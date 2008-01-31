@@ -5,7 +5,6 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.service.exchange.xml.XmlAffichage;
@@ -38,6 +37,7 @@ public class XmlWebAlbums {
     public XmlMaint maint;
     public XmlChoix choix;
     public XmlAlbums albums;
+    public XmlCarnets carnets;
     public XmlPhotos photos;
     public XmlConfig config;
     public XmlTags tags;

@@ -3,6 +3,7 @@ package net.wazari.service.engine;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Tag;
@@ -45,6 +47,7 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
+import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
@@ -168,8 +171,8 @@ public class PhotoBean implements PhotoLocal {
         if (themeBackground) {
             Theme enrTheme = enrPhoto.getAlbum().getTheme();
             log.warn("Assign theme background {}",enrPhoto) ;
-            themeDAO.setPicture(enrTheme, enrPhoto.getId());
-            vSession.getTheme().setPicture(enrPhoto.getId());
+            themeDAO.setBackground(enrTheme, enrPhoto.getId());
+            vSession.getTheme().setBackground(enrPhoto.getId());
             File backgroundDir = new File(vSession.getConfiguration()
                     .getTempPath()+vSession.getTheme().getNom()) ;
             log.info("Delete and create background dir: {}", backgroundDir) ;
@@ -180,6 +183,14 @@ public class PhotoBean implements PhotoLocal {
                     }
                 }
             }
+        }
+        //utiliser cette photo comme representante de l'album ?
+        Boolean themePicture = vSession.getThemePicture();
+        if (themePicture) {
+            Theme enrTheme = enrPhoto.getAlbum().getTheme();
+            log.warn("Assign theme picture {}",enrPhoto) ;
+            themeDAO.setPicture(enrTheme, enrPhoto.getId());
+            vSession.getTheme().setPicture(enrPhoto.getId());
         }
 
         //utiliser cette photo pour representer le tag de ce theme
@@ -258,6 +269,18 @@ public class PhotoBean implements PhotoLocal {
         album.droit = enrAlbum.getDroit().getNom();
         album.date = webPageService.xmlDate(enrAlbum.getDate(), null);
         
+        for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
+            if (album.carnet == null)
+                album.carnet = new ArrayList(enrAlbum.getCarnetList().size()) ;
+
+            XmlCarnet carnet = new XmlCarnet();
+            carnet.date = webPageService.xmlDate(enrCarnet.getDate(), null);
+            carnet.id = enrCarnet.getId();
+            carnet.name = enrCarnet.getNom();
+            carnet.picture = enrCarnet.getPicture();
+
+            album.carnet.add(carnet);
+        }
         XmlDetails details = new XmlDetails() ;
         details.description = enrAlbum.getDescription() ;
         details.photoId = enrAlbum.getPicture() ;
@@ -295,6 +318,7 @@ public class PhotoBean implements PhotoLocal {
         Album enrAlbum = enrPhoto.getAlbum();
 
         output.id = enrPhoto.getId() ;
+        output.album = enrPhoto.getAlbum().getId() ;
         output.description = enrPhoto.getDescription();
         output.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
                 Box.MULTIPLE);
@@ -305,9 +329,8 @@ public class PhotoBean implements PhotoLocal {
         output.tag_never = webPageService.displayListIBT(Mode.TAG_NEVER, vSession, enrPhoto,
                 Box.MULTIPLE);
 
-        output.tag_used_lst = webPageService.displayListIBTNI(Mode.TAG_USED, vSession, enrPhoto,
-                Box.LIST,
-                null, null);
+        output.tag_used_lst = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
+                Box.LIST);
         Utilisateur enrUtil = userDAO.find(enrPhoto.getDroit());
         output.rights = webPageService.displayListDroit(enrUtil, enrAlbum.getDroit().getId());
 
@@ -420,15 +443,12 @@ public class PhotoBean implements PhotoLocal {
             XmlDetails details = new XmlDetails();
             details.photoId = enrPhoto.getId();
             details.description = enrPhoto.getDescription();
-
-            //TODO: improve here, EXIF tags contain text
-            details.miniWidth = Integer.toString(photoUtil.getWidth(vSession, enrPhoto, false));
-            details.miniHeight =  Integer.toString(photoUtil.getHeight(vSession, enrPhoto, false));
-
             //tags de cette photo
-            details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
-                    Box.NONE);
+            details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
+                    Box.NONE, enrPhoto.getAlbum().getDate());
+            
             details.albumId = enrPhoto.getAlbum().getId();
+            details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager()
                     && inEditionMode != EditMode.VISITE) {
@@ -497,12 +517,11 @@ public class PhotoBean implements PhotoLocal {
         XmlDetails details = new XmlDetails();
         details.photoId = enrPhoto.getId();
         details.description = enrPhoto.getDescription();
-        details.miniWidth = Integer.toString(photoUtil.getWidth(vSession, enrPhoto, false));
-        details.miniHeight = Integer.toString(photoUtil.getHeight(vSession, enrPhoto, false));
         //tags de cette photo
-        details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto, Box.NONE) ;
+        details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, 
+                             enrPhoto, Box.NONE, enrPhoto.getAlbum().getDate());
         details.albumId = enrPhoto.getAlbum().getId();
-
+        details.stars = enrPhoto.getStars();
         return details ;
     }
 
@@ -551,6 +570,12 @@ public class PhotoBean implements PhotoLocal {
                 output.tag_msg = ex.getMessage();
                 output.tag_status = XmlPhotoFastEdit.Status.ERROR;
             }
+        }
+        
+        Integer stars = vSession.getStars();
+        if (stars != null) {
+            enrPhoto.setStars(stars);
+            output.stars_status = XmlPhotoFastEdit.Status.OK;
         }
         
         return output;

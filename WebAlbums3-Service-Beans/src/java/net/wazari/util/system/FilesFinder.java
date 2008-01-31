@@ -29,6 +29,7 @@ import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 
 import net.wazari.common.util.StringUtil;
+import net.wazari.dao.CarnetFacadeLocal;
 import net.wazari.util.system.ImageResizer.Element;
 
 @Stateless
@@ -38,6 +39,8 @@ public class FilesFinder {
     private static final int DEFAULT_USER = 3;
     
     private static final Logger log = LoggerFactory.getLogger(FilesFinder.class.getCanonicalName());
+    @EJB
+    private CarnetFacadeLocal carnetDAO;
     @EJB
     private ThemeFacadeLocal themeDAO;
     @EJB
@@ -376,5 +379,11 @@ public class FilesFinder {
             log.warn("URISyntaxException {}", url);
         }
         return false;
+    }
+
+    public boolean deleteCarnet(Carnet enrCarnet, Configuration configuration) {  
+        carnetDAO.remove(enrCarnet);
+        
+        return true ;
     }
 }

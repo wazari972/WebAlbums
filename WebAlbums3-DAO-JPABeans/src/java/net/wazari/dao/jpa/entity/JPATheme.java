@@ -73,7 +73,10 @@ public class JPATheme implements Theme, Serializable {
     @Column(name = "Picture", nullable = true)
     private Integer picture;
 
-
+    @XmlAttribute
+    @Column(name = "Background", nullable = true)
+    private Integer background;
+    
     public JPATheme() {
     }
 
@@ -134,6 +137,16 @@ public class JPATheme implements Theme, Serializable {
     @Override
     public void setPicture(Integer picture) {
         this.picture = picture;
+    }
+    
+    @Override
+    public Integer getBackground() {
+        return background;
+    }
+
+    @Override
+    public void setBackground(Integer background) {
+        this.background = background;
     }
 
     @Override

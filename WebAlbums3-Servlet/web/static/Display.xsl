@@ -31,11 +31,11 @@
              <xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(Images?mode=BACKGROUND)     fixed no-repeat;</xsl:if>
           }
         </style>
-        
       </head>
       <body>
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.5.1.min.js"></script>
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.14.custom.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-cookie.js"></script>
 
         <script type="text/javascript" src="static/scripts/ezpz/jquery.ezpz_tooltip.min.js"></script>
 
@@ -73,8 +73,18 @@
 			<xsl:when test="/webAlbums/affichage/@details = 'false'">Sans Détails</xsl:when>
 			<xsl:when test="not(/webAlbums/affichage/@details = 'false')">Avec Détails</xsl:when>
 		      </xsl:choose> </a></li>
-		  </ul>
-
+                    <xsl:if test="/webAlbums/loginInfo/@admin">
+                        <li>Mode: <a id="mode_edition" title="">not set</a></li>
+                    </xsl:if>
+                  </ul>
+                  
+                  <h3>Qualité: </h3>
+                  <ul>
+                  <li><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/> (all)</li>
+                  <li>Only ? <input type="checkbox"/></li>
+                  </ul>
+		  
+                  
 		<h3>Connexion</h3>
 		<ul>
 		  <li><xsl:value-of select="/webAlbums/loginInfo/user" /></li>
@@ -92,8 +102,8 @@
                         <li>
                             <a href="Database" rel="singlepage[no]" title="Database">Database</a>
                         </li>
-                        <li class="massedit_toggle">Massedit</li>
-                        <li>Mode: <a href="javascript:updateAffichage('edition');" title=""><xsl:value-of select="/webAlbums/affichage/@edition" /></a></li>
+                        <li>Mode: <a id="mode_edition" title="">not set</a></li>
+                        <li>Massedit <a id="mode_massedit" title="">not set</a></li>
                     </ul>
                 </xsl:if>
 		<div id="cloud" />
@@ -110,6 +120,7 @@
 		<xsl:apply-templates select="/webAlbums/choix"/>
 		<xsl:apply-templates select="/webAlbums/albums"/>
 		<xsl:apply-templates select="/webAlbums/photos"/>
+                <xsl:apply-templates select="/webAlbums/carnets"/>
 		<xsl:apply-templates select="/webAlbums/tags"/>
 		<xsl:apply-templates select="/webAlbums/config"/>
                 <xsl:apply-templates select="/webAlbums/database"/>
@@ -153,9 +164,11 @@
   <xsl:include href="PhotosAlbums.xsl" />
   <xsl:include href="Tags.xsl" />
   <xsl:include href="Common.xsl" />
+  <xsl:include href="Carnet.xsl" />
  
   <xsl:include href="ModifAlbum.xsl" /> 
   <xsl:include href="ModifPhoto.xsl" /> 
+  <xsl:include href="ModifCarnet.xsl" /> 
   <xsl:include href="Config.xsl" /> 
   <xsl:include href="Database.xsl" /> 
  </xsl:stylesheet>

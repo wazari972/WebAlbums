@@ -131,6 +131,16 @@ function loadSinglePage(url, dont_scroll) {
     });
 }
 
+function add_singlePageCallback(fct) {
+    old_cp = singlePageCallback 
+    singlePageCallback = function(){
+        old_cp()
+        fct()
+    }
+}
+
+singlePageCallback = function(){}
+
 function loadSinglePageBottomEnd(data, dont_scroll) {
     var xml_doc = data;
     
@@ -168,6 +178,7 @@ function loadSinglePageBottomEnd(data, dont_scroll) {
     } else {
         $(window).scrollTop(0) ;
     }
+    singlePageCallback()
 }
 
 function checkSinglePageAnchor() {

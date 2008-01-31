@@ -21,6 +21,7 @@ public class XmlConfig extends XmlInfoException {
     public XmlConfigModTag modtag;
     public XmlConfigModVis modvis;
     public XmlConfigModGeo modgeo;
+    public XmlConfigModPers modpers;
     public XmlConfigLinkTag linktag;
     public XmlConfigDelTag deltag;
     public XmlConfigDelTheme deltheme;

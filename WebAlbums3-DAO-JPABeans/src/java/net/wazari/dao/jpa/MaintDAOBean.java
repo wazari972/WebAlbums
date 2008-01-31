@@ -14,8 +14,6 @@ import javax.persistence.PersistenceContext;
 import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.entity.Photo;
-import org.hibernate.ejb.EntityManagerImpl;
-import org.hibernate.stat.Statistics;
 
 /**
  *
@@ -88,7 +86,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
     
     @Override
     public void treatDumpStats() {
-        Statistics stats = ((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory().getStatistics();
+/*        Statistics stats = ((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory().getStatistics();
 
         stats.logSummary();
         for (String query : stats.getQueries()) {
@@ -99,5 +97,6 @@ public class MaintDAOBean implements MaintFacadeLocal {
             //log.log(Level.INFO, "\tgetExecutionMaxTime {}", qStats.getExecutionMaxTime());
             //log.log(Level.INFO, "\tgetExecutionRowCount {}", qStats.getExecutionRowCount());
         }
+ */
     }
 }

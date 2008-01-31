@@ -5,14 +5,15 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import java.io.InputStream;
+import java.text.ParseException;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlLoginInfo;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,6 @@ import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
 
-import net.wazari.dao.entity.facades.PhotoOrAlbum;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.WebPageLocal;
 
@@ -38,6 +38,7 @@ import net.wazari.service.util.google.GooglePoint;
 import net.wazari.service.util.google.GooglePoint.Point;
 
 import net.wazari.dao.ThemeFacadeLocal;
+import net.wazari.dao.entity.facades.EntityWithId;
 import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.xml.XmlAffichage;
@@ -49,6 +50,7 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWh
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.common.XmlUserList;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.ListType;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
@@ -214,7 +216,7 @@ public class WebPageBean implements WebPageLocal {
         affichage.details = vSession.getDetails() ;
         if (!vSession.getConfiguration().isPathURL() &&
             (vSession.isRootSession() ||
-            vSession.getTheme() != null && vSession.getTheme().getPicture() != null)) {
+            vSession.getTheme() != null && vSession.getTheme().getBackground() != null)) {
             affichage.background = true  ;
         }
         if (vSession.isRemoteAccess()) affichage.remote = true ;
@@ -230,29 +232,31 @@ public class WebPageBean implements WebPageLocal {
     //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
     @Override
-    public XmlWebAlbumsList displayListIBTNI(Mode mode,
+    public XmlWebAlbumsList displayListIBTN(Mode mode,
             ViewSession vSession,
-            PhotoOrAlbum entity,
+            EntityWithId entity,
             Box box,
-            String name,
-            String info)
+            String name)
             throws WebAlbumsServiceException
     {
 
-        String type = "unknown";
+        ListType type = ListType.UNKNOWN;
         List<TagPhoto> list = null;
         if (entity instanceof Photo) {
             list = ((Photo) entity).getTagPhotoList();
-            type = "PHOTO";
+            type = ListType.PHOTO;
         } else if (entity instanceof Album) {
             list = tagPhotoDAO.queryByAlbum((Album) entity);
-            type = "ALBUMS";
+            type = ListType.ALBUM;
+        } else if (entity instanceof Carnet) {
+            list = tagPhotoDAO.queryByCarnet((Carnet) entity);
+            type = ListType.CARNET;
         }
         List<Tag> tags = new ArrayList<Tag>(list.size());
         for (TagPhoto enrTagPhoto : list) {
             tags.add(enrTagPhoto.getTag());
         }
-        XmlWebAlbumsList output = displayListLBNI(mode, vSession, tags, box, name, info) ;
+        XmlWebAlbumsList output = displayListLBN(mode, vSession, tags, box, name) ;
 
         output.box = box ;
         output.type = type ;
@@ -271,12 +275,11 @@ public class WebPageBean implements WebPageLocal {
     //Mode specific information can be provide throug info (null otherwise)
     //(used by Mode.MAP for the link to the relevant address)
     @Override
-    public XmlWebAlbumsList displayListLBNI(Mode mode,
+    public XmlWebAlbumsList displayListLBN(Mode mode,
             ViewSession vSession,
             List<Tag> ids,
             Box box,
-            String name,
-            String info)
+            String name)
             throws WebAlbumsServiceException 
     {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
@@ -326,7 +329,7 @@ public class WebPageBean implements WebPageLocal {
 
         GooglePoint map = null;
         if (box == Box.MAP_SCRIPT) {
-            map = new GooglePoint(name);
+            map = new GooglePoint();
         }
 
         log.info( "Mode: {}, Box: {}, list: {}", new Object[]{mode, box, ids});
@@ -336,7 +339,7 @@ public class WebPageBean implements WebPageLocal {
             Tag tagId = null;
             String nom = null;
             Point p = null;
-            Integer photo = null;
+            Integer photoId = null;
 
             //first, prepare the information (type, id, nom)
             if (box == Box.MAP_SCRIPT) {
@@ -355,16 +358,15 @@ public class WebPageBean implements WebPageLocal {
                     Geolocalisation enrGeo = enrTag.getGeolocalisation();
                     if (enrGeo != null) {
                         tagId = enrTag;
-
-                        p = new Point(enrGeo.getLat(),
-                                enrGeo.getLongitude(),
-                                enrTag.getNom());
-                        nom = enrTag.getNom();
-
                         //Get the photo to display, if any
                         if (enrTagTh != null) {
-                            photo = enrTagTh.getPhoto();
+                            photoId = enrTagTh.getPhoto();
                         }
+                        p = new Point(enrTag.getNom(), enrTag.getId(),
+                                enrGeo.getLat(),
+                                enrGeo.getLongitude(),
+                                photoId);
+                        nom = enrTag.getNom();
                     }
                 }
             } else if (box == Box.MAP) {
@@ -382,24 +384,6 @@ public class WebPageBean implements WebPageLocal {
             //display the value [if in ids][select if in ids]
             if (box == Box.MAP_SCRIPT) {
                 if (nom != null && (ids == null || ids.contains(tagId))) {
-                    String msg;
-                    
-                    if (photo != null) {
-                        msg = String.format("<div style='height: 160px; width: 210px'> "
-                                + "<img height='150px' height='200px' alt='%s' title='%s' "
-                                + "src='Images?id=%d&amp;mode=PETIT' /></div>",
-                                p.name,
-                                p.name,
-                                photo);
-                    } else {
-                        msg = p.name ;
-                    }
-                    
-                    msg = String.format("<a title='%s' href='Tags?tagAsked=%s'>%s</a>",
-                         p.name, tagId.getId(), msg);
-
-
-                    p.setMsg(msg);
                     map.addPoint(p);
                 }
             } else if (box == Box.MAP) {
@@ -416,6 +400,9 @@ public class WebPageBean implements WebPageLocal {
                     }
                 }
                 if (written) {
+                    if (tag instanceof XmlWebAlbumsTagWho && enrTag.getPerson() != null) {
+                        ((XmlWebAlbumsTagWho) tag).birthdate = enrTag.getPerson().getBirthdate();
+                    }
                     tag.name = nom ;
                     tag.id = tagId.getId() ;
                     tag.checked = selected ;
@@ -425,9 +412,8 @@ public class WebPageBean implements WebPageLocal {
         } /* while loop*/
 
         if (box == Box.MAP_SCRIPT) {
-            output.blob = map.getInitFunction();
+            output.blob = map.getJSon();
         }
-
 
         stopWatch.stop() ;
         return output ;
@@ -436,13 +422,10 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public XmlUserList displayListDroit(Utilisateur right, Integer albmRight)
             throws WebAlbumsServiceException {
-        if (right == null && albmRight == null) {
-            throw new NullPointerException("Droit and Album cannot be null");
-        }
+
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListDroit", log) ;
 
         XmlUserList output = new XmlUserList();
-        boolean hasSelected = false;
 
         List<Utilisateur> lstUsr = userDAO.findAll();
         for (Utilisateur enrUser : lstUsr) {
@@ -467,24 +450,17 @@ public class WebPageBean implements WebPageLocal {
             user.id = id ;
             if (selected) {
                 user.selected = true ;
-                hasSelected = true;
             }
             output.user.add(user);
-        }
-
-        if (!hasSelected) {
-            throw new NoSuchElementException("Right problem: " + right + ", " + albmRight + " (" + lstUsr + ")");
         }
         stopWatch.stop();
         return output ;
     }
 
     @Override
-    public XmlWebAlbumsList displayMapInScript(ViewSession vSession,
-            String name,
-            String info)
+    public XmlWebAlbumsList displayMapInScript(ViewSession vSession)
             throws WebAlbumsServiceException {
-        return displayListLBNI(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT, name, info);
+        return displayListLBN(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT, null);
     }
 
     //display a list into STR
@@ -498,7 +474,7 @@ public class WebPageBean implements WebPageLocal {
             Box box,
             String name)
             throws WebAlbumsServiceException {
-        return displayListLBNI(mode, vSession, null, box, name, null);
+        return displayListLBN(mode, vSession, null, box, name);
     }
     //display a list into STR
     //according to the MODE
@@ -511,8 +487,44 @@ public class WebPageBean implements WebPageLocal {
             ViewSession vSession,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListLBNI(mode, vSession, null, box,
-                "tags", null);
+        return displayListLBN(mode, vSession, null, box, "tags");
+    }
+
+    @Override
+    public XmlWebAlbumsList displayListIBTD(Mode mode,
+            ViewSession vSession,
+            EntityWithId entity,
+            Box box, String date)
+            throws WebAlbumsServiceException {
+        XmlWebAlbumsList lst = displayListIBTN(mode, vSession, entity, box, null);
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+        Date ref;
+        try {
+            ref = parser.parse(date);
+        } catch (ParseException ex) {
+            log.warn("Invalid date provided: {}", date);
+            return lst;
+        }
+        
+        Calendar dob = Calendar.getInstance();
+        Calendar day = Calendar.getInstance();  
+        day.setTime(ref);
+        int age ;
+        for (XmlWebAlbumsTagWho person: lst.who) {
+            if (person.birthdate != null) {
+                try {
+                    Date birth = parser.parse(person.birthdate);
+                    dob.setTime(birth);
+                    age = day.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
+                    if (day.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))  
+                        age--;
+                    person.birthdate = Integer.toString(age);
+                } catch (ParseException ex) {
+                    log.warn("Invalid birth date for tag {}: {}", person.name, person.birthdate);
+                }
+            }
+        }
+        return lst;
     }
     //display a list into STR
     //according to the MODE
@@ -525,12 +537,10 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public XmlWebAlbumsList displayListIBT(Mode mode,
             ViewSession vSession,
-            PhotoOrAlbum entity,
+            EntityWithId entity,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListIBTNI(mode, vSession, entity, box,
-                null,
-                null);
+        return displayListIBTN(mode, vSession, entity, box, null);
     }
     
     //display a list into STR
@@ -544,8 +554,7 @@ public class WebPageBean implements WebPageLocal {
             List<Tag> ids,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListLBNI(mode, vSession, ids, box,
-                "tags", null);
+        return displayListLBN(mode, vSession, ids, box, "tags");
     }
 
     @Override
@@ -555,7 +564,7 @@ public class WebPageBean implements WebPageLocal {
         userDAO.newUser(1, UserLocal.USER_ADMIN);
         userDAO.newUser(2, UserLocal.USER_FAMILLE);
         userDAO.newUser(3, UserLocal.USER_AMIS);
-        userDAO.newUser(4, UserLocal.USER_AUTRES);
+        userDAO.newUser(4, UserLocal.USER_PUBLIC);
     }
 
     private static final SimpleDateFormat annee = new SimpleDateFormat("yyyy");

@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
@@ -30,6 +32,10 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.ViewSessionCarnet;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.ViewSessionImages;
@@ -55,6 +61,7 @@ public class ViewSessionImpl implements
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit,
         ViewSessionTag,
         ViewSessionImages, ViewSessionPhotoDisplayMassEdit, ViewSessionPhotoFastEdit,
+        ViewSessionCarnet, ViewSessionCarnetDisplay, ViewSessionCarnetEdit, ViewSessionCarnetSubmit,
         ViewSessionDatabase, 
         ViewSessionMaint{
 
@@ -68,8 +75,18 @@ public class ViewSessionImpl implements
     }
 
     @Override
+    public String getBirthdate() {
+        return getString("birthdate");
+    }
+    
+    @Override
     public String getDesc() {
         return getString("desc");
+    }
+    
+    @Override
+    public String getCarnetText() {
+        return getString("carnetText");
     }
 
     @Override
@@ -101,7 +118,8 @@ public class ViewSessionImpl implements
     public boolean getSuppr() {
         String suppr = getString("suppr") ;
         return "Oui je veux supprimer cette photo".equals(suppr) ||
-                "Oui je veux supprimer cet album".equals(suppr);
+               "Oui je veux supprimer cet album".equals(suppr)  ||
+               "Oui je veux supprimer ce carnet".equals(suppr);
     }
 
     @Override
@@ -244,6 +262,11 @@ public class ViewSessionImpl implements
     }
 
     @Override
+    public Integer getCarnet() {
+        return getInteger("carnet");
+    }
+    
+    @Override
     public String getNouveau() {
         return getString("nouveau");
     }
@@ -251,6 +274,11 @@ public class ViewSessionImpl implements
     @Override
     public Integer getTag() {
         return getInteger("tag");
+    }
+    
+    @Override
+    public Integer getStars() {
+        return getInteger("stars");
     }
 
     @Override
@@ -291,6 +319,11 @@ public class ViewSessionImpl implements
     @Override
     public boolean getThemeBackground() {
         return "y".equals(getString("themeBackground"));
+    }
+    
+    @Override
+    public boolean getThemePicture() {
+        return "y".equals(getString("themePicture"));
     }
 
     @Override
@@ -391,6 +424,37 @@ public class ViewSessionImpl implements
     public Integer[] getSonTags() {
         return getIntArray("sonTag") ;
     }
+    
+    private Set<Integer> splitInt(String in)  {
+        if (in == null || in.length() == 1)
+            return new HashSet<Integer>();
+        
+        Set<Integer> out = new HashSet<Integer>();
+        for (String str : in.split("-")) {
+            try {
+                out.add(Integer.parseInt(str));
+            } catch (NumberFormatException e) {
+                log.warn("Invalide number during split int:"+str);
+            }
+                
+        }
+        return out ;
+    }
+    
+    @Override
+    public Set<Integer> getCarnetPhoto() {
+        return splitInt(getString("carnetPhoto")) ;
+    }
+    
+    @Override
+    public Set<Integer> getCarnetAlbum() {
+        return splitInt(getString("carnetAlbum")) ;
+    }
+    
+    @Override
+    public Integer getCarnetRepr() {
+        return getInteger("carnetRepr") ;
+    }
 
     @Override
     public Integer getBorderWidth() {
@@ -485,6 +549,11 @@ public class ViewSessionImpl implements
     @Override
     public TagAction getTagAction() {
         return getObject("tagAction", TagAction.class);
+    }
+    
+    @Override
+    public Integer getCountCarnet() {
+        return getInteger("countCarnet") ;
     }
 
     private void setSessionObject(String string, Object value) {

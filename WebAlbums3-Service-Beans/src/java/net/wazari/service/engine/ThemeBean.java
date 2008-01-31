@@ -4,6 +4,7 @@
  */
 package net.wazari.service.engine;
 
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,12 @@ public class ThemeBean implements ThemeLocal {
             webService.populateEntities() ;
             lst = themeDAO.findAll();
         }
+        Collections.reverse(lst);
         for (Theme enrTheme : lst) {
             XmlTheme theme = new XmlTheme() ;
             theme.id = enrTheme.getId() ;
             theme.name = enrTheme.getNom() ;
+            theme.picture = enrTheme.getPicture();
             output.theme.add(theme);
         }
 

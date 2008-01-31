@@ -19,6 +19,8 @@ import net.wazari.service.exchange.xml.tag.XmlTag;
  */
 @XmlRootElement
 public class XmlWebAlbumsList extends XmlInfoException {
+    public enum ListType {UNKNOWN, PHOTO, ALBUM, CARNET} ;
+    
     @XmlAttribute
     public Mode mode;
 
@@ -29,7 +31,7 @@ public class XmlWebAlbumsList extends XmlInfoException {
     @XmlAttribute
     public Integer id;
     @XmlAttribute
-    public String type ;
+    public ListType type ;
 
     public void addTag(XmlTag newTag) {
         if (newTag == null) return ;
@@ -46,12 +48,17 @@ public class XmlWebAlbumsList extends XmlInfoException {
     }
 
     public static class XmlWebAlbumsTagWhere extends XmlTag {
+        @XmlAttribute
+        public String lat;
+        @XmlAttribute
+        public String longit;
         public String getNature() {return "where" ;}
     }
     public static class XmlWebAlbumsTagWhat extends XmlTag {
         public String getNature() {return "what" ;}
     }
     public static class XmlWebAlbumsTagWho extends XmlTag {
+        public String birthdate;
         public String getNature() {return "who" ;}
     }
 

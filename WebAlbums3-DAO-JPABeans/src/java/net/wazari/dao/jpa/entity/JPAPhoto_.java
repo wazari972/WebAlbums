@@ -17,6 +17,7 @@ public abstract class JPAPhoto_ {
     public static volatile SingularAttribute<JPAPhoto, String> date;
     public static volatile SingularAttribute<JPAPhoto, String> type;
     public static volatile SingularAttribute<JPAPhoto, Integer> droit;
+    public static volatile SingularAttribute<JPAPhoto, Integer> stars;
     public static volatile SingularAttribute<JPAPhoto, Integer> id;
     public static volatile SingularAttribute<JPAPhoto, String> height;
     public static volatile ListAttribute<JPAPhoto, JPATagPhoto> jPATagPhotoList;

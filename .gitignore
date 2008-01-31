@@ -1,9 +1,10 @@
 *.class
-**/dist/*
-**/build/*
-**/private/*
+*/dist/*
+*/build/*
+*/private/*
 *.private
 private.?
 private.properties
 private.xml
+WebAlbums3-Servlet/nbproject/private
 

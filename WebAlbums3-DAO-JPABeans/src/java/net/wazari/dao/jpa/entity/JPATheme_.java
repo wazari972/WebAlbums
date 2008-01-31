@@ -13,5 +13,6 @@ public abstract class JPATheme_ {
     public static volatile SingularAttribute<JPATheme, String> nom;
     public static volatile ListAttribute<JPATheme, JPATagTheme> jPATagThemeList;
     public static volatile SingularAttribute<JPATheme, Integer> picture;
+    public static volatile SingularAttribute<JPATheme, Integer> background;
 }
 

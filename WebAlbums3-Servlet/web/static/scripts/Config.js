@@ -93,7 +93,7 @@ function checkValidity(listId, validateBtId) {
     if ($("#"+listId).val() == -1) {
         $("#"+validateBtId).attr('disabled', 'disabled');
     } else {
-        $("#"+validateBtId).attr('disabled', '');
+        $("#"+validateBtId).removeAttr('disabled');
     }
 }
 
@@ -101,26 +101,32 @@ function checkValidity(listId, validateBtId) {
 $("#lstModGeo").change(function () {
     checkValidity("lstModGeo", "valModGeo")
 }) ;
+checkValidity("lstModGeo", "valModGeo")
 
 $("#lstNewTag").change(function () {
     checkValidity("lstNewTag", "valNewTag")
 }) ;
+checkValidity("lstNewTag", "valNewTag")
 
 $("#lstModTag").change(function () {
     checkValidity("lstModTag", "valModTag")
 }) ;
+checkValidity("lstModTag", "valModTag")
 
 $("#lstParentTag").change(function () {
     checkValidity("lstParentTag", "valLinkTag")
 }) ;
+checkValidity("lstParentTag", "valLinkTag")
 
 $("#lstModVis").change(function () {
     checkValidity("lstModVis", "valModVis")
 }) ;
+checkValidity("lstModVis", "valModVis")
 
 $("#lstDelTag").change(function () {
     checkValidity("lstDelTag", "valDelTag")
 }) ;
+checkValidity("lstDelTag", "valDelTag")
 
 $("#importBt").click(function () {
     pleaseConfirm("formImport")

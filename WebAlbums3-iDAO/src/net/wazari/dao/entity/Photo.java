@@ -9,13 +9,12 @@ import java.io.Serializable;
 import java.util.List;
 import net.wazari.common.plugins.Importer.Metadata;
 import net.wazari.dao.entity.facades.EntityWithId;
-import net.wazari.dao.entity.facades.PhotoOrAlbum;
 
 /**
  *
  * @author kevinpouget
  */
-public interface Photo extends PhotoOrAlbum, Serializable, EntityWithId, Metadata {
+public interface Photo extends Serializable, EntityWithId, Metadata {
     Album getAlbum();
 
     String getDescription();
@@ -29,6 +28,10 @@ public interface Photo extends PhotoOrAlbum, Serializable, EntityWithId, Metadat
     List<TagPhoto> getTagPhotoList();
 
     String getType();
+    
+    List<Carnet> getCarnetList() ;
+    
+    Integer getStars();
 
     void setAlbum(Album album);
 
@@ -43,4 +46,8 @@ public interface Photo extends PhotoOrAlbum, Serializable, EntityWithId, Metadat
     void setTagPhotoList(List<TagPhoto> tagPhotoList);
 
     void setType(String type);
+
+    void setCarnetList(List<Carnet> jPACarnetList) ;
+    
+    void setStars(Integer stars);
 }

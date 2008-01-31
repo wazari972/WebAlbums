@@ -31,5 +31,7 @@ public class XmlPhotoEdit extends XmlInfoException {
     public XmlWebAlbumsList tag_used;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_nused;
+    @XmlAttribute
+    public Integer album;
   
 }

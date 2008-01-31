@@ -6,6 +6,7 @@
 package net.wazari.service.exchange.xml.common;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,13 +17,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlDetails {
     public Integer photoId;
-    public String miniWidth;
-    public String miniHeight;
     public List<String> userInside;
     public String description;
     public Integer albumId;
     public String user;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
-
+    @XmlAttribute
+    public Integer stars;
 }

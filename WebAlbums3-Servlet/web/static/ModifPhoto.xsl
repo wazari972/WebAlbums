@@ -68,11 +68,12 @@
               <xsl:with-param name="id">tagPhoto</xsl:with-param>
 	    </xsl:apply-templates>
 	    <br/>
+            <label for="bg">Theme picture ? </label><input id="bg" type='checkbox' name='themePicture' value='y' />
             <label for="bg">Theme background ? </label><input id="bg" type='checkbox' name='themeBackground' value='y' />
             <input type="button" value="Try it!">
-            <xsl:attribute name="ONCLICK">
-	      updateBackground(<xsl:value-of select="id" />) ;
-	    </xsl:attribute>
+                <xsl:attribute name="ONCLICK">
+                  updateBackground(<xsl:value-of select="@id" />) ;
+                </xsl:attribute>
             </input><br />
 	    <label>Droits de visibilité : </label><xsl:apply-templates select="rights"/>
 	    <br/>

@@ -5,6 +5,7 @@
 
 package net.wazari.dao;
 
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
@@ -52,4 +53,8 @@ public interface TagPhotoFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     List<TagPhoto> findAll();
+    
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    List<TagPhoto> queryByCarnet(Carnet carnet);
+
 }

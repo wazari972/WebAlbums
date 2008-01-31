@@ -18,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
 import org.hibernate.annotations.GenericGenerator;
@@ -69,6 +71,10 @@ public class JPAPhoto implements Photo, Serializable {
     private String description;
 
     @XmlElement
+    @Column(name = "Stars", length = 2, nullable = false)
+    private Integer stars = 3;
+    
+    @XmlElement
     @Column(name = "Model", length = 100)
     private String model;
 
@@ -76,6 +82,7 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "DateMeta", length = 50)
     private String date;
 
+    
     @XmlElement
     @Column(name = "Iso", length = 50)
     private String iso;
@@ -121,6 +128,12 @@ public class JPAPhoto implements Photo, Serializable {
     @Transient
     private Integer albumId ;
 
+    @XmlTransient
+    @ManyToMany(mappedBy="jPAPhotoList")
+    private List<JPACarnet> jPACarnetList;
+
+    
+    
     public JPAPhoto() {
     }
 
@@ -141,6 +154,16 @@ public class JPAPhoto implements Photo, Serializable {
     @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    @Override
+    public Integer getStars() {
+        return stars;
+    }
+
+    @Override
+    public void setStars(Integer stars) {
+        this.stars = stars;
     }
 
     @Override
@@ -281,6 +304,16 @@ public class JPAPhoto implements Photo, Serializable {
     @Override
     public void setAlbum(Album album) {
         this.album = (JPAAlbum) album;
+    }
+    
+    @Override
+    public List<Carnet> getCarnetList() {
+        return (List) jPACarnetList;
+    }
+
+    @Override
+    public void setCarnetList(List<Carnet> jPACarnetList) {
+        this.jPACarnetList = (List) jPACarnetList;
     }
 
     @XmlAttribute

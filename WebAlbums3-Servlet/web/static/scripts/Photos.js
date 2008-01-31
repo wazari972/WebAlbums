@@ -15,6 +15,11 @@ $("#selectAllBt").click(function () {
     selectAll() ;
 }) ;
 
+//buttons to toggle TAG and DESC fast edit
+$(".fastedit_stars_bt").click(function () {
+    id = $(this).attr('rel');
+    $("#fastedit_div_stars_"+id).toggle("fast")
+}) ;
 $(".fastedit_tag_bt").click(function () {
     id = $(this).attr('rel');
     $("#fastedit_div_tag_"+id).toggle("fast")
@@ -23,6 +28,13 @@ $(".fastedit_desc_bt").click(function () {
     id = $(this).attr('rel');
     $("#desc_"+id).toggle("fast")
     $("#fastedit_div_desc_"+id).toggle("fast")
+}) ;
+$(".fastedit_stars").click(function () {
+    photoid = $(this).attr('rel').split('/')[0];
+    stars = $(this).attr('rel').split('/')[1];
+    
+    set_stars(photoid, parseInt(stars))
+    
 }) ;
 
 function reload_page_cb(data, photoid) {
@@ -68,6 +80,39 @@ $(".fastedit_desc").click(function () {
         }
      );
 }) ;
+function inc_dec_stars(photoid, inc_dec) {
+    stars = $("#fastedit_div_stars_"+photoid).attr('rel')
+    
+    n = parseInt(stars)
+    n += inc_dec
+    
+    set_stars(photoid, n)
+    
+}
+
+function set_stars(photoid, stars) {
+    if (stars < 0 || stars > 5) {
+        alert("Le nombre d'étoiles doit être compris entre 0 et 5 ("+n+")")
+        return
+    }    
+    
+    $.post("Photos?special=FASTEDIT", 
+        {id : photoid, stars:stars},
+        function(data) {
+            reload_page_cb(data, photoid);
+        }
+     );
+}
+
+$(".fastedit_stars_inc").click(function () {
+    photoid = $(this).attr('rel');
+    inc_dec_stars(photoid, 1)
+}) ;
+
+$(".fastedit_stars_dec").click(function () {
+    photoid = $(this).attr('rel');
+    inc_dec_stars(photoid, -1)
+}) ;
 
 massedit_enabled = false
 function massedit_toggle(state) {
@@ -88,3 +133,5 @@ massedit_toggle(true)
 
 $(".massedit_toggle").unbind('click');
 $(".massedit_toggle").click(massedit_toggle) ;
+
+$("#fastedit_stars_bt").toggle()

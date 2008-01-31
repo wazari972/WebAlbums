@@ -120,7 +120,10 @@ function addLoadEvent(func) {
     }
 }
 function updateBackground(id) {
-    document.getElementById("body").style.backgroundImage = "url(Images?id="+id+"&mode=SHRINK&width=1280)"
+    alert(id)
+    if (document.body){
+        document.body.style.backgroundImage = "url(Images?id="+id+"&mode=SHRINK&width=1280)"
+    }
 }
 function prepareTagsTooltipsDiv(content) {
     prepareTooltipsDiv(content, "Tags") ;

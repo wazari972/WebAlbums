@@ -23,5 +23,4 @@ public class XmlPhoto extends XmlInfoException {
     @XmlAttribute
     public int count;
     public XmlPhotoExif exif;
-
 }

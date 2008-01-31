@@ -18,5 +18,7 @@ public class XmlTheme {
     public String name ;
     @XmlAttribute
     public Integer id ;
+    @XmlAttribute
+    public Integer picture;
 
 }

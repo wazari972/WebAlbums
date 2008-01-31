@@ -67,7 +67,11 @@ public class Photos extends HttpServlet {
             XmlReturnTo return_to = new XmlReturnTo();
             return_to.name = "Photos" ;
             return_to.count = vSession.getCount();
-            return_to.album = vSession.getAlbum();
+            if (vSession.getAlbum() != null)
+                return_to.album = vSession.getAlbum();
+            else
+                return_to.album = output.edit.album;
+            
             return_to.albmCount = vSession.getAlbmCount();
             output.return_to = return_to;
         } else {

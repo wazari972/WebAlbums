@@ -17,7 +17,7 @@ import net.wazari.service.exchange.ViewSessionLogin;
  */
 @Local
 
-@DeclareRoles({UserLocal.USER_ADMIN, UserLocal.USER_FAMILLE, UserLocal.USER_AMIS, UserLocal.USER_AUTRES,
+@DeclareRoles({UserLocal.USER_ADMIN, UserLocal.USER_FAMILLE, UserLocal.USER_AMIS, UserLocal.USER_PUBLIC,
 UserLocal.MANAGER_ROLE, UserLocal.VIEWER_ROLE})
 public interface UserLocal {
     String MANAGER_ROLE = UtilisateurFacadeLocal.MANAGER_ROLE ;
@@ -26,7 +26,7 @@ public interface UserLocal {
     String USER_ADMIN   = "Admin"   ;
     String USER_FAMILLE = "Famille" ;
     String USER_AMIS    = "Amis"    ;
-    String USER_AUTRES  = "Autres"  ;
+    String USER_PUBLIC  = "Autres"  ;
 
     @PermitAll
     boolean logon(ViewSessionLogin vSession, HttpServletRequest request) ;

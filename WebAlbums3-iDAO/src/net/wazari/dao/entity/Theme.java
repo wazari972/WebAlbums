@@ -34,4 +34,8 @@ public interface Theme extends Serializable, EntityWithId {
     Integer getPicture() ;
 
     void setPicture(Integer picture) ;
+    
+    Integer getBackground() ;
+
+    void setBackground(Integer background) ;
 }
