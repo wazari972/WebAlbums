@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
+
+<hibernate-mapping>
+	<class name="Entity.Photo" table="Photo">
+		<id name="ID" type="integer">
+			<column name="ID" sql-type="int(4)"/>
+			<generator class="increment"/>
+		</id>
+		
+		<property name="Description" type="string">
+			<column name="Description" sql-type="char(500)" not-null="false" />
+		</property>
+
+		<property name="Album" type="integer">
+			<column name="Album" sql-type="int(11)" not-null="true" />
+		</property>
+		 
+ 		<property name="Path" type="string">
+			<column name="Path" sql-type="char(100)" not-null="true" />
+		</property>
+	</class>
+</hibernate-mapping>
