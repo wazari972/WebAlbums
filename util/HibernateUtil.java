@@ -1,28 +1,32 @@
 package util;
 
+import org.apache.log4j.Logger;
+
 import net.sf.hibernate.*;
 import net.sf.hibernate.cfg.*;
 
 public class HibernateUtil {
+	public static final Logger log = Logger.getLogger("WebAlbum");
+	private static final SessionFactory sessionFactory;
+	public  static final ThreadLocal session = new ThreadLocal();
+	
+	static {
+		try {
+			// Crée la SessionFactory
+			log.info("creation") ;
+			sessionFactory = new Configuration().configure().buildSessionFactory();
+			log.info("created") ;
+			
+		} catch (HibernateException ex) {
+			throw new RuntimeException("Problème de configuration : " + ex.getMessage(), ex);
+		} catch (Exception e) {
+			System.out.println("meeerde ") ;
+			throw new RuntimeException("Problème de configuration : " + e.getMessage(), e);
+		}
+	}
 
- private static final SessionFactory sessionFactory;
-
- static {
-   try {
-	   // Crée la SessionFactory
-	   sessionFactory =
-		 new Configuration().configure().buildSessionFactory();
-	   } catch (HibernateException ex) {
-		   throw new RuntimeException("Problème de configuration : "
-		   + ex.getMessage(), ex);
-	   }
-   }
-
- public static final ThreadLocal session = new ThreadLocal();
-
- @SuppressWarnings("unchecked")
-public static Session currentSession()
-		throws HibernateException {
+	@SuppressWarnings("unchecked")
+	public static Session currentSession() throws HibernateException {
 	   Session s = (Session) session.get();
 	   // Ouvre une nouvelle Session, si ce Thread n'en a aucune
 	   if (s == null) {
@@ -32,12 +36,15 @@ public static Session currentSession()
 	   return s;
    }
 
- @SuppressWarnings("unchecked")
-public static void closeSession()
-		throws HibernateException {
+	@SuppressWarnings("unchecked")
+	public static void closeSession() throws HibernateException {
 	   Session s = (Session) session.get();
 	   session.set(null);
 	   if (s != null)
 		   s.close();
-	   }
- }
+    }
+	
+	public static SessionFactory getSessionFactory() {
+	    return sessionFactory;
+	}
+}

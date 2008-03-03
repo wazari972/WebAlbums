@@ -11,28 +11,31 @@ import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 
-import traverse.FilesFinder;
+import constante.Path;
 
 
 public class ImageResizer implements Runnable {
 	public static final Logger log = Logger.getLogger("WebAlbum");
-	public static final String IMAGES = FilesFinder.ROOT +"/"+ FilesFinder.IMAGES ;
-	public static final String MINI   = FilesFinder.ROOT +"/"+ FilesFinder.MINI ;
-		
-	private String endLocker = "" ;
 	
 	private Stack<Element> stack = new Stack<Element> () ;
 	private boolean finished = false ;
-	
+	private File author ; 
+	private boolean done = false ;
 	public void run () {
 		Element current ;
-		while (true) {
+		while (!done) {
 			if (stack.empty()) {
 				if (finished) {
-					synchronized (endLocker) {
-						endLocker.notify() ;
+					if (this.author.isDirectory()) {
+						log.info("Nettoyage du dossier "+this.author) ;
+						File[] lst = this.author.listFiles() ;
+						
+						//supprimer recursivement tous les dossiers de ce repertoire
+						for (File f : lst) {
+							delete (f) ;
+						}
 					}
-					return ;
+					done = true ;
 				} else {
 					try {
 						Thread.sleep (1000) ;
@@ -44,27 +47,41 @@ public class ImageResizer implements Runnable {
 				log.info("Resizing...");
 				resize(current);
 				log.info("Moving...");
-				move  (current);
+				move(current);
 				log.info("Done !");
 			}
 		}
+		log.info("Finished !");
 	}
 	
 	public void push (Element elt) {
 		stack.push(elt) ;
 	}
 	
-	public void terminate () {
+	public void terminate (File author) {
 		this.finished = true ;
-		synchronized (endLocker) {
-			try {
-				endLocker.wait() ;
-			} catch (InterruptedException e) {}
+		this.author = author ;
+	}
+	
+	public static void delete (File rep) {
+		if (rep.isFile()) {
+			//on fait rien
+			log.warn("Fichier trouvé "+rep+" !") ;
+		} else if (rep.isDirectory()) {
+			log.info("Suppression du dossier "+rep+" ...") ;
+			File[] lst = rep.listFiles() ;
+			
+			//supprimer recursivement tous les dossiers de ce repertoire
+			for (File f : lst) {
+				delete (f) ;
+			}
+			//et supprimer le repertoire lui meme
+			rep.delete() ;
 		}
 	}
 	
 	private static void move (Element elt) {
-		File destination = new File (IMAGES + "/"+elt.path);
+		File destination = new File (Path.ABSOLUTE_PATH+Path.IMAGES + Path.SEP +elt.path);
 		destination.getParentFile().mkdirs();
 		elt.source.renameTo(destination) ;
 	}
@@ -72,20 +89,27 @@ public class ImageResizer implements Runnable {
 	private static void resize (Element elt) {
 		try {
 			
-			File destination = new File (MINI+"/"+elt.path+".png");
+			File destination = new File (Path.ABSOLUTE_PATH+Path.MINI+Path.SEP+elt.path+".png");
 			destination.mkdirs();
 			BufferedImage img = ImageIO.read(elt.source) ;
 			
-			int largeur ;
-			int hauteur ;
-			if (img.getWidth() > img.getHeight()) {
-				largeur = 266 ;
-				hauteur = 200 ;
-			} else {
-				largeur = 200 ;
+			int hauteur = img.getHeight() ;
+			int largeur = img.getWidth() ;
+
+			//conserver les proportions des images
+			if (hauteur > largeur) {
+				double reduc = (266.0/(double)hauteur) ;
+				largeur = new Double ((double) largeur * reduc).intValue() ;
 				hauteur = 266 ;
+				log.info("## "+reduc);
+			} else {
+				double reduc = (266.0/(double)largeur) ;
+				hauteur = new Double((double) hauteur * reduc).intValue() ;
+				largeur = 266 ;
+				log.info("** "+reduc);
 			}
-			
+			log.info("h:"+img.getHeight()+" et h2:"+hauteur);
+			log.info("l:"+img.getWidth()+" et l2:"+largeur);
 			BufferedImage res = scale (img, largeur, hauteur) ;
 			
 			File des = destination ;
@@ -126,5 +150,9 @@ public class ImageResizer implements Runnable {
 			this.source = source;
 		}
 	
+	}
+
+	public boolean isDone() {
+		return done;
 	}
 }

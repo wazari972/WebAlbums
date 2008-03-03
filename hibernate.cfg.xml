@@ -9,27 +9,38 @@
 		<property name="hibernate.connection.url">
 			jdbc:mysql://localhost/WebAlbum
 		</property>
+		
 		<property name="hibernate.connection.driver_class">
 			com.mysql.jdbc.Driver
 		</property>
+		
 		<property name="hibernate.connection.username">wazari972</property>
 		<property name="hibernate.connection.password">rien</property>
+		
 		<!-- property name="hibernate.connection.pool_size"></property -->
 		<!-- dialect for MySQL -->
 		<property name="dialect">
 			net.sf.hibernate.dialect.MySQLDialect
 		</property>
+		
 		<property name="hibernate.show_sql">false</property>
 		<property name="hibernate.use_outer_join">true</property>
+		
 		<!--
 			property name="hibernate.transaction.factory_class">net.sf.hibernate.transaction.JTATransactionFactory</property>
 			<property name="jta.UserTransaction">java:comp/UserTransaction</property
 		//-->
+		
 		<property name="hibernate.transaction.factory_class">
 			net.sf.hibernate.transaction.JDBCTransactionFactory
 		</property>
+		
 		<mapping resource="Auteur.hbm" />
 		<mapping resource="Photo.hbm" />
 		<mapping resource="Album.hbm" />
+		<mapping resource="Tag.hbm" />
+		<mapping resource="TagAlbum.hbm" />
+		<mapping resource="TagPhoto.hbm" />
+		
 	</session-factory>
 </hibernate-configuration>

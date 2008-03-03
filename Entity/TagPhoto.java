@@ -1,24 +1,25 @@
 package Entity;
 
-import Entity.base.BaseAuteur;
+import Entity.base.BaseTagPhoto;
 
 /**
- * This is the object class that relates to the Auteur table.
+ * This is the object class that relates to the TagPhoto table.
  * Any customizations belong here.
  */
-public class Auteur extends BaseAuteur {
+public class TagPhoto extends BaseTagPhoto {
 	private static final long serialVersionUID = 1L;
 
 	/*[CONSTRUCTOR MARKER BEGIN]*/
-	public Auteur () {
+	public TagPhoto () {
 		super();
 	}
 
 	/**
 	 * Constructor for primary key
 	 */
-	public Auteur (java.lang.Integer _iD) {
+	public TagPhoto (java.lang.Integer _iD) {
 		super(_iD);
 	}
+
 /*[CONSTRUCTOR MARKER END]*/
 }

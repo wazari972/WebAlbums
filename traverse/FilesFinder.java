@@ -1,12 +1,20 @@
 package traverse;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.* ;
 
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+
+import constante.Path;
 
 import Entity.*;
 import util.*;
@@ -17,11 +25,6 @@ import net.sf.hibernate.Transaction;
 
 
 public class FilesFinder {
-	public static final String ROOT = "data" ;
-	public static final String FTP = "ftp" ;
-	public static final String IMAGES = "images" ;
-	public static final String MINI = "miniatures" ;
-	
 	
 	public static final SimpleDateFormat DATE_STANDARD = new SimpleDateFormat("yyyy-MM-dd");
 	public static final Logger log = Logger.getLogger("WebAlbum");
@@ -37,11 +40,16 @@ public class FilesFinder {
 	
 	public FilesFinder () {
 		log.setLevel(Level.ALL);
+		try {
+			log.addAppender(new FileAppender(new SimpleLayout(),"/tmp/FilesFinder.log"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void importAutor(String autorName) throws HibernateException {
+	public void importAuthor(String authorName) throws HibernateException {
 		
-		log.info ("Importing autor : "+autorName) ;
+		log.info ("Importing author : "+authorName) ;
 		session = HibernateUtil.currentSession();
 		   
 		tx = session.beginTransaction();
@@ -50,26 +58,26 @@ public class FilesFinder {
 		th.setName("Resizer stack") ;
 		th.start() ;
 		
-		File autor = new File(ROOT+"/"+FTP+"/"+autorName);
-		log.warn (ROOT+"/"+FTP+"/"+autorName) ;
+		File author = new File(Path.ABSOLUTE_PATH+Path.FTP+"/"+authorName);
+		log.warn (Path.ABSOLUTE_PATH+Path.FTP+"/"+authorName) ;
 		
-		if (!autor.exists() || !autor.isDirectory()){
-			log.fatal ("Le dossier Auteur '"+autor.getName()+"' n'existe pas");
+		if (!author.exists() || !author.isDirectory()){
+			log.fatal ("Le dossier Auteur '"+author.getName()+"' n'existe pas");
 		
 		} else {
 			//plus prevention des problemes de ' => ''
-			List list = session.find("from Auteur where nom = '"+autorName.replace("'", "''")+"'");
+			List list = session.find("from Auteur where nom = '"+authorName.replace("'", "''")+"'");
 			
 			//si l'auteur n'est pas encore dans la base de données, on l'ajoute
 			if (list.size() > 1) {
-				log.fatal("Plusieurs auteurs ont le même nom ! ==> "+autorName) ;
+				log.fatal("Plusieurs auteurs ont le même nom ! ==> "+authorName) ;
 				
 			} else {
 				Auteur enrAuteur = null ;
 				if (list.size() == 0) {
 					log.info("L'auteur n'est pas dans la table") ;
 					enrAuteur = new Auteur () ;
-					enrAuteur.setNom(autorName) ;
+					enrAuteur.setNom(authorName) ;
 					session.save(enrAuteur) ;
 					log.debug("L'auteur a correctement été ajouté") ;
 					
@@ -78,31 +86,27 @@ public class FilesFinder {
 					enrAuteur = (Auteur) list.iterator().next();
 				}
 				
-				this.auteur = autorName ;
+				this.auteur = authorName ;
 				
 				int myID = enrAuteur.getID() ;
 				
-				File[] subfiles = autor.listFiles();
+				File[] subfiles = author.listFiles();
 				
-				log.info("Le dossier '"+autorName+"' contient "+ subfiles.length+" fichier"+(subfiles.length>1?"s":""));
+				log.info("Le dossier '"+authorName+"' contient "+ subfiles.length+" fichier"+(subfiles.length>1?"s":""));
 				for (int i=0 ; i<subfiles.length; i++){
 					importAlbum(subfiles[i], myID);
 				}
 			}
 		}
 		log.info ("Waiting for Resizer termination");
-		resizer.terminate () ;
+		resizer.terminate (author) ;
 		
-		//suprimer les dossiers importés/vidés
-		delete(autor) ;
-		//mais laisser le dossier au nom de l'auteur pour sa prochaine importation
-		autor.mkdir();
-		log.info ("Commit for autor : "+autorName) ;
+		log.info ("Commit for author : "+authorName) ;
 		tx.commit() ;
 		log.info ("Well done !") ;
 	}
 	
-	private void importAlbum (File album, int autorID) throws HibernateException  {
+	private void importAlbum (File album, int authorID) throws HibernateException  {
 		log.info ("## Import of : "+album.getName()) ;
 		
 		if (!album.exists() || !album.isDirectory()){
@@ -132,7 +136,7 @@ public class FilesFinder {
 					
 					enrAlbum.setNom(nom);
 					enrAlbum.setDescription("");
-					enrAlbum.setAuteur(autorID) ;
+					enrAlbum.setAuteur(authorID) ;
 					try {
 						enrAlbum.setDate(DATE_STANDARD.parse(date));
 						log.debug("## Date correctement parsée : "+enrAlbum.getDate()) ;
@@ -173,6 +177,27 @@ public class FilesFinder {
 	
 	private void importPhoto (File photo, int albumID) throws HibernateException {
 		log.info ("#### Import of : "+photo.getName() +"") ;
+		
+		URL url;
+		try {
+			url = photo.toURI().toURL();
+			URLConnection connection = url.openConnection();
+			String type = connection.getContentType();
+			
+			log.info("#### type : "+type);
+			
+			if (!type.contains("image")) {
+				log.warn("#### ce n'est pas une image ...");
+				return ;
+			}
+		} catch (MalformedURLException e) {
+			log.warn("#### URL mal formée ..." + e);
+			return ;
+		} catch (IOException e) {
+			log.warn("#### Erreur d'IO ..." + e);
+			return ;
+		}
+
 		String path = auteur+"/"+annee+"/"+dossier+"/"+photo.getName() ;
 		
 		ImageResizer.Element elt = new ImageResizer.Element (path, photo) ;
@@ -191,7 +216,7 @@ public class FilesFinder {
 			if (list.isEmpty()) {
 				enrPhoto = new Photo () ;
 				enrPhoto.setDescription("") ;
-				enrPhoto.setPath(path) ;
+				enrPhoto.setPath(StringUtil.escapeURL(path)) ;
 			} else {
 				enrPhoto = (Photo) list.iterator().next();
 			}
@@ -202,29 +227,8 @@ public class FilesFinder {
 		
 		log.info ("#### Import of : "+photo.getName() +" : completed") ;
 	}
-	
-	@Override
-	public void finalize () {
-		log.info ("Import procedure abort !") ;
-		resizer.terminate();
-		log.info ("Import procedure abort !") ;
-	}
-	
-	public static void delete (File rep) {
-		if (rep.isFile()) {
-			//on fait rien
-		} else if (rep.isDirectory()) {
-			log.info("Suppression du dossier "+rep+" ...") ;
-			File[] lst = rep.listFiles() ;
-			
-			//supprimer recursivement tous les dossiers de ce repertoire
-			for (File f : lst) {
-				delete (f) ;
-			}
-			//et supprimer le repertoire lui meme
-			rep.delete() ;
-		}
-	}
+
+
 	
 	public static void main (String[] args) {
 		
@@ -232,7 +236,17 @@ public class FilesFinder {
 		
 		FilesFinder finder = new FilesFinder () ;
 		try {
-			finder.importAutor("Kevin") ;
+			finder.importAuthor("Kevin") ;
+			
+			while (!finder.resizer.isDone()) {
+				try {
+					Thread.sleep(1000) ;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				log.info ("esperando, esperando ...") ;
+			}
+			log.info ("ciao !!!") ;
 		} catch (HibernateException e) {}
 	}
 }
