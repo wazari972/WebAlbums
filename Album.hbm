@@ -3,7 +3,7 @@
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
 
-<hibernate-mapping package="Entity">
+<hibernate-mapping package="entity">
 	<class name="Album" table="Album">
 		<id name="ID" type="integer">
 			<column name="ID" sql-type="int(4)"/>
@@ -18,12 +18,20 @@
 			<column name="Description" not-null="false" />
 		</property>
 
- 		<property name="Auteur" type="integer">
-			<column name="Auteur" sql-type="int(4)" not-null="true" />
+ 		<property name="Theme" type="integer">
+			<column name="Theme" sql-type="int(4)" not-null="true" />
 		</property>
 
  		<property name="Date" type="timestamp">
 			<column name="Date" sql-type="timestamp" not-null="true" />
+		</property>
+		
+ 		<property name="Source" type="string">
+			<column name="Source" not-null="true" />
+		</property>
+		
+ 		<property name="Picture" type="string">
+			<column name="Picture" not-null="false" />
 		</property>
 
 	</class>

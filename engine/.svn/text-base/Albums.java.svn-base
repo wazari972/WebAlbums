@@ -1,0 +1,289 @@
+package display;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import constante.Path;
+
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.JDBCException;
+import traverse.FilesFinder;
+import util.StringUtil;
+import Entity.Album;
+import Entity.Utilisateur;
+import display.WebPage.Mode;
+import display.WebPage.Type;
+
+public class Albums extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	public void init() {
+		Path.setLocation(this) ;
+	}
+	
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+		WebPage.treat(WebPage.Page.ALBM, request, response) ;
+	}
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response) ;
+	}
+	protected static void treatALBM(HttpServletRequest request, StringBuilder output) throws Exception {
+		WebPage.log.warn("Traitement Album");
+		String action = request.getParameter("action") ;
+		
+		if ("SUBMIT".equals(action) && WebPage.isLoggerAsCurrentAuthor(request, output)) {
+			action = treatAlbmSUBMIT(request, output);
+		}
+		
+		if ("EDIT".equals(action) && WebPage.isLoggerAsCurrentAuthor(request, output)) {
+			treatAlbmEDIT(request, output);
+		} else {
+			//memoriser les params de lURL pour pouvoir revenir
+			String from = "/WebAlbums/servlet/display.Albums" ;
+			request.getSession().setAttribute("from", from) ;
+			
+			//sinon afficher la liste des albums de cet auteur
+			treatAlbmDISPLAY(request, output, action);
+		}
+	}
+
+	protected static String treatAlbmSUBMIT(HttpServletRequest request, StringBuilder output) throws HibernateException, Exception {
+		String albumID = StringUtil.escapeHTML(request.getParameter("id")) ;
+		String rq = null;
+		try {
+			rq = "from Album where id = '"+albumID+"' and id in ("+WebPage.listAlbumAllowed(request)+")" ;
+			List list = WebPage.session.find(rq);
+			rq = "done" ;
+			String suppr = request.getParameter("suppr") ;
+			if ("Oui je veux supprimer cet album".equals(suppr)) {
+				FilesFinder.deleteAlbum (albumID) ;
+				return null ;
+			}
+			Album enrAlbum = (Album) list.iterator().next() ;
+			
+			String desc = StringUtil.escapeHTML(request.getParameter("desc")) ;
+			String nom = StringUtil.escapeHTML(request.getParameter("nom")) ;
+			String date = request.getParameter("date") ;
+			String[] themes = request.getParameterValues("themes") ;
+			String[] users = request.getParameterValues("users") ;
+			String force = request.getParameter("force") ;
+			
+			enrAlbum.setThemesToPhoto(themes, "yes".equals(force)) ;
+			enrAlbum.setUsers(users) ;
+			enrAlbum.setNom(nom) ;
+			enrAlbum.setDescription(desc) ;
+			enrAlbum.setDate(date) ;
+			
+			return "<i> Album ("+enrAlbum.getID()+") correctement mise à jour !</i><br/><br/>\n" ;
+		} catch (JDBCException e) {
+			output.append("Impossible de finaliser la modification de l'album ("+albumID+") => "+e.getSQLException()+"<br/>\n"+
+						  "Derniere requete : "+rq+"<br/>\n"+e+"<br/>\n");
+			WebPage.log.warn("Impossible de finaliser la modification de l'album ("+albumID+") => "+e+"<br/>\n");
+			return "EDIT" ;
+		} catch (NoSuchElementException e) {
+			output.append("Impossible d'acceder à cet album ("+albumID+")...<br/>\n");
+			return "EDIT" ;
+		}
+	}
+
+	protected static void treatAlbmDISPLAY(HttpServletRequest request, StringBuilder output, String message) throws HibernateException {
+		String auteur = WebPage.getAuteurID(request) ;
+		String rq = null ;
+		String pageGet = "/WebAlbums/servlet/display.Albums?" ;
+		try {
+			output.append("<b>Liste des albums : </b><br/><br/>\n");
+			rq = "from Album where auteur = '"+auteur+"' " +
+				 "and id in ("+WebPage.listAlbumAllowed(request)+")"+
+				 "order by date desc " ;
+			
+			List list = WebPage.session.find(rq);
+			rq = "done" ;
+			
+			displayAlbum(list, output, request, message, pageGet);
+
+			output.append("<br/>\n");
+			
+			output.append("<a href='/WebAlbums/servlet/display.Choix'>Retour aux choix</a>\n");
+		} catch (JDBCException e) {
+			output.append("<br/><i>Impossible d'afficher les albums de l'auteur ("+auteur+") </i>=> "+rq+"<br/>\n"+e+"<br/>\n"+e.getSQLException()+"<br/>\n");
+		}
+	}
+
+	protected static void treatAlbmEDIT(HttpServletRequest request, StringBuilder output) throws HibernateException {
+		String albumID = request.getParameter("id") ;
+		String rq = null ;
+		try {
+			rq = "from Album where id = '"+albumID.replace("'", "''")+"'" ;
+			List list = WebPage.session.find(rq);
+			rq = "done" ;
+			
+			Album enrAlbum = (Album) list.iterator().next() ;
+			
+			StringBuilder str = new StringBuilder () ;
+			str.append("<b>Modification d'album</b><br/><br/>\n"+
+					   "<form action='/WebAlbums/servlet/display.Albums?action=SUBMIT&id="+enrAlbum.getID()+"#"+enrAlbum.getID()+"' method='POST'>\n"+
+			   		   "<table valign='middle'>\n"+
+			   		   "	<tr>\n"+
+			   		   "		<td align='right'>Nom :</td>" +
+					   "		<td> <input type='text' size='100' maxlength='100' name='nom' value='"+enrAlbum.getNom()+"'/></td>\n"+
+					   "	</tr>\n" +
+					   "	<tr>\n"+
+					   "		<td align='right'>Description :</td>\n" +
+					   "		<td> <textarea name='desc' rows='5' cols='100'>"+enrAlbum.getDescription()+"</textarea></td>\n"+
+					   "	</tr>\n" +
+					   "	<tr>"+
+					   "		<td align='right'>Date :</td><td> <input type='text' size='10' name='date' maxlength='10' value='"+WebPage.DATE_STANDARD.format(enrAlbum.getDate())+"'/></td>\n"+
+					   "	</tr>\n" +
+					   "	<tr>\n"+
+					   "		<td align='right'>Thèmes à appliquer aux photos:</td>\n" +
+					   "		<td>\n" );
+			WebPage.displayList(Mode.THEME, request, str, null,  WebPage.Box.MULTIPLE);
+			str.append("		</td>\n"+
+					   "	</tr>\n" +
+					   "	<tr>\n"+
+					   "		<td align='right'>Uniquement ?</td>\n" +
+					   "		<td align='left'><input type='checkbox' name='force' value='yes' /></td>\n" +
+					   "	</tr>\n"+
+					   "	<tr>\n" +
+			   		   "		<td align='right'> Utilisateurs :</td>\n"+
+					   "		<td>\n");
+			WebPage.displayList(Mode.USER, request, str, enrAlbum.getID(), WebPage.Box.MULTIPLE, Type.ALBUM ) ;
+		    str.append("		</td>\n"+
+					   "	</tr>\n"+
+					   "	<tr>\n"+
+					   "		<td align='right'>Supprimer ?</td>\n" +
+					   "		<td align='left'><input type='text' name='suppr' size='31' maxlength='31'/>" +
+					   "		\"Oui je veux supprimer cet album\" (définitif !) </td>\n" +
+					   "	</tr>\n"+
+					   "	<tr>\n" +
+					   "		<td align='center'><input type='submit' value='Valider' /></td>\n" +
+					   "	</tr>\n"+
+			   		   "<table>\n"+
+			   	   	   "</form>\n"+
+					   "<a href='/WebAlbums/servlet/display.Albums#"+enrAlbum.getID()+"'>Retour aux albums</a>\n");
+			
+			output.append(str.toString());
+		} catch (JDBCException e) {
+			output.append("<br/><i>Impossible de modifier l'album ("+albumID+") </i>=> "+rq+"<br/>\n"+e+e.getSQLException()+"<br/>\n");
+		}
+	}
+	
+	protected static void displayAlbum(List list, StringBuilder output, HttpServletRequest request, String message, String pageGet) throws HibernateException {
+		Boolean inEditionMode = WebPage.getEditionMode(request) ;
+		String albumID = request.getParameter("id") ;
+		String page = request.getParameter("page") ;
+		
+		Integer[] bornes = WebPage.calculBornes(Type.ALBUM, page, list.size()) ;
+		List portionLst = list.subList(bornes[0], bornes[1]) ;
+		
+		int id ;
+		try {
+			id = Integer.parseInt(albumID) ;
+			message = (message == null ? "" : message) ;
+		} catch (NumberFormatException e) {
+			id = -1 ;
+			message = "" ;
+		}
+		
+		Album enrAlbum;
+		Iterator it = portionLst.iterator();
+		
+		Date oldDate = null ;
+		output.append("<table width='100%'>\n");
+		while (it.hasNext()) {
+			enrAlbum = (Album) it.next();
+			if (enrAlbum.getID() == id) {
+				output.append("<tr><td colspan='4'>"+message+"</td><tr>\n") ;
+			}
+			output.append(
+					"	<tr align='center' valign='middle'>\n" +
+					"		<td>\n" +
+					"			<a name='"+enrAlbum.getID()+"'></a>\n" +
+			StringUtil.displayDate(enrAlbum.getDate(), oldDate)+
+					"		</td>\n" +
+					"		<td><b><a href='/WebAlbums/servlet/display.Photos?album="+enrAlbum.getID()+"'> "+enrAlbum.getNom()+"</a></b></td>\n" +
+					"		<td width='70%' align='left'>\n" +
+					"		<table>\n" +
+					"			<tr>\n" +
+					"				<td>"+enrAlbum.getDescription()+"</td>\n" +
+					"			</tr>\n" +
+					"			<tr>\n" +
+					"				<td>\n" +
+					"					<i>\n");
+			WebPage.displayList(Mode.THEME, request, output, enrAlbum.getID(), WebPage.Box.NONE, Type.ALBUM);
+			output.append("\n"+
+					"				</i>\n" +
+					"				</td>\n" +
+					"			</tr>\n" +
+					"			<tr>\n" +
+					"				<td>\n");
+			if (WebPage.isLoggerAsCurrentAuthor(request)) {
+				WebPage.displayList(Mode.USER, request, output, enrAlbum.getID(), WebPage.Box.NONE, Type.ALBUM);
+				displayListUserInside(request, output, enrAlbum.getID()) ;
+			}
+			
+			output.append(
+					"\n				</td>\n" +
+					"			</tr>\n" +
+					"		</table>\n");
+			if (WebPage.isLoggerAsCurrentAuthor(request) && inEditionMode) {
+				output.append("		<td width ='5%'> <a href=/WebAlbums/servlet/display.Albums?action=EDIT&id="+enrAlbum.getID()+"><img src='/data/web/edit.png' width='25' heigh='25'></a></td>\n");
+			}
+			output.append("	</tr>\n");
+			
+			oldDate = enrAlbum.getDate();
+		}
+		output.append("</table>\n");
+		
+		WebPage.displayPages(page, pageGet, bornes, output);
+		
+	}
+	private static void displayListUserInside(HttpServletRequest request, StringBuilder output, int id) throws HibernateException {
+		String rq = null ;
+		try {
+			rq = "from Utilisateur u " +
+				 "where u.ID in (" +
+				 //	liste des utilisateurs autorisé à voir les photos d'un album
+				 "	select u.ID " +
+				 "	from Utilisateur u " +
+				 "	where ("+
+				 "		u.ID not in (select up.User from UserPhoto up, Photo p where p.ID = up.Photo and p.Album = '"+id+"')" +
+				 "		and u.ID in (select ua.User from UserAlbum ua  where ua.Album = '"+id+"')" +
+				 "	) or (" +
+				 "		u.ID in (select up.User from UserPhoto up, Photo p where p.ID = up.Photo and p.Album = '"+id+"')" +
+				 "		and u.ID not in (select ua.User from UserAlbum ua  where ua.Album = '"+id+"')" +
+				 "	)" +
+				 ") and u.ID not in (" +
+				 //	list des utilisateur autorisé à voir un album
+				 "	select ua.User from UserAlbum ua where ua.Album = '"+id+"'"+
+				 ")" ;
+			List list = WebPage.session.find(rq);
+			rq = "done" ;
+			List<Integer> ids = new ArrayList<Integer>(list.size()) ;
+			for (Object o : list) {
+				Utilisateur u = (Utilisateur) o ;
+				ids.add(u.getID()) ;
+			}
+			StringBuilder str = new StringBuilder () ;
+			WebPage.displayList(WebPage.Mode.USER, request, str, ids,  WebPage.Box.NONE) ;
+			if (str.length() != 0) {
+				output.append("  ("+str.toString()+")") ;
+			}
+		} catch (JDBCException e) {
+			
+
+		}
+		
+	}
+
+}

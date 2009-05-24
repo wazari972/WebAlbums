@@ -1,0 +1,117 @@
+package display;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import constante.Path;
+
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.JDBCException;
+import util.StringUtil;
+import display.WebPage.Mode;
+import display.WebPage.Type;
+
+public class Themes extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	public void init() {
+		Path.setLocation(this) ;
+	}
+	
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		WebPage.treat(WebPage.Page.THEMES, request, response) ;
+	}
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response) ;
+	}
+	protected static void treatTHEMES(HttpServletRequest request, StringBuilder output) throws HibernateException {
+		String type = StringUtil.escapeHTML(request.getParameter("type")) ;
+		String[] themes = request.getParameterValues("themes");
+		String page = request.getParameter("page") ;
+		
+		//memoriser les params de lURL pour pouvoir revenir
+		String from = "/WebAlbums/servlet/display.Themes?" ;
+		if (type != null) from += "&type="+type ;
+		if (themes != null) from += addEach("themes",themes) ;
+		
+		String pageGet = from ;
+		if (page != null) from += "&page="+page ;
+		request.getSession().setAttribute("from", from) ;
+		
+		String rq = null ;
+		try {
+			Type direction ;
+			if ("PHOTO".equals(type)) {
+				direction = Type.PHOTO ;
+			} else if ("ALBUM".equals(type)) {
+				direction = Type.ALBUM ;
+			} else {
+				return ;
+			}
+			if (themes != null) {
+				List<Integer> listTagId = new ArrayList<Integer> (themes.length) ;
+				for (int i = 0; i < themes.length; i++) {
+					try {
+						listTagId.add(Integer.parseInt(themes[i]));
+					} catch (NumberFormatException e) {}
+				}
+				output.append("<b>"+(direction == Type.PHOTO ? "Photos" :(direction == Type.ALBUM ? "Albums" : "Erreur"))+ " sur les thèmes :</b><br /> \n"+
+							  "<i>\n");
+				WebPage.displayList(Mode.THEME, request, output, listTagId,  WebPage.Box.NONE) ;
+				output.append("</i><br/><br/>\n");
+				
+				
+				//creation de la partie commune de la requete
+				rq = "from Photo photo, Album album " +
+					"where photo.ID in (" +
+					"	select tagPhoto.Photo " +
+					"	from TagPhoto as tagPhoto " +
+					"	where album.ID = photo.Album " +
+					"and tagPhoto.Tag in ('-1' " ;
+				for (int id : listTagId) {
+					rq += ", '"+id+"'" ;
+				}
+				rq+="))" +
+				    "and photo.ID in ("+WebPage.listPhotoAllowed(request)+") " +
+				    " order by album.Date desc " ;
+				
+				//creation de la liste des photos/albums a afficher 
+				//en fonction de la liste de tag et de l'auteur
+				if (direction == Type.PHOTO) {
+					rq = "select photo " + rq + "group by photo.ID" ;
+					List list = WebPage.session.find(rq);
+					rq = "done" ;
+					
+					Photos.displayPhoto(list, output, request, null, pageGet) ;
+					
+				} else if (direction == Type.ALBUM) {
+					rq = "select album " + rq + "group by album.ID" ;
+					List list = WebPage.session.find(rq);
+					rq = "done" ;
+					
+					Albums.displayAlbum(list, output, request, null, pageGet) ;
+				} else {
+					return ;
+				}
+			}
+			output.append("<a href='/WebAlbums/servlet/display.Choix'>Retour aux choix</a>\n");
+		}catch (JDBCException e) {
+			output.append("<i> Impossible d'effectuer la requete' :</i>"+rq+"<br/>"+e+"<br/>\n"+e.getSQLException()+"<br/>\n");
+		}
+	}
+	
+	private static String addEach(String name, String[] from) {
+		String dest = "" ;
+		for (int i = 0; i < from.length; i++) {
+			dest += "&"+name+"="+StringUtil.escapeHTML(from[i]) ;
+		}
+		return dest ;
+	}
+	
+}

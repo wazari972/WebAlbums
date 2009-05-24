@@ -5,8 +5,15 @@ import java.util.Date;
 
 public class StringUtil {
 	
+	public static final String escapeSpaces(String s) {
+		
+		return s.replace (" ", "\\ ");
+	}
+	
 	// from : http://www.rgagnon.com/javadetails/java-0306.html
 	public static final String escapeHTML(String s){
+	
+	   if (s == null) return null ;
 	   StringBuffer sb = new StringBuffer(s.length());
 	   int n = s.length();
 	   for (int i = 0; i < n; i++) {
@@ -54,6 +61,7 @@ public class StringUtil {
 	         case '®': sb.append("&reg;");break;         
 	         case '©': sb.append("&copy;");break;   
 	         case '€': sb.append("&euro;"); break;
+	         case '\'':sb.append("&#39;"); break ;
 	         // be carefull with this one (non-breaking whitee space)
 	         //case ' ': sb.append("&nbsp;");break;
 	         
@@ -62,20 +70,70 @@ public class StringUtil {
 	   }
 	   return sb.toString();
 	}
+
+  public static final String toAscii(String s) {
+    if (s == null) return null ;
+    StringBuffer sb = new StringBuffer(s.length());
+    int n = s.length();
+    int i = 0 ;
+    while (i < n)  {
+      char c = s.charAt(i);
+      if (c >= 'a' && c <= 'z') {
+	sb.append(c) ;
+      } 
+      i++;
+    }
+    return sb.toString();
+  }
+  
+  public static final String putbackAmp(String s) {
+    if (s == null) return null ;
+    StringBuffer sb = new StringBuffer(s.length());
+    int n = s.length();
+    int i = 0 ;
+    while (i < n)  {
+      char c = s.charAt(i);
+      if (c == '%') {
+	i++ ;
+	c = s.charAt(i);
+	if (c == '2') {
+	  i++ ;
+	  c = s.charAt(i);
+	  if (c == '6')
+	    sb.append('&');
+	  else
+	    sb.append(c);
+	} else
+	  sb.append(c);
 	
-	public static final String escapeURL(String s){
-		   StringBuffer sb = new StringBuffer(s.length());
-		   int n = s.length();
-		   for (int i = 0; i < n; i++) {
-				char c = s.charAt(i);
-				switch (c) {
-					case '\'' : sb.append("%27");break;
-					default:  sb.append(c); break;
-				}
-		   }
-		   return sb.toString();
-		}
-	
+      } else 
+	sb.append(c);
+      i++ ;
+    }
+    return sb.toString();
+  }
+    public static final String escapeURL(String s){
+      if (s == null) return null ;
+      StringBuffer sb = new StringBuffer(s.length());
+      int n = s.length();
+      for (int i = 0; i < n; i++) {
+	char c = s.charAt(i);
+	switch (c) {
+	case '\'' : sb.append("%27");break;
+	case ' ' : sb.append("%20");break;
+	case 'é' : sb.append("%C3%A9"); break ;
+	case 'è' : sb.append("%C3%A8"); break ;
+	case 'à' : sb.append("%C3%A0"); break ;
+	case '&' : sb.append("%26"); break ;
+	default:  sb.append(c); break;
+	}
+      }
+      return sb.toString();
+    }
+    /*
+	/data/miniatures/Marine%20et%20Kevin/2008/2008-03-06%20Montagnes%20enneig%E9es%20d%27innsbruck/P1000030.JPG.png
+	/data/miniatures/Marine%20et%20Kevin/2008/2008-03-06%20Montagnes%20enneig%E9es%20d%27innsbruck/P1000030.JPG.png
+	*/
 	public static String displayDate(Date newDate, Date oldDate) {
 		SimpleDateFormat annee = new SimpleDateFormat("yyyy");
 		SimpleDateFormat mois = new SimpleDateFormat("MMMM");

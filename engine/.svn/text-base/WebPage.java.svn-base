@@ -1,0 +1,637 @@
+package display;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+
+import constante.Path;
+
+import Entity.*;
+
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.JDBCException;
+import net.sf.hibernate.Session;
+
+import util.HibernateUtil;
+import util.StringUtil;
+
+public class WebPage extends HttpServlet {
+	public enum Page {PHOTO, IMG, USR, ALBM, CONFIG, CHX, THEMES, VOID, PERIODE} 
+	public enum Type {PHOTO, ALBUM}
+	public enum Box  {NONE, MULTIPLE, LIST} ;
+	public enum Mode {USER, THEME}
+	private static final long serialVersionUID = -8157612278920872716L;
+	public static final Logger log = Logger.getLogger("WebAlbum");
+	public static final Logger stat = Logger.getLogger("Stats");
+	public static final SimpleDateFormat DATE_STANDARD = new SimpleDateFormat("yyyy-MM-dd");
+	public static final SimpleDateFormat DATE_FRANCE = new SimpleDateFormat("dd-MM-yyyy");
+	protected static final String AUTEUR_CHEAT = "-1" ;
+	protected static final int TAILLE_PHOTO = 5;
+	protected static final int TAILLE_ALBUM = 15;
+	
+	protected static Session session ;
+
+	static {
+		try {
+			session = HibernateUtil.currentSession();
+			
+			log.setLevel(Level.ALL);
+			log.addAppender(new FileAppender(new SimpleLayout(),"/tmp/WebPage.log"));
+			stat.setLevel(Level.ALL);
+			stat.addAppender(new FileAppender(new SimpleLayout(),"/tmp/stat.log"));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} 
+	}
+
+	public void init() {
+		Path.setLocation(this) ;
+	}
+	
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		treat(Page.VOID, request, response);
+	}
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response) ;
+	}
+
+	protected static void treat(Page page, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		long debut = System.currentTimeMillis();
+		
+		StringBuilder out = new StringBuilder() ;
+
+		boolean isPhoto = false ;
+		
+		StringBuilder output = new StringBuilder () ;
+		try {
+			String auteurID = getAuteurID(request) ;
+			String userID   = Users.getUser(request) ;
+			if (page == Page.VOID) {
+				treatVOID(output);
+			} else if (page == Page.USR) {
+				Users.treatUSR(request, output);
+			//a partir d'ici, l'auteur doit être en memoire
+			} else if (auteurID != null) {
+				//a partir d'ici, l'utilisateur doit être en memoire
+				if (userID != null) { 
+					if (page == Page.CHX) {
+						Choix.treatCHX(request, output);
+					}else if (page == Page.ALBM) {
+						Albums.treatALBM(request, output);
+					} else if (page == Page.PERIODE) {
+						Periode.treatPERIODE(request, output) ;
+					} else if (page == Page.PHOTO) {
+						Photos.treatPHOTO(request, output);
+					} else if (page == Page.CONFIG){
+						Config.treatCONFIG(request, output);
+					} else if (page == Page.THEMES){
+						Themes.treatTHEMES(request, output);
+					} else if (page == Page.IMG){
+						isPhoto = Images.treatIMG(request, output, response);
+					} else {
+						treatVOID(output);
+					}
+				} else {
+					treatVOID(output);
+				}
+			} else {
+				treatVOID(output);
+			}
+			
+		} catch (JDBCException e) {
+			 
+			out.append("Il y a une erreur dans la requete ... !<br/>\n"+e.getSQLException()+"<br/>\n") ;
+			out.append(e.getMessage());
+			
+		} catch (Exception e) {
+			out.append("Il y a un truc qui n'a pas marché... !\n" +
+					e.getMessage() + "<br/>\n"+e+"" +
+					"**>"+StringUtil.escapeHTML(output.toString())+"<**\n");
+		}
+		
+		long fin = System.currentTimeMillis();
+		
+		if (!isPhoto) {
+			response.setContentType("text/html");
+			preventCaching(request, response);
+			out.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n" +
+					"<html>\n" +
+					"  <head>\n" +
+					"    <title>WebAlbum4</title>\n" +
+					"  </head>\n" +
+					"  <body>\n" +
+							output.toString()+
+					"		<br/>Page générée en "+(((double)(fin-debut))/1000)+"s" +
+					"		<br/>\n"+
+					"  </body>\n" +
+					   "</html>");
+			PrintWriter sortie = response.getWriter();
+			sortie.println(out.toString());
+			sortie.flush();
+			sortie.close();
+		}
+	}
+
+
+	protected static String listPhotoAllowed(HttpServletRequest request) {
+		String user = Users.getUser(request) ;
+		String rq = null ;
+		
+		if (isLoggerAsCurrentAuthor(request)) {
+			rq = "select ph.ID from Photo ph" ;
+		} else {
+			rq = "select ph.ID from Photo ph " +
+				 "where " +
+				 //photo non masqué dans les albums autorisé
+				 "(" +
+				 "	ph.Album in (select ua.Album from UserAlbum ua where ua.User = '"+user+"' ) "+
+				 " 	and ph.ID not in (select up.Photo from UserPhoto up where up.User = '"+user+"' )" +
+				 ") "+
+				 "or " +
+				 //photo autorisé dans les albums masqué
+				 "ph.ID in (select p.ID "+
+							"from Album a, Photo p "+
+							"where "+
+							"a.ID = p.Album and "+
+							"a.ID not in ( "+
+							     //liste des albums autorisés
+							"    select usrA.Album "+
+							"    from UserAlbum usrA "+
+							"    where usrA.User = "+user+" "+
+							") " + 
+							"and " +
+							"p.ID in (" +
+								//liste des photos avec status inverse
+							"	select usrP.Photo " +
+							"	from UserPhoto usrP " +
+							"	where usrP.User = '"+user+"'" +
+							")" +
+					")";
+		}
+		return rq;
+	}
+	
+
+	protected static String listAlbumAllowed(HttpServletRequest request) {
+		String user = Users.getUser(request) ;
+		String rq = null ;
+		if (isLoggerAsCurrentAuthor(request)) {
+			rq = "select al.ID from Album al " ;
+		}
+		else {
+			rq = "select al.ID from Album al " +
+					"where " +
+					//albums autorisés
+					"al.ID in (select ua.Album from UserAlbum ua where ua.User = '"+user+"')" +
+					" or " +
+					// albums ayant des photos autorisés dans un album masqué
+					"al.ID in (select p.Album "+
+							"from Album a, Photo p "+ 
+							"where "+
+							"a.ID = p.Album and "+
+						    // liste des albums NON autorisés
+							"a.ID not in ( "+
+							"    select usrA.Album "+
+							"    from UserAlbum usrA "+
+							"    where usrA.User = '"+user+"' "+
+							") " +
+							"and " +
+							"p.ID in (" +
+								//liste des photos avec status inverse
+							"	select usrP.Photo " +
+							"	from UserPhoto usrP " +
+							"	where usrP.User = '"+user+"'" +
+							")" +
+						")" ;
+		}
+		return rq;
+	}
+
+	
+
+	protected static boolean isLoggerAsCurrentAuthor(HttpServletRequest request) {
+		String logedID  = (String) request.getSession().getAttribute("LogInID") ;
+		
+		try {
+			return logedID.equals(AUTEUR_CHEAT) ;
+		} catch (NullPointerException e) {
+			return false ;
+		}
+	}
+	
+
+	protected static boolean isLoggerAsCurrentAuthor(HttpServletRequest request, StringBuilder output) {
+		if (isLoggerAsCurrentAuthor(request)) {
+			return true ;
+		} else {
+			output.append("<i>Vous n'êtes pas l'auteur de ces albums !</i><br/><br/>\n");
+			return false ;
+		}
+	}
+		
+
+	
+	protected static void treatVOID(StringBuilder output) throws HibernateException {
+		//afficher la liste des auteurs
+		String rq = null ; 
+		try  {
+			rq = "from Auteur" ;
+			List list = session.find(rq);
+			rq = "done" ;
+			Auteur enrAuteur = null;
+			
+			output.append("<b>Liste des auteurs : </b><br/><br/>\n");
+			
+			Iterator it = list.iterator();
+			while (it.hasNext()) {
+				enrAuteur = (Auteur) it.next();
+				output.append("<a href='/WebAlbums/servlet/display.Users?auteur="+enrAuteur.getID()+"'> "+enrAuteur.getNom()+"</a><br/>\n");
+			}
+		} catch (JDBCException e) {
+			if (e.getSQLException().getMessage().toString().contains("Communication link failure")) {
+				output.append("Probleme important, on doit rebooter le server web ...") ;
+				stat.warn("Communication link failure, reboot ....") ;
+				try {
+					Runtime.getRuntime().exec("sh /var/www/vhosts/wazari.net/jakarta-tomcat/bin/restart.sh");
+				} catch (IOException e1) {
+					output.append("IOException ... "+e);
+				}
+			} else {
+				output.append("<br/><i>Impossible d'afficher les auteur </i>=> "+rq+"<br/>\n"+e+"<br/>\n"+e.getSQLException()+"<br/>\n");
+			}
+		}
+	}
+	
+
+
+	
+	protected static String tryToSaveAuteur(HttpServletRequest request, StringBuilder output) throws HibernateException {
+		String auteur = getAuteurID(request) ;
+		String rq = null ;
+		//memoriser le nom de l'auteur
+		try {
+			Session session = HibernateUtil.currentSession();
+			rq = "from Auteur where id='"+auteur+"'" ;
+			String auteurName = ((Auteur) session.find(rq).iterator().next()).getNom();
+			rq = "done" ;
+			
+			request.getSession().setAttribute("AuteurName", auteurName) ;
+			request.getSession().setAttribute("AuteurID", auteur) ;
+			request.getSession().setAttribute("EditionMode", false) ;
+		} catch (JDBCException e) {
+			output.append("<br/><i>Impossible d'executer la requete </i>=> "+rq+"<br/>\n"+e+"<br/>\n"+e.getSQLException()+"<br/>\n");
+			return null ;
+		} catch (NoSuchElementException e) {
+			output.append("<i>Cet auteur ("+auteur+") n'existe pas ...</i>"+e+"<br/>\n");
+			return null;
+		}
+		return auteur ;
+	}
+
+	protected static String getAuteurID(HttpServletRequest request) {
+		String auteur = (String) request.getSession().getAttribute("AuteurID");
+		if (auteur == null) {
+			auteur = StringUtil.escapeHTML(request.getParameter("auteur"));
+		}
+		
+		return auteur ;
+	}
+	
+	protected static String getAuteurName(HttpServletRequest request) {
+		return (String) request.getSession().getAttribute("AuteurName");
+	}
+
+	
+	protected static void displayList(Mode mode, HttpServletRequest request, StringBuilder str, Box box) throws HibernateException {
+		displayList(mode, request, str, null, box) ;
+	}
+	
+	protected static void displayList(Mode mode, HttpServletRequest request, StringBuilder str, int id, Box box, Type type) throws HibernateException {
+		String rq = null ;
+		try {
+			ArrayList<Integer> ids ;
+			if (type == Type.PHOTO) {
+				if (mode == Mode.THEME) {
+					rq = "from TagPhoto " +
+						 "where photo = '"+id+"'" ;
+					List list = session.find(rq);
+					rq = "done" ;
+					ids= new ArrayList<Integer>(list.size()) ;
+					for (Object o : list) {
+						TagPhoto tag = (TagPhoto) o ;
+						ids.add(tag.getTag()) ;
+					}
+				} else if (mode == Mode.USER){
+					//liste des utilisateurs autorisé à voir une photo
+					rq = "select u " +
+						 "from Utilisateur u " +
+						 "where ("+
+						 "	u.ID not in (select up.User from UserPhoto up where up.Photo = '"+id+"')" +
+						 "	and u.ID in (select ua.User from UserAlbum ua, Photo p where p.ID = '"+id+"' and p.Album = ua.Album)" +
+						 ") or (" +
+						 "	u.ID not in (select ua.User from UserAlbum ua, Photo p where p.ID = '"+id+"' and p.Album = ua.Album)" +
+						 "	and u.ID in (select up.User from UserPhoto up where up.Photo = '"+id+"')" +
+						 ")" ;
+					
+					List list = session.find(rq);
+					rq = "done" ;
+					ids= new ArrayList<Integer>(list.size()) ;
+					for (Object o : list) {
+						Utilisateur user = (Utilisateur) o ;
+						ids.add(user.getID()) ;
+					}
+				} else {
+					ids = null ;
+				}
+			} else if (type == Type.ALBUM){
+
+				if (mode == Mode.THEME) {
+					rq = "select tp " +
+						 "from Photo photo, TagPhoto tp " +
+						 "where photo.Album = '"+id+"' " +
+						 "and photo.ID = tp.Photo " +
+						 "group by tp.Tag" ;
+					List list = session.find(rq);
+					rq = "done" ;
+					ids = new ArrayList<Integer>(list.size()) ;
+					for (Object o : list) {
+						TagPhoto user = (TagPhoto) o ;
+						ids.add(user.getTag()) ;
+					}
+				} else if (mode == Mode.USER) {
+					//list des utilisateur autorisé d'un album
+					rq = "select ua from UserAlbum ua where ua.Album = '"+id+"'" ;
+					List list = session.find(rq);
+					rq = "done" ;
+					ids = new ArrayList<Integer>(list.size()) ;
+					for (Object o : list) {
+						UserAlbum ua = (UserAlbum) o ;
+						ids.add(ua.getUser()) ;
+					}
+				} else {
+					ids = null ;
+				}
+					
+			} else {
+				ids = null ;
+			}
+			displayList(mode, request, str, ids, box) ;
+		} catch (JDBCException e) {
+			str.append("Il y a une erreur dans la requete : "+rq+"<br/>\n"+e+"<br/>\n"+e.getSQLException()+"<br/>\n"+e.getSQLException()+"<br/>\n") ;
+		}
+	}
+	
+	protected static void displayList(Mode mode, HttpServletRequest request, StringBuilder str, List<Integer> ids, Box box) throws HibernateException {	
+		String rq = null ;
+		String auteurID = getAuteurID(request) ;
+		String userID = Users.getUser(request) ;
+		try {
+			List list ;
+			//afficheage de la liste des themes
+			if (mode == Mode.THEME) {
+				//si on est loggé comme auteur,
+				if (isLoggerAsCurrentAuthor(request)) {
+					//afficher tous les tags
+					rq = "from Tag" ;
+				} else {
+					//sinon afficher que les tags où il y aura des photos
+					rq = "from Tag t0 where "+
+						"t0.ID in ("+
+						
+							// Tags des photos autorisés dans album autorisé
+							"select t3.ID "+
+							"from Album a3, Photo p3, Tag t3, TagPhoto tp3 "+
+							
+							"where "+
+							"a3.ID = p3.Album and "+
+							"t3.ID = tp3.Tag and "+
+							"tp3.Photo = p3.ID and "+
+							"a3.ID in ( "+
+							    // liste des albums autorisés
+							"    select usrA4.Album "+
+							"    from UserAlbum usrA4 "+
+							"    where usrA4.User = "+userID+" "+
+							") "+
+							"and p3.id not in ( "+
+							"    select usrP5.Photo "+
+							"    from UserPhoto usrP5 "+
+							"    where usrP5.User = "+userID+" "+
+							") System.out.println(path);"+
+						
+						") or t0.ID in ("+
+							// Tags des photos autorisés dans album masqué
+							"select t6.ID "+
+							"from Album a6, Photo p6, Tag t6, TagPhoto tp6 "+
+							
+							"where "+
+							"a6.ID = p6.Album and "+
+							"t6.ID = tp6.Tag and "+
+							"tp6.Photo = p6.ID and "+
+							"a6.ID not in ( "+
+							    // liste des albums autorisés
+							"    select usrA7.Album "+
+							"    from UserAlbum usrA7 "+
+							"    where usrA7.User = "+userID+" "+
+							") "+
+							"and p6.ID in ( "+
+							    // select usrP.Photo
+							"    select usrP8.Photo "+
+							"    from UserPhoto usrP8 "+
+							"    where usrP8.User = "+userID+" "+
+							") " +
+						") " +
+						"group by t0.ID" ;
+				}
+			} else if (mode == Mode.USER) /*sinon on afiche la liste des utilisateurs*/ {
+				rq = "from Utilisateur where auteur = '"+auteurID+"'" ;
+			} else {
+				str.append("Mode incorrect :"+mode+"<br/>\n");
+				return ;
+			}
+			list = session.find(rq) ;
+			rq = "done" ;
+			
+			int current = 0;
+			int max = (ids == null ? 0 : ids.size()) ;
+			
+			if (box == Box.MULTIPLE) str.append("<select size='7' name='"+(mode == Mode.THEME ? "themes" : "users")+"' multiple>\n");
+			if (box == Box.LIST) str.append("<select name='"+(mode == Mode.THEME ? "themes" : "users")+"'>\n");
+			
+			int id = -1 ;
+			String nom = null ;
+			Iterator it = list.iterator();
+			while (it.hasNext()) {
+				if (mode == Mode.THEME) {
+					Tag enrTag = (Tag) it.next();
+					id = enrTag.getID() ;
+					nom = enrTag.getNom();
+				} else if (mode == Mode.USER){
+					Utilisateur enrUser = (Utilisateur) it.next() ;
+					id = enrUser.getID();
+					nom = enrUser.getNom();
+				} else { /* reserved for a future growing up*/}
+				
+				if (box != Box.NONE) {
+					str.append("<option value='"+id+"' ") ;
+					if (ids != null && ids.contains(id)) {
+						str.append("selected") ;
+					}
+					str.append(">");
+					str.append(nom);
+					str.append("</option>\n") ;
+				} else {
+					if (ids != null && ids.contains(id)) {
+						current++ ;
+						str.append(nom);
+						if (current < max) {
+							str.append(", ");
+						}
+					}
+				}
+			}
+			if (box != Box.NONE) str.append("</select>\n");
+		} catch (JDBCException e) {
+			str.append("Impossible d'effectuer la requete suivante :"+rq+"<br/>\n"+e+"<br/><br/>"+e.getSQLException()+"<br/>\n") ;
+		}
+	}
+
+
+	protected static void displayUserPhoto (int auteur, int albumId, int photoId, StringBuilder output) throws HibernateException {
+		String rq = null ;
+		try {
+			//liste des status individuels, par photo 
+			rq = "from UserPhoto where photo = '"+photoId+"'" ;
+			List list = session.find(rq);
+			rq = "done" ;
+			List<Integer> details = new ArrayList<Integer>(list.size()) ;
+
+			for (Object o : list) {
+				UserPhoto user = (UserPhoto) o ;
+				details.add(user.getUser()) ;
+			}
+			
+			//liste des status de l'album
+			rq = "from UserAlbum where album = '"+albumId+"'" ;
+			list = session.find(rq);
+			rq = "done" ;
+			List<Integer> global = new ArrayList<Integer>(list.size()) ;
+
+			for (Object o : list) {
+				UserAlbum user = (UserAlbum) o ;
+				global.add(user.getUser()) ;
+			}
+			
+			//afficher pour chaque auteur
+			rq = "from Utilisateur where auteur = '"+auteur+"'" ;
+			list = session.find(rq);
+			rq = "done" ;
+			boolean album, photo ;
+			output.append("<table>\n" +
+					"<tr>\n" +
+					"	<th>Utilisateurs</th>\n" +
+					"	<th>Album</th>\n" +
+					"	<th>Different ?</th>\n" +
+					"</tr>") ;
+			for (Object o : list) {
+				output.append("<tr>\n") ;
+				Utilisateur user = (Utilisateur) o ;
+				album = global.contains(user.getID()) ;
+				photo = details.contains(user.getID()) ;
+				
+				output.append("<td>"+user.getNom()+"</td>\n" +
+						"<td>"+(album ? "visible" : "masqué")+"</td>\n" +
+						"<td align='center'><input type='checkbox'name='user"+user.getID()+"' "+(photo ? "checked" : "")+"></td>\n"+
+						"</tr>\n") ;
+			}
+			output.append("</table>\n") ;
+			
+		} catch (JDBCException e) {
+			output.append("Probleme dans la requete => "+rq+"<br/>\n"+e+"<br/>\n"+e.getSQLException()+"<br/>\n");
+		}
+	}
+	protected static void saveDetails (HttpServletRequest request) {
+		String details = request.getParameter("details") ;
+		if (details != null && details.equals("OUI")) {
+			request.getSession().setAttribute("details", true) ;
+			
+		} else if (details != null && details.equals("NON")) {
+			request.getSession().setAttribute("details", false) ;
+		}
+	}
+	protected static Boolean getDetails(HttpServletRequest request) {
+		Boolean details = (Boolean) request.getSession().getAttribute("details") ;
+		
+		return (details == null ? false : details) ;
+	}
+	
+	protected static Boolean getEditionMode(HttpServletRequest request) {
+		Boolean mode = (Boolean) request.getSession().getAttribute("inEditionMode") ;
+		
+		return (mode == null ? false : mode) ;
+	}
+
+	protected static Integer[] calculBornes(Type type, String page, int size) {
+		
+		int taille = (type == Type.ALBUM ? TAILLE_ALBUM : TAILLE_PHOTO) ;
+		Integer[] bornes = new Integer[3] ;
+		try {
+			if (page == null) {
+				bornes[0] = 0 ;
+				page = "0" ;
+			} else {
+				bornes[0] = Math.min(Integer.parseInt(page) * taille , size)  ;
+				bornes[0] = (bornes[0] < 0 ? 0 : bornes[0]) ;
+			}
+		} catch (Exception e) {
+			bornes[0] = 0 ;
+			page = "3" ;
+		}
+		bornes[1] = Math.min(bornes[0]+taille, size);
+		bornes[2] = (int) Math.ceil(((double)size)/((double)taille)) ;
+		
+		return bornes ;
+	}
+
+
+	protected static void displayPages(String page, String from, Integer[] bornes, StringBuilder output) {
+		if (bornes[2] > 1) {
+			output.append("<table> <tr> <td>\n");
+			for (int i = 0; i < bornes[2]; i++) {
+				if (Integer.toString(i).equals(page) || page == null && i == 0) {
+					output.append(" "+i+" ");
+				} else {
+					output.append("<a href='"+from+"&page="+i+"'>"+i+"<a/>\n");
+				}
+			}
+			output.append("\n</td> </tr> </table>\n");
+		}
+	}
+
+	protected static void preventCaching(HttpServletRequest request,
+			HttpServletResponse response) {
+		// see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+		String protocol = request.getProtocol();
+		if ("HTTP/1.0".equalsIgnoreCase(protocol)) {
+			response.setHeader("Pragma", "no-cache");
+		} else if ("HTTP/1.1".equalsIgnoreCase(protocol)) {
+			response.setHeader("Cache-Control", "no-cache"); // "no-store" work also 
+		}
+		response.setDateHeader("Expires", 0);
+	}
+}

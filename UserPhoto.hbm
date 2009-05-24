@@ -4,7 +4,7 @@
 	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
 
 <hibernate-mapping>
-	<class name="entity.TagPhoto" table="TagPhoto">
+	<class name="entity.UserPhoto" table="UserPhoto">
 		<id name="ID" type="integer">
 			<column name="ID" sql-type="int(11)"/>
 			<generator class="increment"/>
@@ -13,8 +13,8 @@
 		<property name="Photo" type="integer">
 			<column name="Photo" sql-type="int(11)" not-null="true" />
 		</property>
-		<property name="Tag" type="integer">
-			<column name="Tag" sql-type="int(11)" not-null="true" />
+		<property name="User" type="integer">
+			<column name="User" sql-type="int(11)" not-null="true" />
 		</property>
 	</class>
 </hibernate-mapping>

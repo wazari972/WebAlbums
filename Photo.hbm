@@ -4,7 +4,7 @@
 	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
 
 <hibernate-mapping>
-	<class name="Entity.Photo" table="Photo">
+	<class name="entity.Photo" table="Photo">
 		<id name="ID" type="integer">
 			<column name="ID" sql-type="int(4)"/>
 			<generator class="increment"/>
@@ -20,6 +20,42 @@
 		 
  		<property name="Path" type="string">
 			<column name="Path" sql-type="char(100)" not-null="true" />
+		</property>
+		
+ 		<property name="Click" type="integer">
+			<column name="Click" sql-type="int(11)" not-null="true" />
+		</property>
+		
+ 		<property name="Model" type="string">
+			<column name="Model" sql-type="char(100)" not-null="false" />
+		</property>
+		
+		<property name="Date" type="string">
+			<column name="Date" sql-type="char(50)" not-null="false" />
+		</property>
+		
+		<property name="Iso" type="string">
+			<column name="Iso" sql-type="char(50)" not-null="false" />
+		</property>
+		
+		<property name="Exposure" type="string">
+			<column name="Exposure" sql-type="char(50)" not-null="false" />
+		</property>
+		
+		<property name="Focal" type="string">
+			<column name="Focal" sql-type="char(50)" not-null="false" />
+		</property>
+		
+		<property name="Flash" type="string">
+			<column name="Flash" sql-type="char(50)" not-null="false" />
+		</property>
+		
+		<property name="Height" type="string">
+			<column name="Height" sql-type="char(50)" not-null="false" />
+		</property>
+		
+		<property name="Width" type="string">
+			<column name="Width" sql-type="char(50)" not-null="false" />
 		</property>
 	</class>
 </hibernate-mapping>

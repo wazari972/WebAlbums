@@ -1,0 +1,102 @@
+package display;
+
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import constante.Path;
+
+import net.sf.hibernate.HibernateException;
+import display.WebPage.Mode;
+
+public class Choix extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+	throws ServletException, IOException {
+	
+		WebPage.treat(WebPage.Page.CHX, request, response) ;
+	}
+	
+	public void init() {
+		Path.setLocation(this) ;
+	}
+	
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response) ;
+	}
+	
+	protected static void treatCHX(HttpServletRequest request, StringBuilder output) throws HibernateException {
+		output.append("<b>Critères de choix : </b></br></br>\n"+
+				"<form action='/WebAlbums/servlet/display.Albums' method='get'>\n" +
+				"	Liste compléte des albums\n" +
+				"	<input type='submit' value='OK'/>\n" +
+				"</form></br></br>\n");
+
+		output.append("<form action='/WebAlbums/servlet/display.Periode' method='get'>\n" +
+				"	Par Année <input type='text' name='year' size='4' maxlength='4'>\n" +
+				"	[et mois <input type='text' name='month' size='2' maxlength='2' />]\n" +
+				"	<input type='submit' value='OK' />\n" +
+				"</form></br></br>\n");
+		
+		output.append("<form action='/WebAlbums/servlet/display.Periode' method='get'>\n" +
+				"	Sur la Periode du <input type='text' name='debut' size='10' maxlength='10' />\n" +
+				"	au <input type='text' name='fin' size='10' maxlength='10' />\n" +
+				"	<input type='submit' value='OK' /><br/>(format des dates : JJ-MM-AAAA)\n" +
+				"</form></br></br>\n");
+		
+		output.append("<form action='/WebAlbums/servlet/display.Themes' mehod='get'>\n" +
+				"	<table>" +
+				"		<tr valign='middle'>\n" +
+				"			<td>\n" +
+				"				Par Thèmes :</td>\n" +
+				"			<td>\n");
+		
+		WebPage.displayList(Mode.THEME, request, output,  WebPage.Box.MULTIPLE);
+		output.append("			</td>\n" +
+				"			<td>\n" +
+				"				<input type='radio' name='type' value='ALBUM' checked/>Albums<br>\n"+
+				"				<input type='radio' name='type' value='PHOTO'/>Photos<br>\n"+
+				"			<td><input type='submit' value='OK'/></td>\n" +
+				"			<td colspan='3'>(Ctrl pour en selectionner plusieurs)</td>" +
+				"		</tr>\n" +
+				"</table>\n" +
+				"</form><br/></br>\n");
+		
+		WebPage.saveDetails(request) ;
+		output.append("<form method='get' action='/WebAlbums/servlet/display.Choix'>\n" +
+				"Afficher les détails des photos ? "+(WebPage.getDetails(request) ? "oui" : "non")+" \n" +
+				"<input type='hidden' name='details' value='"+(WebPage.getDetails(request) ? "NON" : "OUI")+"'/>"+
+				"<input type='submit' value='Changer' />\n" +
+				"</form>\n"+
+				"<br/><br/>\n");
+		if (WebPage.isLoggerAsCurrentAuthor(request)) {
+			//gestion du mode Edition
+			treatEditionMode(request, output);
+			output.append("<br/><br/>\n");
+			output.append("<b><a href='/WebAlbums/servlet/display.Config'><b>Configuration </a></b><br/><br/>\n");
+		}
+		output.append("<a href='/WebAlbums/servlet/display.Users'>Retour aux utilisateurs</a>\n");
+	}
+	private static void treatEditionMode(HttpServletRequest request, StringBuilder output) {
+		String action = request.getParameter("action");
+		Boolean inEditionMode ;
+		if ("EDITION".equals(action)) {
+			inEditionMode = true ;
+		} else if ("NORMAL".equals(action)) {
+			inEditionMode = false ;
+		} else {
+			inEditionMode = WebPage.getEditionMode(request) ;
+		}
+		request.getSession().setAttribute("inEditionMode", inEditionMode) ;
+		
+		if (inEditionMode) {
+			output.append("Passer en mode <a href='/WebAlbums/servlet/display.Choix?action=NORMAL'>Normal</a><br/>\n");
+		} else {
+			output.append("Passer en mode <a href='/WebAlbums/servlet/display.Choix?action=EDITION'>Edition</a><br/>\n");
+		}
+	}
+}

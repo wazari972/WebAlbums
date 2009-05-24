@@ -1,17 +1,25 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
-	"-//Hibernate/Hibernate Mapping DTD//EN"
-	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
+	  "-//Hibernate/Hibernate Mapping DTD//EN"
+	  "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
 
-<hibernate-mapping package="Entity">
-	<class name="Tag" table="Tag">
-		<id name="ID" type="integer">
-			<column name="ID" sql-type="int(4)"/>
-			<generator class="increment"/>
-		</id>
-		
- 		<property name="Nom" type="string">
-			<column name="Nom" sql-type="char(100)" not-null="true" />
-		</property>
-	</class>
+<hibernate-mapping package="entity">
+  <class name="Tag" table="Tag">
+    <id name="ID" type="integer">
+      <column name="ID" sql-type="int(4)"/>
+      <generator class="increment"/>
+    </id>
+    
+    <property name="Nom" type="string">
+      <column name="Nom" sql-type="char(100)" not-null="true" />
+    </property>
+    
+    <property name="TagType" type="integer">
+      <column name="TagType" sql-type="int(11)" not-null="true" />
+    </property>
+
+    <property name="Photo" type="integer">
+      <column name="Photo" sql-type="int(11)" not-null="false" />
+    </property>
+  </class>
 </hibernate-mapping>
