@@ -22,56 +22,55 @@ import constante.Path;
 import entity.Photo;
 import entity.Theme ;
 
-public class Images extends HttpServlet {
+public class Images {
   private static final long serialVersionUID = 1L;
-  
-  public void init() {
-    Path.setLocation(this) ;
-  }
-  
-  public void doGet(HttpServletRequest request,
-		    HttpServletResponse response)
-    throws ServletException, IOException {
-    
-    WebPage.treat(WebPage.Page.IMG, request, response) ;
-  }
-  public void doPost(HttpServletRequest request,
-		     HttpServletResponse response)
-    throws ServletException, IOException {
-    doGet(request, response) ;
-  }
-  
-  static boolean treatIMG(HttpServletRequest request,
-			  StringBuilder output,
-			  HttpServletResponse response)
+
+  public static boolean treatIMG(HttpServletRequest request,
+				 StringBuilder output,
+				 HttpServletResponse response)
     throws HibernateException {
     boolean uniq = false ;
     String imgID = StringUtil.escapeHTML(request.getParameter("id")) ;
     String mode = request.getParameter("mode") ;
     String rq = null ;
     String filepath = null ;
+    String type = null ;
     try {
       rq = "from Photo where id = '"+imgID+"' "+
 	"and id in ("+WebPage.listPhotoAllowed(request)+")" ;
-      Photo enrPhoto = (Photo) WebPage.session.find(rq).iterator().next() ;
+      Photo enrPhoto = (Photo) WebPage.session.createQuery(rq).uniqueResult() ;
       rq = "done" ;
 
+      if (enrPhoto == null) {
+	String erreur = "<i> Cette photo n'est pas accessible "+
+	  "ou n'existe pas ...</i><br/>"+rq+"<br/>\n" ;
+	output.append(erreur);
+	WebPage.log.warn(erreur) ;
+	return false ;
+      }
+      
       String themeName ;
       if (!WebPage.isRootSession(request)) {
 	themeName = WebPage.getThemeName(request) ;
       } else {
 	rq = "select t from Theme t, Album a "+
 	  "where t.ID = a.Theme and a.ID = '"+enrPhoto.getAlbum()+"'" ;
-	Theme enrTheme = (Theme) WebPage.session.find(rq).iterator().next() ;
+	Theme enrTheme = (Theme) WebPage.session.createQuery(rq).uniqueResult() ;
+	rq = "done" ;
+	if (enrTheme == null) {
+	  return false ;
+	}
 	themeName = enrTheme.getNom () ;
       }
+      type = (enrPhoto.getType() == null ? 
+	      "image/jpeg" : enrPhoto.getType());
 
       filepath = Path.getSourceURL() +
 	("GRAND".equals(mode) ? Path.IMAGES : Path.MINI)+
 	"/"+themeName+"/"+enrPhoto.getPath()+
 	("GRAND".equals(mode) ? "" : ".png") ;
             
-      uniq = sendImage(request, filepath, response);
+      uniq = sendFile(request, filepath, response, type);
             
     } catch (MalformedURLException e) {
       String erreur = "<i> URL Incorrect' :</i>"+filepath+"<br/>"+e+"<br/>\n" ; 
@@ -86,12 +85,7 @@ public class Images extends HttpServlet {
       String erreur = "<i> Impossible d'effectuer la requete' :</i>"+
 	rq+"<br/>"+e+"<br/>\n"+e.getSQLException()+"<br/>\n" ;
       output.append(erreur);
-      WebPage.log.warn(erreur) ;
-    } catch (NoSuchElementException e) {
-      String erreur = "<i> Cette photo n'est pas accessible "+
-	"ou n'existe pas ...</i><br/>"+rq+"<br/>\n" ;
-      output.append(erreur);
-      WebPage.log.warn(erreur) ;
+      WebPage.log.warn(erreur) ;      
     } catch (IOException e) {
       String erreur = "<i> Impossible de lire le fichier ...</i>("+filepath+")\n"+e ;
       output.append(erreur);
@@ -100,7 +94,8 @@ public class Images extends HttpServlet {
     return uniq ;
   }
   
-  protected static boolean sendImage(HttpServletRequest request, String filepath, HttpServletResponse response) throws IOException, MalformedURLException, ConnectException {
+    protected static boolean sendFile(HttpServletRequest request, String filepath, HttpServletResponse response, String type) 
+	throws IOException, MalformedURLException, ConnectException {
     boolean uniq = false ;
     
     InputStream in = null ; 
@@ -114,7 +109,7 @@ public class Images extends HttpServlet {
     WebPage.log.warn("size : "+conn.getContentLength()) ;
     
     response.setContentLength(conn.getContentLength()) ;
-    response.setContentType("image/jpeg"); 
+    response.setContentType(type); 
     //response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\""); 
     
     int bufferSize = (int) Math.min(conn.getContentLength(), 4*1024) ;
@@ -130,17 +125,5 @@ public class Images extends HttpServlet {
     out.close() ;
     
     return uniq ;
-  }
-  
-  protected static void preventCaching(HttpServletRequest request,
-				       HttpServletResponse response) {
-    // see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
-    String protocol = request.getProtocol();
-    if ("HTTP/1.0".equalsIgnoreCase(protocol)) {
-      response.setHeader("Pragma", "no-cache");
-    } else if ("HTTP/1.1".equalsIgnoreCase(protocol)) {
-      response.setHeader("Cache-Control", "no-cache"); // "no-store" work also 
-    }
-    response.setDateHeader("Expires", 0);
   }
 }

@@ -14,23 +14,22 @@ import constante.Path;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
+import org.hibernate.Query;
 
 import util.StringUtil;
 
 import engine.WebPage ;
 
+import engine.Index ;
+
 public class Periode extends HttpServlet {
   private static final long serialVersionUID = 1L;
-  
-  public void init() {
-    Path.setLocation(this) ;
-  }
 	
   public void doGet(HttpServletRequest request,
 		    HttpServletResponse response)
     throws ServletException, IOException {
     
-    WebPage.treat(WebPage.Page.PERIODE, request, response) ;
+    engine.Index.treat(WebPage.Page.PERIODE, request, response) ;
   }
   public void doPost(HttpServletRequest request,
 		     HttpServletResponse response)
@@ -48,7 +47,7 @@ public class Periode extends HttpServlet {
     String page = request.getParameter("page") ;
     
     //memoriser les params de lURL pour pouvoir revenir
-    String from = Path.LOCATION+".Periode?" ;
+    String from = Path.LOCATION+"Periode?" ;
     if (year != null) from += "&year="+year ;
     if (month != null) from += "&month="+month ;
     if (debut != null) from += "&debut="+debut ;
@@ -115,10 +114,10 @@ public class Periode extends HttpServlet {
 	"and id in ("+WebPage.listAlbumAllowed(request)+")"+
 	"order by Date ";
       
-      List list = WebPage.session.find(rq);
+      Query query = WebPage.session.createQuery(rq);
       rq = "done" ;
       
-      Albums.displayAlbum(list, output, request, null, pageGet);		
+      Albums.displayAlbum(query, output, request, null, pageGet);		
       
       output.append(out.toString()) ;
     } catch (NumberFormatException e) {

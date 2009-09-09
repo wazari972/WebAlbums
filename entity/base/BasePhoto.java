@@ -30,6 +30,7 @@ public abstract class BasePhoto  implements Serializable {
 	public static String PROP_CLICK = "Click";
 	public static String PROP_EXPOSURE = "Exposure";
 	public static String PROP_WIDTH = "Width";
+	public static String PROP_TYPE = "Type";
 
 
 	private int hashCode = Integer.MIN_VALUE;
@@ -50,6 +51,7 @@ public abstract class BasePhoto  implements Serializable {
 	private java.lang.String _flash;
 	private java.lang.String _height;
 	private java.lang.String _width;
+	private java.lang.String _type ;
 
 
 	// constructors
@@ -133,9 +135,24 @@ public abstract class BasePhoto  implements Serializable {
 	 * @param _path the Path value
 	 */
 	public void setPath (java.lang.String _path) {
-		this._path = _path;
+	    setClick(0) ;
+	    this._path = _path;
 	}
 
+	/**
+	 * Return the value associated with the column: Type
+	 */
+	public java.lang.String getType () {
+		return _type;
+	}
+
+	/**
+	 * Set the value related to the column: Type
+	 * @param _type the Path value
+	 */
+	public void setType (java.lang.String _type) {
+		this._type = _type;
+	}
 
 	/**
 	 * Return the value associated with the column: Click

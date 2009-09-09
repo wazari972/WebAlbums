@@ -22,19 +22,33 @@ import util.StringUtil;
 import engine.WebPage.Mode;
 import engine.WebPage.Type;
 
-public class Choix {
+public class Choix extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+	
+  public void doGet(HttpServletRequest request,
+		    HttpServletResponse response)
+    throws ServletException, IOException {
+    
+    engine.Index.treat(WebPage.Page.CHOIX, request, response) ;
+  }
+  public void doPost(HttpServletRequest request,
+		     HttpServletResponse response)
+    throws ServletException, IOException {
+    doGet(request, response) ;
+  }
+  
   public static void displayCHX(HttpServletRequest request,
 		       StringBuilder output)
     throws HibernateException {
     output.append("<b>Critères de choix : </b></br></br>\n"+
-		  "<form action='"+Path.LOCATION+".Albums' "+
+		  "<form action='"+Path.LOCATION+"Albums' "+
 		  "method='get'>\n" +
 		  "	Liste compléte des albums\n" +
 		  "	<input type='submit' value='OK'/>\n" +
 		  "</form></br></br>\n");
     
 /*
-  output.append("<form action='"+Path.LOCATION+".Periode' "+
+  output.append("<form action='"+Path.LOCATION+"Periode' "+
   "method='get'>\n" +
   "	Par Année <input type='text' name='year' size='4' "+
   "maxlength='4'>\n" +
@@ -43,7 +57,7 @@ public class Choix {
   "	<input type='submit' value='OK' />\n" +
   "</form></br></br>\n");
   
-  output.append("<form action='"+Path.LOCATION+".Periode' "+
+  output.append("<form action='"+Path.LOCATION+"Periode' "+
   "method='get'>\n" +
   "	Sur la Periode du <input type='text' name='debut' size='10' "+
   "maxlength='10' />\n" +
@@ -52,7 +66,7 @@ public class Choix {
   "JJ-MM-AAAA)\n" +
   "</form></br></br>\n");
 */
-    output.append("<form action='"+Path.LOCATION+".Tags' "+
+    output.append("<form action='"+Path.LOCATION+"Tags' "+
 		  "mehod='get'>\n" +
 		  "	<table>" +
 		  "		<tr valign='middle'>\n" +
@@ -71,14 +85,14 @@ public class Choix {
 		  "</form>\n");
     //tag map
     WebPage.displayMapIn(request, output,
-			 Path.LOCATION+".Tags?"+
+			 Path.LOCATION+"Tags?"+
 			 "tagAsked=");
 
     /*
     //details
     output.append("<br/><br/>\n"+
 		  "<form method='get' "+
-		  "action='"+Path.LOCATION+".Choix'>\n" +
+		  "action='"+Path.LOCATION+"Choix'>\n" +
 		  "Afficher les détails des photos ? "+
 		  (WebPage.getDetails(request) ? "oui" : "non")+" \n" +
 		  "<input type='hidden' name='details' value='"+
@@ -88,7 +102,7 @@ public class Choix {
 		  "<br/><br/>\n");
     //albums map
     output.append("<form method='get' "+
-		  "action='"+Path.LOCATION+".Choix'>\n" +
+		  "action='"+Path.LOCATION+"Choix'>\n" +
 		  "Afficher les cartes des albums ? "+
 		  (WebPage.getMaps(request) ? "oui" : "non")+" \n" +
 		  "<input type='hidden' name='maps' value='"+
@@ -98,7 +112,7 @@ public class Choix {
 		  "<br/><br/>\n");
     */
     output.append("<br/><br/>\n");
-    output.append("<a href='"+Path.LOCATION+".Users'>"+
+    output.append("<a href='"+Path.LOCATION+"Users'>"+
 		  "Retour aux utilisateurs</a>\n");
   }
 }

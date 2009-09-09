@@ -17,36 +17,17 @@ import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import traverse.FilesFinder;
+
+import util.FilesFinder;
 import util.HibernateUtil;
 import util.StringUtil;
-import engine.WebPage.Mode;
-import entity.Theme;
-import entity.Photo;
-import entity.Tag;
-import entity.Utilisateur;
-import entity.Geolocalisation ;
-import entity.TagType ;
 
-public class Config extends HttpServlet {
+import engine.WebPage.Mode;
+import entity.*;
+
+public class Config {
   private static final long serialVersionUID = -628341734743684910L;
   
-  public void init() {
-    Path.setLocation(this) ;
-  }
-  public void doPost(HttpServletRequest request,
-		    HttpServletResponse response)
-    throws ServletException, IOException {
-    
-    WebPage.treat(WebPage.Page.CONFIG, request, response) ;
-  }
-  public void doGet(HttpServletRequest request,
-		    HttpServletResponse response)
-    throws ServletException, IOException {
-    
-    WebPage.treat(WebPage.Page.CONFIG, request, response) ;
-  }
-
   public static void treatCONFIG(HttpServletRequest request,
 				    StringBuilder output)
     throws HibernateException {
@@ -62,7 +43,7 @@ public class Config extends HttpServlet {
     try {
       //Session session = HibernateUtil.currentSession();
       //rq = "from Theme where nom = '"+theme+"'" ;
-      //List list  = session.find(rq) ;
+      //List list  = session.createQuery(rq).list() ;
       //rq = "done" ;
       //if (!list.isEmpty()) {
 	output.append("<i>Begining ...</i><br/>\n") ;
@@ -97,14 +78,20 @@ public class Config extends HttpServlet {
       output.append("<i> Pas de tag selectionné ...</i></br/>\n");
       return ;
     }
-
-    Transaction tx = WebPage.session.beginTransaction();
-    
+    Transaction tx = null ;
     try {
       rq = "from Tag where id = '"+tags+"'" ;
-      Tag tag = (Tag) WebPage.session.find(rq).iterator().next() ;
+      Tag tag = (Tag) WebPage.session.createQuery(rq).uniqueResult() ;
+
+      if (tag == null) {
+	output.append("<i> Le Tag "+tags+
+	      " n'est pas dans la base ...</i></br/>\n");
+	return ;
+      }
+      
       rq = "from Tag where nom = '"+nouveau+"'" ;
-      if (!WebPage.session.find(rq).iterator().hasNext()) {
+      if (WebPage.session.createQuery(rq).uniqueResult() == null) {
+	tx = WebPage.session.beginTransaction();
 	tag.setNom (nouveau) ;
 	WebPage.session.update(tag) ;
 	
@@ -113,7 +100,6 @@ public class Config extends HttpServlet {
       } else {
 	output.append("<i> Le Tag "+nouveau+
 		      " est déjà présent dans la base ...</i></br/>\n");
-	tx.rollback() ;
       }
 
     } catch (JDBCException e) {
@@ -127,14 +113,14 @@ public class Config extends HttpServlet {
 		      rq+"<br/>"+e+"<br/>\n"+
 		      e.getSQLException()+"<br/>\n");
       }
-      tx.rollback() ;
+      if (tx != null) tx.rollback() ;
     } catch (NoSuchElementException e) {
       output.append("<i>Impossible de trouver ce tag ("+e+") ...</i>\n");
       tx.rollback() ;
     }
   }
 
-    public static void treatMODGEO(HttpServletRequest request,
+  public static void treatMODGEO(HttpServletRequest request,
 				  StringBuilder output)
     throws HibernateException {
     String rq = null ;
@@ -148,13 +134,21 @@ public class Config extends HttpServlet {
       return ;
     }
 
-    Transaction tx = WebPage.session.beginTransaction();
+    Transaction tx = null ;
     
     try {
       rq = "from Geolocalisation where tag = '"+tags+"'" ;
       Geolocalisation enrGeo =
-	(Geolocalisation) WebPage.session.find(rq).iterator().next() ;
+	(Geolocalisation) WebPage.session.createQuery(rq).uniqueResult() ;
+      rq = "done" ;
+
+      if (enrGeo == null) {
+	output.append("<i> La localisation "+tags+" ne correspond "+
+		    "à aucun tag ... ? </i></br/>\n");
+	return ;
+      }
       
+      tx = WebPage.session.beginTransaction();
       enrGeo.setLong (lng) ;
       enrGeo.setLat(lat);
       WebPage.session.update(enrGeo) ;
@@ -168,10 +162,61 @@ public class Config extends HttpServlet {
       output.append("<i> Impossible d'effectuer la requete' :</i>"+
 		    rq+"<br/>"+e+"<br/>\n"+
 		    e.getSQLException()+"<br/>\n");
+      if (tx != null) tx.rollback() ;
+    }
+  }
+  public static void treatMODVIS(HttpServletRequest request,
+				  StringBuilder output)
+    throws HibernateException {
+    String rq = null ;
+
+    String tags = StringUtil.escapeHTML(request.getParameter("tags")) ;
+    String visible = request.getParameter("visible") ;
+
+    if ("-1".equals(tags)) {
+      output.append("<i> Pas de tag selectionné ...</i></br/>\n");
+      return ;
+    }
+
+    Transaction tx = null ;
+    
+    try {
+      rq = "from TagTheme where tag = '"+tags+
+	"' and theme = '"+WebPage.getThemeID(request)+"'" ;
+      TagTheme enrTagTheme = (TagTheme) WebPage.session.createQuery(rq).uniqueResult() ;
+      rq = "done" ;
+
+      tx = WebPage.session.beginTransaction();
+      if (enrTagTheme == null) {
+	rq = "from Tag where id = '"+tags+"'" ;
+	if (WebPage.session.createQuery(rq).uniqueResult() == null) {
+	  output.append("<i>Impossible de trouver ce tag ("+tags+") ...</i>\n");
+	  tx.rollback() ;
+	  return ;
+	}
+	//le tag existe
+	rq = "done" ;
+	
+	enrTagTheme = new TagTheme () ;
+	enrTagTheme.setTheme (WebPage.getThemeID(request)) ;
+	enrTagTheme.setTag (tags) ;
+
+	WebPage.session.save(enrTagTheme);
+      }
+      if ("y".equals(visible)) {
+	enrTagTheme.setIsVisible (true) ;
+      } else {
+	enrTagTheme.setIsVisible (false) ;
+      }
+      WebPage.session.update(enrTagTheme);
+      tx.commit() ;
+      output.append("Le tag "+tags+" est maintenant : "+("y".equals(visible) ? "visible" :"invisible")+"<br/>\n");
+
+    } catch (JDBCException e) {
+      output.append("<i> Impossible d'effectuer la requete' :</i>"+
+		    rq+"<br/>"+e+"<br/>\n"+
+		    e.getSQLException()+"<br/>\n");
       
-      tx.rollback() ;
-    } catch (NoSuchElementException e) {
-      output.append("<i>Impossible de trouver cette geoloc ("+e+") ...</i>\n");
       tx.rollback() ;
     }
   }
@@ -188,34 +233,36 @@ public class Config extends HttpServlet {
       return ;
     }
 
-    Transaction tx = WebPage.session.beginTransaction();
-    Tag t = null ;
+    Transaction tx = null ;
     try {
       if (nom != null && !nom.equals("")) {
 	String msg = "";
 	String liste = "" ;
 	
 	rq = "from Tag where nom = '"+nom+"'" ;
-	Iterator it  = WebPage.session.find(rq).iterator() ;
+	Tag enrTag  = (Tag) WebPage.session.createQuery(rq).uniqueResult() ;
 	rq = "done" ;
-	if (!it.hasNext()) {
+	if (enrTag == null) {
 	  int itype = Integer.parseInt (type) ;
 	  if (0 > itype || itype > 3) {
 	    output.append("<i> Type incorrect ("+type+") ...</i><br/><br/>\n");
+	    tx.rollback() ;
+	    return ;
 	  }
-	  t = new Tag () ;
+	  tx = WebPage.session.beginTransaction();
+	  enrTag = new Tag () ;
 	  
-	  t.setNom(nom) ;
-	  t.setTagType(itype);
-	  WebPage.session.save(t) ;
-	  output.append("<i> TAG ==> "+t.getID()+" <==<br/>\n");
-	  if (Integer.parseInt(type) == 3) {
+	  enrTag.setNom(nom) ;
+	  enrTag.setTagType(itype);
+	  WebPage.session.save(enrTag) ;
+	  output.append("<i> TAG ==> "+enrTag.getID()+" <==<br/>\n");
+	  if (itype == 3) {
 	    try {
 	      String longit = StringUtil.escapeHTML(request.getParameter("long")) ;
 	      String lat = StringUtil.escapeHTML(request.getParameter("lat")) ;
 	      
 	      Geolocalisation geo = new Geolocalisation () ;
-	      geo.setTag(t.getID ());
+	      geo.setTag(enrTag.getID ());
 	      geo.setLong(longit);
 	      geo.setLat (lat);
 	      
@@ -248,38 +295,28 @@ public class Config extends HttpServlet {
 	} else {
 	  output.append("<i> Le Tag "+nom+
 			" est déjà présent dans la base ...</i></br/>\n");
-	  while (it.hasNext()) {
-	    Tag enrTag = (Tag) it.next() ;
-	    output.append("<i>"+enrTag.getID()+" - "+enrTag.getNom()+"</i><br/>\n");
-	  }
-	  tx.rollback() ;
+	  output.append("<i>"+enrTag.getID()+" - "+enrTag.getNom()+"</i><br/>\n");
+	  
+	  if (tx != null) tx.rollback() ;
+	  return ;
 	}
       } else {
 	output.append("<i>Le nom du tag est vide ...</i><br/><br/>\n");
+	if (tx != null) tx.rollback() ;
+	return ;
       }
     } catch (JDBCException e) {
       output.append("<i> Impossible d'effectuer la requete' :</i>"+rq+
 		    "<br/>"+e+"<br/>\n"+e.getSQLException()+"<br/>\n");
       
-      tx.rollback();
-      try {
-	if (t != null) {
-	  output.append("<i> Suppression de l'enr "+
-			t.getID()+" crée par erreur</i></br/>\n");
-	  WebPage.session.delete(t);
-	}
-      }catch (JDBCException e2) {
-	output.append("<i> Impossible d'effectuer la requete' :</i>"+rq+
-		      "<br/>"+e2+"<br/>\n"+e.getSQLException()+"<br/>\n");
-	
-      }
+      if (tx != null) tx.rollback() ;
     } catch (HibernateException e) {
       output.append("<i>Problème Hibernate : "+e+"</i><br/><br/>");
-      tx.rollback();
+      if (tx != null) tx.rollback() ;
     } catch (NumberFormatException e) {
       output.append("<i>Erreur dans le cast de l'un des nombres : "+e
 		    +"</i><br/><br/>");
-      tx.rollback();
+      if (tx != null) tx.rollback() ;
     }
   }
   public static List<Integer> treatDELTAG(HttpServletRequest request,
@@ -301,47 +338,53 @@ public class Config extends HttpServlet {
 	  rq += ", '"+tags[i]+"' " ;
 	}
 	rq += ") and tag.ID = photo.Tag";
-	List list = WebPage.session.find(rq) ;
+	
+	Iterator it = WebPage.session.createQuery(rq).iterate() ;
 	rq = "done" ;
-	output.append("<i> Suppression de "+list.size()+" Tags Photo</i>"+
-		      "<br/>\n");
-	Iterator it = list.iterator();
+	int i = 0 ;
 	while (it.hasNext()) {
 	  WebPage.session.delete(it.next());
+	  i++ ;
 	}
+	output.append("<i> Suppression de "+i+" Tags Photo</i>"+
+		      "<br/>\n");
 	
 	//liens Tag->Localisation
 	rq = "from Geolocalisation where tag in ( '-1'" ;
-	for (int i = 0; i < tags.length; i++) {
+	for (i = 0; i < tags.length; i++) {
 	  rq += ", '"+tags[i]+"' " ;
 	}
 	rq += ")";
-	list = WebPage.session.find(rq) ;
+	it = WebPage.session.createQuery(rq).iterate() ;
 	rq = "done" ;
-	output.append("<i> Suppression de "+list.size()+" "+
-		      "Geolocalisations</i><br/>\n");
-	it = list.iterator();
+	
+	i = 0 ;
 	while (it.hasNext()) {
 	  WebPage.session.delete(it.next());
+	  i++ ;
 	}
-	
+	output.append("<i> Suppression de "+i+" "+
+		      "Geolocalisations</i><br/>\n");
 	//tags
 	rq = "from Tag where ID in ( '-1'" ;
-	for (int i = 0; i < tags.length; i++) {
+	for (i = 0; i < tags.length; i++) {
 	  rq += ", '"+tags[i]+"' " ;
 	}
 	rq += ")";
-	list = WebPage.session.find(rq) ;
+	it = WebPage.session.createQuery(rq).iterate() ;
 	rq = "done" ;
-	output.append("<i> Suppression de "+list.size()+" Tags</i><br/>\n");
-	it = list.iterator();
+	
+	i = 0 ;
 	while (it.hasNext()) {
 	  WebPage.session.delete(it.next());
+	  i++ ;
 	}
+	output.append("<i> Suppression de "+i+" Tags</i><br/>\n");
 	tx.commit();
 	output.append("<br/>\n");
-	      return null ;
+	return null ;
       } else {
+	tx.rollback();
 	if (tags != null) {
 	  output.append("<i> vous n'êtes pas sûr ("+sure+") ?</i><br/><br/>\n");
 	  List<Integer> l = new ArrayList<Integer>(1) ;
@@ -355,6 +398,7 @@ public class Config extends HttpServlet {
     } catch (JDBCException e) {
       output.append("<i> Impossible d'effectuer la requete' :</i>"+rq+"<br/>\n"+
 		    e+"<br/>\n"+e.getSQLException()+"<br/>\n");
+      tx.rollback();
       return null ;
     } catch (HibernateException e) {
       output.append("<i>Problème Hibernate : "+e+"</i><br/><br/>");
@@ -371,14 +415,14 @@ public class Config extends HttpServlet {
     try {
       tx = WebPage.session.beginTransaction();
       
-      Utilisateur t = new Utilisateur () ;
+      Utilisateur enrUtil = new Utilisateur () ;
       String nom = StringUtil.escapeHTML(request.getParameter("nom")) ;
       String pass = StringUtil.escapeHTML(request.getParameter("pass")) ;
       
       if (nom != null && !nom.equals("")) {
-	t.setNom(nom) ;
-	t.setPassword(("".equals(pass) ? null : pass)) ;
-	WebPage.session.save(t) ;
+	enrUtil.setNom(nom) ;
+	enrUtil.setPassword(("".equals(pass) ? null : pass)) ;
+	WebPage.session.save(enrUtil) ;
 	
 	output.append("<i>Utilisateur </i>'"+nom+"'"+
 		      "<i> correctement ajouté</i><br/><br/>\n");
@@ -386,14 +430,16 @@ public class Config extends HttpServlet {
       } else {
 	output.append("<i>Le nom de l'utilisateur est vide ...</i>"+
 		      "<br/><br/>\n");
+	tx.rollback();
       }
     } catch (JDBCException e) {
       output.append("<i> Impossible d'effectuer la requete' :</i>"+
 		    rq+"<br/>\n"+e+"<br/>\n"+
 		    e.getSQLException()+"<br/>\n");
+      if (tx != null) tx.rollback();
     } catch (HibernateException e) {
       output.append("<i>Problème Hibernate : "+e+"</i><br/><br/>");
-      tx.rollback();
+      if (tx != null) tx.rollback();
     }
   }
   public static void treatDELUSER(HttpServletRequest request,
@@ -413,7 +459,7 @@ public class Config extends HttpServlet {
 	  rq += ", '"+StringUtil.escapeHTML(users[i])+"' " ;
 	}
 	rq += ") and user.ID = albm.User";
-	List list = WebPage.session.find(rq) ;
+	List list = WebPage.session.createQuery(rq).list() ;
 	rq = "done" ;
 	output.append("<i> Suppression de "+list.size()+" "+
 		      "Users Album</i><br/>\n");
@@ -428,7 +474,7 @@ public class Config extends HttpServlet {
 	  rq += ", '"+users[i]+"' " ;
 	}
 	rq += ") and user.ID = photo.User";
-	list = WebPage.session.find(rq) ;
+	list = WebPage.session.createQuery(rq).list() ;
 	rq = "done" ;
 	output.append("<i> Suppression de "+list.size()+" "+
 		      "Users Photo</i><br/>\n");
@@ -442,7 +488,7 @@ public class Config extends HttpServlet {
 	  rq += ", '"+users[i]+"' " ;
 	}
 	rq += ")";
-	list = WebPage.session.find(rq) ;
+	list = WebPage.session.createQuery(rq).list() ;
 	rq = "done" ;
 	output.append("<i> Suppression de "+list.size()+" utilisateur"+
 		      "</i><br/>\n");

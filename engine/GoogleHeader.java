@@ -3,6 +3,8 @@ package engine ;
 import java.util.List ;
 import java.util.ArrayList ;
 
+import constante.Path ;
+
 public class GoogleHeader implements Header {
   public static final String googleKey =
     "ABQIAAAANkbb-SNf1VDzX-W2M-MKGBTBfUk9TZrBRaIteybtnU"+
@@ -18,6 +20,8 @@ public class GoogleHeader implements Header {
   
   public String header () {
     if (maps == null) return "" ;
+    else if (!Path.hasInternet()) return "" ;
+
     StringBuilder str = new StringBuilder() ;
     str.append(
       "<script "+
@@ -36,8 +40,13 @@ public class GoogleHeader implements Header {
     str.append(
       "     \n"+
       "  }\n"+
-      "}\n"+
-      "</script>\n");
+      "}\n" );
+    str.append("\n\n");
+    for (GoogleMap m : maps) {
+	str.append(m.getFunctions());
+    }
+    str.append("</script>\n");
+    
     
     maps = new ArrayList<GoogleMap> () ;
     return str.toString();
@@ -45,6 +54,8 @@ public class GoogleHeader implements Header {
 
   public String bodyAttributes () {
     if (maps == null) return "" ;
+    else if (!Path.hasInternet()) return "" ;
+
     return "onload='initialize()' onunload='GUnload()'" ;
   }
 }

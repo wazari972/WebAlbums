@@ -1,6 +1,5 @@
 package display;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,10 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import constante.Path;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query ;
 import org.hibernate.JDBCException;
 
-import traverse.FilesFinder;
 import util.StringUtil;
+
 import engine.WebPage.AccessorsException ;
 import engine.WebPage.Mode;
 import engine.WebPage.Type;
@@ -29,7 +29,21 @@ import entity.Utilisateur;
 
 import engine.* ;
 
-public class Albums {
+public class Albums extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+	
+  public void doGet(HttpServletRequest request,
+		    HttpServletResponse response)
+    throws ServletException, IOException {
+    
+    engine.Index.treat(WebPage.Page.ALBUM, request, response) ;
+  }
+  public void doPost(HttpServletRequest request,
+		     HttpServletResponse response)
+    throws ServletException, IOException {
+    doGet(request, response) ;
+  }
+  
  
   public static void treatAlbmEDIT(HttpServletRequest request,
 				      StringBuilder output)
@@ -42,22 +56,23 @@ public class Albums {
     String rq = null ;
     try {
       rq = "from Album where id = '"+albumID.replace("'", "''")+"'" ;
-      List list = WebPage.session.find(rq);
+      Album enrAlbum = (Album) WebPage.session.createQuery(rq).uniqueResult();
       rq = "done" ;
+
+      if (enrAlbum == null) {
+	output.append("<br/><i>Impossible de trouver l'album ("+albumID+") </i>");
+	return ;
+      }
       
-      Album enrAlbum = (Album) list.iterator().next() ;
-      
-      StringBuilder str = new StringBuilder () ;
-      
-      str.append("<center>\n"+
+      output.append("<center>\n"+
 		 "<b>Modification d'album</b><br/><br/>\n"+
 		 ("0".equals(enrAlbum.getPicture()) ? "" :
 		  "<img alt='"+StringUtil.escapeHTML(
 		    enrAlbum.getNom())+
-		  "' src='"+Path.LOCATION+".Images?id="+
+		  "' src='"+Path.LOCATION+"Images?id="+
 		  enrAlbum.getPicture()+"&mode=PETIT' />\n")+
 		 "</center>\n"+
-		 "<form action='"+Path.LOCATION+".Albums?"+
+		 "<form action='"+Path.LOCATION+"Albums?"+
 		 "action=SUBMIT&count="+count+"&id="+enrAlbum.getID()+
 		 "#"+enrAlbum.getID()+"' method='POST'>\n"+
 		 "<table valign='middle'>\n"+
@@ -83,52 +98,50 @@ public class Albums {
 		 "		<td align='right'>Thèmes à appliquer "+
 		 "aux photos:</td>\n" +
 		 "		<td>\n" );
-      WebPage.displayListLB(Mode.TAG_USED, request, str, null,
+      WebPage.displayListLB(Mode.TAG_USED, request, output, null,
 			    WebPage.Box.MULTIPLE);
-      WebPage.displayListLB(Mode.TAG_NUSED, request, str, null,
+      WebPage.displayListLB(Mode.TAG_NUSED, request, output, null,
 			    WebPage.Box.MULTIPLE);
-      WebPage.displayListLB(Mode.TAG_NONE, request, str, null,
+      WebPage.displayListLB(Mode.TAG_NONE, request, output, null,
 			    WebPage.Box.MULTIPLE);
       
-      str.append("		</td>\n"+
-		 "	</tr>\n" +
-		 "	<tr>\n"+
-		 "		<td align='right'>Uniquement ?</td>\n" +
-		 "		<td align='left'><input type='checkbox' "+
-		 "name='force' value='yes' /></td>\n" +
-		 "	</tr>\n"+
-		 "	<tr>\n" +
-		 "		<td align='right'> Utilisateurs :</td>\n"+
-		 "		<td>\n");
-      WebPage.displayListIBT(Mode.USER, request, str, enrAlbum.getID(),
+      output.append("		</td>\n"+
+		    "	</tr>\n" +
+		    "	<tr>\n"+
+		    "		<td align='right'>Uniquement ?</td>\n" +
+		    "		<td align='left'><input type='checkbox' "+
+		    "name='force' value='yes' /></td>\n" +
+		    "	</tr>\n"+
+		    "	<tr>\n" +
+		    "		<td align='right'> Utilisateurs :</td>\n"+
+		    "		<td>\n");
+      WebPage.displayListIBT(Mode.USER, request, output, enrAlbum.getID(),
 			     WebPage.Box.MULTIPLE, Type.ALBUM ) ;
-      str.append("		</td>\n"+
-		 "	</tr>\n"+
-		 "	<tr>\n"+
-		 "		<td align='right'>Supprimer ?</td>\n" +
-		 "		<td align='left'><input type='text' "+
-		 "name='suppr' size='31' maxlength='31'/>" +
-		 "		\"Oui je veux supprimer cet album\" "+
-		 "(définitif !) </td>\n" +
-		 "	</tr>\n"+
-		 "	<tr>\n" +
-		 "		<td align='center'><input type='submit' "+
-		 "value='Valider' /></td>\n" +
-		 "	</tr>\n"+
-		 "<table>\n"+
-		 "</form>\n"+
-		 "<a href='"+Path.LOCATION+".Albums?count="+count+
-		 "#"+enrAlbum.getID()+"'>Retour aux albums</a>\n");
+      output.append("		</td>\n"+
+		    "	</tr>\n"+
+		    "	<tr>\n"+
+		    "		<td align='right'>Supprimer ?</td>\n" +
+		    "		<td align='left'><input type='text' "+
+		    "name='suppr' size='31' maxlength='31'/>" +
+		    "		\"Oui je veux supprimer cet album\" "+
+		    "(définitif !) </td>\n" +
+		    "	</tr>\n"+
+		    "	<tr>\n" +
+		    "		<td align='center'><input type='submit' "+
+		    "value='Valider' /></td>\n" +
+		    "	</tr>\n"+
+		    "<table>\n"+
+		    "</form>\n");
+      output.append("<a href='"+Path.LOCATION+"Albums?count="+count+
+		    "#"+enrAlbum.getID()+"'>Retour aux albums</a>\n");
       	    
-      output.append(str.toString());
-      
     } catch (JDBCException e) {
       output.append("<br/><i>Impossible de modifier l'album ("+albumID+") </i>"+
 		    "=> "+rq+"<br/>\n"+e+e.getSQLException()+"<br/>\n");
-    }
+    } 
   }
 
-  public static void displayAlbum(List list,
+  public static void displayAlbum(Query query,
 				  StringBuilder output,
 				  HttpServletRequest request,
 				  String message,
@@ -139,10 +152,21 @@ public class Albums {
     String page = request.getParameter("page") ;
     String countAlbm = StringUtil.escapeURL(request.getParameter("count")) ;
     page = (page == null ? "0" : page) ;
+    String strQuery = query.getQueryString() ;    
+    long size ;
+    if(strQuery.contains("select")) {
+	size = WebPage.session.createQuery(strQuery).list().size();
+    }else {
+	size = ((Long) WebPage.session.createQuery("select count(*) "+strQuery)
+		.uniqueResult()).longValue();
+    }
     
     Integer[] bornes =
-      WebPage.calculBornes(Type.ALBUM, page, countAlbm, list.size()) ;
-    List portionLst = list.subList(bornes[0], bornes[1]) ;
+      WebPage.calculBornes(Type.ALBUM, page, countAlbm, (int) size) ;
+
+    query.setFirstResult(bornes[0]) ;
+    query.setMaxResults(WebPage.TAILLE_ALBUM ) ;
+    query.setReadOnly(true).setCacheable(true);
     
     int id ;
     try {
@@ -154,7 +178,7 @@ public class Albums {
     }
     
     Album enrAlbum;
-    Iterator it = portionLst.iterator();
+    Iterator it = query.iterate();
     String albmPict ;
     Date oldDate = null ;
     output.append("<table width='100%'>\n");
@@ -164,21 +188,21 @@ public class Albums {
       albmPict = (enrAlbum.getPicture() == null ? "" :
 		  ("0".equals(enrAlbum.getPicture()) ? "" :
 		   "<img alt='"+enrAlbum.getNom()+"' "+
-		   "src='"+Path.LOCATION+".Images?"+
+		   "src='"+Path.LOCATION+"Images?"+
 		   "id="+enrAlbum.getPicture()+"&mode=PETIT' />\n"));
       if (enrAlbum.getID() == id) {
 	output.append("<tr><td colspan='4'>"+message+"</td><tr>\n") ;
       }
       output.append("	<tr align='center' valign='middle'>\n" +
-		    "		<td>"+
-		    StringUtil.displayDate(enrAlbum.getDate(), oldDate)+
+		    "		<td>");
+      output.append(StringUtil.displayDate(enrAlbum.getDate(), oldDate)+
 		    "</td>\n" +
 		    "		<td>\n"+
 		    "			<a name='"+enrAlbum.getID()+"'></a>\n" +
 		    albmPict+
 		    "           </td>\n"+
 		    "		<td><b>"+
-		    "<a href='"+Path.LOCATION+".Photos?"+
+		    "<a href='"+Path.LOCATION+"Photos?"+
 		    "albmCount="+count+"&album="+enrAlbum.getID()+"'>"+
 		    enrAlbum.getNom()+"</a></b></td>\n" +
 		    "		<td width='70%' align='left'>\n" +
@@ -196,7 +220,7 @@ public class Albums {
 		    "				</td>\n" +
 		    "			</tr>\n");
       if (WebPage.isLoggedAsCurrentManager(request)
-	  && !WebPage.isRootSession(request)) {
+	  && !WebPage.isReadOnly()) {
 	if (inEditionMode != WebPage.EditMode.VISITE) {
 	  output.append("			<tr>\n"+
 			"				<td>\n");
@@ -217,11 +241,11 @@ public class Albums {
       output.append("</td>\n");
 			
       if (WebPage.isLoggedAsCurrentManager(request)
-	  && !WebPage.isRootSession(request)) {
+	  && !WebPage.isReadOnly()) {
 	if (inEditionMode == WebPage.EditMode.EDITION) {
 	  output.append("		<td width ='5%'>"+
 			"                  <a href='"+
-			""+Path.LOCATION+".Albums?"+
+			""+Path.LOCATION+"Albums?"+
 			"action=EDIT&id="+enrAlbum.getID()+
 			"&count="+count+"'>\n"+
 			"                     <img src='/data/web/edit.png' "+

@@ -112,58 +112,58 @@ public class StringUtil {
     }
     return sb.toString();
   }
-    public static final String escapeURL(String s){
-      if (s == null) return null ;
-      StringBuffer sb = new StringBuffer(s.length());
-      int n = s.length();
-      for (int i = 0; i < n; i++) {
-	char c = s.charAt(i);
-	switch (c) {
-	case '\'' : sb.append("%27");break;
-	case ' ' : sb.append("%20");break;
-	case 'é' : sb.append("%C3%A9"); break ;
-	case 'è' : sb.append("%C3%A8"); break ;
-	case 'à' : sb.append("%C3%A0"); break ;
-	case '&' : sb.append("%26"); break ;
-	default:  sb.append(c); break;
-	}
+  public static final String escapeURL(String s){
+    if (s == null) return null ;
+    StringBuffer sb = new StringBuffer(s.length());
+    int n = s.length();
+    for (int i = 0; i < n; i++) {
+      char c = s.charAt(i);
+      switch (c) {
+      case '\'' : sb.append("%27");break;
+      case ' ' : sb.append("%20");break;
+      case 'é' : sb.append("%C3%A9"); break ;
+      case 'è' : sb.append("%C3%A8"); break ;
+      case 'à' : sb.append("%C3%A0"); break ;
+      case '&' : sb.append("%26"); break ;
+      default:  sb.append(c); break;
       }
-      return sb.toString();
     }
-    /*
-	/data/miniatures/Marine%20et%20Kevin/2008/2008-03-06%20Montagnes%20enneig%E9es%20d%27innsbruck/P1000030.JPG.png
-	/data/miniatures/Marine%20et%20Kevin/2008/2008-03-06%20Montagnes%20enneig%E9es%20d%27innsbruck/P1000030.JPG.png
-	*/
-	public static String displayDate(Date newDate, Date oldDate) {
-		SimpleDateFormat annee = new SimpleDateFormat("yyyy");
-		SimpleDateFormat mois = new SimpleDateFormat("MMMM");
-		SimpleDateFormat jour = new SimpleDateFormat("dd");
-		String temps = "";
-		
-		if (oldDate == null) {
-			temps += "<b>"+annee.format(newDate)+"</b><br/>" ;
-			temps += mois.format(newDate) +"<br/>" ;
-			temps += jour.format(newDate) ;
-		} else {
-			
-			if (!annee.format(oldDate).equals(annee.format(newDate))) {
-				temps += "<b>"+annee.format(newDate)+"</b><br/>" ;
-				temps += mois.format(newDate)+"<br/>" ;
-				temps += jour.format(newDate) ;
-				
-			} else if (!mois.format(oldDate).equals(mois.format(newDate))) {
-				temps += mois.format(newDate)+"<br/>" ; ;
-				temps += jour.format(newDate) ;
-				
-			// 1 jour = 86 400 secondes
-			} else if (!jour.format(oldDate).equals(jour.format(newDate))) {
-				temps += jour.format(newDate) ;
-				
-			} else {
-				//nothing to display
-			} 
-		}
-		
-		return temps;
-	}
+      return sb.toString();
+  }
+  
+  public static String displayDate(Date newDate, Date oldDate) {
+    SimpleDateFormat annee = new SimpleDateFormat("yyyy");
+    SimpleDateFormat mois = new SimpleDateFormat("MMMM");
+    SimpleDateFormat jour = new SimpleDateFormat("dd");
+    String temps = "";
+    try {
+      if (oldDate == null) {
+	temps += "<b>"+annee.format(newDate)+"</b><br/>" ;
+	temps += mois.format(newDate) +"<br/>" ;
+	temps += jour.format(newDate) ;
+      } else {
+	
+	if (!annee.format(oldDate).equals(annee.format(newDate))) {
+	  temps += "<b>"+annee.format(newDate)+"</b><br/>" ;
+	  temps += mois.format(newDate)+"<br/>" ;
+	  temps += jour.format(newDate) ;
+	
+	} else if (!mois.format(oldDate).equals(mois.format(newDate))) {
+	  temps += mois.format(newDate)+"<br/>" ; ;
+	  temps += jour.format(newDate) ;
+	
+	  // 1 jour = 86 400 secondes
+	} else if (!jour.format(oldDate).equals(jour.format(newDate))) {
+	  temps += jour.format(newDate) ;
+	  
+	} else {
+	  //nothing to display
+	} 
+      }
+    } catch (Exception e) {
+      temps = "Exception" ;
+    }
+    
+    return temps;
+  }
 }

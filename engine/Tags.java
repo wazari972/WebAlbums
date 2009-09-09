@@ -13,31 +13,18 @@ import constante.Path;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
+import org.hibernate.Query;
+
 import util.StringUtil;
 import engine.WebPage.Mode;
 import engine.WebPage.Type;
 
 import display.Photos ;
 
-public class Tags extends HttpServlet {
+public class Tags {
   private static final long serialVersionUID = 1L;
-  
-  public void init() {
-    Path.setLocation(this) ;
-  }
-  
-  public void doGet(HttpServletRequest request,
-		    HttpServletResponse response)
-    throws ServletException, IOException {
-    WebPage.treat(WebPage.Page.TAGS, request, response) ;
-  }
-  public void doPost(HttpServletRequest request,
-		     HttpServletResponse response)
-    throws ServletException, IOException {
-    doGet(request, response) ;
-  }
-  
-  protected static void treatTAGS(HttpServletRequest request,
+    
+  public static void treatTAGS(HttpServletRequest request,
 				  StringBuilder output)
     throws WebPage.AccessorsException, HibernateException {
     String type = StringUtil.escapeHTML(request.getParameter("type")) ;
@@ -64,7 +51,7 @@ public class Tags extends HttpServlet {
 		
     
     //memoriser les params de lURL pour pouvoir revenir
-    String from = Path.LOCATION+".Tags?" ;
+    String from = Path.LOCATION+"Tags?" ;
     if (type != null) from += "&type="+type ;
     if (tags != null) tagList = addEach("tagAsked",tags) ;
     from += tagList ;
@@ -108,13 +95,14 @@ public class Tags extends HttpServlet {
 	rq += "order by album.Date desc "+
 	  "group by photo.ID" ;
 	
-	List list = WebPage.session.find(rq);
+	Query query = WebPage.session.createQuery(rq);
+	query.setReadOnly(true).setCacheable(true);
 	rq = "done" ;
 	
-	display.Photos.displayPhoto(list, output, request, null,
+	display.Photos.displayPhoto(query, output, request, null,
 				    pageGet, StringUtil.escapeURL(tagList)) ;
       }
-      output.append("<a href='"+Path.LOCATION+".Choix'>"+
+      output.append("<a href='"+Path.LOCATION+"Choix'>"+
 		    "Retour aux choix</a>\n");
     }catch (JDBCException e) {
       output.append("<i> Impossible d'effectuer la requete' :</i>"+

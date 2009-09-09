@@ -26,11 +26,25 @@ import entity.Utilisateur ;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
+import org.hibernate.Query;
 
-import traverse.FilesFinder;
 import util.StringUtil;
 
-public class Photos {
+public class Photos extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+	
+  public void doGet(HttpServletRequest request,
+		    HttpServletResponse response)
+    throws ServletException, IOException {
+    
+    engine.Index.treat(WebPage.Page.PHOTO, request, response) ;
+  }
+  public void doPost(HttpServletRequest request,
+		     HttpServletResponse response)
+    throws ServletException, IOException {
+    doGet(request, response) ;
+  }
+  
 
   public static void treatPhotoEDIT(HttpServletRequest request,
 				       StringBuilder output)
@@ -45,19 +59,22 @@ public class Photos {
       int theme = Integer.parseInt(WebPage.getThemeID(request)) ;
       
       rq = "from Photo where id = '"+photoID+"'" ;
-      List list = WebPage.session.find(rq);
+      Photo enrPhoto = (Photo) WebPage.session.createQuery(rq).uniqueResult() ;
       rq = "done" ;
       
-      Photo enrPhoto = (Photo) list.iterator().next() ;
+      if (enrPhoto == null) {
+	output.append("Impossible de trouver la photo ("+photoID+")");
+	return ;
+      }
 
       String from, name ;
       if (albmCount == null || albmCount == ""
 	  || !"%".equals(albmCount.substring(0, 1))) {
-	from = ""+Path.LOCATION+".Photos?"+
+	from = ""+Path.LOCATION+"Photos?"+
 	  "count="+count+"&album="+enrPhoto.getAlbum()+"&albmCount="+albmCount ;
 	name = "photos" ;
       } else {
-	from = ""+Path.LOCATION+".Tags?"+
+	from = ""+Path.LOCATION+"Tags?"+
 	  "count="+count+StringUtil.putbackAmp(albmCount) ;
 	name = "tags" ;
       }
@@ -70,7 +87,7 @@ public class Photos {
 		 "	<tr valign='middle'>\n"+
 		 "		<td rowspan='3'><img alt='"+
 		 enrPhoto.getDescription()+
-		 "' src='"+Path.LOCATION+".Images?"+
+		 "' src='"+Path.LOCATION+"Images?"+
 		 "id="+enrPhoto.getID()+"&mode=PETIT' /></td>\n"+
 		 "		<td align='right'>Description :</td>\n"+
 		 "		<td colspan='2'><textarea type='text' "+
@@ -139,12 +156,12 @@ public class Photos {
     }
   }
 
-  public static void displayPhoto(List list,
-				     StringBuilder output,
-				     HttpServletRequest request,
-				     String message,
-				     String pageGet,
-				     String albmCount)
+  public static void displayPhoto(Query query,
+				  StringBuilder output,
+				  HttpServletRequest request,
+				  String message,
+				  String pageGet,
+				  String albmCount)
     throws HibernateException {
     WebPage.EditMode inEditionMode = WebPage.getEditionMode(request) ;
     String page = request.getParameter("page") ;
@@ -153,10 +170,20 @@ public class Photos {
     page = (page == null ? "0" : page) ;
     String all = request.getParameter("all") ;
     Boolean details = WebPage.getDetails (request) ;
-    
+    String strQuery = query.getQueryString() ;
+    long size ;
+    if(strQuery.contains("select")) {
+	size = WebPage.session.createQuery(strQuery).list().size();
+    }else {
+	size = ((Long) WebPage.session.createQuery("select count(*) "+strQuery)
+		.uniqueResult()).longValue();
+    }
     Integer[] bornes = WebPage.calculBornes(Type.PHOTO, page,
-					    scount, list.size()) ;
-    List portionLst = list.subList(bornes[0], bornes[1]) ;
+					    scount, (int) size) ;
+    query.setReadOnly(true).setCacheable(true);
+    query.setFirstResult(bornes[0]) ;
+    query.setMaxResults(WebPage.TAILLE_PHOTO) ;
+    
     String degrees = "0" ;
     String tag = null ;
     String rq = null ;
@@ -170,12 +197,7 @@ public class Photos {
       try {
 	String action = request.getParameter("action") ;
 	if ("MASSEDIT".equals(action)) {
-	  if ("tag".equals(turn)) {
-	    tag = StringUtil.escapeHTML(request.getParameter("newTag")) ;
-	    rq = "from Tag where id = '"+tag+"'" ;
-	    Tag enrTag = (Tag) WebPage.session.find(rq).iterator().next() ;
-	    rq = "done" ;
-	  } else if ("gauche".equals(turn)) {
+	  if ("gauche".equals(turn)) {
 	    degrees = "270" ;
 	  } else if ("droite".equals(turn)) {
 	    degrees = "90" ;
@@ -197,7 +219,7 @@ public class Photos {
     output.append("<table>\n");
     Photo enrPhoto = null;
     int count = bornes[0] ;
-    Iterator it = portionLst.iterator();
+    Iterator it = query.iterate() ;
     while (it.hasNext()) {
       enrPhoto = (Photo) it.next();
       
@@ -249,10 +271,10 @@ public class Photos {
       
       output.append("		<td>\n" +
 		    "                 <a name='"+enrPhoto.getID()+"'></a>"+
-		    "			<a href='"+Path.LOCATION+".Images?"+
+		    "			<a href='"+Path.LOCATION+"Images?"+
 		    "id="+enrPhoto.getID()+"&mode=GRAND'>"+
 		    "<img alt='"+enrPhoto.getDescription()+"' "+
-		    "src='"+Path.LOCATION+".Images?"+
+		    "src='"+Path.LOCATION+"Images?"+
 		    "id="+enrPhoto.getID()+"&mode=PETIT' /></a>\n" +
 		    "		</td>\n");
       if (details) {
@@ -279,7 +301,7 @@ public class Photos {
 		    
       //liste des utilisateurs pouvant voir cette photo
       if (WebPage.isLoggedAsCurrentManager(request)
-	  && !WebPage.isRootSession(request)) {
+	  && !WebPage.isReadOnly()) {
 	if (inEditionMode != WebPage.EditMode.VISITE) {
 	  output.append("			<tr>\n" +
 			"				<td>");
@@ -294,9 +316,9 @@ public class Photos {
       //lien vers la page d'edition
       if (WebPage.isLoggedAsCurrentManager(request)
 	  && inEditionMode == WebPage.EditMode.EDITION
-	  && !WebPage.isRootSession(request)) {
+	  && !WebPage.isReadOnly()) {
 	output.append("		<td width='5%'>"+
-		      "<a href='"+Path.LOCATION+".Photos?action=EDIT"+
+		      "<a href='"+Path.LOCATION+"Photos?action=EDIT"+
 		      "&id="+enrPhoto.getID()+
 		      "&count="+count+
 		      "&albmCount="+albmCount+"'>"+

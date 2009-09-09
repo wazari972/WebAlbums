@@ -20,7 +20,6 @@ public abstract class BaseTag  implements Serializable {
   public static String PROP_ID = "ID";
   public static String PROP_TAG_TYPE = "TagType";
   public static String PROP_NOM = "Nom";
-  public static String PROP_PHOTO = "Photo";
   
   
   private int hashCode = Integer.MIN_VALUE;
@@ -99,21 +98,6 @@ public abstract class BaseTag  implements Serializable {
    */
   public void setTagType (java.lang.Integer _tagType) {
     this._tagType = _tagType;
-  }
-
-  /**
-   * Return the value associated with the column: Photo
-   */
-  public java.lang.Integer getPhoto   () {
-    return _photo  ;
-  }
-
-    /**
-   * Set the value related to the column: Photo
-   * @param _photo   the Photo   value
-   */
-  public void setPhoto   (java.lang.Integer _photo  ) {
-    this._photo   = _photo  ;
   }
   
 

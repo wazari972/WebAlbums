@@ -19,25 +19,9 @@ import engine.WebPage.Mode;
 import entity.Utilisateur;
 import entity.Theme ;
 
-public class Choix extends HttpServlet {
+public class Choix {
   private static final long serialVersionUID = 1L;
-  public void doGet(HttpServletRequest request,
-		    HttpServletResponse response)
-    throws ServletException, IOException {
-    
-    WebPage.treat(WebPage.Page.CHX, request, response) ;
-	}
   
-  public void init() {
-    Path.setLocation(this) ;
-  }
-  
-  public void doPost(HttpServletRequest request,
-		     HttpServletResponse response)
-    throws ServletException, IOException {
-    doGet(request, response) ;
-  }
-
   public static void treatCHX(HttpServletRequest request,
 		       StringBuilder output)
     throws HibernateException {

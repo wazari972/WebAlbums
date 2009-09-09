@@ -25,7 +25,21 @@ import engine.WebPage.Type;
 import entity.Tag ;
 import entity.Geolocalisation ;
 
-public class Config {
+public class Config extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+	
+  public void doGet(HttpServletRequest request,
+		    HttpServletResponse response)
+    throws ServletException, IOException {
+    
+    engine.Index.treat(WebPage.Page.CONFIG, request, response) ;
+  }
+  public void doPost(HttpServletRequest request,
+		     HttpServletResponse response)
+    throws ServletException, IOException {
+    doGet(request, response) ;
+  }
+  
 
   public static void displayCONFIG(HttpServletRequest request,
 				    StringBuilder output)
@@ -37,13 +51,13 @@ public class Config {
     StringBuilder strUsers = new StringBuilder() ;
     
     if (WebPage.isLoggedAsCurrentManager(request)
-      && !WebPage.isRootSession(request)) {
+      && !WebPage.isReadOnly()) {
       
       if ("IMPORT".equals(action)) {
 	engine.Config.treatIMPORT(request, theme, passwrd, output);
       }
       output.append("<b>Importations des albums d'un auteur : </b><br/><br/>\n"+
-		    "<form action='"+Path.LOCATION+".Config' "+
+		    "<form action='"+Path.LOCATION+"Config' "+
 		    "method='get'>\n"+
 		    "<input type='hidden' name='action' value='IMPORT'/>\n"+
 		    "<input type='text' name='importTheme' size='20' "+
@@ -58,12 +72,16 @@ public class Config {
       if ("NEWTAG".equals(action)) {
        engine.Config.treatNEWTAG(request, strTags);	
       }
+      String lngID = "lngID" ;
+      String latID = "latID" ;
+      GoogleSearch map = new GoogleSearch (lngID, latID) ;
       strTags.append("<b>Ajout d'un tag</b><br/><br/>\n"+
-		     "<form action='"+Path.LOCATION+".Config' "+
-		     "method='get'>\n"+
+		     "<form action='"+Path.LOCATION+"Config' "+
+		     "method='get' name=newTag >\n"+
 		     "<input type='hidden' name='action' value='NEWTAG'/>\n"+
-		     "Nom : <input name='nom' type='text' size='20' "+
-		     "maxlength='20'/> <br/>\n"+
+		     "Nom : <input name=\"nom\" type='text' size='20' "+
+		     "maxlength='20'\"/>\n"+
+		     "<input type='button' value='Goto' onClick=\""+map.getSearch("newTag.nom")+"\"/><br/>\n"+
 		     "Type : "+
 		     "<select name='type'>"+
 		     "  <option value='-1'>========</option>\n"+
@@ -71,10 +89,19 @@ public class Config {
 		     "  <option value='2' >[WHAT]</option>\n"+
 		     "  <option value='3' >[WHERE]</option>\n"+
 		     "</select>");
-      
+      GoogleHeader head = (GoogleHeader) WebPage.hash.get(request) ;
+      if (head == null) {
+	  head = new GoogleHeader() ;
+	  WebPage.hash.put(request, head) ;
+      }
+            
+      map.setSize(250,500);
+      head.addMap(map) ;
+      strTags.append(map.getBody());
       strTags.append("<br/>Long/Lat : "+
-		     "<input name='long' type='text' size='20' "+
-		     "maxlength='20'/> <input name='lat' type='text' "+
+		     "<input id='"+lngID+"' name='long' type='text' size='20' "+
+		     "maxlength='20'/> \n"+
+		     "<input id='"+latID+"'name='lat' type='text' "+
 		     "size='20' maxlength='20'/><br/>\n"+
 		     "<input type='submit' value='Valider'/>\n"+
 		     "</form>\n"+
@@ -85,8 +112,8 @@ public class Config {
 	engine.Config.treatMODTAG(request, strTags);	
       }
       strTags.append("<b>Renommage d'un tag</b><br/><br/>\n"+
-		     "<form action='"+Path.LOCATION+".Config' "+
-		     "method='get'>\n"+
+		     "<form action='"+Path.LOCATION+"Config' "+
+		     "method='get' >\n"+
 		     "<input type='hidden' name='action' value='MODTAG'/>\n"+
 		     "<table>" +
 		     "	<tr>"+
@@ -107,12 +134,38 @@ public class Config {
 		     "</form>\n"+
 		     "<br/><br/>\n");
 
+      //Changement de visibilité d'un tag
+      if ("MODVIS".equals(action)) {
+	engine.Config.treatMODVIS(request, strTags);	
+      }
+      strTags.append("<b>Changement de visibilité d'un tag</b><br/><br/>\n"+
+		     "<form action='"+Path.LOCATION+"Config' "+
+		     "method='get'>\n"+
+		     "<input type='hidden' name='action' value='MODVIS'/>\n"+
+		     "<table>" +
+		     "	<tr>"+
+		     "		<td align='left'> Tag : </td>" +
+		     "		<td>");
+      WebPage.displayListB(Mode.TAG_ALL, request, strTags, WebPage.Box.LIST);
+      strTags.append("		</td>"+
+		     "	</tr>"+
+		     "	<tr>"+
+		     "		<td align='left'> Visible ? </td>" +
+		     "		<td>"+
+		     "			<input name='visible' value='y' type='checkbox'/>\n"+
+		     "		</td>"+
+		     "	</tr>"+
+		     "<table>" +
+		     "<input type='submit' value='Valider'/>\n"+
+		     "</form>\n"+
+		     "<br/><br/>\n");
+      
       //modification d'une geolocalisation
       if ("MODGEO".equals(action)) {
        engine.Config.treatMODGEO(request, strTags);	
       }
       strTags.append("<b>Modification d'une localisation</b><br/><br/>\n"+
-		     "<form action='"+Path.LOCATION+".Config' "+
+		     "<form action='"+Path.LOCATION+"Config' "+
 		     "method='get'>\n"+
 		     "<input type='hidden' name='action' value='MODGEO'/>\n"+
 		     "<table>" +
@@ -143,7 +196,7 @@ public class Config {
 	selected = engine.Config.treatDELTAG(request, strTags);	
       }
       strTags.append("<b>Suppression d'un tag</b><br/><br/>\n"+
-		     "<form action='"+Path.LOCATION+".Config' "+
+		     "<form action='"+Path.LOCATION+"Config' "+
 		     "method='get'>\n"+
 		     "<input type='hidden' name='action' value='DELTAG'/>\n");
       WebPage.displayListLB(Mode.TAG_ALL, request, strTags, selected,
@@ -160,7 +213,7 @@ public class Config {
 	engine.Config.treatNEWUSER(request, strUsers);	
       }
       strUsers.append("<b>Ajout d'un utilisateur</b><br/><br/>\n"+
-		     "<form action='"+Path.LOCATION+".Config' "+
+		     "<form action='"+Path.LOCATION+"Config' "+
 		     "method='get'>\n"+
 		     "<input type='hidden' name='action' value='NEWUSER'/>\n"+
 		     "Nom : <input name='nom' type='text' size='20' "+
@@ -177,7 +230,7 @@ public class Config {
       }
       
       strUsers.append("<b>Suppression d'un utilisateur</b><br/><br/>\n"+
-		      "<form action='"+Path.LOCATION+".Config' "+
+		      "<form action='"+Path.LOCATION+"Config' "+
 		      "method='get'>\n"+
 		      "<input type='hidden' name='action' value='DELUSER'/>\n");
       WebPage.displayListB(Mode.USER, request, strUsers, WebPage.Box.LIST);
@@ -195,7 +248,7 @@ public class Config {
       output.append("<i> Vous n'avez pas crée ce theme ...</i><br/>\n");
     }
     
-    output.append("<br/><br/><a href='"+Path.LOCATION+".Choix'>"+
+    output.append("<br/><br/><a href='"+Path.LOCATION+"Choix'>"+
 		  "Retour aux choix</a><br/>\n");
   }
 }

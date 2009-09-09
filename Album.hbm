@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
-	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 
 <hibernate-mapping package="entity">
 	<class name="Album" table="Album">
+	  <cache usage="nonstrict-read-write"/>
 		<id name="ID" type="integer">
 			<column name="ID" sql-type="int(4)"/>
 			<generator class="increment"/>
@@ -33,6 +34,5 @@
  		<property name="Picture" type="string">
 			<column name="Picture" not-null="false" />
 		</property>
-
 	</class>
 </hibernate-mapping>

@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
-	"http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 
 <hibernate-mapping>
 	<class name="entity.TagPhoto" table="TagPhoto">
+	  <cache usage="nonstrict-read-write"/>
 		<id name="ID" type="integer">
 			<column name="ID" sql-type="int(11)"/>
 			<generator class="increment"/>

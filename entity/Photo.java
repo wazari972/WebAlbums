@@ -9,12 +9,12 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import util.HibernateUtil;
 import util.StringUtil;
-import util.ConvertWrapper ;
+import util.ConvertPhotoWrapper ;
 import util.ImageUtil ;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -35,16 +35,8 @@ import entity.base.BasePhoto;
 public class Photo extends BasePhoto {
   private static final long serialVersionUID = 1L;
 
-  private static final ImageUtil util = new ConvertWrapper () ;
-  public Photo () {
-    super();
-    this.setClick(0) ;
-  }
-  public Photo (java.lang.Integer _iD) {
-    super(_iD);
-    this.setClick(0) ;
-  }
-  
+  private static final ImageUtil util = new ConvertPhotoWrapper () ;
+    
   public void setTags(String[] tags)
     throws WebPage.AccessorsException, HibernateException {
     removeExtraTags(tags);
@@ -57,10 +49,11 @@ public class Photo extends BasePhoto {
     Transaction tx = session.beginTransaction() ;
     String rq = null ;
     try {
+      tx.begin();
       if (tags == null) return ;
 			
       rq = "from TagPhoto where photo = '"+this.getID()+"'";
-      List list = session.find(rq);
+      List list = session.createQuery(rq).list();
       rq = "done" ;
       
       //ajouter les nouveaux tags
@@ -71,7 +64,7 @@ public class Photo extends BasePhoto {
 
 	//verifier que le tag est bien dans la base
 	rq = "from Tag where id = '"+newTag+"'";
-	boolean exists = session.find(rq).iterator().hasNext() ;
+	boolean exists = session.createQuery(rq).uniqueResult() == null ;
 	rq = "done" ;
 	if (exists) {
 	  //regarder si le tag est déjà dans la liste
@@ -115,11 +108,12 @@ public class Photo extends BasePhoto {
     Transaction tx = session.beginTransaction() ;
     String rq = null ;
     try {
+      tx.begin();
       if (tags == null) {
 	rq = "from TagPhoto where photo = '"+this.getID()+"'";
-	List list = session.find(rq);
+	Iterator it = session.createQuery(rq).iterate();
 	rq = "done" ;
-	Iterator it = list.iterator() ;
+	
 	while (it.hasNext()) {
 	  session.delete(it.next()) ;
 	}
@@ -131,11 +125,11 @@ public class Photo extends BasePhoto {
       
       //enlever les tags existants qui ne sont pas dans la nouvelle liste
       rq = "from TagPhoto where photo = '"+this.getID()+"'";
-      List list = session.find(rq);
+      List list = session.createQuery(rq).list();
       rq = "done" ;
       
       WebPage.log.info(list.size()+" resultats : "+list.toString());
-      WebPage.log.info("tages :"+Arrays.toString(tags));
+      WebPage.log.info("tags :"+Arrays.toString(tags));
       
       Iterator it = list.iterator() ;
       
@@ -165,6 +159,7 @@ public class Photo extends BasePhoto {
     String rq = null ;
     int level = 0 ;
     try {
+      tx.begin();
       //creer une requete avec les elements a supprimer
       //(case non cochée, = null)
       //et creer les nouveau
@@ -188,14 +183,14 @@ public class Photo extends BasePhoto {
 	  }
 	  
 	  tx = session.beginTransaction() ;
+	  tx.begin();
 	}
       }
       rq += ")" ;
       
-      List list = session.find(rq) ;
+      Iterator it = session.createQuery(rq).iterate() ;
       rq = "done" ;
       
-      Iterator it = list.iterator() ;
       while (it.hasNext()) {
 	UserPhoto ph = (UserPhoto) it.next() ;
 	session.delete(ph);
@@ -207,13 +202,6 @@ public class Photo extends BasePhoto {
 	"Erreur dans setUsers "+level+": <br/>\n"+
 	rq+"<br/>"+e.getSQLException()+"<br/>") ;
     }
-  }
-  
-  public void click() throws HibernateException {
-    Session session = HibernateUtil.currentSession();
-    Transaction tx = session.beginTransaction() ;
-    this.setClick(this.getClick()+1) ;
-    tx.commit();
   }
   
   public String getExif() {
@@ -303,6 +291,11 @@ public class Photo extends BasePhoto {
   
   public boolean rotate (String degrees)
     throws  WebPage.AccessorsException, HibernateException {
+      
+      if (getType() != null && !getType().contains("image")) {
+	  return true ;
+      }
+
     String rq = null ;
     String themeName = null ;
     try {
@@ -311,18 +304,16 @@ public class Photo extends BasePhoto {
 	"from Theme t, Album a "+
 	"where a.ID = '"+getAlbum()+"' "+
 	"and a.Theme = t.ID" ;
-      List list = session.find(rq);
+      Theme enrTh = (Theme) session.createQuery(rq).uniqueResult();
       rq = "done" ;
 
-      Iterator it = list.iterator () ;
-      if (!it.hasNext()) {
+      if (enrTh == null) {
 	throw new WebPage.AccessorsException (
 	  "Erreur dans Photo.rotate()<br/>\n"+
 	  "Impossible to find the photo's theme "+
 	  "("+getID()+")");
       } else {
-	Theme th = (Theme) it.next();
-	themeName = th.getNom () ;
+	themeName = enrTh.getNom () ;
       }
     } catch (JDBCException e) {
       throw new WebPage.AccessorsException (

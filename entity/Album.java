@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import util.HibernateUtil;
@@ -42,15 +42,12 @@ public class Album extends BaseAlbum {
     throws HibernateException, WebPage.AccessorsException {
     int myID = this.getID();
     Session session = HibernateUtil.currentSession();
-    Transaction tx = session.beginTransaction() ;
     String rq = null ;
     try {
       rq = "from Photo where album = '"+myID+"'" ;
-      List list = session.find(rq) ;
-      Iterator it = list.iterator() ;
+      Iterator it = session.createQuery(rq).iterate() ;
       while (it.hasNext()) {
-	
-	Photo photo = (Photo) it.next() ;
+       	Photo photo = (Photo) it.next() ;
 	if (force) {
 	  photo.setTags(tags) ;
 	} else {
@@ -58,13 +55,13 @@ public class Album extends BaseAlbum {
 	}
       }
 			
-      tx.commit();
+    
       
     } catch (JDBCException e) {
-      tx.rollback();
-      throw new WebPage.AccessorsException ("Impossible d'ajouter les tags ("+
-					    Arrays.toString(tags)+") => "+rq+
-					    "<br/>\n"+e);
+      throw new WebPage.AccessorsException
+	("Impossible d'ajouter les tags ("+
+	 Arrays.toString(tags)+") => "+rq+
+	 "<br/>\n"+e);
     }
   }
   
@@ -81,23 +78,22 @@ public class Album extends BaseAlbum {
       //si aucun utilisateur n'a ete selectionner
       if (users == null) {
 	rq = "from UserAlbum where album = '"+myID+"'";
-	List list = session.find(rq);
+	Iterator it = session.createQuery(rq).iterate();
 	rq = "done" ;
-	Iterator it = list.iterator() ;
 	while (it.hasNext()) {
 	  UserAlbum user = (UserAlbum) it.next() ;
 	  deleteRelatedPhotoRights(session, user) ;
 	  session.delete(user) ;
 	}
 	tx.commit();
-				return ;
+	return ;
       }
       
       Arrays.sort(users);
       
       //enlever les utilisateurs existants qui ne sont pas dans la nouvelle liste
       rq = "from UserAlbum where album = '"+myID+"'";
-      List list = session.find(rq);
+      List list = session.createQuery(rq).list();
       rq = "done" ;
       WebPage.log.warn(list.size()+" resultats : "+list.toString());
       WebPage.log.warn("Users :"+Arrays.toString(users));
@@ -157,23 +153,26 @@ public class Album extends BaseAlbum {
     Transaction tx = s.beginTransaction() ;
     String rq = null ;
     try {
+      tx.begin();
       rq = "select user from UserPhoto user, Photo photo " +
 	"where user.Photo = photo.ID " +
 	"and photo.Album = '"+this.getID()+"'" +
 	"and user.User = '"+user.getUser()+"'" ;
-      List list = s.find(rq);
+      Iterator it = s.createQuery(rq).iterate();
       rq = "done" ;
-      Iterator it = list.iterator() ;
+
       while (it.hasNext()) {
 	s.delete(it.next()) ;
       }
     } catch (JDBCException e) {
       tx.rollback();	
-      throw new WebPage.AccessorsException ("Impossible d'effectuer la requete de suppression des droits photo => "+rq+"<br/>\n"+e);
+      throw new WebPage.AccessorsException ("Impossible d'effectuer la "+
+					    "requete de suppression des "+
+					    "droits photo => "+rq+"<br/>\n"+e);
     }
   }
 
-  public void setDate(String date) {
+  public void setDateStr(String date) {
     if (date != null) {
       try {
 	this.setDate(new SimpleDateFormat("yyyy-MM-dd").parse(date)) ;

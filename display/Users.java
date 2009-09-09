@@ -33,6 +33,20 @@ import java.util.Iterator ;
 
 import entity.* ;
 
-public class Users  {
+public class Users extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+	
+  public void doGet(HttpServletRequest request,
+		    HttpServletResponse response)
+    throws ServletException, IOException {
+    
+    engine.Index.treat(WebPage.Page.USER, request, response) ;
+  }
+  public void doPost(HttpServletRequest request,
+		     HttpServletResponse response)
+    throws ServletException, IOException {
+    doGet(request, response) ;
+  }
+  
   
 }

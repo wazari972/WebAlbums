@@ -16,8 +16,12 @@ import constante.Path;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
-import traverse.FilesFinder;
+import org.hibernate.Transaction;
+import org.hibernate.Query ;
+
+import util.FilesFinder;
 import util.StringUtil;
+
 import engine.WebPage.AccessorsException ;
 import engine.WebPage.Mode;
 import engine.WebPage.Type;
@@ -25,42 +29,28 @@ import entity.Album;
 import entity.Theme;
 import entity.Utilisateur;
 
-public class Albums extends HttpServlet {
+public class Albums {
   private static final long serialVersionUID = 1L;
   
-  public void init() {
-    Path.setLocation(this) ;
-  }
-  
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-    engine.WebPage.treat(engine.WebPage.Page.ALBM, request, response) ;
-  }
-  public void doPost(HttpServletRequest request,
-		     HttpServletResponse response)
-    throws ServletException, IOException {
-    doGet(request, response) ;
-  }
-  
   public static void treatALBM(HttpServletRequest request,
-				  StringBuilder output)
+			       StringBuilder output)
     throws HibernateException {
     engine.WebPage.log.warn("Traitement Album");
     String action = request.getParameter("action") ;
 		
     if ("SUBMIT".equals(action)
 	&& WebPage.isLoggedAsCurrentManager(request, output)
-	&& !WebPage.isRootSession(request)) {
+	&& !WebPage.isReadOnly()) {
       action = treatAlbmSUBMIT(request, output);
     }
     
     if ("EDIT".equals(action)
 	&& WebPage.isLoggedAsCurrentManager(request, output)
-	&& !WebPage.isRootSession(request)) {
+	&& !WebPage.isReadOnly()) {
       display.Albums.treatAlbmEDIT(request, output);
     } else {
       //memoriser les params de lURL pour pouvoir revenir
-      String from = Path.LOCATION+".Albums" ;
+      String from = Path.LOCATION+"Albums" ;
       request.getSession().setAttribute("from", from) ;
       
       output.append(WebPage.getHeadBand(request));
@@ -74,32 +64,39 @@ public class Albums extends HttpServlet {
     throws HibernateException {
     String albumID = StringUtil.escapeHTML(request.getParameter("id")) ;
     String rq = null;
+    Transaction tx = null ;
     try {
       rq = "from Album "+
 	"where id = '"+albumID+"' "+
 	"and id in ("+WebPage.listAlbumAllowed(request)+")" ;
-      List list = WebPage.session.find(rq);
+      Album enrAlbum = (Album) WebPage.session.createQuery(rq).uniqueResult();
       rq = "done" ;
+
+      if (enrAlbum == null) {
+	return "<i> Album ("+enrAlbum.getID()+") "+
+	  "introuvable !</i><br/><br/>\n" ;
+      }
+      
       String suppr = request.getParameter("suppr") ;
       if ("Oui je veux supprimer cet album".equals(suppr)) {
 	FilesFinder.deleteAlbum (albumID, output) ;
-	return null ;
+	return "<i> Album correctement  supprimé !</i><br/><br/>\n" ;
       }
-      Album enrAlbum = (Album) list.iterator().next() ;
-      
+            
       String desc = StringUtil.escapeHTML(request.getParameter("desc")) ;
       String nom = StringUtil.escapeHTML(request.getParameter("nom")) ;
       String date = request.getParameter("date") ;
       String[] tags = request.getParameterValues("tags") ;
       String[] users = request.getParameterValues("users") ;
       String force = request.getParameter("force") ;
-      
+
+      tx = WebPage.session.beginTransaction();
       enrAlbum.setTagsToPhoto(tags, "yes".equals(force)) ;
       enrAlbum.setUsers(users) ;
       enrAlbum.setNom(nom) ;
       enrAlbum.setDescription(desc) ;
-      enrAlbum.setDate(date) ;
-      
+      enrAlbum.setDateStr(date) ;
+      tx.commit();
       return "<i> Album ("+enrAlbum.getID()+") "+
 	"correctement mise à jour !</i><br/><br/>\n" ;
     } catch (JDBCException e) {
@@ -108,12 +105,12 @@ public class Albums extends HttpServlet {
 		    "Derniere requete : "+rq+"<br/>\n"+e+"<br/>\n");
       WebPage.log.warn("Impossible de finaliser la modification de l'album "+
 		       "("+albumID+") => "+e+"<br/>\n");
+      if (tx != null) tx.rollback() ;
       return "EDIT" ;
-    } catch (NoSuchElementException e) {
-      output.append("Impossible d'acceder à cet album ("+albumID+")...<br/>\n");
-      return "EDIT" ;
+
     } catch (WebPage.AccessorsException e) {
       output.append("Problème dans l'acces aux champs ... ("+e+")...<br/>\n");
+      if (tx != null) tx.rollback() ;
       return "EDIT" ;
     }
   }
@@ -124,7 +121,7 @@ public class Albums extends HttpServlet {
     throws HibernateException {
     String theme = WebPage.getThemeID(request) ;
     String rq = null ;
-    String pageGet = Path.LOCATION+".Albums?" ;
+    String pageGet = Path.LOCATION+"Albums?" ;
     try {
       rq = "from Album "+
 	"where id in ("+engine.WebPage.listAlbumAllowed(request)+") " ;
@@ -133,20 +130,17 @@ public class Albums extends HttpServlet {
       }
       rq += "order by date desc " ;
       
-      List list = engine.WebPage.session.find(rq);
+      Query query = engine.WebPage.session.createQuery(rq);
+      query.setReadOnly(true).setCacheable(true) ;
       rq = "done" ;
       
-      Iterator it = list.iterator () ;
-      if (it.hasNext()) {
-	output.append("<center><h1>"+engine.WebPage.getThemeName(request)+"</h1></center>");
-	display.Albums.displayAlbum(list, output, request, message, pageGet);
-	
-      } else {
-	output.append("No album to display...<br/>");
-      }
+      
+      output.append("<center><h1>"+engine.WebPage.getThemeName(request)+"</h1></center>");
+      display.Albums.displayAlbum(query, output, request, message, pageGet);
+
       output.append("<br/>\n");
       
-      output.append("<a href='"+Path.LOCATION+".Choix'>"+
+      output.append("<a href='"+Path.LOCATION+"Choix'>"+
 		    "Retour aux choix</a>\n");
     } catch (JDBCException e) {
       output.append("<br/><i>Impossible d'afficher les albums du theme "+
@@ -184,7 +178,8 @@ public class Albums extends HttpServlet {
 	//	liste des utilisateur autorisé à voir un album
 	"	select ua.User from UserAlbum ua where ua.Album = '"+id+"'"+
 	")" ;
-      List list = engine.WebPage.session.find(rq);
+      List list = engine.WebPage.session.createQuery(rq)
+	.setReadOnly(true).setCacheable(true).list();
       rq = "done" ;
       List<Integer> ids = new ArrayList<Integer>(list.size()) ;
       for (Object o : list) {
@@ -199,9 +194,6 @@ public class Albums extends HttpServlet {
       }
     } catch (Exception e) {
       output.append ("error ..."+e);
-
     }
-    
   }
-  
 }

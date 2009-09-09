@@ -7,24 +7,32 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.*;
 
+import java.sql.Connection ;
+
 public class HibernateUtil {
   public static final Logger log = Logger.getLogger("WebAlbum");
-  private static final SessionFactory sessionFactory;
-  public  static final ThreadLocal session = new ThreadLocal();
-  
+  public static final SessionFactory sessionFactory;
+  public static final ThreadLocal session = new ThreadLocal();
+  public static final Configuration config ;
   static {
     try {
       // Crée la SessionFactory
-      log.info("creation") ;
-      sessionFactory = new Configuration().configure().buildSessionFactory();
-      log.info("created") ;
-      
-    } catch (HibernateException ex) {
-      throw new RuntimeException("Problème de configuration : " + ex.getMessage(), ex);
+      log.info("Creation of the configuration") ;
+      config = new Configuration().configure() ;
+      log.info("Creation of the SessionFactory") ;
+      sessionFactory = config.buildSessionFactory();
+            
     } catch (Exception e) {
-      System.out.println("meeerde ") ;
       throw new RuntimeException("Problème de configuration : " + e.getMessage(), e);
     }
+  }
+
+    public static Configuration getConfiguration() {
+	return config ;
+    }
+  @SuppressWarnings("unchecked")
+  public static Connection getAConnection() throws Exception {
+      return new Configuration().buildSettings().getConnectionProvider().getConnection(); 
   }
 
   @SuppressWarnings("unchecked")

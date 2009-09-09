@@ -1,14 +1,19 @@
 package engine;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.text.SimpleDateFormat;
+
+import java.util.Map ;
+import java.util.HashMap ;
+import java.util.List ;
+import java.util.ArrayList ;
+import java.util.Iterator ;
+
+import java.io.IOException;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -18,20 +23,20 @@ import org.apache.log4j.SimpleLayout;
 import constante.Path;
 import entity.*;
 
-import display.VoidPage ;
-import display.Periode ;
+import engine.GooglePoint.Point ;
 
-import engine.GoogleMap.Point ;
 import org.hibernate.Transaction;
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
-import org.hibernate.classic.Session;
+import org.hibernate.Session;
+import org.hibernate.Query;
+import org.hibernate.stat.Statistics;
 
 import util.HibernateUtil;
 import util.StringUtil;
 
-public class WebPage extends HttpServlet {
-  public enum Page {PHOTO, IMG, USR, ALBM, CONFIG, CHX, TAGS, VOID, PERIODE} 
+public class WebPage {
+  public enum Page {PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT} 
   public enum Type {PHOTO, ALBUM}
   public enum Box  {NONE, MULTIPLE, LIST, MAP} ;
   public enum Mode {USER, TAG_USED, TAG_NUSED, TAG_ALL, TAG_NONE, TAG_GEO} ;
@@ -46,6 +51,9 @@ public class WebPage extends HttpServlet {
   public static final SimpleDateFormat DATE_HEURE =
     new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
   
+  public static final Map<HttpServletRequest, Header> hash =
+    new HashMap<HttpServletRequest, Header> () ;
+
   public static final String USER_CHEAT = "-1" ;
   
   public static final int TAILLE_PHOTO = 10;
@@ -53,9 +61,6 @@ public class WebPage extends HttpServlet {
   
   public static Session session ;
 
-  public static final Map<HttpServletRequest, Header> hash =
-    new HashMap<HttpServletRequest, Header> () ;
-      
   static {
     try {
       session = HibernateUtil.currentSession();
@@ -74,118 +79,8 @@ public class WebPage extends HttpServlet {
       e.printStackTrace();
     } 
   }
-  
-  public void init() {
-    Path.setLocation(this) ;
-  }
-  
-  public void doGet(HttpServletRequest request,
-		    HttpServletResponse response)
-    throws ServletException, IOException {
-    
-    treat(Page.VOID, request, response);
-  }
-  public void doPost(HttpServletRequest request,
-		     HttpServletResponse response)
-    throws ServletException, IOException {
-    doGet(request, response) ;
-  }
-  
-  public static void treat(Page page,
-			   HttpServletRequest request,
-			   HttpServletResponse response)
-    throws IOException {
-    long debut = System.currentTimeMillis();
-    hash.remove(request) ;
-    StringBuilder out = new StringBuilder() ;
-    
-    boolean isCorrect = false ;
-    boolean isPhoto = false ;
-    
-    StringBuilder err = new StringBuilder () ;
-    StringBuilder output = new StringBuilder () ;
 
-    try {
-      if (page == Page.VOID) {
-	VoidPage.treatVOID(output);
-      } else if (page == Page.USR) {
-	Users.treatUSR(request, output);
-      } else {
-	updateLogInformation(request, output) ;
-	String userID  = Users.getUser(request) ;
-	String themeID = getThemeID(request) ;
-	//a partir d'ici, l'utilisateur doit être en memoire
-	if (userID != null) { 
-	  if (page == Page.CHX) {
-	    Choix.treatCHX(request, output);
-	  }else if (page == Page.ALBM) {
-	    Albums.treatALBM(request, output);
-	  } else if (page == Page.PERIODE) {
-	    display.Periode.treatPERIODE(request, output) ;
-	  } else if (page == Page.PHOTO) {
-	    Photos.treatPHOTO(request, output);
-	  } else if (page == Page.CONFIG){
-	    Config.treatCONFIG(request, output);
-	  } else if (page == Page.TAGS){
-	    Tags.treatTAGS(request, output);
-	  } else if (page == Page.IMG){
-	    isPhoto = Images.treatIMG(request, output, response);
-	  } else {
-	    VoidPage.treatVOID(output);
-	  }
-	} else {
-	  VoidPage.treatVOID(output);
-	}
-      
-      }
-      isCorrect = true ;
-    } catch (JDBCException e) {
-      
-      err.append("Il y a une erreur dans la requete ... !<br/>\n"+
-		 e.getSQLException()+"<br/>\n") ;
-      err.append(e);
-      
-    } catch (HibernateException e) {
-      err.append("Problème avec Hibernate ... !\n" +
-		 e+"<br/><br/>**<br/>\n" +
-		 StringUtil.escapeHTML(output.toString())+
-		 "<br/>**<br/><br/>\n");
-    } catch (AccessorsException e) {
-      err.append("Problème avec les accesseurs ... !\n" +
-		 e+"<br/><br/>**<br/>\n" +
-		 StringUtil.escapeHTML(output.toString())+
-		 "<br/>**<br/><br/>\n");
-    }
-    
-    long fin = System.currentTimeMillis();
-
-    Header head = hash.get(request) ;
-    if (!isPhoto) {
-      response.setContentType("text/html");
-      preventCaching(request, response);
-      out.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD "+
-		 "HTML 4.01 Transitional//EN\">\n" +
-		 "<html>\n" +
-		 "  <head>\n" +
-		 "    <title>WebAlbum4</title>\n" +
-		 (head == null ? "" : head.header())+
-		 "  </head>\n" +
-		 "  <body "+
-		 (head == null ? "" : head.bodyAttributes())+">\n" +
-		 (isCorrect ? output.toString() : err.toString())+
-		 "		<br/>Page générée en "+
-		 (((double)(fin-debut))/1000)+"s\n" +
-		 "		<br/>\n"+
-		 "  </body>\n" +
-		 "</html>");
-      PrintWriter sortie = response.getWriter();
-      sortie.println(out.toString());
-      sortie.flush();
-      sortie.close();
-    }
-  }
-
-  protected static void updateLogInformation (HttpServletRequest request, StringBuilder output)
+  public static void updateLogInformation (HttpServletRequest request, StringBuilder output)
     throws HibernateException {
     String rq = null ;
     String themeName = request.getParameter("themeName");
@@ -193,16 +88,15 @@ public class WebPage extends HttpServlet {
     if (themeName != null) {
       try {
 	rq = "from Theme where nom = '"+themeName+"'" ;
-	List list = session.find(rq);
+	Theme enrTheme = (Theme) session.createQuery(rq).uniqueResult ();
 	rq = "done" ;
 	
-	Theme enrTheme = (Theme) list.iterator().next() ;
-
+	if (enrTheme == null) {
+	  output.append("<i>Impossible de trouver ce theme "+
+			"("+themeName+")</i><br/>\n");
+	}
 	saveTheme (request, enrTheme) ;
 	
-      } catch (NoSuchElementException e) {
-	output.append("<i>Impossible de trouver ce theme "+
-		      "("+themeName+")</i><br/>\n");
       } catch (JDBCException e) {
 	output.append("<br/><i>Impossible d'executer la requete </i>"+
 		      "=> "+rq+"<br/>\n"+e+"<br/>\n"+
@@ -213,15 +107,15 @@ public class WebPage extends HttpServlet {
     if (userName != null) {
       try {
 	rq = "from Utilisateur where nom = '"+userName+"'" ;
-	List list = session.find(rq);
+	Utilisateur enrUtilisateur = (Utilisateur) session.createQuery(rq).uniqueResult();
 	rq = "done" ;
 	
-	Utilisateur enrUtilisateur = (Utilisateur) list.iterator().next() ;
-
-	Users.saveUser(request, enrUtilisateur, null);
-      } catch (NoSuchElementException e) {
-	output.append("<i>Impossible de trouver cet utilisateur "+
-		      "("+userName+")</i><br/>\n");
+	if (enrUtilisateur == null) {
+	  output.append("<i>Impossible de trouver cet utilisateur "+
+			"("+userName+")</i><br/>\n");
+	} else {
+	  Users.saveUser(request, enrUtilisateur, null);
+	}
       } catch (JDBCException e) {
 	output.append("<br/><i>Impossible d'executer la requete </i>"+
 		      "=> "+rq+"<br/>\n"+e+"<br/>\n"+
@@ -274,7 +168,11 @@ public class WebPage extends HttpServlet {
     }
     try {
       StringBuilder str = new StringBuilder() ;
-      Iterator it = session.find(rq).iterator() ;
+      Query query = session.createQuery(rq) ;
+      rq = "done" ;
+      query.setReadOnly(true).setCacheable(true);
+      Iterator it = query.iterate() ;
+      
       while (it.hasNext()) {
 	str.append(it.next() + ", ");
       }
@@ -323,7 +221,10 @@ public class WebPage extends HttpServlet {
     }
     try {
       StringBuilder str = new StringBuilder() ;
-      Iterator it = session.find(rq).iterator() ;
+      Query query = session.createQuery(rq) ;
+      rq = "done" ;
+      query.setReadOnly(true).setCacheable(true);
+      Iterator it = query.iterate() ;
       while (it.hasNext()) {
 	str.append(it.next()+ ", ");
       }
@@ -349,7 +250,7 @@ public class WebPage extends HttpServlet {
   
 
   public static boolean isLoggedAsCurrentManager(HttpServletRequest request,
-					  StringBuilder output) {
+						 StringBuilder output) {
     if (isLoggedAsCurrentManager(request)) {
       return true ;
     } else {
@@ -373,8 +274,13 @@ public class WebPage extends HttpServlet {
     try {
       Session session = HibernateUtil.currentSession();
       rq = "from Theme where id='"+theme+"'" ;
-      Theme enrTheme = (Theme) session.find(rq).iterator().next();
+      Theme enrTheme = (Theme) session.createQuery(rq).uniqueResult() ;
       rq = "done" ;
+
+      if (enrTheme == null) {
+	output.append("<i>Ce theme ("+theme+") n'existe pas ...</i><br/>\n");
+	return null;
+      }
       
       saveTheme (request, enrTheme);
     } catch (JDBCException e) {
@@ -382,9 +288,6 @@ public class WebPage extends HttpServlet {
 		    "=> "+rq+"<br/>\n"+e+"<br/>\n"+
 		    e.getSQLException()+"<br/>\n");
       return null ;
-    } catch (NoSuchElementException e) {
-      output.append("<i>Ce theme ("+theme+") n'existe pas ...</i>"+e+"<br/>\n");
-      return null;
     }
     return theme ;
   }
@@ -415,6 +318,10 @@ public class WebPage extends HttpServlet {
     return theme ;
   }
   
+  public static boolean isReadOnly() {
+      return Path.isReadOnly() ;
+  }
+
   public static boolean isRootSession (HttpServletRequest request) {
     return getThemeID(request).equals("-1"); 
   }
@@ -543,8 +450,11 @@ public class WebPage extends HttpServlet {
 	    || mode == Mode.TAG_GEO) {
 	  rq = "from TagPhoto " +
 	    "where photo = '"+id+"'" ;
-	  List list = session.find(rq);
+	  Query query = session.createQuery(rq) ;
 	  rq = "done" ;
+	  query.setReadOnly(true).setCacheable(true);
+	  List list = query.list();
+	  
 	  ids= new ArrayList<Integer>(list.size()) ;
 	  for (Object o : list) {
 	    TagPhoto tag = (TagPhoto) o ;
@@ -565,9 +475,12 @@ public class WebPage extends HttpServlet {
 	    "	and u.ID in (select up.User from UserPhoto up "+
 	    "                 where up.Photo = '"+id+"')" +
 	    ")" ;
-	  ids = (List<Integer>)session.find(rq);
-	  rq = "done" ;
 	  
+	  Query query = session.createQuery(rq) ;
+	  rq = "done" ;
+	  query.setReadOnly(true).setCacheable(true);
+	  ids = (List<Integer>) query.list();
+	  	  
 	} else {
 	  ids = null ;
 	}
@@ -583,8 +496,11 @@ public class WebPage extends HttpServlet {
 	    "where photo.Album = '"+id+"' " +
 	    "and photo.ID = tp.Photo " +
 	    "group by tp.Tag" ;
-	  List list = session.find(rq);
+	  Query query = session.createQuery(rq) ;
 	  rq = "done" ;
+	  query.setReadOnly(true).setCacheable(true);
+	  List list = query.list();
+	  
 	  ids = new ArrayList<Integer>(list.size()) ;
 	  for (Object o : list) {
 	    TagPhoto user = (TagPhoto) o ;
@@ -593,8 +509,10 @@ public class WebPage extends HttpServlet {
 	} else if (mode == Mode.USER) {
 	  //list des utilisateur autorisé d'un album
 	  rq = "select ua from UserAlbum ua where ua.Album = '"+id+"'" ;
-	  List list = session.find(rq);
+	  Query query = session.createQuery(rq) ;
 	  rq = "done" ;
+	  query.setReadOnly(true).setCacheable(true);
+	  List list = query.list();
 	  ids = new ArrayList<Integer>(list.size()) ;
 	  for (Object o : list) {
 	    UserAlbum ua = (UserAlbum) o ;
@@ -610,8 +528,7 @@ public class WebPage extends HttpServlet {
       displayListLBNI(mode, request, str, ids, box, name, info) ;
     } catch (JDBCException e) {
       str.append("Il y a une erreur dans la requete : "+rq+"<br/>\n"
-		 +e+"<br/>\n"+e.getSQLException()+"<br/>\n"
-		 +e.getSQLException()+"<br/>\n") ;
+		 +e+"<br/>\n" +e.getSQLException()+"<br/>\n") ;
     }
   }
   
@@ -719,8 +636,11 @@ public class WebPage extends HttpServlet {
 	    }
 
 	    //rq = "from Tag where id not in ("+rq+")" ;
-	    list = session.find(rq) ;
-	    Iterator iterTags = list.iterator () ;
+	    Query query = session.createQuery(rq) ;
+	    rq = "done" ;
+	    query.setReadOnly(true).setCacheable(true);
+	    Iterator iterTags = query.iterate();
+	  
 	    StringBuilder tagsUsed = new StringBuilder () ;
 	    if (iterTags.hasNext()) {
 	      while (true) {
@@ -748,9 +668,11 @@ public class WebPage extends HttpServlet {
 	return ;
       }
       
-      list = session.find(rq) ;
+      Query query = session.createQuery(rq) ;
       rq = "done" ;
-      
+      query.setReadOnly(true).setCacheable(true);
+      Iterator it = query.iterate();
+	    
       int current = 0;
       int max = (ids == null ? 0 : ids.size()) ;
       
@@ -758,14 +680,14 @@ public class WebPage extends HttpServlet {
 					  "name='"+name+"' multiple>\n");
       if (box == Box.LIST) str.append("<select name='"+name+"'>\n");
 
-      GoogleMap map = null;
+      GooglePoint map = null;
       if (box == Box.MAP)  {
 	GoogleHeader head = (GoogleHeader) hash.get(request) ;
 	if (head == null) {
 	  head = new GoogleHeader() ;
 	  hash.put(request, head) ;
 	}
-	map = new GoogleMap () ;
+	map = new GooglePoint () ;
 	head.addMap(map) ;
 	if (info == null) {
 	  map.setSize(200, 266) ;
@@ -777,7 +699,6 @@ public class WebPage extends HttpServlet {
 
       boolean first = true ;
       int prevTagType = -1 ;
-      Iterator it = list.iterator();
       while (it.hasNext()) {
 	int id = -1 ;
 	String nom = null ;
@@ -791,18 +712,39 @@ public class WebPage extends HttpServlet {
 	  Tag enrTag = (Tag) it.next();
 	  if (box == Box.MAP) {
 	    if (enrTag.getTagType() == 3) {
+	      //ensure that this tag is display in this theme
+	      rq = "from TagTheme "+
+		"where tag = "+enrTag.getID()+" "+
+		"and theme = "+getThemeID(request);
+	      TagTheme enrTagTh =
+		(TagTheme) session.createQuery(rq).uniqueResult() ;
+	      rq = "done" ;
+	      	      
+	      if (enrTagTh != null) {
+		if (!enrTagTh.getIsVisible()) {
+		  continue ;
+		} 
+	      } //else : display !
+	      
+	      //get its geoloc
 	      rq = "from Geolocalisation "+
 		"where tag = "+enrTag.getID()+" ";
-	      List geoList = session.find(rq) ;
-	      Iterator geoIt = geoList.iterator() ;
-	      if (geoIt.hasNext()) {
+	      Geolocalisation enrGeo =
+		(Geolocalisation) session.createQuery(rq).uniqueResult() ;
+	      rq = "done" ;
+	      
+	      if (enrGeo != null) {
 		id = enrTag.getID() ;
-		Geolocalisation enrGeo = (Geolocalisation) geoIt.next();
+		 
 		p = new Point (enrGeo.getLat(),
 			       enrGeo.getLong(),
 			       enrTag.getNom()) ;
 		nom = enrTag.getNom() ;
-		photo = enrTag.getPhoto() ;
+
+		//Get the photo to display, if any
+		if (enrTagTh != null) {
+		  photo = enrTagTh.getPhoto () ;
+		}
 	      } 
 	    }
 	  } else {
@@ -824,7 +766,14 @@ public class WebPage extends HttpServlet {
 	        default : type = "[-]" ; break ;
 	      }
 	      String havePhoto = "" ;
-	      if (enrTag.getPhoto() == null) {
+	      
+	      rq = "from TagTheme "+
+		"where theme = "+getThemeID(request) +
+		" and tag = " + enrTag.getID();
+	      TagTheme enrTagTh = (TagTheme) session.createQuery(rq).uniqueResult() ;
+	      rq = "done";
+	      
+	      if (enrTagTh == null || enrTagTh.getPhoto() == null) {
 		havePhoto = "*" ;
 	      }
 	      nom = type + " " + nom + havePhoto;
@@ -857,7 +806,7 @@ public class WebPage extends HttpServlet {
 				  info+id,p.name );
 	      if (photo != null) {
 		msg += String.format("<br/><img alt='%s' "+
-				     "src='%s.Images?"+
+				     "src='%sImages?"+
 				     "id=%d&amp;mode=PETIT'>",
 				     p.name,
 				     Path.LOCATION,
@@ -936,8 +885,11 @@ public class WebPage extends HttpServlet {
     try {
       //liste des status individuels, par photo 
       rq = "from UserPhoto where photo = '"+photoId+"'" ;
-      List list = session.find(rq);
+      Query query = session.createQuery(rq) ;
       rq = "done" ;
+      query.setReadOnly(true).setCacheable(true);
+      List list = query.list();
+      
       List<Integer> details = new ArrayList<Integer>(list.size()) ;
 
       for (Object o : list) {
@@ -947,8 +899,11 @@ public class WebPage extends HttpServlet {
       
       //liste des status de l'album
       rq = "from UserAlbum where album = '"+albumId+"'" ;
-      list = session.find(rq);
+      query = session.createQuery(rq) ;
       rq = "done" ;
+      query.setReadOnly(true).setCacheable(true);
+      list = query.list();
+      
       List<Integer> global = new ArrayList<Integer>(list.size()) ;
 
       for (Object o : list) {
@@ -958,8 +913,11 @@ public class WebPage extends HttpServlet {
       
       //afficher pour chaque theme
       rq = "from Utilisateur" ;
-      list = session.find(rq);
+      query = session.createQuery(rq) ;
       rq = "done" ;
+      query.setReadOnly(true).setCacheable(true);
+      list = query.list();
+      
       boolean album, photo ;
       output.append("<table>\n" +
 		    "<tr>\n" +
@@ -1069,7 +1027,7 @@ public class WebPage extends HttpServlet {
 	       "</a>\n"+
 	       "</td>") ;
     if(isLoggedAsCurrentManager(request)
-       && !isRootSession(request)) {
+       && !isReadOnly()) {
       str.append("<td>"+
 		 "<a href='"+getCurrentURL(request)+
 		 "&edition="+getNextEditionMode(request)+"'>"+
@@ -1077,7 +1035,7 @@ public class WebPage extends HttpServlet {
 		 "</td>\n");
 		 
       str.append("<td>"+
-		 "<a href='"+Path.LOCATION+".Config'>"+
+		 "<a href='"+Path.LOCATION+"Config'>"+
 		    "Config</a>"+
 		 "</td>\n");
     }
@@ -1092,7 +1050,7 @@ public class WebPage extends HttpServlet {
       
       return (mode == null ? EditMode.NORMAL : mode) ;
     } catch (Exception e) {
-			return EditMode.NORMAL ;
+	return EditMode.NORMAL ;
     }
   }
  

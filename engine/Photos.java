@@ -14,44 +14,28 @@ import constante.Path;
 
 import engine.WebPage ;
 import engine.WebPage.*;
-import entity.Album;
-import entity.Photo;
-import entity.Tag;
-import entity.Theme;
-import entity.Utilisateur ;
+import entity.*;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
-import traverse.FilesFinder;
+import org.hibernate.Query;
+
+import util.FilesFinder;
 import util.StringUtil;
 
-public class Photos extends HttpServlet {
+import org.hibernate.Transaction;
+
+public class Photos {
   private static final long serialVersionUID = 1L;
-  
-  public void init() {
-    Path.setLocation(this) ;
-  }
-  
-  public void doGet(HttpServletRequest request,
-		    HttpServletResponse response)
-    throws ServletException, IOException {
     
-    WebPage.treat(WebPage.Page.PHOTO, request, response) ;
-  }
-  public void doPost(HttpServletRequest request,
-		     HttpServletResponse response)
-    throws ServletException, IOException {
-    doGet(request, response) ;
-  }
-  
-  protected static void treatPHOTO(HttpServletRequest request,
-				   StringBuilder output)
+  public static void treatPHOTO(HttpServletRequest request,
+				StringBuilder output)
     throws WebPage.AccessorsException, HibernateException {
     String action = request.getParameter("action") ;
     
     if ("SUBMIT".equals(action) &&
 	WebPage.isLoggedAsCurrentManager(request, output)
-	&& !WebPage.isRootSession(request)) {
+	&& !WebPage.isReadOnly()) {
       action = treatPhotoSUBMIT(request, output);
       //ensuite afficher la liste *normal* des photos
       //s'il n'y a pas eu de probleme
@@ -59,7 +43,7 @@ public class Photos extends HttpServlet {
     
     if ("EDIT".equals(action)
 	&& WebPage.isLoggedAsCurrentManager(request)
-	&& !WebPage.isRootSession(request)) {
+	&& !WebPage.isReadOnly()) {
       display.Photos.treatPhotoEDIT(request, output);
       
     } else {
@@ -75,15 +59,20 @@ public class Photos extends HttpServlet {
     String photoID = StringUtil.escapeHTML(request.getParameter("id")) ;
     String theme = WebPage.getThemeID(request) ;
     String rq = null ;
+    Transaction tx = WebPage.session.beginTransaction();
     try {
       rq = "select ph from Album al, Photo ph " +
 	"where al.ID = ph.Album " +
 	"and al.Theme = '"+theme+"' " +
 	"and ph.ID = '"+photoID+"'" ;
-      List list = WebPage.session.find(rq);
+      Photo enrPhoto = (Photo) WebPage.session.createQuery(rq).uniqueResult();
       rq = "done" ;
       
-      Photo enrPhoto = (Photo) list.iterator().next() ;
+      if (enrPhoto == null) {
+	output.append("<i> Impossible de trouver cette photo "+
+		      "("+photoID+"/"+theme+")</i><br/>\n");
+	return null ;
+      }
       
       String suppr = request.getParameter("suppr") ;
       if ("Oui je veux supprimer cette photo".equals(suppr)) {
@@ -100,12 +89,11 @@ public class Photos extends HttpServlet {
       enrPhoto.setTags(tags) ;
       
       rq = "from Utilisateur" ;
-      list = WebPage.session.find(rq);
+      List list = WebPage.session.createQuery(rq).list();
       rq = "done" ;
       
       String[][] users = new String[list.size()][2] ;
       Iterator it = list.iterator() ;
-      
       for (int i = 0; it.hasNext(); i++) {
 	Utilisateur user = (Utilisateur) it.next();
 	users[i][0] = user.getID().toString() ;
@@ -116,33 +104,40 @@ public class Photos extends HttpServlet {
       
       String represent = request.getParameter("represent") ;
       if ("y".equals(represent)) {
-	try {
-	  rq = "from Album where id = '"+enrPhoto.getAlbum()+"'" ;
-	  list = WebPage.session.find(rq);
-	  Album enrAlbum = (Album) list.iterator().next() ;
-	  rq = "done" ;
-	  	  
-	  enrAlbum.setPicture(Integer.toString(enrPhoto.getID()));
-	} catch (NoSuchElementException e) {
+	rq = "from Album where id = '"+enrPhoto.getAlbum()+"'" ;
+	Album enrAlbum = (Album)  WebPage.session.createQuery(rq).uniqueResult();
+	rq = "done" ;
+	
+	if (enrAlbum == null) {
 	  output.append("Impossible d'accerder l'album à representer "+
 			"("+enrPhoto.getAlbum()+")<br/>"+rq+"<br/>\n");
+	} else {
+	  enrAlbum.setPicture(Integer.toString(enrPhoto.getID()));
 	}
       }
 
       String tagPhoto = request.getParameter("tagPhoto") ;
       if (!"-1".equals(tagPhoto)) {
-	try {
-	  rq = "from Tag where id = '"+tagPhoto+"'" ;
-	  list = WebPage.session.find(rq);
-	  Tag enrTag = (Tag) list.iterator().next() ;
-	  rq = "done" ;
-	  	  
-	  enrTag.setPhoto(enrPhoto.getID());
-	} catch (NoSuchElementException e) {
-	  output.append("Impossible d'accerder au tag à representer "+
-			"("+tagPhoto+")<br/>"+rq+"<br/>\n");
+	rq = "from TagTheme "+
+	  "where theme = "+WebPage.getThemeID(request) +
+	  " and tag = " + tagPhoto;
+	output.append(rq);
+	TagTheme enrTagTh =
+	  (TagTheme)  WebPage.session.createQuery(rq).uniqueResult() ;
+	rq = "done" ;
+	
+	if (enrTagTh != null) {
+	  enrTagTh.setPhoto(enrPhoto.getID()) ;
+	} else {
+	  enrTagTh = new TagTheme() ;
+	  enrTagTh.setTheme (WebPage.getThemeID(request)) ;
+	  enrTagTh.setTag (tagPhoto) ;
+	  
+	  enrTagTh.setPhoto (enrPhoto.getID());
 	}
+	WebPage.session.saveOrUpdate(enrTagTh);
       }
+      tx.commit();
       
       return "<b> Photo ("+enrPhoto.getID()+") "+
 	"correctement mise à jour !</b><br/><br/>\n";
@@ -150,10 +145,12 @@ public class Photos extends HttpServlet {
       output.append("Impossible d'effectuer la modification de la photo "+
 		    "("+photoID+") => "+rq +"<br/>\n"+e+"<br/>\n"+
 		    e.getSQLException()+"<br/>\n");
+      tx.rollback();
       return "EDIT" ;
     } catch (NoSuchElementException e) {
       output.append("Impossible d'accerder à la photo à modifier "+
 		    "("+photoID+")<br/>"+rq+"<br/>\n");
+      tx.rollback();
       return "EDIT" ;
     }
   }	
@@ -176,8 +173,14 @@ public class Photos extends HttpServlet {
 	"where id = '"+album+"' "+
 	"and id in ("+WebPage.listAlbumAllowed(request)+")" ;
       
-      enrAlbum = (Album) WebPage.session.find(rq).iterator().next();
+      enrAlbum = (Album) WebPage.session.createQuery(rq).uniqueResult();
       rq = "done" ;
+      
+      if (enrAlbum == null) {
+	output.append("L'album ("+album+") n'existe pas dans la base "+
+		      "ou n'est pas accessible...<br/>\n") ;
+	return ;
+      }
       
       output.append("<b><center>"+enrAlbum.getNom()+"</center> </b></br>\n"+
 		    "<i><center>"+enrAlbum.getDescription()+"</center>"+
@@ -189,30 +192,22 @@ public class Photos extends HttpServlet {
 	"and id in ("+WebPage.listPhotoAllowed(request)+")"+
 	"order by path" ;
       
-      List list = WebPage.session.find(rq);
-      
-      String pageGet = ""+Path.LOCATION+".Photos?"+
+      Query query = WebPage.session.createQuery(rq);
+      query.setReadOnly(true).setCacheable(true) ;
+      String pageGet = ""+Path.LOCATION+"Photos?"+
 	"album="+album+"&albmCount="+albmCount ;
-      display.Photos.displayPhoto(list, output, request, message, pageGet, albmCount);
+      display.Photos.displayPhoto(query, output, request, message, pageGet, albmCount);
 			
       output.append("<br/>\n");
-      String from = ""+Path.LOCATION+".Albums" ;
+      String from = ""+Path.LOCATION+"Albums" ;
       output.append("<a href='"+from+"?count="+albmCount+"#"+album+"'>"+
 		    "Retour aux albums</a>\n");
       
     } catch (NullPointerException e) {
-      if (enrAlbum == null) {
-	output.append("L'album ("+album+") n'existe pas dans la base "+
-		      "ou n'est pas accessible...<br/>\n") ;
-      } else {
-	output.append("Quelque chose n'existe pas ... "+e+"<br/>\n") ;
-      }
+      output.append("Quelque chose n'existe pas ... "+e+"<br/>\n") ;
     } catch (JDBCException e) {
       output.append("Il y a une erreur dans la requete : "+rq+"<br/>\n"+
 		    e+"<br/>\n"+e.getSQLException()+"<br/>\n") ;
-    } catch (NoSuchElementException e) {
-      output.append("Aucune image à afficher : "+rq+"<br/>\n");
-		    
     }
   }
 }
