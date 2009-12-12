@@ -26,6 +26,7 @@ public abstract class BaseGeolocalisationDAO extends entity.dao._RootDAO {
 	/**
 	 * entity.dao._RootDAO _RootDAO.getReferenceClass()
 	 */
+	@SuppressWarnings("unchecked")
 	public Class getReferenceClass () {
 		return entity.Geolocalisation.class;
 	}

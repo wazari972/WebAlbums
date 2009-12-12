@@ -1,65 +1,65 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
-	"-//Hibernate/Hibernate Mapping DTD//EN"
-	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+	  "-//Hibernate/Hibernate Mapping DTD//EN"
+	  "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 
-<hibernate-mapping>
-	<class name="entity.Photo" table="Photo">
-	  <cache usage="nonstrict-read-write"/>
-		<id name="ID" type="integer">
-			<column name="ID" sql-type="int(4)"/>
-			<generator class="increment"/>
-		</id>
-		
-		<property name="Description" type="string">
-			<column name="Description" sql-type="char(200)" not-null="false" />
-		</property>
+<hibernate-mapping package="entity">
+  <class name="Photo" table="Photo">
+    <cache usage="nonstrict-read-write"/>
+    <id name="ID" type="integer">
+      <column name="ID" sql-type="int"/>
+      <generator class="increment"/>
+    </id>
 
-		<property name="Album" type="integer">
-			<column name="Album" sql-type="int(11)" not-null="true" />
-		</property>
-		 
- 		<property name="Path" type="string">
-			<column name="Path" sql-type="char(100)" not-null="true" />
-		</property>
-		
- 		<property name="Click" type="integer">
-			<column name="Click" sql-type="int(11)" not-null="true" />
-		</property>
-		
- 		<property name="Model" type="string">
-			<column name="Model" sql-type="char(100)" not-null="false" />
-		</property>
-		
-		<property name="Date" type="string">
-			<column name="Date" sql-type="char(50)" not-null="false" />
-		</property>
-		
-		<property name="Iso" type="string">
-			<column name="Iso" sql-type="char(50)" not-null="false" />
-		</property>
-		
-		<property name="Exposure" type="string">
-			<column name="Exposure" sql-type="char(50)" not-null="false" />
-		</property>
-		
-		<property name="Focal" type="string">
-			<column name="Focal" sql-type="char(50)" not-null="false" />
-		</property>
-		
-		<property name="Flash" type="string">
-			<column name="Flash" sql-type="char(50)" not-null="false" />
-		</property>
-		
-		<property name="Height" type="string">
-			<column name="Height" sql-type="char(50)" not-null="false" />
-		</property>
-		
-		<property name="Width" type="string">
-			<column name="Width" sql-type="char(50)" not-null="false" />
-		</property>
-		<property name="Type" type="string">
-			<column name="Type" sql-type="char(50)" not-null="false" />
-		</property>
-	</class>
+    <property name="Album" type="integer" index="album">
+      <column name="Album" sql-type="int" not-null="true" />
+    </property>
+    
+    <property name="Path" type="string" index="path" update="false">
+      <column name="Path" sql-type="char(100)" not-null="true" />
+    </property>
+    
+    
+    <property name="Description" type="string">
+      <column name="Description" sql-type="char(200)" not-null="false" />
+    </property>
+    
+    <property name="Model" type="string" update="false">
+      <column name="Model" sql-type="char(100)" not-null="false" />
+    </property>
+    
+    <property name="Date" type="string" update="false">
+      <column name="Date" sql-type="char(50)" not-null="false" />
+    </property>
+    
+    <property name="Iso" type="string" update="false">
+      <column name="Iso" sql-type="char(50)" not-null="false" />
+    </property>
+    
+    <property name="Exposure" type="string" update="false">
+      <column name="Exposure" sql-type="char(50)" not-null="false" />
+    </property>
+    
+    <property name="Focal" type="string" update="false">
+      <column name="Focal" sql-type="char(50)" not-null="false" />
+    </property>
+    
+    <property name="Flash" type="string" update="false">
+      <column name="Flash" sql-type="char(50)" not-null="false" />
+    </property>
+    
+    <property name="Height" type="string" update="false">
+      <column name="Height" sql-type="char(50)" not-null="false" />
+    </property>
+    
+    <property name="Width" type="string" update="false">
+      <column name="Width" sql-type="char(50)" not-null="false" />
+    </property>
+    <property name="Type" type="string" index="type" update="false">
+      <column name="Type" sql-type="char(50)" not-null="false" />
+    </property>
+    <property name="Droit" type="integer" index="droitPhoto" update="true">
+      <column name="Droit" sql-type="int" not-null="false" />
+    </property>
+  </class>
 </hibernate-mapping>

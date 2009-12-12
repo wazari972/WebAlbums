@@ -15,6 +15,8 @@ import java.io.Serializable;
  * @hibernate.class
  *  table="Photo"
  */
+
+@SuppressWarnings("serial")
 public abstract class BasePhoto  implements Serializable {
 
 	public static String PROP_FOCAL = "Focal";
@@ -27,10 +29,10 @@ public abstract class BasePhoto  implements Serializable {
 	public static String PROP_DATE = "Date";
 	public static String PROP_ID = "ID";
 	public static String PROP_DESCRIPTION = "Description";
-	public static String PROP_CLICK = "Click";
-	public static String PROP_EXPOSURE = "Exposure";
+        public static String PROP_EXPOSURE = "Exposure";
 	public static String PROP_WIDTH = "Width";
 	public static String PROP_TYPE = "Type";
+        public static String PROP_DROIT = "Droit";
 
 
 	private int hashCode = Integer.MIN_VALUE;
@@ -42,7 +44,6 @@ public abstract class BasePhoto  implements Serializable {
 	private java.lang.String _description;
 	private java.lang.Integer _album;
 	private java.lang.String _path;
-	private java.lang.Integer _click;
 	private java.lang.String _model;
 	private java.lang.String _date;
 	private java.lang.String _iso;
@@ -52,7 +53,7 @@ public abstract class BasePhoto  implements Serializable {
 	private java.lang.String _height;
 	private java.lang.String _width;
 	private java.lang.String _type ;
-
+	private java.lang.Integer _droit ;
 
 	// constructors
 	public BasePhoto () {
@@ -135,8 +136,7 @@ public abstract class BasePhoto  implements Serializable {
 	 * @param _path the Path value
 	 */
 	public void setPath (java.lang.String _path) {
-	    setClick(0) ;
-	    this._path = _path;
+	  this._path = _path;
 	}
 
 	/**
@@ -153,22 +153,6 @@ public abstract class BasePhoto  implements Serializable {
 	public void setType (java.lang.String _type) {
 		this._type = _type;
 	}
-
-	/**
-	 * Return the value associated with the column: Click
-	 */
-	public java.lang.Integer getClick () {
-		return _click;
-	}
-
-	/**
-	 * Set the value related to the column: Click
-	 * @param _click the Click value
-	 */
-	public void setClick (java.lang.Integer _click) {
-		this._click = _click;
-	}
-
 
 	/**
 	 * Return the value associated with the column: Model
@@ -296,7 +280,21 @@ public abstract class BasePhoto  implements Serializable {
 	public void setWidth (java.lang.String _width) {
 		this._width = _width;
 	}
+  
+        /**
+	 * Return the value associated with the column: Droit
+	 */
+	public java.lang.Integer getDroit () {
+		return _droit;
+	}
 
+	/**
+	 * Set the value related to the column: Droit
+	 * @param _droit the Droit value
+	 */
+	public void setDroit (java.lang.Integer _droit) {
+		this._droit = _droit;
+	}
 
 	public boolean equals (Object obj) {
 		if (null == obj) return false;

@@ -1,213 +1,288 @@
 package engine;
 
-import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import constante.Path;
 
 import engine.WebPage ;
-import engine.WebPage.*;
-import entity.*;
+import entity.Album;
+import entity.Photo;
+import entity.TagTheme;
+import entity.Tag;
+
+import system.SystemTools ;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Query;
 
-import util.FilesFinder;
+import system.FilesFinder;
 import util.StringUtil;
+import util.XmlBuilder;
 
 import org.hibernate.Transaction;
 
 public class Photos {
   private static final long serialVersionUID = 1L;
     
-  public static void treatPHOTO(HttpServletRequest request,
-				StringBuilder output)
+  public static XmlBuilder treatPHOTO(HttpServletRequest request)
     throws WebPage.AccessorsException, HibernateException {
     String action = request.getParameter("action") ;
-    
-    if ("SUBMIT".equals(action) &&
-	WebPage.isLoggedAsCurrentManager(request, output)
-	&& !WebPage.isReadOnly()) {
-      action = treatPhotoSUBMIT(request, output);
-      //ensuite afficher la liste *normal* des photos
-      //s'il n'y a pas eu de probleme
-    }
-    
-    if ("EDIT".equals(action)
-	&& WebPage.isLoggedAsCurrentManager(request)
-	&& !WebPage.isReadOnly()) {
-      display.Photos.treatPhotoEDIT(request, output);
-      
-    } else {
-      output.append(WebPage.getHeadBand(request));
-      treatPhotoDISPLAY(request, output, action);
-    }
-  }
+    XmlBuilder output ;
+    XmlBuilder submit = null ;
+    Boolean correct = new Boolean (true);
 
+    if ("SUBMIT".equals(action)
+	&& Users.isLoggedAsCurrentManager(request)
+	&& !Path.isReadOnly()) {
+      submit = treatPhotoSUBMIT(request, correct);
+    }
+    
+    if (("EDIT".equals(action) || !correct)
+	&& Users.isLoggedAsCurrentManager(request)
+	&& !Path.isReadOnly()) {
+      output = display.Photos.treatPhotoEDIT(request, submit);
+      
+      XmlBuilder return_to = new XmlBuilder("return_to");
+      return_to.add("name", "Photos");
+      return_to.add("count", request.getParameter("count"));
+      return_to.add("album", request.getParameter("album"));
+      return_to.add("albmCount", request.getParameter("albmCount"));
+      output.add(return_to);
+    } else {
+      output = new XmlBuilder ("photos");
+      output.add(treatPhotoDISPLAY(request, submit));
+    }
+    
+    
+    return output.validate() ;
+  }
 	
-  protected static String treatPhotoSUBMIT(HttpServletRequest request,
-					   StringBuilder output)
+  @SuppressWarnings("unchecked")
+  protected static XmlBuilder treatPhotoSUBMIT(HttpServletRequest request,
+					       Boolean correct)
     throws WebPage.AccessorsException, HibernateException {
+    XmlBuilder output = new XmlBuilder(null) ;
     String photoID = StringUtil.escapeHTML(request.getParameter("id")) ;
     String theme = WebPage.getThemeID(request) ;
     String rq = null ;
-    Transaction tx = WebPage.session.beginTransaction();
+    Transaction tx = null ;
     try {
-      rq = "select ph from Album al, Photo ph " +
-	"where al.ID = ph.Album " +
-	"and al.Theme = '"+theme+"' " +
-	"and ph.ID = '"+photoID+"'" ;
+      //rechercher la photo
+      rq = "select ph from Album al, Photo ph" +
+	" where al.ID = ph.Album " +
+	" and ph.ID = '"+photoID+"'" +
+	(WebPage.isRootSession(request) ? "" : " and al.Theme = '"+theme+"' ") ;
+
       Photo enrPhoto = (Photo) WebPage.session.createQuery(rq).uniqueResult();
       rq = "done" ;
       
       if (enrPhoto == null) {
-	output.append("<i> Impossible de trouver cette photo "+
-		      "("+photoID+"/"+theme+")</i><br/>\n");
-	return null ;
+	correct = false ;
+	output.addException("Impossible de trouver cette photo "+
+			    "("+photoID+ (WebPage.isRootSession(request) ? "" : "/"+theme) +")");
+	return output.validate() ;
       }
-      
+
+      //supprimer ?
       String suppr = request.getParameter("suppr") ;
       if ("Oui je veux supprimer cette photo".equals(suppr)) {
-	
-	String msg = FilesFinder.deletePhoto (photoID, output) ;
-	output.append("<i>"+msg+"</i><br/>\n");
-	return null ;
+	XmlBuilder suppr_msg = new XmlBuilder("suppr_msg");
+	FilesFinder.deletePhoto (photoID, suppr_msg) ; 
+	output.add(suppr_msg);
+	return output.validate() ;
       }
-      
+
+      //mise à jour des tag/description
+      String user = request.getParameter("user") ;
       String desc = StringUtil.escapeHTML(request.getParameter("desc")) ;
-      enrPhoto.setDescription(desc) ;
+      String[] tags = request.getParameterValues("newTag");
       
-      String[] tags = request.getParameterValues("tags");
+      tx = WebPage.session.beginTransaction() ;
+
+      enrPhoto.updateDroit("null".equals(user) ? null : new Integer("0"+user)) ;
       enrPhoto.setTags(tags) ;
+      enrPhoto.setDescription(desc) ;
+
+      WebPage.session.update(enrPhoto);
+      tx.commit();
       
-      rq = "from Utilisateur" ;
-      List list = WebPage.session.createQuery(rq).list();
-      rq = "done" ;
-      
-      String[][] users = new String[list.size()][2] ;
-      Iterator it = list.iterator() ;
-      for (int i = 0; it.hasNext(); i++) {
-	Utilisateur user = (Utilisateur) it.next();
-	users[i][0] = user.getID().toString() ;
-	users[i][1] =
-	  StringUtil.escapeHTML(request.getParameter("user"+user.getID())) ;
-      }
-      enrPhoto.setUsers (users) ;
-      
+      //utiliser cette photo comme representante de l'album ?
       String represent = request.getParameter("represent") ;
       if ("y".equals(represent)) {
+	
 	rq = "from Album where id = '"+enrPhoto.getAlbum()+"'" ;
 	Album enrAlbum = (Album)  WebPage.session.createQuery(rq).uniqueResult();
 	rq = "done" ;
 	
 	if (enrAlbum == null) {
-	  output.append("Impossible d'accerder l'album à representer "+
-			"("+enrPhoto.getAlbum()+")<br/>"+rq+"<br/>\n");
-	} else {
-	  enrAlbum.setPicture(Integer.toString(enrPhoto.getID()));
-	}
-      }
-
-      String tagPhoto = request.getParameter("tagPhoto") ;
-      if (!"-1".equals(tagPhoto)) {
-	rq = "from TagTheme "+
-	  "where theme = "+WebPage.getThemeID(request) +
-	  " and tag = " + tagPhoto;
-	output.append(rq);
-	TagTheme enrTagTh =
-	  (TagTheme)  WebPage.session.createQuery(rq).uniqueResult() ;
-	rq = "done" ;
+	  output.addException("Exception", "Impossible d'acceder l'album à representer "+
+			      "("+enrPhoto.getAlbum()+")") ;
+	  return output.validate() ;
+	} 
+	tx = WebPage.session.beginTransaction() ;
 	
-	if (enrTagTh != null) {
-	  enrTagTh.setPhoto(enrPhoto.getID()) ;
-	} else {
-	  enrTagTh = new TagTheme() ;
-	  enrTagTh.setTheme (WebPage.getThemeID(request)) ;
-	  enrTagTh.setTag (tagPhoto) ;
-	  
-	  enrTagTh.setPhoto (enrPhoto.getID());
-	}
-	WebPage.session.saveOrUpdate(enrTagTh);
+	enrAlbum.setPicture(enrPhoto.getID());
+	WebPage.session.update(enrAlbum);
+	
+	tx.commit();
       }
-      tx.commit();
       
-      return "<b> Photo ("+enrPhoto.getID()+") "+
-	"correctement mise à jour !</b><br/><br/>\n";
+      //utiliser cette photo pour representer le tag de ce theme
+      String tagPhoto = StringUtil.escapeHTML(request.getParameter("tagPhoto")) ;
+      if (tagPhoto != null && !"-1".equals(tagPhoto)) {
+	rq = "from TagTheme "+
+	  "where tag = '" + tagPhoto + "'" +
+	  (WebPage.isRootSession(request) ? "" : " and theme = "+WebPage.getThemeID(request)) ;
+
+	String actualTheme ;
+	TagTheme enrTagTh = null ;
+	if (!WebPage.isRootSession(request)) {
+	  actualTheme = WebPage.getThemeID(request) ;
+	  
+	  enrTagTh = (TagTheme)  WebPage.session.createQuery(rq).uniqueResult() ;
+	  rq = "done" ;
+	} else {
+	  Iterator it = WebPage.session.createQuery(rq).iterate() ;
+
+	  rq = "select a.Theme from Album a where a.ID = "+enrPhoto.getAlbum() ;
+	  Integer itheme = (Integer) WebPage.session.createQuery(rq).uniqueResult() ;
+	  rq = "done" ;
+	  if (itheme == null) throw new NoSuchElementException("Album with ID="+enrPhoto.getAlbum());
+	  actualTheme = itheme.toString();
+	  
+	  while(it.hasNext()) {
+	    enrTagTh = (TagTheme) it.next() ;
+	    WebPage.log.info("tag th"+enrTagTh.getTheme()+" ta"+enrTagTh.getTag()) ;
+	    if (enrTagTh.getTheme() == itheme) {
+	      break ;
+	    }
+	  }
+
+	  if (enrTagTh.getTheme() != itheme) {
+	    enrTagTh = null ;
+	  }
+	}
+	  
+	if (enrTagTh == null) {
+	  rq = "from Tag where ID = '"+tagPhoto+"'" ;
+	  Tag enrTag = (Tag)  WebPage.session.createQuery(rq).uniqueResult() ;
+	  rq = "done" ;
+
+	  //creer un tagTheme pour cette photo/tag/theme
+	  enrTagTh = new TagTheme() ;
+
+	  enrTagTh.setTheme (actualTheme) ;
+	  enrTagTh.setTag (enrTag.getID()) ;
+	  //par défaut le tag est visible
+	  enrTagTh.setIsVisible(true) ;
+	}
+	//changer la photo representant ce tag/theme
+	enrTagTh.setPhoto(enrPhoto.getID()) ;
+
+	tx = WebPage.session.beginTransaction() ;
+	WebPage.log.info("saveOrUpdate "+enrTagTh);
+	WebPage.session.saveOrUpdate(enrTagTh);
+	tx.commit();
+      }
+            
+      output.add("message", " Photo ("+enrPhoto.getID()+") "+
+		 "correctement mise à jour !");
     } catch (JDBCException e) {
-      output.append("Impossible d'effectuer la modification de la photo "+
-		    "("+photoID+") => "+rq +"<br/>\n"+e+"<br/>\n"+
-		    e.getSQLException()+"<br/>\n");
-      tx.rollback();
-      return "EDIT" ;
+      e.printStackTrace() ;
+
+      output.cancel() ;
+      output.addException("JDBCException", "Impossible d'effectuer la modification de la photo "+
+			  "("+photoID+")") ;
+      output.addException("JDBCException", rq) ;
+      output.addException("JDBCException", e.getSQLException());
+
+      if (tx != null) tx.rollback();
+      correct = false ;
+      
     } catch (NoSuchElementException e) {
-      output.append("Impossible d'accerder à la photo à modifier "+
-		    "("+photoID+")<br/>"+rq+"<br/>\n");
-      tx.rollback();
-      return "EDIT" ;
+      e.printStackTrace() ;
+
+      output.cancel() ;
+      output.addException("NoSuchElementException", "Impossible d'accerder à la photo à modifier ("+photoID+")") ;
+      output.addException("NoSuchElementException", rq);
+      
+      if (tx != null) tx.rollback();
+      correct = false ;
     }
+    return output.validate() ;
   }	
 	
-  protected static void treatPhotoDISPLAY(HttpServletRequest request,
-					  StringBuilder output,
-					  String message)
+  protected static XmlBuilder treatPhotoDISPLAY(HttpServletRequest request, XmlBuilder submit)
     throws HibernateException {
+    XmlBuilder output = new XmlBuilder(null);
     //afficher les photos
     //afficher la liste des albums de cet theme
-    String album = StringUtil.escapeHTML(request.getParameter("album")) ;
+    String albumID = StringUtil.escapeHTML(request.getParameter("album")) ;
     String page = StringUtil.escapeHTML(request.getParameter("page")) ;
     String albmCount = StringUtil.escapeURL(request.getParameter("albmCount")) ;
+    String special = request.getParameter("special") ;
     page = (page == null ? "0" : page);
     
     Album enrAlbum = null ;
     String rq = null ;
     try {
-      rq = "from Album " +
-	"where id = '"+album+"' "+
-	"and id in ("+WebPage.listAlbumAllowed(request)+")" ;
+      rq = "FROM Album a " +
+	"WHERE a.ID = '"+albumID+"' " +
+	"AND "+WebPage.restrictToAlbumsAllowed(request, "a")+" " +
+	"AND "+WebPage.restrictToThemeAllowed(request, "a")+" " ;
       
       enrAlbum = (Album) WebPage.session.createQuery(rq).uniqueResult();
       rq = "done" ;
       
       if (enrAlbum == null) {
-	output.append("L'album ("+album+") n'existe pas dans la base "+
-		      "ou n'est pas accessible...<br/>\n") ;
-	return ;
+    	output.addException("L'album ("+albumID+") n'existe pas "+
+			    "ou n'est pas accessible...") ;
+	return output.validate();
       }
-      
-      output.append("<b><center>"+enrAlbum.getNom()+"</center> </b></br>\n"+
-		    "<i><center>"+enrAlbum.getDescription()+"</center>"+
-		    "</i></br>\n");
-      
-      
-      rq = "from Photo " +
-	"where album = '"+album+"' " +
-	"and id in ("+WebPage.listPhotoAllowed(request)+")"+
-	"order by path" ;
+      XmlBuilder album = new XmlBuilder ("album") ;
+      output.add(album) ;
+
+      album.add("id",enrAlbum.getID()) ;
+      album.add("count",albmCount) ;
+      album.add("title",enrAlbum.getNom()) ;
+      album.add(WebPage.getUserName(enrAlbum.getDroit())) ;
+      album.add(StringUtil.xmlDate(enrAlbum.getDate(), null)) ;
+      album.add(new XmlBuilder("details")
+		.add("description",enrAlbum.getDescription())
+		.add("photoID",enrAlbum.getPicture())) ;
+
+      rq = "FROM Photo p " +
+	" WHERE p.Album = '"+albumID+"' " +
+      	" AND "+WebPage.restrictToPhotosAllowed(request, "p")+" " +
+	" ORDER BY path" ;
       
       Query query = WebPage.session.createQuery(rq);
       query.setReadOnly(true).setCacheable(true) ;
-      String pageGet = ""+Path.LOCATION+"Photos?"+
-	"album="+album+"&albmCount="+albmCount ;
-      display.Photos.displayPhoto(query, output, request, message, pageGet, albmCount);
-			
-      output.append("<br/>\n");
-      String from = ""+Path.LOCATION+"Albums" ;
-      output.append("<a href='"+from+"?count="+albmCount+"#"+album+"'>"+
-		    "Retour aux albums</a>\n");
+
+      if ("FULLSCREEN".equals(special)) {
+	SystemTools.fullscreen(query, "Albums", enrAlbum.getID().toString(), page, request);
+      }
+      
+      XmlBuilder thisPage = new XmlBuilder(null);
+      thisPage.add("name", "Photos");
+      thisPage.add("album", albumID);
+      thisPage.add("albmCount", albmCount) ;
+      output.add(display.Photos.displayPhoto(query, request, thisPage, albmCount, submit));
       
     } catch (NullPointerException e) {
-      output.append("Quelque chose n'existe pas ... "+e+"<br/>\n") ;
+      e.printStackTrace() ;
+      output.cancel() ;
+      output.addException("NullPointerException","Quelque chose n'existe pas ... "+e) ;
     } catch (JDBCException e) {
-      output.append("Il y a une erreur dans la requete : "+rq+"<br/>\n"+
-		    e+"<br/>\n"+e.getSQLException()+"<br/>\n") ;
+      e.printStackTrace() ;
+      output.cancel() ;
+      output.addException("JDBCException", "Il y a une erreur dans la requete : "+rq);
+      output.addException("JDBCException", e.getSQLException()) ;
     }
+    return output.validate() ;
   }
 }

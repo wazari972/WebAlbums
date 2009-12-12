@@ -3,24 +3,20 @@ package display;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import constante.Path;
-
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Query;
 
 import util.StringUtil;
+import util.XmlBuilder;
 
 import engine.WebPage ;
-
-import engine.Index ;
 
 public class Periode extends HttpServlet {
   private static final long serialVersionUID = 1L;
@@ -37,9 +33,9 @@ public class Periode extends HttpServlet {
     doGet(request, response) ;
   }
   
-  public static void treatPERIODE(HttpServletRequest request,
-				     StringBuilder output)
+  public static XmlBuilder treatPERIODE(HttpServletRequest request)
     throws HibernateException {
+	  XmlBuilder output = new XmlBuilder("periode") ;
     String year = StringUtil.escapeHTML(request.getParameter("year")) ;
     String month = StringUtil.escapeHTML(request.getParameter("month")) ;
     String debut = StringUtil.escapeHTML(request.getParameter("debut")) ;
@@ -47,18 +43,16 @@ public class Periode extends HttpServlet {
     String page = request.getParameter("page") ;
     
     //memoriser les params de lURL pour pouvoir revenir
-    String from = Path.LOCATION+"Periode?" ;
+    String from = "Periode?" ;
     if (year != null) from += "&year="+year ;
     if (month != null) from += "&month="+month ;
     if (debut != null) from += "&debut="+debut ;
     if (fin != null) from += "&fin="+fin ;
-    String pageGet = from ;
     if (page != null) from += "&page="+page ;
     request.getSession().setAttribute("from", from) ;
     
     String rq = null ;
     try {
-      StringBuilder out = new StringBuilder () ;
       String desc ;
       if (debut == null) {
 	if (year == null) {
@@ -107,28 +101,30 @@ public class Periode extends HttpServlet {
 	  "Periode negative ! (from "+debut+" to "+fin+")") ;
       }
       
-      output.append("<b>Liste des albums "+desc+"</b><br/><br/>\n");
+      output.add("descr", desc);
       
-      rq = "from Album " +
-	"where date between '"+debut+"' and '"+fin+"' " +
-	"and id in ("+WebPage.listAlbumAllowed(request)+")"+
-	"order by Date ";
+      rq = "FROM Album a " +
+	"WHERE a.Date BETWEEN '"+debut+"' AND '"+fin+"' " +
+	"AND "+WebPage.restrictToAlbumsAllowed(request, "a")+" " +
+	"AND "+WebPage.restrictToThemeAllowed(request, "a")+" " +
+	"ORDER BY Date ";
       
       Query query = WebPage.session.createQuery(rq);
       rq = "done" ;
       
-      Albums.displayAlbum(query, output, request, null, pageGet);		
-      
-      output.append(out.toString()) ;
+      Albums.displayAlbum(query, output, request, null, new XmlBuilder(null));		
     } catch (NumberFormatException e) {
-      output.append("Impossible de comprendre ces dates ! => "+e+"<br/>\n") ;
+      e.printStackTrace() ;
+      output.addException("NumberFormatException","Impossible de comprendre ces dates !") ;
     } catch (ParseException e) {
-      output.append("Format de date incorrect... "+e) ;
+      e.printStackTrace() ;
+      output.addException("ParseException", "Format de date incorrect... ") ;
     } catch (JDBCException e) {
-      output.append("Impossible de faire la recherche => "+rq+"<br/>\n"+
-		    e+"<br/>\n"+e.getSQLException()+"<br/>\n");
+    	e.printStackTrace() ;
+    	
+      output.addException("JDBCException", rq) ;
+      output.addException("JDBCException", e.getSQLException());
     }
-    output.append("<br/>\n<a href='/WebAlbums/servlet/display.Choix'>"+
-		  "Retour aux choix</a>\n");
+    return output.validate();
   }  
 }

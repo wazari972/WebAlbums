@@ -15,6 +15,8 @@ import java.io.Serializable;
  * @hibernate.class
  *  table="Geolocalisation"
  */
+
+@SuppressWarnings("serial")
 public abstract class BaseGeolocalisation  implements Serializable {
 
 	public static String PROP_LAT = "Lat";

@@ -13,12 +13,12 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.classic.Session;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
 import org.hibernate.Transaction;
 import org.hibernate.SessionFactory;
 
 import org.hibernate.cfg.Configuration;
-import org.hibernate.expression.Expression;
-import org.hibernate.expression.Order;
 import org.hibernate.type.Type;
 
 /**
@@ -26,6 +26,7 @@ import org.hibernate.type.Type;
  * For more information or documentation, visit The Hibernate Synchronizer page
  * at http://www.binamics.com/hibernatesync or contact Joe Hudson at joe@binamics.com.
  */
+@SuppressWarnings({ "unchecked", "deprecation" })
 public abstract class _BaseRootDAO {
 
 	protected static Map sessionFactoryMap = new HashMap();
@@ -65,7 +66,6 @@ public abstract class _BaseRootDAO {
 	/**
 	 * Set the session factory
 	 */
-	@SuppressWarnings("unchecked")
 	protected static void setSessionFactory (String configFileName, SessionFactory sessionFactory) {
 		sessionFactoryMap.put(configFileName, sessionFactory);
 	}
@@ -114,7 +114,6 @@ public abstract class _BaseRootDAO {
 	 * @param configFile the config file must match the meta attribute "config-file" in the hibernate mapping file
 	 * @return the active Session
 	 */
-	@SuppressWarnings("unchecked")
 	public static Session createSession(String configFile) throws HibernateException {
 		java.util.Stack sessionStack = (java.util.Stack) threadedSessions.get();
 		Session session = null;

@@ -15,6 +15,8 @@ import java.io.Serializable;
  * @hibernate.class
  *  table="Theme"
  */
+
+@SuppressWarnings("serial")
 public abstract class BaseTheme  implements Serializable {
 
 	public static String PROP_ID = "ID";

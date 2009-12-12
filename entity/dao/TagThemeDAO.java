@@ -10,5 +10,5 @@ import entity.base.BaseTagPhotoDAO;
  * This is the object class that relates to the TagPhoto table.
  * Any customizations belong here.
  */
-public class TagPhotoDAO extends BaseTagPhotoDAO {
+public class TagThemeDAO extends BaseTagPhotoDAO {
 }

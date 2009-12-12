@@ -1,20 +1,17 @@
 package engine;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.text.SimpleDateFormat;
 
-import java.util.Map ;
-import java.util.HashMap ;
 import java.util.List ;
 import java.util.ArrayList ;
 import java.util.Iterator ;
+import java.util.Collections ;
 
 import java.io.IOException;
-
+import java.util.NoSuchElementException;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -23,27 +20,27 @@ import org.apache.log4j.SimpleLayout;
 import constante.Path;
 import entity.*;
 
-import engine.GooglePoint.Point ;
 
-import org.hibernate.Transaction;
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Query;
-import org.hibernate.stat.Statistics;
 
 import util.HibernateUtil;
-import util.StringUtil;
+import util.XmlBuilder;
+import util.google.GooglePoint;
+import util.google.GooglePoint.Point;
 
 public class WebPage {
   public enum Page {PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT} 
   public enum Type {PHOTO, ALBUM}
-  public enum Box  {NONE, MULTIPLE, LIST, MAP} ;
-  public enum Mode {USER, TAG_USED, TAG_NUSED, TAG_ALL, TAG_NONE, TAG_GEO} ;
+  public enum Box  {NONE, MULTIPLE, LIST, MAP, MAP_SCRIPT} 
+  public enum Mode {TAG_USED, TAG_NUSED, TAG_ALL, TAG_NEVER, TAG_GEO} ;
   
   private static final long serialVersionUID = -8157612278920872716L;
-  public static final Logger log = Logger.getLogger("WebAlbum");
-  public static final Logger stat = Logger.getLogger("Stats");
+  public static final Logger log = Logger.getLogger("WebAlbums");
+  public static final Logger fatal = Logger.getLogger("Fatal");
+  
   public static final SimpleDateFormat DATE_STANDARD =
     new SimpleDateFormat("yyyy-MM-dd");
   public static final SimpleDateFormat DATE_FRANCE =
@@ -51,10 +48,7 @@ public class WebPage {
   public static final SimpleDateFormat DATE_HEURE =
     new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
   
-  public static final Map<HttpServletRequest, Header> hash =
-    new HashMap<HttpServletRequest, Header> () ;
-
-  public static final String USER_CHEAT = "-1" ;
+  public static final String USER_CHEAT = "0" ;
   
   public static final int TAILLE_PHOTO = 10;
   public static final int TAILLE_ALBUM = 15;
@@ -68,105 +62,72 @@ public class WebPage {
       log.setLevel(Level.ALL);
       log.addAppender(new FileAppender(
 			new SimpleLayout(),
-			"/"+Path.TMP+"/WebPage.log"));
-      stat.setLevel(Level.ALL);
-      stat.addAppender(new FileAppender(
-			 new SimpleLayout(),
-			 "/"+Path.TMP+"/stat.log"));
+			Path.getTempDir()+"/WebPage.log"));
+      
+      fatal.setLevel(Level.ALL);
+      fatal.addAppender(new FileAppender(
+			new SimpleLayout(),
+			Path.getTempDir()+"/Fatal.log"));
+      
     } catch (IOException e) {
       e.printStackTrace();
-    } catch (HibernateException e) {
-      e.printStackTrace();
-    } 
-  }
-
-  public static void updateLogInformation (HttpServletRequest request, StringBuilder output)
-    throws HibernateException {
-    String rq = null ;
-    String themeName = request.getParameter("themeName");
-    String userName = request.getParameter("userName");
-    if (themeName != null) {
-      try {
-	rq = "from Theme where nom = '"+themeName+"'" ;
-	Theme enrTheme = (Theme) session.createQuery(rq).uniqueResult ();
-	rq = "done" ;
-	
-	if (enrTheme == null) {
-	  output.append("<i>Impossible de trouver ce theme "+
-			"("+themeName+")</i><br/>\n");
-	}
-	saveTheme (request, enrTheme) ;
-	
-      } catch (JDBCException e) {
-	output.append("<br/><i>Impossible d'executer la requete </i>"+
-		      "=> "+rq+"<br/>\n"+e+"<br/>\n"+
-		      e.getSQLException()+"<br/>\n");
-      } 
     }
-
-    if (userName != null) {
-      try {
-	rq = "from Utilisateur where nom = '"+userName+"'" ;
-	Utilisateur enrUtilisateur = (Utilisateur) session.createQuery(rq).uniqueResult();
-	rq = "done" ;
-	
-	if (enrUtilisateur == null) {
-	  output.append("<i>Impossible de trouver cet utilisateur "+
-			"("+userName+")</i><br/>\n");
-	} else {
-	  Users.saveUser(request, enrUtilisateur, null);
-	}
-      } catch (JDBCException e) {
-	output.append("<br/><i>Impossible d'executer la requete </i>"+
-		      "=> "+rq+"<br/>\n"+e+"<br/>\n"+
-		      e.getSQLException()+"<br/>\n");
-      }
-    }
-    saveEditionMode(request);
-    saveDetails(request) ;
-    saveMaps(request) ;
   }
   
-  public static String listPhotoAllowed(HttpServletRequest request) {
-    String user = engine.Users.getUser(request) ;
+  public static String restrictToPhotosAllowed(HttpServletRequest request, String photo) {
     String rq = null ;
-    
-    if (isLoggedAsCurrentManager(request)) {
-      rq = "select ph.ID from Photo ph" ;
-    } else {
-      rq = "select ph.ID from Photo ph " +
-	"where " +
-	//photo non masqué dans les albums autorisé
-	"(" +
-	"  ph.Album in ("+
-	"    select ua.Album from UserAlbum ua where ua.User = '"+user+
-	"' ) "+
-	"  and ph.ID not in ("+
-	"    select up.Photo from UserPhoto up where up.User = '"+user+
-	"' )" +
-	") "+
-	"or " +
-	//photo autorisé dans les albums masqué
-	"ph.ID in (select p.ID "+
-	"from Album a, Photo p "+
-	"where "+
-	"a.ID = p.Album and "+
-	"a.ID not in ( "+
-	//liste des albums autorisés
-	"    select usrA.Album "+
-	"    from UserAlbum usrA "+
-	"    where usrA.User = "+user+" "+
-	") " + 
-	"and " +
-	"p.ID in (" +
-	//liste des photos avec status inverse
-	"	select usrP.Photo " +
-	"	from UserPhoto usrP " +
-	"	where usrP.User = '"+user+"'" +
-	")" +
-	")";
+
+    rq = "SELECT p.ID "+
+      " FROM Photo p, Album a "+
+      " WHERE p.Album = a.ID " ;
+    if (Users.getUserID(request) != USER_CHEAT) {
+      rq += " AND ("+ 
+	//albums autorisé
+	"((p.Droit = 0 OR p.Droit is null) AND a.Droit >= '"+Users.getUserID(request)+"') "+
+	"OR "+
+	//albums ayant au moins une photo autorisée
+	"(p.Droit >= '"+Users.getUserID(request)+"')" +
+	")" ;
     }
-    try {
+
+    rq = " "+photo+".ID IN ("+ processListID(request, rq, true)+") " ;
+    return rq ;
+  }
+
+  public static String restrictToAlbumsAllowed(HttpServletRequest request, String album) {
+    String rq = null ;
+    if (Users.getUserID(request) == USER_CHEAT) {
+      rq = "SELECT a.ID FROM Album a WHERE 1 = 1 " ;
+    }
+    else {
+      rq = "SELECT a.ID "+
+	"FROM Album a, Photo p "+
+	"WHERE a.ID = p.Album AND ("+ 
+	//albums autorisé
+	"((p.Droit = 0 OR p.Droit is null) AND a.Droit >= '"+Users.getUserID(request)+"') "+
+	"OR "+
+	//albums ayant au moins une photo autorisée
+	"(p.Droit >= '"+Users.getUserID(request)+"')" +
+	") " ;
+    }
+    rq = " "+album+".ID IN ("+processListID(request, rq, true)+") " ;
+    return rq ;
+  }
+
+  public static String restrictToThemeAllowed (HttpServletRequest request, String album) {
+    if (isRootSession(request)) return " 1 = 1" ;
+    else return " "+album+".Theme = '"+getThemeID(request)+"' " ;
+  }
+  
+  @SuppressWarnings("unchecked")
+private static String processListID(HttpServletRequest request, String rq, boolean restrict) {
+    boolean EXEC = false ;
+
+    if (restrict && !isRootSession(request)) {
+      rq += " AND "+WebPage.restrictToThemeAllowed(request, "a")+" " ;
+    }
+    
+    if (EXEC) {
       StringBuilder str = new StringBuilder() ;
       Query query = session.createQuery(rq) ;
       rq = "done" ;
@@ -177,183 +138,111 @@ public class WebPage {
 	str.append(it.next() + ", ");
       }
       str.append("-1");
+      
       return str.toString();
-    } catch (Exception e) {
-      return "" ;
-    }
-    //return rq;
-  }
-  
-
-  public static String listAlbumAllowed(HttpServletRequest request) {
-    String user = engine.Users.getUser(request) ;
-    String rq = null ;
-    if (isLoggedAsCurrentManager(request)) {
-      rq = "select al.ID from Album al " ;
-    }
-    else {
-      rq = "select al.ID from Album al " +
-	"where " +
-	//albums autorisés
-	"al.ID in ("+
-	"  select ua.Album from UserAlbum ua where ua.User = '"+user+
-	"')" +
-	" or " +
-	// albums ayant des photos autorisés dans un album masqué
-	"al.ID in (select p.Album "+
-	"from Album a, Photo p "+ 
-	"where "+
-	"a.ID = p.Album and "+
-	// liste des albums NON autorisés
-	"a.ID not in ( "+
-	"    select usrA.Album "+
-	"    from UserAlbum usrA "+
-	"    where usrA.User = '"+user+"' "+
-	") " +
-	"and " +
-	"p.ID in (" +
-	//liste des photos avec status inverse
-	"	select usrP.Photo " +
-	"	from UserPhoto usrP " +
-	"	where usrP.User = '"+user+"'" +
-	"  )" +
-	")" ;
-    }
-    try {
-      StringBuilder str = new StringBuilder() ;
-      Query query = session.createQuery(rq) ;
-      rq = "done" ;
-      query.setReadOnly(true).setCacheable(true);
-      Iterator it = query.iterate() ;
-      while (it.hasNext()) {
-	str.append(it.next()+ ", ");
-      }
-      str.append("-1");
-      return str.toString();
-    } catch (Exception e) {
-      return "" ;
-    }
-    //return rq;
-  }
-  
-  
-  
-  public static boolean isLoggedAsCurrentManager(HttpServletRequest request) {
-    String logedID  = (String) request.getSession().getAttribute("LogInID") ;
-    
-    try {
-      return logedID.equals(USER_CHEAT) ;
-    } catch (NullPointerException e) {
-      return false ;
-    }
-  }
-  
-
-  public static boolean isLoggedAsCurrentManager(HttpServletRequest request,
-						 StringBuilder output) {
-    if (isLoggedAsCurrentManager(request)) {
-      return true ;
     } else {
-      output.append("<i>Vous n'êtes pas le manager de ce theme !</i>"+
-		    "<br/><br/>\n");
-      return false ;
+      return rq;
     }
   }
-  
-  protected static String tryToSaveTheme(HttpServletRequest request,
-					 StringBuilder output,
-					 String theme)
+    
+  //look for the theme which ID is themeID in the DB and log it if possible
+  //return themeID if OK or null in case of error
+  protected static String tryToSaveTheme(HttpServletRequest request)
     throws HibernateException {
-    //String theme = request.getParameter("theme") ;
-    if (theme == null) {
-      //pas de nouvelles informations
-      return (String) request.getSession().getAttribute("ThemeID");
+    
+    boolean autologging = false ;
+    String themeID = request.getParameter("theme") ;
+    if (themeID == null) {
+      themeID = Path.autoLogin() ;    
+      if (themeID == null) return null ;
+      autologging = true ;
     }
+
+    String currentThemeID = getThemeID(request) ;
+    if (themeID.equals(currentThemeID)) return themeID ;
+    
     String rq = null ;
     //memoriser le nom de l'auteur
     try {
-      Session session = HibernateUtil.currentSession();
-      rq = "from Theme where id='"+theme+"'" ;
+      rq = "FROM Theme WHERE id='"+themeID+"'" ;
       Theme enrTheme = (Theme) session.createQuery(rq).uniqueResult() ;
       rq = "done" ;
 
       if (enrTheme == null) {
-	output.append("<i>Ce theme ("+theme+") n'existe pas ...</i><br/>\n");
+	WebPage.log.warn("Ce theme ("+themeID+") n'existe pas ...");
 	return null;
       }
+
+      String savedID = saveTheme (request, enrTheme);
       
-      saveTheme (request, enrTheme);
+      if (autologging) {
+	Users.saveUser(request, null, null, true);
+      }
+      return savedID ;
+
     } catch (JDBCException e) {
-      output.append("<br/><i>Impossible d'executer la requete </i>"+
-		    "=> "+rq+"<br/>\n"+e+"<br/>\n"+
-		    e.getSQLException()+"<br/>\n");
+      e.printStackTrace() ;
+      
+      WebPage.log.warn("Impossible d'executer la requete => "+rq) ;
+      WebPage.log.warn(e.getSQLException());
       return null ;
     }
-    return theme ;
   }
-
-  protected static void saveTheme(HttpServletRequest request,
+  
+  protected static String saveTheme(HttpServletRequest request,
 				  Theme enrTheme) {
     String oldID = (String) request.getSession().getAttribute("ThemeID");
     String newID = Integer.toString(enrTheme.getID()) ;
 
-    if (!newID.equals(oldID) && isLoggedAsCurrentManager(request)) {
+    if (!newID.equals(oldID) && Users.isLoggedAsCurrentManager(request)) {
       Users.clearUser(request);
     }
+    
+    log.info("saveTheme ("+enrTheme.getNom()+"-"+newID+")");
     request.getSession().setAttribute("ThemeName", enrTheme.getNom()) ;
     request.getSession().setAttribute("ThemeID", newID) ;
     request.getSession().setAttribute("EditionMode", EditMode.NORMAL) ;
-  }
-  
-  public static String getThemeID(HttpServletRequest request) {
-    String theme = request.getParameter("theme") ;
-    if (theme != null) {
-      try {
-	tryToSaveTheme(request, new StringBuilder(), theme) ;
-      } catch (HibernateException e) {}
-    } else {
-      theme = (String) request.getSession().getAttribute("ThemeID");
-    }
-    
-    return theme ;
-  }
-  
-  public static boolean isReadOnly() {
-      return Path.isReadOnly() ;
-  }
 
+    return newID ;
+  }
+  
+  public static String getThemeID(HttpServletRequest request)
+    throws HibernateException {
+    return (String) request.getSession().getAttribute("ThemeID");
+  }
+  
   public static boolean isRootSession (HttpServletRequest request) {
-    return getThemeID(request).equals("-1"); 
+    return "-1".equals(getThemeID(request)); 
   }
 
   public static String getThemeName(HttpServletRequest request) {
     return (String) request.getSession().getAttribute("ThemeName");
   }
   
-  public static void displayMapIn(HttpServletRequest request,
-				  StringBuilder str, String info)
+  public static XmlBuilder displayMapInBody(HttpServletRequest request,
+					  String name, String info)
     throws HibernateException {
-    displayListLBNI(Mode.TAG_USED, request, str, null, Box.MAP, null, info) ;
+    return displayListLBNI(Mode.TAG_USED, request, null, Box.MAP, name, info) ;
+  }
+  public static XmlBuilder displayMapInScript(HttpServletRequest request,
+					      String name, String info)
+    throws HibernateException {
+    XmlBuilder output = displayListLBNI(Mode.TAG_USED, request, null, Box.MAP_SCRIPT, name, info) ;
+    return output ;
   }
 
-  public static void displayMapId(HttpServletRequest request,
-				  StringBuilder str,
-				  int id) throws HibernateException {
-    displayListIBT(Mode.TAG_USED, request, str, id, Box.MAP, Type.ALBUM) ;
-  }
   
   //display a list into STR
   //according to the MODE
   //and the information found in the REQUEST.
   //List made up of BOX items,
   //and is named NAME
-  public static void displayListBN(Mode mode,
+  public static XmlBuilder displayListBN(Mode mode,
 				   HttpServletRequest request,
-				   StringBuilder str,
 				   Box box,
 				   String name)
     throws HibernateException {
-    displayListLBNI(mode, request, str, null, box, name, null) ;
+    return displayListLBNI(mode, request, null, box, name, null) ;
   }
   
   //display a list into STR
@@ -361,19 +250,12 @@ public class WebPage {
   //and the information found in REQUEST.
   //List is made up of BOX items
   //and is named with the default name for this MODE
-  public static void displayListB(Mode mode,
+  public static XmlBuilder displayListB(Mode mode,
 				  HttpServletRequest request,
-				  StringBuilder str,
 				  Box box)
     throws HibernateException {
-    displayListLBNI(mode, request, str, null, box,
-		    (mode == Mode.TAG_USED
-		     || mode == Mode.TAG_NUSED
-		     || mode == Mode.TAG_ALL
-		     || mode == Mode.TAG_NONE
-		     || mode == Mode.TAG_GEO ?
-		     "tags" : (mode == Mode.USER ? "users" : "???")),
-		    null) ;
+    return displayListLBNI(mode, request, null, box,
+			   "tags", null) ;
   }
   
   //display a list into STR
@@ -382,22 +264,16 @@ public class WebPage {
   //List is made up of BOX items
   //and is named with the default name for this MODE
   //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
-  //if type is ALBUM, infon (MODE) related to the album #ID are put in the list
-  public static void displayListIBT(Mode mode,
-				    HttpServletRequest request,
-				    StringBuilder str,
-				    int id,
-				    Box box,
-				    Type type)
+  //if type is ALBUM, info (MODE) related to the album #ID are put in the list
+  public static XmlBuilder displayListIBT(Mode mode,
+					  HttpServletRequest request,
+					  int id,
+					  Box box,
+					  Type type)
     throws HibernateException {
-    displayListIBTNI(mode, request, str, id, box, type,
-		     (mode == Mode.TAG_USED
-		      || mode == Mode.TAG_NUSED
-		      || mode == mode.TAG_ALL
-		      || mode == Mode.TAG_NONE
-		      || mode == Mode.TAG_GEO
-		      ? "tags" : (mode == Mode.USER ? "users" : "???")),
-		     null) ;
+    return displayListIBTNI(mode, request, id, box, type,
+			    null,
+			    null) ;
   }
   
   //display a list into STR
@@ -405,20 +281,13 @@ public class WebPage {
   //and the information found in REQUEST.
   //List is made up of BOX items
   //and is filled with the IDs 
-  public static void displayListLB(Mode mode,
-				   HttpServletRequest request,
-				   StringBuilder str,
-				   List<Integer> ids,
-				   Box box)
+  public static XmlBuilder displayListLB(Mode mode,
+					 HttpServletRequest request,
+					 List<Integer> ids,
+					 Box box)
     throws HibernateException {
-    displayListLBNI(mode, request, str, ids, box,
-		    (mode == Mode.TAG_USED
-		     || mode == Mode.TAG_NUSED
-		     || mode == mode.TAG_ALL
-		     || mode == Mode.TAG_NONE
-		     || mode == Mode.TAG_GEO ?
-		     "tags" : (mode == Mode.USER ? "users" : "???")),
-		    null) ;
+    return displayListLBNI(mode, request, ids, box,
+			   "tags", null) ;
   }
   
   
@@ -430,108 +299,61 @@ public class WebPage {
   //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
   //if type is ALBUM, info (MODE) related to the album #ID are put in the list
   @SuppressWarnings("unchecked")
-  public static void displayListIBTNI(Mode mode,
-				      HttpServletRequest request,
-				      StringBuilder str,
-				      int id,
-				      Box box,
-				      Type type,
-				      String name,
-				      String info)
+  public static XmlBuilder displayListIBTNI(Mode mode,
+					    HttpServletRequest request,
+					    int id,
+					    Box box,
+					    Type type,
+					    String name,
+					    String info)
     throws HibernateException {
     String rq = null ;
     try {
-      List<Integer> ids ;
+      List<Integer> ids = null ;
       if (type == Type.PHOTO) {
-	if (mode == Mode.TAG_USED
-	    || mode == Mode.TAG_NUSED
-	    || mode == mode.TAG_ALL
-	    || mode == Mode.TAG_NONE
-	    || mode == Mode.TAG_GEO) {
-	  rq = "from TagPhoto " +
-	    "where photo = '"+id+"'" ;
-	  Query query = session.createQuery(rq) ;
-	  rq = "done" ;
-	  query.setReadOnly(true).setCacheable(true);
-	  List list = query.list();
-	  
-	  ids= new ArrayList<Integer>(list.size()) ;
-	  for (Object o : list) {
-	    TagPhoto tag = (TagPhoto) o ;
-	    ids.add(tag.getTag()) ;
-	  }
-	} else if (mode == Mode.USER){
-	  //liste des utilisateurs autorisé à voir une photo
-	  rq = "select u.ID " +
-	    "from Utilisateur u " +
-	    "where ("+
-	    "	u.ID not in (select up.User from UserPhoto up "+
-	    "                 where up.Photo = '"+id+"')" +
-	    "	and u.ID in (select ua.User from UserAlbum ua, Photo p "+
-	    "                 where p.ID = '"+id+"' and p.Album = ua.Album)" +
-	    ") or (" +
-	    "	u.ID not in (select ua.User from UserAlbum ua, Photo p "+
-	    "                 where p.ID = '"+id+"' and p.Album = ua.Album)" +
-	    "	and u.ID in (select up.User from UserPhoto up "+
-	    "                 where up.Photo = '"+id+"')" +
-	    ")" ;
-	  
-	  Query query = session.createQuery(rq) ;
-	  rq = "done" ;
-	  query.setReadOnly(true).setCacheable(true);
-	  ids = (List<Integer>) query.list();
-	  	  
-	} else {
-	  ids = null ;
+	rq = "from TagPhoto " +
+	  "where photo = '"+id+"'" ;
+	Query query = session.createQuery(rq) ;
+	rq = "done" ;
+	query.setReadOnly(true).setCacheable(true);
+	List list = query.list();
+	
+	ids= new ArrayList<Integer>(list.size()) ;
+	for (Object o : list) {
+	  TagPhoto tag = (TagPhoto) o ;
+	  ids.add(tag.getTag()) ;
 	}
       } else if (type == Type.ALBUM){
+	rq = "SELECT DISTINCT tp " +
+	  "FROM Photo photo, TagPhoto tp " +
+	  "WHERE photo.Album = '"+id+"' " +
+	  "AND photo.ID = tp.Photo " ;
+	Query query = session.createQuery(rq) ;
+	rq = "done" ;
+	query.setReadOnly(true).setCacheable(true);
+	List list = query.list();
 	
-	if (mode == Mode.TAG_USED
-	    || mode == Mode.TAG_NUSED
-	    || mode == mode.TAG_ALL
-	    || mode == Mode.TAG_NONE
-	    || mode == Mode.TAG_GEO) {
-	  rq = "select tp " +
-	    "from Photo photo, TagPhoto tp " +
-	    "where photo.Album = '"+id+"' " +
-	    "and photo.ID = tp.Photo " +
-	    "group by tp.Tag" ;
-	  Query query = session.createQuery(rq) ;
-	  rq = "done" ;
-	  query.setReadOnly(true).setCacheable(true);
-	  List list = query.list();
-	  
-	  ids = new ArrayList<Integer>(list.size()) ;
-	  for (Object o : list) {
-	    TagPhoto user = (TagPhoto) o ;
-	    ids.add(user.getTag()) ;
-	  }
-	} else if (mode == Mode.USER) {
-	  //list des utilisateur autorisé d'un album
-	  rq = "select ua from UserAlbum ua where ua.Album = '"+id+"'" ;
-	  Query query = session.createQuery(rq) ;
-	  rq = "done" ;
-	  query.setReadOnly(true).setCacheable(true);
-	  List list = query.list();
-	  ids = new ArrayList<Integer>(list.size()) ;
-	  for (Object o : list) {
-	    UserAlbum ua = (UserAlbum) o ;
-	    ids.add(ua.getUser()) ;
-	  }
-	} else {
-	  ids = null ;
+	ids = new ArrayList<Integer>(list.size()) ;
+	for (Object o : list) {
+	  TagPhoto tagPhoto = (TagPhoto) o ;
+	  ids.add(tagPhoto.getTag()) ;
 	}
-	
-      } else {
-	ids = null ;
       }
-      displayListLBNI(mode, request, str, ids, box, name, info) ;
+      return displayListLBNI(mode, request, ids, box, name, info)
+	.addAttribut("box", box)
+	.addAttribut("type", type)
+	.addAttribut("id", id) 
+      	.addAttribut("mode", mode);
     } catch (JDBCException e) {
-      str.append("Il y a une erreur dans la requete : "+rq+"<br/>\n"
-		 +e+"<br/>\n" +e.getSQLException()+"<br/>\n") ;
+      XmlBuilder output = new XmlBuilder(name != null ? name : "listBuilder") ;
+      e.printStackTrace() ;
+      output.addException("JDBCException",rq);
+      output.addException("JDBCException",e.getSQLException()) ;
+      return output.validate() ;
     }
   }
   
+  @SuppressWarnings("unchecked")
   //display a list into STR
   //according to the MODE
   //and the information found in REQUEST.
@@ -540,422 +362,311 @@ public class WebPage {
   //Only IDS are added to the list
   //Mode specific information can be provide throug info (null otherwise)
   //(used by Mode.MAP for the link to the relevant address)
-  public static void displayListLBNI(Mode mode,
-				     HttpServletRequest request,
-				     StringBuilder str,
-				     List<Integer> ids,
-				     Box box,
-				     String name,
-				     String info
-    ) throws HibernateException {	
+  public static XmlBuilder displayListLBNI(Mode mode,
+					   HttpServletRequest request,
+					   List<Integer> ids,
+					   Box box,
+					   String name,
+					   String info)
+    throws HibernateException {
+    XmlBuilder xmlResult = null ;
     String rq = null ;
-    String themeID = getThemeID(request) ;
-    String userID = engine.Users.getUser(request) ;
     try {
-      List list ;
-      //affichage de la liste des tags
-      if (mode == Mode.TAG_USED
-	  || mode == Mode.TAG_NUSED
-	  || mode == mode.TAG_ALL
-	  || mode == Mode.TAG_NONE
-	  || mode == Mode.TAG_GEO) {	
-	//afficher que les tags où il y aura des photos
-	rq =
-	  "from Tag t0 where "+
-	  "t0.ID in ("+
-	  // Tags des photos autorisés dans album autorisé
-	  "  select t1.ID "+
-	  "  from Album a1, Photo p1, Tag t1, TagPhoto tp1 "+
-	  "  where "+
-	  "  a1.ID = p1.Album "+
-	  "  and t1.ID = tp1.Tag  "+
-	  "  and tp1.Photo = p1.ID " ;
+      //
+      //affichage de la liste des tags où il y aura des photos
+      if (!Users.isLoggedAsCurrentManager(request)) {
+	if (mode != Mode.TAG_USED && mode != Mode.TAG_GEO)
+	  throw new RuntimeException("Don't want to process mode "+mode+" when not logged at manager");
 	
-	if (!isRootSession(request)) {
-	  // albums de ce theme
-	  rq += "  and a1.Theme = '"+themeID+"' " ;
-	}
+	rq = "SELECT DISTINCT ta " +
+	  "FROM Tag ta, TagPhoto tp, Photo p, Album a "+
+	  "WHERE  ta.ID = tp.Tag AND tp.Photo = p.ID AND p.Album = a.ID "+
+	  "AND "+WebPage.restrictToPhotosAllowed(request, "p")+" " +
+	  "AND "+WebPage.restrictToThemeAllowed(request, "a")+" " ;
 	
-	if (!isLoggedAsCurrentManager(request)) {
-	  rq +=
-	    // liste des albums autorisés
-	    "  and a1.ID in ( "+
-	    "    select usrA11.Album "+
-	    "    from UserAlbum usrA11 "+
-	    "    where usrA11.User = "+userID+" "+
-	    "  ) "+
-	    // liste des photos autorisés
-	    "  and p1.id not in ( "+
-	    "    select usrP12.Photo "+
-	    "    from UserPhoto usrP12 "+
-	    "    where usrP12.User = "+userID+" "+
-	    "  ) " ;
+	if (mode == Mode.TAG_GEO) {
+	  rq += " AND ta.TagType = '3' " ;
 	}
-	rq += ") "+
-	  //Tags des photos autorisés dans album masqué
-	  "or t0.ID in ("+
-	  "  select t2.ID "+
-	  "  from Album a2, Photo p2, Tag t2, TagPhoto tp2 "+
-	  "  where "+
-	  "  a2.ID = p2.Album "+
-	  "  and t2.ID = tp2.Tag "+
-	  "  and tp2.Photo = p2.ID " ;
-	if (!isRootSession(request)) {
-	  // albums de ce theme
-	  rq += "  and a2.Theme = '"+themeID+"' " ;
-	}
+	rq += " ORDER BY ta.Nom" ;
+      } else /* current manager*/ {
 	
-	if (!isLoggedAsCurrentManager(request)) {
-	  rq +=
-	    // pas dans liste des albums autorisés
-	    "  and a2.ID not in ( "+
-	    "    select usrA21.Album "+
-	    "    from UserAlbum usrA21 "+
-	    "    where usrA21.User = "+userID+" "+
-	    "  )"+
-	    // dans la liste des photos autorisées
-	    "and p2.ID in ( "+
-	    "    select usrP22.Photo "+
-	    "    from UserPhoto usrP22 "+
-	    "    where usrP22.User = "+userID+" "+
-	    "  )" ;
-	}
-	rq +=  ")" ;
-	 
-	  
-	if (isLoggedAsCurrentManager(request)) {
-	  if (mode ==  Mode.TAG_ALL) {
-	    //afficher tous les tags
-	    rq = "from Tag" ;
-	  } else if (mode == Mode.TAG_NUSED || mode == Mode.TAG_NONE) {
-	    //remove the tags used in this theme
-	    if (mode == Mode.TAG_NONE) {
-	      //remove ALL the tags used
-	      rq = "select t from Tag t, TagPhoto tp "+
-		"where t.ID = tp.Tag" ;
-	    }
-
-	    //rq = "from Tag where id not in ("+rq+")" ;
-	    Query query = session.createQuery(rq) ;
-	    rq = "done" ;
-	    query.setReadOnly(true).setCacheable(true);
-	    Iterator iterTags = query.iterate();
-	  
-	    StringBuilder tagsUsed = new StringBuilder () ;
-	    if (iterTags.hasNext()) {
-	      while (true) {
-		Tag enrTag = (Tag) iterTags.next();
-		tagsUsed.append(""+enrTag.getID());
-		if (iterTags.hasNext()) {
-		  tagsUsed.append(", ");
-		} else break ;
-	      }
-	      rq = "from Tag where id not in ("+tagsUsed.toString()+")" ;
-	    } else {
-	      rq = "from Tag" ;
-	    }
-	  } else if (mode == Mode.TAG_GEO) {
-	    rq = "from Tag where tagtype = '3'" ;
+	if (mode ==  Mode.TAG_USED || mode == Mode.TAG_GEO) {
+	  rq = "SELECT DISTINCT ta " +
+	    "FROM Tag ta, TagPhoto tp, Photo p, Album a "+
+	    "WHERE ta.ID = tp.Tag AND tp.Photo = p.ID AND p.Album = a.ID " +
+	    "AND "+WebPage.restrictToThemeAllowed(request, "a")+" " +
+	    "AND "+WebPage.restrictToPhotosAllowed(request, "p")+" " ;
+	  if (mode == Mode.TAG_GEO) {
+	    rq += " AND ta.TagType = '3' " ;
 	  }
-	  rq += " order by TagType, Nom" ;
-	} else {
-	  rq += "group by t0.ID order by TagType, Nom" ;
+	  rq += " ORDER BY ta.Nom" ;
+	} else if (mode ==  Mode.TAG_ALL) {
+	  
+	  //afficher tous les tags
+	  rq = "SELECT DISTINCT ta FROM Tag ta" ;
+	} else if (mode == Mode.TAG_NUSED || mode == Mode.TAG_NEVER) {
+	  
+	  //select the tags not used [in this theme]
+	  if (mode == Mode.TAG_NEVER || isRootSession(request)) {
+	    //select all the tags used
+	    rq = "SELECT DISTINCT tp.Tag FROM TagPhoto tp" ;
+
+	  } else /* TAG_NUSED*/ {
+	    //select all the tags used in photo of this theme
+	    rq = "SELECT DISTINCT tp.Tag " +
+	      "FROM TagPhoto tp, Photo p, Album a "+
+	      "WHERE "+
+	      " tp.Photo = p.ID AND p.Album = a.ID "+
+	      " AND a.Theme = '"+getThemeID(request)+"' ";
+	  }
+	  
+	  rq = "SELECT DISTINCT ta "+
+	    " FROM Tag ta "+
+	    " WHERE ta.id NOT IN ("+processListID(request, rq, false)+") "+
+	    " ORDER BY ta.Nom" ;
+	
+	} else /* not handled mode*/{
+	  xmlResult = new XmlBuilder("list") ;
+	  
+	  xmlResult.addException("Unknown handled mode :"+mode);
+	  return xmlResult.validate() ;
 	}
-      } else if (mode == Mode.USER) /*sinon on afiche la liste des users*/ {
-	rq = "from Utilisateur" ;
-      } else {
-	str.append("Mode incorrect :"+mode+"<br/>\n");
-	return ;
-      }
+      } /* isManagerSession */
       
       Query query = session.createQuery(rq) ;
       rq = "done" ;
       query.setReadOnly(true).setCacheable(true);
       Iterator it = query.iterate();
-	    
-      int current = 0;
-      int max = (ids == null ? 0 : ids.size()) ;
+    
+      xmlResult = new XmlBuilder ("tags");
+      xmlResult.addAttribut("mode", mode) ;
       
-      if (box == Box.MULTIPLE) str.append("<select size='7' "+
-					  "name='"+name+"' multiple>\n");
-      if (box == Box.LIST) str.append("<select name='"+name+"'>\n");
-
-      GooglePoint map = null;
-      if (box == Box.MAP)  {
-	GoogleHeader head = (GoogleHeader) hash.get(request) ;
-	if (head == null) {
-	  head = new GoogleHeader() ;
-	  hash.put(request, head) ;
-	}
-	map = new GooglePoint () ;
-	head.addMap(map) ;
-	if (info == null) {
-	  map.setSize(200, 266) ;
-	  map.displayInfo(false);
-	} else {
-	  map.setSize(500, 700) ;  
-	}
+      GooglePoint map = null ;
+      if (box == Box.MAP_SCRIPT) {
+	map = new GooglePoint(name) ;
       }
-
-      boolean first = true ;
-      int prevTagType = -1 ;
-      while (it.hasNext()) {
+      
+      xmlResult.addComment("Mode: "+mode);
+      xmlResult.addComment("Box:" +box);
+      xmlResult.addComment("List: "+ ids);
+      
+      while (it.hasNext()) {	
+	String type = "nop" ;
 	int id = -1 ;
 	String nom = null ;
 	Point p = null;
 	Integer photo = null ;
-	if (mode == Mode.TAG_USED
-	    || mode == Mode.TAG_NUSED
-	    || mode == Mode.TAG_ALL
-	    || mode == Mode.TAG_NONE
-	    || mode == Mode.TAG_GEO) {
-	  Tag enrTag = (Tag) it.next();
-	  if (box == Box.MAP) {
-	    if (enrTag.getTagType() == 3) {
-	      //ensure that this tag is display in this theme
-	      rq = "from TagTheme "+
-		"where tag = "+enrTag.getID()+" "+
-		"and theme = "+getThemeID(request);
-	      TagTheme enrTagTh =
-		(TagTheme) session.createQuery(rq).uniqueResult() ;
-	      rq = "done" ;
-	      	      
-	      if (enrTagTh != null) {
-		if (!enrTagTh.getIsVisible()) {
-		  continue ;
-		} 
-	      } //else : display !
-	      
-	      //get its geoloc
-	      rq = "from Geolocalisation "+
-		"where tag = "+enrTag.getID()+" ";
-	      Geolocalisation enrGeo =
-		(Geolocalisation) session.createQuery(rq).uniqueResult() ;
-	      rq = "done" ;
-	      
-	      if (enrGeo != null) {
-		id = enrTag.getID() ;
-		 
-		p = new Point (enrGeo.getLat(),
-			       enrGeo.getLong(),
-			       enrTag.getNom()) ;
-		nom = enrTag.getNom() ;
-
-		//Get the photo to display, if any
-		if (enrTagTh != null) {
-		  photo = enrTagTh.getPhoto () ;
-		}
-	      } 
-	    }
-	  } else {
-
-	    id = enrTag.getID() ;
-	    nom = enrTag.getNom();
+	
+	//first, prepare the information (type, id, nom)
+	Tag enrTag = (Tag) it.next();
+	if (box == Box.MAP_SCRIPT ) {
+	  if (enrTag.getTagType() == 3) {
+	    //ensure that this tag is displayed in this theme
+	    //(in root theme, diplay all of theme
+	    rq = "FROM TagTheme th "+
+	      " WHERE th.Tag = "+enrTag.getID()+" "+
+	      " AND th.Theme = "+getThemeID(request)+" ";
+	    TagTheme enrTagTh =
+	      (TagTheme) session.createQuery(rq).uniqueResult() ;
+	    rq = "done" ;
 	    
-	    if (box == Box.MULTIPLE  || box == box.LIST) {
-	      if (prevTagType != enrTag.getTagType () &&
-		  !(box == Box.MULTIPLE && first)) {
-		str.append("<option value='-1'>==========</option>\n") ;
-	      }
+	    if (enrTagTh != null && !enrTagTh.getIsVisible()) {
+	      continue ;
+	    } 
+	    
+	    //get its geoloc
+	    rq = "FROM Geolocalisation g "+
+	      " WHERE g.Tag = "+enrTag.getID()+" ";
+	    Geolocalisation enrGeo =
+	      (Geolocalisation) session.createQuery(rq).uniqueResult() ;
+	    rq = "done" ;
+	    if (enrGeo != null) {
+	      id = enrTag.getID() ;
+	    
+	      p = new Point (enrGeo.getLat(),
+			     enrGeo.getLong(),
+			     enrTag.getNom()) ;
+	      nom = enrTag.getNom() ;
 	      
-	      String type ;
-	      switch (enrTag.getTagType()) {
-	        case 1 : type = "[WHO]" ; break ;
-	        case 2 : type = "[WHAT]" ; break ;
-	        case 3 : type = "[WHERE]" ; break ;
-	        default : type = "[-]" ; break ;
+	      //Get the photo to display, if any
+	      if (enrTagTh != null) {
+		photo = enrTagTh.getPhoto () ;
 	      }
-	      String havePhoto = "" ;
-	      
-	      rq = "from TagTheme "+
-		"where theme = "+getThemeID(request) +
-		" and tag = " + enrTag.getID();
-	      TagTheme enrTagTh = (TagTheme) session.createQuery(rq).uniqueResult() ;
-	      rq = "done";
-	      
-	      if (enrTagTh == null || enrTagTh.getPhoto() == null) {
-		havePhoto = "*" ;
-	      }
-	      nom = type + " " + nom + havePhoto;
-	    }
-	    prevTagType = enrTag.getTagType () ;
-	  } 	  
-	} else if (mode == Mode.USER){
-	  if (box == box.LIST) {
-	    //first loop
-	    if (first) {
-	      str.append("<option value='-1'>==========</option>\n") ;
-	    }
+	    } 
 	  }
-	  Utilisateur enrUser = (Utilisateur) it.next() ;
-	  id = enrUser.getID();
-	  nom = enrUser.getNom();
-	
+	} else if (box == Box.MAP) {
 	} else {
-	  /* reserved for a future growing up*/
-	  str.append("Error");
-	  throw new RuntimeException ("Unknown mode "+mode);
+	  id = enrTag.getID() ;
+	  nom = enrTag.getNom();
+	  
+	  switch (enrTag.getTagType()) {
+	    case 1 : type = "who" ; break ;
+	    case 2 : type = "what" ; break ;
+	    case 3 : type = "where" ; break ;
+	    default : type = "unknown" ; break ;
+	  }
 	}
-	
 	//display the value [if in ids][select if in ids]
-	if (box == Box.MAP)  {
+	if (box == Box.MAP_SCRIPT)  {
 	  if (nom != null && (ids == null || ids.contains(id))) {
 	    String msg ;
-	    if (info != null) {
-	      msg = String.format("<center><a href='%s'>%s</a></center>",
-				  info+id,p.name );
-	      if (photo != null) {
-		msg += String.format("<br/><img alt='%s' "+
-				     "src='%sImages?"+
-				     "id=%d&amp;mode=PETIT'>",
-				     p.name,
-				     Path.LOCATION,
-				     photo);
-				     
-	      }
-	    } else {
-	      msg = p.name ;
+	    msg = String.format("<center><a href='Tags?tagAsked=%s'>%s</a></center>",
+				id,p.name );
+	    if (photo != null) {
+	      msg += String.format("<br/><img height='150px' alt='%s' "+
+				   "src='Images?"+
+				   "id=%d&amp;mode=PETIT' />",
+				   p.name,
+				   photo);
 	    }
+	    
 	    p.setMsg(msg);
 	    map.addPoint(p) ;
 	  }				  
-	} else if (box != Box.NONE) {
+	} else if (box == Box.MAP) {
+	} else {
 	  String selected = "" ;
-
-	  if (ids == null) {
-	    str.append("<option value='"+id+"' "+selected+">"+
-		       nom+
-		       "</option>\n") ;
-	  } else {
+	  boolean written = true ;
+	  if (ids != null) {
 	    if (box == Box.MULTIPLE) {
 	      if (ids.contains(id)) {
-		selected = "selected" ;
+		selected = "checked" ;
 	      }
-	      str.append("<option value='"+id+"' "+selected+">"+
-			 nom+
-			 "</option>\n") ;
-	    } else {
-	      if (ids.contains(id)) {
-		str.append("<option value='"+id+"' "+selected+">"+
-			   nom+
-			   "</option>\n") ;
-	      }
-	      
+	    } else if (!ids.contains(id)) {
+	      written = false ;
 	    }
 	  }
-
-	  /*
-	  if (ids != null && ids.contains(id) && box == Box.MULTIPLE) {
-	    selected = "selected" ;
-	  }
-	  str.append("<option value='"+id+"' "+selected+">"+
-		     nom+
-		     "</option>\n") ;
-	  */
-	} else {
-	  if (ids != null && ids.contains(id)) {
-	    current++ ;
-	    str.append(nom);
-	    if (current < max) {
-	      str.append(", ");
-	    }
+	  if (written) {
+	    xmlResult.add(new XmlBuilder(type, nom)
+			  .addAttribut("id", id)
+			  .addAttribut("checked", selected));
 	  }
 	}
-	first = false ;
-      }
+      } /* while loop*/
       
       if (box == Box.MAP)  {
-	str.append(map.getBody());
+	xmlResult = new XmlBuilder("map") ;
+	xmlResult.add("name", name);
+	xmlResult.add(GooglePoint.getBody());
+      } else if (box == Box.MAP_SCRIPT) {
+	xmlResult = XmlBuilder.newText() ;
+	xmlResult.addText(map.getInitFunction()) ;
       }
-      else if (box != Box.NONE) str.append("</select>\n");
       
     } catch (JDBCException e) {
-      str.append("Impossible d'effectuer la requete suivante :<br/>\n"+
-		 rq+"<br/>\nException : "+e+"<br/><br/>\n"+
-		 "SQLException : "+e.getSQLException()+"<br/><br/>\n\n") ;
+      e.printStackTrace() ;
+      if (xmlResult != null) xmlResult.cancel() ;
+      else xmlResult = new XmlBuilder("list") ;
+      xmlResult.addException("JDBCException", rq);
+      xmlResult.addException("JDBCException", e.getSQLException());
     }
+    return xmlResult.validate() ;
   }
-  
-  
-  public static void displayUserPhoto (int albumId,
-					  int photoId,
-					  StringBuilder output)
+
+  @SuppressWarnings("unchecked")
+  public static XmlBuilder displayListDroit (Integer right, Integer albmRight)
     throws HibernateException {
-    String rq = null ;
+    if (right == null && albmRight == null) throw new NullPointerException ("Droit and Album cannot be null");
+    
+    XmlBuilder output = new XmlBuilder ("userList") ;
+    String rq = "done" ;
+    boolean hasSelected = false ;
+    
     try {
-      //liste des status individuels, par photo 
-      rq = "from UserPhoto where photo = '"+photoId+"'" ;
-      Query query = session.createQuery(rq) ;
-      rq = "done" ;
-      query.setReadOnly(true).setCacheable(true);
-      List list = query.list();
-      
-      List<Integer> details = new ArrayList<Integer>(list.size()) ;
-
-      for (Object o : list) {
-	UserPhoto user = (UserPhoto) o ;
-	details.add(user.getUser()) ;
-      }
-      
-      //liste des status de l'album
-      rq = "from UserAlbum where album = '"+albumId+"'" ;
-      query = session.createQuery(rq) ;
-      rq = "done" ;
-      query.setReadOnly(true).setCacheable(true);
-      list = query.list();
-      
-      List<Integer> global = new ArrayList<Integer>(list.size()) ;
-
-      for (Object o : list) {
-	UserAlbum user = (UserAlbum) o ;
-	global.add(user.getUser()) ;
-      }
-      
-      //afficher pour chaque theme
       rq = "from Utilisateur" ;
-      query = session.createQuery(rq) ;
+      Iterator it = session.createQuery(rq).iterate() ;
       rq = "done" ;
-      query.setReadOnly(true).setCacheable(true);
-      list = query.list();
-      
-      boolean album, photo ;
-      output.append("<table>\n" +
-		    "<tr>\n" +
-		    "	<th>Utilisateurs</th>\n" +
-		    "	<th>Album</th>\n" +
-		    "	<th>Different ?</th>\n" +
-		    "</tr>") ;
-      for (Object o : list) {
-	output.append("<tr>\n") ;
-	Utilisateur user = (Utilisateur) o ;
-	album = global.contains(user.getID()) ;
-	photo = details.contains(user.getID()) ;
+      while (it.hasNext()) {
+	Utilisateur enrUtil = (Utilisateur) it.next() ;
+		
+	String name = enrUtil.getNom() ;
+	Integer id = enrUtil.getID();
+	boolean selected = false ;
 	
-	output.append("<td>"+user.getNom()+"</td>\n" +
-		      "<td>"+(album ? "visible" : "masqué")+"</td>\n" +
-		      "<td align='center'>"+
-		      "<input type='checkbox' "+
-		      "name='user"+user.getID()+"'"+
-		      " "+(photo ? "checked" : "")+"></td>\n"+
-		      "</tr>\n") ;
+	if (albmRight != null &&  albmRight.equals(enrUtil.getID())) {
+	  name = "["+name+"]" ;
+	  id = null ;
+
+	  if (right == null || right.equals(0)) {
+	    selected = true ;
+	  }
+	} else if (right != null &&  right.equals(enrUtil.getID())) {
+	  selected = true ;
+	}
+	
+	XmlBuilder util = new XmlBuilder("user", name);
+	util.addAttribut("id", id == null ? "null" : id) ;
+	if (selected) {
+	  util.addAttribut("selected", true);
+	  hasSelected = true ;
+	}
+	output.add(util);
       }
-      output.append("</table>\n") ;
-      
+      if (!hasSelected) throw new NoSuchElementException("Right problem: "+right+", "+albmRight);
     } catch (JDBCException e) {
-      output.append("Probleme dans la requete => "+rq+"<br/>\n"+
-		    e+"<br/>\n"+
-		    e.getSQLException()+"<br/>\n");
+      e.printStackTrace() ;
+
+      output.addException("JDBCException", rq);
+      output.addException("JDBCException", e.getSQLException());
     }
+    return output.validate();
+  }
+
+  public static XmlBuilder getUserName(Integer id) {
+    if (id != null) {
+      String rq = "from Utilisateur u where u.ID = '"+id+"'" ;
+      Utilisateur enrUtil = (Utilisateur) WebPage.session.createQuery(rq).uniqueResult() ;
+      
+      if (enrUtil != null) {
+	return new XmlBuilder ("user", enrUtil.getNom()) ;
+      }
+    }
+    return null ;
   }
   
-  protected static void saveDetails (HttpServletRequest request) {
+  @SuppressWarnings("unchecked")
+  public static XmlBuilder getUserInside(int id) throws HibernateException {
+    XmlBuilder output = new XmlBuilder("userInside");
+    boolean filled = false ;
+    String rq = "SELECT DISTINCT p.Droit "+
+      " FROM Photo p "+
+      " WHERE p.Album = '"+id+"' "+
+      " AND p.Droit != null AND p.Droit != 0" ;
+    Iterator it = WebPage.session.createQuery(rq).iterate() ;
+
+    while (it.hasNext()) {
+      Integer userId = (Integer) it.next() ;
+      XmlBuilder xmlUser = getUserName(userId) ;
+      if (xmlUser != null) {
+	output.add(xmlUser) ;
+	filled = true ;
+      }
+    }
+    if (!filled) return null ;
+    else return output.validate();
+  }
+
+  public static XmlBuilder getUserOutside(int albmId) {
+    String rq = "SELECT u FROM Utilisateur u, Album a WHERE u.ID = a.Droit AND a.ID = '"+albmId+"'" ;
+    Utilisateur enrUtil = (Utilisateur) WebPage.session.createQuery(rq).uniqueResult() ;
+      
+    return new XmlBuilder ("user", enrUtil.getNom()).addAttribut("album", true) ;
+  }
+  
+  public static void saveDetails (HttpServletRequest request) {
     String details = request.getParameter("details") ;
     if (details != null) {
+      Boolean newValue ;
       if (details.equals("OUI")) {
-	request.getSession().setAttribute("details", true) ;
-      } else {
-	request.getSession().setAttribute("details", false) ;
+	newValue = true ;
+      } else if (details.equals("NON")) {
+	newValue = false ;
+      } else /* SWAP */ {
+	Boolean old = (Boolean) request.getSession().getAttribute("details") ;
+	if (old == null) old = false ;
+	newValue = !old ;
       }
+      request.getSession().setAttribute("details", newValue) ;
     }
   }
   public static Boolean getDetails(HttpServletRequest request) {
@@ -965,7 +676,7 @@ public class WebPage {
     return (details == null ? false : details) ;
   }
 
-  protected static void saveMaps (HttpServletRequest request) {
+  public static void saveMaps (HttpServletRequest request) {
     String details = request.getParameter("maps") ;
     if (details != null) {
       if (details.equals("OUI")) {
@@ -981,96 +692,33 @@ public class WebPage {
 		
     return (maps == null ? false : maps) ;
   }
-
-  public static String getCurrentURL(HttpServletRequest request) {
-    String[] removed = {"maps", "edition", "details"} ;
-    String uri = request.getRequestURI() ;
-    String query = request.getQueryString();
-
-    if (query == null) return uri+"?" ;
-    
-    for (int i = 0; i < removed.length; i++) {
-      int idx = query.indexOf(removed[i]+"=") ;
-      while (idx != -1) {
-	if (idx != 0 && query.charAt(idx -1) == '&') {
-	  idx-- ;
-	}
-	String avant = query.substring(0, idx) ;
-	int end = query.indexOf("&", idx+1) ;
-	String apres = "" ;
-	if (end != -1) {
-	  apres = query.substring(end);
-	}
-	query = avant+apres ;
-	log.info(query);
-	idx = query.indexOf(removed[i]+"=") ;
-      }
-    }
-      
-    
-    return uri+"?"+ query ;
-  }
-
-  public static String getHeadBand(HttpServletRequest request) {
-    StringBuilder str = new StringBuilder() ;
-    str.append("<table><tr>\n"+
-	       "<td>\n"+
-	       "<a href='"+getCurrentURL(request)+
-	       "&maps="+(getMaps(request) ?"NON" : "OUI")+"'>"+
-	       (getMaps(request) ?"Carte" : "NoCarte")+
-	       "</a>\n"+
-	       "</td>"+
-	       "<td>"+
-	       "<a href='"+getCurrentURL(request)+
-	       "&details="+(getDetails(request) ?"NON" : "OUI")+"'>"+
-	       (getDetails(request) ?"Details" : "NoDetails")+
-	       "</a>\n"+
-	       "</td>") ;
-    if(isLoggedAsCurrentManager(request)
-       && !isReadOnly()) {
-      str.append("<td>"+
-		 "<a href='"+getCurrentURL(request)+
-		 "&edition="+getNextEditionMode(request)+"'>"+
-		 getEditionMode(request)+"</a>"+
-		 "</td>\n");
-		 
-      str.append("<td>"+
-		 "<a href='"+Path.LOCATION+"Config'>"+
-		    "Config</a>"+
-		 "</td>\n");
-    }
-    str.append("</tr></table>\n");
-    return str.toString() ;
-  }
   
   public static EditMode getEditionMode(HttpServletRequest request) {
-    try {
-      EditMode mode = (EditMode) request.getSession()
-	.getAttribute("edition") ;
+    EditMode mode = (EditMode) request.getSession()
+      .getAttribute("edition") ;
+    
+    return (mode == null ? EditMode.NORMAL : mode) ;
       
-      return (mode == null ? EditMode.NORMAL : mode) ;
-    } catch (Exception e) {
-	return EditMode.NORMAL ;
-    }
   }
  
   public static void saveEditionMode(HttpServletRequest request) {
-    String edition = request.getParameter("edition");
-    EditMode editionMode ;
-    EditMode next = null ;
+    String editionParam = request.getParameter("edition");
+    EditMode newMode ;
     
-    if ("VISITE".equals(edition)) {
-      editionMode = EditMode.VISITE ;
-    } else if ("NORMAL".equals(edition)) {
-      editionMode = EditMode.NORMAL ;
-    } else if ("EDITION".equals(edition)) {
-      editionMode = EditMode.EDITION ;
+    if ("NORMAL".equals(editionParam)) {
+      newMode = EditMode.NORMAL ;
+    } else if ("EDITION".equals(editionParam)) {
+      newMode = EditMode.EDITION ;
+    } else if ("SWAP".equals(editionParam)) {
+      newMode = getNextEditionMode(request) ;
     }else {
-      editionMode = getEditionMode(request) ;
+      newMode = getEditionMode(request) ;
     }
-        
-    request.getSession().setAttribute("edition", editionMode) ;
-    
+
+    if (getEditionMode(request) != newMode) {
+      log.info(getEditionMode(request) +" --> "+newMode) ;
+    }
+    request.getSession().setAttribute("edition", newMode) ;    
   }
 
   public static EditMode getNextEditionMode(HttpServletRequest request) {
@@ -1108,7 +756,7 @@ public class WebPage {
 	ipage = Integer.parseInt(page) ;
 	bornes[0] = Math.min(ipage * taille , size)  ;
       }
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
       //cannot parse the page
       bornes[0] = 0 ;
       ipage = 0 ;
@@ -1120,32 +768,28 @@ public class WebPage {
     return bornes ;
   }
   
+  public static XmlBuilder xmlPage (XmlBuilder from, Integer[] bornes){
+    XmlBuilder page = new XmlBuilder ("page") ;
+    page.addComment("Page 0 .. "+bornes[3]+" .."+bornes[2]) ;
+    page.add ("url", from) ;
 
-  public static void displayPages(String from,
-				     Integer[] bornes,
-				     StringBuilder output) {
     if (bornes[2] > 1) {
       int ipage = bornes[3] ;
-      output.append("<center>\n");
-      if (ipage != -1 && ipage != 0) {
-	output.append("<a href='"+from+"&page="+0+"'>&lt;&lt;<a/>\n");
-	output.append("<a href='"+from+"&page="+(ipage - 1)+"'>&lt;<a/>\n");
-      }
       
       for (int i = 0; i < bornes[2]; i++) {
 	if (i == ipage || ipage == -1 && i == 0) {
-	  output.append(" ~"+i+"~ ");
+	    page.add("current", i) ;
+	} else if (i < ipage) {
+	  page.add("prev", i) ;
 	} else {
-	  output.append("<a href='"+from+"&page="+i+"'>"+i+"<a/>\n");
-	      }
+	  page.add("next", i) ;
+	}
       }
-      if (bornes[2] >= 3 && ipage != bornes[2] - 1 ) {
-	output.append("<a href='"+from+"&page="+(ipage + 1)+"'>&gt;<a/>\n");
-	output.append("<a href='"+from+"&page="+(bornes[2]-1)+"'>"+
-		      "&gt;&gt;<a/>\n");
-      }
-      output.append("</center>\n");
+      page.validate() ;
+    } else {
+      page.addComment("1 page only") ;
     }
+    return page ;
   }
   
   public static void preventCaching(HttpServletRequest request,
@@ -1162,12 +806,48 @@ public class WebPage {
   
   public enum EditMode {VISITE,NORMAL,EDITION}
   public static class AccessorsException extends Exception {
-    private String e ;
+	private static final long serialVersionUID = 1L;
+	private String e ;
     public AccessorsException(String e) {
       this.e = e ;
     }
     public String toString() {
       return e ;
     }
+  }
+
+  public static XmlBuilder xmlLogin(HttpServletRequest request) {
+    XmlBuilder login = new XmlBuilder ("login") ;
+    login.add("theme",getThemeName(request)) ;
+    login.add("user",Users.getUserName(request)) ;
+    
+    if (Users.isLoggedAsCurrentManager(request)
+	&& !Path.isReadOnly()) {
+      login.add("admin");
+      if (getEditionMode(request) == WebPage.EditMode.EDITION) {
+	login.add("edit");
+      } 
+    }
+
+    if (isRootSession(request)) {
+      login.add("root");
+    }
+
+    return login.validate() ;
+  }
+
+  public static XmlBuilder xmlAffichage (HttpServletRequest request) {
+    XmlBuilder affichage = new XmlBuilder("affichage") ;
+    if (Users.isLoggedAsCurrentManager(request)
+	&& !Path.isReadOnly()) {
+      if (getEditionMode(request) == WebPage.EditMode.EDITION) {
+	affichage.add("edit");
+      }
+      affichage.add("edition", getEditionMode(request)) ;
+    }
+    affichage.add("maps","Avec Carte") ;
+    affichage.add ("details", getDetails(request)) ;
+    
+    return affichage ;
   }
 }

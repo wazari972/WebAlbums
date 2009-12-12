@@ -1,9 +1,5 @@
-package engine ;
+package util.google ;
 
-import java.util.List ;
-import java.util.ArrayList ;
-
-import constante.Path ;
 
 public class GoogleSearch extends GoogleMap {
     private String lng, lat ;
@@ -11,7 +7,7 @@ public class GoogleSearch extends GoogleMap {
 	this.lng = lng ;
 	this.lat = lat ;
     }
-    public String getInit() {
+    public String getInitCode() {
 	String init = 
 "        var map = new GMap2(document.getElementById('"+getMapName()+"'));\n"+
 "        map.addControl(new GSmallMapControl());\n"+

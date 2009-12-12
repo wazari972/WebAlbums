@@ -26,6 +26,7 @@ public abstract class BaseTagThemeDAO extends entity.dao._RootDAO {
 	/**
 	 * entity.dao._RootDAO _RootDAO.getReferenceClass()
 	 */
+	@SuppressWarnings("unchecked")
 	public Class getReferenceClass () {
 		return entity.TagTheme.class;
 	}

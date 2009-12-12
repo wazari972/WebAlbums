@@ -9,8 +9,9 @@ import org.hibernate.cfg.*;
 
 import java.sql.Connection ;
 
+@SuppressWarnings("unchecked")
 public class HibernateUtil {
-  public static final Logger log = Logger.getLogger("WebAlbum");
+  public static final Logger log = Logger.getLogger("WebAlbums");
   public static final SessionFactory sessionFactory;
   public static final ThreadLocal session = new ThreadLocal();
   public static final Configuration config ;
@@ -27,15 +28,13 @@ public class HibernateUtil {
     }
   }
 
-    public static Configuration getConfiguration() {
-	return config ;
-    }
-  @SuppressWarnings("unchecked")
-  public static Connection getAConnection() throws Exception {
-      return new Configuration().buildSettings().getConnectionProvider().getConnection(); 
+  public static Configuration getConfiguration() {
+    return config ;
   }
-
-  @SuppressWarnings("unchecked")
+  public static Connection getAConnection() throws Exception {
+    return new Configuration().buildSettings().getConnectionProvider().getConnection(); 
+  }
+  
   public static Session currentSession() throws HibernateException {
     Session s = (Session) session.get();
     // Ouvre une nouvelle Session, si ce Thread n'en a aucune
@@ -45,16 +44,13 @@ public class HibernateUtil {
     }
     return s;
   }
-  
-  @SuppressWarnings("unchecked")
-  public static void closeSession() throws HibernateException {
+  public static void closeSession()
+    throws HibernateException {
     Session s = (Session) session.get();
     session.set(null);
-    if (s != null)
-      s.close();
+    if (s != null) s.close();
   }
-	
   public static SessionFactory getSessionFactory() {
-	    return sessionFactory;
+    return sessionFactory;
   }
 }

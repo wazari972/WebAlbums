@@ -15,10 +15,11 @@ import java.io.Serializable;
  * @hibernate.class
  *  table="Utilisateur"
  */
+
+@SuppressWarnings("serial")
 public abstract class BaseUtilisateur  implements Serializable {
 
 	public static String PROP_ID = "ID";
-	public static String PROP_PASSWORD = "Password";
 	public static String PROP_NOM = "Nom";
 
 
@@ -29,7 +30,6 @@ public abstract class BaseUtilisateur  implements Serializable {
 
 	// fields
 	private java.lang.String _nom;
-	private java.lang.String _password;
 	
 	// constructors
 	public BaseUtilisateur () {
@@ -81,22 +81,6 @@ public abstract class BaseUtilisateur  implements Serializable {
 	 */
 	public void setNom (java.lang.String _nom) {
 		this._nom = _nom;
-	}
-
-
-	/**
-	 * Return the value associated with the column: Password
-	 */
-	public java.lang.String getPassword () {
-		return _password;
-	}
-
-	/**
-	 * Set the value related to the column: Password
-	 * @param _password the Password value
-	 */
-	public void setPassword (java.lang.String _password) {
-		this._password = _password;
 	}
 
 	public boolean equals (Object obj) {

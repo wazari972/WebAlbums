@@ -15,16 +15,16 @@ import java.io.Serializable;
  * @hibernate.class
  *  table="Album"
  */
+@SuppressWarnings("serial")
 public abstract class BaseAlbum  implements Serializable {
 
 	public static String PROP_ID = "ID";
 	public static String PROP_DATE = "Date";
-	public static String PROP_SOURCE = "Source";
 	public static String PROP_THEME = "Theme";
 	public static String PROP_PICTURE = "Picture";
 	public static String PROP_NOM = "Nom";
 	public static String PROP_DESCRIPTION = "Description";
-
+        public static String PROP_DROIT = "Droit";
 
 	private int hashCode = Integer.MIN_VALUE;
 
@@ -35,10 +35,9 @@ public abstract class BaseAlbum  implements Serializable {
 	private java.lang.String _nom;
 	private java.lang.String _description;
 	private java.lang.Integer _theme;
-	private java.util.Date _date;
-	private java.lang.String _source;
-	private java.lang.String _picture;
-
+	private java.lang.String _date;
+	private java.lang.Integer _picture;
+        private java.lang.Integer _droit;
 
 	// constructors
 	public BaseAlbum () {
@@ -128,7 +127,7 @@ public abstract class BaseAlbum  implements Serializable {
 	/**
 	 * Return the value associated with the column: Date
 	 */
-	public java.util.Date getDate () {
+	public java.lang.String getDate () {
 		return _date;
 	}
 
@@ -136,31 +135,14 @@ public abstract class BaseAlbum  implements Serializable {
 	 * Set the value related to the column: Date
 	 * @param _date the Date value
 	 */
-	public void setDate (java.util.Date _date) {
+	public void setDate (java.lang.String _date) {
 		this._date = _date;
 	}
-
-
-	/**
-	 * Return the value associated with the column: Source
-	 */
-	public java.lang.String getSource () {
-		return _source;
-	}
-
-	/**
-	 * Set the value related to the column: Source
-	 * @param _source the Source value
-	 */
-	public void setSource (java.lang.String _source) {
-		this._source = _source;
-	}
-
 
 	/**
 	 * Return the value associated with the column: Picture
 	 */
-	public java.lang.String getPicture () {
+	public java.lang.Integer getPicture () {
 		return _picture;
 	}
 
@@ -168,8 +150,23 @@ public abstract class BaseAlbum  implements Serializable {
 	 * Set the value related to the column: Picture
 	 * @param _picture the Picture value
 	 */
-	public void setPicture (java.lang.String _picture) {
+	public void setPicture (java.lang.Integer _picture) {
 		this._picture = _picture;
+	}
+
+        /**
+	 * Return the value associated with the column: Droit
+	 */
+	public java.lang.Integer getDroit () {
+		return _droit;
+	}
+
+	/**
+	 * Set the value related to the column: Droit
+	 * @param _droit the Droit value
+	 */
+	public void setDroit (java.lang.Integer _droit) {
+		this._droit = _droit;
 	}
 
 

@@ -2,60 +2,66 @@ package engine ;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.xml.transform.stream.*;
+import javax.xml.transform.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.HibernateException;
 
-import engine.*;
-import engine.WebPage.AccessorsException;
-import display.* ;
-import entity.*;
 import constante.Path;
 
 import util.HibernateUtil;
-import util.StringUtil;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
 import org.hibernate.Transaction;
-import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
-import org.hibernate.Session;
-import org.hibernate.Query;
 import org.hibernate.stat.Statistics;
+import org.hibernate.exception.SQLGrammarException ;
+import entity.Theme;
 
+
+import util.XmlBuilder ;
 public class Index {
   
- public static void treatVOID(StringBuilder output)
-    throws HibernateException {
-    //afficher la liste des themes
-    String rq = null ; 
-    try  {
-      rq = "from Theme" ;
-      Iterator it = WebPage.session.createQuery(rq)
-	.setReadOnly(true).setCacheable(true)
-	.iterate();
-      rq = "done" ;
-      Theme enrTheme = null;
+ @SuppressWarnings("unchecked")
+ public static XmlBuilder treatVOID()
+   throws HibernateException {
+   XmlBuilder output = new XmlBuilder("index");
+   //afficher la liste des themes
+   String rq = null ; 
+   try  {
+     rq = "from Theme" ;
+     Iterator it = WebPage.session.createQuery(rq)
+       .setReadOnly(true).setCacheable(true)
+       .iterate();
+     rq = "done" ;
+     Theme enrTheme = null;
+     while (it.hasNext()) {
+       enrTheme = (Theme) it.next () ;
+       output.add(new XmlBuilder("theme", enrTheme.getNom()).addAttribut("id", enrTheme.getID()));
+     }
+
+     if (Path.lightenDb()) {
+       output.add(new XmlBuilder("reload")) ;
+     }
       
-      output.append("<b>Liste des themes abc : </b><br/><br/>\n");
-      
-      while (it.hasNext()) {
-	enrTheme = (Theme) it.next();
-	output.append("<a href='"+Path.LOCATION+"Users"+
-		      "?theme="+enrTheme.getID()+"'> "+
-		      enrTheme.getNom()+"</a><br/>\n");
-      }
-    } catch (JDBCException e) {
-      output.append("<br/><i>Impossible d'afficher les themes </i>"+
-		    "=> "+rq+"<br/>\n"+e+"<br/>\n"+
-		    e.getSQLException()+"<br/>\n");
-    }  
+   } catch (SQLGrammarException e) {
+     e.printStackTrace() ;
+     
+     output.cancel() ;
+     Maint.treatFullImport(output) ;
+   } catch (JDBCException e) {
+     e.printStackTrace() ;
+
+     output.cancel() ;
+     output.addException(rq);
+     output.addException(e.getSQLException());
+   }
+
+   return output.validate() ;
  }
   
   public static void treat(WebPage.Page page,
@@ -63,153 +69,227 @@ public class Index {
 			   HttpServletResponse response)
     throws IOException {
     long debut = System.currentTimeMillis();
+    request.setCharacterEncoding("UTF-8");
     
     Statistics stats = HibernateUtil.sessionFactory.getStatistics();
     stats.setStatisticsEnabled(Path.wantsStats());
     
-    WebPage.hash.remove(request) ;
-    StringBuilder out = new StringBuilder() ;
-    
-    boolean isCorrect = false ;
-    boolean isPhoto = false ;
-    
-    StringBuilder err = new StringBuilder () ;
-    StringBuilder output = new StringBuilder () ;
+    XmlBuilder output = new XmlBuilder("root") ;
 
+    WebPage.tryToSaveTheme(request);
+    
+    String xslFile = null ;
+
+    boolean isWritten = false ;
+    boolean isComplete = false ;
     try {
+      xslFile = "static/Display.xsl" ;
       if (page == WebPage.Page.VOID) {
-	treatVOID(output);
-      } else if (page == WebPage.Page.MAINT){
-	engine.Maint.treatMAINT(request, output);
+	output.add(treatVOID());
+      } else if (page == WebPage.Page.MAINT) {
+	xslFile = "static/Empty.xsl" ;
+
+	output.add(engine.Maint.treatMAINT(request));
       } else if (page == WebPage.Page.USER) {
-	engine.Users.treatUSR(request, output);
+	output.add(engine.Users.treatUSR(request));
       } else {
-	WebPage.updateLogInformation(request, output) ;
-	String userID  = engine.Users.getUser(request) ;
-	String themeID = WebPage.getThemeID(request) ;
+	boolean isRss = false ;
+	String special = request.getParameter("special") ;
+	if (special != null) {
+	  if ("RSS".equals(special)) {
+	    isRss = true ;
+	    xslFile = "static/Rss.xsl" ;
+	  }  else {
+	    xslFile = "static/Empty.xsl" ;
+	  }
+	}
+	String userID  = engine.Users.getUserID(request) ;
 	//a partir d'ici, l'utilisateur doit être en memoire
 	if (userID != null) { 
 	  if (page == WebPage.Page.CHOIX) {
-	    engine.Choix.treatCHX(request, output);
+	    if (special == null) {
+	      output.add(engine.Choix.treatCHX(request));
+	    } else {
+	      output = engine.Choix.treatChxScript(request);
+	      isComplete = true ;
+	    }
 	  } else if (page == WebPage.Page.ALBUM) {
-	    engine.Albums.treatALBM(request, output);
+	    output.add(engine.Albums.treatALBM(request));
 	  } else if (page == WebPage.Page.PERIODE) {
-	    display.Periode.treatPERIODE(request, output) ;
+	    output.add(display.Periode.treatPERIODE(request)) ;
 	  } else if (page == WebPage.Page.PHOTO) {
-	    engine.Photos.treatPHOTO(request, output);
+	    output.add(engine.Photos.treatPHOTO(request));
 	  } else if (page == WebPage.Page.CONFIG){
-	    engine.Config.treatCONFIG(request, output);
+	    output.add(engine.Config.treatCONFIG(request));
 	  } else if (page == WebPage.Page.TAGS){
-	    engine.Tags.treatTAGS(request, output);
+	    
+	    output.add(engine.Tags.treatTAGS(request));
 	  } else if (page == WebPage.Page.IMAGE){
-	    isPhoto = engine.Images.treatIMG(request, output, response);
-	  } else if (page == WebPage.Page.MAINT){
-	    engine.Maint.treatMAINT(request, output);
+	    XmlBuilder ret = engine.Images.treatIMG(request, response);
+	    if (ret == null) {
+	      isWritten = true ;
+	    } else {
+	      output.add(ret);
+	    }
 	  } else {
-	    treatVOID(output);
+	    output.add(treatVOID());
 	  }
 	} else {
-	  treatVOID(output);
+	  WebPage.log.info("special: "+special);
+	  if (special == null) {
+	    output.add(treatVOID());
+	  } else {
+	    isComplete = true ;
+	    output = new XmlBuilder("nothing");
+	  }
 	}
-      
       }
-      isCorrect = true ;
+      output.validate() ;
     } catch (JDBCException e) {
-      
-      err.append("Il y a une erreur dans la requete ... !<br/>\n"+
-		 e.getSQLException()+"<br/>\n") ;
-      err.append(e);
-      
-    } catch (HibernateException e) {
-      err.append("Problème avec Hibernate ... !<br/<\n" +
-		 e+"<br/><br/>**<br/>\n" +
-		 StringUtil.escapeHTML(output.toString())+
-		 "<br/>**<br/><br/>\n");
-      for (int i = 0; i < e.getStackTrace().length; i++) {
-	err.append(""+e.getStackTrace()[i]+"</br>");
-      }
+      e.printStackTrace() ;
+      output.cancel() ;
 
-      err.append(e.getStackTrace().toString());
+      output.addException("JDBCException", e.getSQLException()) ;
+    } catch (HibernateException e) {
+      e.printStackTrace() ;
+      output.cancel() ;
+      
+      for (int i = 0; i < e.getStackTrace().length; i++) {
+	output.addException("HibernateException", e.getStackTrace()[i]);
+      }
+      
+      //rollback if possible
+      try {
+	Transaction tx = WebPage.session.getTransaction() ;
+	if (tx != null && tx.isActive()) {
+	  tx.rollback() ;
+	}
+      } catch (Exception f) {}
+      
+      //close and reopen the session
+      HibernateUtil.closeSession() ;
+      WebPage.session = HibernateUtil.currentSession() ;
+      
     } catch (WebPage.AccessorsException e) {
-      err.append("Problème avec les accesseurs ... !\n" +
-		 e+"<br/><br/>**<br/>\n" +
-		 StringUtil.escapeHTML(output.toString())+
-		 "<br/>**<br/><br/>\n");
+      e.printStackTrace() ;
+      output.cancel() ;
+
+      output.addException("AccessorsException", e.getMessage());
     }
     
     long fin = System.currentTimeMillis();
-
-    Header head = WebPage.hash.get(request) ;
-    if (!isPhoto) {
-      response.setContentType("text/html");
+  
+    if (!isWritten) {
       preventCaching(request, response);
-      out.append("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD "+
-		 "HTML 4.01 Transitional//EN\">\n" +
-		 "<html>\n" +
-		 "  <head>\n" +
-		 "    <title>WebAlbum4</title>\n" +
-		 (head == null ? "" : head.header())+
-		 "  </head>\n" +
-		 "  <body "+
-		 (head == null ? "" : head.bodyAttributes())+">\n" +
-		 (isCorrect ? output.toString() : err.toString())+"<br/>\n");
-      if (stats.isStatisticsEnabled()) {
-	out.append("Connect: "+ stats.getConnectCount()+ "<br/>\n"+
+
+      if (!isComplete) {
+	output.add(WebPage.xmlLogin(request));
+	output.add(WebPage.xmlAffichage(request));
+
+	XmlBuilder xmlStats = new XmlBuilder ("stats") ;
+	output.add(xmlStats) ;
+	xmlStats.add("time", (((float)(fin - debut)/1000)));
+	if (stats.isStatisticsEnabled()) {
+	  xmlStats.add("Connect", stats.getConnectCount());
 // Number of flushes done on the session (either by client code or 
 // by hibernate).
-		   "FlushCount: "+stats.getFlushCount()+ "<br/>\n"+
+	  xmlStats.add("FlushCount", stats.getFlushCount());
 // The number of completed transactions (failed and successful).
-		   "TxCount: "+stats.getTransactionCount()+ "<br/>\n"+
-// The number of transactions completed without failure
-		   "SuccessfulTransaction: "+stats.getSuccessfulTransactionCount()+ "<br/>\n"+
+	  xmlStats.add("TxCount", stats.getTransactionCount());
+// The number of transactions completed withoutput failure
+	  xmlStats.add("SuccessfulTransaction", stats.getSuccessfulTransactionCount());
 // The number of sessions your code has opened.
-		   "SessionOpen: "+stats.getSessionOpenCount()+ "<br/>\n"+
+	  xmlStats.add("SessionOpen", stats.getSessionOpenCount());
 // The number of sessions your code has closed.
-		   "SessionClose: "+stats.getSessionCloseCount()+ "<br/><br/>\n");
+	  xmlStats.add("SessionClose", stats.getSessionCloseCount());
 // All of the queries that have executed.
-	int i = 0 ;
-	for (String s : Arrays.asList(stats.getQueries())) {
-	  i++ ;
-	  out.append("<b>Query "+i+"</b>: "+s+"<br/>\n");
-	  out.append("<br>\n");
-	}
-	out.append("QueryNumber: "+i+ "<br/>\n"+
-// Total number of queries executed.
-		   "QueryExec: "+stats.getQueryExecutionCount()+ "<br/>\n"+
-// Time of the slowest query executed.
-		   "QueryExecMaxTime: "+stats.getQueryExecutionMaxTime()+ "<br/><br/>\n"+
+	  if (Path.wantsQueries()) {
+	    XmlBuilder querys = new XmlBuilder("querys");
+	    xmlStats.add(querys) ;
+	    for (String s : Arrays.asList(stats.getQueries())) {
+	    	xmlStats.add("query ", s);
+	    }
+	  }
+	  // Total number of queries executed.
+	  xmlStats.add("QueryExec", stats.getQueryExecutionCount());
+          // Time of the slowest query executed.
+	  xmlStats.add("QueryExecMaxTime", stats.getQueryExecutionMaxTime());
 // The number of your objects deleted.
-		   "EntityDelete: "+stats.getEntityDeleteCount()+ "<br/>\n"+
+	  xmlStats.add("EntityDelete", stats.getEntityDeleteCount());
 // The number of your objects fetched.
-		   "EntityFetch: "+stats.getEntityFetchCount()+ "<br/>\n"+
+	  xmlStats.add("EntityFetch", stats.getEntityFetchCount());
 // The number of your objects actually loaded (fully populated).
-		   "EntityLoad: "+stats.getEntityLoadCount()+ "<br/>\n"+
+	  xmlStats.add("EntityLoad", stats.getEntityLoadCount());
 // The number of your objects inserted.
-		   "EntityInsert: "+stats.getEntityInsertCount()+ "<br/>\n"+
+	  xmlStats.add("EntityInsert", stats.getEntityInsertCount());
 // The number of your object updated.
-		   "EntityUpdate: "+stats.getEntityUpdateCount()+ "<br/><br/>\n");
+	  xmlStats.add("EntityUpdate", stats.getEntityUpdateCount());
       
 
-	double queryCacheHitCount  = stats.getQueryCacheHitCount();
-	double queryCacheMissCount = stats.getQueryCacheMissCount();
-	double queryCacheHitRatio = queryCacheHitCount / (queryCacheHitCount + queryCacheMissCount) *100;
-	out.append("Cache: hit "+(int)queryCacheHitCount+", miss "+(int)queryCacheMissCount+
-		   ", ratio "+(int)queryCacheHitRatio+"%<br/></br/>\n"+		   
-		   "		<br/><br/>\n");
+	  double queryCacheHitCount  = stats.getQueryCacheHitCount();
+	  double queryCacheMissCount = stats.getQueryCacheMissCount();
+	  double queryCacheHitRatio = queryCacheHitCount / (queryCacheHitCount + queryCacheMissCount) *100;
+	  xmlStats.add("CacheHit", (int)queryCacheHitCount) ;
+	  xmlStats.add("CacheMiss", (int)queryCacheMissCount) ;
+	  xmlStats.add("CacheRatio ", (int)queryCacheHitRatio) ;
+	}
       }
-      out.append("		<br/>Page générée en "+
-		 (((double)(fin-debut))/1000)+"s\n" +
-		 "  </body>\n" +
-		 "</html>");
-      stats.clear() ;
-      PrintWriter sortie = response.getWriter();
-      sortie.println(out.toString());
-      sortie.flush();
-      sortie.close();
+      doWrite(response, output, xslFile, isComplete);
     }
-  }  
+  }
+  private static void doWrite(HttpServletResponse response, XmlBuilder output, String xslFile, boolean isComplete) {
+    response.setContentType("text/xml");
+    try {
+      PrintWriter sortie = response.getWriter();
+
+      if (!isComplete) {
+	output.addHeader("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+	output.addHeader("<!DOCTYPE xsl:stylesheet  ["+
+			 "<!ENTITY auml   \"&#228;\" >" +
+			 "<!ENTITY ouml   \"&#246;\" >" +
+			 "<!ENTITY uuml   \"&#252;\" >" +
+			 "<!ENTITY szlig  \"&#223;\" >" +
+			 "<!ENTITY Auml   \"&#196;\" >" +
+			 "<!ENTITY Ouml   \"&#214;\" >" +
+			 "<!ENTITY Uuml   \"&#220;\" >" +
+			 "<!ENTITY euml   \"&#235;\" >" +
+			 "<!ENTITY ocirc  \"&#244;\" >" +
+			 "<!ENTITY nbsp   \"&#160;\" >" + 
+			 "<!ENTITY Agrave \"&#192;\" >" + 
+			 "<!ENTITY Egrave \"&#200;\" >" + 
+			 "<!ENTITY Eacute \"&#201;\" >" + 
+			 "<!ENTITY Ecirc  \"&#202;\" >" + 
+			 "<!ENTITY egrave \"&#232;\" >" + 
+			 "<!ENTITY eacute \"&#233;\" >" + 
+			 "<!ENTITY ecirc  \"&#234;\" >" + 
+			 "<!ENTITY agrave \"&#224;\" >" + 
+			 "<!ENTITY iuml   \"&#239;\" >" + 
+			 "<!ENTITY ugrave \"&#249;\" >" + 
+			 "<!ENTITY ucirc  \"&#251;\" >" + 
+			 "<!ENTITY uuml   \"&#252;\" >" + 
+			 "<!ENTITY ccedil \"&#231;\" >" + 
+			 "<!ENTITY AElig  \"&#198;\" >" + 
+			 "<!ENTITY aelig  \"&#330;\" >" + 
+			 "<!ENTITY OElig  \"&#338;\" >" + 
+			 "<!ENTITY oelig  \"&#339;\" >" + 
+			 "<!ENTITY euro   \"&#8364;\">" + 
+			 "<!ENTITY laquo  \"&#171;\" >" + 
+			 "<!ENTITY raquo  \"&#187;\" >" + 
+			 "]>");
+	if (Path.wantsXsl()) {
+	  output.addHeader("<?xml-stylesheet type=\"text/xsl\" href=\""+xslFile+"\"?>");
+	}
+      }
+      sortie.println(output.toString());      
+      
+      sortie.flush();
+      sortie.close();    
+    } catch (IOException e) {
+      e.printStackTrace() ;
+    }
+  }
   protected static void preventCaching(HttpServletRequest request,
-				HttpServletResponse response) {
+				       HttpServletResponse response) {
     // see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
     String protocol = request.getProtocol();
     if ("HTTP/1.0".equalsIgnoreCase(protocol)) {
@@ -218,5 +298,5 @@ public class Index {
       response.setHeader("Cache-Control", "no-cache"); // "no-store" work also 
     }
     response.setDateHeader("Expires", 0);
-  }  
+  }
 }

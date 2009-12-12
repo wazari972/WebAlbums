@@ -1,16 +1,13 @@
 package engine ;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.* ;
+
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.NoSuchElementException;
 
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,112 +15,122 @@ import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 
 import util.StringUtil;
-import constante.Path;
+import util.XmlBuilder;
 import entity.Photo;
-import entity.Theme ;
+import entity.Tag ;
+import entity.Album ;
+
+import system.SystemTools;
 
 public class Images {
   private static final long serialVersionUID = 1L;
 
-  public static boolean treatIMG(HttpServletRequest request,
-				 StringBuilder output,
-				 HttpServletResponse response)
+  
+  public static XmlBuilder treatIMG(HttpServletRequest request,
+				    HttpServletResponse response)
     throws HibernateException {
-    boolean uniq = false ;
+    XmlBuilder output = new XmlBuilder("img");
     String imgID = StringUtil.escapeHTML(request.getParameter("id")) ;
+    
     String mode = request.getParameter("mode") ;
     String rq = null ;
     String filepath = null ;
     String type = null ;
     try {
-      rq = "from Photo where id = '"+imgID+"' "+
-	"and id in ("+WebPage.listPhotoAllowed(request)+")" ;
+      String tagID = StringUtil.escapeHTML(request.getParameter("tag")) ;
+      
+      rq = "FROM Photo p "+
+	" WHERE p.ID = '"+imgID+"' "+
+	" AND "+WebPage.restrictToPhotosAllowed(request, "p")+" " ;
+
       Photo enrPhoto = (Photo) WebPage.session.createQuery(rq).uniqueResult() ;
       rq = "done" ;
 
       if (enrPhoto == null) {
-	String erreur = "<i> Cette photo n'est pas accessible "+
-	  "ou n'existe pas ...</i><br/>"+rq+"<br/>\n" ;
-	output.append(erreur);
-	WebPage.log.warn(erreur) ;
-	return false ;
+	output.addException("Cette photo ("+imgID+") n'est pas accessible ou n'existe pas ...");
+
+	return output.validate() ;
+      }
+
+      if (enrPhoto.getPath() == null) {
+	output.addException("Cette photo ("+imgID+") a un path null ...") ;
+	return output.validate() ;
       }
       
-      String themeName ;
-      if (!WebPage.isRootSession(request)) {
-	themeName = WebPage.getThemeName(request) ;
-      } else {
-	rq = "select t from Theme t, Album a "+
-	  "where t.ID = a.Theme and a.ID = '"+enrPhoto.getAlbum()+"'" ;
-	Theme enrTheme = (Theme) WebPage.session.createQuery(rq).uniqueResult() ;
-	rq = "done" ;
-	if (enrTheme == null) {
-	  return false ;
-	}
-	themeName = enrTheme.getNom () ;
-      }
-      type = (enrPhoto.getType() == null ? 
-	      "image/jpeg" : enrPhoto.getType());
+      type = (enrPhoto.getType() == null ? "image/jpeg" : enrPhoto.getType());
 
-      filepath = Path.getSourceURL() +
-	("GRAND".equals(mode) ? Path.IMAGES : Path.MINI)+
-	"/"+themeName+"/"+enrPhoto.getPath()+
-	("GRAND".equals(mode) ? "" : ".png") ;
-            
-      uniq = sendFile(request, filepath, response, type);
-            
-    } catch (MalformedURLException e) {
-      String erreur = "<i> URL Incorrect' :</i>"+filepath+"<br/>"+e+"<br/>\n" ; 
-      output.append(erreur);
-      WebPage.log.warn(erreur) ;
-    } catch (ConnectException e) {
-      String erreur = "<i> Erreur dans la connexion vers' :</i>"+
-	filepath+"<br/>"+e+"<br/>\n" ;
-      output.append(erreur);
-      WebPage.log.warn(erreur) ;
+      if ("SHRINK".equals(mode)) {
+	String width = request.getParameter("width") ;
+	try {
+	  filepath = SystemTools.shrink(request, enrPhoto, new Integer(width)) ;
+	} catch(NumberFormatException e) {
+	  output.addException("Impossible de parser le nombre "+width);
+	  return output.validate() ;
+	}
+      } else {
+	filepath = ("GRAND".equals(mode) ? enrPhoto.getImagePath() : enrPhoto.getMiniPath()) ;      
+      }
+      filepath = "file://" + filepath ;
+      
+      //null = correct, true = incorrect, but contentType already set 
+      Boolean correct = sendFile(request, filepath, response, type, output) ;
+      if (correct == null || correct) {
+	output = null ;
+      } else {
+	output.validate() ;
+      }
     } catch (JDBCException e) {
-      String erreur = "<i> Impossible d'effectuer la requete' :</i>"+
-	rq+"<br/>"+e+"<br/>\n"+e.getSQLException()+"<br/>\n" ;
-      output.append(erreur);
-      WebPage.log.warn(erreur) ;      
-    } catch (IOException e) {
-      String erreur = "<i> Impossible de lire le fichier ...</i>("+filepath+")\n"+e ;
-      output.append(erreur);
-      WebPage.log.warn(erreur) ;
-    }
-    return uniq ;
+      e.printStackTrace();
+      output.addException("JDBCException", rq);
+      output.addException("JDBCException", e.getSQLException());
+      output.validate() ;
+    } 
+    return output ;
   }
   
-    protected static boolean sendFile(HttpServletRequest request, String filepath, HttpServletResponse response, String type) 
-	throws IOException, MalformedURLException, ConnectException {
+  protected static Boolean sendFile(HttpServletRequest request,
+				    String filepath,
+				    HttpServletResponse response,
+				    String type,
+				    XmlBuilder output) {
+    
     boolean uniq = false ;
-    
-    InputStream in = null ; 
-    
-    filepath = StringUtil.escapeURL(filepath) ;
-    //dans mon cas le filepath et le path complet après création d'un temp file 
-    WebPage.log.warn("on ouvre la connexion vers  : "+filepath) ;
-    URLConnection conn = new URL(filepath).openConnection() ;
-    in = conn.getInputStream() ;
-    
-    WebPage.log.warn("size : "+conn.getContentLength()) ;
-    
-    response.setContentLength(conn.getContentLength()) ;
-    response.setContentType(type); 
-    //response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\""); 
-    
-    int bufferSize = (int) Math.min(conn.getContentLength(), 4*1024) ;
-    byte[] buffer = new byte[bufferSize];
-    int nbRead;
-    
-    uniq = true ;
-    ServletOutputStream out = response.getOutputStream(); 
-    while ((nbRead = in.read(buffer)) != -1) {
-      out.write(buffer, 0, nbRead);
+    try {
+      InputStream in = null ; 
+
+      
+      filepath = StringUtil.escapeURL(filepath) ;   
+      URLConnection conn = new URL(filepath).openConnection() ;
+      in = conn.getInputStream() ;
+      
+      int bufferSize = (int) Math.min(conn.getContentLength(), 4*1024) ;
+      byte[] buffer = new byte[bufferSize];
+      int nbRead;
+      
+
+      uniq = true ;
+      response.setHeader( "Content-Disposition", "filename=\"" + new File(filepath).getName() + "\"" );
+      response.setContentLength(conn.getContentLength()) ;
+      response.setContentType(type); 
+      ServletOutputStream out = response.getOutputStream(); 
+      while ((nbRead = in.read(buffer)) != -1) {
+	out.write(buffer, 0, nbRead);
+      }
+      out.flush() ;
+      out.close() ;
+
+      return null ;
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+      output.addException("MalformedURLException", filepath);
+
+    } catch (ConnectException e) {
+      e.printStackTrace();
+      output.addException("ConnectException", filepath);
+    } catch (IOException e) {
+      WebPage.fatal.warn("IOException "+filepath+"("+e.getMessage()+")");
+      output.addException("IOException", filepath);
     }
-    out.flush() ;
-    out.close() ;
-    
     return uniq ;
   }
 }

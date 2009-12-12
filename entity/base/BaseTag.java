@@ -15,6 +15,8 @@ import java.io.Serializable;
  * @hibernate.class
  *  table="Tag"
  */
+
+@SuppressWarnings("serial")
 public abstract class BaseTag  implements Serializable {
 
   public static String PROP_ID = "ID";
@@ -30,7 +32,10 @@ public abstract class BaseTag  implements Serializable {
   // fields
   private java.lang.String _nom;
   private java.lang.Integer _tagType;
-  private java.lang.Integer _photo  ;
+
+  
+  @SuppressWarnings("unused")
+private java.lang.Integer _photo  ;
 
 
   // constructors

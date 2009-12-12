@@ -1,34 +1,33 @@
 package display;
 
-
-import engine.* ;
-
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.List ;
+import java.util.ArrayList ;
+import java.util.Collections ;
+import java.util.Set ;
+import java.util.HashSet ;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import constante.Path;
-
-import engine.WebPage.*;
 import engine.WebPage ;
-import entity.Album;
+import engine.WebPage.AccessorsException;
+import engine.WebPage.Mode;
+import engine.WebPage.Type;
 import entity.Photo;
-import entity.Tag;
-import entity.Theme;
-import entity.Utilisateur ;
-
+import entity.Album;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Query;
+import org.hibernate.Transaction;
 
 import util.StringUtil;
+import util.XmlBuilder;
 
 public class Photos extends HttpServlet {
   private static final long serialVersionUID = 1L;
@@ -46,138 +45,68 @@ public class Photos extends HttpServlet {
   }
   
 
-  public static void treatPhotoEDIT(HttpServletRequest request,
-				       StringBuilder output)
+  public static XmlBuilder treatPhotoEDIT(HttpServletRequest request, XmlBuilder submit)
     throws HibernateException {
+    XmlBuilder output = new XmlBuilder("photo_edit") ;
+    if (submit != null) output.add(submit) ;
+    
     String photoID = StringUtil.escapeHTML(request.getParameter("id")) ;
     String page = StringUtil.escapeHTML(request.getParameter("page")) ;
-    String count = StringUtil.escapeHTML(request.getParameter("count")) ;
-    String albmCount = StringUtil.escapeURL(request.getParameter("albmCount")) ;
     page = (page == null ? "0" : page);
     String rq = null ;
     try {
-      int theme = Integer.parseInt(WebPage.getThemeID(request)) ;
-      
-      rq = "from Photo where id = '"+photoID+"'" ;
-      Photo enrPhoto = (Photo) WebPage.session.createQuery(rq).uniqueResult() ;
+      rq = "SELECT a, p FROM Photo p, Album a WHERE a.ID = p.Album AND p.ID = '"+photoID+"'" ;
+      Object[] result = (Object[]) WebPage.session.createQuery(rq).uniqueResult() ;
       rq = "done" ;
-      
+      Photo enrPhoto = (Photo) result[1] ;
+      Album enrAlbum = (Album) result[0] ;
       if (enrPhoto == null) {
-	output.append("Impossible de trouver la photo ("+photoID+")");
-	return ;
+	output.addException("Impossible de trouver la photo ("+photoID+")");
+	return output.validate();
       }
-
-      String from, name ;
-      if (albmCount == null || albmCount == ""
-	  || !"%".equals(albmCount.substring(0, 1))) {
-	from = ""+Path.LOCATION+"Photos?"+
-	  "count="+count+"&album="+enrPhoto.getAlbum()+"&albmCount="+albmCount ;
-	name = "photos" ;
-      } else {
-	from = ""+Path.LOCATION+"Tags?"+
-	  "count="+count+StringUtil.putbackAmp(albmCount) ;
-	name = "tags" ;
-      }
-      StringBuilder str = new StringBuilder () ;
+      output.add("id", enrPhoto.getID());
+      output.add("description", enrPhoto.getDescription());
+      output.add(WebPage.displayListIBT(Mode.TAG_USED, request, enrPhoto.getID(),
+					WebPage.Box.MULTIPLE, Type.PHOTO)) ;
       
-      str.append("<b>Modification de photo</b><br/><br/>\n"+
-		 "<form action='"+from+"&action=SUBMIT&id="+photoID+
-		 "#"+enrPhoto.getID()+"' method='POST'>\n"+
-		 "<table border='0'>\n"+
-		 "	<tr valign='middle'>\n"+
-		 "		<td rowspan='3'><img alt='"+
-		 enrPhoto.getDescription()+
-		 "' src='"+Path.LOCATION+"Images?"+
-		 "id="+enrPhoto.getID()+"&mode=PETIT' /></td>\n"+
-		 "		<td align='right'>Description :</td>\n"+
-		 "		<td colspan='2'><textarea type='text' "+
-		 "name='desc' cols='50'>"+
-		 enrPhoto.getDescription()+"</textarea></td>\n"+
-		 "       </tr><tr>\n" +
-		 "		<td align='right'>Thèmes :</td>\n"+
-				   "		<td rowspan='2' valign='top'>\n");
-      WebPage.displayListIBT(Mode.TAG_USED, request, str, enrPhoto.getID(),
-			     WebPage.Box.MULTIPLE, Type.PHOTO) ;
-      WebPage.displayListIBT(Mode.TAG_NUSED, request, str, enrPhoto.getID(),
-			     WebPage.Box.MULTIPLE, Type.PHOTO) ;
-      WebPage.displayListIBT(Mode.TAG_NONE, request, str, enrPhoto.getID(),
-			     WebPage.Box.MULTIPLE, Type.PHOTO) ;
-      str.append("		</td>\n"+
-		 "	</tr>\n"+
-		 "   </tr><tr>\n" +
-		 "	<tr>\n"+
-		 "	<td></td>"+
-		 "		<td colspan='4' align='center'>\n");
-      WebPage.displayUserPhoto(enrPhoto.getAlbum(), enrPhoto.getID(), str);
-      str.append("		</td>\n"+
-		 "	</tr>\n"+
-		 "	<tr>\n"+
-		 "		<td align='right'>Supprimer ?</td>\n" +
-		 "		<td align='left' colspan='3'>"+
-		 "<input type='text' "+
-		 "name='suppr' size='33' maxlength='33'/>\n" +
-		 "		\"Oui je veux supprimer cette photo\" </td>\n" +
-		 "	</tr>\n"+
-		 "	<tr>\n"+
-		 "		<td align='right'>"+
-		 "Representer l'album ?"+
-		 "</td><td><input type='checkbox' "+
-		 "name='represent' value='y' /></td>\n"+
-		 "	</tr>\n");
-
-      str.append("	<tr>\n"+
-		 "<td align='right'>Representer le tag ?\n"+
-		 "</td><td>");
+      output.add(WebPage.displayListIBT(Mode.TAG_NUSED, request, enrPhoto.getID(),
+					WebPage.Box.MULTIPLE, Type.PHOTO)) ;
       
-      WebPage.displayListIBTNI(Mode.TAG_USED,
-			     request,
-			     str,
-			     enrPhoto.getID(),
-			     WebPage.Box.LIST,
-			     Type.PHOTO,
-			     "tagPhoto",
-			     null);
-      str.append("	</td></tr>\n");
+      output.add(WebPage.displayListIBT(Mode.TAG_NEVER, request, enrPhoto.getID(),
+					WebPage.Box.MULTIPLE, Type.PHOTO)) ;
       
-      str.append("	<tr>\n"+
-		 "		<td colspan='5' align='center'>"+
-		 "<input type='submit' value='Valider' /></td>\n"+
-		 "	</tr>\n"+
-		 "</table>\n"+
-		 "</form>\n"+
-		 "<br/><br/>\n") ;
-      str.append("<a href='"+from+"#"+enrPhoto.getID()+"'>"+
-		 "Retour aux "+name+"</a>\n");
-      output.append(str.toString());
+      output.add(WebPage.displayListIBTNI(Mode.TAG_USED, request, enrPhoto.getID(),
+					  WebPage.Box.LIST, Type.PHOTO,
+					  null, null));
+      output.add(WebPage.displayListDroit(enrPhoto.getDroit(), enrAlbum.getDroit()));
+      output.validate() ;
     } catch (JDBCException e) {
-      output.append("Impossible de modifier la photo ("+photoID+")"+
-		    " => "+rq+"<br/>\n"+e+"<br/>\n"+
-		    e.getSQLException()+"<br/>\n");
+      e.printStackTrace() ;
+      output.cancel();
+      output.addException("JDBCException", rq);
+      output.addException("JDBCException", e.getSQLException());
     }
+    return output.validate() ;
   }
 
-  public static void displayPhoto(Query query,
-				  StringBuilder output,
-				  HttpServletRequest request,
-				  String message,
-				  String pageGet,
-				  String albmCount)
+  @SuppressWarnings("unchecked")
+  public static XmlBuilder displayPhoto(Query query,
+					HttpServletRequest request,
+					XmlBuilder thisPage,
+					String albmCount,
+					XmlBuilder submit)
     throws HibernateException {
+    XmlBuilder output = new XmlBuilder(null) ;
+    
     WebPage.EditMode inEditionMode = WebPage.getEditionMode(request) ;
     String page = request.getParameter("page") ;
-    
+    String photoID = request.getParameter("id") ;
     String scount = request.getParameter("count") ;
     page = (page == null ? "0" : page) ;
-    String all = request.getParameter("all") ;
-    Boolean details = WebPage.getDetails (request) ;
+    
     String strQuery = query.getQueryString() ;
-    long size ;
-    if(strQuery.contains("select")) {
-	size = WebPage.session.createQuery(strQuery).list().size();
-    }else {
-	size = ((Long) WebPage.session.createQuery("select count(*) "+strQuery)
-		.uniqueResult()).longValue();
-    }
+    long size = WebPage.session.createQuery(strQuery).list().size();
+    
     Integer[] bornes = WebPage.calculBornes(Type.PHOTO, page,
 					    scount, (int) size) ;
     query.setReadOnly(true).setCacheable(true);
@@ -188,10 +117,10 @@ public class Photos extends HttpServlet {
     String tag = null ;
     String rq = null ;
     int countME = 0 ;
-    boolean massEdit = false ;
+    boolean massEditParam = false ;
     boolean reSelect = false ;
     boolean current = false ;
-    
+
     String turn = request.getParameter("turn") ;
     if (inEditionMode == WebPage.EditMode.EDITION) {
       try {
@@ -201,161 +130,135 @@ public class Photos extends HttpServlet {
 	    degrees = "270" ;
 	  } else if ("droite".equals(turn)) {
 	    degrees = "90" ;
+	  } else if ("tag".equals(turn) || "untag".equals(turn) || "movtag".equals(turn)) {
+	    tag = StringUtil.escapeHTML(request.getParameter("addTag")) ;
 	  }
-
-	  massEdit = true ;
+	  
+	  massEditParam = true ;
 	}
       } catch (JDBCException e) {
-	output.append("Impossible d'executer la requete ...=> "+rq+"<br/>\n"+
-		      e+"<br/>\n"+e.getSQLException()+"<br/>\n");
+	output.addException("JDBCException", rq);
+	output.addException("JDBCException", e.getSQLException());
       } catch (NoSuchElementException e) {
-	output.append("Impossible de trouver ce tag ("+tag+") ...<br/>\n");
+	output.addException("NoSuchElementException", tag);
 	reSelect = true ;
       }
-      output.append("<form action='"+pageGet+"&action=MASSEDIT&page="+bornes[3]+
-		    "' method='POST'>\n");
     }
     
-    output.append("<table>\n");
     Photo enrPhoto = null;
     int count = bornes[0] ;
+    
     Iterator it = query.iterate() ;
     while (it.hasNext()) {
       enrPhoto = (Photo) it.next();
-      
-      output.append("<tr><td colspan='3'></td></tr>\n");
-      
+      XmlBuilder photo = new XmlBuilder("photo") ;
       boolean reSelectThis = false ;
-      if (massEdit) {
+      if (massEditParam) {
 	String chkbox = request.getParameter("chk"+enrPhoto.getID()) ;
-	if ("y".equals (all) || "modif".equals(chkbox)) {
+	if ("modif".equals(chkbox)) {
 	  current = true ;
+	  Transaction tx = null ;
 	  try {
-	    if ("tag".equals(turn)) {
-	      String[] tags = null ;
-	      
-	      tags = new String[1] ;
-	      tags[0] = tag ;
-	      enrPhoto.addTags(tags);
-	      output.append("Tag "+tag+" added to photo #"+enrPhoto.getID()+"!"+
-			  "<br/><br/>\n") ;
-	    } else {
+	    if ("tag".equals(turn) || "untag".equals(turn) || "movtag".equals(turn)) {
+	      String verb ;
+	      tx = WebPage.session.beginTransaction() ;
+	      if ("tag".equals(turn)) {
+		enrPhoto.addTags(new String[] {tag});
+		verb = "added" ;
+	      } else if ("untag".equals(turn)) {
+		enrPhoto.removeTag(tag) ;
+		verb = "removed" ;
+	      } else if ("movtag".equals(turn)) {
+		String rmTag = StringUtil.escapeHTML(request.getParameter("rmTag")) ;
+		enrPhoto.removeTag(rmTag) ;
+		enrPhoto.addTags(new String[] {tag});
+		verb = "added and tag "+rmTag+" removed" ;
+	      } else {
+		verb = "nothinged" ;
+	      }
+	      WebPage.session.update(enrPhoto) ;
+	      tx.commit() ;
+	      photo.add("message", "Tag "+tag+" "+verb+" to photo #"+enrPhoto.getID());
+	    } else if ("droite".equals(turn) || "gauche".equals(turn)) {
 	      if (!enrPhoto.rotate(degrees)) {
-		output.append("Erreur dans le ConvertWrapper ..."+
-			  "<br/><br/>\n") ;
+		photo.addException("Erreur dans le ConvertWrapper ...");
 		reSelectThis = true ;
 	      }
 	    }
 	    
 	    countME++ ;
-	  } catch (Exception e) {
-	    output.append("Impossible d'effectuer l'action sur cette photo..."+
-			  e+"<br/><br/>\n") ;
+	  } catch (AccessorsException e) {
+	    photo.addException("AccessorsException", "Impossible d'effectuer l'action sur cette photo..."+e) ;
 	    reSelectThis = true ;
+	    if (tx != null) tx.rollback();
 	  }
 	}
       }
-              
-      if (message != null &&
-	  enrPhoto.getID().toString().equals(request.getParameter("id"))) {
-	output.append("<tr><td colspan='3'>"+message+"</td></tr>") ;
-      }
-      output.append("	<tr align='center' valign='middle'>\n");
+
+      if (enrPhoto.getID().equals(photoID)) {
+	if (submit != null) {
+	  photo.add(submit) ;
+	  submit = null ;
+	}
+      }	
       if (inEditionMode == WebPage.EditMode.EDITION) {
-	output.append("<td><input type='checkbox' "+
-		      "name='chk"+enrPhoto.getID()+"' "+
-		      "value='modif' "+((reSelect || reSelectThis) && current ?
-					"checked" : "")+
-		      "/></td>\n");
+	if ((reSelect || reSelectThis) && current)
+	  photo.add("checked");
       }
+      XmlBuilder details = new XmlBuilder("details");
+      details.add("photoID", enrPhoto.getID());
+      details.add("description", enrPhoto.getDescription());
       
-      output.append("		<td>\n" +
-		    "                 <a name='"+enrPhoto.getID()+"'></a>"+
-		    "			<a href='"+Path.LOCATION+"Images?"+
-		    "id="+enrPhoto.getID()+"&mode=GRAND'>"+
-		    "<img alt='"+enrPhoto.getDescription()+"' "+
-		    "src='"+Path.LOCATION+"Images?"+
-		    "id="+enrPhoto.getID()+"&mode=PETIT' /></a>\n" +
-		    "		</td>\n");
-      if (details) {
-	output.append("	<td align='left' width='50%'><table><tr><td>"+
-		      enrPhoto.getExif()
-		      .replace("\n", "</td></tr><tr><td>\n")
-		      .replace(" - ", "</td><td>")+
-		      "</td></tr></table></td>\n");
-      }
-      output.append("		<td width='50%' align='left'>\n" +
-		    "		<table>\n" +
-		    "			<tr>\n" +
-		    "				<td>"+
-		    enrPhoto.getDescription()+"</td>\n" +
-		    "			</tr>\n" +
-		    "			<tr>\n" +
-		    "				<td>\n" +
-		    "					<i>");
-      WebPage.displayListIBT(Mode.TAG_USED, request, output, enrPhoto.getID(),
-			     WebPage.Box.NONE, Type.PHOTO);
-      output.append("</i>\n" +
-		    "				</td>\n" +
-		    "			</tr>\n");
-		    
+      details.add("miniWidth", enrPhoto.getWidth(false));
+      details.add("miniHeight", enrPhoto.getHeight(false));
+
+      //tags de cette photo
+      details.add(WebPage.displayListIBT(Mode.TAG_USED, request, enrPhoto.getID(),
+					 WebPage.Box.NONE, Type.PHOTO));
+      details.add("albumID", enrPhoto.getAlbum());
       //liste des utilisateurs pouvant voir cette photo
-      if (WebPage.isLoggedAsCurrentManager(request)
-	  && !WebPage.isReadOnly()) {
-	if (inEditionMode != WebPage.EditMode.VISITE) {
-	  output.append("			<tr>\n" +
-			"				<td>");
-	  WebPage.displayListIBT(Mode.USER, request, output, enrPhoto.getID(),
-				 WebPage.Box.NONE, Type.PHOTO);
-	  output.append("</td>\n" +
-			"			</tr>\n");
+      if (engine.Users.isLoggedAsCurrentManager(request) &&
+	  inEditionMode != WebPage.EditMode.VISITE)
+      {
+	Integer right = enrPhoto.getDroit() ;
+	if (right != null && !right.equals(0)) {
+	  details.add(WebPage.getUserName(enrPhoto.getDroit())) ;
+	} else {
+	  details.add(WebPage.getUserOutside(enrPhoto.getAlbum())) ;
 	}
       }
-      output.append("		</table>\n" +
-		    "		</td>\n");
-      //lien vers la page d'edition
-      if (WebPage.isLoggedAsCurrentManager(request)
-	  && inEditionMode == WebPage.EditMode.EDITION
-	  && !WebPage.isReadOnly()) {
-	output.append("		<td width='5%'>"+
-		      "<a href='"+Path.LOCATION+"Photos?action=EDIT"+
-		      "&id="+enrPhoto.getID()+
-		      "&count="+count+
-		      "&albmCount="+albmCount+"'>"+
-		      "<img src='/data/web/edit.png' width='25' heigh='25'>"+
-		      "</a></td>\n");
+      photo.add(details);
+      photo.add("count", count);
+      if (WebPage.getDetails (request)) {
+	photo.add(enrPhoto.getXmlExif()) ;
       }
-      output.append("	</tr>\n");
+      output.add(photo);
       current = false ;
       count++ ; 
     }
-    output.append("</table>\n");
+
+    if (submit != null) {
+      output.add(submit) ;
+    }
     
     if (inEditionMode == WebPage.EditMode.EDITION) {
-      if (massEdit) {
-	output.append("<i>");
-	if (countME == 0 || "rien".equals(turn))
-	   output.append("Aucune modification faite ... ?");
-	else 
-	  output.append(countME+" photo"+
-			(countME == 1 ? " a été modifiée" :
-			                "s ont été modifées"));
-	output.append("</i><br/><br/>\n") ;
-      }
-      output.append("<input type='checkbox' name='all' value='y' />\n"+
-		    "Toutes <br /><br />\n");
-      output.append("<input type='radio' name='turn' value='droite' />\n"+
-		    "Tourner vers la droite <br />\n");
-      output.append("<input type='radio' name='turn' value='gauche' />\n"+
-		    "Tourner vers la gauche <br />\n");
-      output.append("<input type='radio' name='turn' value='tag' checked />\n"+
-		    "Tagger avec ");
-      WebPage.displayListBN(WebPage.Mode.TAG_USED, request, output,
-			    WebPage.Box.LIST, "newTag") ;
-      output.append("<br /><input type='submit' value='OK'/>\n") ;
-      output.append("</form>\n");
+      XmlBuilder massEdit = new XmlBuilder("massEdit");
+      massEdit.add(WebPage.displayListBN(WebPage.Mode.TAG_USED, request,
+				       WebPage.Box.LIST, "newTag")) ;
+      if (massEditParam) {
+	String msg ; 
+	if (countME == 0 || "rien".equals(turn)) {
+	  msg = "Aucune modification faite ... ?";
+	} else { 
+	  msg = ""+ countME+" photo"+
+	    (countME == 1 ? " a été modifiée" :
+	     "s ont été modifées");
+	}
+	massEdit.add("message", msg);
+      } 
+      output.add(massEdit);
     }
-    WebPage.displayPages(pageGet, bornes, output);
+    output.add(WebPage.xmlPage(thisPage, bornes));
+    return output.validate() ;
   }
-
 }

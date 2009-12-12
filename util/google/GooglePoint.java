@@ -1,4 +1,4 @@
-package engine ;
+package util.google ;
 
 import java.util.List ;
 import java.util.ArrayList ;
@@ -7,11 +7,12 @@ import constante.Path ;
 
 public class GooglePoint extends GoogleMap {
   private static int current = 0 ;
-  private List<Point> points = new ArrayList<Point>();
-  private int id ;
-  private boolean displayInfo = true ;
-  private static final String MAP_NAME = "map_point" ;
 
+  private List<Point> points = new ArrayList<Point>();
+  private String id = "" ;
+  private boolean displayInfo = true ;
+  private String name ;
+  
   static public class Point {
     public String lat ;
     public String lng ;
@@ -28,15 +29,18 @@ public class GooglePoint extends GoogleMap {
       this.msg = msg ;
     }
   }
+  public GooglePoint(String name) {
+    this.name = name ;
+  }
+  public GooglePoint(String name, boolean uniqueName) {
+    this.name = name +(uniqueName ? GooglePoint.current++ : "") ;
+  }
+  
   public boolean isEmpty() {
       return points.isEmpty();
   }
   public String getMapName() {
-      return MAP_NAME+id ;
-  }
-  public GooglePoint () {
-    this.id = GooglePoint.current ;
-    GooglePoint.current++ ;
+    return name ;
   }
   
   public void addPoint(Point p) {
@@ -44,16 +48,24 @@ public class GooglePoint extends GoogleMap {
       Double.parseDouble(p.lat) ;
       Double.parseDouble(p.lng) ;
       points.add(p);
-    } catch (Exception e) {}
+    } catch (RuntimeException e) {}
   }
 
   public void displayInfo(boolean info) {
     this.displayInfo = info ;
   }
+
+  public String getInitFunction() {
+    return "function loadMap() {\n"+
+      "  if (GBrowserIsCompatible()) {\n"+
+      getInitCode()+"\n"+
+      "  }\n"+
+      "}\n" ;
+  }
   
-  public String getInit() {
-    if (points.isEmpty()) return "" ;
-    else if (!Path.hasInternet()) return "" ;
+  public String getInitCode() {
+    if (points.isEmpty()) return "//point list is empty\n" ;
+    else if (!Path.hasInternet()) return "//no internet\n" ;
 
     StringBuilder str = new StringBuilder() ;
     str.append(
@@ -93,7 +105,7 @@ public class GooglePoint extends GoogleMap {
     if (displayInfo) {
       str.append(""+
 		 "     map"+id+".addControl(new GSmallMapControl());\n"+
-		 "     map"+id+".addControl(new GMapTypeControl());");
+		 "     map"+id+".addControl(new GMapTypeControl());\n");
     }
         
     return str.toString() ;

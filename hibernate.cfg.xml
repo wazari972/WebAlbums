@@ -8,6 +8,7 @@
 		<!-- local connection properties -->
 
 		<!-- dialect for MySQL -->
+
 		<property name="hibernate.connection.url">
 			jdbc:mysql://127.0.0.1/WebAlbums
 		</property>
@@ -20,24 +21,28 @@
 			org.hibernate.dialect.MySQLDialect
 		</property>
 
-		<!--		
-		<property name="hibernate.connection.url">
-		  jdbc:derby:/home/kevin/Web/WebAlbums/WEB-INF/lib/WebAlbum
-		</property>
-		
-		<property name="hibernate.connection.driver_class">
-		  org.apache.derby.jdbc.EmbeddedDriver
-		</property>
-
-		<property name="dialect">
-		  org.hibernate.dialect.DerbyDialect
-		</property>
-		-->
-
 		<property name="hibernate.connection.username">wazari972</property>
 		<property name="hibernate.connection.password">ijaheb</property>
 
-		<property name="hibernate.show_sql">false</property>
+		<!-- dialect for HSQLDB -->
+<!--	
+		<property name="hibernate.connection.url">
+		  jdbc:hsqldb:mem:WebAlbums
+		</property>
+		
+		<property name="hibernate.connection.driver_class">
+		  org.hsqldb.jdbcDriver
+		</property>
+
+		<property name="dialect">
+		  org.hibernate.dialect.HSQLDialect
+		</property>
+		<property name="hibernate.connection.username">SA</property>
+		<property name="hibernate.connection.password"></property>
+-->
+                <!-- application settings -->
+
+
 		<property name="hibernate.use_outer_join">true</property>
 		
 		<property name="hibernate.transaction.factory_class">
@@ -45,8 +50,8 @@
 		</property>
 		
 		<property name="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</property>
-		<property name="hibernate.cache.use_second_level_cache">true</property>
 		<property name="hibernate.cache.use_query_cache">true</property> 
+		<property name="hibernate.show_sql">false</property>
 
 		<mapping resource="Geolocalisation.hbm" />
 		<mapping resource="Photo.hbm" />
@@ -54,8 +59,6 @@
 		<mapping resource="Tag.hbm" />
 		<mapping resource="TagPhoto.hbm" />
                 <mapping resource="Theme.hbm" />
-		<mapping resource="UserPhoto.hbm" />
-		<mapping resource="UserAlbum.hbm" />
 		<mapping resource="Utilisateur.hbm" />
 		<mapping resource="TagTheme.hbm" />
 	</session-factory>

@@ -15,6 +15,8 @@ import java.io.Serializable;
  * @hibernate.class
  *  table="TagPhoto"
  */
+
+@SuppressWarnings("serial")
 public abstract class BaseTagPhoto  implements Serializable {
 
 	public static String PROP_ID = "ID";
