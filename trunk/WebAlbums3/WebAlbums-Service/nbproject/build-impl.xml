@@ -345,17 +345,17 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.WebAlbums-Util.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${reference.WebAlbums-DAO.dist}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.CP-Apache-commos-lang.2.5.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar-1}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.WebAlbums-Util.jar}" manifestproperty="manifest.reference.WebAlbums-Util.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${reference.WebAlbums-DAO.dist}" manifestproperty="manifest.reference.WebAlbums-DAO.dist" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.CP-Apache-commos-lang.2.5.jar}" manifestproperty="manifest.file.reference.CP-Apache-commos-lang.2.5.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" manifestproperty="manifest.file.reference.CP-DB-dbunit-2.4.5.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" manifestproperty="manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar-1}" manifestproperty="manifest.file.reference.CP-DB-dbunit-2.4.5.jar-1" todir="${dist.ear.dir}"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${manifest.reference.WebAlbums-Util.jar} ${manifest.reference.WebAlbums-DAO.dist} ${manifest.file.reference.CP-Apache-commos-lang.2.5.jar} ${manifest.file.reference.CP-DB-dbunit-2.4.5.jar} ${manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar} "/>
+            <attribute name="Class-Path" value="${manifest.reference.WebAlbums-Util.jar} ${manifest.reference.WebAlbums-DAO.dist} ${manifest.file.reference.CP-Apache-commos-lang.2.5.jar} ${manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar} ${manifest.file.reference.CP-DB-dbunit-2.4.5.jar-1} "/>
         </manifest>
     </target>
     <target name="-copy-meta-inf">

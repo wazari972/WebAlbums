@@ -8,8 +8,8 @@
             <included-library>reference.WebAlbums-Util.jar</included-library>
             <included-library>reference.WebAlbums-DAO.dist</included-library>
             <included-library>file.reference.CP-Apache-commos-lang.2.5.jar</included-library>
-            <included-library>file.reference.CP-DB-dbunit-2.4.5.jar</included-library>
             <included-library>file.reference.CP-EXIF-metadata-extractor-2.3.1.jar</included-library>
+            <included-library>file.reference.CP-DB-dbunit-2.4.5.jar-1</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
