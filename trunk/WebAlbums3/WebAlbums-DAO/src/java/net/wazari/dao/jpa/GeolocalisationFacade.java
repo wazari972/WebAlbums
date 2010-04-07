@@ -38,6 +38,7 @@ public class GeolocalisationFacade implements GeolocalisationFacadeLocal {
     }
 
     public List<Geolocalisation> findAll() {
-        return em.createQuery("select object(o) from Geolocalisation as o").getResultList();
+        return em.createQuery("select object(o) from Geolocalisation as o")
+                .getResultList();
     }
 }

@@ -6,7 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.view.servlet.Index.Page;
 
 @SuppressWarnings("unchecked")
@@ -18,8 +17,7 @@ public class Albums extends HttpServlet {
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-        ViewSessionAlbum vSession = null;
-        Index.treat(Page.ALBUM, request, response, vSession);
+        Dispatcher.treat(this, Page.ALBUM, request, response);
     }
 
     @Override

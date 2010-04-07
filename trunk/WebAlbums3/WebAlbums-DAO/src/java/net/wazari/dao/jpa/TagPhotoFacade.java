@@ -44,7 +44,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     public List<TagPhoto> findAll() {
-        return em.createQuery("select object(o) from TagPhoto as o").getResultList();
+        return em.createQuery("select object(o) from TagPhoto as o")
+                .getResultList();
     }
 
     public void deleteByPhoto(int photoID) {
@@ -55,27 +56,36 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
         }
     }
 
-    public List<TagPhoto> queryByPhoto(int photoID) {
-        String rq = "FROM TagPhoto WHERE photo = '" + photoID + "'";
-        return em.createQuery(rq).getResultList();
+    public List<TagPhoto> queryByPhoto(int photoId) {
+        String rq = "FROM TagPhoto WHERE photo = :photoId";
+        return em.createQuery(rq)
+                .setParameter("photoId", photoId)
+                .getResultList();
     }
 
-    public List<TagPhoto> queryByAlbum(int albumID) {
+    public List<TagPhoto> queryByAlbum(int albumId) {
         String rq = "SELECT DISTINCT tp " +
                 "FROM Photo photo, TagPhoto tp " +
-                "WHERE photo.Album = '" + albumID + "' " +
+                "WHERE photo.Album = :albumId " +
                 "AND photo.ID = tp.Photo ";
-        return em.createQuery(rq).getResultList();
+        return em.createQuery(rq)
+                .setParameter("albumId", albumId)
+                .getResultList();
     }
 
-    public TagPhoto loadByTagPhoto(int tagID, int photoID) {
-        String rq = "FROM TagPhoto WHERE photo = '" + photoID + "' AND tag = '" + tagID + "'";
-        return (TagPhoto) em.createQuery(rq).getSingleResult();
+    public TagPhoto loadByTagPhoto(int tagId, int photoId) {
+        String rq = "FROM TagPhoto WHERE photo = :photoId AND tag = :tagId";
+        return (TagPhoto) em.createQuery(rq)
+                .setParameter("photoId", photoId)
+                .setParameter("tagId", tagId)
+                .getSingleResult();
     }
 
-    public List<TagPhoto> queryByTag(int tagID) {
-        String rq = "FROM TagPhoto WHERE tag = '" + tagID + "'";
-        return em.createQuery(rq).getResultList();
+    public List<TagPhoto> queryByTag(int tagId) {
+        String rq = "FROM TagPhoto WHERE tag = :tagId";
+        return em.createQuery(rq)
+                .setParameter("tagId", tagId)
+                .getResultList();
     }
 
     public List<Tag> selectDistinctTags() {
@@ -84,12 +94,14 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
 
-    public List<Tag> selectUnusedTags(ServiceSession sSession) {
+    public List<Tag> selectUnusedTags(ServiceSession session) {
         String rq = "SELECT DISTINCT tp.Tag " +
                             "FROM TagPhoto tp, Photo p, Album a " +
                             "WHERE " +
                             " tp.Photo = p.ID AND p.Album = a.ID " +
-                            " AND a.Theme = '" + sSession.getThemeId() + "' ";
-        return em.createQuery(rq).getResultList();
+                            " AND a.Theme = :themeId ";
+        return em.createQuery(rq)
+                .setParameter("themeId", session.getThemeId())
+                .getResultList();
     }
 }

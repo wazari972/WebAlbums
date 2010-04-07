@@ -42,29 +42,36 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     public List<Photo> findAll() {
-        return em.createQuery("select object(o) from Photo as o").getResultList();
+        return em.createQuery("select object(o) from Photo as o")
+                .getResultList();
     }
 
     public Photo loadIfAllowed(ServiceSession session, int id) {
             String rq = "FROM Photo p " +
-            " WHERE p.ID = "+id+" " +
+            " WHERE p.ID = :id " +
             (session == null ? "" : " AND "+webDAO.restrictToPhotosAllowed(session, "p"))+" " ;
 
-        return (Photo) em.createQuery(rq).getResultList();
+        return (Photo) em.createQuery(rq)
+                .setParameter("id", id)
+                .getResultList();
     }
 
-    public List<Photo> loadFromAlbum(ServiceSession session, int albumID) {
+    public List<Photo> loadFromAlbum(ServiceSession session, int albumId) {
           String rq = "FROM Photo p " +
-            " WHERE p.Album = '"+albumID+"' " +
+            " WHERE p.Album = :albumId " +
             (session == null ? "" : " AND "+webDAO.restrictToPhotosAllowed(session, "p"))+" " +
             " ORDER BY path" ;
-          return em.createQuery(rq).getResultList() ;
+          return em.createQuery(rq)
+                  .setParameter("albumId", albumId)
+                  .getResultList() ;
 
     }
 
     public Photo loadByPath(String path) {
-            String rq = "FROM Photo WHERE Path = '"+path+"'" ;
-            return (Photo) em.createQuery(rq).getResultList();
+            String rq = "FROM Photo WHERE Path = :path" ;
+            return (Photo) em.createQuery(rq)
+                    .setParameter("path", path)
+                    .getResultList();
     }
 
     public List<Photo> loadByTags(ServiceSession session, List<Integer> listTagId) {

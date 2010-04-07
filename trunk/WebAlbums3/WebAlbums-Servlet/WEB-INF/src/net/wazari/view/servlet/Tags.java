@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.view.servlet.Index.Page;
 
 public class Tags extends HttpServlet {
@@ -19,8 +18,7 @@ public class Tags extends HttpServlet {
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-        ViewSessionTag vSession = null;
-        Index.treat(Page.TAGS, request, response, vSession);
+        Dispatcher.treat(this, Page.TAGS, request, response);
     }
 
     @Override

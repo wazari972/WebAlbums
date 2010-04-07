@@ -23,7 +23,7 @@ import net.wazari.util.system.wrapper.*;
 @Stateless
 public class SystemTools implements SystemToolsService {
 
-    private static List<FileUtilWrapper> wrappers = new ArrayList<FileUtilWrapper>(2);
+    private static final List<FileUtilWrapper> wrappers = new ArrayList<FileUtilWrapper>(2);
     private static final Logger log = Logger.getLogger("Process");
     @EJB
     private UtilisateurFacadeLocal userDAO;

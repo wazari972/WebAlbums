@@ -43,22 +43,28 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
 
 
     public Utilisateur loadByName(String name) {
-        String rq = "FROM Utilisateur WHERE nom = '" + name + "'";
-        return (Utilisateur) em.createQuery(rq).getSingleResult();
+        String rq = "FROM Utilisateur WHERE nom = :nom";
+        return (Utilisateur) em.createQuery(rq)
+                .setParameter("nom", name)
+                .getSingleResult();
     }
 
-    public Utilisateur loadUserOutside(int albmId) {
-        String rq = "SELECT u FROM Utilisateur u, Album a WHERE u.ID = a.Droit AND a.ID = '" + albmId + "'";
-        return (Utilisateur) em.createQuery(rq).getSingleResult();
+    public Utilisateur loadUserOutside(int albumId) {
+        String rq = "SELECT u FROM Utilisateur u, Album a WHERE u.ID = a.Droit AND a.ID = :albumId";
+        return (Utilisateur) em.createQuery(rq)
+                .setParameter("albumId", albumId)
+                .getSingleResult();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Utilisateur> loadUserInside(int id) {
+    public List<Utilisateur> loadUserInside(int albumId) {
         String rq = "SELECT DISTINCT u " +
                 " FROM Photo p, Utilisateur u " +
                 " WHERE u.Id = p.Droit " +
-                " AND p.Album = '" + id + "' " +
+                " AND p.Album = :albumId " +
                 " AND p.Droit != null AND p.Droit != 0";
-        return  em.createQuery(rq).getResultList();
+        return  em.createQuery(rq)
+                .setParameter("albumId", albumId)
+                .getResultList();
     }
 }

@@ -40,7 +40,7 @@ import net.wazari.util.system.SystemToolsService;
 @Stateless
 public class PhotoBean implements PhotoLocal {
 
-    private static Logger log = Logger.getLogger(PhotoBean.class.toString());
+    private static final Logger log = Logger.getLogger(PhotoBean.class.toString());
     private static final long serialVersionUID = 1L;
     @EJB
     PhotoUtilLocal photoUtil;

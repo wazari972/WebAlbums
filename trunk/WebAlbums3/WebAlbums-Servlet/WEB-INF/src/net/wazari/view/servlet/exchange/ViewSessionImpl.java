@@ -7,8 +7,10 @@ package net.wazari.view.servlet.exchange;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.Enum;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +30,8 @@ import net.wazari.service.exchange.ViewSessionTag;
  * @author kevin
  */
 public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, ViewSessionPhoto, ViewSessionTag, ViewSessionImages {
-
+    private static final Logger log = Logger.getLogger(ViewSessionImpl.class.getName()) ;
+    
     private HttpServletRequest request;
     private HttpServletResponse response;
     private static Configuration conf = null;
@@ -124,6 +127,7 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     public File getTempDir() {
         return getSessionObject("tempDir", File.class);
     }
+
     public void setTempDir(File temp) {
         setSessionObject("tempDir", temp);
     }
@@ -159,6 +163,7 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     public String getUserName() {
         return getSessionObject("userName", String.class);
     }
+
     public void setUserName(String userName) {
         setSessionObject("userName", userName);
     }
@@ -302,25 +307,52 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return response.getOutputStream();
     }
 
+    /** ** ** ** **/
+    
     private Integer getInteger(String name) {
-        return Integer.parseInt(getString(name));
+        return getObject(name, Integer.class);
     }
 
     private String getString(String name) {
-        return getString(name);
+        return getObject(name, String.class);
     }
 
     private Boolean getBoolean(String name) {
-        return Boolean.parseBoolean(getString(name));
-    }
-
-    private <T> T getSessionObject(String name, Class<T> type) {
-        return type.cast(request.getSession().getAttribute(name));
+        return getObject(name, Boolean.class);
     }
 
     private <T extends Enum<T>> T getEnum(String value, Class<T> type) {
-        Enum.valueOf(type, value);
-        return null;
+        return getObject(value, type);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T getObject(String name, Class<T> type) {
+        T ret = null ;
+        String val = request.getParameter(name) ;
+        try {
+            if (type == String.class) {
+                ret = type.cast(val) ;
+            } else if (type == Integer.class) {
+                ret = type.cast(Integer.parseInt(val));
+            } else if (type == Boolean.class) {
+                ret = type.cast(Boolean.parseBoolean(val));
+            } else if (type.isEnum()) {
+                ret = (T) Enum.valueOf((Class)type,val) ;
+            } else {
+                log.fine("Can't parse class "+type+" from parameters") ;
+            }
+        } catch (ClassCastException e) {
+            log.fine("Can't cast value "+val+" into class "+type) ;
+        }
+        return ret ;
+    }
+
+    private <T> T getSessionObject(String name, Class<T> type) {
+        T ret = type.cast(request.getSession().getAttribute(name));
+        if (ret == null) {
+            getObject(name, type) ;
+        }
+        return ret;
     }
 
     private void setSessionObject(String key, Object val) {

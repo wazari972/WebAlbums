@@ -44,7 +44,8 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     public List<Tag> findAll() {
-        return em.createQuery("select object(o) from Tag as o").getResultList();
+        return em.createQuery("select object(o) from Tag as o")
+                .getResultList();
     }
 
     /*
@@ -90,11 +91,11 @@ public class TagFacade implements TagFacadeLocal {
     public List<Tag> queryAllowedTagByType(ServiceSession session, int type) {
         String rq;
         if (session.isRootSession()) {
-            rq = "FROM Tag t WHERE t.TagType = '" + type + "'";
+            rq = "FROM Tag t WHERE t.TagType = :type";
         } else {
             rq = "SELECT DISTINCT t " +
                     "FROM Tag t, TagPhoto tp, Photo p, Album a " +
-                    "WHERE t.TagType = '" + type + "' " +
+                    "WHERE t.TagType = :type " +
                     "AND t.ID = tp.Tag " +
                     "AND tp.Photo = p.ID " +
                     "AND p.Album = a.ID " +
@@ -102,14 +103,18 @@ public class TagFacade implements TagFacadeLocal {
                     "AND " + webDAO.restrictToThemeAllowed(session, "a") + " ";
         }
 
-        return em.createQuery(rq).getResultList();
+        return em.createQuery(rq)
+                .setParameter("type", type)
+                .getResultList();
     }
 
     public Tag loadByName(String nom) {
         String rq = "FROM Tag t " +
-                " WHERE  t.Nom = '" + nom + "' ";
+                " WHERE  t.Nom = :nom ";
 
-        return (Tag) em.createQuery(rq).getSingleResult();
+        return (Tag) em.createQuery(rq)
+                .setParameter("nom", nom)
+                .getSingleResult();
     }
 
     public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) {

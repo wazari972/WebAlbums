@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.service.exchange.ViewSession;
 import net.wazari.view.servlet.Index.Page;
 
 public class Choix extends HttpServlet {
@@ -19,8 +18,7 @@ public class Choix extends HttpServlet {
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-        ViewSession vSession = null;
-        Index.treat(Page.CHOIX, request, response, vSession);
+        Dispatcher.treat(this, Page.CHOIX, request, response);
     }
 
     @Override

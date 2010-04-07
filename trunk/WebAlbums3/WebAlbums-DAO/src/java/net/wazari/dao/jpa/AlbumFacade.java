@@ -59,16 +59,21 @@ public class AlbumFacade implements AlbumFacadeLocal {
     public Album loadIfAllowed(ServiceSession session, int id) {
         String rq = "FROM Album a " +
                 " WHERE " + webDAO.restrictToAlbumsAllowed(session, "a") + " " +
-                " AND a.ID = " + id + " ";
+                " AND a.ID = :id ";
 
-        return (Album) em.createQuery(rq).getSingleResult();
+        return (Album) em.createQuery(rq)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 
     public Album loadByNameDate(String name, String date) {
         String rq = "FROM Album a " +
                 " WHERE a.Date = :date " +
                 " AND a.Nom = :nom";
-        return (Album) em.createQuery(rq).setParameter("date", date).setParameter("nom", name).getSingleResult();
+        return (Album) em.createQuery(rq)
+                .setParameter("date", date)
+                .setParameter("nom", name)
+                .getSingleResult();
     }
 
     public void setDateStr(Album enrAlbum, String date) {

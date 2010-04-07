@@ -39,7 +39,7 @@ public class Album implements Serializable {
     private String description;
     @Basic(optional = false)
     @Column(name = "Date")
-    private String datee;
+    private String date;
     @Column(name = "Picture")
     private Integer picture;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album")
@@ -61,7 +61,7 @@ public class Album implements Serializable {
     public Album(Integer id, String nom, String date) {
         this.id = id;
         this.nom = nom;
-        this.datee = date;
+        this.date = date;
     }
 
     public Integer getId() {
@@ -89,11 +89,11 @@ public class Album implements Serializable {
     }
 
     public String getDate() {
-        return datee;
+        return date;
     }
 
     public void setDate(String date) {
-        this.datee = date;
+        this.date = date;
     }
 
     public Integer getPicture() {
