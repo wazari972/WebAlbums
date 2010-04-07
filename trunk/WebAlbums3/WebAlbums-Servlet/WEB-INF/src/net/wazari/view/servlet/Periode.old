@@ -1,0 +1,36 @@
+package display;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.hibernate.HibernateException;
+import org.hibernate.JDBCException;
+import org.hibernate.Query;
+
+import util.StringUtil;
+import util.XmlBuilder;
+
+import engine.WebPage ;
+
+public class Periode extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+	
+  public void doGet(HttpServletRequest request,
+		    HttpServletResponse response)
+    throws ServletException, IOException {
+    ViewSession vSession = null;
+    Index.treat(Page.PERIODE, request, response, vSession) ;
+  }
+  public void doPost(HttpServletRequest request,
+		     HttpServletResponse response)
+    throws ServletException, IOException {
+    doGet(request, response) ;
+  }
+  
+}

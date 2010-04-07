@@ -1,0 +1,3 @@
+# Disable logging (readonly filesystem)
+<!-- <Set name="RequestLog"> ... ... </Set> -->
+coucou

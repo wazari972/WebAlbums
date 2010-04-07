@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="Display.xsl"?>
+
+
+<!DOCTYPE xsl:stylesheet  [
+  <!ENTITY auml   "&#228;" >
+  <!ENTITY ouml   "&#246;" >
+  <!ENTITY uuml   "&#252;" >
+  <!ENTITY szlig  "&#223;" >
+  <!ENTITY Auml   "&#196;" >
+  <!ENTITY Ouml   "&#214;" >
+  <!ENTITY Uuml   "&#220;" >
+  
+  <!ENTITY nbsp   "&#160;" > 
+  <!ENTITY Agrave "&#192;" > 
+  <!ENTITY Egrave "&#200;" > 
+  <!ENTITY Eacute "&#201;" > 
+  <!ENTITY Ecirc  "&#202;" > 
+  <!ENTITY egrave "&#232;" > 
+  <!ENTITY eacute "&#233;" > 
+  <!ENTITY ecirc  "&#234;" > 
+  <!ENTITY agrave "&#224;" > 
+  <!ENTITY iuml   "&#239;" > 
+  <!ENTITY ugrave "&#249;" > 
+  <!ENTITY ucirc  "&#251;" > 
+  <!ENTITY uuml   "&#252;" > 
+  <!ENTITY ccedil "&#231;" > 
+  <!ENTITY AElig  "&#198;" > 
+  <!ENTITY aelig  "&#330;" > 
+  <!ENTITY OElig  "&#338;" > 
+  <!ENTITY oelig  "&#339;" > 
+  <!ENTITY euro   "&#8364;"> 
+  <!ENTITY laquo  "&#171;" > 
+  <!ENTITY raquo  "&#187;" > 
+
+  ]>
+<root>
+  <login> 
+    <theme>Angleterre</theme> 
+    <user>Administrateur</user>
+  </login>
+  <affichage>
+    <maps>Avec Carte</maps>
+    <details>Avec Détails</details>
+    <edition>Mode Édition</edition>
+    <edit />
+  </affichage>
+  
+  <album>
+    <id>347</id>
+    <count>1</count>
+    <date>
+      <year>2009</year>
+      <month>OCT</month>
+      <day>11</day>
+    </date>
+    <title>Preston Park, living in there !</title>
+    <details>
+      <photoID>3746</photoID>
+      <tagSeq>
+	<where id='203' >LN - Glastone Park</where>
+	<where id='208' >LN - Hampstead Heath*</where>
+	<where id='214' >LN - Millennium Brdg*</where>
+	<where id='211' >LN - Notting Hill*</where>
+	<where id='212' >LN - Piccalily*</where>
+      </tagSeq>
+      <comment>No Comment</comment>
+      <allowed>Everybody is allowed</allowed>
+    </details>
+  </album>
+
+  <album>
+    <id>340</id>
+    <count>2</count>
+    <photoID>3696</photoID>
+    <date>
+      <year>2009</year>
+      <month>OCT</month>
+      <day>07</day>
+    </date>
+    <title>London Centre</title>
+    <details>
+      <photoID>3696</photoID>
+      <tagSeq>
+	<where id='203' >LN - Glastone Park</where>
+	<where id='208' >LN - Hampstead Heath*</where>
+	<where id='214' >LN - Millennium Brdg*</where>
+	<where id='211' >LN - Notting Hill*</where>
+	<where id='212' >LN - Piccalily*</where>
+      </tagSeq>
+      <comment>Balade dans le centre de Londres, vers Oxford Street, la Tate modern, Westminster, Harrods, ...</comment>
+      <allowed>Ami, Famille</allowed>
+    </details>
+  </album>
+
+  <album>
+    <id>338</id>
+    <count>3</count>
+    <date>
+      <year>2009</year>
+      <month>SEPT</month>
+      <day>27</day>
+    </date>
+    <title>Arriv&Eacute;Chez Yvonne</title>
+    <image>http://127.0.0.1:8080/WebAlbums/Images?id=3663&amp;mode=PETIT</image>
+    <details>
+      <photoID>3663</photoID>
+      <tagSeq>
+	<who id='1' >Marine*</who>
+	<where id='204' >LN - Preston Park*</where>
+      </tagSeq>
+      <comment>Arrivée chez l'instit-tutrice de Marine</comment>
+      <allowed>Ami, Famille</allowed>
+    </details>
+  </album>
+  
+  <page>
+    <url>/WebAlbums/Albums?&amp;page=</url>
+    <current>0</current>
+    <next>1</next>
+    <next>2</next>
+    <next>3</next>
+  </page>
+
+</root>

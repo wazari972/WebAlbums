@@ -1,0 +1,329 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package net.wazari.view.servlet.exchange;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import net.wazari.common.constante.Path;
+import net.wazari.service.exchange.Configuration;
+import net.wazari.service.exchange.ViewSession.Action;
+import net.wazari.service.exchange.ViewSession.EditMode;
+import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionConfig;
+import net.wazari.service.exchange.ViewSessionImages;
+import net.wazari.service.exchange.ViewSessionPhoto;
+import net.wazari.service.exchange.ViewSessionTag;
+
+/**
+ *
+ * @author kevin
+ */
+public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, ViewSessionPhoto, ViewSessionTag, ViewSessionImages {
+
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private static Configuration conf = null;
+
+    public ViewSessionImpl(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
+        if (conf == null) {
+            conf = Path.getConf(context);
+        }
+        this.request = request;
+        this.response = response;
+    }
+
+    public String getDescr() {
+        return getString("descr");
+    }
+
+    public String getNom() {
+        return getString("nom");
+    }
+
+    public String getDate() {
+        return getString("date");
+    }
+
+    public Integer[] getTags() {
+        return castToIntArray(getParamArray("tags"));
+    }
+
+    public Boolean getForce() {
+        return getBoolean("force");
+    }
+
+    public Boolean getSuppr() {
+        return getBoolean("suppr");
+    }
+
+    public Integer getPage() {
+        return getInteger("page");
+    }
+
+    public Integer getCount() {
+        return getInteger("count");
+    }
+
+    public Integer getCountAlbm() {
+        return getInteger("countAlbm");
+    }
+
+    public Integer getUserAllowed() {
+        return getInteger("userAllowed");
+    }
+
+    public Special getSpecial() {
+        return getEnum("special", Special.class);
+    }
+
+    public Action getAction() {
+        return getEnum("action", Action.class);
+    }
+
+    public String getUserPass() {
+        return getString("userPass");
+    }
+
+    /** ** **/
+    public String getThemeName() {
+        return getSessionObject("themeName", String.class);
+    }
+
+    public void setThemeName(String nom) {
+        setSessionObject("themeName", nom);
+    }
+
+    /** ** **/
+    public Integer getThemeId() {
+        return getSessionObject("themeId", Integer.class);
+    }
+
+    public void setThemeID(Integer newID) {
+        setSessionObject("themeID", newID);
+    }
+
+    /** ** **/
+    public Boolean getDetails() {
+        return getSessionObject("details", Boolean.class);
+    }
+
+    public void setDetails(Boolean newValue) {
+        setSessionObject("details", newValue);
+    }
+
+    /** ** **/
+    public File getTempDir() {
+        return getSessionObject("tempDir", File.class);
+    }
+    public void setTempDir(File temp) {
+        setSessionObject("tempDir", temp);
+    }
+
+    /** ** **/
+    public Integer getUserId() {
+        return getInteger("userId");
+    }
+
+    public void setUserId(String userId) {
+        setSessionObject("userId", userId);
+    }
+
+    /** ** **/
+    public EditMode getEditionMode() {
+        return getSessionObject("editionMode", EditMode.class);
+    }
+
+    public void setEditionMode(EditMode editMode) {
+        setSessionObject("editionMode", editMode);
+    }
+
+    /** ** **/
+    public boolean isRootSession() {
+        return getSessionObject("rootSession", Boolean.class);
+    }
+
+    public void setRootSession(boolean asThemeManager) {
+        setSessionObject("rootSession", asThemeManager);
+    }
+
+    /** ** **/
+    public String getUserName() {
+        return getSessionObject("userName", String.class);
+    }
+    public void setUserName(String userName) {
+        setSessionObject("userName", userName);
+    }
+
+    public boolean isSessionManager() {
+        return getBoolean("sessionManager");
+    }
+
+    public Integer getId() {
+        return getInteger("id");
+    }
+
+    public String getNouveau() {
+        return getString("nouveau");
+    }
+
+    public Integer getTag() {
+        return getInteger("tag");
+    }
+
+    public String getLng() {
+        return getString("lng");
+    }
+
+    public String getLat() {
+        return getString("lat");
+    }
+
+    public Boolean getVisible() {
+        return getBoolean("visible");
+    }
+
+    public String getImportTheme() {
+        return getString("importTheme");
+    }
+
+    public String getPassword() {
+        return getString("password");
+    }
+
+    public Integer getType() {
+        return getInteger("type");
+    }
+
+    public Boolean getSure() {
+        return getBoolean("sure");
+    }
+
+    public String getWidth() {
+        return getString("width");
+    }
+
+    public String getUser() {
+        return getString("user");
+    }
+
+    public String getDesc() {
+        return getString("desc");
+    }
+
+    public Boolean getRepresent() {
+        return getBoolean("represent");
+    }
+
+    public Integer getTagPhoto() {
+        return getInteger("tagPhoto");
+    }
+
+    public Turn getTurn() {
+        return getEnum("turn", Turn.class);
+    }
+
+    public Integer getAddTag() {
+        return getInteger("addTag");
+    }
+
+    public Boolean getChk(Integer id) {
+        return getBoolean("chk" + id);
+    }
+
+    public Integer getRmTag() {
+        return getInteger("rmTag");
+    }
+
+    public Boolean wantsDetails() {
+        return getBoolean("details");
+    }
+
+    public Mode getMode() {
+        return getEnum("mode", Mode.class);
+    }
+
+    public Integer getAlbum() {
+        return getInteger("album");
+    }
+
+    public Integer getAlbmCount() {
+        return getInteger("albmCount");
+    }
+
+    public Integer[] getTagAsked() {
+        return castToIntArray(getParamArray("tagAsked"));
+    }
+
+    public ImgMode getImgMode() {
+        return getEnum("imgMode", ImgMode.class);
+    }
+
+    private String[] getParamArray(String name) {
+        return request.getParameterValues(name);
+    }
+
+    private Integer[] castToIntArray(String[] from) {
+        List<Integer> ret = new ArrayList<Integer>(from.length);
+        for (int i = 0; i < from.length; i++) {
+            try {
+                ret.add(Integer.parseInt(from[i]));
+            } catch (NumberFormatException e) {
+            }
+        }
+        return (Integer[]) ret.toArray();
+    }
+
+    public Configuration getConfiguration() {
+        return conf;
+    }
+
+    public void setContentDispositionFilename(String name) {
+        response.setHeader("Disposition-Filename", name);
+    }
+
+    public void setContentLength(int contentLength) {
+        response.setContentLength(contentLength);
+    }
+
+    public void setContentType(String type) {
+        response.setContentType(type);
+    }
+
+    public OutputStream getOutputStream() throws IOException {
+        return response.getOutputStream();
+    }
+
+    private Integer getInteger(String name) {
+        return Integer.parseInt(getString(name));
+    }
+
+    private String getString(String name) {
+        return getString(name);
+    }
+
+    private Boolean getBoolean(String name) {
+        return Boolean.parseBoolean(getString(name));
+    }
+
+    private <T> T getSessionObject(String name, Class<T> type) {
+        return type.cast(request.getSession().getAttribute(name));
+    }
+
+    private <T extends Enum<T>> T getEnum(String value, Class<T> type) {
+        Enum.valueOf(type, value);
+        return null;
+    }
+
+    private void setSessionObject(String key, Object val) {
+        request.getSession().setAttribute(key, val);
+    }
+}
