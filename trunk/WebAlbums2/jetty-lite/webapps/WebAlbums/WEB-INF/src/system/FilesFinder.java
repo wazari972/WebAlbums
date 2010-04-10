@@ -13,11 +13,6 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-
 import constante.Path;
 import engine.WebPage ;
 import entity.*;
@@ -210,9 +205,12 @@ public class FilesFinder {
 	
 	//rechercher s'il est deja dans la liste
 	rq = "FROM Album a "+
-	  " WHERE a.Date = '"+strDate+"' "+
-	  " AND a.Nom = '"+nom+"'";
-	Album enrAlbum = (Album) WebPage.session.createQuery(rq).uniqueResult();
+	  " WHERE a.Date = :date "+
+	  " AND a.Nom = :nom";
+	Album enrAlbum = (Album) WebPage.session.createQuery(rq)
+                .setParameter("date", strDate)
+                .setParameter("nom", nom)
+                .uniqueResult();
        	rq = "done" ;
 		
 	if (enrAlbum == null) {

@@ -9,7 +9,7 @@
 
   <context-param>
     <param-name>auto_login</param-name>
-    <param-value>1</param-value>
+    <param-value>8</param-value>
   </context-param>
 
   <context-param>
