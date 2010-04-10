@@ -8,19 +8,13 @@ import java.text.SimpleDateFormat;
 import java.util.List ;
 import java.util.ArrayList ;
 import java.util.Iterator ;
-import java.util.Collections ;
-
-import java.io.IOException;
 import java.util.NoSuchElementException;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 
 import constante.Path;
 import entity.*;
 
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
@@ -386,6 +380,7 @@ private static String processListID(HttpServletRequest request, String rq, boole
 	    "WHERE ta.ID = tp.Tag AND tp.Photo = p.ID AND p.Album = a.ID " +
 	    "AND "+WebPage.restrictToThemeAllowed(request, "a")+" " +
 	    "AND "+WebPage.restrictToPhotosAllowed(request, "p")+" " ;
+   
 	  if (mode == Mode.TAG_GEO) {
 	    rq += " AND ta.TagType = '3' " ;
 	  }
