@@ -3684,3 +3684,23 @@
 19:15:15,844  INFO WebAlbums:12 - /home/kevin/WebAlbums/WebAlbums2/jetty-lite/../data/tmp/1qftaslf7ml8f
 19:15:16,223  INFO WebAlbums:191 - saveTheme (France-1)
 19:15:16,237  INFO WebAlbums:129 - saveUser (Administrateur-0)
+20:00:42,625  INFO WebAlbums:60 - WebAlbums v4 is loading ... 
+20:00:42,645  INFO WebAlbums:62 - Starting up Hibernate ...
+20:00:42,648  INFO WebAlbums:21 - Creation of the configuration
+20:00:43,950  INFO WebAlbums:23 - Creation of the SessionFactory
+20:00:46,317  INFO WebAlbums:64 - Hibernate is ready !
+20:00:46,318  INFO WebAlbums:20 - WebPage initialized !
+20:00:46,324  INFO WebAlbums:31 - Initialization of the PATH options ...
+20:00:46,324 DEBUG WebAlbums:80 - @root_dir => ../
+20:00:46,325 DEBUG WebAlbums:70 - @read_only => false
+20:00:46,326 DEBUG WebAlbums:70 - @has_internet => true
+20:00:46,326 DEBUG WebAlbums:70 - @wants_stats => false
+20:00:46,327 DEBUG WebAlbums:70 - @wants_queries => false
+20:00:46,327 DEBUG WebAlbums:70 - @wants_xsl => true
+20:00:46,328 DEBUG WebAlbums:70 - @lighten_db => false
+20:00:46,328 DEBUG WebAlbums:80 - @sgbd => mysql
+20:00:46,329 DEBUG WebAlbums:80 - @auto_login => 1
+20:00:46,330  INFO WebAlbums:22 - Ready to serve !
+20:00:48,609  INFO WebAlbums:12 - /home/kevin/Assembla/trunk/WebAlbums2/jetty-lite/../data/tmp/1tu86a7nx7btr
+20:00:49,033  INFO WebAlbums:191 - saveTheme (France-1)
+20:00:49,069  INFO WebAlbums:129 - saveUser (Administrateur-0)
