@@ -18,7 +18,7 @@
 	<xsl:apply-templates select="/root/userLogin/valid"/>
 	
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>WebAlbums 4 : <xsl:value-of select="/root/login/theme" />  (<xsl:value-of select="/root/login/user" />)</title>
+	<title>WebAlbums 2 : <xsl:value-of select="/root/login/theme" />  (<xsl:value-of select="/root/login/user" />)</title>
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />

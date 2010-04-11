@@ -51,7 +51,7 @@ public class WebPage {
   public static Session session ;
 
   static {
-    WebPage.log.info("WebAlbums v4 is loading ... ");
+    WebPage.log.info("WebAlbums v2 is loading ... ");
     
     WebPage.log.info("Starting up Hibernate ...");
     session = HibernateUtil.currentSession();

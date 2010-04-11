@@ -42,7 +42,8 @@ public static XmlBuilder treatTAGS(HttpServletRequest request)
 	  " AND p.Album = a.ID "+
 	  " AND "+WebPage.restrictToPhotosAllowed(request, "p")+" " +
 	  " AND "+WebPage.restrictToThemeAllowed(request, "a")+" " +
-	  " GROUP BY t.ID " ;
+	  " GROUP BY t.ID " +
+          " ORDER BY t.Nom " ;
 	
 	String rqMax = "SELECT max( count ) "+
 	  "FROM ( "+
