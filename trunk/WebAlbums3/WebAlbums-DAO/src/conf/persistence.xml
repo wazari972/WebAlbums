@@ -4,6 +4,8 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>jdbc/jdbcWebAlbums</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <properties/>
+    <properties>
+    <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+    </properties>
   </persistence-unit>
 </persistence>
