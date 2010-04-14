@@ -48,7 +48,7 @@ public class WebPageBean implements WebPageLocal {
     private static final long serialVersionUID = -8157612278920872716L;
     private static final Logger log = Logger.getLogger(WebPageBean.class.getName());
     
-    public static final String USER_CHEAT = "0";
+    public static final int USER_CHEAT = 0 ;
     public static final int TAILLE_PHOTO = 10;
     public static final int TAILLE_ALBUM = 15;
 

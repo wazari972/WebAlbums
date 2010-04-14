@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.view.servlet.Index.Page;
+import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
     name = "Users",
@@ -18,12 +18,13 @@ import net.wazari.view.servlet.Index.Page;
 public class Users extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    @EJB private Index idx ;
+    @EJB private DispatcherBean dispatcher ;
+    
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-        idx.treat(this.getServletContext(), Page.USER, request, response);
+        dispatcher.treat(this.getServletContext(), Page.USER, request, response);
     }
 
     @Override

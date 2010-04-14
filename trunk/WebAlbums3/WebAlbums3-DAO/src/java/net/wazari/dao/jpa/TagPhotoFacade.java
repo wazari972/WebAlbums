@@ -25,7 +25,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     @PersistenceContext
     private EntityManager em;
 
-    @EJB PhotoFacade photoDAO ;
+    @EJB PhotoFacadeLocal photoDAO ;
 
     public void create(TagPhoto tagPhoto) {
         em.persist(tagPhoto);
@@ -66,15 +66,15 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     public List<TagPhoto> queryByAlbum(int albumId) {
         String rq = "SELECT DISTINCT tp " +
                 "FROM Photo photo, TagPhoto tp " +
-                "WHERE photo.Album = :albumId " +
-                "AND photo.ID = tp.Photo ";
+                "WHERE photo.album = :albumId " +
+                "AND photo.id = tp.photo ";
         return em.createQuery(rq)
                 .setParameter("albumId", albumId)
                 .getResultList();
     }
 
     public TagPhoto loadByTagPhoto(int tagId, int photoId) {
-        String rq = "FROM TagPhoto WHERE photo = :photoId AND tag = :tagId";
+        String rq = "FROM TagPhoto tp WHERE tp.photo = :photoId AND tp.tag = :tagId";
         return (TagPhoto) em.createQuery(rq)
                 .setParameter("photoId", photoId)
                 .setParameter("tagId", tagId)
@@ -89,7 +89,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     public List<Tag> selectDistinctTags() {
-        String rq = "SELECT DISTINCT tp.Tag FROM TagPhoto tp";
+        String rq = "SELECT DISTINCT tp.tag FROM TagPhoto tp";
         return em.createQuery(rq).getResultList();
     }
 
@@ -98,8 +98,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
         String rq = "SELECT DISTINCT tp.Tag " +
                             "FROM TagPhoto tp, Photo p, Album a " +
                             "WHERE " +
-                            " tp.Photo = p.ID AND p.Album = a.ID " +
-                            " AND a.Theme = :themeId ";
+                            " tp.photo = p.id AND p.album = a.ID " +
+                            " AND a.theme = :themeId ";
         return em.createQuery(rq)
                 .setParameter("themeId", session.getThemeId())
                 .getResultList();

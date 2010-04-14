@@ -73,7 +73,7 @@ public interface ViewSession extends ServiceSession {
 
     Integer getUserId() ;
 
-    void setUserId(String userId);
+    void setUserId(Integer userId);
 
     void setRootSession(boolean asThemeManager);
 

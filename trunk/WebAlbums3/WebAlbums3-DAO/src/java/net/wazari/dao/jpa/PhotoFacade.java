@@ -48,7 +48,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
     public Photo loadIfAllowed(ServiceSession session, int id) {
             String rq = "FROM Photo p " +
-            " WHERE p.ID = :id " +
+            " WHERE p.id = :id " +
             (session == null ? "" : " AND "+webDAO.restrictToPhotosAllowed(session, "p"))+" " ;
 
         return (Photo) em.createQuery(rq)
@@ -58,9 +58,9 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
     public List<Photo> loadFromAlbum(ServiceSession session, int albumId) {
           String rq = "FROM Photo p " +
-            " WHERE p.Album = :albumId " +
+            " WHERE p.album = :albumId " +
             (session == null ? "" : " AND "+webDAO.restrictToPhotosAllowed(session, "p"))+" " +
-            " ORDER BY path" ;
+            " ORDER BY p.path" ;
           return em.createQuery(rq)
                   .setParameter("albumId", albumId)
                   .getResultList() ;
@@ -68,7 +68,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     public Photo loadByPath(String path) {
-            String rq = "FROM Photo WHERE Path = :path" ;
+            String rq = "FROM Photo p WHERE p.path = :path" ;
             return (Photo) em.createQuery(rq)
                     .setParameter("path", path)
                     .getResultList();
@@ -77,8 +77,8 @@ public class PhotoFacade implements PhotoFacadeLocal {
     public List<Photo> loadByTags(ServiceSession session, List<Integer> listTagId) {
             //creation de la requete
             String rq = "SELECT p FROM Photo p, Album a, TagPhoto tp " +
-              " WHERE a.ID = p.Album and p.ID = tp.Photo"+
-              " AND tp.Tag in ('-1' " ;
+              " WHERE a.ID = p.album and p.id = tp.photo"+
+              " AND tp.tag in ('-1' " ;
             for (int id : listTagId) {
               rq += ", '"+id+"'" ;
             }
@@ -86,8 +86,8 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
             rq += " AND "+webDAO.restrictToPhotosAllowed(session, "p")+" " ;
             rq += " AND "+webDAO.restrictToThemeAllowed(session, "a")+" " ;
-            rq += " GROUP BY p.ID " ;
-            rq += " ORDER BY p.Path DESC " ;
+            rq += " GROUP BY p.id " ;
+            rq += " ORDER BY p.path DESC " ;
 
             return em.createQuery(rq).getResultList()	;
     }

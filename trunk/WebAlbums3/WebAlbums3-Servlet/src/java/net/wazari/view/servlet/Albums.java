@@ -8,21 +8,21 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.view.servlet.Index.Page;
+import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
     name = "Albums",
     urlPatterns = {"/Albums"}
 )
 public class Albums extends HttpServlet{
-    @EJB private Index idx ;
+    @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
 
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-        idx.treat(this.getServletContext(), Page.ALBUM, request, response);
+        dispatcher.treat(this.getServletContext(), Page.ALBUM, request, response);
     }
 
     @Override

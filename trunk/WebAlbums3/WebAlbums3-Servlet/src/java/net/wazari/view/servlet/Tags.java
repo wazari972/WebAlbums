@@ -10,21 +10,21 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.view.servlet.Index.Page;
+import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
     name = "Tags",
     urlPatterns = {"/Tags"}
 )
 public class Tags extends HttpServlet {
-    @EJB private Index idx ;
+    @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
 
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-        idx.treat(this.getServletContext(), Page.TAGS, request, response);
+        dispatcher.treat(this.getServletContext(), Page.TAGS, request, response);
     }
 
     @Override

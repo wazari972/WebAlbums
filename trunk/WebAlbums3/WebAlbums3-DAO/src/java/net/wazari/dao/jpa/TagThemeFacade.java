@@ -43,9 +43,9 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     }
 
     public List<TagTheme> queryByTag(ServiceSession session, int tagId) {
-        String rq = "FROM TagTheme " +
-                "WHERE tag = :tagId " +
-                (session.isRootSession() ? "" : " AND theme = :themeId");
+        String rq = "FROM TagTheme tt " +
+                "WHERE tt.tag = :tagId " +
+                (session.isRootSession() ? "" : " AND tt.theme = :themeId");
         return em.createQuery(rq)
                 .setParameter("tagId", tagId)
                 .setParameter("themeId", session.getUserId())
@@ -53,9 +53,9 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     }
 
     public TagTheme loadByTagTheme(int tagId, int themeId) {
-        String rq = "FROM TagTheme " +
-                "WHERE tag = :tagId " +
-                " AND theme = :themeId ";
+        String rq = "FROM TagTheme tt " +
+                "WHERE tt.tag = :tagId " +
+                " AND tt.theme = :themeId ";
         return (TagTheme) em.createQuery(rq)
                 .setParameter("tagId", tagId)
                 .setParameter("themeId", themeId)

@@ -28,7 +28,7 @@
   </xsl:template>
   <xsl:template match="index/theme">
     <A>
-      <xsl:attribute name="HREF">Users?theme=<xsl:value-of select="@id"/></xsl:attribute>
+      <xsl:attribute name="HREF">Users?themeId=<xsl:value-of select="@id"/></xsl:attribute>
       <xsl:value-of select="."/>
     </A><BR/><BR/>
   </xsl:template>

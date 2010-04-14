@@ -1,5 +1,6 @@
 package net.wazari.service.engine;
 
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -16,7 +17,7 @@ import net.wazari.util.XmlBuilder;
 
 @Stateless
 public class UserBean implements UserLocal {
-
+    private static Logger log = Logger.getLogger(UserBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
     @EJB
     private UtilisateurFacadeLocal userDAO;
@@ -27,15 +28,13 @@ public class UserBean implements UserLocal {
         XmlBuilder output = new XmlBuilder("userLogin");
 
         Action action = vSession.getAction();
-
+        log.info("Action: "+action) ;
         vSession.setUserId(null);
-
         boolean valid = false;
-
         if (Action.LOGIN == action) {
             String userName = vSession.getUserName();
             boolean asThemeManager = false;
-
+            log.info("userName: "+userName) ;
             if (userName == null) {
                 output.add("denied");
                 output.add("login");
@@ -52,9 +51,11 @@ public class UserBean implements UserLocal {
             }
 
             Utilisateur enrUtil = null;
-            //log.info("look for user " + userName + " as Admin");
+            
             enrUtil = userDAO.loadByName(userName);
-
+            log.info("database lookup returned: "+enrUtil) ;
+            if (enrUtil == null) asThemeManager = true ;
+            
             String pass = vSession.getUserPass();
             if (saveUser(vSession, enrUtil, pass, asThemeManager)) {
                 output.add("valid");
@@ -63,6 +64,7 @@ public class UserBean implements UserLocal {
                 output.add("denied");
                 output.add("login");
             }
+            log.info("authentication: "+valid);
         } else {
             output.add("login");
         }
@@ -79,17 +81,17 @@ public class UserBean implements UserLocal {
             Utilisateur enrUser,
             String passwd,
             boolean asThemeManager) {
-        String userID;
+        Integer userId;
         String goodPasswd;
         String userName;
-        Integer themeID = vSession.getThemeId();
+        Integer themeId = vSession.getThemeId();
 
-        if (themeID == null) {
+        if (themeId == null) {
             return false;
         }
 
         if (asThemeManager) {
-            Theme enrTheme = themeDAO.find(themeID);
+            Theme enrTheme = themeDAO.find(themeId);
 
             if (enrTheme == null) {
                 return false;
@@ -98,23 +100,23 @@ public class UserBean implements UserLocal {
 
             userName = "Administrateur";
             if (enrUser != null) {
-                userID = enrUser.getId().toString();
+                userId = enrUser.getId();
                 userName += "+" + enrUser.getNom();
             } else {
-                userID = WebPageBean.USER_CHEAT;
+                userId = WebPageBean.USER_CHEAT;
             }
         } else {
             if (enrUser == null) {
                 return false;
             }
             userName = enrUser.getNom();
-            userID = enrUser.getId().toString();
+            userId = enrUser.getId();
             goodPasswd = null;
         }
 
         if (goodPasswd != null && !goodPasswd.equals(passwd)) {
             Integer autoLogin = vSession.getConfiguration().autoLogin();
-            if (!themeID.equals(autoLogin)) {
+            if (!themeId.equals(autoLogin)) {
                 return false;
             }
         }
@@ -123,7 +125,7 @@ public class UserBean implements UserLocal {
         vSession.setUserName(userName);
         vSession.setEditionMode(ViewSession.EditMode.EDITION) ;
         vSession.setRootSession(asThemeManager);
-        vSession.setUserId(userID);
+        vSession.setUserId(userId);
         return true;
     }
 }

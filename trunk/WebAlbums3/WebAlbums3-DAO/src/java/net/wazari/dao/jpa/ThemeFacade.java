@@ -42,7 +42,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     public Theme loadByName(String themeName) {
-        String rq = "FROM Theme WHERE nom = :nom";
+        String rq = "FROM Theme t WHERE t.nom = :nom";
 
         return (Theme) em.createQuery(rq)
                 .setParameter("nom", themeName)

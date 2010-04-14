@@ -29,39 +29,39 @@ public class WebAlbumsDAOBean implements WebAlbumsDAOLocal {
     public String restrictToAlbumsAllowed(ServiceSession session, String album) {
         String rq = null;
         if (session.isSessionManager()) {
-            rq = "SELECT a.ID FROM Album a WHERE 1 = 1 ";
+            rq = "SELECT a.id FROM Album a WHERE 1 = 1 ";
         } else {
-            rq = "SELECT a.ID " +
+            rq = "SELECT a.id " +
                     "FROM Album a, Photo p " +
-                    "WHERE a.ID = p.Album AND (" +
+                    "WHERE a.id = p.album AND (" +
                     //albums autorisé
-                    "((p.Droit = 0 OR p.Droit is null) AND a.Droit >= '" + session.getUserId() + "') " +
+                    "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUserId() + "') " +
                     "OR " +
                     //albums ayant au moins une photo autorisée
-                    "(p.Droit >= '" + session.getUserId() + "')" +
+                    "(p.droit >= '" + session.getUserId() + "')" +
                     ") ";
         }
-        rq = " " + album + ".ID IN (" + processListID(session, rq, true) + ") ";
+        rq = " " + album + ".id IN (" + processListID(session, rq, true) + ") ";
         return rq;
     }
 
     public String restrictToPhotosAllowed(ServiceSession session, String photo) {
         String rq = null;
 
-        rq = "SELECT p.ID " +
+        rq = "SELECT p.id " +
                 " FROM Photo p, Album a " +
-                " WHERE p.Album = a.ID ";
+                " WHERE p.album = a.id ";
         if (!session.isSessionManager()) {
             rq += " AND (" +
                     //albums autorisé
-                    "((p.Droit = 0 OR p.Droit is null) AND a.Droit >= '" + session.getUserId() + "') " +
+                    "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUserId() + "') " +
                     "OR " +
                     //albums ayant au moins une photo autorisée
-                    "(p.Droit >= '" + session.getUserId() + "')" +
+                    "(p.droit >= '" + session.getUserId() + "')" +
                     ")";
         }
 
-        rq = " " + photo + ".ID IN (" + processListID(session, rq, true) + ") ";
+        rq = " " + photo + ".id IN (" + processListID(session, rq, true) + ") ";
         return rq;
     }
 

@@ -4,14 +4,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.view.servlet.Index.Page;
+import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
     name = "Config",
@@ -19,14 +17,14 @@ import net.wazari.view.servlet.Index.Page;
 )
 public class Config extends HttpServlet {
 
-    @EJB private Index idx ;
+    @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
 
     @Override
     public void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-        idx.treat(this.getServletContext(), Page.CONFIG, request, response);
+        dispatcher.treat(this.getServletContext(), Page.CONFIG, request, response);
     }
 
     @Override

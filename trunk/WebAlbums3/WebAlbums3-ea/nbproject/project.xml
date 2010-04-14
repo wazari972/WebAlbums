@@ -8,22 +8,22 @@
             <web-module-libraries/>
             <web-module-additional-libraries>
                 <library>
-                    <file>${reference.WebAlbums-Service.dist-ear}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library>
-                    <file>${reference.WebAlbums-DAO.dist-ear}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library>
                     <file>${reference.WebAlbums3-Servlet.dist-ear}</file>
+                    <path-in-war>/</path-in-war>
+                </library>
+                <library>
+                    <file>${reference.WebAlbums3-DAO.dist-ear}</file>
+                    <path-in-war>/</path-in-war>
+                </library>
+                <library>
+                    <file>${reference.WebAlbums3-Service.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
             </web-module-additional-libraries>
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
-                <foreign-project>WebAlbums-DAO</foreign-project>
+                <foreign-project>WebAlbums3-DAO</foreign-project>
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
                 <target>dist-ear</target>
@@ -31,7 +31,7 @@
                 <id>dist-ear</id>
             </reference>
             <reference>
-                <foreign-project>WebAlbums-Service</foreign-project>
+                <foreign-project>WebAlbums3-Service</foreign-project>
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
                 <target>dist-ear</target>

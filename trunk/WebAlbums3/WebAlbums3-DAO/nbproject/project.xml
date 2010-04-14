@@ -6,7 +6,6 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>WebAlbums3-DAO</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
-            <included-library>reference.WebAlbums-Util.jar</included-library>
             <included-library>libs.hibernate-persistence.classpath</included-library>
             <included-library>file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar</included-library>
             <included-library>reference.WebAlbums3-Util.jar</included-library>
@@ -18,14 +17,6 @@
             </test-roots>
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
-            <reference>
-                <foreign-project>WebAlbums-Util</foreign-project>
-                <artifact-type>jar</artifact-type>
-                <script>build.xml</script>
-                <target>jar</target>
-                <clean-target>clean</clean-target>
-                <id>jar</id>
-            </reference>
             <reference>
                 <foreign-project>WebAlbums3-Util</foreign-project>
                 <artifact-type>jar</artifact-type>

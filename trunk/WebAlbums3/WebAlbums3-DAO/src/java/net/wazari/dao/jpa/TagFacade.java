@@ -68,18 +68,19 @@ public class TagFacade implements TagFacadeLocal {
     }
      */
     public long getMaxTagPerPhoto(ServiceSession session) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 80 ;
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public Map<Tag, Long> queryIDNameCount(ServiceSession session) {
         String rq = "SELECT t, count( tp.Photo ) AS count " +
                 " FROM Tag t, TagPhoto tp, Photo p, Album a " +
-                " WHERE t.ID = tp.Tag " +
-                " AND tp.Photo = p.ID " +
-                " AND p.Album = a.ID " +
+                " WHERE t.ID = tp.tag " +
+                " AND tp.photo = p.id " +
+                " AND p.album = a.id " +
                 " AND " + webDAO.restrictToPhotosAllowed(session, "p") + " " +
                 " AND " + webDAO.restrictToThemeAllowed(session, "a") + " " +
-                " GROUP BY t.ID ";
+                " GROUP BY t.id ";
         List<Object[]> lst = em.createQuery(rq).getResultList();
         Map<Tag, Long> ret = new HashMap<Tag, Long>();
         for (Object[] current : lst) {
@@ -96,9 +97,9 @@ public class TagFacade implements TagFacadeLocal {
             rq = "SELECT DISTINCT t " +
                     "FROM Tag t, TagPhoto tp, Photo p, Album a " +
                     "WHERE t.TagType = :type " +
-                    "AND t.ID = tp.Tag " +
-                    "AND tp.Photo = p.ID " +
-                    "AND p.Album = a.ID " +
+                    "AND t.id = tp.tag " +
+                    "AND tp.photo = p.id " +
+                    "AND p.album = a.id " +
                     "AND " + webDAO.restrictToPhotosAllowed(session, "p") + " " +
                     "AND " + webDAO.restrictToThemeAllowed(session, "a") + " ";
         }
@@ -110,7 +111,7 @@ public class TagFacade implements TagFacadeLocal {
 
     public Tag loadByName(String nom) {
         String rq = "FROM Tag t " +
-                " WHERE  t.Nom = :nom ";
+                " WHERE  t.nom = :nom ";
 
         return (Tag) em.createQuery(rq)
                 .setParameter("nom", nom)
@@ -120,14 +121,14 @@ public class TagFacade implements TagFacadeLocal {
     public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) {
         String rq = "SELECT DISTINCT ta " +
                 "FROM Tag ta, TagPhoto tp, Photo p, Album a " +
-                "WHERE  ta.ID = tp.Tag AND tp.Photo = p.ID AND p.Album = a.ID " +
+                "WHERE  ta.id = tp.tag AND tp.photo = p.id AND p.album = a.id " +
                 "AND " + webDAO.restrictToPhotosAllowed(sSession, "p") + " " +
                 "AND " + webDAO.restrictToThemeAllowed(sSession, "a") + " ";
 
         if (restrictToGeo) {
-            rq += " AND ta.TagType = '3' ";
+            rq += " AND ta.tagType = '3' ";
         }
-        rq += " ORDER BY ta.Nom";
+        rq += " ORDER BY ta.nom";
         return em.createQuery(rq).getResultList() ;
     }
 
@@ -135,7 +136,7 @@ public class TagFacade implements TagFacadeLocal {
         String rq = "SELECT DISTINCT ta " +
                 " FROM Tag ta " +
                 " WHERE ta.id NOT IN (" + getIdList(tags)+ ") " +
-                " ORDER BY ta.Nom";
+                " ORDER BY ta.nom";
         return em.createQuery(rq).getResultList();
     }
 

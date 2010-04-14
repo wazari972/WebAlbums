@@ -7,7 +7,6 @@ package net.wazari.view.servlet.exchange;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.Enum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -30,7 +29,7 @@ import net.wazari.service.exchange.ViewSessionTag;
  * @author kevin
  */
 public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, ViewSessionPhoto, ViewSessionTag, ViewSessionImages {
-    private static final Logger log = Logger.getLogger(ViewSessionImpl.class.getName()) ;
+    private static final Logger log = Logger.getLogger(ViewSessionImpl.class.getCanonicalName()) ;
     
     private HttpServletRequest request;
     private HttpServletResponse response;
@@ -42,6 +41,7 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         }
         this.request = request;
         this.response = response;
+
     }
 
     public String getDescr() {
@@ -134,10 +134,10 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
 
     /** ** **/
     public Integer getUserId() {
-        return getInteger("userId");
+        return getSessionObject("userId", Integer.class);
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         setSessionObject("userId", userId);
     }
 
@@ -152,8 +152,9 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
 
     /** ** **/
     public boolean isRootSession() {
-        if (true) return true ;
-        return getSessionObject("rootSession", Boolean.class);
+        Boolean val = getSessionObject("rootSession", Boolean.class);
+        if (val == null) val = false ;
+        return val ;
     }
 
     public void setRootSession(boolean asThemeManager) {
@@ -170,7 +171,9 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     }
 
     public boolean isSessionManager() {
-        return getBoolean("sessionManager");
+        Boolean val =  getBoolean("sessionManager");
+        if (val == null) val = false ;
+        return val ;
     }
 
     public Integer getId() {
@@ -328,8 +331,10 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
 
     @SuppressWarnings("unchecked")
     private <T> T getObject(String name, Class<T> type) {
+        log.info("getObject param:"+name+" type:"+type) ;
         T ret = null ;
         String val = request.getParameter(name) ;
+        if (val == null) return null ;
         try {
             if (type == String.class) {
                 ret = type.cast(val) ;
@@ -344,15 +349,20 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
             }
         } catch (ClassCastException e) {
             log.fine("Can't cast value "+val+" into class "+type) ;
+        } catch (NullPointerException e) {
+            log.fine("NullPointerException with "+val+" for class "+type) ;
         }
+        log.info("getObject param:"+name+" type:"+type+" returned "+ret) ;
         return ret ;
     }
 
     private <T> T getSessionObject(String name, Class<T> type) {
+        log.fine("getSessionObject param:"+name+" type:"+type) ;
         T ret = type.cast(request.getSession().getAttribute(name));
         if (ret == null) {
-            getObject(name, type) ;
+            ret = getObject(name, type) ;
         }
+        log.fine("getSessionObject param:"+name+" type:"+type+" returned "+ret) ;
         return ret;
     }
 

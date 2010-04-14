@@ -7,8 +7,10 @@ package net.wazari.dao.jpa;
 
 import net.wazari.dao.*;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import net.wazari.dao.entity.Utilisateur;
 
@@ -18,6 +20,8 @@ import net.wazari.dao.entity.Utilisateur;
  */
 @Stateless
 public class UtilisateurFacade implements UtilisateurFacadeLocal {
+    private static final Logger log = Logger.getLogger(UtilisateurFacade.class.getCanonicalName()) ;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -43,14 +47,19 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
 
 
     public Utilisateur loadByName(String name) {
-        String rq = "FROM Utilisateur WHERE nom = :nom";
-        return (Utilisateur) em.createQuery(rq)
-                .setParameter("nom", name)
-                .getSingleResult();
+        try {
+            String rq = "FROM Utilisateur u WHERE u.nom = :nom";
+            return (Utilisateur) em.createQuery(rq)
+                    .setParameter("nom", name)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            log.info("No user with name +"+name+"+");
+            return null ;
+        }
     }
 
     public Utilisateur loadUserOutside(int albumId) {
-        String rq = "SELECT u FROM Utilisateur u, Album a WHERE u.ID = a.Droit AND a.ID = :albumId";
+        String rq = "SELECT u FROM Utilisateur u, Album a WHERE u.ID = a.droit AND a.id = :albumId";
         return (Utilisateur) em.createQuery(rq)
                 .setParameter("albumId", albumId)
                 .getSingleResult();
@@ -60,9 +69,9 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     public List<Utilisateur> loadUserInside(int albumId) {
         String rq = "SELECT DISTINCT u " +
                 " FROM Photo p, Utilisateur u " +
-                " WHERE u.Id = p.Droit " +
-                " AND p.Album = :albumId " +
-                " AND p.Droit != null AND p.Droit != 0";
+                " WHERE u.id = p.droit " +
+                " AND p.album = :albumId " +
+                " AND p.droit != null AND p.droit != 0";
         return  em.createQuery(rq)
                 .setParameter("albumId", albumId)
                 .getResultList();
