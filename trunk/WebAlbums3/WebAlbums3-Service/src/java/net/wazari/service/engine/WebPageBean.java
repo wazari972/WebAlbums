@@ -59,64 +59,6 @@ public class WebPageBean implements WebPageLocal {
         WebPageBean.log.info("Hibernate is ready !");
     }
 
-    //look for the theme which ID is themeID in the DB and log it if possible
-    //return themeID if OK or null in case of error
-    protected Integer tryToSaveTheme(ViewSession vSession)
-            throws WebAlbumsServiceException {
-
-        boolean autologging = false;
-        Integer themeID = vSession.getThemeId();
-
-
-        if (themeID == null) {
-            themeID = vSession.getConfiguration().autoLogin();
-            if (themeID == null) {
-                return null;
-            }
-            autologging = true;
-        }
-
-        Integer currentThemeID = vSession.getThemeId();
-        if (themeID.equals(currentThemeID)) {
-            return themeID;
-        }
-
-
-        //memoriser le nom de l'auteur
-
-        Theme enrTheme = themeDAO.find(themeID);
-
-        if (enrTheme == null) {
-            //WebPage.log.warn("Ce theme (" + themeID + ") n'existe pas ...");
-            return null;
-        }
-
-        Integer savedID = saveTheme(vSession, enrTheme);
-
-        if (autologging) {
-            userService.saveUser(vSession, null, null, true);
-        }
-        return savedID;
-
-    }
-
-    protected Integer saveTheme(ViewSession vSession,
-            Theme enrTheme) {
-        Integer oldID = vSession.getThemeId();
-        Integer newID = enrTheme.getId();
-
-        if (!newID.equals(oldID) && vSession.isSessionManager()) {
-            vSession.setUserId(null);
-        }
-
-        log.info("saveTheme (" + enrTheme.getNom() + "-" + newID + ")");
-        vSession.setThemeName(enrTheme.getNom());
-        vSession.setThemeID(newID);
-        vSession.setEditionMode(EditMode.NORMAL);
-
-        return newID;
-    }
-
     public EditMode getNextEditionMode(ViewSession vSession) {
         EditMode editionMode = vSession.getEditionMode();
         EditMode next;

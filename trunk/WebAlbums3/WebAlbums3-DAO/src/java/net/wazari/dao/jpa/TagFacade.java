@@ -73,9 +73,9 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     public Map<Tag, Long> queryIDNameCount(ServiceSession session) {
-        String rq = "SELECT t, count( tp.Photo ) AS count " +
+        String rq = "SELECT t, count( tp.photo ) AS count " +
                 " FROM Tag t, TagPhoto tp, Photo p, Album a " +
-                " WHERE t.ID = tp.tag " +
+                " WHERE t.id = tp.tag " +
                 " AND tp.photo = p.id " +
                 " AND p.album = a.id " +
                 " AND " + webDAO.restrictToPhotosAllowed(session, "p") + " " +
@@ -96,7 +96,7 @@ public class TagFacade implements TagFacadeLocal {
         } else {
             rq = "SELECT DISTINCT t " +
                     "FROM Tag t, TagPhoto tp, Photo p, Album a " +
-                    "WHERE t.TagType = :type " +
+                    "WHERE t.tagType = :type " +
                     "AND t.id = tp.tag " +
                     "AND tp.photo = p.id " +
                     "AND p.album = a.id " +

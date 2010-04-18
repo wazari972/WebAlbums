@@ -10,7 +10,7 @@ import java.util.Stack;
 
 import java.util.logging.Logger;
 import net.wazari.service.exchange.Configuration;
-import net.wazari.util.system.SystemToolsService;
+import net.wazari.util.system.SystemTools;
 
 public class ImageResizer implements Runnable {
   private static final Logger log = Logger.getLogger(ImageResizer.class.toString());
@@ -22,9 +22,9 @@ public class ImageResizer implements Runnable {
   private File author ; 
   private boolean done ;
   private Configuration conf ;
-  private SystemToolsService sysTool ;
+  private SystemTools sysTool ;
 
-  public ImageResizer (Configuration conf, SystemToolsService sysTool) {
+  public ImageResizer (Configuration conf, SystemTools sysTool) {
       this.conf = conf ;
       this.sysTool = sysTool ;
   }

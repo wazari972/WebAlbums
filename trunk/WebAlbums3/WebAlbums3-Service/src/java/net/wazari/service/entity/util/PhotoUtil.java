@@ -32,7 +32,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.StringUtil;
 import net.wazari.util.XmlBuilder;
-import net.wazari.util.system.SystemToolsService;
+import net.wazari.util.system.SystemTools;
 
 /**
  * This is the object class that relates to the Photo table.
@@ -43,7 +43,7 @@ public class PhotoUtil implements PhotoUtilLocal {
 
     private static final Logger log = Logger.getLogger(PhotoUtil.class.toString());
     private static final long serialVersionUID = 1L;
-    @EJB SystemToolsService sysTools ;
+    @EJB SystemTools sysTools ;
     @EJB
     TagPhotoFacadeLocal tagPhotoDAO;
     @EJB

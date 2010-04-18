@@ -30,13 +30,13 @@ public interface TagPhotoFacadeLocal {
 
     void deleteByPhoto(int photoID) ;
 
-    List<TagPhoto> queryByPhoto(int photoID) ;
+    List<TagPhoto> queryByPhoto(int photoId) ;
 
-    List<TagPhoto> queryByAlbum(int albumID) ;
+    List<TagPhoto> queryByAlbum(int albumId) ;
 
-    TagPhoto loadByTagPhoto(int tagID, int photoID) ;
+    TagPhoto loadByTagPhoto(int tagID, int photoId) ;
 
-    List<TagPhoto> queryByTag(int tagID)  ;
+    List<TagPhoto> queryByTag(int tagId)  ;
 
     List<Tag> selectDistinctTags() ;
     List<Tag> selectUnusedTags(ServiceSession sSession) ;

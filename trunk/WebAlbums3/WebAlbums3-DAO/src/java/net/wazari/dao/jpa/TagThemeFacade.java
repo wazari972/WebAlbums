@@ -42,7 +42,7 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
         return em.createQuery("select object(o) from TagTheme as o").getResultList();
     }
 
-    public List<TagTheme> queryByTag(ServiceSession session, int tagId) {
+    public List<TagTheme> queryByTag(ServiceSession session, Integer tagId) {
         String rq = "FROM TagTheme tt " +
                 "WHERE tt.tag = :tagId " +
                 (session.isRootSession() ? "" : " AND tt.theme = :themeId");
@@ -52,7 +52,7 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
                 .getResultList();
     }
 
-    public TagTheme loadByTagTheme(int tagId, int themeId) {
+    public TagTheme loadByTagTheme(Integer tagId, Integer themeId) {
         String rq = "FROM TagTheme tt " +
                 "WHERE tt.tag = :tagId " +
                 " AND tt.theme = :themeId ";

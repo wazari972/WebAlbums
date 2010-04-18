@@ -110,8 +110,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return getSessionObject("themeId", Integer.class);
     }
 
-    public void setThemeID(Integer newID) {
-        setSessionObject("themeID", newID);
+    public void setThemeId(Integer newID) {
+        setSessionObject("themeId", newID);
     }
 
     /** ** **/
@@ -329,9 +329,7 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return getObject(value, type);
     }
 
-    @SuppressWarnings("unchecked")
     private <T> T getObject(String name, Class<T> type) {
-        log.info("getObject param:"+name+" type:"+type) ;
         T ret = null ;
         String val = request.getParameter(name) ;
         if (val == null) return null ;
@@ -345,28 +343,28 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
             } else if (type.isEnum()) {
                 ret = (T) Enum.valueOf((Class)type,val) ;
             } else {
-                log.fine("Can't parse class "+type+" from parameters") ;
+                log.info("Unknown class "+type+" for parameter "+name) ;
             }
         } catch (ClassCastException e) {
-            log.fine("Can't cast value "+val+" into class "+type) ;
+            log.info("Can't cast value "+val+" into class "+type) ;
         } catch (NullPointerException e) {
-            log.fine("NullPointerException with "+val+" for class "+type) ;
+            log.info("NullPointerException with "+val+" for class "+type) ;
         }
         log.info("getObject param:"+name+" type:"+type+" returned "+ret) ;
         return ret ;
     }
 
     private <T> T getSessionObject(String name, Class<T> type) {
-        log.fine("getSessionObject param:"+name+" type:"+type) ;
         T ret = type.cast(request.getSession().getAttribute(name));
         if (ret == null) {
             ret = getObject(name, type) ;
         }
-        log.fine("getSessionObject param:"+name+" type:"+type+" returned "+ret) ;
+        log.info("getSessionObject param:"+name+" type:"+type+" returned "+ret) ;
         return ret;
     }
 
     private void setSessionObject(String key, Object val) {
+        log.info("setSessionObject param:"+key+" val:"+val) ;
         request.getSession().setAttribute(key, val);
     }
 }

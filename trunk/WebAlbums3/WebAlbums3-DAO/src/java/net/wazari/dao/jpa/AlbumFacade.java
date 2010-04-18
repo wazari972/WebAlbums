@@ -7,6 +7,7 @@ package net.wazari.dao.jpa;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -19,6 +20,7 @@ import net.wazari.dao.entity.Album;
  */
 @Stateless
 public class AlbumFacade implements AlbumFacadeLocal {
+    private static final Logger log = Logger.getLogger(AlbumFacade.class.getCanonicalName()) ;
 
     @EJB
     WebAlbumsDAOLocal webDAO;
@@ -46,12 +48,12 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     public List<Album> queryAlbums(ServiceSession session, boolean restrictAllowed, boolean restrictTheme, Integer topX) {
-        String rq = (topX == null ? "" : "TOP "+topX+" ")+
+        String rq = (topX == null ? "" : "TOP " + topX + " ") +
                 "FROM Album a " +
                 " WHERE " + (restrictAllowed ? webDAO.restrictToAlbumsAllowed(session, "a") : "1 = 1") + " " +
                 " AND " + (restrictTheme ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1") + " " +
                 " ORDER BY a.date DESC ";
-
+        log.info(rq);
         return em.createQuery(rq).getResultList();
     }
 
@@ -60,19 +62,14 @@ public class AlbumFacade implements AlbumFacadeLocal {
                 " WHERE " + webDAO.restrictToAlbumsAllowed(session, "a") + " " +
                 " AND a.id = :id ";
 
-        return (Album) em.createQuery(rq)
-                .setParameter("id", id)
-                .getSingleResult();
+        return (Album) em.createQuery(rq).setParameter("id", id).getSingleResult();
     }
 
     public Album loadByNameDate(String name, String date) {
         String rq = "FROM Album a " +
                 " WHERE a.date = :date " +
                 " AND a.nom = :nom";
-        return (Album) em.createQuery(rq)
-                .setParameter("date", date)
-                .setParameter("nom", name)
-                .getSingleResult();
+        return (Album) em.createQuery(rq).setParameter("date", date).setParameter("nom", name).getSingleResult();
     }
 
     public void setDateStr(Album enrAlbum, String date) {

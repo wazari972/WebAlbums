@@ -5,7 +5,6 @@
 package net.wazari.service;
 
 import javax.ejb.Local;
-import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.XmlBuilder;
 
@@ -17,9 +16,4 @@ import net.wazari.util.XmlBuilder;
 public interface UserLocal {
 
     XmlBuilder treatUSR(ViewSession vSession);
-
-    boolean saveUser(ViewSession vSession,
-            Utilisateur enrUser,
-            String passwd,
-            boolean asThemeManager);
 }

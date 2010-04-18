@@ -57,7 +57,7 @@ public class UserBean implements UserLocal {
             if (enrUtil == null) asThemeManager = true ;
             
             String pass = vSession.getUserPass();
-            if (saveUser(vSession, enrUtil, pass, asThemeManager)) {
+            if (saveSession(vSession, enrUtil, pass, asThemeManager)) {
                 output.add("valid");
                 valid = true;
             } else {
@@ -76,8 +76,8 @@ public class UserBean implements UserLocal {
 
         return output.validate();
     }
-
-    public boolean saveUser(ViewSession vSession,
+    
+    private boolean saveSession(ViewSession vSession,
             Utilisateur enrUser,
             String passwd,
             boolean asThemeManager) {
@@ -85,17 +85,20 @@ public class UserBean implements UserLocal {
         String goodPasswd;
         String userName;
         Integer themeId = vSession.getThemeId();
+        String themeName ;
 
         if (themeId == null) {
             return false;
         }
 
-        if (asThemeManager) {
-            Theme enrTheme = themeDAO.find(themeId);
+        Theme enrTheme = themeDAO.find(themeId);
 
-            if (enrTheme == null) {
-                return false;
-            }
+        if (enrTheme == null) {
+            return false;
+        }
+        themeName = enrTheme.getNom() ;
+
+        if (asThemeManager) {
             goodPasswd = enrTheme.getPassword();
 
             userName = "Administrateur";
@@ -121,11 +124,15 @@ public class UserBean implements UserLocal {
             }
         }
 
-        //WebPage.log.info("saveUser (" + userName + "-" + userID + ")");
+        log.info("saveUser (" + userName + "-" + userId + ")");
+        log.info("saveTheme (" + themeName  + "-" + themeId + ")");
         vSession.setUserName(userName);
+        vSession.setUserId(userId);
+
         vSession.setEditionMode(ViewSession.EditMode.EDITION) ;
         vSession.setRootSession(asThemeManager);
-        vSession.setUserId(userId);
+        vSession.setThemeId(themeId);
+        vSession.setThemeName(themeName);
         return true;
     }
 }

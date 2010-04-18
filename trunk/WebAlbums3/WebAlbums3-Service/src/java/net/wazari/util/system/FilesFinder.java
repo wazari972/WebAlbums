@@ -44,7 +44,7 @@ public class FilesFinder {
     @EJB
     private PhotoUtil photoUtil;
     @EJB
-    private SystemToolsService sysTools;
+    private SystemTools sysTools;
 
     private static final int DEFAULT_USER = 3;
     public static final SimpleDateFormat DATE_STANDARD = new SimpleDateFormat("yyyy-MM-dd");

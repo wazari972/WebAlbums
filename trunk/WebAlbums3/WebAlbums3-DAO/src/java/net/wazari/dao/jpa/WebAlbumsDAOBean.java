@@ -69,7 +69,7 @@ public class WebAlbumsDAOBean implements WebAlbumsDAOLocal {
         if (session.isRootSession()) {
             return " 1 = 1";
         } else {
-            return " " + album + ".Theme = '" + session.getThemeId() + "' ";
+            return " " + album + ".theme = '" + session.getThemeId() + "' ";
         }
     }
 }

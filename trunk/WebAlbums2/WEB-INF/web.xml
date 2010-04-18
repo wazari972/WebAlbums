@@ -42,7 +42,12 @@
     <param-value>mysql</param-value>
   </context-param>
 
-  <servlet>
+    <listener>
+        <listener-class>engine.SessionCleaner</listener-class>
+    </listener>
+      <!-- Listeners -->
+
+    <servlet>
     <servlet-name>Index</servlet-name>
     <servlet-class>display.Index</servlet-class>
     <load-on-startup>1</load-on-startup>
@@ -113,12 +118,5 @@
     <servlet-name>Choix</servlet-name>
     <url-pattern>/Choix</url-pattern>
   </servlet-mapping>
-  
-  <!-- Listeners -->
-  <!--
-  <listener>
-    <listener-class>engine.SessionCleaner</listener-class>
-  </listener>
-  -->
   
 </web-app>

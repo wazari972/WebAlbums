@@ -35,7 +35,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.Turn;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.util.StringUtil;
 import net.wazari.util.XmlBuilder;
-import net.wazari.util.system.SystemToolsService;
+import net.wazari.util.system.SystemTools;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -61,7 +61,7 @@ public class PhotoBean implements PhotoLocal {
     @EJB
     private WebPageLocal webService;
     private FilesFinder finder = new FilesFinder();
-    @EJB private SystemToolsService sysTools ;
+    @EJB private SystemTools sysTools ;
 
     public XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Action action = vSession.getAction();

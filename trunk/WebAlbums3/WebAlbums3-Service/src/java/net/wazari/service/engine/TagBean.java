@@ -28,7 +28,7 @@ import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exception.WebAlbumsServiceException;
 
 import net.wazari.util.XmlBuilder;
-import net.wazari.util.system.SystemToolsService;
+import net.wazari.util.system.SystemTools;
 
 @Stateless
 public class TagBean implements TagLocal {
@@ -40,7 +40,7 @@ public class TagBean implements TagLocal {
     @EJB private TagThemeFacadeLocal tagThemeDAO ;
     @EJB private PhotoLocal photoLocal ;
     @EJB private WebPageLocal webService ;
-    @EJB private SystemToolsService sysTools ;
+    @EJB private SystemTools sysTools ;
 
     public XmlBuilder treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
         String tagList = "";
@@ -51,26 +51,19 @@ public class TagBean implements TagLocal {
 
             int sizeScale = 200;
             int sizeMin = 100;
-            try {
+            long max = tagDAO.getMaxTagPerPhoto(vSession);
+            Map<Tag,Long> map = tagDAO.queryIDNameCount(vSession);
 
-                long max = tagDAO.getMaxTagPerPhoto(vSession);
-                Map<Tag,Long> map = tagDAO.queryIDNameCount(vSession);
-
-                for (Tag enrTag : map.keySet()) {
-                    long current = map.get(enrTag);
-                    int size = (int) (sizeMin + ((double) current / max) * sizeScale);
-                    cloud.add(new XmlBuilder("tag")
-                            .addAttribut("size", size)
-                            .addAttribut("nb", current)
-                            .addAttribut("id", enrTag.getId()));
-                }
-                cloud.validate();
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                cloud.cancel();
-                cloud.addException(e.getMessage());
+            for (Tag enrTag : map.keySet()) {
+                long current = map.get(enrTag);
+                int size = (int) (sizeMin + ((double) current / max) * sizeScale);
+                cloud.add(new XmlBuilder("tag")
+                        .addAttribut("size", size)
+                        .addAttribut("nb", current)
+                        .addAttribut("id", enrTag.getId()));
             }
+            cloud.validate();
+           
             output.add(cloud);
             return output.validate();
         }

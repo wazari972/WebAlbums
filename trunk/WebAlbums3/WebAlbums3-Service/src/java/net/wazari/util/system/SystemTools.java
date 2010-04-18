@@ -1,27 +1,30 @@
 package net.wazari.util.system;
 
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
 
+import java.util.Arrays;
+import java.util.ServiceLoader;
 import net.wazari.util.FileUtilWrapper;
 
-import net.wazari.service.engine.WebPageBean;
-import net.wazari.dao.entity.Photo;
-import java.io.*;
 
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.dao.entity.Photo;
+import net.wazari.service.engine.WebPageBean;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.FileUtilWrapper.FileUtilWrapperCallBack;
-import net.wazari.util.system.wrapper.*;
 
 @Stateless
-public class SystemTools implements SystemToolsService {
+public class SystemTools {
 
     private static final List<FileUtilWrapper> wrappers = new ArrayList<FileUtilWrapper>(2);
     private static final Logger log = Logger.getLogger("Process");
@@ -42,12 +45,14 @@ public class SystemTools implements SystemToolsService {
     } ;
 
     static {
-        addWrapper(new ConvertPhotoWrapper());
-        addWrapper(new TotemVideoWrapper());
-    }
 
-    private static void addWrapper(FileUtilWrapper wrapper) {
-        wrappers.add(wrapper);
+        log.info("+++ Loading datasources for service \"" + FileUtilWrapper.class.getCanonicalName() + "\"");
+
+        ServiceLoader<FileUtilWrapper> services = ServiceLoader.load(FileUtilWrapper.class);
+
+        for (FileUtilWrapper current : services) {
+            wrappers.add(current);
+        }
     }
 
     private static FileUtilWrapper getWrapper(String type, String ext) {

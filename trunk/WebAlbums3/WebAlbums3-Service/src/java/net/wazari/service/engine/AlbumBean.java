@@ -100,8 +100,8 @@ public class AlbumBean implements AlbumLocal {
 
         Integer[] bornes =
                 webPageService.calculBornes(Type.ALBUM, page, countAlbm, albums.size());
-
-        albums.subList(bornes[0], bornes[0] + WebPageBean.TAILLE_ALBUM) ;
+        int max = Math.min(bornes[0] + WebPageBean.TAILLE_ALBUM, albums.size()) ;
+        albums.subList(bornes[0], max) ;
 
         int count = bornes[0];
 

@@ -17,7 +17,7 @@ public interface ViewSession extends ServiceSession {
 
     void setThemeName(String nom);
 
-    void setThemeID(Integer newID);
+    void setThemeId(Integer newID);
 
     void setEditionMode(EditMode editMode);
 
