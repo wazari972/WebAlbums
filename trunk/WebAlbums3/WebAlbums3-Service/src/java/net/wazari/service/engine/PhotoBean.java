@@ -245,7 +245,7 @@ public class PhotoBean implements PhotoLocal {
             thisPage.add("name", "Photos");
             thisPage.add("album", albumId);
             thisPage.add("albmCount", albmCount);
-            output.add(displayPhoto(lstP, vSession, thisPage, albmCount, submit));
+            output.add(displayPhoto(lstP, vSession, thisPage, submit));
 
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -297,7 +297,6 @@ public class PhotoBean implements PhotoLocal {
     public XmlBuilder displayPhoto(List<Photo> lstP,
             ViewSessionPhoto vSession,
             XmlBuilder thisPage,
-            Integer albmCount,
             XmlBuilder submit)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder(null);

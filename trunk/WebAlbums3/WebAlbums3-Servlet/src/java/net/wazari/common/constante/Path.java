@@ -43,7 +43,7 @@ public class Path implements Configuration {
 
     public void init(ServletContext context) {
         log.info("Initialization of the PATH options ...");
-        initStrParam(context, "root_dir", "../");
+        initStrParam(context, "root_dir", "/other/Web/");
 
         //home_dir is used if root_dir is relative (./ or ../)
         home_dir = System.getProperty("user.dir");

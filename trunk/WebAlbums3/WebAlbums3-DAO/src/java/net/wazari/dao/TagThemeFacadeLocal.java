@@ -27,7 +27,7 @@ public interface TagThemeFacadeLocal {
 
     List<TagTheme> findAll();
 
-    List<TagTheme> queryByTag(ServiceSession session, Integer tag) ;
+    List<TagTheme> queryByTag(ServiceSession session, int tag) ;
 
     TagTheme loadByTagTheme(Integer tagID, Integer themeID) ;
 }

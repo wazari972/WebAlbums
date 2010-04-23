@@ -252,8 +252,10 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return getInteger("rmTag");
     }
 
-    public Boolean wantsDetails() {
-        return getBoolean("details");
+    public boolean wantsDetails() {
+        Boolean val = getSessionObject("details", Boolean.class);
+        if (val == null) val = false ;
+        return val ;
     }
 
     public Mode getMode() {
@@ -281,14 +283,14 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     }
 
     private Integer[] castToIntArray(String[] from) {
-        List<Integer> ret = new ArrayList<Integer>(from.length);
+        ArrayList<Integer> ret = new ArrayList<Integer>(from.length);
         for (int i = 0; i < from.length; i++) {
             try {
                 ret.add(Integer.parseInt(from[i]));
             } catch (NumberFormatException e) {
             }
         }
-        return (Integer[]) ret.toArray();
+        return ret.toArray(new Integer[0]);
     }
 
     public Configuration getConfiguration() {

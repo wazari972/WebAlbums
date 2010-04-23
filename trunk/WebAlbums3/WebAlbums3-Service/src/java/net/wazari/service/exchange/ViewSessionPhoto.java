@@ -37,7 +37,7 @@ public interface ViewSessionPhoto extends ViewSession {
 
     Integer getRmTag();
 
-    Boolean wantsDetails();
+    boolean wantsDetails();
 
     enum Turn {
         RIGHT, LEFT, TAG, UNTAG, MVTAG, RIEN

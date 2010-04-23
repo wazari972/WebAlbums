@@ -27,9 +27,7 @@ public interface TagFacadeLocal {
     Tag find(Object id);
 
     List<Tag> findAll();
-
-    long getMaxTagPerPhoto(ServiceSession session) ;
-
+    
     Map<Tag,Long> queryIDNameCount(ServiceSession session) ;
 
     List<Tag> queryAllowedTagByType(ServiceSession session, int type) ;

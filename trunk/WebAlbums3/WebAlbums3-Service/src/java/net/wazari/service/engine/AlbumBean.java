@@ -120,12 +120,14 @@ public class AlbumBean implements AlbumLocal {
             album.add("title", enrAlbum.getNom());
 
             XmlBuilder details = new XmlBuilder("details");
+
             Photo enrPhoto = photoDAO.find(enrAlbum.getPicture());
             if (enrPhoto != null) {
                 details.add("photoID", enrPhoto.getId());
                 details.add("miniWidth", enrPhoto.getWidth());
                 details.add("miniHeight", enrPhoto.getHeight());
             }
+            
             details.add("description", enrAlbum.getDescription());
 
             //tags de l'album

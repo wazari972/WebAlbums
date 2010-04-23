@@ -20,7 +20,7 @@ import net.wazari.util.XmlBuilder;
 public interface PhotoLocal {
 
     @SuppressWarnings(value = "unchecked")
-    XmlBuilder displayPhoto(List<Photo> lstPhoto, ViewSessionPhoto vSession, XmlBuilder thisPage, Integer albmCount, XmlBuilder submit) throws WebAlbumsServiceException;
+    XmlBuilder displayPhoto(List<Photo> lstPhoto, ViewSessionPhoto vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
 
     XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException;
 

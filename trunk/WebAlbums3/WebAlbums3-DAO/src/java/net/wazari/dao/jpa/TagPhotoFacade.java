@@ -21,11 +21,13 @@ import net.wazari.dao.entity.TagPhoto;
  */
 @Stateless
 public class TagPhotoFacade implements TagPhotoFacadeLocal {
-
     @PersistenceContext
     private EntityManager em;
 
     @EJB PhotoFacadeLocal photoDAO ;
+    @EJB AlbumFacadeLocal albumDAO ;
+    @EJB TagFacadeLocal   tagDAO ;
+    @EJB ThemeFacadeLocal themeDAO ;
 
     public void create(TagPhoto tagPhoto) {
         em.persist(tagPhoto);
@@ -48,8 +50,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
                 .getResultList();
     }
 
-    public void deleteByPhoto(int photoID) {
-        Photo enrPhoto = photoDAO.find(photoID) ;
+    public void deleteByPhoto(int photoId) {
+        Photo enrPhoto = photoDAO.find(photoId) ;
 
         for (TagPhoto enrTp : enrPhoto.getTagPhotoList()) {
             remove(enrTp);
@@ -59,7 +61,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     public List<TagPhoto> queryByPhoto(int photoId) {
         String rq = "FROM TagPhoto WHERE photo = :photoId";
         return em.createQuery(rq)
-                .setParameter("photoId", photoId)
+                .setParameter("photoId", photoDAO.find(photoId))
                 .getResultList();
     }
 
@@ -69,22 +71,22 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
                 "WHERE photo.album = :albumId " +
                 "AND photo.id = tp.photo ";
         return em.createQuery(rq)
-                .setParameter("albumId", albumId)
+                .setParameter("albumId", albumDAO.find(albumId))
                 .getResultList();
     }
 
     public TagPhoto loadByTagPhoto(int tagId, int photoId) {
         String rq = "FROM TagPhoto tp WHERE tp.photo = :photoId AND tp.tag = :tagId";
         return (TagPhoto) em.createQuery(rq)
-                .setParameter("photoId", photoId)
-                .setParameter("tagId", tagId)
+                .setParameter("photoId", photoDAO.find(photoId))
+                .setParameter("tagId", tagDAO.find(tagId))
                 .getSingleResult();
     }
 
     public List<TagPhoto> queryByTag(int tagId) {
         String rq = "FROM TagPhoto WHERE tag = :tagId";
         return em.createQuery(rq)
-                .setParameter("tagId", tagId)
+                .setParameter("tagId", tagDAO.find(tagId))
                 .getResultList();
     }
 
@@ -101,7 +103,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
                             " tp.photo = p.id AND p.album = a.ID " +
                             " AND a.theme = :themeId ";
         return em.createQuery(rq)
-                .setParameter("themeId", session.getThemeId())
+                .setParameter("themeId", themeDAO.find(session.getThemeId()))
                 .getResultList();
     }
 }

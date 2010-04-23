@@ -44,32 +44,7 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     public List<Tag> findAll() {
-        return em.createQuery("select object(o) from Tag as o")
-                .getResultList();
-    }
-
-    /*
-    public long getMsaxTagPerPhoto(ServiceDaoSession session) {
-    String rq = queryIDNameCount(session).getQueryString();
-
-    String rqMax = "SELECT max( count ) " +
-    "FROM ( " +
-    rq +
-    ")temp";
-    Query query = em.createSQLQuery(rqMax);
-    rqMax = "done";
-
-    Object val = query.getResultList();
-    long max = 100;
-    if (val != null) {
-    max = Long.valueOf(val.toString());
-    }
-    return max;
-    }
-     */
-    public long getMaxTagPerPhoto(ServiceSession session) {
-        return 80 ;
-        //throw new UnsupportedOperationException("Not supported yet.");
+        return em.createQuery("select object(o) from Tag as o").getResultList();
     }
 
     public Map<Tag, Long> queryIDNameCount(ServiceSession session) {
@@ -92,7 +67,7 @@ public class TagFacade implements TagFacadeLocal {
     public List<Tag> queryAllowedTagByType(ServiceSession session, int type) {
         String rq;
         if (session.isRootSession()) {
-            rq = "FROM Tag t WHERE t.TagType = :type";
+            rq = "FROM Tag t WHERE t.tagType = :type";
         } else {
             rq = "SELECT DISTINCT t " +
                     "FROM Tag t, TagPhoto tp, Photo p, Album a " +
@@ -104,18 +79,14 @@ public class TagFacade implements TagFacadeLocal {
                     "AND " + webDAO.restrictToThemeAllowed(session, "a") + " ";
         }
 
-        return em.createQuery(rq)
-                .setParameter("type", type)
-                .getResultList();
+        return em.createQuery(rq).setParameter("type", type).getResultList();
     }
 
     public Tag loadByName(String nom) {
         String rq = "FROM Tag t " +
                 " WHERE  t.nom = :nom ";
 
-        return (Tag) em.createQuery(rq)
-                .setParameter("nom", nom)
-                .getSingleResult();
+        return (Tag) em.createQuery(rq).setParameter("nom", nom).getSingleResult();
     }
 
     public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) {
@@ -129,21 +100,22 @@ public class TagFacade implements TagFacadeLocal {
             rq += " AND ta.tagType = '3' ";
         }
         rq += " ORDER BY ta.nom";
-        return em.createQuery(rq).getResultList() ;
+        return em.createQuery(rq).getResultList();
     }
 
     public List<Tag> getNoSuchTags(ServiceSession sSession, List<Tag> tags) {
         String rq = "SELECT DISTINCT ta " +
                 " FROM Tag ta " +
-                " WHERE ta.id NOT IN (" + getIdList(tags)+ ") " +
+                " WHERE ta.id NOT IN (" + getIdList(tags) + ") " +
                 " ORDER BY ta.nom";
         return em.createQuery(rq).getResultList();
     }
 
     private static String getIdList(List<Tag> lst) {
-        String ret = "-1 " ;
-        for (Tag enrTag : lst) ret += ", "+enrTag.getId() ;
-        return ret ;
+        String ret = "-1 ";
+        for (Tag enrTag : lst) {
+            ret += ", " + enrTag.getId();
+        }
+        return ret;
     }
-    
 }

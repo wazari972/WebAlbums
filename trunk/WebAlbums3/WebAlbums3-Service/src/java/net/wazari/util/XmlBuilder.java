@@ -91,7 +91,7 @@ public class XmlBuilder {
   }
   public XmlBuilder addException (String type, Object message) {
     if (this.exception == null) this.exception = new XmlBuilder("exception");
-    if (message == null) throw new NullPointerException("message cannot be null");
+    //if (message == null) throw new NullPointerException("message cannot be null");
     if (type == null) type = "Exception" ;
     this.exception.add(type, message);
     return this ;

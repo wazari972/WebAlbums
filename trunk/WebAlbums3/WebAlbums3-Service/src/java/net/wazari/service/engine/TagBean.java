@@ -43,7 +43,6 @@ public class TagBean implements TagLocal {
     @EJB private SystemTools sysTools ;
 
     public XmlBuilder treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
-        String tagList = "";
         XmlBuilder output = new XmlBuilder("tags");
         Special special = vSession.getSpecial();
         if (Special.CLOUD == special) {
@@ -51,13 +50,14 @@ public class TagBean implements TagLocal {
 
             int sizeScale = 200;
             int sizeMin = 100;
-            long max = tagDAO.getMaxTagPerPhoto(vSession);
+            long max = 0;
             Map<Tag,Long> map = tagDAO.queryIDNameCount(vSession);
-
+            for (long current : map.values()) if (current > max) max = current ;
+            
             for (Tag enrTag : map.keySet()) {
                 long current = map.get(enrTag);
                 int size = (int) (sizeMin + ((double) current / max) * sizeScale);
-                cloud.add(new XmlBuilder("tag")
+                cloud.add(new XmlBuilder("tag", enrTag.getNom())
                         .addAttribut("size", size)
                         .addAttribut("nb", current)
                         .addAttribut("id", enrTag.getId()));
@@ -156,7 +156,7 @@ public class TagBean implements TagLocal {
                     sysTools.fullscreen(vSession, lstPhoto, "Tags", null, page);
                     return null;
                 } else {
-                    output.add(photoLocal.displayPhoto(lstPhoto, (ViewSessionPhoto)vSession, thisPage, Integer.parseInt(tagList), submit));
+                    output.add(photoLocal.displayPhoto(lstPhoto, (ViewSessionPhoto)vSession, thisPage, submit));
                 }
             }
        

@@ -12,6 +12,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import net.wazari.dao.entity.Album;
 
 /**
@@ -48,13 +49,17 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     public List<Album> queryAlbums(ServiceSession session, boolean restrictAllowed, boolean restrictTheme, Integer topX) {
-        String rq = (topX == null ? "" : "TOP " + topX + " ") +
-                "FROM Album a " +
+        String rq = "FROM Album a " +
                 " WHERE " + (restrictAllowed ? webDAO.restrictToAlbumsAllowed(session, "a") : "1 = 1") + " " +
                 " AND " + (restrictTheme ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1") + " " +
                 " ORDER BY a.date DESC ";
         log.info(rq);
-        return em.createQuery(rq).getResultList();
+        Query q = em.createQuery(rq) ;
+        if (topX != null) {
+            q.setFirstResult(1);
+            q.setMaxResults(5);
+        }
+        return q.getResultList();
     }
 
     public Album loadIfAllowed(ServiceSession session, int id) {
@@ -69,7 +74,10 @@ public class AlbumFacade implements AlbumFacadeLocal {
         String rq = "FROM Album a " +
                 " WHERE a.date = :date " +
                 " AND a.nom = :nom";
-        return (Album) em.createQuery(rq).setParameter("date", date).setParameter("nom", name).getSingleResult();
+        return (Album) em.createQuery(rq)
+                .setParameter("date", date)
+                .setParameter("nom", name)
+                .getSingleResult();
     }
 
     public void setDateStr(Album enrAlbum, String date) {

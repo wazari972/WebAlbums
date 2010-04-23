@@ -21,7 +21,7 @@ import net.wazari.dao.entity.Photo;
 @Stateless
 public class PhotoFacade implements PhotoFacadeLocal {
     @EJB WebAlbumsDAOLocal webDAO ;
-    
+    @EJB AlbumFacadeLocal albumDAO ;
     @PersistenceContext
     private EntityManager em;
 
@@ -38,6 +38,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     public Photo find(Object id) {
+        if (id == null) return null ;
         return em.find(Photo.class, id);
     }
 
@@ -53,7 +54,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
         return (Photo) em.createQuery(rq)
                 .setParameter("id", id)
-                .getResultList();
+                .getSingleResult();
     }
 
     public List<Photo> loadFromAlbum(ServiceSession session, int albumId) {
@@ -62,7 +63,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
             (session == null ? "" : " AND "+webDAO.restrictToPhotosAllowed(session, "p"))+" " +
             " ORDER BY p.path" ;
           return em.createQuery(rq)
-                  .setParameter("albumId", albumId)
+                  .setParameter("albumId", albumDAO.find(albumId))
                   .getResultList() ;
 
     }
@@ -71,13 +72,13 @@ public class PhotoFacade implements PhotoFacadeLocal {
             String rq = "FROM Photo p WHERE p.path = :path" ;
             return (Photo) em.createQuery(rq)
                     .setParameter("path", path)
-                    .getResultList();
+                    .getSingleResult();
     }
 
     public List<Photo> loadByTags(ServiceSession session, List<Integer> listTagId) {
             //creation de la requete
             String rq = "SELECT p FROM Photo p, Album a, TagPhoto tp " +
-              " WHERE a.ID = p.album and p.id = tp.photo"+
+              " WHERE a.id = p.album and p.id = tp.photo"+
               " AND tp.tag in ('-1' " ;
             for (int id : listTagId) {
               rq += ", '"+id+"'" ;
