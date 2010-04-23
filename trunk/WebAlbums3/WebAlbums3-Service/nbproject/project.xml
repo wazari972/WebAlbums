@@ -5,11 +5,11 @@
         <data xmlns="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
             <name>WebAlbums3-Service</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
-            <included-library>file.reference.CP-Apache-commos-lang.2.5.jar</included-library>
-            <included-library>file.reference.CP-EXIF-metadata-extractor-2.3.1.jar</included-library>
-            <included-library>file.reference.CP-DB-dbunit-2.4.5.jar-1</included-library>
-            <included-library>reference.WebAlbums3-DAO.dist</included-library>
-            <included-library>reference.WebAlbums3-Util.jar</included-library>
+            <included-library files="1">file.reference.CP-Apache-commos-lang.2.5.jar</included-library>
+            <included-library files="1">file.reference.CP-EXIF-metadata-extractor-2.3.1.jar</included-library>
+            <included-library files="1">file.reference.CP-DB-dbunit-2.4.5.jar-1</included-library>
+            <included-library files="1">reference.WebAlbums3-DAO.dist</included-library>
+            <included-library files="1">reference.WebAlbums3-Util.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

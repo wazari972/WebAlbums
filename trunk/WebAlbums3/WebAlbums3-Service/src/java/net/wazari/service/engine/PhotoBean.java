@@ -22,6 +22,7 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.PhotoUtilLocal;
 import net.wazari.service.WebPageLocal;
+import net.wazari.service.WebPageLocal.Bornes;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
@@ -305,11 +306,10 @@ public class PhotoBean implements PhotoLocal {
         Integer page = vSession.getPage();
         Integer photoID = vSession.getId();
         Integer scount = vSession.getCount();
-        page = (page == null ? 0 : page);
 
-        Integer[] bornes = webService.calculBornes(Type.PHOTO, page,
+        Bornes bornes = webService.calculBornes(Type.PHOTO, page,
                 scount, lstP.size());
-        lstP = lstP.subList(bornes[0], bornes[0] + WebPageBean.TAILLE_PHOTO);
+        lstP = lstP.subList(bornes.first, bornes.last);
 
         String degrees = "0";
         Integer tag = null;
@@ -338,7 +338,7 @@ public class PhotoBean implements PhotoLocal {
             }
         }
 
-        int count = bornes[0];
+        int count = bornes.first;
         for (Photo enrPhoto : lstP) {
             XmlBuilder photo = new XmlBuilder("photo");
             boolean reSelectThis = false;

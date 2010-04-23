@@ -14,6 +14,7 @@ import net.wazari.dao.entity.Photo;
 import net.wazari.service.AlbumUtilLocal;
 import net.wazari.service.AlbumLocal;
 import net.wazari.service.WebPageLocal;
+import net.wazari.service.WebPageLocal.Bornes;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Special;
@@ -96,14 +97,11 @@ public class AlbumBean implements AlbumLocal {
         Integer albumId = vSession.getId();
         Integer page = vSession.getPage();
         Integer countAlbm = vSession.getCountAlbm();
-        page = (page == null ? 0 : page);
 
-        Integer[] bornes =
-                webPageService.calculBornes(Type.ALBUM, page, countAlbm, albums.size());
-        int max = Math.min(bornes[0] + WebPageBean.TAILLE_ALBUM, albums.size()) ;
-        albums.subList(bornes[0], max) ;
+        Bornes bornes = webPageService.calculBornes(Type.ALBUM, page, countAlbm, albums.size());
+        albums.subList(bornes.first, bornes.last) ;
 
-        int count = bornes[0];
+        int count = bornes.first;
 
         for(Album enrAlbum : albums) {
             XmlBuilder album = new XmlBuilder("album");

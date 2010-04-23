@@ -73,47 +73,44 @@ public class WebPageBean implements WebPageLocal {
         }
         return next;
     }
-
-    //[begin][end][nb pages][page]
-    public Integer[] calculBornes(Type type,
+    
+    //try to get the 'asked' element
+    //or the page 'page' if asked is null
+    //go to the first page otherwise
+    public Bornes calculBornes(Type type,
             Integer page,
-            Integer asked,
-            int size) {
-        int ipage;
+            Integer eltAsked,
+            int nbElements) {
         int taille = (type == Type.ALBUM ? TAILLE_ALBUM : TAILLE_PHOTO);
-        Integer[] bornes = new Integer[4];
-        try {
-            if (asked != null) {
-                //compute the page into wich the element asked is in
-                ipage = (int) Math.floor(asked / taille);
-                bornes[0] = ipage * taille;
-            } else if (page == null) {
-                bornes[0] = 0;
-                ipage = 0;
-            } else {
-                bornes[0] = Math.min(page * taille, size);
-            }
-        } catch (NumberFormatException e) {
-            //cannot parse the page
-            bornes[0] = 0;
-            ipage = 0;
+        Bornes bornes = new Bornes();
+
+        if (eltAsked != null) {
+            //compute the page into which the element asked is 
+            bornes.page = (int) Math.floor(eltAsked / taille);
+            bornes.first = bornes.page * taille;
+        } else if (page != null) {
+            bornes.first = Math.min(page * taille, nbElements);
+            bornes.page = page ;
+        } else {
+            bornes.first = 0;
+            bornes.page = 0 ;
         }
-        bornes[0] = (bornes[0] < 0 ? 0 : bornes[0]);
-        bornes[1] = Math.min(bornes[0] + taille, size);
-        bornes[2] = (int) Math.ceil(((double) size) / ((double) taille));
-        bornes[3] = page;
+        if (bornes.first < 0) bornes.first = 0 ;
+        
+        bornes.last = Math.min(bornes.first + taille, nbElements);
+        bornes.nbPages = (int) Math.ceil(((double) nbElements) / ((double) taille));
         return bornes;
     }
 
-    public XmlBuilder xmlPage(XmlBuilder from, Integer[] bornes) {
+    public XmlBuilder xmlPage(XmlBuilder from, Bornes bornes) {
         XmlBuilder page = new XmlBuilder("page");
-        page.addComment("Page 0 .. " + bornes[3] + " .." + bornes[2]);
+        page.addComment("Page 0 .. " + bornes.page + " .." + bornes.nbPages);
         page.add("url", from);
 
-        if (bornes[2] > 1) {
-            int ipage = bornes[3];
+        if (bornes.nbPages > 1) {
+            int ipage = bornes.page;
 
-            for (int i = 0; i < bornes[2]; i++) {
+            for (int i = 0; i < bornes.nbPages; i++) {
                 if (i == ipage || ipage == -1 && i == 0) {
                     page.add("current", i);
                 } else if (i < ipage) {

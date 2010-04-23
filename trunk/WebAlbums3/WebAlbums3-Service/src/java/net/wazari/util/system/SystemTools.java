@@ -9,8 +9,6 @@ import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.ServiceLoader;
-import net.wazari.util.FileUtilWrapper;
-
 
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -21,13 +19,13 @@ import net.wazari.dao.entity.Photo;
 import net.wazari.service.engine.WebPageBean;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.util.FileUtilWrapper.FileUtilWrapperCallBack;
+import net.wazari.util.system.IImageUtil.FileUtilWrapperCallBack;
 
 @Stateless
 public class SystemTools {
-
-    private static final List<FileUtilWrapper> wrappers = new ArrayList<FileUtilWrapper>(2);
-    private static final Logger log = Logger.getLogger("Process");
+    private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName()) ;
+    private static final List<IImageUtil> wrappers = new ArrayList<IImageUtil>(2);
+    private static final ISystemUtil systemUtil ;
     @EJB
     private UtilisateurFacadeLocal userDAO;
     @EJB
@@ -46,17 +44,60 @@ public class SystemTools {
 
     static {
 
-        log.info("+++ Loading datasources for service \"" + FileUtilWrapper.class.getCanonicalName() + "\"");
-
-        ServiceLoader<FileUtilWrapper> services = ServiceLoader.load(FileUtilWrapper.class);
-
-        for (FileUtilWrapper current : services) {
+        log.info("+++ Loading services for \"" + IImageUtil.class.getCanonicalName() + "\"");
+        ServiceLoader<IImageUtil> servicesImg = ServiceLoader.load(IImageUtil.class);
+        for (IImageUtil current : servicesImg) {
             wrappers.add(current);
         }
+        
+        log.info("+++ Loading services for \"" + ISystemUtil.class.getCanonicalName() + "\"");
+        ServiceLoader<ISystemUtil> servicesSys = ServiceLoader.load(ISystemUtil.class);
+        systemUtil = null ;
+        for (ISystemUtil current : servicesSys) {
+            systemUtil = current;
+            break ;
+        }
     }
+    private static Process execPS(String[] cmd) {
+        try {
+            log.info("exec: " + Arrays.toString(cmd));
+            return Runtime.getRuntime().exec(cmd);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    private static int execWaitFor(String[] cmd) {
+        Process ps = execPS(cmd);
+        if (ps == null) {
+            return -1;
+        }
 
-    private static FileUtilWrapper getWrapper(String type, String ext) {
-        for (FileUtilWrapper util : wrappers) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+        String str = null;
+        while (true) {
+            try {
+                while ((str = reader.readLine()) != null) {
+                    log.info(str);
+                }
+
+                reader = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
+                while ((str = reader.readLine()) != null) {
+                    log.info("err - " + str);
+                }
+                int ret = ps.waitFor();
+                log.info("ret:" + ret);
+
+                return ret;
+
+            } catch (InterruptedException e) {
+            } catch (IOException e) {
+            }
+        }
+    }
+    private static IImageUtil getWrapper(String type, String ext) {
+        for (IImageUtil util : wrappers) {
             if (util.support(type, ext)) {
                 return util;
             }
@@ -117,11 +158,14 @@ public class SystemTools {
     @SuppressWarnings("unchecked")
     public void fullscreen(ViewSession vSession, List<Photo> lstPhoto, String type, Integer id, Integer page) {
         page = (page == null ? 0 : page);
-
+        if (systemUtil == null) {
+            log.warning("No ISystemUtil available ...");
+            return ;
+        }
         File dir = null;
         int i = 0;
         boolean first = true;
-        FileUtilWrapper util = getWrapper("image", null);
+        IImageUtil util = getWrapper("image", null);
         for (Photo enrPhoto : lstPhoto) {
             if (first) {
                 dir = buildTempDir(vSession, type, id);
@@ -132,7 +176,7 @@ public class SystemTools {
 
             int currentPage = i / WebPageBean.TAILLE_PHOTO;
             File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
-            link(photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
+            systemUtil.link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
 
             if (first && page == currentPage) {
                 util.fullscreen(cb, fPhoto.toString());
@@ -152,9 +196,9 @@ public class SystemTools {
         if (dir == null) {
             return null;
         }
-
-        File fPhoto = new File(dir, enrPhoto.getId() + "-" + width + "." + photoUtil.getExtention(vSession, enrPhoto));
-        FileUtilWrapper util = getWrapper(enrPhoto.getType(), null);
+        String ext = photoUtil.getExtention(vSession, enrPhoto) ;
+        File fPhoto = new File(dir, enrPhoto.getId() + "-" + width + "." + ext );
+        IImageUtil util = getWrapper(enrPhoto.getType(), ext);
         if (util == null) {
             return photoUtil.getImagePath(vSession, enrPhoto);
         }
@@ -164,54 +208,7 @@ public class SystemTools {
 
         return fPhoto.toString();
     }
-
-    private static Process execPS(String[] cmd) {
-        try {
-            log.info("exec: " + Arrays.toString(cmd));
-            return Runtime.getRuntime().exec(cmd);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static int execWaitFor(String[] cmd) {
-        Process ps = execPS(cmd);
-        if (ps == null) {
-            return -1;
-        }
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-        String str = null;
-        while (true) {
-            try {
-                while ((str = reader.readLine()) != null) {
-                    log.info(str);
-                }
-
-                reader = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
-                while ((str = reader.readLine()) != null) {
-                    log.info("err - " + str);
-                }
-                int ret = ps.waitFor();
-                log.info("ret:" + ret);
-
-                return ret;
-
-            } catch (InterruptedException e) {
-            } catch (IOException e) {
-            }
-        }
-    }
-
-    public boolean link(String source, File dest) {
-        return 0 == execWaitFor(new String[]{"ln", "-s", source, dest.toString()});
-    }
-
-    public void remove(String file) {
-        execPS(new String[]{"rm", file, "-rf"});
-    }
-
+    
     public boolean support(String type, String ext) {
         return getWrapper(type, ext) != null;
     }

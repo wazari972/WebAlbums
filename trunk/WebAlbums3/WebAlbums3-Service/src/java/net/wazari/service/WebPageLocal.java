@@ -21,7 +21,13 @@ import net.wazari.util.XmlBuilder;
  */
 @Local
 public interface WebPageLocal {
-    Integer[] calculBornes(Type type, Integer page, Integer asked, int size);
+    public static class Bornes {
+        public int first ;
+        public int last ;
+        public int nbPages ;
+        public int page ;
+    }
+    Bornes calculBornes(Type type, Integer page, Integer asked, int size);
 
     XmlBuilder displayListB(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
 
@@ -46,7 +52,7 @@ public interface WebPageLocal {
 
     EditMode getNextEditionMode(ViewSession vSession);
 
-    XmlBuilder xmlPage(XmlBuilder from, Integer[] bornes) ;
+    XmlBuilder xmlPage(XmlBuilder from, Bornes bornes) ;
 
     XmlBuilder xmlLogin(ViewSession vSession) ;
 
