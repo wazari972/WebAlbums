@@ -15,7 +15,6 @@ import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
 
-import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -35,11 +34,7 @@ public class WebPageBean implements WebPageLocal {
     @EJB
     private TagThemeFacadeLocal tagThemeDAO;
     @EJB
-    private ThemeFacadeLocal themeDAO;
-    @EJB
-    private UtilisateurFacadeLocal userDAO;
-    @EJB
-    private UserLocal userService;
+    private UtilisateurFacadeLocal userDAO ;
     @EJB
     private TagPhotoFacadeLocal tagPhotoDAO;
     @EJB
@@ -49,8 +44,6 @@ public class WebPageBean implements WebPageLocal {
     private static final Logger log = Logger.getLogger(WebPageBean.class.getName());
     
     public static final int USER_CHEAT = 0 ;
-    public static final int TAILLE_PHOTO = 10;
-    public static final int TAILLE_ALBUM = 15;
 
     static {
         WebPageBean.log.info("WebAlbums v4 is loading ... ");
@@ -77,11 +70,9 @@ public class WebPageBean implements WebPageLocal {
     //try to get the 'asked' element
     //or the page 'page' if asked is null
     //go to the first page otherwise
-    public Bornes calculBornes(Type type,
-            Integer page,
+    public Bornes calculBornes(Integer page,
             Integer eltAsked,
-            int nbElements) {
-        int taille = (type == Type.ALBUM ? TAILLE_ALBUM : TAILLE_PHOTO);
+            int taille) {
         Bornes bornes = new Bornes();
 
         if (eltAsked != null) {
@@ -89,7 +80,7 @@ public class WebPageBean implements WebPageLocal {
             bornes.page = (int) Math.floor(eltAsked / taille);
             bornes.first = bornes.page * taille;
         } else if (page != null) {
-            bornes.first = Math.min(page * taille, nbElements);
+            bornes.first = page * taille;
             bornes.page = page ;
         } else {
             bornes.first = 0;
@@ -97,32 +88,26 @@ public class WebPageBean implements WebPageLocal {
         }
         if (bornes.first < 0) bornes.first = 0 ;
         
-        bornes.last = Math.min(bornes.first + taille, nbElements);
-        bornes.nbPages = (int) Math.ceil(((double) nbElements) / ((double) taille));
         return bornes;
     }
 
     public XmlBuilder xmlPage(XmlBuilder from, Bornes bornes) {
         XmlBuilder page = new XmlBuilder("page");
-        page.addComment("Page 0 .. " + bornes.page + " .." + bornes.nbPages);
+        page.addComment("Page 0 .. " + bornes.page + " ..");
         page.add("url", from);
-
-        if (bornes.nbPages > 1) {
-            int ipage = bornes.page;
-
-            for (int i = 0; i < bornes.nbPages; i++) {
-                if (i == ipage || ipage == -1 && i == 0) {
-                    page.add("current", i);
-                } else if (i < ipage) {
-                    page.add("prev", i);
-                } else {
-                    page.add("next", i);
-                }
+        int start = Math.max(0, bornes.page - 5) ;
+        int stop = bornes.page + 5 ;
+        for (int i = start; i < stop; i++) {
+            if (i == bornes.page || bornes.page == -1 && i == 0) {
+                page.add("current", i);
+            } else if (i < bornes.page) {
+                page.add("prev", i);
+            } else {
+                page.add("next", i);
             }
-            page.validate();
-        } else {
-            page.addComment("1 page only");
         }
+        page.validate();
+       
         return page;
     }
 
@@ -130,14 +115,14 @@ public class WebPageBean implements WebPageLocal {
         XmlBuilder login = new XmlBuilder("login");
         login.add("theme", vSession.getThemeName());
         login.add("user", vSession.getUserName());
-
-        if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+        log.info("logged as manager? "+vSession.isSessionManager());
+        if (vSession.isSessionManager()) {
             login.add("admin");
             if (vSession.getEditionMode() == EditMode.EDITION) {
                 login.add("edit");
             }
         }
-
+        log.info("logged as root? "+vSession.isRootSession());
         if (vSession.isRootSession()) {
             login.add("root");
         }

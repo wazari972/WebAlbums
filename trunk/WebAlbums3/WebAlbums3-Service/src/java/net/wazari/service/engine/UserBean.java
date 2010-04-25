@@ -29,9 +29,10 @@ public class UserBean implements UserLocal {
 
         Action action = vSession.getAction();
         log.info("Action: "+action) ;
-        vSession.setUserId(null);
         boolean valid = false;
         if (Action.LOGIN == action) {
+            clearSession(vSession) ;
+            
             String userName = vSession.getUserName();
             boolean asThemeManager = false;
             log.info("userName: "+userName) ;
@@ -40,7 +41,7 @@ public class UserBean implements UserLocal {
                 output.add("login");
                 return output.validate();
             }
-
+            //allow Theme+User to be logged as theme manager with given user view
             int indexOf = userName.indexOf('+');
             if ((indexOf == -1 && userName.equals(vSession.getThemeName())) ||
                     (indexOf != -1 && userName.substring(0, indexOf).equals(vSession.getThemeName()))) {
@@ -86,18 +87,20 @@ public class UserBean implements UserLocal {
         String userName;
         Integer themeId = vSession.getThemeId();
         String themeName ;
+        boolean rootSession = false ;
 
         if (themeId == null) {
             return false;
         }
-
+        
         Theme enrTheme = themeDAO.find(themeId);
 
         if (enrTheme == null) {
             return false;
         }
         themeName = enrTheme.getNom() ;
-
+        rootSession = enrTheme.getId().equals(-1) ;
+        
         if (asThemeManager) {
             goodPasswd = enrTheme.getPassword();
 
@@ -118,21 +121,30 @@ public class UserBean implements UserLocal {
         }
 
         if (goodPasswd != null && !goodPasswd.equals(passwd)) {
-            Integer autoLogin = vSession.getConfiguration().autoLogin();
-            if (!themeId.equals(autoLogin)) {
-                return false;
-            }
+            return false;
         }
 
         log.info("saveUser (" + userName + "-" + userId + ")");
-        log.info("saveTheme (" + themeName  + "-" + themeId + ")");
         vSession.setUserName(userName);
         vSession.setUserId(userId);
-
+        log.info("saveProperties (manager=" + asThemeManager  +
+                ", editionMode=" + ViewSession.EditMode.EDITION + "" +
+                ", rootSession="+rootSession+")");
+        vSession.setSessionManager(asThemeManager) ;
         vSession.setEditionMode(ViewSession.EditMode.EDITION) ;
-        vSession.setRootSession(asThemeManager);
+        vSession.setRootSession(rootSession);
+        log.info("saveTheme (" + themeName  + "-" + themeId + ")");
         vSession.setThemeId(themeId);
         vSession.setThemeName(themeName);
         return true;
+    }
+    private void clearSession(ViewSession vSession) {
+        vSession.setUserName(null);
+        vSession.setUserId(null);
+        vSession.setSessionManager(null) ;
+        vSession.setEditionMode(null) ;
+        vSession.setRootSession(null);
+        vSession.setThemeId(null);
+        vSession.setThemeName(null);
     }
 }

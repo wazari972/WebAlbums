@@ -1,11 +1,16 @@
 package net.wazari.service.engine;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import net.wazari.dao.AlbumFacadeLocal;
+import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
@@ -24,12 +29,13 @@ import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Type;
 
+import net.wazari.util.StringUtil;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.util.XmlBuilder;
 
 @Stateless
 public class AlbumBean implements AlbumLocal {
-
+    private static final Logger log = Logger.getLogger(AlbumBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
     private static final int TOP = 5;
 
@@ -87,8 +93,7 @@ public class AlbumBean implements AlbumLocal {
         return output.validate();
     }
 
-    public XmlBuilder displayAlbum(List<Album> albums,
-            XmlBuilder output,
+    public XmlBuilder displayAlbum(XmlBuilder output,
             ViewSessionAlbum vSession,
             XmlBuilder submit,
             XmlBuilder thisPage) throws WebAlbumsServiceException {
@@ -98,11 +103,11 @@ public class AlbumBean implements AlbumLocal {
         Integer page = vSession.getPage();
         Integer countAlbm = vSession.getCountAlbm();
 
-        Bornes bornes = webPageService.calculBornes(Type.ALBUM, page, countAlbm, albums.size());
-        albums.subList(bornes.first, bornes.last) ;
-
+        Bornes bornes = webPageService.calculBornes(page, countAlbm, vSession.getConfiguration().getAlbumSize());
+        List<Album> albums = albumDAO.queryAlbums(vSession, true, true, AlbumFacadeLocal.TopFirst.FIRST, bornes.first);
+        
         int count = bornes.first;
-
+        String oldDate = null ;
         for(Album enrAlbum : albums) {
             XmlBuilder album = new XmlBuilder("album");
 
@@ -111,8 +116,8 @@ public class AlbumBean implements AlbumLocal {
                 submit = null;
             }
 
-            //album.add(StringUtil.xmlDate(enrAlbum.getDate(), oldDate));
-
+            album.add(StringUtil.xmlDate(enrAlbum.getDate(), oldDate));
+            oldDate = enrAlbum.getDate() ;
             album.add("id", enrAlbum.getId());
             album.add("count", count);
             album.add("title", enrAlbum.getNom());
@@ -164,7 +169,7 @@ public class AlbumBean implements AlbumLocal {
         if (special == Special.TOP5) {
             XmlBuilder top5 = new XmlBuilder("top5");
 
-            List<Album> albums = albumDAO.queryAlbums(vSession, true, true, TOP);
+            List<Album> albums = albumDAO.queryAlbums(vSession, true, true, TopFirst.TOP, TOP);
             int i = 0;
             for (Album enrAlbum : albums) {
                 XmlBuilder album = new XmlBuilder("album");
@@ -200,10 +205,10 @@ public class AlbumBean implements AlbumLocal {
             throws WebAlbumsServiceException {
 
         XmlBuilder output = new XmlBuilder(null);
-        Integer albumID = vSession.getId();
+        Integer albumId = vSession.getId();
 
 
-        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumID);
+        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
         if (enrAlbum == null) {
             return null;
         }
@@ -222,17 +227,26 @@ public class AlbumBean implements AlbumLocal {
         }
 
         Integer user = vSession.getUserAllowed();
-        String desc = vSession.getDescr();
+        String desc = vSession.getDesc();
         String nom = vSession.getNom();
         String date = vSession.getDate();
         Integer[] tags = vSession.getTags();
         Boolean force = vSession.getForce();
-
-        albumUtil.updateDroit(enrAlbum, new Integer("0" + user));
+        if (user != null) {
+            albumUtil.updateDroit(enrAlbum, user);
+        }
         albumUtil.setTagsToPhoto(enrAlbum, tags, force);
         enrAlbum.setNom(nom);
         enrAlbum.setDescription(desc);
-        albumDAO.setDateStr(enrAlbum, date);
+        if (date != null) {
+            try {
+                Date d = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+                enrAlbum.setDate(date);
+            } catch (ParseException ex) {
+                log.info("Date format incorrect: "+date);
+            }
+
+        }
         albumDAO.edit(enrAlbum);
 
         output.add("message", "Album (" + enrAlbum.getId() + ") correctement mise à jour !");
@@ -246,8 +260,7 @@ public class AlbumBean implements AlbumLocal {
         XmlBuilder output = new XmlBuilder(null);
         XmlBuilder thisPage = new XmlBuilder("name", "Albums");
 
-        List<Album> albums = albumDAO.queryAlbums(vSession, true, true, null);
-        displayAlbum(albums, output, vSession, submit, thisPage);
+        displayAlbum(output, vSession, submit, thisPage);
 
         return output.validate();
     }

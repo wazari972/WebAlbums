@@ -272,60 +272,46 @@ public class ConfigBean implements ConfigLocal {
         String rq = null;
         int tagID = vSession.getTag();
 
-        Boolean sure = vSession.getSure();
-
         try {
-            if (sure != null && sure) {
-                //liens Tag->Photos
-                List<TagPhoto> lstTP = tagPhotoDAO.queryByTag(tagID);
-                int i = 0;
-                for (TagPhoto enrTagPhoto : lstTP)  {
-                    tagPhotoDAO.remove(enrTagPhoto);
-                    i++;
-                }
-                output.add("message", "Suppression de " + i + " Tags Photo");
 
-                //liens Tag->Localisation
-                i = 0;
-                Geolocalisation enrGeo = geoDAO.find(tagID);
-                if (enrGeo != null) {
-                    geoDAO.remove(enrGeo);
-                    i = 1;
-                }
-                output.add("message", "Suppression de " + i + " Geolocalisation");
-
-                //liens Tag->Theme
-                List<TagTheme> lstTT = tagThemeDAO.queryByTag(vSession, tagID);
-
-                i = 0;
-                for(TagTheme enrTagTheme : lstTT) {
-                    tagThemeDAO.remove(enrTagTheme);
-                    i++;
-                }
-                output.add("message", "Suppression de " + i + " TagThemes");
-
-                //tag
-                Tag enrTag = tagDAO.find(tagID);
-                i = 0;
-                if (enrTag != null) {
-                    tagDAO.remove(enrTag);
-                    i++;
-                }
-                output.add("message", "Suppression de " + i + " Tag");
-                
-                return output.validate();
-            } else {
-                if (tagID != -1) {
-                    output.addException("Vous n'êtes pas sûr (" + sure + ") ?");
-                    output.add("selected", tagID);
-
-                    return output.validate();
-                } else {
-                    output.addException("Aucun tag selectionné ...");
-                    return output.validate();
-                }
+            //liens Tag->Photos
+            List<TagPhoto> lstTP = tagPhotoDAO.queryByTag(tagID);
+            int i = 0;
+            for (TagPhoto enrTagPhoto : lstTP)  {
+                tagPhotoDAO.remove(enrTagPhoto);
+                i++;
             }
+            output.add("message", "Suppression de " + i + " Tags Photo");
 
+            //liens Tag->Localisation
+            i = 0;
+            Geolocalisation enrGeo = geoDAO.find(tagID);
+            if (enrGeo != null) {
+                geoDAO.remove(enrGeo);
+                i = 1;
+            }
+            output.add("message", "Suppression de " + i + " Geolocalisation");
+
+            //liens Tag->Theme
+            List<TagTheme> lstTT = tagThemeDAO.queryByTag(vSession, tagID);
+
+            i = 0;
+            for(TagTheme enrTagTheme : lstTT) {
+                tagThemeDAO.remove(enrTagTheme);
+                i++;
+            }
+            output.add("message", "Suppression de " + i + " TagThemes");
+
+            //tag
+            Tag enrTag = tagDAO.find(tagID);
+            i = 0;
+            if (enrTag != null) {
+                tagDAO.remove(enrTag);
+                i++;
+            }
+            output.add("message", "Suppression de " + i + " Tag");
+
+            return output.validate();
         } catch (NumberFormatException e) {
             output.addException("Aucun tag selectionné ...");
             return output.validate();

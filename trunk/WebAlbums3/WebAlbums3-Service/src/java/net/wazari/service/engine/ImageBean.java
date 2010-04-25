@@ -38,21 +38,25 @@ public class ImageBean implements ImageLocal {
     public XmlBuilder treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("img");
-        Integer imgID = vSession.getId();
+        Integer imgId = vSession.getId();
 
         ImgMode mode = vSession.getImgMode();
         String filepath = null;
         String type = null;
         try {
-            Photo enrPhoto = photoDAO.loadIfAllowed(vSession, new Integer(imgID));
-            if (enrPhoto == null) {
-                output.addException("Cette photo (" + imgID + ") n'est pas accessible ou n'existe pas ...");
+            if (imgId == null) {
+                output.addException("No photo asked ... (id=null)");
+                return output.validate();
+            }
 
+            Photo enrPhoto = photoDAO.loadIfAllowed(vSession, imgId);
+            if (enrPhoto == null) {
+                output.addException("Cette photo (" + imgId + ") n'est pas accessible ou n'existe pas ...");
                 return output.validate();
             }
 
             if (enrPhoto.getPath() == null) {
-                output.addException("Cette photo (" + imgID + ") a un path null ...");
+                output.addException("Cette photo (" + imgId + ") a un path null ...");
                 return output.validate();
             }
 
@@ -80,7 +84,7 @@ public class ImageBean implements ImageLocal {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            output.addException("JDBCException", e.getMessage());
+            output.addException("Exception", e.getMessage());
             output.validate();
         }
         return output;

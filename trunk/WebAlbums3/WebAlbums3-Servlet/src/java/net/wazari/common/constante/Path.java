@@ -43,7 +43,7 @@ public class Path implements Configuration {
 
     public void init(ServletContext context) {
         log.info("Initialization of the PATH options ...");
-        initStrParam(context, "root_dir", "/other/Web/");
+        initStrParam(context, "root_dir", "/photo/");
 
         //home_dir is used if root_dir is relative (./ or ../)
         home_dir = System.getProperty("user.dir");
@@ -203,6 +203,24 @@ public class Path implements Configuration {
         }
         if (value != null) {
             strParams.put(param, value);
+        }
+    }
+
+    private static final int ALBUM_SIZE = 15 ;
+    public int getAlbumSize() {
+        try {
+            return Integer.parseInt(strParams.get("album_size"));
+        } catch(NumberFormatException e) {
+            return ALBUM_SIZE ;
+        }
+    }
+
+    private static final int PHOTO_SIZE = 15 ;
+    public int getPhotoSize() {
+        try {
+            return Integer.parseInt(strParams.get("photo_size"));
+        } catch(NumberFormatException e) {
+            return PHOTO_SIZE ;
         }
     }
 }

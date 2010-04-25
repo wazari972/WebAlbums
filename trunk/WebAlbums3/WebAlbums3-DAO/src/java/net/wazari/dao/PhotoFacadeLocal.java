@@ -28,9 +28,9 @@ public interface PhotoFacadeLocal {
 
     Photo loadIfAllowed(ServiceSession session, int id);
 
-    List<Photo> loadFromAlbum(ServiceSession session, int albumID);
+    List<Photo> loadFromAlbum(ServiceSession session, int albumId, Integer first);
 
     Photo loadByPath(String path);
 
-    List<Photo> loadByTags(ServiceSession session, List<Integer> listTagId);
+    List<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Integer first);
 }

@@ -60,9 +60,9 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     }
 
     public Utilisateur loadUserOutside(int albumId) {
-        String rq = "SELECT u FROM Utilisateur u, Album a WHERE u.ID = a.droit AND a.id = :albumId";
+        String rq = "SELECT u FROM Utilisateur u, Album a WHERE u.id = a.droit AND a.id = :albumId";
         return (Utilisateur) em.createQuery(rq)
-                .setParameter("albumId", albumDAO.find(albumId))
+                .setParameter("albumId", albumId)
                 .getSingleResult();
     }
     

@@ -28,6 +28,7 @@ import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.exception.WebAlbumsDaoException;
+import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.StringUtil;
@@ -43,7 +44,7 @@ public class PhotoUtil implements PhotoUtilLocal {
 
     private static final Logger log = Logger.getLogger(PhotoUtil.class.toString());
     private static final long serialVersionUID = 1L;
-    @EJB SystemTools sysTools ;
+    @EJB SystemToolsLocal sysTools ;
     @EJB
     TagPhotoFacadeLocal tagPhotoDAO;
     @EJB

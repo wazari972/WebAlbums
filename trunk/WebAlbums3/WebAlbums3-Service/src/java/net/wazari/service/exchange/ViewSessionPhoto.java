@@ -13,7 +13,7 @@ public interface ViewSessionPhoto extends ViewSession {
 
     String getWidth();
 
-    Boolean getSuppr();
+    boolean getSuppr();
 
     String getUser();
 
@@ -21,7 +21,7 @@ public interface ViewSessionPhoto extends ViewSession {
 
     String getDesc();
 
-    Boolean getRepresent();
+    boolean getRepresent();
 
     Integer getTagPhoto();
 
@@ -33,7 +33,7 @@ public interface ViewSessionPhoto extends ViewSession {
 
     Integer getAddTag();
 
-    Boolean getChk(Integer id);
+    boolean getChk(Integer id);
 
     Integer getRmTag();
 

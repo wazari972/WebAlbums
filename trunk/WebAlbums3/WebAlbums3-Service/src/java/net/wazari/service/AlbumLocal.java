@@ -5,9 +5,7 @@
 
 package net.wazari.service;
 
-import java.util.List;
 import javax.ejb.Local;
-import net.wazari.dao.entity.Album;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.util.XmlBuilder;
@@ -18,8 +16,7 @@ import net.wazari.util.XmlBuilder;
  */
 @Local
 public interface AlbumLocal {
-
-    XmlBuilder displayAlbum(List<Album> query, XmlBuilder output, ViewSessionAlbum vSession, XmlBuilder submit, XmlBuilder thisPage) throws WebAlbumsServiceException;
+    XmlBuilder displayAlbum(XmlBuilder output, ViewSessionAlbum vSession, XmlBuilder submit, XmlBuilder thisPage) throws WebAlbumsServiceException;
 
     XmlBuilder treatALBM(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
 

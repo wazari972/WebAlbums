@@ -17,6 +17,9 @@ import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 
 import net.wazari.service.PhotoLocal;
+import net.wazari.service.PhotoLocal.PhotoRequest;
+import net.wazari.service.PhotoLocal.TypeRequest;
+import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSession.Action;
@@ -40,7 +43,7 @@ public class TagBean implements TagLocal {
     @EJB private TagThemeFacadeLocal tagThemeDAO ;
     @EJB private PhotoLocal photoLocal ;
     @EJB private WebPageLocal webService ;
-    @EJB private SystemTools sysTools ;
+    @EJB private SystemToolsLocal sysTools ;
 
     public XmlBuilder treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("tags");
@@ -143,22 +146,21 @@ public class TagBean implements TagLocal {
             thisPage.add("tagAsked", tags[i]);
         }
 
-            if (tags != null) {
-                List<Integer> listTagId = Arrays.asList(tags) ;
-                XmlBuilder title = new XmlBuilder("title");
-                title.add(webService.displayListLB(Mode.TAG_USED, vSession, listTagId,
-                        Box.NONE));
-                output.add(title);
+        if (tags != null) {
+            List<Integer> listTagId = Arrays.asList(tags) ;
+            XmlBuilder title = new XmlBuilder("title");
+            title.add(webService.displayListLB(Mode.TAG_USED, vSession, listTagId,
+                    Box.NONE));
+            output.add(title);
+            PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, listTagId) ;
 
-                List<Photo> lstPhoto = photoDAO.loadByTags(vSession, listTagId);
-
-                if (Special.FULLSCREEN == special) {
-                    sysTools.fullscreen(vSession, lstPhoto, "Tags", null, page);
-                    return null;
-                } else {
-                    output.add(photoLocal.displayPhoto(lstPhoto, (ViewSessionPhoto)vSession, thisPage, submit));
-                }
+            if (Special.FULLSCREEN == special) {
+                sysTools.fullscreen(vSession, rq, "Tags", null, page);
+                return null;
+            } else {
+                output.add(photoLocal.displayPhoto(rq, (ViewSessionPhoto)vSession, thisPage, submit));
             }
+        }
        
         return output.validate();
     }

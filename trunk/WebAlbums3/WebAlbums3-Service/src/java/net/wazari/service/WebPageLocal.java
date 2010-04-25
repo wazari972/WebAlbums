@@ -23,11 +23,9 @@ import net.wazari.util.XmlBuilder;
 public interface WebPageLocal {
     public static class Bornes {
         public int first ;
-        public int last ;
-        public int nbPages ;
         public int page ;
     }
-    Bornes calculBornes(Type type, Integer page, Integer asked, int size);
+    Bornes calculBornes(Integer page, Integer eltAsked, int taille);
 
     XmlBuilder displayListB(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
 

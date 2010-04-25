@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import net.wazari.dao.entity.Album;
@@ -48,26 +49,35 @@ public class AlbumFacade implements AlbumFacadeLocal {
         return em.createQuery("select object(o) from Album as o").getResultList();
     }
 
-    public List<Album> queryAlbums(ServiceSession session, boolean restrictAllowed, boolean restrictTheme, Integer topX) {
+    public List<Album> queryAlbums(ServiceSession session,
+            boolean restrictAllowed,
+            boolean restrictTheme, TopFirst topFirst, int topX) {
         String rq = "FROM Album a " +
                 " WHERE " + (restrictAllowed ? webDAO.restrictToAlbumsAllowed(session, "a") : "1 = 1") + " " +
                 " AND " + (restrictTheme ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1") + " " +
                 " ORDER BY a.date DESC ";
         log.info(rq);
         Query q = em.createQuery(rq) ;
-        if (topX != null) {
+        if (topFirst == TopFirst.TOP) {
             q.setFirstResult(1);
-            q.setMaxResults(5);
+            q.setMaxResults(topX);
+        } else {
+            q.setFirstResult(topX);
+            q.setMaxResults(session.getAlbumSize());
         }
         return q.getResultList();
     }
 
     public Album loadIfAllowed(ServiceSession session, int id) {
-        String rq = "FROM Album a " +
-                " WHERE " + webDAO.restrictToAlbumsAllowed(session, "a") + " " +
-                " AND a.id = :id ";
+        try {
+            String rq = "FROM Album a " +
+                    " WHERE " + webDAO.restrictToAlbumsAllowed(session, "a") + " " +
+                    " AND a.id = :id ";
 
-        return (Album) em.createQuery(rq).setParameter("id", id).getSingleResult();
+            return (Album) em.createQuery(rq).setParameter("id", id).getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 
     public Album loadByNameDate(String name, String date) {
@@ -78,9 +88,5 @@ public class AlbumFacade implements AlbumFacadeLocal {
                 .setParameter("date", date)
                 .setParameter("nom", name)
                 .getSingleResult();
-    }
-
-    public void setDateStr(Album enrAlbum, String date) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

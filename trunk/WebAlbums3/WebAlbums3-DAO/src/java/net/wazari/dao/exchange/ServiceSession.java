@@ -19,4 +19,6 @@ public interface ServiceSession {
 
     boolean isSessionManager();
 
+    int getAlbumSize() ;
+    int getPhotoSize() ;
 }

@@ -10,7 +10,7 @@ package net.wazari.service.exchange;
  * @author kevin
  */
 public interface ViewSessionAlbum extends ViewSession {
-    String getDescr();
+    String getDesc();
 
     String getNom();
 
@@ -18,9 +18,9 @@ public interface ViewSessionAlbum extends ViewSession {
 
     Integer[] getTags();
 
-    Boolean getForce();
+    boolean getForce();
 
-    Boolean getSuppr() ;
+    boolean getSuppr() ;
 
     Integer getPage() ;
 

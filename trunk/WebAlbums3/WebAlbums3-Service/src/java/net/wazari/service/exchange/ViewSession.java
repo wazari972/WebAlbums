@@ -21,11 +21,13 @@ public interface ViewSession extends ServiceSession {
 
     void setEditionMode(EditMode editMode);
 
-    Boolean getDetails();
+    boolean getDetails();
 
     void setDetails(Boolean newValue);
 
     void setTempDir(File temp);
+    
+    void setSessionManager(Boolean sessionManager) ;
 
     Configuration getConfiguration();
 
@@ -75,7 +77,7 @@ public interface ViewSession extends ServiceSession {
 
     void setUserId(Integer userId);
 
-    void setRootSession(boolean asThemeManager);
+    void setRootSession(Boolean asThemeManager);
 
     void setUserName(String userName);
 

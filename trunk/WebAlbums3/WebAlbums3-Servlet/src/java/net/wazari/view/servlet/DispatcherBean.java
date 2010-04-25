@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.wazari.view.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletContext;
@@ -38,33 +38,44 @@ import net.wazari.view.servlet.exchange.ViewSessionImpl;
 @Stateless
 public class DispatcherBean {
 
-    @EJB private ThemeLocal themeService;
-    @EJB private UserLocal userService;
-    @EJB private ChoixLocal choixService;
-    @EJB private AlbumLocal albumService;
-    @EJB private PhotoLocal photoService;
-    @EJB private TagLocal tagService;
-    @EJB private ImageLocal imageService;
-    @EJB private ConfigLocal configService;
-    @EJB private WebPageLocal webPageService;
+    private static final Logger log = Logger.getLogger(DispatcherBean.class.getCanonicalName());
+    @EJB
+    private ThemeLocal themeService;
+    @EJB
+    private UserLocal userService;
+    @EJB
+    private ChoixLocal choixService;
+    @EJB
+    private AlbumLocal albumService;
+    @EJB
+    private PhotoLocal photoService;
+    @EJB
+    private TagLocal tagService;
+    @EJB
+    private ImageLocal imageService;
+    @EJB
+    private ConfigLocal configService;
+    @EJB
+    private WebPageLocal webPageService;
+
     public enum Page {
 
         PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT
     }
-    
+
     public void treat(ServletContext context,
             Page page,
             HttpServletRequest request,
             HttpServletResponse response)
             throws IOException {
-
+        log.info("============= "+page+" =============");
         long debut = System.currentTimeMillis();
         request.setCharacterEncoding("UTF-8");
 
         XmlBuilder output = new XmlBuilder("root");
 
         String xslFile = null;
-        ViewSession vSession = new ViewSessionImpl(request, response, context) ;
+        ViewSession vSession = new ViewSessionImpl(request, response, context);
 
         boolean isWritten = false;
         boolean isComplete = false;
@@ -134,7 +145,7 @@ public class DispatcherBean {
         }
 
         long fin = System.currentTimeMillis();
-
+        float time = ((float) (fin - debut) / 1000) ;
         if (!isWritten) {
             preventCaching(request, response);
 
@@ -144,11 +155,12 @@ public class DispatcherBean {
 
                 XmlBuilder xmlStats = new XmlBuilder("stats");
                 output.add(xmlStats);
-                xmlStats.add("time", (((float) (fin - debut) / 1000)));
+                xmlStats.add("time", time);
 
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
+        log.info("============= "+page+": "+time+" =============");
     }
 
     private static void doWrite(HttpServletResponse response, XmlBuilder output, String xslFile, boolean isComplete, ViewSession vSession) {

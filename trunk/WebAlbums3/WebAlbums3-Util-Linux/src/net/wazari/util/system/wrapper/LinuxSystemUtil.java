@@ -20,8 +20,4 @@ public class LinuxSystemUtil implements ISystemUtil{
     public boolean link(FileUtilWrapperCallBack cb, String source, File dest) {
         return 0 == cb.execWaitFor(new String[]{"ln", "-s", source, dest.toString()});
     }
-
-    public void remove(FileUtilWrapperCallBack cb, String file) {
-        cb.exec(new String[]{"rm", file, "-rf"});
-    }
 }

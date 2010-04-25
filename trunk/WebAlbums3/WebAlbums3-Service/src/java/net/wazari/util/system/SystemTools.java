@@ -1,5 +1,6 @@
 package net.wazari.util.system;
 
+import net.wazari.service.SystemToolsLocal;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -13,16 +14,19 @@ import java.util.ServiceLoader;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
+import net.wazari.service.PhotoLocal.PhotoRequest;
+import net.wazari.service.PhotoLocal.TypeRequest;
 import net.wazari.service.engine.WebPageBean;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.system.IImageUtil.FileUtilWrapperCallBack;
 
 @Stateless
-public class SystemTools {
+public class SystemTools implements SystemToolsLocal {
     private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName()) ;
     private static final List<IImageUtil> wrappers = new ArrayList<IImageUtil>(2);
     private static final ISystemUtil systemUtil ;
@@ -30,6 +34,8 @@ public class SystemTools {
     private UtilisateurFacadeLocal userDAO;
     @EJB
     private ThemeFacadeLocal themeDAO;
+    @EJB
+    private PhotoFacadeLocal photoDAO;
     @EJB
     private PhotoUtil photoUtil;
 
@@ -52,10 +58,11 @@ public class SystemTools {
         
         log.info("+++ Loading services for \"" + ISystemUtil.class.getCanonicalName() + "\"");
         ServiceLoader<ISystemUtil> servicesSys = ServiceLoader.load(ISystemUtil.class);
-        systemUtil = null ;
-        for (ISystemUtil current : servicesSys) {
-            systemUtil = current;
-            break ;
+        
+        if (servicesSys.iterator().hasNext()) {
+            systemUtil = servicesSys.iterator().next();
+        } else {
+            systemUtil = null ;
         }
     }
     private static Process execPS(String[] cmd) {
@@ -156,11 +163,17 @@ public class SystemTools {
     }
 
     @SuppressWarnings("unchecked")
-    public void fullscreen(ViewSession vSession, List<Photo> lstPhoto, String type, Integer id, Integer page) {
+    public void fullscreen(ViewSession vSession,PhotoRequest rq, String type, Integer id, Integer page) {
         page = (page == null ? 0 : page);
         if (systemUtil == null) {
             log.warning("No ISystemUtil available ...");
             return ;
+        }
+        List<Photo> lstPhoto ;
+        if (rq.type == TypeRequest.PHOTO) {
+            lstPhoto = photoDAO.loadFromAlbum(vSession, rq.albumId, null);
+        } else {
+            lstPhoto = photoDAO.loadByTags(vSession, rq.listTagId, null);
         }
         File dir = null;
         int i = 0;
@@ -174,7 +187,7 @@ public class SystemTools {
                 }
             }
 
-            int currentPage = i / WebPageBean.TAILLE_PHOTO;
+            int currentPage = i / vSession.getPhotoSize();
             File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
             systemUtil.link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
 
@@ -219,6 +232,10 @@ public class SystemTools {
 
     public boolean rotate(String type, String ext, String degrees, String source, String dest) {
         return getWrapper(type, ext).rotate(cb, degrees, source, dest) ;
+    }
+
+    public void remove(String toString) {
+
     }
 }
 

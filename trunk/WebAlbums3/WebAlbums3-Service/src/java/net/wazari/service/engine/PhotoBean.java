@@ -21,6 +21,7 @@ import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.PhotoUtilLocal;
+import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.WebPageLocal.Bornes;
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -36,7 +37,6 @@ import net.wazari.service.exchange.ViewSessionPhoto.Turn;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.util.StringUtil;
 import net.wazari.util.XmlBuilder;
-import net.wazari.util.system.SystemTools;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -62,7 +62,7 @@ public class PhotoBean implements PhotoLocal {
     @EJB
     private WebPageLocal webService;
     private FilesFinder finder = new FilesFinder();
-    @EJB private SystemTools sysTools ;
+    @EJB private SystemToolsLocal sysTools ;
 
     public XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Action action = vSession.getAction();
@@ -235,18 +235,17 @@ public class PhotoBean implements PhotoLocal {
             album.add(enrAlbum.getDroit().getNom());
             album.add(StringUtil.xmlDate(enrAlbum.getDate(), null));
             album.add(new XmlBuilder("details").add("description", enrAlbum.getDescription()).add("photoID", enrAlbum.getPicture()));
-
-            List<Photo> lstP = photoDAO.loadFromAlbum(vSession, albumId);
-
+            
+            PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, albumId) ;
             if (Special.FULLSCREEN == special) {
-                sysTools.fullscreen(vSession, lstP, "Albums", enrAlbum.getId(), page);
+                sysTools.fullscreen(vSession, rq, "Albums", enrAlbum.getId(), page);
             }
 
             XmlBuilder thisPage = new XmlBuilder(null);
             thisPage.add("name", "Photos");
             thisPage.add("album", albumId);
             thisPage.add("albmCount", albmCount);
-            output.add(displayPhoto(lstP, vSession, thisPage, submit));
+            output.add(displayPhoto(rq, vSession, thisPage, submit));
 
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -272,7 +271,7 @@ public class PhotoBean implements PhotoLocal {
             output.addException("Impossible de trouver la photo (" + photoID + ")");
             return output.validate();
         }
-        Album enrAlbum = albumDAO.find(enrPhoto.getAlbum());
+        Album enrAlbum = enrPhoto.getAlbum();
 
         output.add("id", enrPhoto.getId());
         output.add("description", enrPhoto.getDescription());
@@ -293,9 +292,8 @@ public class PhotoBean implements PhotoLocal {
 
         return output.validate();
     }
-
-    @SuppressWarnings("unchecked")
-    public XmlBuilder displayPhoto(List<Photo> lstP,
+    
+    public XmlBuilder displayPhoto(PhotoRequest rq,
             ViewSessionPhoto vSession,
             XmlBuilder thisPage,
             XmlBuilder submit)
@@ -306,11 +304,14 @@ public class PhotoBean implements PhotoLocal {
         Integer page = vSession.getPage();
         Integer photoID = vSession.getId();
         Integer scount = vSession.getCount();
-
-        Bornes bornes = webService.calculBornes(Type.PHOTO, page,
-                scount, lstP.size());
-        lstP = lstP.subList(bornes.first, bornes.last);
-
+        Bornes bornes = webService.calculBornes(page, scount, vSession.getPhotoSize());
+        List<Photo> lstP ;
+        if (rq.type == TypeRequest.PHOTO) {
+            lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes.first);
+        } else {
+            lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes.first);
+        }
+        
         String degrees = "0";
         Integer tag = null;
         int countME = 0;
@@ -398,7 +399,7 @@ public class PhotoBean implements PhotoLocal {
             //tags de cette photo
             details.add(webService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto.getId(),
                     Box.NONE, Type.PHOTO));
-            details.add("albumID", enrPhoto.getAlbum());
+            details.add("albumID", enrPhoto.getAlbum().getId());
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager() &&
                     inEditionMode != EditMode.VISITE) {
@@ -406,7 +407,7 @@ public class PhotoBean implements PhotoLocal {
                 if (right != null && !right.equals(0)) {
                     details.add("user", userDAO.find(enrPhoto.getDroit()).getNom());
                 } else {
-                    details.add("user", userDAO.loadUserOutside(enrPhoto.getAlbum().getId()));
+                    details.add("user", userDAO.loadUserOutside(enrPhoto.getAlbum().getId()).getNom());
                 }
             }
             photo.add(details);

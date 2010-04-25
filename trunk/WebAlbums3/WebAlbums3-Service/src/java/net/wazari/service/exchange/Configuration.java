@@ -47,4 +47,7 @@ public interface Configuration {
 
     String getSep();
 
+    int getAlbumSize() ;
+    int getPhotoSize() ;
+
 }

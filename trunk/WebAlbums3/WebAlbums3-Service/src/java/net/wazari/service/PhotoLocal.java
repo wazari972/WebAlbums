@@ -7,7 +7,6 @@ package net.wazari.service;
 
 import java.util.List;
 import javax.ejb.Local;
-import net.wazari.dao.entity.Photo;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.util.XmlBuilder;
@@ -18,9 +17,27 @@ import net.wazari.util.XmlBuilder;
  */
 @Local
 public interface PhotoLocal {
+    public enum TypeRequest {
+        PHOTO, TAG
+    }
+    public class PhotoRequest {
 
+        public PhotoRequest(TypeRequest type, Integer albumId) {
+            this.type = type;
+            this.albumId = albumId ;
+            this.listTagId = null ;
+        }
+        public PhotoRequest(TypeRequest type, List<Integer> listTagId) {
+            this.type = type;
+            this.listTagId = listTagId ;
+            this.albumId = null ;
+        }
+        public Integer albumId ;
+        public TypeRequest type ;
+        public List<Integer> listTagId ;
+    }
     @SuppressWarnings(value = "unchecked")
-    XmlBuilder displayPhoto(List<Photo> lstPhoto, ViewSessionPhoto vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
+    XmlBuilder displayPhoto(PhotoRequest rq, ViewSessionPhoto vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
 
     XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException;
 

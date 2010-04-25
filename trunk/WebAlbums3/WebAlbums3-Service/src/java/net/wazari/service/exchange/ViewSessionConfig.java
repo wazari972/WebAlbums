@@ -19,7 +19,7 @@ public interface ViewSessionConfig extends ViewSession{
 
     public String getLat();
 
-    public Boolean getVisible();
+    public boolean getVisible();
 
     public String getImportTheme();
 
@@ -28,6 +28,4 @@ public interface ViewSessionConfig extends ViewSession{
     public String getNom();
 
     public Integer getType();
-
-    public Boolean getSure();
 }

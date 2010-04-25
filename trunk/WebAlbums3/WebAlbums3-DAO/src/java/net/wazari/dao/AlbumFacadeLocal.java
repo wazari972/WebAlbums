@@ -26,15 +26,15 @@ public interface AlbumFacadeLocal {
     Album find(Object id);
 
     List<Album> findAll();
+    public enum TopFirst {
+        TOP, FIRST
+    }
 
     List<Album> queryAlbums(ServiceSession session,
             boolean restrictAllowed,
-            boolean restrictTheme, Integer topX) ;
+            boolean restrictTheme, TopFirst topFirst, int topX) ;
 
     Album loadIfAllowed(ServiceSession session, int id) ;
 
     Album loadByNameDate(String name, String date) ;
-
-    void setDateStr(Album enrAlbum, String date);
-
 }

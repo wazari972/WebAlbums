@@ -97,10 +97,10 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
 
     public List<Tag> selectUnusedTags(ServiceSession session) {
-        String rq = "SELECT DISTINCT tp.Tag " +
+        String rq = "SELECT DISTINCT tp.tag " +
                             "FROM TagPhoto tp, Photo p, Album a " +
                             "WHERE " +
-                            " tp.photo = p.id AND p.album = a.ID " +
+                            " tp.photo = p.id AND p.album = a.id " +
                             " AND a.theme = :themeId ";
         return em.createQuery(rq)
                 .setParameter("themeId", themeDAO.find(session.getThemeId()))

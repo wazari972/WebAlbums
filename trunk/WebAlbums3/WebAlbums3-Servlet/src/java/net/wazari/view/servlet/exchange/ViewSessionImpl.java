@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +43,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
 
     }
 
-    public String getDescr() {
-        return getString("descr");
+    public String getDesc() {
+        return getString("desc");
     }
 
     public String getNom() {
@@ -60,12 +59,12 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return castToIntArray(getParamArray("tags"));
     }
 
-    public Boolean getForce() {
-        return getBoolean("force");
+    public boolean getForce() {
+        return "yes".equals(getString("force"));
     }
 
-    public Boolean getSuppr() {
-        return getBoolean("suppr");
+    public boolean getSuppr() {
+        return "Oui je veux supprimer".equals(getString("suppr"));
     }
 
     public Integer getPage() {
@@ -115,8 +114,10 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     }
 
     /** ** **/
-    public Boolean getDetails() {
-        return getSessionObject("details", Boolean.class);
+    public boolean getDetails() {
+        Boolean ret = getSessionObject("details", Boolean.class);
+        if (ret == null) ret = false ;
+        return false ;
     }
 
     public void setDetails(Boolean newValue) {
@@ -157,8 +158,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return val ;
     }
 
-    public void setRootSession(boolean asThemeManager) {
-        setSessionObject("rootSession", asThemeManager);
+    public void setRootSession(Boolean rootSession) {
+        setSessionObject("rootSession", rootSession);
     }
 
     /** ** **/
@@ -169,12 +170,17 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     public void setUserName(String userName) {
         setSessionObject("userName", userName);
     }
-
+    /** ** **/
     public boolean isSessionManager() {
-        Boolean val =  getBoolean("sessionManager");
-        if (val == null) val = false ;
-        return val ;
+        Boolean ret = getSessionObject("sessionManager", Boolean.class);
+        if (ret == null) ret = false ;
+        return ret ;
     }
+
+    public void setSessionManager(Boolean sessionManager) {
+        setSessionObject("sessionManager", sessionManager);
+    }
+    /** ** **/
 
     public Integer getId() {
         return getInteger("id");
@@ -196,8 +202,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return getString("lat");
     }
 
-    public Boolean getVisible() {
-        return getBoolean("visible");
+    public boolean getVisible() {
+        return "yes".equals(getString("visible"));
     }
 
     public String getImportTheme() {
@@ -212,8 +218,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return getInteger("type");
     }
 
-    public Boolean getSure() {
-        return getBoolean("sure");
+    public boolean getSure() {
+        return "yes".equals(getString("sure"));
     }
 
     public String getWidth() {
@@ -224,12 +230,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return getString("user");
     }
 
-    public String getDesc() {
-        return getString("desc");
-    }
-
-    public Boolean getRepresent() {
-        return getBoolean("represent");
+    public boolean getRepresent() {
+        return "y".equals(getString("represent"));
     }
 
     public Integer getTagPhoto() {
@@ -244,8 +246,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         return getInteger("addTag");
     }
 
-    public Boolean getChk(Integer id) {
-        return getBoolean("chk" + id);
+    public boolean getChk(Integer id) {
+        return "modif".equals(getString("chk" + id));
     }
 
     public Integer getRmTag() {
@@ -283,6 +285,7 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     }
 
     private Integer[] castToIntArray(String[] from) {
+        if (from == null) return null ;
         ArrayList<Integer> ret = new ArrayList<Integer>(from.length);
         for (int i = 0; i < from.length; i++) {
             try {
@@ -351,6 +354,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
             log.info("Can't cast value "+val+" into class "+type) ;
         } catch (NullPointerException e) {
             log.info("NullPointerException with "+val+" for class "+type) ;
+        } catch (NumberFormatException e) {
+            log.info("NumberFormatException with "+val+" for class "+type) ;
         }
         log.info("getObject param:"+name+" type:"+type+" returned "+ret) ;
         return ret ;
@@ -368,5 +373,13 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     private void setSessionObject(String key, Object val) {
         log.info("setSessionObject param:"+key+" val:"+val) ;
         request.getSession().setAttribute(key, val);
+    }
+
+    public int getAlbumSize() {
+        return getConfiguration().getAlbumSize() ;
+    }
+
+    public int getPhotoSize() {
+        return getConfiguration().getPhotoSize() ;
     }
 }
