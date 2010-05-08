@@ -29,9 +29,9 @@ function validMass() {
 
     selected = false ;
     var turn = document.getElementsByName("turn");
-    for(var i = 0; i < turn.length && !selected; i++) {
-	if (turn[i].checked) {
-	    if (turn[i].value.match("tag")) {
+    for(var j = 0; j < turn.length && !selected; j++) {
+	if (turn[j].checked) {
+	    if (turn[j].value.match("tag")) {
 		if (document.getElementById("massTagList").value != -1) {
 		    selected = true ;
 		}		 
