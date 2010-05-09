@@ -38,7 +38,7 @@
             <test-roots/>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
-            <definitions>/Users/kevinpouget/Documents/netbeans/WebAlbums/trunk/WebAlbums/WebAlbums2-libs/nblibraries.properties</definitions>
+            <definitions>../WebAlbums2-libs/nblibraries.properties</definitions>
         </libraries>
     </configuration>
 </project>
