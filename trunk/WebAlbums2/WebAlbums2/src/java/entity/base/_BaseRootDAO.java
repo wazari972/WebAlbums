@@ -13,8 +13,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.classic.Session;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Order;
+//import org.hibernate.criterion.Order;
 import org.hibernate.Transaction;
 import org.hibernate.SessionFactory;
 
@@ -269,7 +268,7 @@ public abstract class _BaseRootDAO {
 	 */
 	public java.util.List findAll (Session s, String orderProperty) throws HibernateException {
 		Criteria crit = createCriteria(s);
-		if (null != orderProperty) crit.addOrder(Order.asc(orderProperty));
+		//if (null != orderProperty) crit.addOrder(Order.asc(orderProperty));
 		return crit.list();
 	}
 
@@ -311,8 +310,8 @@ public abstract class _BaseRootDAO {
 	 */
 	protected java.util.List findFiltered (Session s, String propName, Object filter, String orderProperty) throws HibernateException {
 		Criteria crit = createCriteria(s);
-		crit.add(Expression.eq(propName, filter));
-		if (null != orderProperty) crit.addOrder(Order.asc(orderProperty));
+		//crit.add(Expression.eq(propName, filter));
+		//if (null != orderProperty) crit.addOrder(Order.asc(orderProperty));
 		return crit.list();
 	}
 	
