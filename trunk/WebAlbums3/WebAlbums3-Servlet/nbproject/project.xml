@@ -6,15 +6,15 @@
             <name>WebAlbums3-Servlet</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <web-module-libraries>
-                <library files="1">
+                <library>
                     <file>${reference.WebAlbums3-Service.dist}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
-                <library files="1">
+                <library>
                     <file>${reference.WebAlbums3-Util.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
-                <library files="1">
+                <library>
                     <file>${reference.WebAlbums3-DAO.dist}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>

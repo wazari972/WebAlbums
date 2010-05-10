@@ -13,7 +13,6 @@ import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 
 import net.wazari.service.PhotoLocal;
@@ -31,7 +30,6 @@ import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exception.WebAlbumsServiceException;
 
 import net.wazari.util.XmlBuilder;
-import net.wazari.util.system.SystemTools;
 
 @Stateless
 public class TagBean implements TagLocal {

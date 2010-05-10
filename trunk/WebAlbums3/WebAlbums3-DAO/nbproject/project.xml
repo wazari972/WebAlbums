@@ -8,7 +8,7 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <included-library>libs.hibernate-persistence.classpath</included-library>
             <included-library>file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar</included-library>
-            <included-library files="1">reference.WebAlbums3-Util.jar</included-library>
+            <included-library>reference.WebAlbums3-Util.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
