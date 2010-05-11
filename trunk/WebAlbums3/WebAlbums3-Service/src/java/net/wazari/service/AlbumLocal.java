@@ -25,5 +25,4 @@ public interface AlbumLocal {
     XmlBuilder treatAlbmEDIT(ViewSessionAlbum vSession, XmlBuilder submit) throws WebAlbumsServiceException;
 
     XmlBuilder treatAlbmSUBMIT(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
-
 }

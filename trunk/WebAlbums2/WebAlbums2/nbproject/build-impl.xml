@@ -38,7 +38,7 @@
         <property file="nbproject/private/private.properties"/>
     </target>
     <target depends="-pre-init,-init-private" name="-init-libraries">
-        <property location="../WebAlbums2-libs/nblibraries.properties" name="libraries.1.path"/>
+        <property location="web/WEB-INF/lib/nblibraries.properties" name="libraries.1.path"/>
         <dirname file="${libraries.1.path}" property="libraries.1.dir.nativedirsep"/>
         <pathconvert dirsep="/" property="libraries.1.dir">
             <path path="${libraries.1.dir.nativedirsep}"/>
@@ -534,7 +534,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.CP-DB-dbunit-2.4.5.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.CP-Hiber-hibernate3.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.CP-Hiber-hibernate3.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.CP-Log-log4j-1.2.11.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.CP-Log-log4j-1.2.11.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.CP-Log-log4j-1.2.15.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.CP-Log-log4j-1.2.15.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.CP-Serv-servlet-api.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.CP-Serv-servlet-api.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.RT-DB-hsqldb.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-DB-hsqldb.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar" todir="${dist.ear.dir}"/>
@@ -544,11 +544,12 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.RT-Hiber-javassist-3.4.GA.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-Hiber-javassist-3.4.GA.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.RT-Hiber-jta.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-Hiber-jta.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.RT-Log-log4j-1.2.15.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-Log-log4j-1.2.15.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.RT-Log-slf4j-api-1.5.8.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-Log-slf4j-api-1.5.8.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.RT-Log-slf4j-log4j12-1.5.8.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-Log-slf4j-log4j12-1.5.8.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.RT-Log-slf4j-api-1.6.0.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-Log-slf4j-api-1.6.0.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.RT-Log-slf4j-jcl-1.6.0.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-Log-slf4j-jcl-1.6.0.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.RT-Log-commons-logging-1.1.1.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.RT-Log-commons-logging-1.1.1.jar" todir="${dist.ear.dir}"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${manifest.file.reference.CP-Apache-commos-lang.2.5.jar} ${manifest.file.reference.CP-DB-dbunit-2.4.5.jar} ${manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar} ${manifest.file.reference.CP-Hiber-hibernate3.jar} ${manifest.file.reference.CP-Log-log4j-1.2.11.jar} ${manifest.file.reference.CP-Serv-servlet-api.jar} ${manifest.file.reference.RT-DB-hsqldb.jar} ${manifest.file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar} ${manifest.file.reference.RT-Hiber-antlr-2.7.6.jar} ${manifest.file.reference.RT-Hiber-commons-collections-3.1.jar} ${manifest.file.reference.RT-Hiber-dom4j-1.6.1.jar} ${manifest.file.reference.RT-Hiber-javassist-3.4.GA.jar} ${manifest.file.reference.RT-Hiber-jta.jar} ${manifest.file.reference.RT-Log-log4j-1.2.15.jar} ${manifest.file.reference.RT-Log-slf4j-api-1.5.8.jar} ${manifest.file.reference.RT-Log-slf4j-log4j12-1.5.8.jar} "/>
+            <attribute name="Class-Path" value="${manifest.file.reference.CP-Apache-commos-lang.2.5.jar} ${manifest.file.reference.CP-DB-dbunit-2.4.5.jar} ${manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar} ${manifest.file.reference.CP-Hiber-hibernate3.jar} ${manifest.file.reference.CP-Log-log4j-1.2.15.jar} ${manifest.file.reference.CP-Serv-servlet-api.jar} ${manifest.file.reference.RT-DB-hsqldb.jar} ${manifest.file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar} ${manifest.file.reference.RT-Hiber-antlr-2.7.6.jar} ${manifest.file.reference.RT-Hiber-commons-collections-3.1.jar} ${manifest.file.reference.RT-Hiber-dom4j-1.6.1.jar} ${manifest.file.reference.RT-Hiber-javassist-3.4.GA.jar} ${manifest.file.reference.RT-Hiber-jta.jar} ${manifest.file.reference.RT-Log-log4j-1.2.15.jar} ${manifest.file.reference.RT-Log-slf4j-api-1.6.0.jar} ${manifest.file.reference.RT-Log-slf4j-jcl-1.6.0.jar} ${manifest.file.reference.RT-Log-commons-logging-1.1.1.jar} "/>
         </manifest>
     </target>
     <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
@@ -556,7 +557,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.CP-Hiber-hibernate3.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.CP-Log-log4j-1.2.11.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.CP-Log-log4j-1.2.15.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.CP-Serv-servlet-api.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.RT-DB-hsqldb.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
@@ -566,8 +567,9 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.RT-Hiber-javassist-3.4.GA.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.RT-Hiber-jta.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.RT-Log-log4j-1.2.15.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.RT-Log-slf4j-api-1.5.8.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.RT-Log-slf4j-log4j12-1.5.8.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.RT-Log-slf4j-api-1.6.0.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.RT-Log-slf4j-jcl-1.6.0.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.RT-Log-commons-logging-1.1.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist,library-inclusion-in-manifest" if="do.tmp.war.package" name="do-ear-dist">
         <dirname file="${dist.ear.war}" property="dist.jar.dir"/>

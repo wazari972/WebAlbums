@@ -4,7 +4,7 @@
     <!-- User configuration -->
   <context-param>
     <param-name>root_dir</param-name>
-    <param-value>/other/Web/</param-value>
+    <param-value>/photo/</param-value>
   </context-param>
 
   <context-param>

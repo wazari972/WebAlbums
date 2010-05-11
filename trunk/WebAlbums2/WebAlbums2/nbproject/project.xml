@@ -23,7 +23,7 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${file.reference.CP-Log-log4j-1.2.11.jar}</file>
+                    <file>${file.reference.CP-Log-log4j-1.2.15.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
@@ -63,11 +63,15 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${file.reference.RT-Log-slf4j-api-1.5.8.jar}</file>
+                    <file>${file.reference.RT-Log-slf4j-api-1.6.0.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${file.reference.RT-Log-slf4j-log4j12-1.5.8.jar}</file>
+                    <file>${file.reference.RT-Log-slf4j-jcl-1.6.0.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library>
+                    <file>${file.reference.RT-Log-commons-logging-1.1.1.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
@@ -78,7 +82,7 @@
             <test-roots/>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
-            <definitions>../WebAlbums2-libs/nblibraries.properties</definitions>
+            <definitions>web/WEB-INF/lib/nblibraries.properties</definitions>
         </libraries>
     </configuration>
 </project>
