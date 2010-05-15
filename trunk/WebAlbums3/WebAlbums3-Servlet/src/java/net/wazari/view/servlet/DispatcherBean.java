@@ -6,10 +6,12 @@ package net.wazari.view.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.AlbumLocal;
@@ -82,6 +84,7 @@ public class DispatcherBean {
         try {
             xslFile = "static/Display.xsl";
             if (page == Page.VOID) {
+                request.logout() ;
                 output.add(themeService.treatVOID(vSession));
             } else if (page == Page.MAINT) {
                 xslFile = "static/Empty.xsl";
@@ -90,6 +93,7 @@ public class DispatcherBean {
             } else if (page == Page.USER) {
                 output.add(userService.treatUSR(vSession));
             } else {
+                log.info("============= Login: "+request.getUserPrincipal()+" =============");
                 String special = request.getParameter("special");
                 if (special != null) {
                     if ("RSS".equals(special)) {
@@ -100,7 +104,7 @@ public class DispatcherBean {
                 }
                 Integer userID = vSession.getUserId();
                 //a partir d'ici, l'utilisateur doit être en memoire
-                if (userID != null) {
+                if (userID != null && vSession.isAuthenticated()) {
                     if (page == Page.CHOIX) {
                         if (special == null) {
                             output.add(choixService.displayCHX(vSession));
@@ -125,11 +129,13 @@ public class DispatcherBean {
                             output.add(ret);
                         }
                     } else {
+                        request.logout() ;
                         output.add(themeService.treatVOID(vSession));
                     }
                 } else {
                     //log.info("special: " + special);
                     if (special == null) {
+                        request.logout() ;
                         output.add(themeService.treatVOID(vSession));
                     } else {
                         isComplete = true;
@@ -141,7 +147,9 @@ public class DispatcherBean {
         } catch (WebAlbumsServiceException e) {
             e.printStackTrace();
             output.cancel();
-
+        } catch (ServletException ex) {
+            Logger.getLogger(DispatcherBean.class.getName()).log(Level.SEVERE, null, ex);
+            output.cancel();
         }
 
         long fin = System.currentTimeMillis();

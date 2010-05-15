@@ -29,26 +29,32 @@ public class AlbumFacade implements AlbumFacadeLocal {
     @PersistenceContext
     private EntityManager em;
 
+    @Override
     public void create(Album album) {
         em.persist(album);
     }
 
+    @Override
     public void edit(Album album) {
         em.merge(album);
     }
 
+    @Override
     public void remove(Album album) {
         em.remove(em.merge(album));
     }
 
+    @Override
     public Album find(Object id) {
         return em.find(Album.class, id);
     }
 
+    @Override
     public List<Album> findAll() {
         return em.createQuery("select object(o) from Album as o").getResultList();
     }
 
+    @Override
     public List<Album> queryAlbums(ServiceSession session,
             boolean restrictAllowed,
             boolean restrictTheme, TopFirst topFirst, int topX) {
@@ -68,6 +74,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
         return q.getResultList();
     }
 
+    @Override
     public Album loadIfAllowed(ServiceSession session, int id) {
         try {
             String rq = "FROM Album a " +
@@ -80,6 +87,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
         }
     }
 
+    @Override
     public Album loadByNameDate(String name, String date) {
         String rq = "FROM Album a " +
                 " WHERE a.date = :date " +

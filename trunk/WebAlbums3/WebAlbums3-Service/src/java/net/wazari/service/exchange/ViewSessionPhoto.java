@@ -18,7 +18,9 @@ public interface ViewSessionPhoto extends ViewSession {
     String getUser();
 
     Integer[] getTags();
-
+    
+    Integer[] getNewTag();
+    
     String getDesc();
 
     boolean getRepresent();
@@ -26,8 +28,6 @@ public interface ViewSessionPhoto extends ViewSession {
     Integer getTagPhoto();
 
     Integer getPage();
-
-    EditMode getEditionMode();
 
     Turn getTurn();
 

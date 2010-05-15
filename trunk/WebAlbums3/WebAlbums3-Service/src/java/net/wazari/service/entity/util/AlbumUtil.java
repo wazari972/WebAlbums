@@ -1,6 +1,5 @@
 package net.wazari.service.entity.util;
 
-import net.wazari.service.AlbumUtilLocal;
 import java.text.SimpleDateFormat;
 
 import net.wazari.dao.entity.Photo;
@@ -11,7 +10,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.service.PhotoUtilLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Utilisateur;
@@ -22,7 +20,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
  * Any customizations belong here.
  */
 @Stateless
-public class AlbumUtil implements AlbumUtilLocal {
+public class AlbumUtil {
 
     @EJB
     AlbumFacadeLocal albumDAO;
@@ -31,7 +29,7 @@ public class AlbumUtil implements AlbumUtilLocal {
     @EJB
     PhotoFacadeLocal photoDAO;
     @EJB
-    PhotoUtilLocal photoUtil;
+    PhotoUtil photoUtil;
     private static final Logger log = Logger.getLogger(AlbumUtil.class.toString());
 
     public void setTagsToPhoto(Album enrAlbum, Integer[] tags, Boolean force) throws WebAlbumsServiceException {

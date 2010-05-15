@@ -13,6 +13,9 @@ import net.wazari.common.exception.WebAlbumsException;
  */
 public class WebAlbumsServiceException extends WebAlbumsException {
 
+    public WebAlbumsServiceException(ErrorType type) {
+        super(type) ;
+    }
     public WebAlbumsServiceException(ErrorType type, String msg) {
         super(type, msg);
     }

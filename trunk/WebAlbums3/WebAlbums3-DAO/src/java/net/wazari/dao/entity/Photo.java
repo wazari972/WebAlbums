@@ -31,8 +31,7 @@ import javax.persistence.Table;
 public class Photo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Basic(optional = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID")
     private Integer id;
     @Basic(optional = false)
@@ -60,7 +59,7 @@ public class Photo implements Serializable {
     private String type;
     @Column(name = "Droit")
     private Integer droit;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "photo")
+    @OneToMany(cascade = CascadeType.ALL , mappedBy = "photo")
     private List<TagPhoto> tagPhotoList;
     @JoinColumn(name = "Album", referencedColumnName = "ID")
     @ManyToOne(optional = false)

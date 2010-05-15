@@ -16,10 +16,10 @@ import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 
-import net.wazari.service.AlbumUtilLocal;
 import net.wazari.service.AlbumLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.WebPageLocal.Bornes;
+import net.wazari.service.entity.util.AlbumUtil;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Special;
@@ -42,7 +42,7 @@ public class AlbumBean implements AlbumLocal {
     @EJB
     AlbumFacadeLocal albumDAO;
     @EJB
-    AlbumUtilLocal albumUtil;
+    AlbumUtil albumUtil;
     @EJB
     private UtilisateurFacadeLocal userDAO;
     @EJB

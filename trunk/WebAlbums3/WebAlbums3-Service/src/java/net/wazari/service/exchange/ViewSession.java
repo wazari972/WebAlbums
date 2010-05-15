@@ -5,6 +5,7 @@
 package net.wazari.service.exchange;
 
 import java.io.File;
+import java.security.Principal;
 import net.wazari.dao.exchange.ServiceSession;
 
 /**
@@ -33,7 +34,7 @@ public interface ViewSession extends ServiceSession {
 
     enum Special {
 
-        TOP5, FULLSCREEN, CLOUD, PERSONS, PLACES, RSS
+        TOP5, FULLSCREEN, CLOUD, PERSONS, PLACES, RSS, UPDATE
     }
 
     enum Action {
@@ -73,8 +74,6 @@ public interface ViewSession extends ServiceSession {
 
     String getUserPass();
 
-    Integer getUserId() ;
-
     void setUserId(Integer userId);
 
     void setRootSession(Boolean asThemeManager);
@@ -82,4 +81,9 @@ public interface ViewSession extends ServiceSession {
     void setUserName(String userName);
 
     Integer getId();
+
+    boolean authenticate() ;
+    boolean isAuthenticated() ;
+    Principal getUserPrincipal() ;
+    void login(String user, String passwd) ;
 }

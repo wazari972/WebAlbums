@@ -16,12 +16,12 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.service.PhotoUtilLocal;
 import net.wazari.util.StringUtil;
 import net.wazari.util.XmlBuilder;
 import net.wazari.dao.entity.Photo;
 
 import net.wazari.service.ImageLocal;
+import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.util.system.SystemTools;
@@ -31,7 +31,7 @@ public class ImageBean implements ImageLocal {
     private static final Logger log = Logger.getLogger(ImageBean.class.getName());
     private static final long serialVersionUID = 1L;
     @EJB private PhotoFacadeLocal photoDAO ;
-    @EJB private PhotoUtilLocal photoUtil ;
+    @EJB private PhotoUtil photoUtil ;
 
     private SystemTools sysTools ;
 

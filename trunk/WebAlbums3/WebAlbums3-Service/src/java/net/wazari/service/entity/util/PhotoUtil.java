@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import net.wazari.service.PhotoUtilLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
@@ -33,14 +32,13 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.StringUtil;
 import net.wazari.util.XmlBuilder;
-import net.wazari.util.system.SystemTools;
 
 /**
  * This is the object class that relates to the Photo table.
  * Any customizations belong here.
  */
 @Stateless
-public class PhotoUtil implements PhotoUtilLocal {
+public class PhotoUtil {
 
     private static final Logger log = Logger.getLogger(PhotoUtil.class.toString());
     private static final long serialVersionUID = 1L;
@@ -74,53 +72,51 @@ public class PhotoUtil implements PhotoUtilLocal {
         for (int i = 0; i < tags.length; i++) {
             log.info("add tag " + tags[i]);
             boolean already = false;
-            Integer newTag = tags[i];
 
             //verifier que le tag est bien dans la base
-            boolean exists = (tagDAO.find(newTag) != null);
-
-            if (exists) {
+            net.wazari.dao.entity.Tag enrTag = tagDAO.find(tags[i]);
+            if (enrTag != null) {
                 //regarder si le tag est déjà dans la liste
                 for (TagPhoto enrTp : list) {
                     //si le tag est déjà dans la liste
-                    if (enrTp.getTag().getId() == newTag) {
+                    if (enrTag.equals(enrTp.getTag())) {
                         already = true;
+                        break ;
                     }
                 }
 
                 if (!already) {
                     //alors on l'ajoute
-                    try {
-                        TagPhoto nouveau = new TagPhoto();
-                        nouveau.setPhoto(p);
-                        nouveau.setTag(tagDAO.find(newTag));
-                        log.info("Ajout du tag : " + newTag);
-                        tagPhotoDAO.create(nouveau);
-                    } catch (NumberFormatException e) {
-                        log.warning("Erreur dans l'id du Tag : " + newTag);
-                    }
+                    TagPhoto nouveau = new TagPhoto();
+                    nouveau.setPhoto(p);
+                    nouveau.setTag(enrTag);
+                    log.info("Ajout du tag : " + enrTag.getNom());
+                    tagPhotoDAO.create(nouveau);
+  
                 } else {
-                    log.info("already: " + tags[i]);
+                    log.info("already: " +enrTag.getNom());
                 }
             } else {
-                log.warning("Erreur dans l'id du Tag : " + newTag + ": introuvable !");
+                log.warning("Erreur dans l'id du Tag : " + tags[i] + ": introuvable !");
             }
         }
     }
 
     public void removeTag(Photo p, int tag) throws WebAlbumsServiceException {
-        String rq = null;
-
+        TagPhoto toRemove = null ;
         for (TagPhoto enrTp : p.getTagPhotoList()) {
             if (enrTp.getTag().getId() == tag) {
-                tagPhotoDAO.remove(enrTp);
+                toRemove = enrTp ;
+                break ;
             }
+        }
+        if (toRemove != null) {
+            tagPhotoDAO.remove(toRemove);
         }
 
     }
 
-    public void removeExtraTags(Photo p, Integer[] tags)
-            throws WebAlbumsServiceException {
+    public void removeExtraTags(Photo p, Integer[] tags) throws WebAlbumsServiceException {
         if (tags == null) {
             for (TagPhoto enrTp : p.getTagPhotoList()) {
                 tagPhotoDAO.remove(enrTp);
@@ -133,7 +129,7 @@ public class PhotoUtil implements PhotoUtilLocal {
         //enlever les tags existants qui ne sont pas dans la nouvelle liste
         for (TagPhoto enrTp : p.getTagPhotoList()) {
             //si la liste des nouveaux tags ne contient pas le tag courant
-            if (Arrays.binarySearch(tags, enrTp.getTag().toString()) < 0) {
+            if (Arrays.binarySearch(tags, enrTp.getTag().getId()) < 0) {
                 //alors enlever ce tag des tags existants
                 tagPhotoDAO.remove(enrTp);
             }
@@ -160,7 +156,6 @@ public class PhotoUtil implements PhotoUtilLocal {
         return output.validate();
     }
 
-    @Override
     public void retreiveExif(ViewSession vSession, Photo p) {
         String path = vSession.getConfiguration().getSourceURL() + "/" + vSession.getConfiguration().getImages() + "/" + p.getPath();
         retreiveExif(p, path);

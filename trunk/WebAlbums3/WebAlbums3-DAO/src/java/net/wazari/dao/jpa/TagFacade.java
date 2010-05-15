@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import net.wazari.dao.entity.Tag;
 
@@ -40,7 +41,11 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     public Tag find(Object id) {
-        return em.find(Tag.class, id);
+        try {
+            return em.find(Tag.class, id);
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 
     public List<Tag> findAll() {

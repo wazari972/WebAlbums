@@ -11,11 +11,15 @@ package net.wazari.common.exception;
  */
 public abstract class WebAlbumsException extends Exception {
     public enum ErrorType {
-        JDBCException
+        JDBCException,
+        AuthenticationException
     }
     public static final ErrorType JDBCException = ErrorType.JDBCException;
 
     private ErrorType type ;
+    public WebAlbumsException(ErrorType type) {
+        this.type = type;
+    }
     public WebAlbumsException(ErrorType type, Throwable th) {
         super(th);
         this.type = type;

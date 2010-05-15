@@ -5,6 +5,7 @@
 package net.wazari.service;
 
 import javax.ejb.Local;
+import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.XmlBuilder;
 
@@ -15,5 +16,5 @@ import net.wazari.util.XmlBuilder;
 @Local
 public interface UserLocal {
 
-    XmlBuilder treatUSR(ViewSession vSession);
+    XmlBuilder treatUSR(ViewSession vSession) throws WebAlbumsServiceException;
 }

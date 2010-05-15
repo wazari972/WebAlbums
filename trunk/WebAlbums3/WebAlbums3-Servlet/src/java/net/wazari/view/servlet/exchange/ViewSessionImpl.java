@@ -7,9 +7,13 @@ package net.wazari.view.servlet.exchange;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.common.constante.Path;
@@ -56,7 +60,11 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     }
 
     public Integer[] getTags() {
-        return castToIntArray(getParamArray("tags"));
+        return getIntArray("tags");
+    }
+
+    public Integer[] getNewTag() {
+        return getIntArray("newTag") ;
     }
 
     public boolean getForce() {
@@ -273,27 +281,11 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     }
 
     public Integer[] getTagAsked() {
-        return castToIntArray(getParamArray("tagAsked"));
+        return getIntArray("tagAsked");
     }
 
     public ImgMode getImgMode() {
         return getEnum("imgMode", ImgMode.class);
-    }
-
-    private String[] getParamArray(String name) {
-        return request.getParameterValues(name);
-    }
-
-    private Integer[] castToIntArray(String[] from) {
-        if (from == null) return null ;
-        ArrayList<Integer> ret = new ArrayList<Integer>(from.length);
-        for (int i = 0; i < from.length; i++) {
-            try {
-                ret.add(Integer.parseInt(from[i]));
-            } catch (NumberFormatException e) {
-            }
-        }
-        return ret.toArray(new Integer[0]);
     }
 
     public Configuration getConfiguration() {
@@ -356,6 +348,8 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
             log.info("NullPointerException with "+val+" for class "+type) ;
         } catch (NumberFormatException e) {
             log.info("NumberFormatException with "+val+" for class "+type) ;
+        } catch (IllegalArgumentException e) {
+            log.info("IllegalArgumentException with "+val+" for class "+type) ;
         }
         log.info("getObject param:"+name+" type:"+type+" returned "+ret) ;
         return ret ;
@@ -382,4 +376,58 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     public int getPhotoSize() {
         return getConfiguration().getPhotoSize() ;
     }
+
+    private Integer[] getIntArray(String key) {
+        return castToIntArray(getParamArray(key));
+    }
+
+     private String[] getParamArray(String name) {
+        String[] ret = request.getParameterValues(name);
+        log.info("getParamArray param:"+name+" returned "+Arrays.toString(ret)) ;
+        return ret ;
+    }
+
+    private Integer[] castToIntArray(String[] from) {
+        if (from == null) return null ;
+        ArrayList<Integer> ret = new ArrayList<Integer>(from.length);
+        for (int i = 0; i < from.length; i++) {
+            try {
+                ret.add(Integer.parseInt(from[i]));
+            } catch (NumberFormatException e) {
+            }
+        }
+        return ret.toArray(new Integer[0]);
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return getUserPrincipal() != null ;
+    }
+
+    @Override
+    public Principal getUserPrincipal() {
+        return request.getUserPrincipal() ;
+    }
+
+    @Override
+    public boolean authenticate() {
+        try {
+            return request.authenticate(response);
+        } catch (IOException e) {
+
+        } catch (ServletException e) {
+            
+        }
+        return false ;
+    }
+
+    @Override
+    public void login(String user, String passwd) {
+        try {
+            request.login(user, passwd);
+        } catch (ServletException ex) {
+            Logger.getLogger(ViewSessionImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }

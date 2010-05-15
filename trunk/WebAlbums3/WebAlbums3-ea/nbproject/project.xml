@@ -7,15 +7,15 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <web-module-libraries/>
             <web-module-additional-libraries>
-                <library files="1">
+                <library>
                     <file>${reference.WebAlbums3-Servlet.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
-                <library files="1">
+                <library>
                     <file>${reference.WebAlbums3-DAO.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
-                <library files="1">
+                <library>
                     <file>${reference.WebAlbums3-Service.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>

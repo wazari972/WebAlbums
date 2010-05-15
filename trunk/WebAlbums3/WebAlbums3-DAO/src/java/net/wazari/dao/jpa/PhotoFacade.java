@@ -45,7 +45,11 @@ public class PhotoFacade implements PhotoFacadeLocal {
         if (id == null) {
             return null;
         }
-        return em.find(Photo.class, id);
+        try {
+            return em.find(Photo.class, id);
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 
     public List<Photo> findAll() {

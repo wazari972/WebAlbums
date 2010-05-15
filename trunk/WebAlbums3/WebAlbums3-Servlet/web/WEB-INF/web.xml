@@ -8,4 +8,36 @@
     <welcome-file-list>
         <welcome-file>Index</welcome-file>
         </welcome-file-list>
+    <security-constraint>
+        <display-name>Authenticate users</display-name>
+        <web-resource-collection>
+            <web-resource-name>WebAlbums3-Servlets</web-resource-name>
+            <description/>
+            <url-pattern>/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>HEAD</http-method>
+            <http-method>PUT</http-method>
+            <http-method>OPTIONS</http-method>
+            <http-method>TRACE</http-method>
+            <http-method>DELETE</http-method>
+            </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>VIEWER</role-name>
+            <role-name>ADMIN</role-name>
+            </auth-constraint>
+        </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>file</realm-name>
+        </login-config>
+    <security-role>
+        <description>Access to configuration and modification functions</description>
+        <role-name>ADMIN</role-name>
+    </security-role>
+    <security-role>
+        <description>Read-only access</description>
+        <role-name>VIEWER</role-name>
+    </security-role>
     </web-app>

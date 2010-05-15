@@ -4,12 +4,14 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import net.wazari.common.exception.WebAlbumsException;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 
 import net.wazari.service.UserLocal;
+import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
 
@@ -24,7 +26,7 @@ public class UserBean implements UserLocal {
     @EJB
     private ThemeFacadeLocal themeDAO;
 
-    public XmlBuilder treatUSR(ViewSession vSession) {
+    public XmlBuilder treatUSR(ViewSession vSession) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("userLogin");
 
         Action action = vSession.getAction();
@@ -61,6 +63,11 @@ public class UserBean implements UserLocal {
             if (saveSession(vSession, enrUtil, pass, asThemeManager)) {
                 output.add("valid");
                 valid = true;
+                if (!vSession.isAuthenticated()) {
+                    if (!vSession.authenticate()) {
+                        throw new WebAlbumsServiceException(WebAlbumsException.ErrorType.AuthenticationException) ;
+                    }
+                }
             } else {
                 output.add("denied");
                 output.add("login");

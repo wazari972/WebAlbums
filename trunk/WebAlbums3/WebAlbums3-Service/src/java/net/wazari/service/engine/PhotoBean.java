@@ -20,10 +20,10 @@ import net.wazari.dao.entity.Tag;
 
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.PhotoLocal;
-import net.wazari.service.PhotoUtilLocal;
 import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.WebPageLocal.Bornes;
+import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
@@ -44,7 +44,7 @@ public class PhotoBean implements PhotoLocal {
     private static final Logger log = Logger.getLogger(PhotoBean.class.toString());
     private static final long serialVersionUID = 1L;
     @EJB
-    PhotoUtilLocal photoUtil;
+    PhotoUtil photoUtil;
     @EJB
     private PhotoFacadeLocal photoDAO;
     @EJB
@@ -64,6 +64,7 @@ public class PhotoBean implements PhotoLocal {
     private FilesFinder finder = new FilesFinder();
     @EJB private SystemToolsLocal sysTools ;
 
+    @Override
     public XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Action action = vSession.getAction();
         XmlBuilder output;
@@ -92,6 +93,7 @@ public class PhotoBean implements PhotoLocal {
         return output.validate();
     }
 
+    @Override
     public XmlBuilder treatPhotoSUBMIT(ViewSessionPhoto vSession,
             Boolean correct) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder(null);
@@ -100,13 +102,14 @@ public class PhotoBean implements PhotoLocal {
         String rq = null;
         try {
             Photo enrPhoto = photoDAO.loadIfAllowed(vSession, photoID);
+
             if (enrPhoto == null) {
                 correct = false;
                 output.addException("Impossible de trouver cette photo " +
                         "(" + photoID + (vSession.isRootSession() ? "" : "/" + theme) + ")");
                 return output.validate();
             }
-
+            
             //supprimer ?
             if (vSession.getSuppr()) {
                 XmlBuilder suppr_msg = new XmlBuilder("suppr_msg");
@@ -114,19 +117,18 @@ public class PhotoBean implements PhotoLocal {
                 output.add(suppr_msg);
                 return output.validate();
             }
-
+            
             //mise à jour des tag/description
             String user = vSession.getUser();
             String desc = vSession.getDesc();
-            Integer[] tags = vSession.getTags();
+            Integer[] tags = vSession.getNewTag();
 
-
-            photoUtil.updateDroit(enrPhoto, "null".equals(user) ? null : new Integer("0" + user));
-            photoUtil.setTags(enrPhoto, tags);
             enrPhoto.setDescription(desc);
-
+            photoUtil.updateDroit(enrPhoto, "null".equals(user) ? null : new Integer("0" + user));
             photoDAO.edit(enrPhoto);
 
+            photoUtil.setTags(enrPhoto, tags);
+            
             //utiliser cette photo comme representante de l'album ?
             Boolean represent = vSession.getRepresent();
             if (represent) {
@@ -207,6 +209,7 @@ public class PhotoBean implements PhotoLocal {
         return output.validate();
     }
 
+    @Override
     public XmlBuilder treatPhotoDISPLAY(ViewSessionPhoto vSession, XmlBuilder submit) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder(null);
         //afficher les photos
@@ -255,6 +258,7 @@ public class PhotoBean implements PhotoLocal {
         return output.validate();
     }
 
+    @Override
     public XmlBuilder treatPhotoEDIT(ViewSessionPhoto vSession, XmlBuilder submit) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("photo_edit");
         if (submit != null) {
@@ -293,6 +297,7 @@ public class PhotoBean implements PhotoLocal {
         return output.validate();
     }
     
+    @Override
     public XmlBuilder displayPhoto(PhotoRequest rq,
             ViewSessionPhoto vSession,
             XmlBuilder thisPage,
@@ -364,7 +369,6 @@ public class PhotoBean implements PhotoLocal {
                         } else {
                             verb = "nothinged";
                         }
-                        photoDAO.edit(enrPhoto);
                         photo.add("message", "Tag " + tag + " " + verb + " to photo #" + enrPhoto.getId());
                     } else if (turn == Turn.LEFT || turn == Turn.RIGHT) {
                         if (!photoUtil.rotate(vSession, enrPhoto, degrees)) {

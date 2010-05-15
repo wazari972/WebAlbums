@@ -58,16 +58,16 @@
 		onClick="javacript:selectAll()"/>
 	    </td></tr>
 	    <tr>
-	      <td><input type='radio' name='turn' value='droite'/></td>
+	      <td><input type='radio' name='turn' value='RIGHT'/></td>
 	      <td>Tourner vers la droite</td>
 	    </tr>
 	    <tr>
-	      <td><input type='radio' name='turn' value='gauche' /></td>
+	      <td><input type='radio' name='turn' value='LEFT' /></td>
 	      <td>Tourner vers la gauche</td>
 	    </tr>
 	    <tr><td>&#160;</td></tr>
 	    <tr>
-	      <td><input type='radio' name='turn' value='tag' /></td>
+	      <td><input type='radio' name='turn' value='TAG' /></td>
 	      <td>Tagger avec</td>
 	      <td rowspan='3'>
 		<xsl:apply-templates select="tags">
@@ -78,7 +78,7 @@
 	      </td>
 	    </tr>
 	    <tr>
-	      <td><input type='radio' name='turn' value='untag' /></td>
+	      <td><input type='radio' name='turn' value='UNTAG' /></td>
 	      <td>Enlever le tag</td>
 	    </tr>
 	    <xsl:if test="/root/tags">

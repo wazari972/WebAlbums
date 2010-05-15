@@ -4,6 +4,8 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
@@ -21,6 +23,7 @@ import net.wazari.dao.entity.TagPhoto;
  */
 @Stateless
 public class TagPhotoFacade implements TagPhotoFacadeLocal {
+    private static final Logger log = Logger.getLogger(TagPhotoFacade.class.getName()) ;
     @PersistenceContext
     private EntityManager em;
 
@@ -38,7 +41,13 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     public void remove(TagPhoto tagPhoto) {
-        em.remove(em.merge(tagPhoto));
+        Photo enrPhoto = tagPhoto.getPhoto() ;
+        Tag enrTag = tagPhoto.getTag() ;
+        log.info("============= REMOVE "+tagPhoto.getPhoto()+"/"+tagPhoto.getTag()) ;
+        em.remove(tagPhoto);
+        em.merge(enrTag) ;
+        em.merge(enrPhoto) ;
+        em.flush();
     }
 
     public TagPhoto find(Object id) {
@@ -59,9 +68,10 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     public List<TagPhoto> queryByPhoto(int photoId) {
-        String rq = "FROM TagPhoto WHERE photo = :photoId";
+        log.info("============= queryByPhoto "+photoId) ;
+        String rq = "FROM TagPhoto WHERE photo.id = :photoId";
         return em.createQuery(rq)
-                .setParameter("photoId", photoDAO.find(photoId))
+                .setParameter("photoId", photoId)
                 .getResultList();
     }
 
