@@ -40,6 +40,6 @@
   </xsl:template>
 
   <xsl:template match="userLogin/valid">
-    <meta http-equiv="refresh" content="0; URL=Choix" />
+    <meta http-equiv="refresh" content="0; URL=Index" />
   </xsl:template>
 </xsl:stylesheet>

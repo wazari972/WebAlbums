@@ -26,9 +26,11 @@ import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exception.WebAlbumsServiceException;
 
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.util.XmlBuilder;
 
 @Stateless
@@ -123,7 +125,7 @@ public class TagBean implements TagLocal {
         Boolean correct = true;
 
         if (Action.SUBMIT == action && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            submit = photoLocal.treatPhotoSUBMIT((ViewSessionPhoto)vSession, correct);
+            submit = photoLocal.treatPhotoSUBMIT((ViewSessionPhotoEdit)vSession, correct);
         }
 
         if ((Action.EDIT == action || !correct) && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
@@ -156,7 +158,7 @@ public class TagBean implements TagLocal {
                 sysTools.fullscreen(vSession, rq, "Tags", null, page);
                 return null;
             } else {
-                output.add(photoLocal.displayPhoto(rq, (ViewSessionPhoto)vSession, thisPage, submit));
+                output.add(photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay)vSession, thisPage, submit));
             }
         }
        

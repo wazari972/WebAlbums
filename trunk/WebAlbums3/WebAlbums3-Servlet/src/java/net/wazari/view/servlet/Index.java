@@ -36,8 +36,6 @@ public class Index extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException
     {
-        Logger.getLogger(Index.class.getName()).log(Level.SEVERE, "Hello world!", "Hello world!");
-
         dispatcher.treat(this.getServletContext(), Page.VOID, request, response);
     }
 
@@ -47,6 +45,4 @@ public class Index extends HttpServlet {
             throws ServletException, IOException {
         doGet(request, response);
     }
-
-    
 }

@@ -49,14 +49,15 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     public List<TagTheme> queryByTag(ServiceSession session, int tagId) {
         String rq = "FROM TagTheme tt " +
                 "WHERE tt.tag = :tagId " +
-                (session.isRootSession() ? "" : " AND tt.theme = :themeId");
+                (session.isRootSession() ? "" : " AND tt.theme = :theme");
         Query q = em.createQuery(rq)
                 .setParameter("tagId", tagDAO.find(tagId)) ;
-        if (!session.isRootSession()) q.setParameter("themeId", themeDAO.find(session.getThemeId())) ;
+        if (!session.isRootSession()) q.setParameter("theme", session.getTheme()) ;
         return q.getResultList();
     }
 
     public TagTheme loadByTagTheme(Integer tagId, Integer themeId) {
+        if (tagId == null || themeId == null) return null ;
         try {
             String rq = "FROM TagTheme tt " +
                     "WHERE tt.tag = :tagId " +

@@ -11,7 +11,6 @@ import javax.ejb.Stateless;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
 
@@ -113,7 +112,12 @@ public class WebPageBean implements WebPageLocal {
 
     public XmlBuilder xmlLogin(ViewSession vSession) {
         XmlBuilder login = new XmlBuilder("login");
-        login.add("theme", vSession.getThemeName());
+        String theme = "Not logged in" ;
+        Theme enrTheme = vSession.getTheme() ;
+        if (enrTheme != null) {
+            theme = enrTheme.getNom() ;
+        }
+        login.add("theme", theme);
         login.add("user", vSession.getUserName());
         log.info("logged as manager? "+vSession.isSessionManager());
         if (vSession.isSessionManager()) {

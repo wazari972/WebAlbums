@@ -6,7 +6,6 @@ package net.wazari.view.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -69,31 +68,40 @@ public class DispatcherBean {
             Page page,
             HttpServletRequest request,
             HttpServletResponse response)
-            throws IOException {
-        log.info("============= "+page+" =============");
+            throws IOException, ServletException 
+    {
+        ViewSession vSession = new ViewSessionImpl(request, response, context);
+        if (request.getParameter("logout") != null) {
+            request.logout();
+            userService.cleanUpSession(vSession);
+        }
+        if (page != Page.USER) {
+            request.authenticate(response) ;
+        }
+        log.info("============= " + page + " =============");
+                
         long debut = System.currentTimeMillis();
         request.setCharacterEncoding("UTF-8");
 
         XmlBuilder output = new XmlBuilder("root");
 
         String xslFile = null;
-        ViewSession vSession = new ViewSessionImpl(request, response, context);
 
         boolean isWritten = false;
         boolean isComplete = false;
         try {
             xslFile = "static/Display.xsl";
             if (page == Page.VOID) {
-                request.logout() ;
                 output.add(themeService.treatVOID(vSession));
+            } else if (page == Page.USER) {
+                log.info("============= LOGIN =============");
+                output.add(Users.treatLogin(vSession, request));
+                log.info("============= /LOGIN =============");
             } else if (page == Page.MAINT) {
                 xslFile = "static/Empty.xsl";
-
                 //output.add(net.wazari.service.engine.Maint.treatMAINT(request));
-            } else if (page == Page.USER) {
-                output.add(userService.treatUSR(vSession));
             } else {
-                log.info("============= Login: "+request.getUserPrincipal()+" =============");
+                log.info("============= Login: " + request.getUserPrincipal() + " =============");
                 String special = request.getParameter("special");
                 if (special != null) {
                     if ("RSS".equals(special)) {
@@ -102,9 +110,18 @@ public class DispatcherBean {
                         xslFile = "static/Empty.xsl";
                     }
                 }
-                Integer userID = vSession.getUserId();
-                //a partir d'ici, l'utilisateur doit être en memoire
-                if (userID != null && vSession.isAuthenticated()) {
+                if (vSession.getTheme() == null){
+                    userService.authenticate(vSession, request);
+                }
+                //a partir d'ici, le thene doit être en memoire
+                if (vSession.getTheme() == null){
+                    if (special == null) {
+                        output.add(themeService.treatVOID(vSession));
+                    } else {
+                        isComplete = true;
+                        output = new XmlBuilder("nothing");
+                    }
+                } else {
                     if (page == Page.CHOIX) {
                         if (special == null) {
                             output.add(choixService.displayCHX(vSession));
@@ -129,31 +146,23 @@ public class DispatcherBean {
                             output.add(ret);
                         }
                     } else {
-                        request.logout() ;
+                        request.logout();
                         output.add(themeService.treatVOID(vSession));
-                    }
-                } else {
-                    //log.info("special: " + special);
-                    if (special == null) {
-                        request.logout() ;
-                        output.add(themeService.treatVOID(vSession));
-                    } else {
-                        isComplete = true;
-                        output = new XmlBuilder("nothing");
                     }
                 }
             }
+            log.info("============= Validate =============");
             output.validate();
         } catch (WebAlbumsServiceException e) {
             e.printStackTrace();
             output.cancel();
         } catch (ServletException ex) {
-            Logger.getLogger(DispatcherBean.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
             output.cancel();
         }
 
         long fin = System.currentTimeMillis();
-        float time = ((float) (fin - debut) / 1000) ;
+        float time = ((float) (fin - debut) / 1000);
         if (!isWritten) {
             preventCaching(request, response);
 
@@ -168,7 +177,7 @@ public class DispatcherBean {
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
-        log.info("============= "+page+": "+time+" =============");
+        log.info("============= " + page + ": " + time + " =============");
     }
 
     private static void doWrite(HttpServletResponse response, XmlBuilder output, String xslFile, boolean isComplete, ViewSession vSession) {

@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.common.constante.Path;
+import net.wazari.dao.entity.Theme;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.EditMode;
@@ -25,13 +26,21 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionPhoto;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSpecial;
 import net.wazari.service.exchange.ViewSessionTag;
 
 /**
  *
  * @author kevin
  */
-public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, ViewSessionPhoto, ViewSessionTag, ViewSessionImages {
+public class ViewSessionImpl implements ViewSessionAlbum,
+        ViewSessionConfig,
+        ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSpecial,
+        ViewSessionTag,
+        ViewSessionImages {
     private static final Logger log = Logger.getLogger(ViewSessionImpl.class.getCanonicalName()) ;
     
     private HttpServletRequest request;
@@ -104,21 +113,14 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
     }
 
     /** ** **/
-    public String getThemeName() {
-        return getSessionObject("themeName", String.class);
-    }
-
-    public void setThemeName(String nom) {
-        setSessionObject("themeName", nom);
-    }
-
-    /** ** **/
     public Integer getThemeId() {
-        return getSessionObject("themeId", Integer.class);
+        return getInteger("themeId");
     }
-
-    public void setThemeId(Integer newID) {
-        setSessionObject("themeId", newID);
+    public void setTheme(Theme enrTheme) {
+        setSessionObject("theme", enrTheme);
+    }
+    public Theme getTheme() {
+        return getSessionObject("theme", Theme.class);
     }
 
     /** ** **/
@@ -428,6 +430,11 @@ public class ViewSessionImpl implements ViewSessionAlbum, ViewSessionConfig, Vie
         } catch (ServletException ex) {
             Logger.getLogger(ViewSessionImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public ViewSessionPhotoDisplayMassEdit getMassEdit() {
+        return (ViewSessionPhotoDisplayMassEdit) this ;
     }
 
 }

@@ -5,9 +5,8 @@
 package net.wazari.service;
 
 import javax.ejb.Local;
-import net.wazari.service.exception.WebAlbumsServiceException;
+import javax.servlet.http.HttpServletRequest;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.util.XmlBuilder;
 
 /**
  *
@@ -15,6 +14,10 @@ import net.wazari.util.XmlBuilder;
  */
 @Local
 public interface UserLocal {
+    public final static String ADMIN_ROLE = "ADMIN" ;
+    public final static String VIEWER_ROLE = "VIEWER" ;
+    //XmlBuilder treatUSR(ViewSession vSession) throws WebAlbumsServiceException;
 
-    XmlBuilder treatUSR(ViewSession vSession) throws WebAlbumsServiceException;
+    boolean authenticate(ViewSession vSession, HttpServletRequest request) ;
+    void cleanUpSession(ViewSession vSession) ;
 }

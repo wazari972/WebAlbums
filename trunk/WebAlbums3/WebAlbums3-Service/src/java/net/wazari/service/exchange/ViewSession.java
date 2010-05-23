@@ -6,6 +6,7 @@ package net.wazari.service.exchange;
 
 import java.io.File;
 import java.security.Principal;
+import net.wazari.dao.entity.Theme;
 import net.wazari.dao.exchange.ServiceSession;
 
 /**
@@ -15,10 +16,9 @@ import net.wazari.dao.exchange.ServiceSession;
 public interface ViewSession extends ServiceSession {
 
     File getTempDir();
-
-    void setThemeName(String nom);
-
-    void setThemeId(Integer newID);
+    Integer getThemeId() ;
+    Theme getTheme() ;
+    void setTheme(Theme enrTheme);
 
     void setEditionMode(EditMode editMode);
 
@@ -67,9 +67,7 @@ public interface ViewSession extends ServiceSession {
     Special getSpecial();
 
     Action getAction();
-
-    String getThemeName();
-
+    
     String getUserName();
 
     String getUserPass();

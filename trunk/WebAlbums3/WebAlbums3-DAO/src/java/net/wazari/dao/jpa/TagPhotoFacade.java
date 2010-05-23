@@ -113,7 +113,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
                             " tp.photo = p.id AND p.album = a.id " +
                             " AND a.theme = :themeId ";
         return em.createQuery(rq)
-                .setParameter("themeId", themeDAO.find(session.getThemeId()))
+                .setParameter("themeId", session.getTheme())
                 .getResultList();
     }
 }

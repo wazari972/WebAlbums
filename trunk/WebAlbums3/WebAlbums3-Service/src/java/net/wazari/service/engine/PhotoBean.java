@@ -32,8 +32,9 @@ import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSession.Type;
 import net.wazari.service.exchange.ViewSessionPhoto;
-import net.wazari.service.exchange.ViewSessionPhoto.Turn;
+import net.wazari.service.exchange.ViewSessionPhoto.*;
 
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.util.StringUtil;
 import net.wazari.util.XmlBuilder;
@@ -64,7 +65,7 @@ public class PhotoBean implements PhotoLocal {
     private FilesFinder finder = new FilesFinder();
     @EJB private SystemToolsLocal sysTools ;
 
-    @Override
+     @Override
     public XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Action action = vSession.getAction();
         XmlBuilder output;
@@ -72,7 +73,7 @@ public class PhotoBean implements PhotoLocal {
         Boolean correct = new Boolean(true);
 
         if (Action.SUBMIT == action && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            submit = treatPhotoSUBMIT(vSession, correct);
+            submit = treatPhotoSUBMIT((ViewSessionPhotoEdit) vSession,correct);
         }
 
         if ((Action.EDIT == action || !correct) && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
@@ -86,7 +87,7 @@ public class PhotoBean implements PhotoLocal {
             output.add(return_to);
         } else {
             output = new XmlBuilder("photos");
-            output.add(treatPhotoDISPLAY(vSession, submit));
+            output.add(treatPhotoDISPLAY((ViewSessionPhotoDisplay) vSession,submit));
         }
 
 
@@ -94,7 +95,7 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
-    public XmlBuilder treatPhotoSUBMIT(ViewSessionPhoto vSession,
+    public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoEdit vSession,
             Boolean correct) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder(null);
         Integer photoID = vSession.getId();
@@ -210,7 +211,7 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
-    public XmlBuilder treatPhotoDISPLAY(ViewSessionPhoto vSession, XmlBuilder submit) throws WebAlbumsServiceException {
+    public XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder(null);
         //afficher les photos
         //afficher la liste des albums de cet theme
@@ -266,8 +267,6 @@ public class PhotoBean implements PhotoLocal {
         }
 
         Integer photoID = vSession.getId();
-        Integer page = vSession.getPage();
-        page = (page == null ? 0 : page);
 
         Photo enrPhoto = photoDAO.find(photoID);
 
@@ -299,7 +298,7 @@ public class PhotoBean implements PhotoLocal {
     
     @Override
     public XmlBuilder displayPhoto(PhotoRequest rq,
-            ViewSessionPhoto vSession,
+            ViewSessionPhotoDisplay vSession,
             XmlBuilder thisPage,
             XmlBuilder submit)
             throws WebAlbumsServiceException {
@@ -324,17 +323,18 @@ public class PhotoBean implements PhotoLocal {
         boolean reSelect = false;
         boolean current = false;
 
-        Turn turn = vSession.getTurn();
+        Turn turn = null ;
         if (inEditionMode == EditMode.EDITION) {
             try {
                 Action action = vSession.getAction();
                 if (Action.MASSEDIT == action) {
+                    turn = vSession.getMassEdit().getTurn();
                     if (turn == Turn.LEFT) {
                         degrees = "270";
                     } else if (turn == Turn.RIGHT) {
                         degrees = "90";
                     } else if (turn == Turn.TAG || turn == Turn.UNTAG || turn == Turn.MVTAG) {
-                        tag = vSession.getAddTag();
+                        tag = vSession.getMassEdit().getAddTag();
                     }
                     massEditParam = true;
                 }
@@ -349,7 +349,7 @@ public class PhotoBean implements PhotoLocal {
             XmlBuilder photo = new XmlBuilder("photo");
             boolean reSelectThis = false;
             if (massEditParam) {
-                Boolean chkbox = vSession.getChk(enrPhoto.getId());
+                Boolean chkbox = vSession.getMassEdit().getChk(enrPhoto.getId());
                 if (chkbox) {
                     current = true;
 
@@ -362,7 +362,7 @@ public class PhotoBean implements PhotoLocal {
                             photoUtil.removeTag(enrPhoto, tag);
                             verb = "removed";
                         } else if (turn == Turn.MVTAG) {
-                            Integer rmTag = vSession.getRmTag();
+                            Integer rmTag = vSession.getMassEdit().getRmTag();
                             photoUtil.removeTag(enrPhoto, rmTag);
                             photoUtil.addTags(enrPhoto, new Integer[]{tag});
                             verb = "added and tag " + rmTag + " removed";

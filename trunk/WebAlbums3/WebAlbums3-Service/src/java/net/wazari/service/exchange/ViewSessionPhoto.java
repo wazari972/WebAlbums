@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.wazari.service.exchange;
 
 /**
@@ -11,40 +10,58 @@ package net.wazari.service.exchange;
  */
 public interface ViewSessionPhoto extends ViewSession {
 
-    String getWidth();
+    interface ViewSessionPhotoEdit extends ViewSessionPhoto {
 
-    boolean getSuppr();
+        boolean getSuppr();
 
-    String getUser();
+        String getDesc();
 
-    Integer[] getTags();
-    
-    Integer[] getNewTag();
-    
-    String getDesc();
+        boolean getRepresent();
 
-    boolean getRepresent();
+        String getUser();
+
+        Integer[] getNewTag();
+
+        Integer[] getTags();
+    }
+
+    interface ViewSessionPhotoDisplay extends ViewSessionPhoto {
+
+        interface ViewSessionPhotoDisplayMassEdit extends ViewSessionPhotoDisplay {
+
+            enum Turn {
+
+                RIGHT, LEFT, TAG, UNTAG, MVTAG, RIEN
+            }
+
+            Turn getTurn();
+
+            boolean getChk(Integer id);
+
+            Integer getAddTag();
+
+            Integer getRmTag();
+        }
+
+        ViewSessionPhotoDisplayMassEdit getMassEdit();
+
+        boolean wantsDetails();
+
+        Integer getPage();
+    }
+
+    interface ViewSessionPhotoSpecial extends ViewSessionPhoto {
+
+        String getWidth();
+    }
 
     Integer getTagPhoto();
 
-    Integer getPage();
-
-    Turn getTurn();
-
-    Integer getAddTag();
-
-    boolean getChk(Integer id);
-
-    Integer getRmTag();
-
-    boolean wantsDetails();
-
-    enum Turn {
-        RIGHT, LEFT, TAG, UNTAG, MVTAG, RIEN
-    }
-
     Mode getMode();
-    Integer getCount() ;
-    Integer getAlbum() ;
-    Integer getAlbmCount() ;
+
+    Integer getCount();
+
+    Integer getAlbum();
+
+    Integer getAlbmCount();
 }

@@ -6,6 +6,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import net.wazari.service.ChoixLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
@@ -15,9 +16,8 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.XmlBuilder;
 
 @Stateless
-@DeclareRoles("VIEWER")
+@DeclareRoles(UserLocal.VIEWER_ROLE)
 public class ChoixBean implements ChoixLocal {
-
     @EJB
     private WebPageLocal webPageService ;
 
@@ -29,7 +29,7 @@ public class ChoixBean implements ChoixLocal {
         return output;
     }
 
-    @RolesAllowed("VIEWER")
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlBuilder choix = new XmlBuilder("choix");
 

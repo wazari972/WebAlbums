@@ -5,13 +5,15 @@
 
 package net.wazari.dao.exchange;
 
+import net.wazari.dao.entity.Theme;
+
 /**
  *
  * @author kevin
  */
 public interface ServiceSession {
 
-    Integer getThemeId();
+    Theme getTheme();
 
     Integer getUserId();
 

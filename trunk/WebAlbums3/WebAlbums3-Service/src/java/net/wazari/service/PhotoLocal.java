@@ -9,6 +9,7 @@ import java.util.List;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionPhoto;
+import net.wazari.service.exchange.ViewSessionPhoto.*;
 import net.wazari.util.XmlBuilder;
 
 /**
@@ -37,12 +38,12 @@ public interface PhotoLocal {
         public List<Integer> listTagId ;
     }
     @SuppressWarnings(value = "unchecked")
-    XmlBuilder displayPhoto(PhotoRequest rq, ViewSessionPhoto vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
+    XmlBuilder displayPhoto(PhotoRequest rq, ViewSessionPhotoDisplay vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
 
     XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException;
 
     XmlBuilder treatPhotoEDIT(ViewSessionPhoto vSession, XmlBuilder submit) throws WebAlbumsServiceException;
-    XmlBuilder treatPhotoDISPLAY(ViewSessionPhoto vSession, XmlBuilder submit) throws WebAlbumsServiceException ;
-    XmlBuilder treatPhotoSUBMIT(ViewSessionPhoto vSession,Boolean correct) throws WebAlbumsServiceException ;
+    XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException ;
+    XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoEdit vSession,Boolean correct) throws WebAlbumsServiceException ;
 
 }

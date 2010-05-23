@@ -38,11 +38,11 @@
 	  <div id="menu">
 	    <ul>
 	      <li><a href="Index" title="Retour aux thèmes">Thème</a></li>
-	      <li><a href="Users" title="Retour aux utilisateurs">Users</a></li>
 	      <li><a href="Choix" title="Choix">Choix</a></li>
 	      <xsl:if test="count(/root/login/admin)!=0">
 		<li><a href="Config" title="Configuration">Config</a></li>
 	      </xsl:if>
+              <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
 	    </ul>	
 	  </div>
 	</div>
@@ -50,7 +50,6 @@
 	  <div id="top">
 	    <div id="bottom">
 	      <div id="right">
-		
 		<h3>Affichage</h3>
 		<ul>
 		  <li><a href="javascript:updateAffichage('maps')"  title=""><xsl:value-of select="/root/affichage/maps" /></a></li>
