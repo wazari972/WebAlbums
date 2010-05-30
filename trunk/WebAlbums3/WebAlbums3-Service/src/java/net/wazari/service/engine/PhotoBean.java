@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import java.util.logging.Logger;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -19,8 +20,10 @@ import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Tag;
 
 import net.wazari.dao.entity.Theme;
+import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.SystemToolsLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.WebPageLocal.Bornes;
 import net.wazari.service.entity.util.PhotoUtil;
@@ -30,7 +33,6 @@ import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
-import net.wazari.service.exchange.ViewSession.Type;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.*;
 
@@ -40,6 +42,7 @@ import net.wazari.util.StringUtil;
 import net.wazari.util.XmlBuilder;
 
 @Stateless
+@RolesAllowed({UserLocal.VIEWER_ROLE, UserLocal.ADMIN_ROLE})
 public class PhotoBean implements PhotoLocal {
 
     private static final Logger log = Logger.getLogger(PhotoBean.class.toString());
@@ -65,7 +68,8 @@ public class PhotoBean implements PhotoLocal {
     private FilesFinder finder = new FilesFinder();
     @EJB private SystemToolsLocal sysTools ;
 
-     @Override
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Action action = vSession.getAction();
         XmlBuilder output;
@@ -73,11 +77,11 @@ public class PhotoBean implements PhotoLocal {
         Boolean correct = new Boolean(true);
 
         if (Action.SUBMIT == action && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            submit = treatPhotoSUBMIT((ViewSessionPhotoEdit) vSession,correct);
+            submit = treatPhotoSUBMIT((ViewSessionPhotoSubmit) vSession,correct);
         }
 
         if ((Action.EDIT == action || !correct) && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            output = treatPhotoEDIT(vSession, submit);
+            output = treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
 
             XmlBuilder return_to = new XmlBuilder("return_to");
             return_to.add("name", "Photos");
@@ -95,11 +99,11 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
-    public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoEdit vSession,
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,
             Boolean correct) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder(null);
         Integer photoID = vSession.getId();
-        int theme = vSession.getThemeId();
         String rq = null;
         try {
             Photo enrPhoto = photoDAO.loadIfAllowed(vSession, photoID);
@@ -107,7 +111,7 @@ public class PhotoBean implements PhotoLocal {
             if (enrPhoto == null) {
                 correct = false;
                 output.addException("Impossible de trouver cette photo " +
-                        "(" + photoID + (vSession.isRootSession() ? "" : "/" + theme) + ")");
+                        "(" + photoID + (vSession.isRootSession() ? "" : "/" + vSession.getTheme()) + ")");
                 return output.validate();
             }
             
@@ -125,7 +129,7 @@ public class PhotoBean implements PhotoLocal {
             Integer[] tags = vSession.getNewTag();
 
             enrPhoto.setDescription(desc);
-            photoUtil.updateDroit(enrPhoto, "null".equals(user) ? null : new Integer("0" + user));
+            photoUtil.updateDroit(enrPhoto, userDAO.find(Integer.parseInt("0"+user)));
             photoDAO.edit(enrPhoto);
 
             photoUtil.setTags(enrPhoto, tags);
@@ -140,19 +144,18 @@ public class PhotoBean implements PhotoLocal {
                     return output.validate();
                 }
 
-                enrAlbum.setPicture(enrPhoto.getId());
+                enrAlbum.setPicture(enrPhoto);
                 albumDAO.edit(enrAlbum);
             }
 
             //utiliser cette photo pour representer le tag de ce theme
-            Integer tagPhoto = vSession.getTagPhoto();
-            if (tagPhoto != null && -1 != tagPhoto) {
-                List<TagTheme> lstTT = tagThemeDAO.queryByTag(vSession, tagPhoto);
+            Tag enrTag = tagDAO.find(vSession.getTagPhoto()) ;
+            if (enrTag != null) {
+                List<TagTheme> lstTT = enrTag.getTagThemeList() ;
                 Theme actualTheme;
                 TagTheme enrTagTh = null;
                 if (!vSession.isRootSession()) {
-                    actualTheme = themeDAO.find(vSession.getThemeId());
-
+                    actualTheme = vSession.getTheme();
                     if (!lstTT.isEmpty()) {
                         enrTagTh = lstTT.get(0);
                     }
@@ -178,8 +181,6 @@ public class PhotoBean implements PhotoLocal {
                 }
 
                 if (enrTagTh == null) {
-                    Tag enrTag = tagDAO.find(tagPhoto);
-
                     //creer un tagTheme pour cette photo/tag/theme
                     enrTagTh = new TagTheme();
 
@@ -211,6 +212,7 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder(null);
         //afficher les photos
@@ -238,7 +240,9 @@ public class PhotoBean implements PhotoLocal {
             album.add("title", enrAlbum.getNom());
             album.add(enrAlbum.getDroit().getNom());
             album.add(StringUtil.xmlDate(enrAlbum.getDate(), null));
-            album.add(new XmlBuilder("details").add("description", enrAlbum.getDescription()).add("photoID", enrAlbum.getPicture()));
+            album.add(new XmlBuilder("details")
+                    .add("description", enrAlbum.getDescription())
+                    .add("photoID", enrAlbum.getPicture()));
             
             PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, albumId) ;
             if (Special.FULLSCREEN == special) {
@@ -260,7 +264,8 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
-    public XmlBuilder treatPhotoEDIT(ViewSessionPhoto vSession, XmlBuilder submit) throws WebAlbumsServiceException {
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    public XmlBuilder treatPhotoEDIT(ViewSessionPhotoEdit vSession, XmlBuilder submit) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("photo_edit");
         if (submit != null) {
             output.add(submit);
@@ -278,17 +283,17 @@ public class PhotoBean implements PhotoLocal {
 
         output.add("id", enrPhoto.getId());
         output.add("description", enrPhoto.getDescription());
-        output.add(webService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto.getId(),
-                Box.MULTIPLE, Type.PHOTO));
+        output.add(webService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
+                Box.MULTIPLE));
 
-        output.add(webService.displayListIBT(Mode.TAG_NUSED, vSession, enrPhoto.getId(),
-                Box.MULTIPLE, Type.PHOTO));
+        output.add(webService.displayListIBT(Mode.TAG_NUSED, vSession, enrPhoto,
+                Box.MULTIPLE));
 
-        output.add(webService.displayListIBT(Mode.TAG_NEVER, vSession, enrPhoto.getId(),
-                Box.MULTIPLE, Type.PHOTO));
+        output.add(webService.displayListIBT(Mode.TAG_NEVER, vSession, enrPhoto,
+                Box.MULTIPLE));
 
-        output.add(webService.displayListIBTNI(Mode.TAG_USED, vSession, enrPhoto.getId(),
-                Box.LIST, Type.PHOTO,
+        output.add(webService.displayListIBTNI(Mode.TAG_USED, vSession, enrPhoto,
+                Box.LIST,
                 null, null));
         output.add(webService.displayListDroit(enrPhoto.getDroit(), enrAlbum.getDroit().getId()));
         output.validate();
@@ -297,6 +302,7 @@ public class PhotoBean implements PhotoLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayPhoto(PhotoRequest rq,
             ViewSessionPhotoDisplay vSession,
             XmlBuilder thisPage,
@@ -401,15 +407,15 @@ public class PhotoBean implements PhotoLocal {
             details.add("miniHeight", photoUtil.getHeight(vSession, enrPhoto, false));
 
             //tags de cette photo
-            details.add(webService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto.getId(),
-                    Box.NONE, Type.PHOTO));
+            details.add(webService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
+                    Box.NONE));
             details.add("albumID", enrPhoto.getAlbum().getId());
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager() &&
                     inEditionMode != EditMode.VISITE) {
-                Integer right = enrPhoto.getDroit();
-                if (right != null && !right.equals(0)) {
-                    details.add("user", userDAO.find(enrPhoto.getDroit()).getNom());
+                Utilisateur enrUser = enrPhoto.getDroit();
+                if (enrUser != null) {
+                    details.add("user", enrPhoto.getDroit().getNom());
                 } else {
                     details.add("user", userDAO.loadUserOutside(enrPhoto.getAlbum().getId()).getNom());
                 }

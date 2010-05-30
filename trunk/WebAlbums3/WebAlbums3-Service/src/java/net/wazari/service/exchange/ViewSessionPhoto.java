@@ -10,7 +10,7 @@ package net.wazari.service.exchange;
  */
 public interface ViewSessionPhoto extends ViewSession {
 
-    interface ViewSessionPhotoEdit extends ViewSessionPhoto {
+    interface ViewSessionPhotoSubmit extends ViewSessionPhoto {
 
         boolean getSuppr();
 
@@ -24,7 +24,9 @@ public interface ViewSessionPhoto extends ViewSession {
 
         Integer[] getTags();
     }
+    interface ViewSessionPhotoEdit extends ViewSessionPhoto {
 
+    }
     interface ViewSessionPhotoDisplay extends ViewSessionPhoto {
 
         interface ViewSessionPhotoDisplayMassEdit extends ViewSessionPhotoDisplay {
@@ -54,6 +56,8 @@ public interface ViewSessionPhoto extends ViewSession {
 
         String getWidth();
     }
+
+    Integer getId();
 
     Integer getTagPhoto();
 

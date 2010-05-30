@@ -8,6 +8,8 @@ package net.wazari.dao;
 import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
 import javax.ejb.Local;
+import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
 
@@ -24,19 +26,11 @@ public interface TagPhotoFacadeLocal {
 
     void remove(TagPhoto tagPhoto);
 
-    TagPhoto find(Object id);
+    void deleteByPhoto(Photo enrPhoto) ;
 
-    List<TagPhoto> findAll();
-
-    void deleteByPhoto(int photoID) ;
-
-    List<TagPhoto> queryByPhoto(int photoId) ;
-
-    List<TagPhoto> queryByAlbum(int albumId) ;
+    List<TagPhoto> queryByAlbum(Album album) ;
 
     TagPhoto loadByTagPhoto(int tagID, int photoId) ;
-
-    List<TagPhoto> queryByTag(int tagId)  ;
 
     List<Tag> selectDistinctTags() ;
     List<Tag> selectUnusedTags(ServiceSession sSession) ;

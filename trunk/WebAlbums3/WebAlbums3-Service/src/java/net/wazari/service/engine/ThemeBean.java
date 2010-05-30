@@ -5,6 +5,7 @@
 package net.wazari.service.engine;
 
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import net.wazari.service.*;
 import javax.ejb.Stateless;
@@ -18,11 +19,14 @@ import net.wazari.util.XmlBuilder;
  * @author kevin
  */
 @Stateless
+@RolesAllowed({UserLocal.VIEWER_ROLE})
 public class ThemeBean implements ThemeLocal {
 
     @EJB
     ThemeFacadeLocal themeDAO;
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder treatVOID(ViewSession vSession) {
         XmlBuilder output = new XmlBuilder("index");
         //afficher la liste des themes

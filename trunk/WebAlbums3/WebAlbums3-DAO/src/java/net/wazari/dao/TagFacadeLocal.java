@@ -8,6 +8,7 @@ package net.wazari.dao;
 import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Tag;
 
@@ -24,10 +25,7 @@ public interface TagFacadeLocal {
 
     void remove(Tag tag);
 
-    Tag find(Object id);
-
-    List<Tag> findAll();
-    
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Map<Tag,Long> queryIDNameCount(ServiceSession session) ;
 
     List<Tag> queryAllowedTagByType(ServiceSession session, int type) ;
@@ -36,4 +34,10 @@ public interface TagFacadeLocal {
 
     List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) ;
     List<Tag> getNoSuchTags(ServiceSession sSession, List<Tag> tags) ;
+
+    List<Tag> findAll(Integer tagId) ;
+
+    Tag find(Integer integer);
+
+    List<Tag> findAll();
 }

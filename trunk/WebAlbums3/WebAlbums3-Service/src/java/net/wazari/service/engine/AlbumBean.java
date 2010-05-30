@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -17,6 +18,7 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 
 import net.wazari.service.AlbumLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.WebPageLocal.Bornes;
 import net.wazari.service.entity.util.AlbumUtil;
@@ -27,13 +29,16 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Type;
 
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.util.StringUtil;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.util.XmlBuilder;
 
 @Stateless
+@RolesAllowed({UserLocal.VIEWER_ROLE, UserLocal.ADMIN_ROLE})
 public class AlbumBean implements AlbumLocal {
     private static final Logger log = Logger.getLogger(AlbumBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
@@ -51,7 +56,9 @@ public class AlbumBean implements AlbumLocal {
     private WebPageLocal webPageService;
     private FilesFinder finder;
 
-    public XmlBuilder treatAlbmEDIT(ViewSessionAlbum vSession,
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    public XmlBuilder treatAlbmEDIT(ViewSessionAlbumEdit vSession,
             XmlBuilder submit)
             throws WebAlbumsServiceException {
 
@@ -87,14 +94,15 @@ public class AlbumBean implements AlbumLocal {
                 Box.MULTIPLE));
         output.add(webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
                 Box.MULTIPLE));
-        output.add(webPageService.displayListDroit(enrAlbum.getDroit().getId(), null));
+        output.add(webPageService.displayListDroit(enrAlbum.getDroit(), null));
 
         output.validate();
         return output.validate();
     }
-
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayAlbum(XmlBuilder output,
-            ViewSessionAlbum vSession,
+            ViewSessionAlbumDisplay vSession,
             XmlBuilder submit,
             XmlBuilder thisPage) throws WebAlbumsServiceException {
 
@@ -124,7 +132,7 @@ public class AlbumBean implements AlbumLocal {
 
             XmlBuilder details = new XmlBuilder("details");
 
-            Photo enrPhoto = photoDAO.find(enrAlbum.getPicture());
+            Photo enrPhoto = enrAlbum.getPicture();
             if (enrPhoto != null) {
                 details.add("photoID", enrPhoto.getId());
                 details.add("miniWidth", enrPhoto.getWidth());
@@ -134,8 +142,7 @@ public class AlbumBean implements AlbumLocal {
             details.add("description", enrAlbum.getDescription());
 
             //tags de l'album
-            details.add(webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum.getId(),
-                    Box.NONE, Type.ALBUM));
+            details.add(webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE));
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
@@ -159,6 +166,8 @@ public class AlbumBean implements AlbumLocal {
         return output.validate();
     }
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder treatALBM(ViewSessionAlbum vSession)
             throws WebAlbumsServiceException {
 
@@ -187,21 +196,23 @@ public class AlbumBean implements AlbumLocal {
 
         Action action = vSession.getAction();
         if (action == Action.SUBMIT && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            submit = treatAlbmSUBMIT(vSession);
+            submit = treatAlbmSUBMIT((ViewSessionAlbumSubmit) vSession);
         }
 
         if (action == Action.EDIT && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            output = treatAlbmEDIT(vSession, submit);
+            output = treatAlbmEDIT((ViewSessionAlbumEdit) vSession, submit);
 
         } else {
             //sinon afficher la liste des albums de ce theme
-            output.add(treatAlbmDISPLAY(vSession, submit));
+            output.add(treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit));
         }
 
         return output.validate();
     }
 
-    public XmlBuilder treatAlbmSUBMIT(ViewSessionAlbum vSession)
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    public XmlBuilder treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession)
             throws WebAlbumsServiceException {
 
         XmlBuilder output = new XmlBuilder(null);
@@ -254,7 +265,10 @@ public class AlbumBean implements AlbumLocal {
         return output.validate();
     }
 
-    public XmlBuilder treatAlbmDISPLAY(ViewSessionAlbum vSession,
+
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    public XmlBuilder treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession,
             XmlBuilder submit) throws WebAlbumsServiceException {
 
         XmlBuilder output = new XmlBuilder(null);

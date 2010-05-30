@@ -42,8 +42,8 @@ public interface PhotoLocal {
 
     XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException;
 
-    XmlBuilder treatPhotoEDIT(ViewSessionPhoto vSession, XmlBuilder submit) throws WebAlbumsServiceException;
+    XmlBuilder treatPhotoEDIT(ViewSessionPhotoEdit vSession, XmlBuilder submit) throws WebAlbumsServiceException;
     XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException ;
-    XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoEdit vSession,Boolean correct) throws WebAlbumsServiceException ;
+    XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,Boolean correct) throws WebAlbumsServiceException ;
 
 }

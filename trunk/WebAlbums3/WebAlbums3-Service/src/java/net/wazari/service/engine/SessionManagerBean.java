@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSession.ViewSessionSession;
 
 @Stateless
 public class SessionManagerBean implements SessionManagerLocal {
@@ -15,7 +16,8 @@ public class SessionManagerBean implements SessionManagerLocal {
 
     @EJB SystemToolsLocal sysTools ;
     /* Session Listener */
-    public void sessionCreated(ViewSession vSession) {
+    @Override
+    public void sessionCreated(ViewSessionSession vSession) {
         log.info("Session created " + getUID());
         File temp = new File(vSession.getConfiguration().getTempDir() + "/" + getUID());
         log.info(temp.toString());
@@ -28,6 +30,7 @@ public class SessionManagerBean implements SessionManagerLocal {
         vSession.setTempDir(temp) ;
     }
 
+    @Override
     public void sessionDestroyed(ViewSession vSession) {
         File temp = vSession.getTempDir() ;
         if (temp != null) {

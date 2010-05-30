@@ -127,7 +127,7 @@ public class SystemTools implements SystemToolsLocal {
         dir.deleteOnExit();
 
         //build temp/user/THEME
-        dir = new File(dir, themeDAO.find(vSession.getThemeId()).getNom());
+        dir = new File(dir, vSession.getTheme().getNom());
         if (!dir.isDirectory() && !dir.mkdir()) {
             return null;
         }

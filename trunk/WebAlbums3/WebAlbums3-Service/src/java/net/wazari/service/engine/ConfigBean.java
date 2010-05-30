@@ -3,6 +3,7 @@ package net.wazari.service.engine;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -17,6 +18,7 @@ import net.wazari.util.XmlBuilder;
 import net.wazari.dao.entity.*;
 
 import net.wazari.service.ConfigLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionConfig;
@@ -25,19 +27,21 @@ import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 
-@SuppressWarnings("unchecked")
 @Stateless
+@RolesAllowed({UserLocal.ADMIN_ROLE})
 public class ConfigBean implements ConfigLocal {
 
     private static final long serialVersionUID = -628341734743684910L;
     
-    @EJB TagFacadeLocal tagDAO ;
-    @EJB GeolocalisationFacadeLocal geoDAO ;
-    @EJB TagThemeFacadeLocal tagThemeDAO ;
-    @EJB TagPhotoFacadeLocal tagPhotoDAO ;
-    @EJB ThemeFacadeLocal themeDAO ;
-@EJB
-    private WebPageLocal webPageService ;
+    @EJB private TagFacadeLocal tagDAO ;
+    @EJB private GeolocalisationFacadeLocal geoDAO ;
+    @EJB private TagThemeFacadeLocal tagThemeDAO ;
+    @EJB private TagPhotoFacadeLocal tagPhotoDAO ;
+    @EJB private ThemeFacadeLocal themeDAO ;
+    @EJB private WebPageLocal webPageService ;
+
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     public XmlBuilder treatCONFIG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
 
@@ -48,6 +52,8 @@ public class ConfigBean implements ConfigLocal {
         return displayCONFIG(vSession);
     }
 
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     public XmlBuilder treatIMPORT(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("import");
@@ -66,6 +72,8 @@ public class ConfigBean implements ConfigLocal {
         return output.validate();
     }
 
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     public XmlBuilder treatMODTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("modTag");
@@ -98,6 +106,8 @@ public class ConfigBean implements ConfigLocal {
         return output.validate();
     }
 
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     public XmlBuilder treatMODGEO(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("modGeo");
@@ -111,27 +121,30 @@ public class ConfigBean implements ConfigLocal {
             return output.validate();
         }
 
-            Geolocalisation enrGeo = geoDAO.find(tag);
+        Tag enrTag = tagDAO.find(tag);
+        if (enrTag == null) {
+            output.addException("La localisation " + tag + " ne correspond à aucun tag ...");
+            return output.validate();
+        }
 
-            if (enrGeo == null) {
-                output.addException("La localisation " + tag + " ne correspond à aucun tag ...");
-                return output.validate();
-            }
 
-            if (lng == null || lat == null) {
-                output.addException("La geoloc " + lng + "/" + lat + " n'est pas correcte...");
+        if (lng == null || lat == null) {
+            output.addException("La geoloc " + lng + "/" + lat + " n'est pas correcte...");
 
-                return output.validate();
-            }
-            enrGeo.setLongitude(lng);
-            enrGeo.setLat(lat);
-            geoDAO.edit(enrGeo);
+            return output.validate();
+        }
+        Geolocalisation enrGeo = enrTag.getGeolocalisation() ;
+        enrGeo.setLongitude(lng);
+        enrGeo.setLat(lat);
+        geoDAO.edit(enrGeo);
 
-            output.add("newLngLat", lng + "/" + lat);
+        output.add("newLngLat", lng + "/" + lat);
 
         return output.validate();
     }
 
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     public XmlBuilder treatMODVIS(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("modVis");
@@ -149,7 +162,7 @@ public class ConfigBean implements ConfigLocal {
             output.addException("Pas de tag selectionné ...");
             return output.validate();
         }
-            TagTheme enrTagTheme = tagThemeDAO.loadByTagTheme(tag, vSession.getThemeId());
+            TagTheme enrTagTheme = tagThemeDAO.loadByTagTheme(tag, vSession.getTheme().getId());
 
             if (enrTagTheme == null) {
 
@@ -161,7 +174,7 @@ public class ConfigBean implements ConfigLocal {
                 rq = "done";
 
                 enrTagTheme = new TagTheme();
-                enrTagTheme.setTheme(themeDAO.find(vSession.getThemeId()));
+                enrTagTheme.setTheme(vSession.getTheme());
                 enrTagTheme.setTag(tagDAO.find(tag));
 
                 tagThemeDAO.create(enrTagTheme);
@@ -177,6 +190,8 @@ public class ConfigBean implements ConfigLocal {
         return output.validate();
     }
 
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     public XmlBuilder treatNEWTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("newTag");
@@ -265,6 +280,8 @@ public class ConfigBean implements ConfigLocal {
         return output.validate();
     }
 
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     public XmlBuilder treatDELTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("delTag");
@@ -273,9 +290,9 @@ public class ConfigBean implements ConfigLocal {
         int tagID = vSession.getTag();
 
         try {
-
+            Tag enrTag = tagDAO.find(tagID) ;
             //liens Tag->Photos
-            List<TagPhoto> lstTP = tagPhotoDAO.queryByTag(tagID);
+            List<TagPhoto> lstTP = enrTag.getTagPhotoList() ;
             int i = 0;
             for (TagPhoto enrTagPhoto : lstTP)  {
                 tagPhotoDAO.remove(enrTagPhoto);
@@ -285,7 +302,7 @@ public class ConfigBean implements ConfigLocal {
 
             //liens Tag->Localisation
             i = 0;
-            Geolocalisation enrGeo = geoDAO.find(tagID);
+            Geolocalisation enrGeo = enrTag.getGeolocalisation() ;
             if (enrGeo != null) {
                 geoDAO.remove(enrGeo);
                 i = 1;
@@ -293,7 +310,7 @@ public class ConfigBean implements ConfigLocal {
             output.add("message", "Suppression de " + i + " Geolocalisation");
 
             //liens Tag->Theme
-            List<TagTheme> lstTT = tagThemeDAO.queryByTag(vSession, tagID);
+            List<TagTheme> lstTT = enrTag.getTagThemeList() ;
 
             i = 0;
             for(TagTheme enrTagTheme : lstTT) {
@@ -303,7 +320,6 @@ public class ConfigBean implements ConfigLocal {
             output.add("message", "Suppression de " + i + " TagThemes");
 
             //tag
-            Tag enrTag = tagDAO.find(tagID);
             i = 0;
             if (enrTag != null) {
                 tagDAO.remove(enrTag);
@@ -318,6 +334,9 @@ public class ConfigBean implements ConfigLocal {
 
         } 
     }
+
+    @Override
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     public XmlBuilder displayCONFIG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("config");

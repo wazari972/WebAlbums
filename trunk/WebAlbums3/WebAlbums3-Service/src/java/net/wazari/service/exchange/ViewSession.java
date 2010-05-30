@@ -15,20 +15,56 @@ import net.wazari.dao.exchange.ServiceSession;
  */
 public interface ViewSession extends ServiceSession {
 
-    File getTempDir();
-    Integer getThemeId() ;
-    Theme getTheme() ;
-    void setTheme(Theme enrTheme);
+    interface ViewSessionLogin extends ViewSession {
 
-    void setEditionMode(EditMode editMode);
+        void setTheme(Theme enrTheme);
+
+        void setDetails(Boolean newValue);
+
+        
+
+        void setSessionManager(Boolean sessionManager);
+
+        void setUserId(Integer userId);
+
+        void setRootSession(Boolean asThemeManager);
+
+        void setUserName(String userName);
+
+        String getUserPass();
+
+        boolean authenticate();
+
+        Principal getUserPrincipal();
+
+        void login(String user, String passwd);
+
+        void setEditionMode(EditMode editMode);
+
+        Integer getThemeId();
+    }
+
+    interface ViewSessionSession extends ViewSession {
+        void setTempDir(File temp);
+    }
+
+
+    EditMode getEditionMode();
+
+    Special getSpecial();
+
+    Action getAction();
+
+    String getUserName();
+
+    boolean isAuthenticated();
+
+    File getTempDir();
+
+    @Override
+    Theme getTheme();
 
     boolean getDetails();
-
-    void setDetails(Boolean newValue);
-
-    void setTempDir(File temp);
-    
-    void setSessionManager(Boolean sessionManager) ;
 
     Configuration getConfiguration();
 
@@ -47,11 +83,6 @@ public interface ViewSession extends ServiceSession {
         VISITE, NORMAL, EDITION
     }
 
-    enum Type {
-
-        PHOTO, ALBUM
-    }
-
     enum Box {
 
         NONE, MULTIPLE, LIST, MAP, MAP_SCRIPT
@@ -61,27 +92,4 @@ public interface ViewSession extends ServiceSession {
 
         TAG_USED, TAG_NUSED, TAG_ALL, TAG_NEVER, TAG_GEO
     };
-
-    EditMode getEditionMode();
-
-    Special getSpecial();
-
-    Action getAction();
-    
-    String getUserName();
-
-    String getUserPass();
-
-    void setUserId(Integer userId);
-
-    void setRootSession(Boolean asThemeManager);
-
-    void setUserName(String userName);
-
-    Integer getId();
-
-    boolean authenticate() ;
-    boolean isAuthenticated() ;
-    Principal getUserPrincipal() ;
-    void login(String user, String passwd) ;
 }

@@ -23,11 +23,5 @@ public interface TagThemeFacadeLocal {
 
     void remove(TagTheme tagTheme);
 
-    TagTheme find(Object id);
-
-    List<TagTheme> findAll();
-
-    List<TagTheme> queryByTag(ServiceSession session, int tag) ;
-
     TagTheme loadByTagTheme(Integer tagID, Integer themeID) ;
 }

@@ -8,6 +8,7 @@ import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -30,31 +31,25 @@ public class AlbumFacade implements AlbumFacadeLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void create(Album album) {
         em.persist(album);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void edit(Album album) {
         em.merge(album);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void remove(Album album) {
         em.remove(em.merge(album));
     }
 
     @Override
-    public Album find(Object id) {
-        return em.find(Album.class, id);
-    }
-
-    @Override
-    public List<Album> findAll() {
-        return em.createQuery("select object(o) from Album as o").getResultList();
-    }
-
-    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Album> queryAlbums(ServiceSession session,
             boolean restrictAllowed,
             boolean restrictTheme, TopFirst topFirst, int topX) {
@@ -75,6 +70,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Album loadIfAllowed(ServiceSession session, int id) {
         try {
             String rq = "FROM Album a " +
@@ -88,6 +84,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public Album loadByNameDate(String name, String date) {
         String rq = "FROM Album a " +
                 " WHERE a.date = :date " +
@@ -96,5 +93,18 @@ public class AlbumFacade implements AlbumFacadeLocal {
                 .setParameter("date", date)
                 .setParameter("nom", name)
                 .getSingleResult();
+    }
+
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public Album find(Integer albumId) {
+        try {
+            String rq = "SELECT a FROM Album a WHERE a.id = :id";
+        return (Album) em.createQuery(rq)
+                .setParameter("id", albumId)
+                .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 }

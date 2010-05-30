@@ -20,6 +20,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import net.wazari.dao.entity.facades.PhotoOrAlbum;
 
 /**
  *
@@ -28,7 +29,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Album")
 @NamedQueries({@NamedQuery(name = "Album.findAll", query = "SELECT a FROM Album a"), @NamedQuery(name = "Album.findById", query = "SELECT a FROM Album a WHERE a.id = :id"), @NamedQuery(name = "Album.findByNom", query = "SELECT a FROM Album a WHERE a.nom = :nom"), @NamedQuery(name = "Album.findByDescription", query = "SELECT a FROM Album a WHERE a.description = :description"), @NamedQuery(name = "Album.findByDate", query = "SELECT a FROM Album a WHERE a.date = :date"), @NamedQuery(name = "Album.findByPicture", query = "SELECT a FROM Album a WHERE a.picture = :picture")})
-public class Album implements Serializable {
+public class Album implements Serializable, PhotoOrAlbum {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -42,8 +43,9 @@ public class Album implements Serializable {
     @Basic(optional = false)
     @Column(name = "Date")
     private String date;
-    @Column(name = "Picture")
-    private Integer picture;
+    @JoinColumn(name = "Picture", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    private Photo picture;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album")
     private List<Photo> photoList;
     @JoinColumn(name = "Droit", referencedColumnName = "ID")
@@ -98,11 +100,11 @@ public class Album implements Serializable {
         this.date = date;
     }
 
-    public Integer getPicture() {
+    public Photo getPicture() {
         return picture;
     }
 
-    public void setPicture(Integer picture) {
+    public void setPicture(Photo picture) {
         this.picture = picture;
     }
 

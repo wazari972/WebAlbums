@@ -12,6 +12,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.logging.Logger;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -21,12 +22,14 @@ import net.wazari.util.XmlBuilder;
 import net.wazari.dao.entity.Photo;
 
 import net.wazari.service.ImageLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.util.system.SystemTools;
 
 @Stateless
+@RolesAllowed({UserLocal.VIEWER_ROLE})
 public class ImageBean implements ImageLocal {
     private static final Logger log = Logger.getLogger(ImageBean.class.getName());
     private static final long serialVersionUID = 1L;
@@ -35,12 +38,15 @@ public class ImageBean implements ImageLocal {
 
     private SystemTools sysTools ;
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("img");
         Integer imgId = vSession.getId();
 
         ImgMode mode = vSession.getImgMode();
+        mode = (mode == null ? ImgMode.PETIT : mode) ;
         String filepath = null;
         String type = null;
         try {
@@ -60,7 +66,7 @@ public class ImageBean implements ImageLocal {
                 return output.validate();
             }
 
-            type = (enrPhoto.getType() == null ? "image/jpeg" : enrPhoto.getType());
+            type = (mode == ImgMode.PETIT || enrPhoto.getType() == null ? "image/jpeg" : enrPhoto.getType());
 
             if (mode == ImgMode.SHRINK) {
                 String width = vSession.getWidth();

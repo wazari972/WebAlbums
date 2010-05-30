@@ -4,15 +4,16 @@
  */
 package net.wazari.dao.jpa;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
@@ -32,80 +33,63 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     @EJB TagFacadeLocal   tagDAO ;
     @EJB ThemeFacadeLocal themeDAO ;
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void create(TagPhoto tagPhoto) {
         em.persist(tagPhoto);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void edit(TagPhoto tagPhoto) {
         em.merge(tagPhoto);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void remove(TagPhoto tagPhoto) {
-        Photo enrPhoto = tagPhoto.getPhoto() ;
-        Tag enrTag = tagPhoto.getTag() ;
-        log.info("============= REMOVE "+tagPhoto.getPhoto()+"/"+tagPhoto.getTag()) ;
         em.remove(tagPhoto);
-        em.merge(enrTag) ;
-        em.merge(enrPhoto) ;
-        em.flush();
     }
 
-    public TagPhoto find(Object id) {
-        return em.find(TagPhoto.class, id);
-    }
-
-    public List<TagPhoto> findAll() {
-        return em.createQuery("select object(o) from TagPhoto as o")
-                .getResultList();
-    }
-
-    public void deleteByPhoto(int photoId) {
-        Photo enrPhoto = photoDAO.find(photoId) ;
-
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    public void deleteByPhoto(Photo enrPhoto) {
         for (TagPhoto enrTp : enrPhoto.getTagPhotoList()) {
             remove(enrTp);
         }
     }
 
-    public List<TagPhoto> queryByPhoto(int photoId) {
-        log.info("============= queryByPhoto "+photoId) ;
-        String rq = "FROM TagPhoto WHERE photo.id = :photoId";
-        return em.createQuery(rq)
-                .setParameter("photoId", photoId)
-                .getResultList();
-    }
-
-    public List<TagPhoto> queryByAlbum(int albumId) {
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public List<TagPhoto> queryByAlbum(Album enrAlbum) {
         String rq = "SELECT DISTINCT tp " +
                 "FROM Photo photo, TagPhoto tp " +
-                "WHERE photo.album = :albumId " +
+                "WHERE photo.album = :album " +
                 "AND photo.id = tp.photo ";
         return em.createQuery(rq)
-                .setParameter("albumId", albumDAO.find(albumId))
+                .setParameter("album", enrAlbum)
                 .getResultList();
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public TagPhoto loadByTagPhoto(int tagId, int photoId) {
-        String rq = "FROM TagPhoto tp WHERE tp.photo = :photoId AND tp.tag = :tagId";
+        String rq = "FROM TagPhoto tp WHERE tp.photo.id = :photoId AND tp.tag.id = :tagId";
         return (TagPhoto) em.createQuery(rq)
-                .setParameter("photoId", photoDAO.find(photoId))
-                .setParameter("tagId", tagDAO.find(tagId))
+                .setParameter("photoId", photoId)
+                .setParameter("tagId", tagId)
                 .getSingleResult();
     }
 
-    public List<TagPhoto> queryByTag(int tagId) {
-        String rq = "FROM TagPhoto WHERE tag = :tagId";
-        return em.createQuery(rq)
-                .setParameter("tagId", tagDAO.find(tagId))
-                .getResultList();
-    }
-
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public List<Tag> selectDistinctTags() {
         String rq = "SELECT DISTINCT tp.tag FROM TagPhoto tp";
         return em.createQuery(rq).getResultList();
     }
 
-
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public List<Tag> selectUnusedTags(ServiceSession session) {
         String rq = "SELECT DISTINCT tp.tag " +
                             "FROM TagPhoto tp, Photo p, Album a " +

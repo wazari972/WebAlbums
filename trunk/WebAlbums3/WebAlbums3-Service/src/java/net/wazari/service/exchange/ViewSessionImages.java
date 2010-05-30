@@ -14,8 +14,11 @@ import java.io.OutputStream;
  */
 public interface ViewSessionImages extends ViewSession {
     enum ImgMode {
-        GRAND, SHRINK
+        PETIT, GRAND, SHRINK
     }
+
+    Integer getId();
+
     public String getWidth();
 
     ImgMode getImgMode();

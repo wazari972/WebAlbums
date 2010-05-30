@@ -15,6 +15,8 @@ import net.wazari.dao.entity.Utilisateur;
  */
 @Local
 public interface UtilisateurFacadeLocal {
+    final static String ADMIN_ROLE = "ADMIN" ;
+    final static String VIEWER_ROLE = "VIEWER" ;
 
     void create(Utilisateur utilisateur);
 
@@ -22,13 +24,13 @@ public interface UtilisateurFacadeLocal {
 
     void remove(Utilisateur utilisateur);
 
-    Utilisateur find(Object id);
+    Utilisateur loadByName(String name) ;
+    
+    Utilisateur loadUserOutside(int albmId) ;
+
+    List<Utilisateur> loadUserInside(int id) ;
+
+    Utilisateur find(Integer droit);
 
     List<Utilisateur> findAll();
-
-    public Utilisateur loadByName(String name) ;
-    
-    public Utilisateur loadUserOutside(int albmId) ;
-
-    public List<Utilisateur> loadUserInside(int id) ;
 }

@@ -4,15 +4,13 @@
  */
 package net.wazari.dao.jpa;
 
-import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
-import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import net.wazari.dao.entity.TagTheme;
 
 /**
@@ -26,45 +24,35 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     @PersistenceContext
     private EntityManager em;
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void create(TagTheme tagTheme) {
         em.persist(tagTheme);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void edit(TagTheme tagTheme) {
         em.merge(tagTheme);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void remove(TagTheme tagTheme) {
         em.remove(em.merge(tagTheme));
     }
 
-    public TagTheme find(Object id) {
-        return em.find(TagTheme.class, id);
-    }
-
-    public List<TagTheme> findAll() {
-        return em.createQuery("select object(o) from TagTheme as o").getResultList();
-    }
-
-    public List<TagTheme> queryByTag(ServiceSession session, int tagId) {
-        String rq = "FROM TagTheme tt " +
-                "WHERE tt.tag = :tagId " +
-                (session.isRootSession() ? "" : " AND tt.theme = :theme");
-        Query q = em.createQuery(rq)
-                .setParameter("tagId", tagDAO.find(tagId)) ;
-        if (!session.isRootSession()) q.setParameter("theme", session.getTheme()) ;
-        return q.getResultList();
-    }
-
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public TagTheme loadByTagTheme(Integer tagId, Integer themeId) {
         if (tagId == null || themeId == null) return null ;
         try {
             String rq = "FROM TagTheme tt " +
-                    "WHERE tt.tag = :tagId " +
-                    " AND tt.theme = :themeId ";
+                    "WHERE tt.tag.id = :tagId " +
+                    " AND tt.theme.id = :themeId ";
             return (TagTheme) em.createQuery(rq)
-                    .setParameter("tagId", tagDAO.find(tagId))
-                    .setParameter("themeId", themeDAO.find(themeId))
+                    .setParameter("tagId", tagId)
+                    .setParameter("themeId", themeId)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null ;

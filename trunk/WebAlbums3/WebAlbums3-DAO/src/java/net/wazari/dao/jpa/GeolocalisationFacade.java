@@ -6,7 +6,7 @@
 package net.wazari.dao.jpa;
 
 import net.wazari.dao.*;
-import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,24 +21,21 @@ public class GeolocalisationFacade implements GeolocalisationFacadeLocal {
     @PersistenceContext
     private EntityManager em;
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void create(Geolocalisation geolocalisation) {
         em.persist(geolocalisation);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void edit(Geolocalisation geolocalisation) {
         em.merge(geolocalisation);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void remove(Geolocalisation geolocalisation) {
         em.remove(em.merge(geolocalisation));
-    }
-
-    public Geolocalisation find(Object id) {
-        return em.find(Geolocalisation.class, id);
-    }
-
-    public List<Geolocalisation> findAll() {
-        return em.createQuery("select object(o) from Geolocalisation as o")
-                .getResultList();
     }
 }

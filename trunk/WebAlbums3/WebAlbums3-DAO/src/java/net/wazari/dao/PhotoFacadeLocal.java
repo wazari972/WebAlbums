@@ -22,10 +22,6 @@ public interface PhotoFacadeLocal {
 
     void remove(Photo photo);
 
-    Photo find(Object id);
-
-    List<Photo> findAll();
-
     Photo loadIfAllowed(ServiceSession session, int id);
 
     List<Photo> loadFromAlbum(ServiceSession session, int albumId, Integer first);
@@ -33,4 +29,6 @@ public interface PhotoFacadeLocal {
     Photo loadByPath(String path);
 
     List<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Integer first);
+
+    Photo find(Integer photoID);
 }

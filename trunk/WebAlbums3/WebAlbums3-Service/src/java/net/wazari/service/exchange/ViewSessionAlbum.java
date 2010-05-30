@@ -10,23 +10,32 @@ package net.wazari.service.exchange;
  * @author kevin
  */
 public interface ViewSessionAlbum extends ViewSession {
-    String getDesc();
+    interface ViewSessionAlbumSubmit extends ViewSessionAlbum {
+        String getDesc();
 
-    String getNom();
+        String getNom();
 
-    String getDate();
+        String getDate();
 
-    Integer[] getTags();
+        Integer[] getTags();
+        boolean getForce();
 
-    boolean getForce();
+        boolean getSuppr() ;
+        Integer getUserAllowed();
+    }
 
-    boolean getSuppr() ;
+    interface ViewSessionAlbumEdit extends ViewSessionAlbum {
 
-    Integer getPage() ;
+        Integer getCountAlbm();
 
+    }
+    interface ViewSessionAlbumDisplay extends ViewSessionAlbum {
+
+        Integer getCountAlbm();
+
+    }
+    Integer getId();
     Integer getCount();
-
-    Integer getCountAlbm();
-
-    Integer getUserAllowed();
+    Integer getPage() ;
+    
 }

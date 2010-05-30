@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import javax.annotation.security.RolesAllowed;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import javax.ejb.Stateless;
@@ -18,7 +19,9 @@ import javax.persistence.PersistenceContext;
 public class WebAlbumsDAOBean implements WebAlbumsDAOLocal {
     @PersistenceContext
     private EntityManager em;
-    
+
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String processListID(ServiceSession session, String rq, boolean restrict) {
         if (restrict && ! session.isRootSession()) {
             rq += " AND " + restrictToThemeAllowed(session, "a") + " ";
@@ -26,6 +29,8 @@ public class WebAlbumsDAOBean implements WebAlbumsDAOLocal {
         return rq;
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToAlbumsAllowed(ServiceSession session, String album) {
         String rq = null;
         if (session.isSessionManager()) {
@@ -45,6 +50,8 @@ public class WebAlbumsDAOBean implements WebAlbumsDAOLocal {
         return rq;
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToPhotosAllowed(ServiceSession session, String photo) {
         String rq = null;
 
@@ -65,6 +72,8 @@ public class WebAlbumsDAOBean implements WebAlbumsDAOLocal {
         return rq;
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToThemeAllowed(ServiceSession session, String album) {
         if (session.isRootSession()) {
             return " 1 = 1";

@@ -17,8 +17,6 @@ import org.hibernate.JDBCException;
 import util.StringUtil;
 import util.XmlBuilder;
 import entity.Photo;
-import entity.Tag ;
-import entity.Album ;
 
 import system.SystemTools;
 
@@ -37,8 +35,6 @@ public class Images {
     String filepath = null ;
     String type = null ;
     try {
-      String tagID = StringUtil.escapeHTML(request.getParameter("tag")) ;
-      
       rq = "FROM Photo p "+
 	" WHERE p.ID = '"+imgID+"' "+
 	" AND "+WebPage.restrictToPhotosAllowed(request, "p")+" " ;
@@ -57,7 +53,7 @@ public class Images {
 	return output.validate() ;
       }
       
-      type = (enrPhoto.getType() == null ? "image/jpeg" : enrPhoto.getType());
+      type = ("PETIT".equals(mode) || enrPhoto.getType() == null ? "image/jpeg" : enrPhoto.getType());
 
       if ("SHRINK".equals(mode)) {
 	String width = request.getParameter("width") ;
@@ -103,7 +99,7 @@ public class Images {
       URLConnection conn = new URL(filepath).openConnection() ;
       in = conn.getInputStream() ;
       
-      int bufferSize = (int) Math.min(conn.getContentLength(), 4*1024) ;
+      int bufferSize = Math.min(conn.getContentLength(), 4*1024) ;
       byte[] buffer = new byte[bufferSize];
       int nbRead;
       

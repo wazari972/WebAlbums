@@ -23,10 +23,9 @@ public interface AlbumFacadeLocal {
 
     void remove(Album album);
 
-    Album find(Object id);
-
-    List<Album> findAll();
-    public enum TopFirst {
+    Album find(Integer albumId);
+    
+    enum TopFirst {
         TOP, FIRST
     }
 

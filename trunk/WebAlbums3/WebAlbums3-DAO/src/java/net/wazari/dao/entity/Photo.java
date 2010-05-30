@@ -20,6 +20,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import net.wazari.dao.entity.facades.PhotoOrAlbum;
 
 /**
  *
@@ -28,7 +29,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "Photo")
 @NamedQueries({@NamedQuery(name = "Photo.findAll", query = "SELECT p FROM Photo p"), @NamedQuery(name = "Photo.findById", query = "SELECT p FROM Photo p WHERE p.id = :id"), @NamedQuery(name = "Photo.findByPath", query = "SELECT p FROM Photo p WHERE p.path = :path"), @NamedQuery(name = "Photo.findByDescription", query = "SELECT p FROM Photo p WHERE p.description = :description"), @NamedQuery(name = "Photo.findByModel", query = "SELECT p FROM Photo p WHERE p.model = :model"), @NamedQuery(name = "Photo.findByDate", query = "SELECT p FROM Photo p WHERE p.date = :date"), @NamedQuery(name = "Photo.findByIso", query = "SELECT p FROM Photo p WHERE p.iso = :iso"), @NamedQuery(name = "Photo.findByExposure", query = "SELECT p FROM Photo p WHERE p.exposure = :exposure"), @NamedQuery(name = "Photo.findByFocal", query = "SELECT p FROM Photo p WHERE p.focal = :focal"), @NamedQuery(name = "Photo.findByFlash", query = "SELECT p FROM Photo p WHERE p.flash = :flash"), @NamedQuery(name = "Photo.findByHeight", query = "SELECT p FROM Photo p WHERE p.height = :height"), @NamedQuery(name = "Photo.findByWidth", query = "SELECT p FROM Photo p WHERE p.width = :width"), @NamedQuery(name = "Photo.findByType", query = "SELECT p FROM Photo p WHERE p.type = :type"), @NamedQuery(name = "Photo.findByDroit", query = "SELECT p FROM Photo p WHERE p.droit = :droit")})
-public class Photo implements Serializable {
+public class Photo implements Serializable, PhotoOrAlbum {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -57,8 +58,9 @@ public class Photo implements Serializable {
     private String width;
     @Column(name = "Type")
     private String type;
-    @Column(name = "Droit")
-    private Integer droit;
+    @JoinColumn(name = "Droit", referencedColumnName = "ID")
+    @ManyToOne(optional = false)
+    private Utilisateur droit;
     @OneToMany(cascade = CascadeType.ALL , mappedBy = "photo")
     private List<TagPhoto> tagPhotoList;
     @JoinColumn(name = "Album", referencedColumnName = "ID")
@@ -173,11 +175,11 @@ public class Photo implements Serializable {
         this.type = type;
     }
 
-    public Integer getDroit() {
+    public Utilisateur getDroit() {
         return droit;
     }
 
-    public void setDroit(Integer droit) {
+    public void setDroit(Utilisateur droit) {
         this.droit = droit;
     }
 

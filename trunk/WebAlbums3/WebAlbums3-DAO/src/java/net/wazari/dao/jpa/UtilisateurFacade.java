@@ -8,6 +8,7 @@ package net.wazari.dao.jpa;
 import net.wazari.dao.*;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -26,27 +27,26 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     @PersistenceContext
     private EntityManager em;
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void create(Utilisateur utilisateur) {
         em.persist(utilisateur);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void edit(Utilisateur utilisateur) {
         em.merge(utilisateur);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void remove(Utilisateur utilisateur) {
         em.remove(em.merge(utilisateur));
     }
 
-    public Utilisateur find(Object id) {
-        return em.find(Utilisateur.class, id);
-    }
-
-    public List<Utilisateur> findAll() {
-        return em.createQuery("select object(o) from Utilisateur as o").getResultList();
-    }
-
-
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Utilisateur loadByName(String name) {
         try {
             String rq = "FROM Utilisateur u WHERE u.nom = :nom";
@@ -59,21 +59,44 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
         }
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public Utilisateur loadUserOutside(int albumId) {
         String rq = "SELECT u FROM Utilisateur u, Album a WHERE u.id = a.droit AND a.id = :albumId";
         return (Utilisateur) em.createQuery(rq)
                 .setParameter("albumId", albumId)
                 .getSingleResult();
     }
-    
+
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public List<Utilisateur> loadUserInside(int albumId) {
         String rq = "SELECT DISTINCT u " +
                 " FROM Photo p, Utilisateur u " +
                 " WHERE u.id = p.droit " +
-                " AND p.album = :albumId " +
+                " AND p.album.id = :albumId " +
                 " AND p.droit != null AND p.droit != 0";
         return  em.createQuery(rq)
-                .setParameter("albumId", albumDAO.find(albumId))
+                .setParameter("albumId", albumId)
                 .getResultList();
+    }
+
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public Utilisateur find(Integer droit) {
+        try {
+            String rq = "FROM Utilisateur u WHERE u.id = :id";
+            return (Utilisateur) em.createQuery(rq)
+                    .setParameter("id", droit)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
+    }
+
+    @Override
+    public List<Utilisateur> findAll() {
+        String rq = "FROM Utilisateur u";
+        return em.createQuery(rq).getResultList() ;
     }
 }

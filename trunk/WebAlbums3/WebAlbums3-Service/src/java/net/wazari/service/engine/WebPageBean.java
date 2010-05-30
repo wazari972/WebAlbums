@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -14,6 +16,8 @@ import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
 
+import net.wazari.dao.entity.facades.PhotoOrAlbum;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -21,13 +25,13 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Type;
 import net.wazari.service.util.google.GooglePoint;
 import net.wazari.service.util.google.GooglePoint.Point;
 
 import net.wazari.util.XmlBuilder;
 
 @Stateless
+@RolesAllowed({UserLocal.VIEWER_ROLE})
 public class WebPageBean implements WebPageLocal {
 
     @EJB
@@ -51,6 +55,8 @@ public class WebPageBean implements WebPageLocal {
         WebPageBean.log.info("Hibernate is ready !");
     }
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public EditMode getNextEditionMode(ViewSession vSession) {
         EditMode editionMode = vSession.getEditionMode();
         EditMode next;
@@ -69,6 +75,8 @@ public class WebPageBean implements WebPageLocal {
     //try to get the 'asked' element
     //or the page 'page' if asked is null
     //go to the first page otherwise
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public Bornes calculBornes(Integer page,
             Integer eltAsked,
             int taille) {
@@ -90,6 +98,8 @@ public class WebPageBean implements WebPageLocal {
         return bornes;
     }
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder xmlPage(XmlBuilder from, Bornes bornes) {
         XmlBuilder page = new XmlBuilder("page");
         page.addComment("Page 0 .. " + bornes.page + " ..");
@@ -110,6 +120,8 @@ public class WebPageBean implements WebPageLocal {
         return page;
     }
 
+    @Override
+    @PermitAll
     public XmlBuilder xmlLogin(ViewSession vSession) {
         XmlBuilder login = new XmlBuilder("login");
         String theme = "Not logged in" ;
@@ -134,6 +146,8 @@ public class WebPageBean implements WebPageLocal {
         return login.validate();
     }
 
+    @Override
+    @PermitAll
     public XmlBuilder xmlAffichage(ViewSession vSession) {
         XmlBuilder affichage = new XmlBuilder("affichage");
         if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
@@ -156,28 +170,34 @@ public class WebPageBean implements WebPageLocal {
     //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
     @SuppressWarnings("unchecked")
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayListIBTNI(Mode mode,
             ViewSession vSession,
-            int id,
+            PhotoOrAlbum entity,
             Box box,
-            Type type,
             String name,
             String info)
             throws WebAlbumsServiceException {
 
-        List<Integer> ids = null;
+        String type = "unknown" ;
         List<TagPhoto> list = null;
-        if (type == Type.PHOTO) {
-            list = tagPhotoDAO.queryByPhoto(id);
-
-        } else if (type == Type.ALBUM) {
-            list = tagPhotoDAO.queryByAlbum(id);
+        if (entity instanceof Photo) {
+            list = ((Photo) entity).getTagPhotoList();
+            type = "PHOTO" ;
+        } else if (entity instanceof Album) {
+            list = tagPhotoDAO.queryByAlbum((Album) entity);
+            type = "ALBUMS" ;
         }
-        ids = new ArrayList<Integer>(list.size());
+        List<Tag> tags = new ArrayList<Tag>(list.size());
         for (TagPhoto enrTagPhoto : list) {
-            ids.add(enrTagPhoto.getTag().getId());
+            tags.add(enrTagPhoto.getTag());
         }
-        return displayListLBNI(mode, vSession, ids, box, name, info).addAttribut("box", box).addAttribut("type", type).addAttribut("id", id).addAttribut("mode", mode);
+        return displayListLBNI(mode, vSession, tags, box, name, info)
+                .addAttribut("box", box)
+                .addAttribut("type", type)
+                .addAttribut("id", entity.getId())
+                .addAttribut("mode", mode);
 
     }
 
@@ -190,9 +210,11 @@ public class WebPageBean implements WebPageLocal {
     //Only IDS are added to the list
     //Mode specific information can be provide throug info (null otherwise)
     //(used by Mode.MAP for the link to the relevant address)
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayListLBNI(Mode mode,
             ViewSession vSession,
-            List<Integer> ids,
+            List<Tag> ids,
             Box box,
             String name,
             String info)
@@ -252,7 +274,7 @@ public class WebPageBean implements WebPageLocal {
 
         for(Tag enrTag: tags) {
             String type = "nop";
-            int id = -1;
+            Tag tagId =  null ;
             String nom = null;
             Point p = null;
             Integer photo = null;
@@ -262,7 +284,7 @@ public class WebPageBean implements WebPageLocal {
                 if (enrTag.getTagType() == 3) {
                     //ensure that this tag is displayed in this theme
                     //(in root theme, diplay all of theme
-                    TagTheme enrTagTh = tagThemeDAO.loadByTagTheme(enrTag.getId(), vSession.getThemeId());
+                    TagTheme enrTagTh = tagThemeDAO.loadByTagTheme(enrTag.getId(), vSession.getTheme().getId());
                     if (enrTagTh != null && !enrTagTh.getIsVisible()) {
                         continue;
                     }
@@ -270,7 +292,7 @@ public class WebPageBean implements WebPageLocal {
                     //get its geoloc
                     Geolocalisation enrGeo = enrTag.getGeolocalisation();
                     if (enrGeo != null) {
-                        id = enrTag.getId();
+                        tagId = enrTag;
 
                         p = new Point(enrGeo.getLat(),
                                 enrGeo.getLongitude(),
@@ -285,7 +307,7 @@ public class WebPageBean implements WebPageLocal {
                 }
             } else if (box == Box.MAP) {
             } else {
-                id = enrTag.getId();
+                tagId = enrTag;
                 nom = enrTag.getNom();
 
                 switch (enrTag.getTagType()) {
@@ -305,10 +327,10 @@ public class WebPageBean implements WebPageLocal {
             }
             //display the value [if in ids][select if in ids]
             if (box == Box.MAP_SCRIPT) {
-                if (nom != null && (ids == null || ids.contains(id))) {
+                if (nom != null && (ids == null || ids.contains(tagId))) {
                     String msg;
                     msg = String.format("<center><a href='Tags?tagAsked=%s'>%s</a></center>",
-                            id, p.name);
+                            tagId.getId(), p.name);
                     if (photo != null) {
                         msg += String.format("<br/><img height='150px' alt='%s' " +
                                 "src='Images?" +
@@ -326,15 +348,15 @@ public class WebPageBean implements WebPageLocal {
                 boolean written = true;
                 if (ids != null) {
                     if (box == Box.MULTIPLE) {
-                        if (ids.contains(id)) {
+                        if (ids.contains(tagId)) {
                             selected = "checked";
                         }
-                    } else if (!ids.contains(id)) {
+                    } else if (!ids.contains(tagId)) {
                         written = false;
                     }
                 }
                 if (written) {
-                    xmlResult.add(new XmlBuilder(type, nom).addAttribut("id", id).addAttribut("checked", selected));
+                    xmlResult.add(new XmlBuilder(type, nom).addAttribut("id", tagId.getId()).addAttribut("checked", selected));
                 }
             }
         } /* while loop*/
@@ -352,8 +374,9 @@ public class WebPageBean implements WebPageLocal {
         return xmlResult.validate();
     }
 
-    @SuppressWarnings("unchecked")
-    public XmlBuilder displayListDroit(Integer right, Integer albmRight)
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    public XmlBuilder displayListDroit(Utilisateur right, Integer albmRight)
             throws WebAlbumsServiceException {
         if (right == null && albmRight == null) {
             throw new NullPointerException("Droit and Album cannot be null");
@@ -373,10 +396,10 @@ public class WebPageBean implements WebPageLocal {
                 name = "[" + name + "]";
                 id = null;
 
-                if (right == null || right.equals(0)) {
+                if (right == null) {
                     selected = true;
                 }
-            } else if (right != null && right.equals(enrUser.getId())) {
+            } else if (right != null && right.equals(enrUser)) {
                 selected = true;
             }
 
@@ -395,12 +418,16 @@ public class WebPageBean implements WebPageLocal {
         return output.validate();
     }
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayMapInBody(ViewSession vSession,
             String name, String info)
             throws WebAlbumsServiceException {
         return displayListLBNI(Mode.TAG_USED, vSession, null, Box.MAP, name, info);
     }
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayMapInScript(ViewSession vSession,
             String name, String info)
             throws WebAlbumsServiceException {
@@ -413,6 +440,8 @@ public class WebPageBean implements WebPageLocal {
     //and the information found in the REQUEST.
     //List made up of BOX items,
     //and is named NAME
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayListBN(Mode mode,
             ViewSession vSession,
             Box box,
@@ -426,6 +455,8 @@ public class WebPageBean implements WebPageLocal {
     //and the information found in REQUEST.
     //List is made up of BOX items
     //and is named with the default name for this MODE
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayListB(Mode mode,
             ViewSession vSession,
             Box box)
@@ -441,13 +472,14 @@ public class WebPageBean implements WebPageLocal {
     //and is named with the default name for this MODE
     //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayListIBT(Mode mode,
             ViewSession vSession,
-            int id,
-            Box box,
-            Type type)
+            PhotoOrAlbum entity,
+            Box box)
             throws WebAlbumsServiceException {
-        return displayListIBTNI(mode, vSession, id, box, type,
+        return displayListIBTNI(mode, vSession, entity, box,
                 null,
                 null);
     }
@@ -457,9 +489,11 @@ public class WebPageBean implements WebPageLocal {
     //and the information found in REQUEST.
     //List is made up of BOX items
     //and is filled with the IDs
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayListLB(Mode mode,
             ViewSession vSession,
-            List<Integer> ids,
+            List<Tag> ids,
             Box box)
             throws WebAlbumsServiceException {
         return displayListLBNI(mode, vSession, ids, box,

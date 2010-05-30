@@ -22,9 +22,9 @@ public interface ThemeFacadeLocal {
 
     void remove(Theme theme);
 
-    Theme find(Object id);
+    Theme loadByName(String themeName) ;
 
-    List<Theme> findAll();
+    List<Theme> findAll() ;
 
-    public Theme loadByName(String themeName) ;
+    Theme find(Integer themeId);
 }

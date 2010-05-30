@@ -1,16 +1,17 @@
 package net.wazari.service.engine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.EJB;
 
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Geolocalisation;
-import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.entity.Tag;
@@ -20,31 +21,33 @@ import net.wazari.service.PhotoLocal.PhotoRequest;
 import net.wazari.service.PhotoLocal.TypeRequest;
 import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.TagLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
-import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exception.WebAlbumsServiceException;
-
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.util.XmlBuilder;
 
 @Stateless
+@RolesAllowed({UserLocal.VIEWER_ROLE})
 public class TagBean implements TagLocal {
 
     private static final long serialVersionUID = 1L;
 
-    @EJB private PhotoFacadeLocal photoDAO ;
     @EJB private TagFacadeLocal tagDAO ;
     @EJB private TagThemeFacadeLocal tagThemeDAO ;
     @EJB private PhotoLocal photoLocal ;
     @EJB private WebPageLocal webService ;
     @EJB private SystemToolsLocal sysTools ;
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("tags");
         Special special = vSession.getSpecial();
@@ -85,8 +88,9 @@ public class TagBean implements TagLocal {
 
                 List<Tag> lstT = tagDAO.queryAllowedTagByType(vSession, type);
                 for(Tag enrTag : lstT) {
-                    XmlBuilder tag = new XmlBuilder("tag", enrTag.getNom()).addAttribut("id", enrTag.getId());
-                    List<TagTheme> lstTh = tagThemeDAO.queryByTag(vSession, enrTag.getId());
+                    XmlBuilder tag = new XmlBuilder("tag", enrTag.getNom())
+                            .addAttribut("id", enrTag.getId());
+                    List<TagTheme> lstTh = enrTag.getTagThemeList() ;
                     Random rand = new Random();
                     while (!lstTh.isEmpty()) {
                         int i = rand.nextInt(lstTh.size());
@@ -125,11 +129,11 @@ public class TagBean implements TagLocal {
         Boolean correct = true;
 
         if (Action.SUBMIT == action && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            submit = photoLocal.treatPhotoSUBMIT((ViewSessionPhotoEdit)vSession, correct);
+            submit = photoLocal.treatPhotoSUBMIT((ViewSessionPhotoSubmit)vSession, correct);
         }
 
         if ((Action.EDIT == action || !correct) && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            output = photoLocal.treatPhotoEDIT(vSession, submit);
+            output = photoLocal.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
             XmlBuilder return_to = new XmlBuilder("return_to");
             return_to.add("name", "Tags");
             return_to.add("page", page);
@@ -147,9 +151,17 @@ public class TagBean implements TagLocal {
         }
 
         if (tags != null) {
+            List<Tag> listTag = new ArrayList<Tag>(tags.length) ;
+            for (int tagId : Arrays.asList(tags)) {
+                try {
+                    listTag.add(tagDAO.find(tagId)) ;
+                } catch (Exception e) {
+
+                }
+            }
             List<Integer> listTagId = Arrays.asList(tags) ;
             XmlBuilder title = new XmlBuilder("title");
-            title.add(webService.displayListLB(Mode.TAG_USED, vSession, listTagId,
+            title.add(webService.displayListLB(Mode.TAG_USED, vSession, listTag,
                     Box.NONE));
             output.add(title);
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, listTagId) ;

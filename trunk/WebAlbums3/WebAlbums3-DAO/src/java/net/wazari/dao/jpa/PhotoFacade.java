@@ -7,6 +7,7 @@ package net.wazari.dao.jpa;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -29,33 +30,26 @@ public class PhotoFacade implements PhotoFacadeLocal {
     @PersistenceContext
     private EntityManager em;
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void create(Photo photo) {
         em.persist(photo);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void edit(Photo photo) {
         em.merge(photo);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void remove(Photo photo) {
         em.remove(em.merge(photo));
     }
 
-    public Photo find(Object id) {
-        if (id == null) {
-            return null;
-        }
-        try {
-            return em.find(Photo.class, id);
-        } catch (NoResultException e) {
-            return null ;
-        }
-    }
-
-    public List<Photo> findAll() {
-        return em.createQuery("select object(o) from Photo as o").getResultList();
-    }
-
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Photo loadIfAllowed(ServiceSession session, int id) {
         try {
             String rq = "FROM Photo p " +
@@ -68,12 +62,14 @@ public class PhotoFacade implements PhotoFacadeLocal {
         }
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Photo> loadFromAlbum(ServiceSession session, int albumId, Integer first) {
         String rq = "FROM Photo p " +
-                " WHERE p.album = :albumId " +
+                " WHERE p.album.id = :albumId " +
                 (session == null ? "" : " AND " + webDAO.restrictToPhotosAllowed(session, "p")) + " " +
                 " ORDER BY p.path";
-        Query q = em.createQuery(rq).setParameter("albumId", albumDAO.find(albumId));
+        Query q = em.createQuery(rq).setParameter("albumId", albumId);
         if (first != null) {
             q.setFirstResult(first);
             q.setMaxResults(session.getPhotoSize());
@@ -83,11 +79,15 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Photo loadByPath(String path) {
         String rq = "FROM Photo p WHERE p.path = :path";
         return (Photo) em.createQuery(rq).setParameter("path", path).getSingleResult();
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Integer first) {
         //creation de la requete
         String rq = "SELECT p FROM Photo p, Album a, TagPhoto tp " +
@@ -109,5 +109,15 @@ public class PhotoFacade implements PhotoFacadeLocal {
             q.setMaxResults(session.getPhotoSize());
         }
         return q.getResultList();
+    }
+
+    @Override
+    public Photo find(Integer id) {
+        try {
+            String rq = "FROM Photo p WHERE p.id = :id";
+            return (Photo) em.createQuery(rq).setParameter("id", id).getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 }

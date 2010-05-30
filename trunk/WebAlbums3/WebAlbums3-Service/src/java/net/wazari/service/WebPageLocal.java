@@ -7,12 +7,14 @@ package net.wazari.service;
 
 import java.util.List;
 import javax.ejb.Local;
+import net.wazari.dao.entity.Tag;
+import net.wazari.dao.entity.Utilisateur;
+import net.wazari.dao.entity.facades.PhotoOrAlbum;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Type;
 import net.wazari.util.XmlBuilder;
 
 /**
@@ -32,17 +34,17 @@ public interface WebPageLocal {
     XmlBuilder displayListBN(Mode mode, ViewSession vSession, Box box, String name) throws WebAlbumsServiceException;
 
     @SuppressWarnings(value = "unchecked")
-    XmlBuilder displayListDroit(Integer right, Integer albmRight) throws WebAlbumsServiceException;
+    XmlBuilder displayListDroit(Utilisateur right, Integer albmRight) throws WebAlbumsServiceException;
 
-    XmlBuilder displayListIBT(Mode mode, ViewSession vSession, int id, Box box, Type type) throws WebAlbumsServiceException;
-
-    @SuppressWarnings(value = "unchecked")
-    XmlBuilder displayListIBTNI(Mode mode, ViewSession vSession, int id, Box box, Type type, String name, String info) throws WebAlbumsServiceException;
-
-    XmlBuilder displayListLB(Mode mode, ViewSession vSession, List<Integer> ids, Box box) throws WebAlbumsServiceException;
+    XmlBuilder displayListIBT(Mode mode, ViewSession vSession, PhotoOrAlbum entity, Box box) throws WebAlbumsServiceException;
 
     @SuppressWarnings(value = "unchecked")
-    XmlBuilder displayListLBNI(Mode mode, ViewSession vSession, List<Integer> ids, Box box, String name, String info) throws WebAlbumsServiceException;
+    XmlBuilder displayListIBTNI(Mode mode, ViewSession vSession, PhotoOrAlbum entity, Box box, String name, String info) throws WebAlbumsServiceException;
+
+    XmlBuilder displayListLB(Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
+
+    @SuppressWarnings(value = "unchecked")
+    XmlBuilder displayListLBNI(Mode mode, ViewSession vSession, List<Tag> ids, Box box, String name, String info) throws WebAlbumsServiceException;
 
     XmlBuilder displayMapInBody(ViewSession vSession, String name, String info) throws WebAlbumsServiceException;
 

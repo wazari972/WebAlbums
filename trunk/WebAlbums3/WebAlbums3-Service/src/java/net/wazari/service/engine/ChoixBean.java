@@ -23,12 +23,15 @@ public class ChoixBean implements ChoixLocal {
 
     private static final long serialVersionUID = 1L;
 
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayChxScript(ViewSession vSession) throws WebAlbumsServiceException {
         XmlBuilder output = webPageService.displayMapInScript(vSession, "mapChoix",
                 null);
         return output;
     }
 
+    @Override
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlBuilder choix = new XmlBuilder("choix");

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import net.wazari.dao.*;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -28,30 +29,26 @@ public class TagFacade implements TagFacadeLocal {
     @PersistenceContext
     private EntityManager em;
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void create(Tag tag) {
         em.persist(tag);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void edit(Tag tag) {
         em.merge(tag);
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public void remove(Tag tag) {
         em.remove(em.merge(tag));
     }
 
-    public Tag find(Object id) {
-        try {
-            return em.find(Tag.class, id);
-        } catch (NoResultException e) {
-            return null ;
-        }
-    }
-
-    public List<Tag> findAll() {
-        return em.createQuery("select object(o) from Tag as o").getResultList();
-    }
-
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Map<Tag, Long> queryIDNameCount(ServiceSession session) {
         String rq = "SELECT t, count( tp.photo ) AS count " +
                 " FROM Tag t, TagPhoto tp, Photo p, Album a " +
@@ -69,6 +66,8 @@ public class TagFacade implements TagFacadeLocal {
         return ret;
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Tag> queryAllowedTagByType(ServiceSession session, int type) {
         String rq;
         if (session.isRootSession()) {
@@ -87,13 +86,17 @@ public class TagFacade implements TagFacadeLocal {
         return em.createQuery(rq).setParameter("type", type).getResultList();
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Tag loadByName(String nom) {
         String rq = "FROM Tag t " +
-                " WHERE  t.nom = :nom ";
+                " WHERE t.nom = :nom ";
 
         return (Tag) em.createQuery(rq).setParameter("nom", nom).getSingleResult();
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) {
         String rq = "SELECT DISTINCT ta " +
                 "FROM Tag ta, TagPhoto tp, Photo p, Album a " +
@@ -108,6 +111,8 @@ public class TagFacade implements TagFacadeLocal {
         return em.createQuery(rq).getResultList();
     }
 
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     public List<Tag> getNoSuchTags(ServiceSession sSession, List<Tag> tags) {
         String rq = "SELECT DISTINCT ta " +
                 " FROM Tag ta " +
@@ -122,5 +127,32 @@ public class TagFacade implements TagFacadeLocal {
             ret += ", " + enrTag.getId();
         }
         return ret;
+    }
+
+    @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public List<Tag> findAll(Integer tagId) {
+        String rq = "FROM Tag t";
+        return  em.createQuery(rq)
+                .getResultList();
+        
+    }
+
+    @Override
+    public Tag find(Integer id) {
+        try {
+            String rq = "FROM Tag t where t.id = :id";
+            return  (Tag) em.createQuery(rq)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
+    }
+
+    @Override
+    public List<Tag> findAll() {
+        String rq = "FROM Tag t";
+        return em.createQuery(rq).getResultList() ;
     }
 }

@@ -24,6 +24,7 @@ import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSession.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.ViewSessionImages;
@@ -73,7 +74,7 @@ public class DispatcherBean {
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             request.logout();
-            userService.cleanUpSession(vSession);
+            userService.cleanUpSession((ViewSessionLogin) vSession);
         }
         if (page != Page.USER) {
             request.authenticate(response) ;
@@ -93,10 +94,6 @@ public class DispatcherBean {
             xslFile = "static/Display.xsl";
             if (page == Page.VOID) {
                 output.add(themeService.treatVOID(vSession));
-            } else if (page == Page.USER) {
-                log.info("============= LOGIN =============");
-                output.add(Users.treatLogin(vSession, request));
-                log.info("============= /LOGIN =============");
             } else if (page == Page.MAINT) {
                 xslFile = "static/Empty.xsl";
                 //output.add(net.wazari.service.engine.Maint.treatMAINT(request));
@@ -111,7 +108,7 @@ public class DispatcherBean {
                     }
                 }
                 if (vSession.getTheme() == null){
-                    userService.authenticate(vSession, request);
+                    userService.authenticate((ViewSessionLogin) vSession,request);
                 }
                 //a partir d'ici, le thene doit être en memoire
                 if (vSession.getTheme() == null){

@@ -105,7 +105,7 @@ public class FilesFinder {
             } //if theme already exists
             else {
                 int enrThemeId = enrTheme.getId();
-                int logThemeId = vSession.getThemeId();
+                int logThemeId = vSession.getTheme().getId();
                 info(out, "Le theme est dans la table");
                 info(out, "logged: " + enrThemeId + ", " + logThemeId);
                 info(out, "logged: " + (enrThemeId == logThemeId));
@@ -146,8 +146,7 @@ public class FilesFinder {
 
 
                     this.themeName = themeName;
-                    int myID = enrTheme.getId();
-                    info(out, "ID du theme : " + myID + "");
+                    info(out, "ID du theme : " + enrTheme + "");
                     File[] subfiles = dirTheme.listFiles();
 
                     warn(out, "Le dossier '" + themeName + "' contient " +
@@ -158,7 +157,7 @@ public class FilesFinder {
                     for (int i = 0; i < subfiles.length; i++) {
                         if (subfiles[i].isDirectory()) {
                             info(out, "Important de l'album " + subfiles[i] + "");
-                            if (!importAlbum(subfiles[i], myID, out)) {
+                            if (!importAlbum(subfiles[i], enrTheme, out)) {
                                 warn(out, "An error occured during " +
                                         "importation of album (" + subfiles[i] + ")...");
                                 correct = false;
@@ -190,7 +189,7 @@ public class FilesFinder {
         return correct;
     }
 
-    private boolean importAlbum(File album, int authorID, XmlBuilder out)
+    private boolean importAlbum(File album, Theme enrTheme, XmlBuilder out)
             throws WebAlbumsDaoException {
         info(out, "##");
         info(out, "## Import of : " + album.getName());
@@ -225,7 +224,6 @@ public class FilesFinder {
                 //rechercher s'il est deja dans la liste
 
                 Album enrAlbum = albumDAO.loadByNameDate(nom, strDate);
-                Theme enrTheme = themeDAO.find(authorID);
                 if (enrAlbum == null) {
                     //si il n'y est pas, on l'ajoute
                     info(out, "## L'album n'est pas dans la table");
@@ -389,7 +387,7 @@ public class FilesFinder {
             }
             info(out, "Traitement de la photo " + enrPhoto.getId());
             //suppression des tags de cette photo
-            tagPhotoDAO.deleteByPhoto(enrPhoto.getId());
+            tagPhotoDAO.deleteByPhoto(enrPhoto);
 
             //suppression des photos physiquement
             url = source + conf.getImages() + conf.getSep() + enrTheme.getNom() + conf.getSep() + enrPhoto.getPath();

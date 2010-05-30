@@ -7,6 +7,7 @@ package net.wazari.service;
 
 import javax.ejb.Local;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSession.ViewSessionSession;
 
 /**
  *
@@ -15,7 +16,7 @@ import net.wazari.service.exchange.ViewSession;
 @Local
 public interface SessionManagerLocal {
 
-    void sessionCreated(ViewSession vSession);
+    void sessionCreated(ViewSessionSession vSession);
 
     void sessionDestroyed(ViewSession vSession);
 

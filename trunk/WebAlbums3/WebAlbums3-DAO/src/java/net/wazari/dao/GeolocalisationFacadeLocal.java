@@ -5,7 +5,6 @@
 
 package net.wazari.dao;
 
-import java.util.List;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Geolocalisation;
 
@@ -21,8 +20,4 @@ public interface GeolocalisationFacadeLocal {
     void edit(Geolocalisation geolocalisation);
 
     void remove(Geolocalisation geolocalisation);
-
-    Geolocalisation find(Object id);
-
-    List<Geolocalisation> findAll();
 }
