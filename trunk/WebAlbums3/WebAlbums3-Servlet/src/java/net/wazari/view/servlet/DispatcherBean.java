@@ -24,6 +24,7 @@ import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionConfig;
@@ -73,10 +74,12 @@ public class DispatcherBean {
     {
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
+            log.info("Logout and cleanup the session");
             request.logout();
             userService.cleanUpSession((ViewSessionLogin) vSession);
         }
         if (page != Page.USER) {
+            log.info("Authenticated the session");
             request.authenticate(response) ;
         }
         log.info("============= " + page + " =============");
@@ -92,7 +95,9 @@ public class DispatcherBean {
         boolean isComplete = false;
         try {
             xslFile = "static/Display.xsl";
-            if (page == Page.VOID) {
+            if (page == Page.USER) {
+                output.add(treatLogin(vSession, request)) ;
+            } else if (page == Page.VOID) {
                 output.add(themeService.treatVOID(vSession));
             } else if (page == Page.MAINT) {
                 xslFile = "static/Empty.xsl";
@@ -101,63 +106,74 @@ public class DispatcherBean {
                 log.info("============= Login: " + request.getUserPrincipal() + " =============");
                 String special = request.getParameter("special");
                 if (special != null) {
+                    log.info("Special XSL-style ("+special+")");
                     if ("RSS".equals(special)) {
                         xslFile = "static/Rss.xsl";
                     } else {
                         xslFile = "static/Empty.xsl";
                     }
                 }
-                if (vSession.getTheme() == null){
-                    userService.authenticate((ViewSessionLogin) vSession,request);
+                log.fine("XSL-style"+xslFile);
+                //try to logon and set the theme
+                if (vSession.getTheme() == null) {
+                    log.fine("Try to logon");
+                    boolean ret = userService.logon((ViewSessionLogin) vSession, request);
+                    log.finer("Logon result: "+ret);
                 }
-                //a partir d'ici, le thene doit être en memoire
+                //from here on, the theme must be saved
                 if (vSession.getTheme() == null){
                     if (special == null) {
+                        log.finer("Not logged in, not a special page, display VOID page");
                         output.add(themeService.treatVOID(vSession));
                     } else {
                         isComplete = true;
                         output = new XmlBuilder("nothing");
+                        log.finer("Not logged in, special request, nothing to display ...");
                     }
                 } else {
                     if (page == Page.CHOIX) {
                         if (special == null) {
+                            log.finer("CHOIX page");
                             output.add(choixService.displayCHX(vSession));
                         } else {
+                            log.finer("CHOIX special page");
                             output = choixService.displayChxScript(vSession);
                             isComplete = true;
                         }
                     } else if (page == Page.ALBUM) {
+                        log.finer("ALBUM page");
                         output.add(albumService.treatALBM((ViewSessionAlbum) vSession));
                     } else if (page == Page.PHOTO) {
+                        log.finer("PHOTO page");
                         output.add(photoService.treatPHOTO((ViewSessionPhoto) vSession));
                     } else if (page == Page.CONFIG) {
+                        log.finer("CONFIG page");
                         output.add(configService.treatCONFIG((ViewSessionConfig) vSession));
                     } else if (page == Page.TAGS) {
-
+                        log.finer("TAGS page");
                         output.add(tagService.treatTAGS((ViewSessionTag) vSession));
                     } else if (page == Page.IMAGE) {
+                        log.finer("IMAGE page");
                         XmlBuilder ret = imageService.treatIMG((ViewSessionImages) vSession);
                         if (ret == null) {
                             isWritten = true;
                         } else {
                             output.add(ret);
                         }
+                        log.fine("IMAGE written? "+isWritten);
                     } else {
-                        request.logout();
+                        log.finer("VOID page? ("+page+")");
                         output.add(themeService.treatVOID(vSession));
                     }
                 }
             }
-            log.info("============= Validate =============");
+            
             output.validate();
         } catch (WebAlbumsServiceException e) {
             e.printStackTrace();
             output.cancel();
-        } catch (ServletException ex) {
-            ex.printStackTrace();
-            output.cancel();
-        }
-
+        } 
+        log.fine("============= Footer (written:"+isWritten+", complete:"+isComplete+")=============");
         long fin = System.currentTimeMillis();
         float time = ((float) (fin - debut) / 1000);
         if (!isWritten) {
@@ -176,6 +192,8 @@ public class DispatcherBean {
         }
         log.info("============= " + page + ": " + time + " =============");
     }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     private static void doWrite(HttpServletResponse response, XmlBuilder output, String xslFile, boolean isComplete, ViewSession vSession) {
         response.setContentType("text/xml");
@@ -239,5 +257,40 @@ public class DispatcherBean {
             response.setHeader("Cache-Control", "no-cache"); // "no-store" work also
         }
         response.setDateHeader("Expires", 0);
+    }// </editor-fold>
+
+    public static XmlBuilder treatLogin(ViewSession vSession, HttpServletRequest request) {
+        XmlBuilder output = new XmlBuilder("userLogin");
+        try {
+            Action action = vSession.getAction();
+            log.info("Action: " + action);
+            boolean valid = false;
+            if (Action.LOGIN == action) {
+
+                String userName = vSession.getUserName();
+                log.info("userName: " + userName);
+                if (userName == null) {
+                    output.add("denied");
+                    output.add("login");
+                    return output;
+                }
+
+                String pass = vSession.getUserPass();
+
+                request.login(userName, pass);
+                output.add("valid");
+                log.info("authentication: " + valid);
+            } else {
+                output.add("login");
+            }
+
+        } catch (javax.servlet.ServletException e) {
+            output.add("denied");
+            output.add("login");
+
+        } finally {
+            output.validate() ;
+        }
+        return output ;
     }
 }

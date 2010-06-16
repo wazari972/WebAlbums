@@ -100,31 +100,38 @@ public class Path implements Configuration {
         strParams.put(param, value);
     }
 
+    @Override
     public boolean isReadOnly() {
         return boolParams.get("read_only");
     }
 
+    @Override
     public boolean hasInternet() {
         return boolParams.get("has_internet");
     }
 
+    @Override
     public boolean wantsStats() {
         return boolParams.get("wants_stats");
     }
 
+    @Override
     public boolean wantsXsl() {
         return boolParams.get("wants_xsl");
     }
 
+    @Override
     public boolean wantsQueries() {
         return boolParams.get("wants_queries");
     }
 
+    @Override
     public boolean lightenDb() {
         return boolParams.get("lighten_db");
     }
     private int count = 0;
 
+    @Override
     public Integer autoLogin() {
         try {
             if (count == 2) {
@@ -138,6 +145,7 @@ public class Path implements Configuration {
         }
     }
 
+    @Override
     public String getSourcePath() {
         String path = strParams.get("root_dir");
         if (path == null) {
@@ -149,64 +157,80 @@ public class Path implements Configuration {
         return path;
     }
 
+    @Override
     public String getSourceURL() {
         return URL + getSourcePath();
     }
 
+    @Override
     public String getTempDir() {
         return getSourcePath() + TMP;
     }
 
+    @Override
     public String getImages() {
         return IMAGES;
     }
 
+    @Override
     public String getDataPath() {
         return getSourcePath() + DATA;
     }
 
+    @Override
     public String getData() {
         return DATA;
     }
 
+    @Override
     public String getFTP() {
         return FTP;
     }
 
+    @Override
     public String getMini() {
         return MINI;
     }
 
+    @Override
     public boolean isSgbdHsqldb() {
         return "hsqldb".equals(strParams.get("sgbd"));
     }
 
+    @Override
     public boolean isSgbdMysql() {
         return "mysql".equals(strParams.get("sgbd"));
     }
 
-    public void updateBoolParam(String param, String value) {
+    @Override
+    public boolean updateBoolParam(String param, String value) {
         Boolean boolValue = boolParams.get(param);
         if (boolValue == null) {
-            return;
+            return false;
         }
         if (value != null) {
             boolValue = "true".equals(value);
         }
         boolParams.put(param, boolValue);
+
+        return true ;
     }
 
-    public void updateStrParam(String param, String value) {
+    @Override
+    public boolean updateStrParam(String param, String value) {
         String oldValue = strParams.get(param);
         if (oldValue == null) {
-            return;
+            return false;
         }
         if (value != null) {
             strParams.put(param, value);
         }
+
+        return true ;
     }
 
     private static final int ALBUM_SIZE = 15 ;
+    @Override
     public int getAlbumSize() {
         try {
             return Integer.parseInt(strParams.get("album_size"));
@@ -216,6 +240,7 @@ public class Path implements Configuration {
     }
 
     private static final int PHOTO_SIZE = 15 ;
+    @Override
     public int getPhotoSize() {
         try {
             return Integer.parseInt(strParams.get("photo_size"));

@@ -358,7 +358,7 @@ public class ViewSessionImpl implements
 
     @Override
     public ImgMode getImgMode() {
-        return getEnum("imgMode", ImgMode.class);
+        return getEnum("mode", ImgMode.class);
     }
 
     @Override
