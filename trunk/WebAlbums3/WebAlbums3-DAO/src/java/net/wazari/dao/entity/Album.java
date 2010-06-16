@@ -5,156 +5,45 @@
 
 package net.wazari.dao.entity;
 
-import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import net.wazari.dao.entity.facades.PhotoOrAlbum;
 
 /**
  *
- * @author kevin
+ * @author kevinpouget
  */
-@Entity
-@Table(name = "Album")
-@NamedQueries({@NamedQuery(name = "Album.findAll", query = "SELECT a FROM Album a"), @NamedQuery(name = "Album.findById", query = "SELECT a FROM Album a WHERE a.id = :id"), @NamedQuery(name = "Album.findByNom", query = "SELECT a FROM Album a WHERE a.nom = :nom"), @NamedQuery(name = "Album.findByDescription", query = "SELECT a FROM Album a WHERE a.description = :description"), @NamedQuery(name = "Album.findByDate", query = "SELECT a FROM Album a WHERE a.date = :date"), @NamedQuery(name = "Album.findByPicture", query = "SELECT a FROM Album a WHERE a.picture = :picture")})
-public class Album implements Serializable, PhotoOrAlbum {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Integer id;
-    @Basic(optional = false)
-    @Column(name = "Nom")
-    private String nom;
-    @Column(name = "Description")
-    private String description;
-    @Basic(optional = false)
-    @Column(name = "Date")
-    private String date;
-    @JoinColumn(name = "Picture", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Photo picture;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "album")
-    private List<Photo> photoList;
-    @JoinColumn(name = "Droit", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Utilisateur droit;
-    @JoinColumn(name = "Theme", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Theme theme;
+public interface Album extends PhotoOrAlbum {
 
-    public Album() {
-    }
+    String getDate();
 
-    public Album(Integer id) {
-        this.id = id;
-    }
+    String getDescription();
 
-    public Album(Integer id, String nom, String date) {
-        this.id = id;
-        this.nom = nom;
-        this.date = date;
-    }
+    Utilisateur getDroit();
 
-    public Integer getId() {
-        return id;
-    }
+    Integer getId();
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    String getNom();
 
-    public String getNom() {
-        return nom;
-    }
+    List<Photo> getPhotoList();
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
+    Integer getPicture();
 
-    public String getDescription() {
-        return description;
-    }
+    Theme getTheme();
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    void setDate(String date);
 
-    public String getDate() {
-        return date;
-    }
+    void setDescription(String description);
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+    void setDroit(Utilisateur droit);
 
-    public Photo getPicture() {
-        return picture;
-    }
+    void setId(Integer id);
 
-    public void setPicture(Photo picture) {
-        this.picture = picture;
-    }
+    void setNom(String nom);
 
-    public List<Photo> getPhotoList() {
-        return photoList;
-    }
+    void setPhotoList(List<Photo> photoList);
 
-    public void setPhotoList(List<Photo> photoList) {
-        this.photoList = photoList;
-    }
+    void setPicture(Integer picture);
 
-    public Utilisateur getDroit() {
-        return droit;
-    }
-
-    public void setDroit(Utilisateur droit) {
-        this.droit = droit;
-    }
-
-    public Theme getTheme() {
-        return theme;
-    }
-
-    public void setTheme(Theme theme) {
-        this.theme = theme;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Album)) {
-            return false;
-        }
-        Album other = (Album) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.Album[id=" + id + "]";
-    }
+    void setTheme(Theme theme);
 
 }

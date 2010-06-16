@@ -5,37 +5,30 @@
 
 package net.wazari.dao;
 
-import java.util.List;
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
-import net.wazari.dao.entity.Theme;
 
 /**
  *
- * @author kevin
+ * @author kevinpouget
  */
 @Local
-public interface ThemeFacadeLocal {
+public interface MaintFacadeLocal {
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    boolean treatImportDDL() ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void create(Theme theme);
+    boolean treatExportDDL(String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void edit(Theme theme);
+    void treatImportXML(String path, boolean isMySQL) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void remove(Theme theme);
+    void treatExportXML(String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    Theme loadByName(String themeName) ;
-
-    @PermitAll
-    List<Theme> findAll() ;
-
-    @PermitAll
-    Theme find(Integer themeId);
-
+    void treatTruncateXML(String path, boolean isMySQL) ;
+    
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    Theme newTheme();
+    void treatFullImport(String path, boolean isMySQL) ;
 }

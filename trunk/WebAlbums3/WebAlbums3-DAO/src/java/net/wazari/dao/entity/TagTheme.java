@@ -6,111 +6,32 @@
 package net.wazari.dao.entity;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+
 
 /**
  *
- * @author kevin
+ * @author kevinpouget
  */
-@Entity
-@Table(name = "TagTheme")
-@NamedQueries({@NamedQuery(name = "TagTheme.findAll", query = "SELECT t FROM TagTheme t"), @NamedQuery(name = "TagTheme.findById", query = "SELECT t FROM TagTheme t WHERE t.id = :id"), @NamedQuery(name = "TagTheme.findByPhoto", query = "SELECT t FROM TagTheme t WHERE t.photo = :photo"), @NamedQuery(name = "TagTheme.findByIsVisible", query = "SELECT t FROM TagTheme t WHERE t.isVisible = :isVisible")})
-public class TagTheme implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue
-    @Column(name = "ID")
-    private Integer id;
-    @Column(name = "Photo")
-    private Integer photo;
-    @Column(name = "isVisible")
-    private Boolean isVisible;
-    @JoinColumn(name = "Theme", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Theme theme;
-    @JoinColumn(name = "Tag", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
-    private Tag tag;
+public interface TagTheme extends Serializable {
 
-    public TagTheme() {
-    }
+    Integer getId();
 
-    public TagTheme(Integer id) {
-        this.id = id;
-    }
+    Boolean getIsVisible();
 
-    public Integer getId() {
-        return id;
-    }
+    Integer getPhoto();
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    Tag getTag();
 
-    public Integer getPhoto() {
-        return photo;
-    }
+    Theme getTheme();
 
-    public void setPhoto(Integer photo) {
-        this.photo = photo;
-    }
+    void setId(Integer id);
 
-    public Boolean getIsVisible() {
-        return isVisible;
-    }
+    void setIsVisible(Boolean isVisible);
 
-    public void setIsVisible(Boolean isVisible) {
-        this.isVisible = isVisible;
-    }
+    void setPhoto(Integer photo);
 
-    public Theme getTheme() {
-        return theme;
-    }
+    void setTag(Tag tag);
 
-    public void setTheme(Theme theme) {
-        this.theme = theme;
-    }
-
-    public Tag getTag() {
-        return tag;
-    }
-
-    public void setTag(Tag tag) {
-        this.tag = tag;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TagTheme)) {
-            return false;
-        }
-        TagTheme other = (TagTheme) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.TagTheme[id=" + id + "]";
-    }
+    void setTheme(Theme theme);
 
 }

@@ -5,8 +5,7 @@
 
 package net.wazari.dao;
 
-import net.wazari.dao.exchange.ServiceSession;
-import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.TagTheme;
 
@@ -16,12 +15,18 @@ import net.wazari.dao.entity.TagTheme;
  */
 @Local
 public interface TagThemeFacadeLocal {
-
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void create(TagTheme tagTheme);
 
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void edit(TagTheme tagTheme);
 
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void remove(TagTheme tagTheme);
 
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     TagTheme loadByTagTheme(Integer tagID, Integer themeID) ;
+
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    TagTheme newTagTheme();
 }

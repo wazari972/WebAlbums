@@ -6,8 +6,11 @@ package net.wazari.dao;
 
 import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.facades.SubsetOf;
+import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 
 /**
  *
@@ -15,20 +18,30 @@ import net.wazari.dao.entity.Photo;
  */
 @Local
 public interface PhotoFacadeLocal {
-
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void create(Photo photo);
 
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void edit(Photo photo);
 
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void remove(Photo photo);
 
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Photo loadIfAllowed(ServiceSession session, int id);
 
-    List<Photo> loadFromAlbum(ServiceSession session, int albumId, Integer first);
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    SubsetOf<Photo> loadFromAlbum(ServiceSession session, int albumId, Bornes bornes);
 
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     Photo loadByPath(String path);
 
-    List<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Integer first);
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    SubsetOf<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Bornes bornes);
 
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Photo find(Integer photoID);
+
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    Photo newPhoto();
 }

@@ -7,118 +7,31 @@ package net.wazari.dao.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /**
  *
- * @author kevin
+ * @author kevinpouget
  */
-@Entity
-@Table(name = "Theme")
-@NamedQueries({@NamedQuery(name = "Theme.findAll", query = "SELECT t FROM Theme t"), @NamedQuery(name = "Theme.findById", query = "SELECT t FROM Theme t WHERE t.id = :id"), @NamedQuery(name = "Theme.findByNom", query = "SELECT t FROM Theme t WHERE t.nom = :nom"), @NamedQuery(name = "Theme.findByPassword", query = "SELECT t FROM Theme t WHERE t.password = :password")})
-public class Theme implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Integer id;
-    @Basic(optional = false)
-    @Column(name = "Nom")
-    private String nom;
-    @Basic(optional = false)
-    @Column(name = "Password")
-    private String password;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme")
-    private List<TagTheme> tagThemeList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme")
-    private List<Album> albumList;
+public interface Theme extends Serializable {
 
-    public Theme() {
-    }
+    List<Album> getAlbumList();
 
-    public Theme(Integer id) {
-        this.id = id;
-    }
+    Integer getId();
 
-    public Theme(Integer id, String nom, String password) {
-        this.id = id;
-        this.nom = nom;
-        this.password = password;
-    }
+    String getNom();
 
-    public Integer getId() {
-        return id;
-    }
+    String getPassword();
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    List<TagTheme> getTagThemeList();
 
-    public String getNom() {
-        return nom;
-    }
+    void setAlbumList(List<Album> albumList);
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
+    void setId(Integer id);
 
-    public String getPassword() {
-        return password;
-    }
+    void setNom(String nom);
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    void setPassword(String password);
 
-    public List<TagTheme> getTagThemeList() {
-        return tagThemeList;
-    }
-
-    public void setTagThemeList(List<TagTheme> tagThemeList) {
-        this.tagThemeList = tagThemeList;
-    }
-
-    public List<Album> getAlbumList() {
-        return albumList;
-    }
-
-    public void setAlbumList(List<Album> albumList) {
-        this.albumList = albumList;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Theme)) {
-            return false;
-        }
-        Theme other = (Theme) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.Theme[id=" + id + "]";
-    }
+    void setTagThemeList(List<TagTheme> tagThemeList);
 
 }
