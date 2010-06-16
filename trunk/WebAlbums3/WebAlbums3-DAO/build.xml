@@ -7,26 +7,9 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="WebAlbums-DAO" default="default" basedir="." xmlns:ejbjarproject="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
-    <description>Builds, tests, and runs the project WebAlbums-DAO.</description>
+<project name="WebAlbums3-DAO" default="default" basedir="." xmlns:ejbjarproject="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
+    <description>Builds, tests, and runs the project WebAlbums3-DAO.</description>
     <import file="nbproject/build-impl.xml"/>
-<target name="generate-metamodel" depends="init">
-<property name="metaPackage" value="metamodel"/>
-<delete>
-    <fileset dir="${src.dir}"  includes="**/*_.java"/>
-</delete>
-<echo message="generating MetaData "/>
-<javac   srcdir="${src.dir}" verbose="false"
-    destdir="${src.dir}"
-    excludes="demo/**"
-    classpath="${javac.classpath}">
-    <compilerarg line=" -processor org.eclipse.persistence.internal.jpa.modelgen.CanonicalModelProcessor" />
-    <compilerarg line=" -proc:only" compiler="javac1.6" />
-
-</javac>
-
-</target>
-
     <!--
 
     There exist several targets which are by default empty and which can be 

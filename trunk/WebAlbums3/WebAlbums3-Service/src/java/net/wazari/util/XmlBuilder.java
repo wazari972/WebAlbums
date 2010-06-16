@@ -6,7 +6,7 @@ import java.util.Map ;
 import java.util.HashMap ;
 
 public class XmlBuilder {
-  private enum Type {NORMAL, TEXT, COMMENT} ;
+  public enum Type {NORMAL, TEXT, COMMENT} ;
   public static final Type TEXT = Type.TEXT;
   public static final Type COMMENT = Type.COMMENT;
   

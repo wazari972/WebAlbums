@@ -5,6 +5,7 @@
 
 package net.wazari.service;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionAlbum;
@@ -18,14 +19,20 @@ import net.wazari.util.XmlBuilder;
  * @author kevin
  */
 @Local
+@RolesAllowed({UserLocal.VIEWER_ROLE, UserLocal.ADMIN_ROLE})
 public interface AlbumLocal {
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder displayAlbum(XmlBuilder output, ViewSessionAlbumDisplay vSession, XmlBuilder submit, XmlBuilder thisPage) throws WebAlbumsServiceException;
 
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder treatALBM(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
 
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException;
 
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     XmlBuilder treatAlbmEDIT(ViewSessionAlbumEdit vSession, XmlBuilder submit) throws WebAlbumsServiceException;
 
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
     XmlBuilder treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
 }

@@ -50,4 +50,8 @@ public interface Configuration {
     int getAlbumSize() ;
     int getPhotoSize() ;
 
+    boolean updateBoolParam(String param, String value);
+
+    boolean updateStrParam(String param, String value);
+
 }
