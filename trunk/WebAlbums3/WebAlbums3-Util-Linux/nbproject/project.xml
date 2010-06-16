@@ -12,7 +12,7 @@
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
-                <foreign-project>WebAlbums3-Service</foreign-project>
+                <foreign-project>WebAlbums3-Service-Beans</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>dist</target>
