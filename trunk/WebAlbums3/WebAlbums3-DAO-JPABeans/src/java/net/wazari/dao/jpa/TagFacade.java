@@ -68,7 +68,7 @@ public class TagFacade implements TagFacadeLocal {
     public List<Tag> queryAllowedTagByType(ServiceSession session, int type) {
         String rq;
         if (session.isRootSession()) {
-            rq = "FROM Tag t WHERE t.tagType = :type";
+            rq = "FROM JPATag t WHERE t.tagType = :type";
         } else {
             rq = "SELECT DISTINCT t " +
                     "FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a " +
