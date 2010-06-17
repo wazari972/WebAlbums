@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class SubsetOf<T> {
     public static class Bornes {
-        public Bornes(int nbElementsPerPage, int firstElement, int currentPage) {
+        public Bornes(int nbElementsPerPage, int currentPage) {
             this.nbElementsPerPage = nbElementsPerPage ;
-            this.firstElement = firstElement;
+            this.firstElement = nbElementsPerPage*currentPage;
             this.currentPage = currentPage;
             this.nbElements = null ;
         }
@@ -48,7 +48,7 @@ public class SubsetOf<T> {
             return lastPage;
         }
 
-        public int getNbElement() {
+        public Integer getNbElement() {
             return nbElements;
         }
 
