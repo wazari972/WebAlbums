@@ -86,16 +86,18 @@ public class TagBean implements TagLocal {
                 for(Tag enrTag : lstT) {
                     XmlBuilder tag = new XmlBuilder("tag", enrTag.getNom())
                             .addAttribut("id", enrTag.getId());
-                    List<TagTheme> lstTh = enrTag.getTagThemeList() ;
+                    List<TagTheme> lstTT = enrTag.getTagThemeList() ;
                     Random rand = new Random();
-                    while (!lstTh.isEmpty()) {
-                        int i = rand.nextInt(lstTh.size());
-                        TagTheme enrTh =  lstTh.get(i);
-                        if (enrTh.getPhoto() != null) {
-                            tag.addAttribut("picture", enrTh.getPhoto());
+                    //pick up a RANDOM valid picture visible from this theme
+                    while (!lstTT.isEmpty()) {
+                        int i = rand.nextInt(lstTT.size());
+                        TagTheme enrTT =  lstTT.get(i);
+                        if (enrTT.getPhoto() != null &&
+                                (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
+                            tag.addAttribut("picture", enrTT.getPhoto());
                             break;
                         } else {
-                            lstTh.remove(i);
+                            lstTT.remove(i);
                         }
                     }
                     if (Special.RSS == special) {

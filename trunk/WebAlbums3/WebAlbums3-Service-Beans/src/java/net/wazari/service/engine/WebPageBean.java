@@ -81,11 +81,11 @@ public class WebPageBean implements WebPageLocal {
         if (eltAsked != null) {
             //compute the page into which the element asked is
             int first = (int) Math.floor(eltAsked / taille) ;
-            bornes = new Bornes(taille, first, first * taille);
+            bornes = new Bornes(taille, first);
         } else if (page != null) {
-            bornes = new Bornes(taille, page * taille, page);
+            bornes = new Bornes(taille, page);
         } else {
-            bornes = new Bornes(taille, 0,0) ;
+            bornes = new Bornes(taille, 0) ;
         }
         
         return bornes;
@@ -99,7 +99,6 @@ public class WebPageBean implements WebPageLocal {
         int start = Math.max(0, bornes.getCurrentPage() - 5) ;
         int stop = Math.min(bornes.getCurrentPage() + 5, bornes.getLastPage()) ;
         if (start != 0) page.add("first", 0);
-        if (stop != bornes.getLastPage()) page.add("last", 0);
         for (int i = start; i < stop; i++) {
             if (i == bornes.getCurrentPage() || bornes.getCurrentPage() == -1 && i == 0) {
                 page.add("current", i);
@@ -109,6 +108,7 @@ public class WebPageBean implements WebPageLocal {
                 page.add("next", i);
             }
         }
+        if (stop != bornes.getLastPage()) page.add("last", stop);
         page.validate();
        
         return page;

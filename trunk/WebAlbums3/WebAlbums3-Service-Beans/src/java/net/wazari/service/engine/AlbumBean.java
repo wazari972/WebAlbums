@@ -106,9 +106,9 @@ public class AlbumBean implements AlbumLocal {
         EditMode inEditionMode = vSession.getEditionMode();
         Integer albumId = vSession.getId();
         Integer page = vSession.getPage();
-        Integer countAlbm = vSession.getCountAlbm();
+        Integer eltAsked = vSession.getCount();
 
-        Bornes bornes = webPageService.calculBornes(page, countAlbm, vSession.getConfiguration().getAlbumSize());
+        Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getConfiguration().getAlbumSize());
 
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, AlbumFacadeLocal.TopFirst.FIRST, bornes);
 
