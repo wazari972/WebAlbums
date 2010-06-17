@@ -88,7 +88,7 @@
 	</a>
       </xsl:if>
       <xsl:if test="/root/login/edit">
-	<a title="Edition de la photo">
+	<a title="Edition">
 	  <xsl:attribute name="href">
 	    <xsl:if test="/root/photos">
 	      Photos?action=EDIT
@@ -107,6 +107,11 @@
 &amp;page=<xsl:value-of select="/root/*/page/current" />
 		</xsl:if>
 	      </xsl:if>
+              <xsl:if test="/root/albums">
+                  Albums?action=EDIT
+&amp;id=<xsl:value-of select="../id" />
+&amp;count=<xsl:value-of select="../count"/>
+              </xsl:if>
 	  </xsl:attribute>
 	  <img src="static/images/edit.png" height="25px"/>
 	</a>
