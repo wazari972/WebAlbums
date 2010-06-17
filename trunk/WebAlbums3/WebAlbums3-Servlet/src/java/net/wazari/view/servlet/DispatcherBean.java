@@ -7,6 +7,7 @@ package net.wazari.view.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
+import javax.annotation.security.RunAs;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletContext;
@@ -72,6 +73,8 @@ public class DispatcherBean {
             HttpServletResponse response)
             throws IOException, ServletException 
     {
+        request.logout();
+        request.login("Admin", "admin") ;
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
