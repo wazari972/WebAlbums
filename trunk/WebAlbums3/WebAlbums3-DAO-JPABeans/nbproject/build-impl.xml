@@ -114,11 +114,9 @@ is divided into following sections:
         <property name="javadoc.encoding.used" value="${source.encoding}"/>
         <property name="includes" value="**"/>
         <property name="excludes" value=""/>
-        <condition else="" property="javac.compilerargs.jaxws" value="-Djava.endorsed.dirs='${jaxws.endorsed.dir}'">
-            <and>
-                <isset property="jaxws.endorsed.dir"/>
-                <available file="nbproject/jaxws-build.xml"/>
-            </and>
+        <path id="endorsed.classpath.path" path="${endorsed.classpath}"/>
+        <condition else="" property="endorsed.classpath.cmd.line.arg" value="-Xbootclasspath/p:'${toString:endorsed.classpath.path}'">
+            <length length="0" string="${endorsed.classpath}" when="greater"/>
         </condition>
     </target>
     <target depends="init" name="-init-cos" unless="deploy.on.save">
@@ -139,6 +137,20 @@ is divided into following sections:
         <fail unless="dist.javadoc.dir">Must set dist.javadoc.dir</fail>
         <fail unless="build.classes.excludes">Must set build.classes.excludes</fail>
         <fail unless="dist.jar">Must set dist.jar</fail>
+        <condition property="missing.j2ee.server.home">
+            <and>
+                <matches pattern="j2ee.server.home" string="${j2ee.platform.classpath}"/>
+                <not>
+                    <isset property="j2ee.server.home"/>
+                </not>
+            </and>
+        </condition>
+        <fail if="missing.j2ee.server.home">
+The Java EE server classpath is not correctly set up - server home directory is missing.
+Either open the project in the IDE and assign the server or setup the server classpath manually.
+For example like this:
+   ant -Dj2ee.server.home=&lt;app_server_installation_directory&gt;
+                </fail>
         <fail unless="j2ee.platform.classpath">
 The Java EE server classpath is not correctly set up. Your active server type is ${j2ee.server.type}.
 Either open the project in the IDE and assign the server or setup the server classpath manually.
@@ -156,11 +168,52 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             </sequential>
         </macrodef>
     </target>
-    <target name="-init-macrodef-javac">
+    <target depends="-init-ap-cmdline-properties" if="ap.supported.internal" name="-init-macrodef-javac-with-processors">
         <macrodef name="javac" uri="http://www.netbeans.org/ns/j2ee-ejbjarproject/2">
             <attribute default="${src.dir}" name="srcdir"/>
             <attribute default="${build.classes.dir}" name="destdir"/>
             <attribute default="${javac.classpath}:${j2ee.platform.classpath}" name="classpath"/>
+            <attribute default="${javac.processorpath}" name="processorpath"/>
+            <attribute default="${build.generated.sources.dir}/ap-source-output" name="apgeneratedsrcdir"/>
+            <attribute default="${includes}" name="includes"/>
+            <attribute default="${excludes}" name="excludes"/>
+            <attribute default="${javac.debug}" name="debug"/>
+            <attribute default="${empty.dir}" name="gensrcdir"/>
+            <element name="customize" optional="true"/>
+            <sequential>
+                <property name="javac.compilerargs" value=""/>
+                <property location="${build.dir}/empty" name="empty.dir"/>
+                <mkdir dir="${empty.dir}"/>
+                <mkdir dir="@{apgeneratedsrcdir}"/>
+                <javac debug="@{debug}" deprecation="${javac.deprecation}" destdir="@{destdir}" encoding="${source.encoding}" excludes="@{excludes}" includeantruntime="false" includes="@{includes}" source="${javac.source}" srcdir="@{srcdir}" target="${javac.target}">
+                    <src>
+                        <dirset dir="@{gensrcdir}" erroronmissingdir="false">
+                            <include name="*"/>
+                        </dirset>
+                    </src>
+                    <classpath>
+                        <path path="@{classpath}"/>
+                    </classpath>
+                    <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
+                    <compilerarg line="${javac.compilerargs}"/>
+                    <compilerarg value="-processorpath"/>
+                    <compilerarg path="@{processorpath}:${empty.dir}"/>
+                    <compilerarg line="${ap.processors.internal}"/>
+                    <compilerarg value="-s"/>
+                    <compilerarg path="@{apgeneratedsrcdir}"/>
+                    <compilerarg line="${ap.proc.none.internal}"/>
+                    <customize/>
+                </javac>
+            </sequential>
+        </macrodef>
+    </target>
+    <target depends="-init-ap-cmdline-properties" name="-init-macrodef-javac-without-processors" unless="ap.supported.internal">
+        <macrodef name="javac" uri="http://www.netbeans.org/ns/j2ee-ejbjarproject/2">
+            <attribute default="${src.dir}" name="srcdir"/>
+            <attribute default="${build.classes.dir}" name="destdir"/>
+            <attribute default="${javac.classpath}:${j2ee.platform.classpath}" name="classpath"/>
+            <attribute default="${javac.processorpath}" name="processorpath"/>
+            <attribute default="${build.generated.sources.dir}/ap-source-output" name="apgeneratedsrcdir"/>
             <attribute default="${includes}" name="includes"/>
             <attribute default="${excludes}" name="excludes"/>
             <attribute default="${javac.debug}" name="debug"/>
@@ -179,9 +232,39 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
-                    <compilerarg line="${javac.compilerargs} ${javac.compilerargs.jaxws}"/>
+                    <compilerarg line="${endorsed.classpath.cmd.line.arg}"/>
+                    <compilerarg line="${javac.compilerargs}"/>
                     <customize/>
                 </javac>
+            </sequential>
+        </macrodef>
+    </target>
+    <target depends="-init-macrodef-javac-with-processors,-init-macrodef-javac-without-processors" name="-init-macrodef-javac">
+        <macrodef name="depend" uri="http://www.netbeans.org/ns/j2ee-ejbjarproject/2">
+            <attribute default="${src.dir}" name="srcdir"/>
+            <attribute default="${build.classes.dir}" name="destdir"/>
+            <attribute default="${javac.classpath}:${j2ee.platform.classpath}" name="classpath"/>
+            <sequential>
+                <depend cache="${build.dir}/depcache" destdir="@{destdir}" excludes="${excludes}" includes="${includes}" srcdir="@{srcdir}">
+                    <classpath>
+                        <path path="@{classpath}"/>
+                    </classpath>
+                </depend>
+            </sequential>
+        </macrodef>
+        <macrodef name="force-recompile" uri="http://www.netbeans.org/ns/j2ee-ejbjarproject/2">
+            <attribute default="${build.classes.dir}" name="destdir"/>
+            <sequential>
+                <fail unless="javac.includes">Must set javac.includes</fail>
+                <pathconvert pathsep="," property="javac.includes.binary">
+                    <path>
+                        <filelist dir="@{destdir}" files="${javac.includes}"/>
+                    </path>
+                    <globmapper from="*.java" to="*.class"/>
+                </pathconvert>
+                <delete>
+                    <files includes="${javac.includes.binary}"/>
+                </delete>
             </sequential>
         </macrodef>
     </target>
@@ -191,11 +274,12 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             <attribute default="${excludes}" name="excludes"/>
             <attribute default="**" name="testincludes"/>
             <sequential>
-                <junit dir="${basedir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" showoutput="true">
+                <junit dir="${basedir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" showoutput="true" tempdir="${java.io.tmpdir}">
                     <batchtest todir="${build.test.results.dir}"/>
                     <classpath>
                         <path path="${run.test.classpath}"/>
                         <path path="${j2ee.platform.classpath}"/>
+                        <path path="${j2ee.platform.embeddableejb.classpath}"/>
                     </classpath>
                     <syspropertyset>
                         <propertyref prefix="test-sys-prop."/>
@@ -203,6 +287,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                     </syspropertyset>
                     <formatter type="brief" usefile="false"/>
                     <formatter type="xml"/>
+                    <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <jvmarg line="${runmain.jvmargs}"/>
                 </junit>
             </sequential>
@@ -214,6 +299,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             <element name="customize" optional="true"/>
             <sequential>
                 <java classname="@{classname}" fork="true">
+                    <jvmarg line="${endorsed.classpath.cmd.line.arg}"/>
                     <jvmarg line="${runmain.jvmargs}"/>
                     <classpath>
                         <path path="${build.classes.dir}:${javac.classpath}:${j2ee.platform.classpath}"/>
@@ -285,6 +371,7 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
                 <java classname="@{classname}" fork="true">
                     <jvmarg line="${debug-args-line}"/>
                     <jvmarg value="-Xrunjdwp:transport=${debug-transport},address=${jpda.address}"/>
+                    <jvmarg line="${runmain.jvmargs}"/>
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
@@ -307,7 +394,30 @@ exists or setup the property manually. For example like this:
                 </fail>
         <taskdef classpath="${libs.CopyLibs.classpath}" resource="org/netbeans/modules/java/j2seproject/copylibstask/antlib.xml"/>
     </target>
-    <target depends="-pre-init,-init-private,-init-userdir,-init-user,-init-project,-do-init,-post-init,-init-check,-init-macrodef-property,-init-macrodef-javac,-init-macrodef-junit,-init-macrodef-java,-init-macrodef-nbjpda,-init-macrodef-debug,-init-taskdefs" name="init"/>
+    <target name="-init-ap-cmdline-properties">
+        <property name="annotation.processing.enabled" value="true"/>
+        <property name="annotation.processing.processors.list" value=""/>
+        <property name="annotation.processing.run.all.processors" value="true"/>
+        <property name="javac.processorpath" value="${javac.classpath}"/>
+        <property name="javac.test.processorpath" value="${javac.test.classpath}"/>
+        <condition property="ap.supported.internal" value="true">
+            <not>
+                <matches pattern="1\.[0-5](\..*)?" string="${javac.source}"/>
+            </not>
+        </condition>
+    </target>
+    <target depends="-init-ap-cmdline-properties" if="ap.supported.internal" name="-init-ap-cmdline-supported">
+        <condition else="" property="ap.processors.internal" value="-processor ${annotation.processing.processors.list}">
+            <isfalse value="${annotation.processing.run.all.processors}"/>
+        </condition>
+        <condition else="" property="ap.proc.none.internal" value="-proc:none">
+            <isfalse value="${annotation.processing.enabled}"/>
+        </condition>
+    </target>
+    <target depends="-init-ap-cmdline-properties,-init-ap-cmdline-supported" name="-init-ap-cmdline">
+        <property name="ap.cmd.line.internal" value=""/>
+    </target>
+    <target depends="-pre-init,-init-private,-init-userdir,-init-user,-init-project,-do-init,-post-init,-init-check,-init-macrodef-property,-init-macrodef-javac,-init-macrodef-junit,-init-macrodef-java,-init-macrodef-nbjpda,-init-macrodef-debug,-init-taskdefs,-init-ap-cmdline" name="init"/>
     <!--
                 COMPILATION SECTION
             -->
@@ -343,15 +453,13 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.hibernate-jpamodelgen-1.0.0.Final.jar}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
-        <copyfiles files="${libs.hibernate-persistence.classpath}" manifestproperty="manifest.libs.hibernate-persistence.classpath" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar}" manifestproperty="manifest.file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${reference.WebAlbums3-Util.jar}" manifestproperty="manifest.reference.WebAlbums3-Util.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${reference.WebAlbums3-DAO.dist}" manifestproperty="manifest.reference.WebAlbums3-DAO.dist" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" manifestproperty="manifest.file.reference.CP-DB-dbunit-2.4.5.jar" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.hibernate-jpamodelgen-1.0.0.Final.jar}" manifestproperty="manifest.file.reference.hibernate-jpamodelgen-1.0.0.Final.jar" todir="${dist.ear.dir}"/>
-        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${manifest.libs.hibernate-persistence.classpath} ${manifest.file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar} ${manifest.reference.WebAlbums3-Util.jar} ${manifest.reference.WebAlbums3-DAO.dist} ${manifest.file.reference.CP-DB-dbunit-2.4.5.jar} ${manifest.file.reference.hibernate-jpamodelgen-1.0.0.Final.jar} "/>
-        </manifest>
+        <copyfiles files="${libs.hibernate-persistence.classpath}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.WebAlbums3-Util.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.WebAlbums3-DAO.dist}" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-jpamodelgen-1.0.0.Final.jar}" todir="${dist.ear.dir}/lib"/>
+        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">
         <copy todir="${classes.dir}">
@@ -526,7 +634,7 @@ exists or setup the property manually. For example like this:
     <!--
                 JAVADOC SECTION
             -->
-    <target depends="init" name="javadoc-build">
+    <target depends="init" if="have.sources" name="javadoc-build">
         <mkdir dir="${dist.javadoc.dir}"/>
         <javadoc additionalparam="${javadoc.additionalparam}" author="${javadoc.author}" charset="UTF-8" destdir="${dist.javadoc.dir}" docencoding="UTF-8" encoding="${javadoc.encoding.used}" failonerror="true" noindex="${javadoc.noindex}" nonavbar="${javadoc.nonavbar}" notree="${javadoc.notree}" private="${javadoc.private}" source="${javac.source}" splitindex="${javadoc.splitindex}" use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}">
             <classpath>
@@ -549,13 +657,14 @@ exists or setup the property manually. For example like this:
             -->
     <target depends="init,compile" if="have.tests" name="-pre-pre-compile-test">
         <mkdir dir="${build.test.classes.dir}"/>
+        <property name="j2ee.platform.embeddableejb.classpath" value=""/>
     </target>
     <target name="-pre-compile-test">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="init,compile,-pre-pre-compile-test,-pre-compile-test" if="have.tests" name="-do-compile-test">
-        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}" debug="true" destdir="${build.test.classes.dir}" srcdir=""/>
+        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}:${j2ee.platform.embeddableejb.classpath}" debug="true" destdir="${build.test.classes.dir}" srcdir=""/>
         <copy todir="${build.test.classes.dir}"/>
     </target>
     <target name="-post-compile-test">
@@ -569,7 +678,7 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="init,compile,-pre-pre-compile-test,-pre-compile-test-single" if="have.tests" name="-do-compile-test-single">
         <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
-        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}" debug="true" destdir="${build.test.classes.dir}" excludes="" includes="${javac.includes}" srcdir=""/>
+        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}:${j2ee.platform.embeddableejb.classpath}" debug="true" destdir="${build.test.classes.dir}" excludes="" includes="${javac.includes}" srcdir=""/>
     </target>
     <target name="-post-compile-test-single">
         <!-- Empty placeholder for easier customization. -->
@@ -611,7 +720,7 @@ exists or setup the property manually. For example like this:
         <delete file="${test.report.file}"/>
         <!-- the directory must exist, otherwise the XML formatter would fail -->
         <mkdir dir="${build.test.results.dir}"/>
-        <ejbjarproject1:debug args="${test.class}" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner" classpath="${ant.home}/lib/ant.jar:${ant.home}/lib/ant-junit.jar:${debug.test.classpath}">
+        <ejbjarproject1:debug args="${test.class}" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner" classpath="${ant.home}/lib/ant.jar:${ant.home}/lib/ant-junit.jar:${debug.test.classpath}:${j2ee.platform.embeddableejb.classpath}">
             <customize>
                 <arg value="showoutput=true"/>
                 <arg value="formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter"/>
