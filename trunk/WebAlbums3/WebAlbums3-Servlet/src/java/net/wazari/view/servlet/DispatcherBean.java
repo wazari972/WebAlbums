@@ -6,8 +6,8 @@ package net.wazari.view.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.security.RunAs;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletContext;
@@ -85,7 +85,7 @@ public class DispatcherBean {
             log.info("Authenticated the session");
             request.authenticate(response) ;
         }
-        log.info("============= " + page + " =============");
+        log.log(Level.INFO, "============= {0} =============", page);
                 
         long debut = System.currentTimeMillis();
         request.setCharacterEncoding("UTF-8");
@@ -99,29 +99,29 @@ public class DispatcherBean {
         try {
             xslFile = "static/Display.xsl";
             if (page == Page.USER) {
-                output.add(treatLogin(vSession, request)) ;
+                output.add(treatLogin((ViewSessionLogin) vSession,request)) ;
             } else if (page == Page.VOID) {
                 output.add(themeService.treatVOID(vSession));
             } else if (page == Page.MAINT) {
                 xslFile = "static/Empty.xsl";
                 //output.add(net.wazari.service.engine.Maint.treatMAINT(request));
             } else {
-                log.info("============= Login: " + request.getUserPrincipal() + " =============");
+                log.log(Level.INFO, "============= Login: {0} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
                 if (special != null) {
-                    log.info("Special XSL-style ("+special+")");
+                    log.log(Level.INFO, "Special XSL-style ({0})", special);
                     if ("RSS".equals(special)) {
                         xslFile = "static/Rss.xsl";
                     } else {
                         xslFile = "static/Empty.xsl";
                     }
                 }
-                log.fine("XSL-style"+xslFile);
+                log.log(Level.FINE, "XSL-style{0}", xslFile);
                 //try to logon and set the theme
                 if (vSession.getTheme() == null) {
                     log.fine("Try to logon");
                     boolean ret = userService.logon((ViewSessionLogin) vSession, request);
-                    log.finer("Logon result: "+ret);
+                    log.log(Level.FINER, "Logon result: {0}", ret);
                 }
                 //from here on, the theme must be saved
                 if (vSession.getTheme() == null){
@@ -163,9 +163,9 @@ public class DispatcherBean {
                         } else {
                             output.add(ret);
                         }
-                        log.fine("IMAGE written? "+isWritten);
+                        log.log(Level.FINE, "IMAGE written? {0}", isWritten);
                     } else {
-                        log.finer("VOID page? ("+page+")");
+                        log.log(Level.FINER, "VOID page? ({0})", page);
                         output.add(themeService.treatVOID(vSession));
                     }
                 }
@@ -176,7 +176,7 @@ public class DispatcherBean {
             e.printStackTrace();
             output.cancel();
         } 
-        log.fine("============= Footer (written:"+isWritten+", complete:"+isComplete+")=============");
+        log.log(Level.FINE, "============= Footer (written:{0}, complete:{1})=============", new Object[]{isWritten, isComplete});
         long fin = System.currentTimeMillis();
         float time = ((float) (fin - debut) / 1000);
         if (!isWritten) {
@@ -193,7 +193,7 @@ public class DispatcherBean {
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
-        log.info("============= " + page + ": " + time + " =============");
+        log.log(Level.INFO, "============= {0}: {1} =============", new Object[]{page, time});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -262,16 +262,16 @@ public class DispatcherBean {
         response.setDateHeader("Expires", 0);
     }// </editor-fold>
 
-    public static XmlBuilder treatLogin(ViewSession vSession, HttpServletRequest request) {
+    public static XmlBuilder treatLogin(ViewSessionLogin vSession, HttpServletRequest request) {
         XmlBuilder output = new XmlBuilder("userLogin");
         try {
             Action action = vSession.getAction();
-            log.info("Action: " + action);
+            log.log(Level.INFO, "Action: {0}", action);
             boolean valid = false;
             if (Action.LOGIN == action) {
 
                 String userName = vSession.getUserName();
-                log.info("userName: " + userName);
+                log.log(Level.INFO, "userName: {0}", userName);
                 if (userName == null) {
                     output.add("denied");
                     output.add("login");
@@ -282,7 +282,7 @@ public class DispatcherBean {
 
                 request.login(userName, pass);
                 output.add("valid");
-                log.info("authentication: " + valid);
+                log.log(Level.INFO, "authentication: {0}", valid);
             } else {
                 output.add("login");
             }

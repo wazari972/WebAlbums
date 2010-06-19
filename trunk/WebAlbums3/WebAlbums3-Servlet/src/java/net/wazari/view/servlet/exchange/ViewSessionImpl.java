@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.common.constante.Path;
 import net.wazari.dao.entity.Theme;
+import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.EditMode;
@@ -44,6 +45,7 @@ import net.wazari.service.exchange.ViewSessionTag;
  * @author kevin
  */
 public class ViewSessionImpl implements
+        ServiceSession,
         ViewSessionSession,
         ViewSessionLogin,
         ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumEdit, ViewSessionAlbumSubmit,
@@ -464,7 +466,7 @@ public class ViewSessionImpl implements
 
     private String[] getParamArray(String name) {
         String[] ret = request.getParameterValues(name);
-        log.info("getParamArray param:" + name + " returned " + Arrays.toString(ret));
+        log.log(Level.INFO, "getParamArray param:{0} returned {1}", new Object[]{name, Arrays.toString(ret)});
         return ret;
     }
 

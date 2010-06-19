@@ -15,8 +15,6 @@ import net.wazari.dao.exchange.ServiceSession;
  */
 public interface ViewSession extends ServiceSession {
 
-    public String getUserPass();
-
     interface ViewSessionLogin extends ViewSession {
 
         void setTheme(Theme enrTheme);

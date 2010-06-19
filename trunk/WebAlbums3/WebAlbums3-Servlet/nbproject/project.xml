@@ -6,16 +6,16 @@
             <name>WebAlbums3-Servlet</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <web-module-libraries>
-                <library>
+                <library dirs="100">
                     <file>${reference.WebAlbums3-Service.dist}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
-                <library>
+                <library dirs="200">
                     <file>${reference.WebAlbums3-Util.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
-                <library>
-                    <file>${reference.WebAlbums3-DAO.dist}</file>
+                <library dirs="200">
+                    <file>${reference.WebAlbums3-iDAO.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
@@ -27,14 +27,6 @@
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
-                <foreign-project>WebAlbums3-DAO</foreign-project>
-                <artifact-type>jar</artifact-type>
-                <script>build.xml</script>
-                <target>dist</target>
-                <clean-target>clean</clean-target>
-                <id>dist</id>
-            </reference>
-            <reference>
                 <foreign-project>WebAlbums3-Service</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
@@ -44,6 +36,14 @@
             </reference>
             <reference>
                 <foreign-project>WebAlbums3-Util</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>WebAlbums3-iDAO</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

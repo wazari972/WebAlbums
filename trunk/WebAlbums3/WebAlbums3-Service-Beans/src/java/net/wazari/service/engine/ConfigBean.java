@@ -1,13 +1,8 @@
 package net.wazari.service.engine;
 
-import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.TagPhoto;
-import net.wazari.dao.entity.TagTheme;
-import net.wazari.dao.entity.Geolocalisation;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -22,7 +17,6 @@ import net.wazari.util.XmlBuilder;
 import net.wazari.dao.entity.*;
 
 import net.wazari.service.ConfigLocal;
-import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionConfig;

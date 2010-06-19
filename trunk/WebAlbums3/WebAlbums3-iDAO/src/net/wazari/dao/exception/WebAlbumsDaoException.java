@@ -5,14 +5,12 @@
 
 package net.wazari.dao.exception;
 
-import net.wazari.common.exception.WebAlbumsException;
-
 /**
  *
  * @author kevin
  */
 public class WebAlbumsDaoException extends WebAlbumsException {
-
+    
     public WebAlbumsDaoException(ErrorType type, String msg) {
         super(type, msg);
     }
