@@ -419,18 +419,18 @@ public class ViewSessionImpl implements
             } else if (type.isEnum()) {
                 ret = (T) Enum.valueOf((Class) type, val);
             } else {
-                log.info("Unknown class " + type + " for parameter " + name);
+                log.log(Level.INFO, "Unknown class {0} for parameter {1}", new Object[]{type, name});
             }
         } catch (ClassCastException e) {
-            log.info("Can't cast value " + val + " into class " + type);
+            log.log(Level.INFO, "Can''t cast value {0} into class {1}", new Object[]{val, type});
         } catch (NullPointerException e) {
-            log.info("NullPointerException with " + val + " for class " + type);
+            log.log(Level.INFO, "NullPointerException with {0} for class {1}", new Object[]{val, type});
         } catch (NumberFormatException e) {
-            log.info("NumberFormatException with " + val + " for class " + type);
+            log.log(Level.INFO, "NumberFormatException with {0} for class {1}", new Object[]{val, type});
         } catch (IllegalArgumentException e) {
-            log.info("IllegalArgumentException with " + val + " for class " + type);
+            log.log(Level.INFO, "IllegalArgumentException with {0} for class {1}", new Object[]{val, type});
         }
-        log.info("getObject param:" + name + " type:" + type + " returned " + ret);
+        log.log(Level.INFO, "getObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
         return ret;
     }
 
@@ -439,12 +439,12 @@ public class ViewSessionImpl implements
         if (ret == null) {
             ret = getObject(name, type);
         }
-        log.info("getSessionObject param:" + name + " type:" + type + " returned " + ret);
+        log.log(Level.INFO, "getSessionObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
         return ret;
     }
 
     private void setSessionObject(String key, Object val) {
-        log.info("setSessionObject param:" + key + " val:" + val);
+        log.log(Level.INFO, "setSessionObject param:{0} val:{1}", new Object[]{key, val});
         request.getSession().setAttribute(key, val);
     }
 

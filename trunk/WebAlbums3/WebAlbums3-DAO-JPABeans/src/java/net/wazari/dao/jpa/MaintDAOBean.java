@@ -28,10 +28,12 @@ import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.hibernate.JDBCException;
+
+/*import org.hibernate.JDBCException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
+*/
 import org.xml.sax.InputSource;
 
 /**
@@ -39,10 +41,9 @@ import org.xml.sax.InputSource;
  * @author kevinpouget
  */
 @Stateless
-public class MaintDAOBean implements MaintFacadeLocal {
-
+public class MaintDAOBean /*implements MaintFacadeLocal*/ {
+/*
     private static interface Work {
-
         void execute(Connection connection) throws JDBCException;
     }
     @PersistenceContext
@@ -210,4 +211,5 @@ public class MaintDAOBean implements MaintFacadeLocal {
             treatImportXML(path, isMySQL);
         }
     }
+  */
 }

@@ -66,7 +66,6 @@ public class WebAlbumsDAOBean {
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToThemeAllowed(ServiceSession session, String album) {
-        org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor e ;
         if (session.isRootSession()) {
             return " 1 = 1";
         } else {

@@ -26,7 +26,6 @@ import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
-import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exception.WebAlbumsDaoException;
 import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;

@@ -58,7 +58,7 @@ public class FilesFinder {
             String passwrd,
             XmlBuilder out, Configuration conf) {
         if (resizer == null) {
-            new ImageResizer(conf, sysTools);
+            resizer = new ImageResizer(conf, sysTools);
         }
         String rq = null;
         boolean correct = false;

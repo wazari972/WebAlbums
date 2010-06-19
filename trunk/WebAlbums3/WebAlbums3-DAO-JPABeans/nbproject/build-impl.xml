@@ -422,16 +422,12 @@ exists or setup the property manually. For example like this:
                 COMPILATION SECTION
             -->
     <target depends="init" if="no.dist.ear.dir" name="-deps-module-jar" unless="no.deps">
-        <ant antfile="${project.WebAlbums3-DAO}/build.xml" inheritall="false" target="dist"/>
-        <ant antfile="${project.WebAlbums3-Util}/build.xml" inheritall="false" target="jar">
+        <ant antfile="${project.WebAlbums3-iDAO}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
     <target depends="init" if="dist.ear.dir" name="-deps-ear-jar" unless="no.deps">
-        <ant antfile="${project.WebAlbums3-DAO}/build.xml" inheritall="false" target="dist-ear">
-            <property location="${build.dir}" name="dist.ear.dir"/>
-        </ant>
-        <ant antfile="${project.WebAlbums3-Util}/build.xml" inheritall="false" target="jar">
+        <ant antfile="${project.WebAlbums3-iDAO}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
@@ -445,20 +441,14 @@ exists or setup the property manually. For example like this:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="compile" name="library-inclusion-in-archive">
-        <copyfiles files="${libs.hibernate-persistence.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${reference.WebAlbums3-Util.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${reference.WebAlbums3-DAO.dist}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.hibernate-jpamodelgen-1.0.0.Final.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
-        <copyfiles files="${libs.hibernate-persistence.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.RT-DB-mysql-connector-java-5.1.12-bin.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${reference.WebAlbums3-Util.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${reference.WebAlbums3-DAO.dist}" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.hibernate-jpamodelgen-1.0.0.Final.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">
@@ -740,8 +730,7 @@ exists or setup the property manually. For example like this:
                 CLEANUP SECTION
             -->
     <target depends="init" if="no.dist.ear.dir" name="deps-clean" unless="no.deps">
-        <ant antfile="${project.WebAlbums3-DAO}/build.xml" inheritall="false" target="clean"/>
-        <ant antfile="${project.WebAlbums3-Util}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.WebAlbums3-iDAO}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="-do-clean">
         <delete dir="${build.dir}"/>
