@@ -23,7 +23,7 @@ public class GooglePoint extends GoogleMap {
       this.lat = lat ;
       this.lng = lng ;
       this.name = name ;
-      this.varName = net.wazari.util.StringUtil.toAscii(name) ;
+      this.varName = net.wazari.common.util.StringUtil.toAscii(name) ;
     }
     public void setMsg(String msg) {
       this.msg = msg ;

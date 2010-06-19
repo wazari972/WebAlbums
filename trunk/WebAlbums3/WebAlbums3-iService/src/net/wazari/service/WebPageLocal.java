@@ -18,7 +18,7 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 
 /**
  *

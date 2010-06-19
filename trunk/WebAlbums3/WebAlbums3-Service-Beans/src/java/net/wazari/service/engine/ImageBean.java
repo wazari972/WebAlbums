@@ -17,8 +17,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.util.StringUtil;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.StringUtil;
+import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.entity.Photo;
 
 import net.wazari.service.ImageLocal;

@@ -12,7 +12,7 @@ import javax.ejb.Stateless;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 
 /**
  *

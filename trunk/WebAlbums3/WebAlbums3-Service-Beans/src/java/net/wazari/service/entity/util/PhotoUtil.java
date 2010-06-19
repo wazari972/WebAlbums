@@ -30,8 +30,8 @@ import net.wazari.dao.exception.WebAlbumsDaoException;
 import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.util.StringUtil;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.StringUtil;
+import net.wazari.common.util.XmlBuilder;
 
 /**
  * This is the object class that relates to the Photo table.

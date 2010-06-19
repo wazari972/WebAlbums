@@ -5,7 +5,7 @@
 
 package net.wazari.service.exception;
 
-import net.wazari.dao.exception.WebAlbumsException;
+import net.wazari.common.exception.WebAlbumsException;
 
 /**
  *

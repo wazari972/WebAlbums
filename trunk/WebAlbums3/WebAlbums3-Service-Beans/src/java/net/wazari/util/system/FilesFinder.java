@@ -26,8 +26,8 @@ import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 
 import net.wazari.util.ImageResizer;
-import net.wazari.util.StringUtil;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.StringUtil;
+import net.wazari.common.util.XmlBuilder;
 
 public class FilesFinder {
 

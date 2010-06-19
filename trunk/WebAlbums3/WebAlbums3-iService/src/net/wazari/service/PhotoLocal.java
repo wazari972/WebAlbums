@@ -11,7 +11,7 @@ import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.*;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 
 /**
  *

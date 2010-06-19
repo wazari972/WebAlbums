@@ -6,8 +6,8 @@ import java.text.SimpleDateFormat;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import net.wazari.util.StringUtil;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.StringUtil;
+import net.wazari.common.util.XmlBuilder;
 
 public class Periode extends HttpServlet {
   private static final long serialVersionUID = 1L;

@@ -1,7 +1,7 @@
 package net.wazari.service.util.google ;
 
 import net.wazari.service.exchange.Configuration;
-import net.wazari.util.XmlBuilder ;
+import net.wazari.common.util.XmlBuilder ;
 
 public abstract class GoogleMap {
   public abstract String getInitCode(Configuration conf) ;

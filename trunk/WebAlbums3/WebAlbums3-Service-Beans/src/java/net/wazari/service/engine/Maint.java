@@ -3,18 +3,13 @@ package net.wazari.service.engine;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 
-
 import javax.ejb.Stateless;
-
-
-
-
 
 import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionMaint.MaintAction;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 
 @Stateless
 public class Maint {

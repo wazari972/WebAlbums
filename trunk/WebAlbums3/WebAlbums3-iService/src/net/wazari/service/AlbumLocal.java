@@ -12,7 +12,7 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 
 /**
  *

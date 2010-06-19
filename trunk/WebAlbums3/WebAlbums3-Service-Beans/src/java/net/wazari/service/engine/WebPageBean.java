@@ -26,7 +26,7 @@ import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.util.google.GooglePoint;
 import net.wazari.service.util.google.GooglePoint.Point;
 
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 
 @Stateless
 public class WebPageBean implements WebPageLocal {

@@ -1,5 +1,6 @@
 package net.wazari.util;
 
+import net.wazari.common.util.StringUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;

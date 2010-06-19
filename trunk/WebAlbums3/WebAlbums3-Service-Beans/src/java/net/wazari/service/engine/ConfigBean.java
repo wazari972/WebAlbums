@@ -12,7 +12,7 @@ import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.util.system.FilesFinder;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 
 import net.wazari.dao.entity.*;
 

@@ -5,6 +5,8 @@
 
 package net.wazari.dao.exception;
 
+import net.wazari.common.exception.WebAlbumsException;
+
 /**
  *
  * @author kevin

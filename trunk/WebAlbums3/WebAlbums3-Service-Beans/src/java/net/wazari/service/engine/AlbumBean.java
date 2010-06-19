@@ -32,9 +32,9 @@ import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
-import net.wazari.util.StringUtil;
+import net.wazari.common.util.StringUtil;
 import net.wazari.util.system.FilesFinder;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 
 @Stateless
 public class AlbumBean implements AlbumLocal {

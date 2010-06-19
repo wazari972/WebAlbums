@@ -38,8 +38,8 @@ import net.wazari.service.exchange.ViewSessionPhoto.*;
 
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.util.system.FilesFinder;
-import net.wazari.util.StringUtil;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.StringUtil;
+import net.wazari.common.util.XmlBuilder;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {

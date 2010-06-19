@@ -32,7 +32,7 @@ import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
-import net.wazari.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 
 /**
@@ -73,8 +73,6 @@ public class DispatcherBean {
             HttpServletResponse response)
             throws IOException, ServletException 
     {
-        request.logout();
-        request.login("Admin", "admin") ;
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
@@ -85,10 +83,10 @@ public class DispatcherBean {
             log.info("Authenticated the session");
             request.authenticate(response) ;
         }
-        log.log(Level.INFO, "============= {0} =============", page);
+        log.log(Level.WARNING, "============= <{0}> =============", page);
                 
         long debut = System.currentTimeMillis();
-        request.setCharacterEncoding("UTF-8");
+        //request.setCharacterEncoding("UTF-8");
 
         XmlBuilder output = new XmlBuilder("root");
 
