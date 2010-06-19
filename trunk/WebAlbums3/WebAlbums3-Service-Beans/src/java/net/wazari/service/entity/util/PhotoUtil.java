@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import net.wazari.common.exception.WebAlbumsException;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
@@ -253,8 +252,6 @@ public class PhotoUtil {
             throw new WebAlbumsServiceException(WebAlbumsDaoException.JDBCException,
                     "Erreur dans Photo.rotate()");
         }
-        WebAlbumsException e ;
-        WebAlbumsDaoException f ;
 
         String path = p.getPath();
         String mini = vSession.getConfiguration().getSourcePath() + vSession.getConfiguration().getMini() + "/" + themeName + "/" + path;

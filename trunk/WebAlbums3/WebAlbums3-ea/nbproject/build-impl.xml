@@ -175,6 +175,15 @@ exists or setup the property manually. For example like this:
                 <isset property="build.deploy.on.save"/>
             </not>
         </condition>
+        <ant antfile="${project.WebAlbums3-ServiceEngine}/build.xml" inheritall="false" target="dist-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+            <property name="deploy.on.save" value="${build.deploy.on.save}"/>
+        </ant>
+        <condition property="build.deploy.on.save" value="false">
+            <not>
+                <isset property="build.deploy.on.save"/>
+            </not>
+        </condition>
         <ant antfile="${project.WebAlbums3-Servlet}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
@@ -194,6 +203,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.WebAlbums3-Servlet.dist-ear}" todir="${build.dir}//"/>
         <copyfiles files="${reference.WebAlbums3-Service-Beans.dist-ear}" todir="${build.dir}//"/>
         <copyfiles files="${reference.WebAlbums3-DAO-JPABeans.dist-ear}" todir="${build.dir}//"/>
+        <copyfiles files="${reference.WebAlbums3-ServiceEngine.dist-ear}" todir="${build.dir}//"/>
     </target>
     <target name="post-compile">
         <!-- Empty placeholder for easier customization. -->
@@ -272,6 +282,7 @@ exists or setup the property manually. For example like this:
         <!-- Task to deploy to the Access Manager runtime. -->
         <ant antfile="${project.WebAlbums3-DAO-JPABeans}/build.xml" inheritall="false" target="-run-deploy-am"/>
         <ant antfile="${project.WebAlbums3-Service-Beans}/build.xml" inheritall="false" target="-run-deploy-am"/>
+        <ant antfile="${project.WebAlbums3-ServiceEngine}/build.xml" inheritall="false" target="-run-deploy-am"/>
         <ant antfile="${project.WebAlbums3-Servlet}/build.xml" inheritall="false" target="-run-deploy-am"/>
     </target>
     <target depends="-init-cos,dist-directory-deploy,pre-run-deploy,-pre-nbmodule-run-deploy,-run-deploy-nb,-init-deploy-ant,-deploy-ant,-run-deploy-am,-post-nbmodule-run-deploy,post-run-deploy" name="run-deploy"/>
@@ -537,6 +548,15 @@ exists or setup the property manually. For example like this:
             </not>
         </condition>
         <ant antfile="${project.WebAlbums3-Service-Beans}/build.xml" inheritall="false" target="clean-ear">
+            <property location="${build.dir}" name="dist.ear.dir"/>
+            <property name="deploy.on.save" value="${build.deploy.on.save}"/>
+        </ant>
+        <condition property="build.deploy.on.save" value="false">
+            <not>
+                <isset property="build.deploy.on.save"/>
+            </not>
+        </condition>
+        <ant antfile="${project.WebAlbums3-ServiceEngine}/build.xml" inheritall="false" target="clean-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
             <property name="deploy.on.save" value="${build.deploy.on.save}"/>
         </ant>

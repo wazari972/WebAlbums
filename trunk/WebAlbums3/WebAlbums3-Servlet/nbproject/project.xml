@@ -11,10 +11,6 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${reference.WebAlbums3-Util.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
                     <file>${reference.WebAlbums3-iDAO.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
@@ -33,14 +29,6 @@
                 <target>dist</target>
                 <clean-target>clean</clean-target>
                 <id>dist</id>
-            </reference>
-            <reference>
-                <foreign-project>WebAlbums3-Util</foreign-project>
-                <artifact-type>jar</artifact-type>
-                <script>build.xml</script>
-                <target>jar</target>
-                <clean-target>clean</clean-target>
-                <id>jar</id>
             </reference>
             <reference>
                 <foreign-project>WebAlbums3-iDAO</foreign-project>

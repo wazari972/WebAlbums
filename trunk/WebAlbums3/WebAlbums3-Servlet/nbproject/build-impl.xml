@@ -491,9 +491,6 @@ exists or setup the property manually. For example like this:
             -->
     <target depends="init" if="no.dist.ear.dir" name="deps-module-jar" unless="no.deps">
         <ant antfile="${project.WebAlbums3-Service}/build.xml" inheritall="false" target="dist"/>
-        <ant antfile="${project.WebAlbums3-Util}/build.xml" inheritall="false" target="jar">
-            <property name="deploy.on.save" value="false"/>
-        </ant>
         <ant antfile="${project.WebAlbums3-iDAO}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
@@ -501,9 +498,6 @@ exists or setup the property manually. For example like this:
     <target depends="init" if="dist.ear.dir" name="deps-ear-jar" unless="no.deps">
         <ant antfile="${project.WebAlbums3-Service}/build.xml" inheritall="false" target="dist-ear">
             <property location="${build.dir}" name="dist.ear.dir"/>
-        </ant>
-        <ant antfile="${project.WebAlbums3-Util}/build.xml" inheritall="false" target="jar">
-            <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.WebAlbums3-iDAO}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
@@ -645,14 +639,12 @@ exists or setup the property manually. For example like this:
     <target depends="init,compile,compile-jsps,-pre-dist,-do-dist-with-manifest,-do-dist-without-manifest" name="do-dist"/>
     <target depends="init" if="dist.ear.dir" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.WebAlbums3-Service.dist}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}"/>
-        <copyfiles files="${reference.WebAlbums3-Util.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
         <copyfiles files="${reference.WebAlbums3-Service.dist}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${reference.WebAlbums3-Util.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
@@ -948,7 +940,6 @@ exists or setup the property manually. For example like this:
             -->
     <target depends="init" if="no.dist.ear.dir" name="deps-clean" unless="no.deps">
         <ant antfile="${project.WebAlbums3-Service}/build.xml" inheritall="false" target="clean"/>
-        <ant antfile="${project.WebAlbums3-Util}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.WebAlbums3-iDAO}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="do-clean">
