@@ -42,15 +42,12 @@ public class WebPageBean implements WebPageLocal {
     
     private static final long serialVersionUID = -8157612278920872716L;
     private static final Logger log = Logger.getLogger(WebPageBean.class.getName());
-    
-    public static final int USER_CHEAT = 0 ;
 
     static {
-        WebPageBean.log.info("WebAlbums v4 is loading ... ");
-
-        WebPageBean.log.info("Starting up Hibernate ...");
-        WebPageBean.log.info("Hibernate is ready !");
+        log.warning("Loading WebAlbums3-Service-Beans");
     }
+
+    public static final int USER_CHEAT = 0 ;
 
     @Override
     public EditMode getNextEditionMode(ViewSession vSession) {

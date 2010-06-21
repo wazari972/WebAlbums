@@ -4,8 +4,8 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.LinkedHashMap;
 import net.wazari.dao.exchange.ServiceSession;
-import java.util.HashMap;
 import net.wazari.dao.*;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +57,7 @@ public class TagFacade implements TagFacadeLocal {
                 " GROUP BY t.id "+
                 " ORDER BY t.nom ";
         List<Object[]> lst = em.createQuery(rq).getResultList();
-        Map<Tag, Long> ret = new HashMap<Tag, Long>();
+        Map<Tag, Long> ret = new LinkedHashMap <Tag, Long>();
         for (Object[] current : lst) {
             ret.put((JPATag) current[0], (Long) current[1]);
         }

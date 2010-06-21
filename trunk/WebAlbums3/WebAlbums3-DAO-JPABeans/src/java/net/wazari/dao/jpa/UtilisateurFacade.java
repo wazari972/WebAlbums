@@ -24,6 +24,9 @@ import net.wazari.dao.jpa.entity.JPAUtilisateur;
 public class UtilisateurFacade implements UtilisateurFacadeLocal {
     private static final Logger log = Logger.getLogger(UtilisateurFacade.class.getCanonicalName()) ;
 
+    static {
+        log.warning("Loading WebAlbums3-DAO-JPABeans");
+    }
     @EJB AlbumFacadeLocal albumDAO ;
 
     @PersistenceContext

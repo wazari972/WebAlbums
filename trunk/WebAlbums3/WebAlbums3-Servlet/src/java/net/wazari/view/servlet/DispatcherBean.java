@@ -43,6 +43,10 @@ import net.wazari.view.servlet.exchange.ViewSessionImpl;
 public class DispatcherBean {
 
     private static final Logger log = Logger.getLogger(DispatcherBean.class.getCanonicalName());
+    static {
+        log.warning("Loading WebAlbums3-Servlet");
+    }
+
     @EJB
     private ThemeLocal themeService;
     @EJB
