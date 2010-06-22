@@ -8,7 +8,7 @@ package net.wazari.service;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.ViewSessionSession;
+import net.wazari.service.exchange.ViewSessionSession;
 
 /**
  *

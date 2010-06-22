@@ -68,44 +68,39 @@ public class GooglePoint extends GoogleMap {
     else if (!conf.hasInternet()) return "//no internet\n" ;
 
     StringBuilder str = new StringBuilder() ;
-    str.append(
-      "     function createMarker"+id+"(latlng, message) {\n"+
-      "         var marker = new GMarker(latlng);\n"+
-      "         marker.value = 1;\n");
+    str.append("function createMarker"+id+"(latlng, message) {\n")
+       .append("   var marker = new GMarker(latlng);\n")
+       .append("   marker.value = 1;\n");
     if (displayInfo) {
-      str.append(
-	"         GEvent.addListener(marker,'click', function() {\n"+
-	"             map"+id+".openInfoWindowHtml(latlng, message);\n"+
-	"         });\n");
+      str.append("   GEvent.addListener(marker,'click', function() {\n")
+         .append("           map"+id+".openInfoWindowHtml(latlng, message);\n")
+         .append("       });\n");
     }
-    str.append(
-      "         return marker;\n"+
-      "     }\n");
+    str.append("   return marker;\n")
+       .append("}\n");
     
-    str.append(
-      "     var map"+id+" "+
-      "= new GMap2(document.getElementById('"+getMapName()+"'));\n"+
-      "     \n"+
-      "     var bounds"+id+" = new GLatLngBounds ();\n");
+    str.append("var map"+id+" ")
+       .append("= new GMap2(document.getElementById('"+getMapName()+"'));\n")
+       .append("     \n")
+       .append("     var bounds"+id+" = new GLatLngBounds ();\n");
     for (Point p : points) {
       str.append("     var "+p.varName+id+" "+
 		 "= new GLatLng("+p.lat+", "+p.lng+");\n");
       str.append("     bounds"+id+".extend("+p.varName+id+");\n");
     }
-    str.append(
-      "     map"+id+".setCenter(bounds"+id+".getCenter() , 13);\n"+
-      "     var zoomLevel"+id+" = map"+id+".getBoundsZoomLevel(bounds"+id+");\n"+
-      "     map"+id+".setZoom(zoomLevel"+id+");\n"+
-      "     \n");
+    str.append("map"+id+".setCenter(bounds"+id+".getCenter() , 13);\n")
+       .append("var zoomLevel"+id+" = map"+id+".getBoundsZoomLevel(bounds"+id+");\n")
+       .append("map"+id+".setZoom(zoomLevel"+id+");\n")
+       .append("\n");
       
     for (Point p : points) {
       str.append("     map"+id+".addOverlay(createMarker"+id+"("+
 		 p.varName+id+", \""+p.msg+"\"));\n");
     }
+    
     if (displayInfo) {
-      str.append(""+
-		 "     map"+id+".addControl(new GSmallMapControl());\n"+
-		 "     map"+id+".addControl(new GMapTypeControl());\n");
+      str.append("     map"+id+".addControl(new GSmallMapControl());\n")
+         .append("     map"+id+".addControl(new GMapTypeControl());\n");
     }
         
     return str.toString() ;

@@ -90,7 +90,7 @@ public class FilesFinder {
                 }
 
                 info(out, "Le theme n'est pas dans la table");
-                if (passwrd != null && !passwrd.equals("")) {
+                if (passwrd != null && !passwrd.isEmpty()) {
                     enrTheme = themeDAO.newTheme();
                     enrTheme.setNom(themeName);
                     enrTheme.setPassword(passwrd);

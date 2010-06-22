@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.logging.Logger;
 import net.wazari.dao.*;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -19,6 +20,8 @@ import net.wazari.dao.jpa.entity.JPATagTheme;
  */
 @Stateless
 public class TagThemeFacade implements TagThemeFacadeLocal {
+    private static final Logger log = Logger.getLogger(TagThemeFacade.class.getName());
+
     @EJB TagFacadeLocal   tagDAO ;
     @EJB ThemeFacadeLocal themeDAO ;
     @PersistenceContext

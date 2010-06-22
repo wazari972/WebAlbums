@@ -19,7 +19,7 @@ public interface ViewSessionImages extends ViewSession {
 
     Integer getId();
 
-    public String getWidth();
+    String getWidth();
 
     ImgMode getImgMode();
 

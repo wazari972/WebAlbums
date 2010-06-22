@@ -6,7 +6,6 @@
 package net.wazari.dao.jpa;
 
 import net.wazari.dao.*;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

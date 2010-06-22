@@ -8,6 +8,7 @@ package net.wazari.dao;
 import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Tag;
@@ -17,6 +18,7 @@ import net.wazari.dao.entity.Tag;
  * @author kevin
  */
 @Local
+@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface TagFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void create(Tag tag);

@@ -29,11 +29,11 @@ import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 
-/*import org.hibernate.JDBCException;
+import org.hibernate.JDBCException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
-*/
+
 import org.xml.sax.InputSource;
 
 /**
@@ -42,37 +42,6 @@ import org.xml.sax.InputSource;
  */
 @Stateless
 public class MaintDAOBean implements MaintFacadeLocal {
-
-    @Override
-    public boolean treatImportDDL() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean treatExportDDL(String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void treatImportXML(String path, boolean isMySQL) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void treatExportXML(String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void treatTruncateXML(String path, boolean isMySQL) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void treatFullImport(String path, boolean isMySQL) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-/*
     private static interface Work {
         void execute(Connection connection) throws JDBCException;
     }
@@ -241,5 +210,5 @@ public class MaintDAOBean implements MaintFacadeLocal {
             treatImportXML(path, isMySQL);
         }
     }
-  */
+    private static final Logger LOG = Logger.getLogger(MaintDAOBean.class.getName());
 }

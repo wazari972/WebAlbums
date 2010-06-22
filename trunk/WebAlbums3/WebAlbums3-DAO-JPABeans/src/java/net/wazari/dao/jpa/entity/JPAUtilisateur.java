@@ -7,14 +7,13 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import net.wazari.dao.entity.Album;
@@ -26,16 +25,20 @@ import net.wazari.dao.entity.Utilisateur;
  */
 @Entity
 @Table(name = "Utilisateur")
-@NamedQueries({@NamedQuery(name = "JPAUtilisateur.findAll", query = "SELECT j FROM JPAUtilisateur j")})
 public class JPAUtilisateur implements Utilisateur, Serializable {
+    private static final Logger log = Logger.getLogger(JPAUtilisateur.class.getName());
+
     private static final long serialVersionUID = 1L;
+
     @Id
     @Basic(optional = false)
     @Column(name = "ID", nullable = false)
     private Integer id;
+
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "droit", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
 
@@ -51,26 +54,32 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
         this.nom = nom;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public String getNom() {
         return nom;
     }
 
+    @Override
     public void setNom(String nom) {
         this.nom = nom;
     }
 
+    @Override
     public List<Album> getAlbumList() {
         return (List) jPAAlbumList;
     }
 
+    @Override
     public void setAlbumList(List<Album> jPAAlbumList) {
         this.jPAAlbumList = (List) jPAAlbumList;
     }
@@ -84,7 +93,6 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JPAUtilisateur)) {
             return false;
         }
@@ -99,5 +107,4 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
     public String toString() {
         return "net.wazari.dao.jpa.entity.JPAUtilisateur[id=" + id + "]";
     }
-
 }

@@ -1,6 +1,7 @@
 package net.wazari.service.entity.util;
 
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
 
 import net.wazari.dao.entity.Photo;
 
@@ -35,7 +36,7 @@ public class AlbumUtil {
     public void setTagsToPhoto(Album enrAlbum, Integer[] tags, Boolean force) throws WebAlbumsServiceException {
 
         for (Photo enrPhoto : enrAlbum.getPhotoList()) {
-            log.info("apply tags to " + enrPhoto.getId());
+            log.log(Level.INFO, "apply tags to {0}", enrPhoto);
             if (force) {
 
                 photoUtil.setTags(enrPhoto, tags);

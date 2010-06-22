@@ -5,6 +5,7 @@
 
 package net.wazari.dao;
 
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import net.wazari.dao.exchange.ServiceSession;
 import javax.ejb.Local;
@@ -17,7 +18,16 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
  * @author kevin
  */
 @Local
+@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface AlbumFacadeLocal {
+    enum TopFirst {
+        TOP, FIRST
+    }
+
+    enum Restriction {
+        ALLOWED_ONLY, THEME_ONLY, ALLOWED_AND_THEME
+    }
+    
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void create(Album album);
 
@@ -32,14 +42,6 @@ public interface AlbumFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     Album newAlbum();
-    
-    enum TopFirst {
-        TOP, FIRST
-    }
-
-    enum Restriction {
-        ALLOWED_ONLY, THEME_ONLY, ALLOWED_AND_THEME
-    }
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     SubsetOf<Album> queryAlbums(ServiceSession session,

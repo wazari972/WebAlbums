@@ -196,7 +196,7 @@ public class ConfigBean implements ConfigLocal {
         }
 
         try {
-            if (nom != null && !nom.equals("")) {
+            if (nom != null && !nom.isEmpty()) {
                 String msg = "";
                 String liste = "";
 

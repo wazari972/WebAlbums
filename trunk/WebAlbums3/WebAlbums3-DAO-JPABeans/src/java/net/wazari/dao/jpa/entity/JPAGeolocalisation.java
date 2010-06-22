@@ -6,14 +6,13 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import net.wazari.dao.entity.Geolocalisation;
@@ -25,8 +24,9 @@ import net.wazari.dao.entity.Tag;
  */
 @Entity
 @Table(name = "Geolocalisation")
-@NamedQueries({@NamedQuery(name = "JPAGeolocalisation.findAll", query = "SELECT j FROM JPAGeolocalisation j")})
 public class JPAGeolocalisation implements Geolocalisation, Serializable {
+    private static final Logger log = Logger.getLogger(JPAGeolocalisation.class.getName());
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -59,34 +59,42 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
         this.longitude = longitude;
     }
 
+    @Override
     public Integer getTag() {
         return tag;
     }
 
+    @Override
     public void setTag(Integer tag) {
         this.tag = tag;
     }
 
+    @Override
     public String getLat() {
         return lat;
     }
 
+    @Override
     public void setLat(String lat) {
         this.lat = lat;
     }
 
+    @Override
     public String getLongitude() {
         return longitude;
     }
 
+    @Override
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 
+    @Override
     public Tag getTag1() {
         return (Tag) jPATag;
     }
 
+    @Override
     public void setTag1(Tag jPATag) {
         this.jPATag = (JPATag) jPATag;
     }
@@ -100,7 +108,6 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof JPAGeolocalisation)) {
             return false;
         }

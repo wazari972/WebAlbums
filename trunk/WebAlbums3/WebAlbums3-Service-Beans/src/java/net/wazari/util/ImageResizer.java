@@ -1,5 +1,6 @@
 package net.wazari.util;
 
+import java.util.logging.Level;
 import net.wazari.common.util.StringUtil;
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +41,7 @@ public class ImageResizer implements Runnable {
       if (stack.empty()) {
 	if (finished) {
 	  if (this.author != null && this.author.isDirectory()) {
-	    log.info("Nettoyage du dossier "+this.author) ;
+	    log.log(    Level.INFO, "Nettoyage du dossier {0}", this.author) ;
 	    File[] lst = this.author.listFiles() ;
 	    
 	    //supprimer recursivement tous les dossiers de ce repertoire
@@ -73,11 +74,11 @@ public class ImageResizer implements Runnable {
 	    
 	    log.info("Done !");
 	} catch (URISyntaxException e) {
-	    log.info("URISyntaxException "+e);
+	    log.log(Level.INFO, "URISyntaxException {0}", e);
 	} catch (MalformedURLException e) {
-	    log.info("MalformedURLException "+e);
+	    log.log(Level.INFO, "MalformedURLException {0}", e);
 	} catch (IOException e) {
-	    log.info("IOExceptionLException "+e);
+	    log.log(Level.INFO, "IOExceptionLException {0}", e);
 	}
       }
     }
@@ -99,9 +100,9 @@ public class ImageResizer implements Runnable {
       }
       //on fait rien
       
-      log.warning("Fichier trouvé "+rep+" !") ;
+      log.log(Level.WARNING, "Fichier trouv\u00e9 {0} !", rep) ;
     } else if (rep.isDirectory()) {
-      log.info("Suppression du dossier "+rep+" ...") ;
+      log.log(Level.INFO, "Suppression du dossier {0} ...", rep) ;
       File[] lst = rep.listFiles() ;
       
       //supprimer recursivement tous les dossiers vides de ce repertoire
@@ -115,11 +116,11 @@ public class ImageResizer implements Runnable {
   
     private static boolean move (Element elt, Configuration conf) throws MalformedURLException, URISyntaxException {
       String url = conf.getSourceURL()+conf.getImages() + conf.getSep() +elt.path ;
-      log.info("SOURCE = "+url);
+      log.log(Level.INFO, "SOURCE = {0}", url);
       URI uri = new URL(StringUtil.escapeURL(url)).toURI();
       File destination = new File (uri);
       destination.getParentFile().mkdirs();
-      log.info("Move "+elt.image + " to "+destination) ;
+      log.log(Level.INFO, "Move {0} to {1}", new Object[]{elt.image, destination}) ;
       
       if (!elt.image.renameTo(destination)) {
 	log.info("Impossible de déplacer ...");
@@ -135,10 +136,10 @@ public class ImageResizer implements Runnable {
     File destination = new File (path);
     File parent = destination.getParentFile() ;
     if (!parent.isDirectory() && !parent.mkdirs()) {
-      log.warning("Impossible de creer le dossier destination ("+parent+")");
+      log.log(Level.WARNING, "Impossible de creer le dossier destination ({0})", parent);
       return false ;
     } else {
-      log.warning("Repertoires parents crées ("+parent+")") ;
+      log.log(Level.WARNING, "Repertoires parents cr\u00e9es ({0})", parent) ;
       String ext = null ;
       int idx = source.image.getName().lastIndexOf('.');
       if (idx != -1) ext = source.image.getName().substring(idx+1);

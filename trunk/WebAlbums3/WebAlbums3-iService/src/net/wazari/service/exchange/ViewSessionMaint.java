@@ -10,10 +10,6 @@ package net.wazari.service.exchange;
  * @author kevinpouget
  */
 public interface ViewSessionMaint extends ViewSession {
-
-    String getParam();
-
-    String getValue();
     enum MaintAction {
         FULL_IMPORT,
         EXPORT_XML, IMPORT_XML, TRUNCATE_XML,
@@ -22,4 +18,8 @@ public interface ViewSessionMaint extends ViewSession {
     }
 
     MaintAction getMaintAction() ;
+
+    String getParam();
+
+    String getValue();
 }

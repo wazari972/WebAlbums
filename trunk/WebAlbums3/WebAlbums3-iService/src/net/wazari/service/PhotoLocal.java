@@ -20,10 +20,10 @@ import net.wazari.common.util.XmlBuilder;
 @Local
 @RolesAllowed({UserLocal.VIEWER_ROLE, UserLocal.ADMIN_ROLE})
 public interface PhotoLocal {
-    public enum TypeRequest {
+    enum TypeRequest {
         PHOTO, TAG
     }
-    public class PhotoRequest {
+    class PhotoRequest {
 
         public PhotoRequest(TypeRequest type, Integer albumId) {
             this.type = type;
@@ -39,6 +39,7 @@ public interface PhotoLocal {
         public TypeRequest type ;
         public List<Integer> listTagId ;
     }
+    
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder displayPhoto(PhotoRequest rq, ViewSessionPhotoDisplay vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
 

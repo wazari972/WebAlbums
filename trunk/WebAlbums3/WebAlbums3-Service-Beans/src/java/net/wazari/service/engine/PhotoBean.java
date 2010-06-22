@@ -2,6 +2,7 @@ package net.wazari.service.engine;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import java.util.logging.Logger;
 import javax.annotation.security.RolesAllowed;
@@ -72,7 +73,7 @@ public class PhotoBean implements PhotoLocal {
         Action action = vSession.getAction();
         XmlBuilder output;
         XmlBuilder submit = null;
-        Boolean correct = new Boolean(true);
+        Boolean correct = true;
 
         if (Action.SUBMIT == action && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
             submit = treatPhotoSUBMIT((ViewSessionPhotoSubmit) vSession,correct);
@@ -106,7 +107,6 @@ public class PhotoBean implements PhotoLocal {
             Photo enrPhoto = photoDAO.loadIfAllowed(vSession, photoID);
 
             if (enrPhoto == null) {
-                correct = false;
                 output.addException("Impossible de trouver cette photo " +
                         "(" + photoID + (vSession.isRootSession() ? "" : "/" + vSession.getTheme()) + ")");
                 return output.validate();
@@ -168,7 +168,7 @@ public class PhotoBean implements PhotoLocal {
                     actualTheme = enrAlbum.getTheme();
 
                     for (TagTheme enrTagThCurrent : lstTT) {
-                        log.info("tag th" + enrTagThCurrent.getTheme() + " ta" + enrTagThCurrent.getTag());
+                        log.log(Level.INFO, "tag th{0} ta{1}", new Object[]{enrTagThCurrent.getTheme(), enrTagThCurrent.getTag()});
                         if (enrTagTh.getTheme() == enrAlbum.getTheme()) {
                             enrTagTh = enrTagThCurrent;
                             break;
@@ -192,7 +192,7 @@ public class PhotoBean implements PhotoLocal {
                 //changer la photo representant ce tag/theme
                 enrTagTh.setPhoto(enrPhoto.getId());
 
-                log.info("saveOrUpdate " + enrTagTh);
+                log.log(Level.INFO, "saveOrUpdate {0}", enrTagTh);
                 tagThemeDAO.edit(enrTagTh);
             }
 
@@ -204,9 +204,6 @@ public class PhotoBean implements PhotoLocal {
             output.cancel();
             output.addException("NoSuchElementException", "Impossible d'accerder à la photo à modifier (" + photoID + ")");
             output.addException("NoSuchElementException", rq);
-
-
-            correct = false;
         }
         return output.validate();
     }

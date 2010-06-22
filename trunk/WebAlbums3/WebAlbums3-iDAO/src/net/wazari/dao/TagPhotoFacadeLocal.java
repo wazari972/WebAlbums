@@ -7,6 +7,7 @@ package net.wazari.dao;
 
 import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Album;
@@ -19,6 +20,7 @@ import net.wazari.dao.entity.TagPhoto;
  * @author kevin
  */
 @Local
+@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface TagPhotoFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)

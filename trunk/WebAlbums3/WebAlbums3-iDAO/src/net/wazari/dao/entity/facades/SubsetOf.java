@@ -6,12 +6,15 @@
 package net.wazari.dao.entity.facades;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
  * @author kevinpouget
  */
 public class SubsetOf<T> {
+    private static final Logger log = Logger.getLogger(SubsetOf.class.getName());
+    
     public static class Bornes {
         public Bornes(int nbElementsPerPage, int currentPage) {
             this.nbElementsPerPage = nbElementsPerPage ;

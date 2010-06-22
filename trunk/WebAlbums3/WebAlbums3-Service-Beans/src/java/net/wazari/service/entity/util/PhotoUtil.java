@@ -4,6 +4,7 @@ import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifReader;
+import java.util.logging.Level;
 import net.wazari.dao.entity.Theme;
 import javax.swing.ImageIcon;
 import java.awt.Image;
@@ -61,7 +62,7 @@ public class PhotoUtil {
     public void addTags(Photo p, Integer[] tags)
             throws WebAlbumsServiceException {
 
-        log.info("photo " + p.getId());
+        log.log(Level.INFO, "add tags to photo {0}", p);
         if (tags == null) {
             return;
         }
@@ -70,7 +71,7 @@ public class PhotoUtil {
         //ajouter les nouveaux tags
         //qui ne sont pas encore dans la liste existante
         for (int i = 0; i < tags.length; i++) {
-            log.info("add tag " + tags[i]);
+            log.log(Level.INFO, "add tag {0}", tags[i]);
             boolean already = false;
 
             //verifier que le tag est bien dans la base
@@ -90,14 +91,14 @@ public class PhotoUtil {
                     TagPhoto nouveau = tagPhotoDAO.newTagPhoto();
                     nouveau.setPhoto(p);
                     nouveau.setTag(enrTag);
-                    log.info("Ajout du tag : " + enrTag.getNom());
+                    log.log(Level.INFO, "Ajout du tag : {0}", enrTag.getNom());
                     tagPhotoDAO.create(nouveau);
   
                 } else {
-                    log.info("already: " +enrTag.getNom());
+                    log.log(Level.INFO, "already: {0}", enrTag.getNom());
                 }
             } else {
-                log.warning("Erreur dans l'id du Tag : " + tags[i] + ": introuvable !");
+                log.log(Level.WARNING, "Erreur dans l''id du Tag : {0}: introuvable !", tags[i]);
             }
         }
     }
@@ -215,10 +216,10 @@ public class PhotoUtil {
                 }
             }
         } catch (JpegProcessingException e) {
-            log.warning("Exception JPEG durant le traitement exif : " + e);
+            log.log(Level.WARNING, "Exception JPEG durant le traitement exif : {0}", e);
             log.warning(path);
         } catch (URISyntaxException e) {
-            log.warning("URISyntaxException durant le traitement exif : " + e);
+            log.log(Level.WARNING, "URISyntaxException durant le traitement exif : {0}", e);
             log.warning(path);
         }
     }
@@ -256,7 +257,7 @@ public class PhotoUtil {
         String path = p.getPath();
         String mini = vSession.getConfiguration().getSourcePath() + vSession.getConfiguration().getMini() + "/" + themeName + "/" + path;
         String image = vSession.getConfiguration().getSourcePath() + vSession.getConfiguration().getImages() + "/" + themeName + "/" + path;
-        log.info("Rotation de " + degrees + " de " + path);
+        log.log(Level.INFO, "Rotation de {0}degres de {1}", new Object[]{degrees, path});
         if (sysTools.rotate(null, null, degrees, mini + ".png", mini + ".png")) {
             if (!sysTools.rotate(null, null, degrees, image, image)) {
                 sysTools.rotate(null, null, "-" + degrees, mini + ".png", mini + ".png");

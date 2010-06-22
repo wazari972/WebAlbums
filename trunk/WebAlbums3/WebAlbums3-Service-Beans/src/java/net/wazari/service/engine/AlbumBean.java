@@ -119,7 +119,6 @@ public class AlbumBean implements AlbumLocal {
 
             if (enrAlbum.getId() == albumId) {
                 album.add(submit);
-                submit = null;
             }
 
             album.add(StringUtil.xmlDate(enrAlbum.getDate(), oldDate));

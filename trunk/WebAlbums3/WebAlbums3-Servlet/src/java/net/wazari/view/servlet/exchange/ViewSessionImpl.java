@@ -23,8 +23,8 @@ import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Special;
-import net.wazari.service.exchange.ViewSession.ViewSessionLogin;
-import net.wazari.service.exchange.ViewSession.ViewSessionSession;
+import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.service.exchange.ViewSessionSession;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
@@ -492,16 +492,6 @@ public class ViewSessionImpl implements
     @Override
     public Principal getUserPrincipal() {
         return request.getUserPrincipal();
-    }
-
-    @Override
-    public boolean authenticate() {
-        try {
-            return request.authenticate(response);
-        } catch (IOException e) {
-        } catch (ServletException e) {
-        }
-        return false;
     }
 
     @Override

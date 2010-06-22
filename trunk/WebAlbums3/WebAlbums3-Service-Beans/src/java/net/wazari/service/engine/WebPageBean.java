@@ -3,6 +3,7 @@ package net.wazari.service.engine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
@@ -121,14 +122,14 @@ public class WebPageBean implements WebPageLocal {
         }
         login.add("theme", theme);
         login.add("user", vSession.getUserName());
-        log.info("logged as manager? "+vSession.isSessionManager());
+        log.log(Level.INFO, "logged as manager? {0}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {
             login.add("admin");
             if (vSession.getEditionMode() == EditMode.EDITION) {
                 login.add("edit");
             }
         }
-        log.info("logged as root? "+vSession.isRootSession());
+        log.log(Level.INFO, "logged as root? {0}", vSession.isRootSession());
         if (vSession.isRootSession()) {
             login.add("root");
         }

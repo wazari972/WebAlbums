@@ -7,14 +7,13 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import net.wazari.dao.entity.Album;
@@ -27,21 +26,27 @@ import net.wazari.dao.entity.Theme;
  */
 @Entity
 @Table(name = "Theme")
-@NamedQueries({@NamedQuery(name = "JPATheme.findAll", query = "SELECT j FROM JPATheme j")})
 public class JPATheme implements Theme, Serializable {
+    private static final Logger log = Logger.getLogger(JPATheme.class.getName());
+    
     private static final long serialVersionUID = 1L;
+
     @Id
     @Basic(optional = false)
     @Column(name = "ID", nullable = false)
     private Integer id;
+
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
+
     @Basic(optional = false)
     @Column(name = "Password", nullable = false, length = 100)
     private String password;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
 
@@ -58,42 +63,52 @@ public class JPATheme implements Theme, Serializable {
         this.password = password;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public String getNom() {
         return nom;
     }
 
+    @Override
     public void setNom(String nom) {
         this.nom = nom;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Override
     public List<TagTheme> getTagThemeList() {
         return (List) jPATagThemeList;
     }
 
+    @Override
     public void setTagThemeList(List<TagTheme> jPATagThemeList) {
         this.jPATagThemeList = (List) jPATagThemeList;
     }
 
+    @Override
     public List<Album> getAlbumList() {
         return (List) jPAAlbumList;
     }
 
+    @Override
     public void setAlbumList(List<Album> jPAAlbumList) {
         this.jPAAlbumList = (List) jPAAlbumList;
     }

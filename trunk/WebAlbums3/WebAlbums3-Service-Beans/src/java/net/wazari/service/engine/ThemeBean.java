@@ -5,7 +5,6 @@
 package net.wazari.service.engine;
 
 import java.util.List;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import net.wazari.service.*;
 import javax.ejb.Stateless;

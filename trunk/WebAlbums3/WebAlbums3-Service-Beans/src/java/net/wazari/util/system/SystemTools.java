@@ -1,5 +1,6 @@
 package net.wazari.util.system;
 
+import java.util.logging.Level;
 import net.wazari.service.SystemToolsLocal;
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,13 +51,13 @@ public class SystemTools implements SystemToolsLocal {
 
     static {
 
-        log.info("+++ Loading services for \"" + IImageUtil.class.getCanonicalName() + "\"");
+        log.log(Level.INFO, "+++ Loading services for \"{0}\"", IImageUtil.class.getCanonicalName());
         ServiceLoader<IImageUtil> servicesImg = ServiceLoader.load(IImageUtil.class);
         for (IImageUtil current : servicesImg) {
             wrappers.add(current);
         }
         
-        log.info("+++ Loading services for \"" + ISystemUtil.class.getCanonicalName() + "\"");
+        log.log(Level.INFO, "+++ Loading services for \"{0}\"", ISystemUtil.class.getCanonicalName());
         ServiceLoader<ISystemUtil> servicesSys = ServiceLoader.load(ISystemUtil.class);
         
         if (servicesSys.iterator().hasNext()) {
@@ -67,7 +68,7 @@ public class SystemTools implements SystemToolsLocal {
     }
     private static Process execPS(String[] cmd) {
         try {
-            log.info("exec: " + Arrays.toString(cmd));
+            log.log(Level.INFO, "exec: {0}", Arrays.toString(cmd));
             return Runtime.getRuntime().exec(cmd);
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,10 +92,10 @@ public class SystemTools implements SystemToolsLocal {
 
                 reader = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
                 while ((str = reader.readLine()) != null) {
-                    log.info("err - " + str);
+                    log.log(Level.INFO, "err - {0}", str);
                 }
                 int ret = ps.waitFor();
-                log.info("ret:" + ret);
+                log.log(Level.INFO, "ret:{0}", ret);
 
                 return ret;
 
@@ -109,7 +110,7 @@ public class SystemTools implements SystemToolsLocal {
                 return util;
             }
         }
-        log.warning("no wrapper for " + type);
+        log.log(Level.WARNING, "no wrapper for {0}", type);
         return getWrapper("image", null);
     }
 

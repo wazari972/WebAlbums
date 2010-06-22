@@ -6,6 +6,7 @@
 package net.wazari.dao;
 
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Utilisateur;
@@ -15,6 +16,7 @@ import net.wazari.dao.entity.Utilisateur;
  * @author kevin
  */
 @Local
+@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface UtilisateurFacadeLocal {
     final static String ADMIN_ROLE = "ADMIN" ;
     final static String VIEWER_ROLE = "VIEWER" ;

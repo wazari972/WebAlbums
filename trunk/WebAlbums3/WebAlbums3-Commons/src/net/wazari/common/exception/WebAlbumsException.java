@@ -10,7 +10,7 @@ package net.wazari.common.exception;
  * @author kevinpouget
  */
 public class WebAlbumsException extends Exception {
-public enum ErrorType {
+    public enum ErrorType {
         JDBCException,
         AuthenticationException
     }

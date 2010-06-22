@@ -53,6 +53,7 @@ public class GoogleSearch extends GoogleMap {
 	return "showAddress(document."+champs+".value); return false" ;
     }
     
+    @Override
     public String getFunctions(Configuration conf) {
 	String fct = 
 " function showAddress(address) {\n"+
@@ -102,10 +103,12 @@ public class GoogleSearch extends GoogleMap {
 "      }\n"+
 "    }\n" ;
 	return fct ;
-    } ;
+    }
+
     public boolean isEmpty() {
 	return true;
     }
+    
     public String getMapName() {
 	return "map_search" ;
     }

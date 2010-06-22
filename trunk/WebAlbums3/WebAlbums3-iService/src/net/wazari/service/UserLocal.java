@@ -8,7 +8,7 @@ import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
 import net.wazari.dao.UtilisateurFacadeLocal;
-import net.wazari.service.exchange.ViewSession.ViewSessionLogin;
+import net.wazari.service.exchange.ViewSessionLogin;
 
 /**
  *
@@ -18,8 +18,7 @@ import net.wazari.service.exchange.ViewSession.ViewSessionLogin;
 public interface UserLocal {
     public final static String ADMIN_ROLE = UtilisateurFacadeLocal.ADMIN_ROLE ;
     public final static String VIEWER_ROLE = UtilisateurFacadeLocal.VIEWER_ROLE;
-    //XmlBuilder treatUSR(ViewSession vSession) throws WebAlbumsServiceException;
-
+    
     @PermitAll
     boolean logon(ViewSessionLogin vSession, HttpServletRequest request) ;
     @PermitAll

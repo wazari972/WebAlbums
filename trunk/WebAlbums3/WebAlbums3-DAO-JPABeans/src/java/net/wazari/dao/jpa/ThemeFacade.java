@@ -6,6 +6,7 @@ package net.wazari.dao.jpa;
 
 import net.wazari.dao.*;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,7 +19,8 @@ import net.wazari.dao.jpa.entity.JPATheme;
  */
 @Stateless
 public class ThemeFacade implements ThemeFacadeLocal {
-
+    private static final Logger log = Logger.getLogger(ThemeFacade.class.getName());
+     
     @PersistenceContext
     private EntityManager em;
 

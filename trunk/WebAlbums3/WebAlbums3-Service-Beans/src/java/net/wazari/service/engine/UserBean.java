@@ -1,8 +1,8 @@
 package net.wazari.service.engine;
 
 import java.security.Principal;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -14,12 +14,12 @@ import net.wazari.dao.entity.Utilisateur;
 
 import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.ViewSessionLogin;
+import net.wazari.service.exchange.ViewSessionLogin;
 
 
 @Stateless
 public class UserBean implements UserLocal {
-    private static Logger log = Logger.getLogger(UserBean.class.getCanonicalName()) ;
+    private static final Logger log = Logger.getLogger(UserBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
     @EJB
     private UtilisateurFacadeLocal userDAO;
@@ -33,7 +33,7 @@ public class UserBean implements UserLocal {
 
         Principal pr = vSession.getUserPrincipal() ;
 
-        log.info("Login with theme="+themeId+", principal="+pr) ;
+        log.log(Level.INFO, "Login with theme={0}, principal={1}", new Object[]{themeId, pr}) ;
 
         //user must be authenticated
         if (pr == null) return false ;
@@ -52,9 +52,9 @@ public class UserBean implements UserLocal {
 
 
         String userName = pr.getName() ;
-        log.fine("UserPrincipal : +"+userName) ;
-        log.fine("Role admin    :" +request.isUserInRole(UserLocal.ADMIN_ROLE)) ;
-        log.fine("Role view     :" +request.isUserInRole(UserLocal.VIEWER_ROLE)) ;
+        log.log(Level.FINE, "UserPrincipal : +{0}", userName) ;
+        log.log(Level.FINE, "Role admin    :{0}", request.isUserInRole(UserLocal.ADMIN_ROLE)) ;
+        log.log(Level.FINE, "Role view     :{0}", request.isUserInRole(UserLocal.VIEWER_ROLE)) ;
 
         int userId ;
         //allow +User to be logged as theme manager with given user view
@@ -64,7 +64,7 @@ public class UserBean implements UserLocal {
         }
 
         Utilisateur enrUtil = userDAO.loadByName(userName);
-        log.info("database lookup returned: "+enrUtil) ;
+        log.log(Level.INFO, "database lookup returned: {0}", enrUtil) ;
         if (enrUtil == null) {
             asThemeManager = true ;
             userId = -1 ;
@@ -77,18 +77,17 @@ public class UserBean implements UserLocal {
             asThemeManager = false;
         }
 
-        log.info("saveUser (" + userName + "-" + userId + ")");
+        log.log(Level.INFO, "saveUser ({0}-{1})", new Object[]{userName, userId});
         vSession.setUserName(userName);
         vSession.setUserId(userId);
 
-        log.info("saveProperties (manager=" + asThemeManager  +
-                ", editionMode=" + ViewSession.EditMode.EDITION + "" +
-                ", rootSession="+isRootSession+")");
+        log.log(Level.INFO,"saveProperties (manager={0}, editionMode={1}" +
+                ", rootSession="+"{2})", new Object[]{asThemeManager, ViewSession.EditMode.EDITION, isRootSession});
         vSession.setSessionManager(asThemeManager) ;
         vSession.setEditionMode(ViewSession.EditMode.EDITION) ;
         vSession.setRootSession(isRootSession);
 
-        log.info("saveTheme (" + enrTheme  + ")");
+        log.log(Level.INFO, "saveTheme ({0})", enrTheme);
         vSession.setTheme(enrTheme);
 
         return true ;
@@ -102,6 +101,5 @@ public class UserBean implements UserLocal {
         vSession.setEditionMode(null) ;
         vSession.setRootSession(null);
         vSession.setTheme(null);
-        //vSession.setThemeName(null);
     }
 }

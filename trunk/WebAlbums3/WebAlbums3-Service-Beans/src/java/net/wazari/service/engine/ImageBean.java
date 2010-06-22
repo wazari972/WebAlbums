@@ -12,7 +12,6 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import java.util.logging.Logger;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -22,7 +21,6 @@ import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.entity.Photo;
 
 import net.wazari.service.ImageLocal;
-import net.wazari.service.UserLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;

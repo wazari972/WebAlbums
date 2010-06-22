@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.logging.Logger;
 import javax.annotation.security.RolesAllowed;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
@@ -15,8 +16,10 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class WebAlbumsDAOBean {
+    private static final Logger log = Logger.getLogger(WebAlbumsDAOBean.class.getName());
+
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public String processListID(ServiceSession session, String rq, boolean restrict) {
+    String processListID(ServiceSession session, String rq, boolean restrict) {
         if (restrict && ! session.isRootSession()) {
             rq += " AND " + restrictToThemeAllowed(session, "a") + " ";
         }
@@ -24,7 +27,7 @@ public class WebAlbumsDAOBean {
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public String restrictToAlbumsAllowed(ServiceSession session, String album) {
+    String restrictToAlbumsAllowed(ServiceSession session, String album) {
         String rq = null;
         if (session.isSessionManager()) {
             rq = "SELECT a.id FROM JPAAlbum a WHERE 1 = 1 ";
@@ -44,7 +47,7 @@ public class WebAlbumsDAOBean {
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public String restrictToPhotosAllowed(ServiceSession session, String photo) {
+    String restrictToPhotosAllowed(ServiceSession session, String photo) {
         String rq = null;
 
         rq = "SELECT p.id " +
@@ -65,7 +68,7 @@ public class WebAlbumsDAOBean {
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public String restrictToThemeAllowed(ServiceSession session, String album) {
+    String restrictToThemeAllowed(ServiceSession session, String album) {
         if (session.isRootSession()) {
             return " 1 = 1";
         } else {

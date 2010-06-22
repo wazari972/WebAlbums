@@ -6,6 +6,7 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
@@ -26,16 +25,20 @@ import net.wazari.dao.entity.TagPhoto;
  */
 @Entity
 @Table(name = "TagPhoto")
-@NamedQueries({@NamedQuery(name = "JPATagPhoto.findAll", query = "SELECT j FROM JPATagPhoto j")})
 public class JPATagPhoto implements TagPhoto, Serializable {
+    private static final Logger log = Logger.getLogger(JPATagPhoto.class.getName());
+
     private static final long serialVersionUID = 1L;
+
     @Id
     @Basic(optional = false)
     @Column(name = "ID", nullable = false)
     private Long id;
+
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag tag;
+
     @JoinColumn(name = "Photo", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAPhoto photo;
@@ -47,26 +50,32 @@ public class JPATagPhoto implements TagPhoto, Serializable {
         this.id = id;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public Tag getTag() {
         return tag;
     }
 
+    @Override
     public void setTag(Tag tag) {
         this.tag = (JPATag) tag;
     }
 
+    @Override
     public Photo getPhoto() {
         return photo;
     }
 
+    @Override
     public void setPhoto(Photo photo) {
         this.photo = (JPAPhoto) photo;
     }
