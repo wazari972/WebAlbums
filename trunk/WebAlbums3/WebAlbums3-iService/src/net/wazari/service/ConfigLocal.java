@@ -18,13 +18,6 @@ import net.wazari.common.util.XmlBuilder;
 @Local
 @RolesAllowed({UserLocal.ADMIN_ROLE})
 public interface ConfigLocal {
-
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
-    XmlBuilder displayCONFIG(ViewSessionConfig vSession) throws WebAlbumsServiceException;
-
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
-    XmlBuilder treatCONFIG(ViewSessionConfig vSession) throws WebAlbumsServiceException;
-
     @RolesAllowed(UserLocal.ADMIN_ROLE)
     XmlBuilder treatDELTAG(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 

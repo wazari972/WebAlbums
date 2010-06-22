@@ -8,6 +8,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.AlbumLocal;
+import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession.Action;
+import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
@@ -18,6 +27,40 @@ public class Albums extends HttpServlet{
     @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
 
+    @EJB
+    private AlbumLocal albumService;
+
+    public XmlBuilder treatALBM(ViewSessionAlbum vSession)
+            throws WebAlbumsServiceException {
+
+        XmlBuilder output = new XmlBuilder("albums");
+        
+        Special special = vSession.getSpecial();
+        if (special == Special.TOP5) {
+            return albumService.treatTOP(vSession);
+        }
+
+        Action action = vSession.getAction();
+        XmlBuilder submit = null;
+        if(vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+            //prepare SUBMIT message
+            if (action == Action.SUBMIT) {
+                submit = albumService.treatAlbmSUBMIT((ViewSessionAlbumSubmit) vSession);
+            }
+
+            if (action == Action.EDIT) {
+                output = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession, submit);
+            }
+        }
+
+        if (action != Action.EDIT) {
+            //afficher la liste des albums de ce theme
+            output.add(albumService.treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit));
+        }
+
+        return output.validate();
+    }
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -30,7 +73,6 @@ public class Albums extends HttpServlet{
         dispatcher.treat(this.getServletContext(), Page.ALBUM, request, response);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request

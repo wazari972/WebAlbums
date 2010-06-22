@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <servlet>
+        <servlet-name>Maint</servlet-name>
+        <servlet-class>net.wazari.view.servlet.Maint</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Maint</servlet-name>
+        <url-pattern>/Maint</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
@@ -7,7 +15,7 @@
     </session-config>
     <welcome-file-list>
         <welcome-file>Index</welcome-file>
-        </welcome-file-list>
+    </welcome-file-list>
     <security-constraint>
         <display-name>Authenticate users</display-name>
         <web-resource-collection>
@@ -26,21 +34,21 @@
             <http-method>OPTIONS</http-method>
             <http-method>TRACE</http-method>
             <http-method>DELETE</http-method>
-            </web-resource-collection>
+        </web-resource-collection>
         <auth-constraint>
             <description/>
             <role-name>VIEWER</role-name>
             <role-name>ADMIN</role-name>
-            </auth-constraint>
-        </security-constraint>
+        </auth-constraint>
+    </security-constraint>
     <login-config>
         <auth-method>FORM</auth-method>
         <realm-name>file</realm-name>
         <form-login-config>
             <form-login-page>/Users</form-login-page>
             <form-error-page>/static/images/rien.jpg</form-error-page>
-            </form-login-config>
-        </login-config>
+        </form-login-config>
+    </login-config>
     <security-role>
         <description>Access to configuration and modification functions</description>
         <role-name>ADMIN</role-name>
@@ -49,4 +57,4 @@
         <description>Read-only access</description>
         <role-name>VIEWER</role-name>
     </security-role>
-    </web-app>
+</web-app>

@@ -9,6 +9,10 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
+import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.ImageLocal;
+import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
@@ -19,7 +23,14 @@ public class Images extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     @EJB private DispatcherBean dispatcher ;
+    @EJB
+    private ImageLocal imageService;
 
+    public XmlBuilder treatIMG(ViewSessionImages vSession)
+            throws WebAlbumsServiceException {
+        return imageService.treatIMG(vSession);
+    }
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -32,7 +43,6 @@ public class Images extends HttpServlet {
         dispatcher.treat(this.getServletContext(), Page.IMAGE, request, response);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request

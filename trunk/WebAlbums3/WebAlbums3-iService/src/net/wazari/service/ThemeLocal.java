@@ -18,5 +18,5 @@ import net.wazari.common.util.XmlBuilder;
 @RolesAllowed({UserLocal.VIEWER_ROLE})
 public interface ThemeLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatVOID(ViewSession vSession) ;
+    XmlBuilder getThemeList(ViewSession vSession) ;
 }

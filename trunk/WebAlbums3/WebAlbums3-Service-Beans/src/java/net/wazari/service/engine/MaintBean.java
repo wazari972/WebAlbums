@@ -10,9 +10,10 @@ import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionMaint.MaintAction;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.MaintLocal;
 
 @Stateless
-public class Maint {
+public class MaintBean implements MaintLocal {
 
     private static String getPath(Configuration conf) {
         return conf.getSourcePath() + conf.getData() + conf.getSep();

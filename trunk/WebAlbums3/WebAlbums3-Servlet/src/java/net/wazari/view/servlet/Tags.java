@@ -10,6 +10,13 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
+import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.TagLocal;
+import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession.Action;
+import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
+import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
@@ -19,7 +26,38 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 public class Tags extends HttpServlet {
     @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
+    @EJB
+    private TagLocal tagService;
 
+    public XmlBuilder treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
+        XmlBuilder output = new XmlBuilder("tags");
+        Special special = vSession.getSpecial();
+        if (Special.CLOUD == special) {
+            return output.add(tagService.treatTagCloud(vSession)).validate() ;
+        }
+
+        if (Special.PERSONS == special || Special.PLACES == special || Special.RSS == special) {
+            return output.add(tagService.treatTagPersonsPlaces(vSession)).validate() ;
+        }
+
+
+        Action action = vSession.getAction();
+        XmlBuilder submit = null;
+        Boolean correct = true;
+
+        if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+            if (Action.SUBMIT == action) {
+                submit = tagService.treatPhotoSUBMIT((ViewSessionPhotoSubmit)vSession, correct);
+            }
+
+            if ((Action.EDIT == action || !correct)) {
+                return tagService.treatTagEDIT(vSession, submit) ;
+            }
+        }
+        return tagService.treatTagDISPLAY(vSession, submit) ;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -32,7 +70,6 @@ public class Tags extends HttpServlet {
         dispatcher.treat(this.getServletContext(), Page.TAGS, request, response);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request

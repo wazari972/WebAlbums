@@ -14,22 +14,15 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.service.AlbumLocal;
-import net.wazari.service.ChoixLocal;
-import net.wazari.service.ConfigLocal;
-import net.wazari.service.ImageLocal;
-import net.wazari.service.PhotoLocal;
-import net.wazari.service.TagLocal;
-import net.wazari.service.ThemeLocal;
 import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.ViewSessionImages;
+import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.common.util.XmlBuilder;
@@ -48,24 +41,30 @@ public class DispatcherBean {
     }
 
     @EJB
-    private ThemeLocal themeService;
+    private Index indexServlet;
     @EJB
-    private UserLocal userService;
+    private Users userServlet;
     @EJB
-    private ChoixLocal choixService;
+    private Maint maintServlet;
     @EJB
-    private AlbumLocal albumService;
+    private Choix choixServlet;
     @EJB
-    private PhotoLocal photoService;
+    private Albums albumServlet;
     @EJB
-    private TagLocal tagService;
+    private Photos photoServlet;
     @EJB
-    private ImageLocal imageService;
+    private Tags tagServlet;
     @EJB
-    private ConfigLocal configService;
+    private Images imageServlet;
+    @EJB
+    private Config configServlet;
+
     @EJB
     private WebPageLocal webPageService;
 
+    @EJB
+    private UserLocal userService;
+    
     public enum Page {
 
         PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT
@@ -90,7 +89,6 @@ public class DispatcherBean {
         log.log(Level.WARNING, "============= <{0}> =============", page);
                 
         long debut = System.currentTimeMillis();
-        //request.setCharacterEncoding("UTF-8");
 
         XmlBuilder output = new XmlBuilder("root");
 
@@ -101,12 +99,12 @@ public class DispatcherBean {
         try {
             xslFile = "static/Display.xsl";
             if (page == Page.USER) {
-                output.add(treatLogin((ViewSessionLogin) vSession,request)) ;
+                output.add(userServlet.treatLogin((ViewSessionLogin) vSession,request)) ;
             } else if (page == Page.VOID) {
-                output.add(themeService.treatVOID(vSession));
+                output.add(indexServlet.treatVOID(vSession));
             } else if (page == Page.MAINT) {
                 xslFile = "static/Empty.xsl";
-                //output.add(net.wazari.service.engine.Maint.treatMAINT(request));
+                output.add(maintServlet.treatMaint((ViewSessionMaint) request));
             } else {
                 log.log(Level.INFO, "============= Login: {0} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
@@ -129,7 +127,7 @@ public class DispatcherBean {
                 if (vSession.getTheme() == null){
                     if (special == null) {
                         log.finer("Not logged in, not a special page, display VOID page");
-                        output.add(themeService.treatVOID(vSession));
+                        output.add(indexServlet.treatVOID(vSession));
                     } else {
                         isComplete = true;
                         output = new XmlBuilder("nothing");
@@ -139,27 +137,27 @@ public class DispatcherBean {
                     if (page == Page.CHOIX) {
                         if (special == null) {
                             log.finer("CHOIX page");
-                            output.add(choixService.displayCHX(vSession));
+                            output.add(choixServlet.displayCHX(vSession));
                         } else {
                             log.finer("CHOIX special page");
-                            output = choixService.displayChxScript(vSession);
+                            output = choixServlet.displayChxScript(vSession);
                             isComplete = true;
                         }
                     } else if (page == Page.ALBUM) {
                         log.finer("ALBUM page");
-                        output.add(albumService.treatALBM((ViewSessionAlbum) vSession));
+                        output.add(albumServlet.treatALBM((ViewSessionAlbum) vSession));
                     } else if (page == Page.PHOTO) {
                         log.finer("PHOTO page");
-                        output.add(photoService.treatPHOTO((ViewSessionPhoto) vSession));
+                        output.add(photoServlet.treatPHOTO((ViewSessionPhoto) vSession));
                     } else if (page == Page.CONFIG) {
                         log.finer("CONFIG page");
-                        output.add(configService.treatCONFIG((ViewSessionConfig) vSession));
+                        output.add(configServlet.treatCONFIG((ViewSessionConfig) vSession));
                     } else if (page == Page.TAGS) {
                         log.finer("TAGS page");
-                        output.add(tagService.treatTAGS((ViewSessionTag) vSession));
+                        output.add(tagServlet.treatTAGS((ViewSessionTag) vSession));
                     } else if (page == Page.IMAGE) {
                         log.finer("IMAGE page");
-                        XmlBuilder ret = imageService.treatIMG((ViewSessionImages) vSession);
+                        XmlBuilder ret = imageServlet.treatIMG((ViewSessionImages) vSession);
                         if (ret == null) {
                             isWritten = true;
                         } else {
@@ -168,7 +166,7 @@ public class DispatcherBean {
                         log.log(Level.FINE, "IMAGE written? {0}", isWritten);
                     } else {
                         log.log(Level.FINER, "VOID page? ({0})", page);
-                        output.add(themeService.treatVOID(vSession));
+                        output.add(indexServlet.treatVOID(vSession));
                     }
                 }
             }
@@ -199,7 +197,6 @@ public class DispatcherBean {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-
     private static void doWrite(HttpServletResponse response, XmlBuilder output, String xslFile, boolean isComplete, ViewSession vSession) {
         response.setContentType("text/xml");
         try {
@@ -263,39 +260,4 @@ public class DispatcherBean {
         }
         response.setDateHeader("Expires", 0);
     }// </editor-fold>
-
-    public static XmlBuilder treatLogin(ViewSessionLogin vSession, HttpServletRequest request) {
-        XmlBuilder output = new XmlBuilder("userLogin");
-        try {
-            Action action = vSession.getAction();
-            log.log(Level.INFO, "Action: {0}", action);
-            boolean valid = false;
-            if (Action.LOGIN == action) {
-
-                String userName = vSession.getUserName();
-                log.log(Level.INFO, "userName: {0}", userName);
-                if (userName == null) {
-                    output.add("denied");
-                    output.add("login");
-                    return output;
-                }
-
-                String pass = vSession.getUserPass();
-
-                request.login(userName, pass);
-                output.add("valid");
-                log.log(Level.INFO, "authentication: {0}", valid);
-            } else {
-                output.add("login");
-            }
-
-        } catch (javax.servlet.ServletException e) {
-            output.add("denied");
-            output.add("login");
-
-        } finally {
-            output.validate() ;
-        }
-        return output ;
-    }
 }

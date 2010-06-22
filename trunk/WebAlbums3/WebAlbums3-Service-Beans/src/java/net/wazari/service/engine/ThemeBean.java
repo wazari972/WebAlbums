@@ -5,6 +5,7 @@
 package net.wazari.service.engine;
 
 import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import net.wazari.service.*;
 import javax.ejb.Stateless;
@@ -19,12 +20,13 @@ import net.wazari.common.util.XmlBuilder;
  */
 @Stateless
 public class ThemeBean implements ThemeLocal {
-
+    private static final Logger log = Logger.getLogger(ThemeBean.class.getName());
+    
     @EJB
     ThemeFacadeLocal themeDAO;
 
     @Override
-    public XmlBuilder treatVOID(ViewSession vSession) {
+    public XmlBuilder getThemeList(ViewSession vSession) {
         XmlBuilder output = new XmlBuilder("index");
         //afficher la liste des themes
 
@@ -33,11 +35,6 @@ public class ThemeBean implements ThemeLocal {
             output.add(new XmlBuilder("theme", enrTheme.getNom()).addAttribut("id", enrTheme.getId()));
         }
 
-        if (vSession.getConfiguration().lightenDb()) {
-            output.add(new XmlBuilder("reload"));
-        }
-
-
-        return output.validate();
+        return output;
     }
 }

@@ -25,9 +25,6 @@ public interface AlbumLocal {
     XmlBuilder displayAlbum(XmlBuilder output, ViewSessionAlbumDisplay vSession, XmlBuilder submit, XmlBuilder thisPage) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatALBM(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
-
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.ADMIN_ROLE)
@@ -35,4 +32,7 @@ public interface AlbumLocal {
 
     @RolesAllowed(UserLocal.ADMIN_ROLE)
     XmlBuilder treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
+
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlBuilder treatTOP(ViewSessionAlbum vSession);
 }

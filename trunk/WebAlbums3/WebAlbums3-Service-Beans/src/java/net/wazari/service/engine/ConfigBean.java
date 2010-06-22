@@ -10,7 +10,6 @@ import net.wazari.dao.GeolocalisationFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.XmlBuilder;
 
@@ -18,12 +17,8 @@ import net.wazari.dao.entity.*;
 
 import net.wazari.service.ConfigLocal;
 import net.wazari.service.WebPageLocal;
-import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession.Action;
-import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Mode;
 
 @Stateless
 public class ConfigBean implements ConfigLocal {
@@ -34,19 +29,7 @@ public class ConfigBean implements ConfigLocal {
     @EJB private GeolocalisationFacadeLocal geoDAO ;
     @EJB private TagThemeFacadeLocal tagThemeDAO ;
     @EJB private TagPhotoFacadeLocal tagPhotoDAO ;
-    @EJB private ThemeFacadeLocal themeDAO ;
     @EJB private WebPageLocal webPageService ;
-
-    @Override
-    public XmlBuilder treatCONFIG(ViewSessionConfig vSession)
-            throws WebAlbumsServiceException {
-
-        Special special = vSession.getSpecial();
-        if (special != null) {
-            return new XmlBuilder("updated");
-        }
-        return displayCONFIG(vSession);
-    }
 
     @Override
     public XmlBuilder treatIMPORT(ViewSessionConfig vSession)
@@ -323,56 +306,5 @@ public class ConfigBean implements ConfigLocal {
             return output.validate();
 
         } 
-    }
-
-    @Override
-    public XmlBuilder displayCONFIG(ViewSessionConfig vSession)
-            throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("config");
-
-        Action action = vSession.getAction();
-        if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-
-            output.add("map");
-            if (action == Action.IMPORT) {
-                output.add(treatIMPORT(vSession));
-            }
-
-            //ajout d'un nouveau tag
-            if (Action.NEWTAG == action) {
-                output.add(treatNEWTAG(vSession));
-            }
-
-            //Renommage d'un tag tag
-            if (Action.MODTAG == action) {
-                output.add(treatMODTAG(vSession));
-            }
-
-            //Changement de visibilité d'un tag
-            if (Action.MODVIS == action) {
-                output.add(treatMODVIS(vSession));
-            }
-
-            //modification d'une geolocalisation
-            if (Action.MODGEO == action) {
-                output.add(treatMODGEO(vSession));
-            }
-
-            //suppression d'un tag
-            if (Action.DELTAG == action) {
-                output.add(treatDELTAG(vSession));
-            }
-            output.add(webPageService.displayListLB(Mode.TAG_USED, vSession, null,
-                    Box.MULTIPLE));
-            output.add(webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
-                    Box.MULTIPLE));
-            output.add(webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
-                    Box.MULTIPLE));
-
-        } else {
-            output.addException("Vous n'avez pas crée ce theme ...");
-        }
-
-        return output.validate();
     }
 }

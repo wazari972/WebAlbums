@@ -165,46 +165,22 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
-    public XmlBuilder treatALBM(ViewSessionAlbum vSession)
-            throws WebAlbumsServiceException {
+    public XmlBuilder treatTOP(ViewSessionAlbum vSession) {
+        XmlBuilder top5 = new XmlBuilder("top5");
 
-        XmlBuilder output = new XmlBuilder("albums");
-        XmlBuilder submit = null;
-
-        Special special = vSession.getSpecial();
-        if (special == Special.TOP5) {
-            XmlBuilder top5 = new XmlBuilder("top5");
-
-            SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, TopFirst.TOP, new Bornes(TOP));
-            int i = 0;
-            for (Album enrAlbum : albums.subset) {
-                XmlBuilder album = new XmlBuilder("album");
-                album.add("id", enrAlbum.getId());
-                album.add("count", i);
-                album.add("nom", enrAlbum.getNom());
-                if (enrAlbum.getPicture() != null) {
-                    album.add("photo", enrAlbum.getPicture());
-                }
-                top5.add(album);
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, TopFirst.TOP, new Bornes(TOP));
+        int i = 0;
+        for (Album enrAlbum : albums.subset) {
+            XmlBuilder album = new XmlBuilder("album");
+            album.add("id", enrAlbum.getId());
+            album.add("count", i);
+            album.add("nom", enrAlbum.getNom());
+            if (enrAlbum.getPicture() != null) {
+                album.add("photo", enrAlbum.getPicture());
             }
-            output.add(top5);
-            return output.validate();
+            top5.add(album);
         }
-
-        Action action = vSession.getAction();
-        if (action == Action.SUBMIT && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            submit = treatAlbmSUBMIT((ViewSessionAlbumSubmit) vSession);
-        }
-
-        if (action == Action.EDIT && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            output = treatAlbmEDIT((ViewSessionAlbumEdit) vSession, submit);
-
-        } else {
-            //sinon afficher la liste des albums de ce theme
-            output.add(treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit));
-        }
-
-        return output.validate();
+        return top5.validate();
     }
 
     @Override

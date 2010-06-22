@@ -34,13 +34,14 @@ import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
-import net.wazari.service.exchange.ViewSessionPhoto;
-import net.wazari.service.exchange.ViewSessionPhoto.*;
-
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
+
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -67,35 +68,6 @@ public class PhotoBean implements PhotoLocal {
     private WebPageLocal webService;
     private FilesFinder finder = new FilesFinder();
     @EJB private SystemToolsLocal sysTools ;
-
-    @Override
-    public XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
-        Action action = vSession.getAction();
-        XmlBuilder output;
-        XmlBuilder submit = null;
-        Boolean correct = true;
-
-        if (Action.SUBMIT == action && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            submit = treatPhotoSUBMIT((ViewSessionPhotoSubmit) vSession,correct);
-        }
-
-        if ((Action.EDIT == action || !correct) && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
-            output = treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
-
-            XmlBuilder return_to = new XmlBuilder("return_to");
-            return_to.add("name", "Photos");
-            return_to.add("count", vSession.getCount());
-            return_to.add("album", vSession.getAlbum());
-            return_to.add("albmCount", vSession.getAlbmCount());
-            output.add(return_to);
-        } else {
-            output = new XmlBuilder("photos");
-            output.add(treatPhotoDISPLAY((ViewSessionPhotoDisplay) vSession,submit));
-        }
-
-
-        return output.validate();
-    }
 
     @Override
     public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,

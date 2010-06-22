@@ -43,9 +43,6 @@ public interface PhotoLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder displayPhoto(PhotoRequest rq, ViewSessionPhotoDisplay vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException;
-
     @RolesAllowed(UserLocal.ADMIN_ROLE)
     XmlBuilder treatPhotoEDIT(ViewSessionPhotoEdit vSession, XmlBuilder submit) throws WebAlbumsServiceException;
     
