@@ -33,7 +33,6 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
 
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "Tag", nullable = false)
     private Integer tag;
 

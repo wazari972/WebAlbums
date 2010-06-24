@@ -169,7 +169,6 @@ public class ConfigBean implements ConfigLocal {
     public XmlBuilder treatNEWTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("newTag");
-        String rq = null;
         String nom = vSession.getNom();
         Integer type = vSession.getType();
 
@@ -211,10 +210,8 @@ public class ConfigBean implements ConfigLocal {
                             geo.setTag(enrTag.getId());
                             geo.setLongitude(longit);
                             geo.setLat(lat);
-
+                            geo.setTag1(enrTag) ;
                             geoDAO.create(geo);
-
-               
                     }
 
                     switch (type) {

@@ -263,7 +263,7 @@ public class ViewSessionImpl implements
 
     @Override
     public String getLng() {
-        return getString("lng");
+        return getString("long");
     }
 
     @Override

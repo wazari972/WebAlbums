@@ -34,10 +34,6 @@ public class Index extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        log.info("WebPage initialized !");
-
-
-        log.info("Ready to serve !");
     }
     
     public XmlBuilder treatVOID(ViewSession vSession) {

@@ -37,7 +37,11 @@ public class DispatcherBean {
 
     private static final Logger log = Logger.getLogger(DispatcherBean.class.getCanonicalName());
     static {
-        log.warning("Loading WebAlbums3-Servlet");
+        log.warning("WebAlbums3-Servlet DispatcherBean loaded !");
+    }
+
+    public DispatcherBean() {
+        log.warning("WebAlbums3-Servlet DispatcherBean created !");
     }
 
     @EJB

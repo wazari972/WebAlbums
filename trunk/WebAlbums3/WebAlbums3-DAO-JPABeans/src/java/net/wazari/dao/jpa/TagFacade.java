@@ -87,10 +87,14 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public Tag loadByName(String nom) {
-        String rq = "FROM JPATag t " +
-                " WHERE t.nom = :nom ";
+            try {
+            String rq = "FROM JPATag t " +
+                    " WHERE t.nom = :nom ";
 
-        return (JPATag) em.createQuery(rq).setParameter("nom", nom).getSingleResult();
+            return (JPATag) em.createQuery(rq).setParameter("nom", nom).getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 
     @Override
