@@ -3,6 +3,7 @@ package net.wazari.view.servlet;
 import java.io.IOException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +23,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
     name = "Photos",
     urlPatterns = {"/Photos"}
 )
+@Stateless
 public class Photos extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

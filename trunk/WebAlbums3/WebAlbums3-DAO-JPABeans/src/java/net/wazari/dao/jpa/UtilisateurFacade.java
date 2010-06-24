@@ -29,7 +29,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     }
     @EJB AlbumFacadeLocal albumDAO ;
 
-    @PersistenceContext
+    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
     @Override

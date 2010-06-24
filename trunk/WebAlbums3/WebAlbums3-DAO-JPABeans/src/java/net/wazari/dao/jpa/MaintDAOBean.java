@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,10 +43,13 @@ import org.xml.sax.InputSource;
  */
 @Stateless
 public class MaintDAOBean implements MaintFacadeLocal {
+    private static final Logger log = Logger.getLogger(MaintDAOBean.class.getName());
+
     private static interface Work {
         void execute(Connection connection) throws JDBCException;
     }
-    @PersistenceContext
+
+    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
     @Override
@@ -98,13 +102,13 @@ public class MaintDAOBean implements MaintFacadeLocal {
 
     @Override
     public void treatImportXML(final String path, final boolean isMySQL) {
-        final String file = path + "WebAlbums.xml";
+        final String filename = path + "WebAlbums";
 
         try {
-            HibernateEntityManager hem = (HibernateEntityManager) em;
+            HibernateEntityManager hem = (HibernateEntityManager) em.getDelegate();
             @SuppressWarnings("deprecation")
             Connection jdbcConnection = hem.getSession().connection();
-
+            log.log(Level.WARNING, "Importing XML from:{0}", filename);
             new Work() {
 
                 @Override
@@ -112,19 +116,22 @@ public class MaintDAOBean implements MaintFacadeLocal {
                     try {
                         IDatabaseConnection connection = new DatabaseConnection(cx);
                         DatabaseConfig config = connection.getConfig();
-                        if (isMySQL) {
-                            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-                        } else {
-                            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+                        //if (isMySQL) {
+                        //    config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+                        //} else {
+                        //    config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+                        //}
+                        for (String table : TABLES) {
+                            String file = filename+"."+table+ ".xml" ;
+                            log.log(Level.WARNING, "Exporting XML to: {0}", file);
+                            IDataSetProducer producer = new FlatXmlProducer(new InputSource(file), false, true);
+                            IDataSet dataSet = new StreamingDataSet(producer);
+                            DatabaseOperation.INSERT.execute(connection, dataSet);
                         }
-                        boolean enableColumnSensing = true;
-                        IDataSetProducer producer = new FlatXmlProducer(new InputSource(file), false, enableColumnSensing);
-                        IDataSet dataSet = new StreamingDataSet(producer);
-                        DatabaseOperation.INSERT.execute(connection, dataSet);
                     } catch (SQLException ex) {
-                        Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+                        log.log(Level.SEVERE, null, ex);
                     } catch (DatabaseUnitException ex) {
-                        Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+                        log.log(Level.SEVERE, null, ex);
                     }
                 }
             }.execute(jdbcConnection);
@@ -134,11 +141,18 @@ public class MaintDAOBean implements MaintFacadeLocal {
         }
     }
 
+    private static final List<String> TABLES = Arrays.asList(new String[] {
+        "Theme", "Utilisateur",
+        "Tag", "Geolocalisation",
+        "Album", "Photo",
+        "TagPhoto", "TagTheme"}) ;
+    
     @Override
     public void treatExportXML(String path) {
         final String filename = path + "WebAlbums";
         try {
-            HibernateEntityManager hem = (HibernateEntityManager) em;
+            log.log(Level.WARNING, "Exporting XML to:{0} .xml and .dtd", filename);
+            HibernateEntityManager hem = (HibernateEntityManager) em.getDelegate();
             @SuppressWarnings("deprecation")
             Connection jdbcConnection = hem.getSession().connection();
             new Work() {
@@ -148,9 +162,13 @@ public class MaintDAOBean implements MaintFacadeLocal {
                     try {
                         IDatabaseConnection connection = new DatabaseConnection(cx);
                         DatabaseConfig config = connection.getConfig();
-                        config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+                        //config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
                         // full database export
-                        FlatXmlDataSet.write(connection.createDataSet(), new FileOutputStream(filename + ".xml"));
+                        for (String table : TABLES) {
+                            String file = filename+"."+table+ ".xml" ;
+                            log.log(Level.WARNING, "Exporting XML to: {0}", file);
+                            FlatXmlDataSet.write(connection.createDataSet(new String[]{table}), new FileOutputStream(file));
+                        }
                         FlatDtdDataSet.write(connection.createDataSet(), new FileOutputStream(filename + ".dtd"));
                     } catch (DatabaseUnitException ex) {
                         Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -170,7 +188,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
     @Override
     public void treatTruncateXML(final String path, final boolean isMySQL) {
         try {
-            HibernateEntityManager hem = (HibernateEntityManager) em;
+            HibernateEntityManager hem = (HibernateEntityManager) em.getDelegate();
             @SuppressWarnings("deprecation")
             Connection jdbcConnection = hem.getSession().connection();
 
@@ -210,5 +228,4 @@ public class MaintDAOBean implements MaintFacadeLocal {
             treatImportXML(path, isMySQL);
         }
     }
-    private static final Logger LOG = Logger.getLogger(MaintDAOBean.class.getName());
 }

@@ -3,6 +3,7 @@ package net.wazari.view.servlet;
 import java.io.IOException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,6 +24,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
     name = "Albums",
     urlPatterns = {"/Albums"}
 )
+@Stateless
 public class Albums extends HttpServlet{
     @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
@@ -37,7 +39,7 @@ public class Albums extends HttpServlet{
         
         Special special = vSession.getSpecial();
         if (special == Special.TOP5) {
-            return albumService.treatTOP(vSession);
+            return output.add(albumService.treatTOP(vSession));
         }
 
         Action action = vSession.getAction();

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,6 +24,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
     name = "Tags",
     urlPatterns = {"/Tags"}
 )
+@Stateless
 public class Tags extends HttpServlet {
     @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
@@ -54,7 +56,7 @@ public class Tags extends HttpServlet {
                 return tagService.treatTagEDIT(vSession, submit) ;
             }
         }
-        return tagService.treatTagDISPLAY(vSession, submit) ;
+        return output.add(tagService.treatTagDISPLAY(vSession, submit)) ;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

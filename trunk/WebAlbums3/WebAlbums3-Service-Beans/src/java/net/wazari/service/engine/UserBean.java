@@ -52,7 +52,7 @@ public class UserBean implements UserLocal {
 
 
         String userName = pr.getName() ;
-        log.log(Level.FINE, "UserPrincipal : +{0}", userName) ;
+        log.log(Level.FINE, "UserPrincipal :{0}", userName) ;
         log.log(Level.FINE, "Role admin    :{0}", request.isUserInRole(UserLocal.ADMIN_ROLE)) ;
         log.log(Level.FINE, "Role view     :{0}", request.isUserInRole(UserLocal.VIEWER_ROLE)) ;
 

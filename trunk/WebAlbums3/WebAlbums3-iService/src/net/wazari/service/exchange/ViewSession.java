@@ -52,4 +52,6 @@ public interface ViewSession extends ServiceSession {
     boolean getDetails();
 
     Configuration getConfiguration();
+    
+    Integer getThemeId();
 }

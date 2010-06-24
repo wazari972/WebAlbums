@@ -332,7 +332,7 @@ public class WebPageBean implements WebPageLocal {
             } else {
                 String selected = "";
                 boolean written = true;
-                if (ids != null) {
+                if (ids != null && !ids.isEmpty()) {
                     if (box == Box.MULTIPLE) {
                         if (ids.contains(tagId)) {
                             selected = "checked";

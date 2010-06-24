@@ -76,13 +76,14 @@ public class DispatcherBean {
             HttpServletResponse response)
             throws IOException, ServletException 
     {
+
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
             request.logout();
             userService.cleanUpSession((ViewSessionLogin) vSession);
         }
-        if (page != Page.USER) {
+        if (page != Page.USER && page != Page.MAINT) {
             log.info("Authenticated the session");
             request.authenticate(response) ;
         }
@@ -103,8 +104,9 @@ public class DispatcherBean {
             } else if (page == Page.VOID) {
                 output.add(indexServlet.treatVOID(vSession));
             } else if (page == Page.MAINT) {
+                isComplete = true;
                 xslFile = "static/Empty.xsl";
-                output.add(maintServlet.treatMaint((ViewSessionMaint) request));
+                output.add(maintServlet.treatMaint((ViewSessionMaint) vSession));
             } else {
                 log.log(Level.INFO, "============= Login: {0} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
@@ -118,7 +120,7 @@ public class DispatcherBean {
                 }
                 log.log(Level.FINE, "XSL-style{0}", xslFile);
                 //try to logon and set the theme
-                if (vSession.getTheme() == null) {
+                if (vSession.getThemeId() != null) {
                     log.fine("Try to logon");
                     boolean ret = userService.logon((ViewSessionLogin) vSession, request);
                     log.log(Level.FINER, "Logon result: {0}", ret);
@@ -183,8 +185,16 @@ public class DispatcherBean {
             preventCaching(request, response);
 
             if (!isComplete) {
-                output.add(webPageService.xmlLogin(vSession));
-                output.add(webPageService.xmlAffichage(vSession));
+                try {
+                    output.add(webPageService.xmlLogin(vSession));
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "An exception occured during xmlLogin: {0}", e.toString());
+                }
+                try {
+                    output.add(webPageService.xmlAffichage(vSession));
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "An exception occured during xmlAffichage: {0}", e.toString());
+                }
 
                 XmlBuilder xmlStats = new XmlBuilder("stats");
                 output.add(xmlStats);

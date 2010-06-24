@@ -18,7 +18,7 @@ import net.wazari.dao.jpa.entity.JPAGeolocalisation;
  */
 @Stateless
 public class GeolocalisationFacade implements GeolocalisationFacadeLocal {
-    @PersistenceContext
+    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
     @Override

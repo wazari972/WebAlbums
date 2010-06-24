@@ -24,7 +24,8 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
 
     @EJB TagFacadeLocal   tagDAO ;
     @EJB ThemeFacadeLocal themeDAO ;
-    @PersistenceContext
+    
+    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
     @Override

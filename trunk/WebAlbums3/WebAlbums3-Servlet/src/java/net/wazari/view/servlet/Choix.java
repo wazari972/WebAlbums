@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +21,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(name = "Choix",
 urlPatterns = {"/Choix"})
+@Stateless
 public class Choix extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -28,11 +30,11 @@ public class Choix extends HttpServlet {
     @EJB
     private WebPageLocal webPageService;
 
-    XmlBuilder displayChxScript(ViewSession vSession) throws WebAlbumsServiceException {
+    public XmlBuilder displayChxScript(ViewSession vSession) throws WebAlbumsServiceException {
         return webPageService.displayMapInScript(vSession, "mapChoix", null);
     }
 
-    XmlBuilder displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
+    public XmlBuilder displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlBuilder choix = new XmlBuilder("choix");
 
         choix.add(webPageService.displayListBN(Mode.TAG_USED, vSession,

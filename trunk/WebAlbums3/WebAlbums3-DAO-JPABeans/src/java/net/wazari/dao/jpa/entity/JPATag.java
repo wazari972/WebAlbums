@@ -13,6 +13,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -35,6 +37,7 @@ public class JPATag implements Tag, Serializable {
 
     @Id
     @Basic(optional = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
@@ -137,11 +140,13 @@ public class JPATag implements Tag, Serializable {
 
     @Override
     public boolean equals(Object object) {
+        //TODO understand the difference between other.id and other.getId() ;
         if (!(object instanceof JPATag)) {
             return false;
         }
         JPATag other = (JPATag) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+
+        if ((this.id == null && other.getId() != null) || (this.id != null && !this.id.equals(other.getId()))) {
             return false;
         }
         return true;
@@ -149,7 +154,7 @@ public class JPATag implements Tag, Serializable {
 
     @Override
     public String toString() {
-        return "net.wazari.dao.jpa.entity.JPATag[id=" + id + "]";
+        return "net.wazari.dao.jpa.entity.JPATag[id=" + id +"."+getId()+ "]";
     }
 
 }

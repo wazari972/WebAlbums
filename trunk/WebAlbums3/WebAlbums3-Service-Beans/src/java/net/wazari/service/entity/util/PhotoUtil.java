@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import java.util.logging.Logger;
@@ -93,7 +94,6 @@ public class PhotoUtil {
                     nouveau.setTag(enrTag);
                     log.log(Level.INFO, "Ajout du tag : {0}", enrTag.getNom());
                     tagPhotoDAO.create(nouveau);
-  
                 } else {
                     log.log(Level.INFO, "already: {0}", enrTag.getNom());
                 }
@@ -127,13 +127,18 @@ public class PhotoUtil {
 
         Arrays.sort(tags);
 
+
         //enlever les tags existants qui ne sont pas dans la nouvelle liste
+        List<TagPhoto> toRemove = new LinkedList<TagPhoto>() ;
         for (TagPhoto enrTp : p.getTagPhotoList()) {
             //si la liste des nouveaux tags ne contient pas le tag courant
             if (Arrays.binarySearch(tags, enrTp.getTag().getId()) < 0) {
                 //alors enlever ce tag des tags existants
-                tagPhotoDAO.remove(enrTp);
+                toRemove.add(enrTp);
             }
+        }
+        for (TagPhoto enrTp : toRemove) {
+            tagPhotoDAO.remove(enrTp);
         }
 
     }

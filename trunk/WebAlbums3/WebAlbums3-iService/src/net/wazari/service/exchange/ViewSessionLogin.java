@@ -36,6 +36,4 @@ public interface ViewSessionLogin extends ViewSession {
         void login(String user, String passwd);
 
         void setEditionMode(EditMode editMode);
-
-        Integer getThemeId();
     }

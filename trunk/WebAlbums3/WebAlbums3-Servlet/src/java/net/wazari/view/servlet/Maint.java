@@ -6,9 +6,12 @@
 package net.wazari.view.servlet;
 
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +24,11 @@ import net.wazari.view.servlet.DispatcherBean.Page;
  *
  * @author kevinpouget
  */
+@WebServlet(
+    name = "Maint",
+    urlPatterns = {"/Maint"}
+)
+@Stateless
 public class Maint extends HttpServlet {
    
     private static final Logger log = Logger.getLogger(Maint.class.getCanonicalName()) ;
@@ -40,7 +48,12 @@ public class Maint extends HttpServlet {
     }
 
     public XmlBuilder treatMaint(ViewSessionMaint vSession) {
-        return maintService.treatMAINT(vSession) ;
+        try {
+            return maintService.treatMAINT(vSession) ;
+        } catch (Exception e) {
+            log.log(Level.WARNING, "An exception occured in treatMaint:{0}", e.getMessage());
+            return null ;
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

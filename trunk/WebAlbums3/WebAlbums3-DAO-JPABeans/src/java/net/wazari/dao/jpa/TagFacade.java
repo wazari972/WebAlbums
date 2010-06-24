@@ -29,7 +29,7 @@ public class TagFacade implements TagFacadeLocal {
     @EJB
     WebAlbumsDAOBean webDAO;
 
-    @PersistenceContext
+    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
     @Override
@@ -44,7 +44,7 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public void remove(Tag tag) {
-        em.remove(em.merge(tag));
+        em.remove(tag);
     }
 
     @Override

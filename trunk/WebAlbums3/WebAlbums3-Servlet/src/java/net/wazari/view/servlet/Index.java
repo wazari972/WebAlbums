@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,6 +22,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
     name = "Index",
     urlPatterns = {"/Index"}
 )
+@Stateless
 public class Index extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getLogger(Index.class.getName()) ;

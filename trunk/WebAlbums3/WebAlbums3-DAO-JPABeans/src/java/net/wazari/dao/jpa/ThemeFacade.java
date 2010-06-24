@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.ArrayList;
 import net.wazari.dao.*;
 import java.util.List;
 import java.util.logging.Logger;
@@ -21,7 +22,7 @@ import net.wazari.dao.jpa.entity.JPATheme;
 public class ThemeFacade implements ThemeFacadeLocal {
     private static final Logger log = Logger.getLogger(ThemeFacade.class.getName());
      
-    @PersistenceContext
+    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
     @Override
@@ -41,7 +42,12 @@ public class ThemeFacade implements ThemeFacadeLocal {
 
     @Override
     public List<Theme> findAll() {
-        return em.createQuery("select object(o) from JPATheme as o").getResultList();
+        try {
+            return em.createQuery("select object(o) from JPATheme as o").getResultList();
+        } catch (javax.persistence.PersistenceException e) {
+            log.warning("Database query failed ...");
+            return new ArrayList<Theme>() ;
+        }
     }
 
     @Override

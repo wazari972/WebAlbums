@@ -31,6 +31,7 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.ViewSessionImages;
+import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit;
@@ -52,7 +53,8 @@ public class ViewSessionImpl implements
         ViewSessionConfig,
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit, ViewSessionPhotoSpecial,
         ViewSessionTag,
-        ViewSessionImages, ViewSessionPhotoDisplayMassEdit {
+        ViewSessionImages, ViewSessionPhotoDisplayMassEdit,
+        ViewSessionMaint{
 
     private static final Logger log = Logger.getLogger(ViewSessionImpl.class.getCanonicalName());
     private HttpServletRequest request;
@@ -472,7 +474,7 @@ public class ViewSessionImpl implements
 
     private Integer[] castToIntArray(String[] from) {
         if (from == null) {
-            return null;
+            return new Integer[]{};
         }
         ArrayList<Integer> ret = new ArrayList<Integer>(from.length);
         for (int i = 0; i < from.length; i++) {
@@ -506,5 +508,20 @@ public class ViewSessionImpl implements
     @Override
     public ViewSessionPhotoDisplayMassEdit getMassEdit() {
         return (ViewSessionPhotoDisplayMassEdit) this;
+    }
+
+    @Override
+    public MaintAction getMaintAction() {
+        return getObject("action", MaintAction.class);
+    }
+
+    @Override
+    public String getParam() {
+        return getObject("param", String.class);
+    }
+
+    @Override
+    public String getValue() {
+        return getObject("value", String.class);
     }
 }

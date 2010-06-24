@@ -17,9 +17,14 @@ import javax.ejb.Stateless;
 @Stateless
 public class WebAlbumsDAOBean {
     private static final Logger log = Logger.getLogger(WebAlbumsDAOBean.class.getName());
+    
+    private static final String PERSISTENCE_UNIT_DERBY = "WebAlbums-Derby" ;
+    private static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
+    
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    String processListID(ServiceSession session, String rq, boolean restrict) {
+    public String processListID(ServiceSession session, String rq, boolean restrict) {
         if (restrict && ! session.isRootSession()) {
             rq += " AND " + restrictToThemeAllowed(session, "a") + " ";
         }
@@ -27,7 +32,7 @@ public class WebAlbumsDAOBean {
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    String restrictToAlbumsAllowed(ServiceSession session, String album) {
+    public String restrictToAlbumsAllowed(ServiceSession session, String album) {
         String rq = null;
         if (session.isSessionManager()) {
             rq = "SELECT a.id FROM JPAAlbum a WHERE 1 = 1 ";
@@ -47,7 +52,7 @@ public class WebAlbumsDAOBean {
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    String restrictToPhotosAllowed(ServiceSession session, String photo) {
+    public String restrictToPhotosAllowed(ServiceSession session, String photo) {
         String rq = null;
 
         rq = "SELECT p.id " +
@@ -68,7 +73,7 @@ public class WebAlbumsDAOBean {
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    String restrictToThemeAllowed(ServiceSession session, String album) {
+    public String restrictToThemeAllowed(ServiceSession session, String album) {
         if (session.isRootSession()) {
             return " 1 = 1";
         } else {

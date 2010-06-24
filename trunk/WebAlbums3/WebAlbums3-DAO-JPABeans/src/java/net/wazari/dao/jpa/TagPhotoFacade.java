@@ -25,7 +25,8 @@ import net.wazari.dao.jpa.entity.JPATagPhoto;
 @Stateless
 public class TagPhotoFacade implements TagPhotoFacadeLocal {
     private static final Logger log = Logger.getLogger(TagPhotoFacade.class.getName()) ;
-    @PersistenceContext
+    
+    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
     @EJB PhotoFacadeLocal photoDAO ;
@@ -45,6 +46,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public void remove(TagPhoto tagPhoto) {
+        tagPhoto.getPhoto().getTagPhotoList().remove(tagPhoto);
+        tagPhoto.getTag().getTagPhotoList().remove(tagPhoto);
         em.remove(tagPhoto);
     }
 

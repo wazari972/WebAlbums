@@ -7,6 +7,7 @@ import java.util.logging.Level;
 
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +21,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
     name = "Users",
     urlPatterns = {"/Users"}
 )
+@Stateless
 public class Users extends HttpServlet {
     private static final Logger log = Logger.getLogger(Users.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;

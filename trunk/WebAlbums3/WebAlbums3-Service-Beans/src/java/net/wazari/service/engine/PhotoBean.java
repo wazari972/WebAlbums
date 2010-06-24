@@ -93,19 +93,39 @@ public class PhotoBean implements PhotoLocal {
             }
             
             //mise à jour des tag/description
-            String user = vSession.getUser();
             String desc = vSession.getDesc();
-            Integer[] tags = vSession.getNewTag();
-
             enrPhoto.setDescription(desc);
-            Utilisateur enrUser = userDAO.find(Integer.parseInt("0"+user));
-            if (enrUser != null) {
-                enrPhoto.setDroit(enrUser.getId());
+
+            String user = vSession.getUser();
+            if (user != null) {
+                boolean valid = false ;
+                try {
+                    Integer userId = null ;
+
+                    if ("null".equals(user)) {
+                         valid = true ;
+                    } else if (userDAO.find(Integer.parseInt(user)) != null) {
+                        valid = true ;
+                        userId = Integer.parseInt(user) ;
+                    } else {
+                        log.log(Level.WARNING, "Unknown userId:{0}", user);
+                    }
+
+                    if (valid) {
+                        log.log(Level.INFO, "Set Droit to:{0}", userId);
+                        enrPhoto.setDroit(userId);
+                    }
+
+                } catch (NumberFormatException e) {
+                    log.log(Level.WARNING, "Cannot parse userId:{0}", user);
+                }
             }
+            
+            Integer[] tags = vSession.getNewTag();
+            photoUtil.setTags(enrPhoto, tags);
+
             photoDAO.edit(enrPhoto);
 
-            photoUtil.setTags(enrPhoto, tags);
-            
             //utiliser cette photo comme representante de l'album ?
             Boolean represent = vSession.getRepresent();
             if (represent) {

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,6 +25,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
     name = "Config",
     urlPatterns = {"/Config"}
 )
+@Stateless
 public class Config extends HttpServlet {
     private static final long serialVersionUID = 1L;
     @EJB private DispatcherBean dispatcher ;
