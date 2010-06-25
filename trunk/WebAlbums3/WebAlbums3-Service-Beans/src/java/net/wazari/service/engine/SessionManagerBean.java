@@ -4,10 +4,10 @@ import java.util.logging.Level;
 import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.SessionManagerLocal;
 import java.io.File;
+import java.util.UUID;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionSession;
 
 @Stateless
@@ -20,7 +20,7 @@ public class SessionManagerBean implements SessionManagerLocal {
     @Override
     public void sessionCreated(ViewSessionSession vSession) {
         log.log(Level.INFO, "Session created {0}", getUID());
-        File temp = new File(vSession.getConfiguration().getTempDir() + "/" + getUID());
+        File temp = new File(vSession.getConfiguration().getTempPath() + vSession.getConfiguration().getSep() + getUID());
         log.info(temp.toString());
         if (!temp.mkdir()) {
             temp = null;
@@ -32,7 +32,7 @@ public class SessionManagerBean implements SessionManagerLocal {
     }
 
     @Override
-    public void sessionDestroyed(ViewSession vSession) {
+    public void sessionDestroyed(ViewSessionSession vSession) {
         File temp = vSession.getTempDir() ;
         if (temp != null) {
             log.log(Level.INFO, "temp dir deleted: {0}", temp);
@@ -40,9 +40,9 @@ public class SessionManagerBean implements SessionManagerLocal {
         }
         log.log(Level.INFO, "Session destroyed {0}", getUID());
     }
-
-    private int currentUID = 0 ;
+    
     private String getUID() {
-        return Integer.toString(currentUID++) ;
+        UUID id = UUID.randomUUID() ;
+        return id.toString() ;
     }
 }

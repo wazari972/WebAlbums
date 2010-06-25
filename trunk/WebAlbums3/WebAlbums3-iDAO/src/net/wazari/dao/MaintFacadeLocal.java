@@ -23,14 +23,14 @@ public interface MaintFacadeLocal {
     boolean treatExportDDL(String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void treatImportXML(String path, boolean isMySQL) ;
+    void treatImportXML(String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void treatExportXML(String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void treatTruncateXML(String path, boolean isMySQL) ;
+    void treatTruncateXML(String path) ;
     
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void treatFullImport(String path, boolean isMySQL) ;
+    void treatFullImport(String path) ;
 }

@@ -16,7 +16,7 @@ import net.wazari.service.MaintLocal;
 public class MaintBean implements MaintLocal {
 
     private static String getPath(Configuration conf) {
-        return conf.getSourcePath() + conf.getData() + conf.getSep();
+        return conf.getDataPath() + conf.getSep();
     }
     @EJB MaintFacadeLocal mainBean ;
 
@@ -28,29 +28,22 @@ public class MaintBean implements MaintLocal {
 
         XmlBuilder output = new XmlBuilder("maint");
         if (MaintAction.FULL_IMPORT == action) {
-            mainBean.treatFullImport(getPath(vSession.getConfiguration()), !vSession.getConfiguration().isSgbdHsqldb());
+            mainBean.treatFullImport(getPath(vSession.getConfiguration()));
 
         } else if (MaintAction.EXPORT_XML == action) {
             mainBean.treatExportXML(getPath(vSession.getConfiguration()));
         } else if (MaintAction.IMPORT_XML == action) {
-            mainBean.treatImportXML(getPath(vSession.getConfiguration()), !vSession.getConfiguration().isSgbdHsqldb());
+            mainBean.treatImportXML(getPath(vSession.getConfiguration()));
         } else if (MaintAction.TRUNCATE_XML == action) {
-            mainBean.treatTruncateXML(getPath(vSession.getConfiguration()), !vSession.getConfiguration().isSgbdHsqldb());
+            mainBean.treatTruncateXML(getPath(vSession.getConfiguration()));
 
         } else if (MaintAction.EXPORT_DDL == action) {
             mainBean.treatExportDDL(getPath(vSession.getConfiguration()));
         } else if (MaintAction.IMPORT_DDL == action) {
             mainBean.treatImportDDL();
 
-        } else if (MaintAction.UPDATE_BOOL == action) {
-            boolean ret = vSession.getConfiguration().updateBoolParam(param, value);
-            output.add("message", "updating " + param + " to " + value+"==>"+ret);
-
         } else if (MaintAction.UPDATE == action) {
-        } else if (MaintAction.UPDATE_STR == action) {
-            boolean ret = vSession.getConfiguration().updateStrParam(param, value);
 
-            output.add("message", "updating " + param + " to " + value+"==>"+ret);
         } else {
             output.add("action", "FULL_IMPORT");
 
@@ -62,9 +55,6 @@ public class MaintBean implements MaintLocal {
             output.add("action", "IMPORT_DDL");
 
             output.add("action", "UPDATE");
-
-            output.add("action", "UPDATE_BOOL&amp;param=VAL&amp;value=TRUE|FALSE");
-            output.add("action", "UPDATE_STR&amp;param=VAL&amp;value=STR");
         }
         return output.validate();
     }

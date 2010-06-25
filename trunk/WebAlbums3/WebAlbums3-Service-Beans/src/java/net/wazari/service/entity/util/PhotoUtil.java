@@ -163,7 +163,8 @@ public class PhotoUtil {
     }
 
     public void retreiveExif(ViewSession vSession, Photo p) {
-        String path = vSession.getConfiguration().getSourceURL() + "/" + vSession.getConfiguration().getImages() + "/" + p.getPath();
+        String sep = vSession.getConfiguration().getSep() ;
+        String path = vSession.getConfiguration().getImagesPath() + sep + p.getPath();
         retreiveExif(p, path);
     }
 
@@ -259,9 +260,11 @@ public class PhotoUtil {
                     "Erreur dans Photo.rotate()");
         }
 
+        String sep = vSession.getConfiguration().getSep() ;
+
         String path = p.getPath();
-        String mini = vSession.getConfiguration().getSourcePath() + vSession.getConfiguration().getMini() + "/" + themeName + "/" + path;
-        String image = vSession.getConfiguration().getSourcePath() + vSession.getConfiguration().getImages() + "/" + themeName + "/" + path;
+        String mini = vSession.getConfiguration().getMiniPath() + sep + themeName + sep + path;
+        String image = vSession.getConfiguration().getImagesPath() + sep + themeName + sep + path;
         log.log(Level.INFO, "Rotation de {0}degres de {1}", new Object[]{degrees, path});
         if (sysTools.rotate(null, null, degrees, mini + ".png", mini + ".png")) {
             if (!sysTools.rotate(null, null, degrees, image, image)) {
@@ -285,11 +288,13 @@ public class PhotoUtil {
     }
 
     public String getImagePath(ViewSession vSession, Photo p) {
-        return vSession.getConfiguration().getSourcePath() + vSession.getConfiguration().getImages() + "/" + getThemedPath(p);
+        String sep = vSession.getConfiguration().getSep() ;
+        return vSession.getConfiguration().getImagesPath() + sep + getThemedPath(p);
     }
 
     public String getMiniPath(ViewSession vSession, Photo p) {
-        return vSession.getConfiguration().getSourcePath() + vSession.getConfiguration().getMini() + "/" + getThemedPath(p) + ".png";
+        String sep = vSession.getConfiguration().getSep() ;
+        return  vSession.getConfiguration().getMiniPath() + sep + getThemedPath(p) + ".png";
     }
 
     public String getExtention(ViewSession vSession, Photo p) {

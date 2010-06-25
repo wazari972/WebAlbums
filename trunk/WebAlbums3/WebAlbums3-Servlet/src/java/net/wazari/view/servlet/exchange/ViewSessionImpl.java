@@ -16,7 +16,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.constante.Path;
+import javax.servlet.http.HttpSession;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.service.exchange.Configuration;
@@ -47,7 +47,6 @@ import net.wazari.service.exchange.ViewSessionTag;
  */
 public class ViewSessionImpl implements
         ServiceSession,
-        ViewSessionSession,
         ViewSessionLogin,
         ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumEdit, ViewSessionAlbumSubmit,
         ViewSessionConfig,
@@ -59,15 +58,10 @@ public class ViewSessionImpl implements
     private static final Logger log = Logger.getLogger(ViewSessionImpl.class.getCanonicalName());
     private HttpServletRequest request;
     private HttpServletResponse response;
-    private static Configuration conf = null;
-
+    
     public ViewSessionImpl(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
-        if (conf == null) {
-            conf = Path.getConf(context);
-        }
         this.request = request;
         this.response = response;
-
     }
 
     @Override
@@ -175,11 +169,6 @@ public class ViewSessionImpl implements
     @Override
     public File getTempDir() {
         return getSessionObject("tempDir", File.class);
-    }
-
-    @Override
-    public void setTempDir(File temp) {
-        setSessionObject("tempDir", temp);
     }
 
     /** ** **/
@@ -367,7 +356,7 @@ public class ViewSessionImpl implements
 
     @Override
     public Configuration getConfiguration() {
-        return conf;
+        return ConfigurationXML.getConf();
     }
 
     @Override
@@ -405,51 +394,6 @@ public class ViewSessionImpl implements
 
     private <T extends Enum<T>> T getEnum(String value, Class<T> type) {
         return getObject(value, type);
-    }
-
-    private <T> T getObject(String name, Class<T> type) {
-        T ret = null;
-        String val = request.getParameter(name);
-        if (val == null) {
-            return null;
-        }
-        try {
-            if (type == String.class) {
-                ret = type.cast(val);
-            } else if (type == Integer.class) {
-                ret = type.cast(Integer.parseInt(val));
-            } else if (type == Boolean.class) {
-                ret = type.cast(Boolean.parseBoolean(val));
-            } else if (type.isEnum()) {
-                ret = (T) Enum.valueOf((Class) type, val);
-            } else {
-                log.log(Level.INFO, "Unknown class {0} for parameter {1}", new Object[]{type, name});
-            }
-        } catch (ClassCastException e) {
-            log.log(Level.INFO, "Can''t cast value {0} into class {1}", new Object[]{val, type});
-        } catch (NullPointerException e) {
-            log.log(Level.INFO, "NullPointerException with {0} for class {1}", new Object[]{val, type});
-        } catch (NumberFormatException e) {
-            log.log(Level.INFO, "NumberFormatException with {0} for class {1}", new Object[]{val, type});
-        } catch (IllegalArgumentException e) {
-            log.log(Level.INFO, "IllegalArgumentException with {0} for class {1}", new Object[]{val, type});
-        }
-        log.log(Level.INFO, "getObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
-        return ret;
-    }
-
-    private <T> T getSessionObject(String name, Class<T> type) {
-        T ret = type.cast(request.getSession().getAttribute(name));
-        if (ret == null) {
-            ret = getObject(name, type);
-        }
-        log.log(Level.INFO, "getSessionObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
-        return ret;
-    }
-
-    private void setSessionObject(String key, Object val) {
-        log.log(Level.INFO, "setSessionObject param:{0} val:{1}", new Object[]{key, val});
-        request.getSession().setAttribute(key, val);
     }
 
     @Override
@@ -523,5 +467,82 @@ public class ViewSessionImpl implements
     @Override
     public String getValue() {
         return getObject("value", String.class);
+    }
+
+    private void setSessionObject(String string, Object value) {
+        setSessionObject(string, value, request.getSession());
+    }
+
+    private <T> T getObject(String string, Class<T> aClass) {
+        return getObject(string, aClass, request) ;
+    }
+
+    private <T> T getSessionObject(String key, Class<T> aClass) {
+        return getSessionObject(key, aClass, request.getSession(), request) ;
+    }
+
+    private static <T> T getObject(String name, Class<T> type, HttpServletRequest request) {
+        T ret = null;
+        String val = request.getParameter(name);
+        if (val == null) {
+            return null;
+        }
+        try {
+            if (type == String.class) {
+                ret = type.cast(val);
+            } else if (type == Integer.class) {
+                ret = type.cast(Integer.parseInt(val));
+            } else if (type == Boolean.class) {
+                ret = type.cast(Boolean.parseBoolean(val));
+            } else if (type.isEnum()) {
+                ret = (T) Enum.valueOf((Class) type, val);
+            } else {
+                log.log(Level.INFO, "Unknown class {0} for parameter {1}", new Object[]{type, name});
+            }
+        } catch (ClassCastException e) {
+            log.log(Level.INFO, "Can''t cast value {0} into class {1}", new Object[]{val, type});
+        } catch (NullPointerException e) {
+            log.log(Level.INFO, "NullPointerException with {0} for class {1}", new Object[]{val, type});
+        } catch (NumberFormatException e) {
+            log.log(Level.INFO, "NumberFormatException with {0} for class {1}", new Object[]{val, type});
+        } catch (IllegalArgumentException e) {
+            log.log(Level.INFO, "IllegalArgumentException with {0} for class {1}", new Object[]{val, type});
+        }
+        log.log(Level.INFO, "getObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
+        return ret;
+    }
+
+    private static <T> T getSessionObject(String name, Class<T> type, HttpSession session, HttpServletRequest request) {
+        T ret = type.cast(session.getAttribute(name));
+        if (ret == null && request != null) {
+            ret = getObject(name, type, request);
+        }
+        log.log(Level.INFO, "getSessionObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
+        return ret;
+    }
+
+    private static void setSessionObject(String key, Object val, HttpSession session) {
+        log.log(Level.INFO, "setSessionObject param:{0} val:{1}", new Object[]{key, val});
+        session.setAttribute(key, val);
+    }
+
+    public static class ViewSessionLoginImpl implements ViewSessionSession {
+        private HttpSession session ;
+        public ViewSessionLoginImpl (HttpSession session) {
+            this.session = session ;
+        }
+        @Override
+        public void setTempDir(File temp) {
+            setSessionObject("tempDir", temp, session);
+        }
+        @Override
+        public File getTempDir() {
+            return ViewSessionImpl.getSessionObject("tempDir", File.class, session, null) ;
+        }
+
+        @Override
+        public Configuration getConfiguration() {
+            return ConfigurationXML.getConf() ;
+        }
     }
 }

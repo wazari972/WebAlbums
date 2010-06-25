@@ -7,7 +7,6 @@ package net.wazari.service;
 
 import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
-import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionSession;
 
 /**
@@ -21,6 +20,6 @@ public interface SessionManagerLocal {
     void sessionCreated(ViewSessionSession vSession);
 
     @PermitAll
-    void sessionDestroyed(ViewSession vSession);
+    void sessionDestroyed(ViewSessionSession vSession);
 
 }

@@ -2,56 +2,43 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.wazari.service.exchange;
 
 /**
  *
- * @author kevin
+ * @author pk033
  */
 public interface Configuration {
-
-    Integer autoLogin();
 
     String getData();
 
     String getDataPath();
 
-    String getFTP();
+    String getImagesPath();
 
-    String getImages();
+    String getFtpPath();
 
-    String getMini();
+    String getMiniPath();
 
-    String getSourcePath();
+    String getRootPath();
 
-    String getSourceURL();
+    String getTempPath();
 
-    String getTempDir();
+    String getConfigFilePath() ;
 
     boolean hasInternet();
 
     boolean isReadOnly();
 
-    boolean isSgbdHsqldb();
+    boolean wantAlightenDb();
 
-    boolean isSgbdMysql();
+    boolean wantStats();
 
-    boolean lightenDb();
+    boolean wantXsl();
 
-    boolean wantsQueries();
+    int getAlbumSize();
 
-    boolean wantsStats();
-
-    boolean wantsXsl();
+    int getPhotoSize();
 
     String getSep();
-
-    int getAlbumSize() ;
-    int getPhotoSize() ;
-
-    boolean updateBoolParam(String param, String value);
-
-    boolean updateStrParam(String param, String value);
-
 }

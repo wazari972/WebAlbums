@@ -36,6 +36,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public void create(TagPhoto tagPhoto) {
+        tagPhoto.getPhoto().getTagPhotoList().add(tagPhoto);
+        tagPhoto.getTag().getTagPhotoList().add(tagPhoto);
         em.persist(tagPhoto);
     }
 

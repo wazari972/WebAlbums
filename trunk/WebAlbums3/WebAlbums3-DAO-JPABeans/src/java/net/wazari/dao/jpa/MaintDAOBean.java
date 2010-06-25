@@ -101,7 +101,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
     }
 
     @Override
-    public void treatImportXML(final String path, final boolean isMySQL) {
+    public void treatImportXML(final String path) {
         final String filename = path + "WebAlbums";
 
         try {
@@ -186,7 +186,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
     }
 
     @Override
-    public void treatTruncateXML(final String path, final boolean isMySQL) {
+    public void treatTruncateXML(final String path) {
         try {
             HibernateEntityManager hem = (HibernateEntityManager) em.getDelegate();
             @SuppressWarnings("deprecation")
@@ -200,11 +200,9 @@ public class MaintDAOBean implements MaintFacadeLocal {
                         IDatabaseConnection connection = new DatabaseConnection(cx);
                         String file = path + "WebPage.xml";
                         DatabaseConfig config = connection.getConfig();
-                        if (!isMySQL) {
-                            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-                        } else {
-                            config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-                        }
+                        
+                        //    config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
+                        
                         boolean enableColumnSensing = true;
                         IDataSetProducer producer = new FlatXmlProducer(new InputSource(file), false, enableColumnSensing);
                         IDataSet dataSet = new StreamingDataSet(producer);
@@ -223,9 +221,9 @@ public class MaintDAOBean implements MaintFacadeLocal {
     }
 
     @Override
-    public void treatFullImport(String path, boolean isMySQL) {
+    public void treatFullImport(String path) {
         if (treatImportDDL()) {
-            treatImportXML(path, isMySQL);
+            treatImportXML(path);
         }
     }
 }

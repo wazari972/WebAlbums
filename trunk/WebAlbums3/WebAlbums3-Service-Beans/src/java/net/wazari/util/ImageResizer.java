@@ -115,7 +115,7 @@ public class ImageResizer implements Runnable {
   }
   
     private static boolean move (Element elt, Configuration conf) throws MalformedURLException, URISyntaxException {
-      String url = conf.getSourceURL()+conf.getImages() + conf.getSep() +elt.path ;
+      String url = "file://"+conf.getImagesPath() + conf.getSep() +elt.path ;
       log.log(Level.INFO, "SOURCE = {0}", url);
       URI uri = new URL(StringUtil.escapeURL(url)).toURI();
       File destination = new File (uri);
@@ -131,7 +131,7 @@ public class ImageResizer implements Runnable {
   }
     
   private boolean thumbnail (Element source, Configuration conf) throws URISyntaxException, IOException {
-    String path = conf.getSourcePath()+conf.getMini()+conf.getSep()+source.path+".png" ;
+    String path = conf.getMiniPath()+conf.getSep()+source.path+".png" ;
     
     File destination = new File (path);
     File parent = destination.getParentFile() ;

@@ -2,6 +2,7 @@ package net.wazari.view.servlet;
 
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -9,6 +10,8 @@ import javax.ejb.Stateless;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +19,7 @@ import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import net.wazari.view.servlet.exchange.ConfigurationXML;
 
 
 @WebServlet(
@@ -38,7 +42,7 @@ public class Index extends HttpServlet {
     
     public XmlBuilder treatVOID(ViewSession vSession) {
         XmlBuilder output = themeService.getThemeList(vSession) ;
-        if (vSession.getConfiguration().lightenDb()) {
+        if (vSession.getConfiguration().wantAlightenDb()) {
             output.add(new XmlBuilder("reload"));
         }
 

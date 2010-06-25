@@ -128,7 +128,7 @@ public class FilesFinder {
             if (correct) {
                 File dirTheme = null;
 
-                dirTheme = new File(conf.getSourcePath() + conf.getFTP() + "/" + themeName + "/");
+                dirTheme = new File(conf.getFtpPath() + "/" + themeName + "/");
                 info(out, "Dossier source : " + dirTheme);
                 //creer le dossier d'import s'il n'existe pas encore
                 if (!dirTheme.isDirectory()) {
@@ -375,7 +375,6 @@ public class FilesFinder {
     public boolean deletePhoto(Photo enrPhoto,
             XmlBuilder out, Configuration conf) {
 
-        String source = conf.getSourceURL();
         String url = null;
         try {
             File fichier;
@@ -390,7 +389,7 @@ public class FilesFinder {
             tagPhotoDAO.deleteByPhoto(enrPhoto);
 
             //suppression des photos physiquement
-            url = source + conf.getImages() + conf.getSep() + enrTheme.getNom() + conf.getSep() + enrPhoto.getPath();
+            url = "file://" + conf.getImagesPath() + conf.getSep() + enrTheme.getNom() + conf.getSep() + enrPhoto.getPath();
 
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
             info(out, "On supprime sa photo :" + url);
@@ -401,7 +400,7 @@ public class FilesFinder {
             fichier.getParentFile().delete();
 
             //miniature
-            url = source + conf.getMini() + conf.getSep() + enrTheme.getNom() + conf.getSep() + enrPhoto.getPath() + ".png";
+            url = "file://" + conf.getMiniPath() + conf.getSep() + enrTheme.getNom() + conf.getSep() + enrPhoto.getPath() + ".png";
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
             info(out, "On supprime sa miniature :" + url);
             if (!fichier.delete()) {
@@ -430,12 +429,10 @@ public class FilesFinder {
     private static void warn(XmlBuilder output, Object msg) {
         if (msg != null) {
             output.add("Exception", msg.toString());
-            //WebPage.other.warn (msg.toString());
         }
     }
 
     private static void info(XmlBuilder output, Object msg) {
         output.add("message", msg.toString());
-        //WebPage.other.info (msg.toString());
     }
 }
