@@ -157,7 +157,7 @@ public class ViewSessionImpl implements
         if (ret == null) {
             ret = false;
         }
-        return false;
+        return ret;
     }
 
     @Override

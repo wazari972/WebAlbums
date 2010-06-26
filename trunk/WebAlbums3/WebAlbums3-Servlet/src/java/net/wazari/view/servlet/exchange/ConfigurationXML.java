@@ -7,6 +7,7 @@ package net.wazari.view.servlet.exchange;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -41,7 +42,7 @@ public class ConfigurationXML implements Configuration {
         try {
             file = new File(conf.getConfigFilePath()) ;
             conf = XmlUtils.reload(file , ConfigurationXML.class) ;
-            log.info("Configuration correctly loaded from "+file.getAbsolutePath());
+            log.log(Level.INFO, "Configuration correctly loaded from {0}", file.getAbsolutePath());
             log.info(XmlUtils.print((ConfigurationXML)conf, ConfigurationXML.class));
         } catch (Exception e) {
             log.warning("Exception while loading the Configuration from "+file+"->"+e.getMessage());
