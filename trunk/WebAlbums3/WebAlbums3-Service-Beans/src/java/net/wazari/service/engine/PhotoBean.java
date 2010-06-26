@@ -143,36 +143,18 @@ public class PhotoBean implements PhotoLocal {
             //utiliser cette photo pour representer le tag de ce theme
             Tag enrTag = tagDAO.find(vSession.getTagPhoto()) ;
             if (enrTag != null) {
-                List<TagTheme> lstTT = enrTag.getTagThemeList() ;
-                Theme actualTheme;
+                Theme actualTheme = enrPhoto.getAlbum().getTheme();
+
                 TagTheme enrTagTh = null;
-                if (!vSession.isRootSession()) {
-                    actualTheme = vSession.getTheme();
-                    if (!lstTT.isEmpty()) {
-                        enrTagTh = lstTT.get(0);
-                    }
-                } else {
-
-                    Album enrAlbum = enrPhoto.getAlbum();
-                    if (enrAlbum == null) {
-                        throw new NoSuchElementException("Album with ID=" + enrPhoto.getAlbum());
-                    }
-                    actualTheme = enrAlbum.getTheme();
-
-                    for (TagTheme enrTagThCurrent : lstTT) {
-                        log.log(Level.INFO, "tag th{0} ta{1}", new Object[]{enrTagThCurrent.getTheme(), enrTagThCurrent.getTag()});
-                        if (enrTagTh.getTheme() == enrAlbum.getTheme()) {
-                            enrTagTh = enrTagThCurrent;
-                            break;
-                        }
-                    }
-
-                    if (enrTagTh.getTheme() != enrAlbum.getTheme()) {
-                        enrTagTh = null;
+                for (TagTheme enrTTCurrent : enrTag.getTagThemeList()) {
+                    if (enrTTCurrent.getTheme().getId().equals(actualTheme.getId())) {
+                        enrTagTh = enrTTCurrent;
+                        break;
                     }
                 }
 
                 if (enrTagTh == null) {
+                    log.warning("CREATE TAG") ;
                     //creer un tagTheme pour cette photo/tag/theme
                     enrTagTh = tagThemeDAO.newTagTheme();
 
@@ -180,11 +162,15 @@ public class PhotoBean implements PhotoLocal {
                     enrTagTh.setTag(enrTag);
                     //par défaut le tag est visible
                     enrTagTh.setIsVisible(true);
+
+                    tagThemeDAO.create(enrTagTh);
+                } else {
+                    log.warning("EDIT TAG") ;
                 }
                 //changer la photo representant ce tag/theme
                 enrTagTh.setPhoto(enrPhoto.getId());
 
-                log.log(Level.INFO, "saveOrUpdate {0}", enrTagTh);
+                log.log(Level.INFO, "edit {0}", enrTagTh);
                 tagThemeDAO.edit(enrTagTh);
             }
 

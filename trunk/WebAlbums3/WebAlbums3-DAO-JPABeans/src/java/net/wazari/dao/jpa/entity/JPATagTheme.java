@@ -123,7 +123,7 @@ public class JPATagTheme implements TagTheme, Serializable {
             return false;
         }
         JPATagTheme other = (JPATagTheme) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.getId().equals(other.getId()))) {
             return false;
         }
         return true;
