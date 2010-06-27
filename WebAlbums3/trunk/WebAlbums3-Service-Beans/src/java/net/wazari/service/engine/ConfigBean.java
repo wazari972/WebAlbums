@@ -23,29 +23,32 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 public class ConfigBean implements ConfigLocal {
 
     private static final long serialVersionUID = -628341734743684910L;
-    
-    @EJB private TagFacadeLocal tagDAO ;
-    @EJB private GeolocalisationFacadeLocal geoDAO ;
-    @EJB private TagThemeFacadeLocal tagThemeDAO ;
-    @EJB private TagPhotoFacadeLocal tagPhotoDAO ;
-    @EJB private FilesFinder filesFinder ;
+    @EJB
+    private TagFacadeLocal tagDAO;
+    @EJB
+    private GeolocalisationFacadeLocal geoDAO;
+    @EJB
+    private TagThemeFacadeLocal tagThemeDAO;
+    @EJB
+    private TagPhotoFacadeLocal tagPhotoDAO;
+    @EJB
+    private FilesFinder filesFinder;
 
     @Override
     public XmlBuilder treatIMPORT(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("import");
         String theme = vSession.getImportTheme();
-        String passwrd = vSession.getPassword();
 
-            output.add("message", "Begining ...");
-            boolean correct = filesFinder.importAuthor(vSession, theme, passwrd, output, vSession.getConfiguration());
+        output.add("message", "Begining ...");
+        boolean correct = filesFinder.importAuthor(vSession, theme, output, vSession.getConfiguration());
 
-            if (correct) {
-                output.add("message", "Well done !");
-            } else {
-                output.addException("An error occured ...");
-            }
-        
+        if (correct) {
+            output.add("message", "Well done !");
+        } else {
+            output.addException("An error occured ...");
+        }
+
         return output.validate();
     }
 
@@ -108,7 +111,7 @@ public class ConfigBean implements ConfigLocal {
 
             return output.validate();
         }
-        Geolocalisation enrGeo = enrTag.getGeolocalisation() ;
+        Geolocalisation enrGeo = enrTag.getGeolocalisation();
         enrGeo.setLongitude(lng);
         enrGeo.setLat(lat);
         geoDAO.edit(enrGeo);
@@ -136,30 +139,30 @@ public class ConfigBean implements ConfigLocal {
             output.addException("Pas de tag selectionné ...");
             return output.validate();
         }
-            TagTheme enrTagTheme = tagThemeDAO.loadByTagTheme(tag, vSession.getTheme().getId());
+        TagTheme enrTagTheme = tagThemeDAO.loadByTagTheme(tag, vSession.getTheme().getId());
 
-            if (enrTagTheme == null) {
+        if (enrTagTheme == null) {
 
-                if (tagDAO.find(tag) == null) {
-                    output.addException("Impossible de trouver ce tag (" + tag + ") ...");
-                    return output.validate();
-                }
-                //le tag existe
-                rq = "done";
-
-                enrTagTheme = tagThemeDAO.newTagTheme();
-                enrTagTheme.setTheme(vSession.getTheme());
-                enrTagTheme.setTag(tagDAO.find(tag));
-
-                tagThemeDAO.create(enrTagTheme);
+            if (tagDAO.find(tag) == null) {
+                output.addException("Impossible de trouver ce tag (" + tag + ") ...");
+                return output.validate();
             }
-            if (visible != null && visible) {
-                enrTagTheme.setIsVisible(true);
-            } else {
-                enrTagTheme.setIsVisible(false);
-            }
-            tagThemeDAO.edit(enrTagTheme);
-            output.add("message", "Le tag " + tag + " est maintenant : " + (visible ? "visible" : "invisible"));
+            //le tag existe
+            rq = "done";
+
+            enrTagTheme = tagThemeDAO.newTagTheme();
+            enrTagTheme.setTheme(vSession.getTheme());
+            enrTagTheme.setTag(tagDAO.find(tag));
+
+            tagThemeDAO.create(enrTagTheme);
+        }
+        if (visible != null && visible) {
+            enrTagTheme.setIsVisible(true);
+        } else {
+            enrTagTheme.setIsVisible(false);
+        }
+        tagThemeDAO.edit(enrTagTheme);
+        output.add("message", "Le tag " + tag + " est maintenant : " + (visible ? "visible" : "invisible"));
 
         return output.validate();
     }
@@ -194,23 +197,23 @@ public class ConfigBean implements ConfigLocal {
                     tagDAO.create(enrTag);
                     output.add("message", "TAG == " + enrTag.getId() + " ==");
                     if (type == 3) {
-                            String longit = vSession.getLng() ;
-                            String lat = vSession.getLat() ;
-                            msg = " (" + longit + "/" + lat + ")";
-                            if (longit == null || lat == null) {
-                                output.cancel();
-                                output.addException("La geoloc " + msg + " n'est pas correcte...");
-                                tagDAO.remove(enrTag);
-       
-                                return output.validate();
-                            }
+                        String longit = vSession.getLng();
+                        String lat = vSession.getLat();
+                        msg = " (" + longit + "/" + lat + ")";
+                        if (longit == null || lat == null) {
+                            output.cancel();
+                            output.addException("La geoloc " + msg + " n'est pas correcte...");
+                            tagDAO.remove(enrTag);
 
-                            Geolocalisation geo = geoDAO.newGeolocalisation();
-                            geo.setTag(enrTag.getId());
-                            geo.setLongitude(longit);
-                            geo.setLat(lat);
-                            geo.setTag1(enrTag) ;
-                            geoDAO.create(geo);
+                            return output.validate();
+                        }
+
+                        Geolocalisation geo = geoDAO.newGeolocalisation();
+                        geo.setTag(enrTag.getId());
+                        geo.setLongitude(longit);
+                        geo.setLat(lat);
+                        geo.setTag1(enrTag);
+                        geoDAO.create(geo);
                     }
 
                     switch (type) {
@@ -230,7 +233,7 @@ public class ConfigBean implements ConfigLocal {
                     output.cancel();
                     output.addException("Le Tag " + nom + " est déjà présent dans la base ...");
                     output.addException(enrTag.getId() + " - " + enrTag.getNom());
-                    
+
                     return output.validate();
                 }
             } else {
@@ -239,13 +242,13 @@ public class ConfigBean implements ConfigLocal {
 
                 return output.validate();
             }
-       
+
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
             output.cancel();
             output.addException("NumberFormatException", "Erreur dans le cast de l'un des nombres");
-            
+
         }
         return output.validate();
     }
@@ -259,11 +262,11 @@ public class ConfigBean implements ConfigLocal {
         int tagID = vSession.getTag();
 
         try {
-            Tag enrTag = tagDAO.find(tagID) ;
+            Tag enrTag = tagDAO.find(tagID);
             //liens Tag->Photos
-            List<TagPhoto> lstTP = enrTag.getTagPhotoList() ;
+            List<TagPhoto> lstTP = enrTag.getTagPhotoList();
             int i = 0;
-            for (TagPhoto enrTagPhoto : lstTP)  {
+            for (TagPhoto enrTagPhoto : lstTP) {
                 tagPhotoDAO.remove(enrTagPhoto);
                 i++;
             }
@@ -271,7 +274,7 @@ public class ConfigBean implements ConfigLocal {
 
             //liens Tag->Localisation
             i = 0;
-            Geolocalisation enrGeo = enrTag.getGeolocalisation() ;
+            Geolocalisation enrGeo = enrTag.getGeolocalisation();
             if (enrGeo != null) {
                 geoDAO.remove(enrGeo);
                 i = 1;
@@ -279,10 +282,10 @@ public class ConfigBean implements ConfigLocal {
             output.add("message", "Suppression de " + i + " Geolocalisation");
 
             //liens Tag->Theme
-            List<TagTheme> lstTT = enrTag.getTagThemeList() ;
+            List<TagTheme> lstTT = enrTag.getTagThemeList();
 
             i = 0;
-            for(TagTheme enrTagTheme : lstTT) {
+            for (TagTheme enrTagTheme : lstTT) {
                 tagThemeDAO.remove(enrTagTheme);
                 i++;
             }
@@ -301,6 +304,6 @@ public class ConfigBean implements ConfigLocal {
             output.addException("Aucun tag selectionné ...");
             return output.validate();
 
-        } 
+        }
     }
 }

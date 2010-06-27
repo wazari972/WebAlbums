@@ -61,7 +61,6 @@ public class FilesFinder {
 
     public boolean importAuthor(ViewSession vSession,
             String themeName,
-            String passwrd,
             XmlBuilder out, Configuration conf) {
         if (resizer == null) {
             resizer = new ImageResizer(conf, sysTools);
@@ -96,38 +95,18 @@ public class FilesFinder {
                 }
 
                 info(out, "Le theme n'est pas dans la table");
-                if (passwrd != null && !passwrd.isEmpty()) {
-                    enrTheme = themeDAO.newTheme();
-                    enrTheme.setNom(themeName);
-                    enrTheme.setPassword(passwrd);
+                enrTheme = themeDAO.newTheme();
+                enrTheme.setNom(themeName);
 
-                    themeDAO.create(enrTheme);
-                    info(out, "Le theme a correctement été ajouté");
-                    correct = true;
-                } else {
-                    warn(out, "Nouveau theme sans mot de passe...");
-                    enrTheme = null;
-                }
+                themeDAO.create(enrTheme);
+                info(out, "Le theme a correctement été ajouté");
+                correct = true;
+
             } //if theme already exists
             else {
-                int enrThemeId = enrTheme.getId();
-                int logThemeId = vSession.getTheme().getId();
                 info(out, "Le theme est dans la table");
-                info(out, "logged: " + enrThemeId + ", " + logThemeId);
-                info(out, "logged: " + (enrThemeId == logThemeId));
-                //pas besoin de mot de passe si on importe le theme courant
-                if (enrThemeId != logThemeId) {
-                    if (passwrd == null ||
-                            !passwrd.equals(enrTheme.getPassword())) {
-                        warn(out, "Le mot de passe est incorrect...");
-                    } else {
-                        info(out, "Mot de passe correct");
-                        correct = true;
-                    }
-                } else {
-                    info(out, "Pas besoin de mot de passe");
-                    correct = true;
-                }
+
+                correct = true;
             }
 
             //if init was performed correctly

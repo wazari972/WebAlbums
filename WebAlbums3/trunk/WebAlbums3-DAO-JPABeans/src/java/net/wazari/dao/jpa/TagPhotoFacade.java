@@ -55,6 +55,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public void deleteByPhoto(Photo enrPhoto) {
+        //TODO java.util.ConcurrentModificationException
         for (TagPhoto enrTp : enrPhoto.getTagPhotoList()) {
             remove(enrTp);
         }

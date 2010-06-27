@@ -273,11 +273,6 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public String getPassword() {
-        return getString("password");
-    }
-
-    @Override
     public Integer getType() {
         return getInteger("type");
     }

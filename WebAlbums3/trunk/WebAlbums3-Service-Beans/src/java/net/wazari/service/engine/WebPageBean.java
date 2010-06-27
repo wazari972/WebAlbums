@@ -271,6 +271,7 @@ public class WebPageBean implements WebPageLocal {
             //first, prepare the information (type, id, nom)
             if (box == Box.MAP_SCRIPT) {
                 if (enrTag.getTagType() == 3) {
+                    //TODO handle correctly the Root theme
                     //ensure that this tag is displayed in this theme
                     //(in root theme, diplay all of theme
                     TagTheme enrTagTh = tagThemeDAO.loadByTagTheme(enrTag.getId(), vSession.getTheme().getId());

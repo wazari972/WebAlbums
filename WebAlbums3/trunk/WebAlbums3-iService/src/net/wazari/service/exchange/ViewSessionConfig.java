@@ -23,8 +23,6 @@ public interface ViewSessionConfig extends ViewSession{
 
     public String getImportTheme();
 
-    public String getPassword();
-
     public String getNom();
 
     public Integer getType();

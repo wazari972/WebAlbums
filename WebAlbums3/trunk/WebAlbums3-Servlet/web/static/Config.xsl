@@ -27,7 +27,7 @@
 	      <xsl:attribute name="value"><xsl:value-of select="/root/login/theme"/>
 	      </xsl:attribute>
 	    </input>
-	    <input type='password' name='passwrd' value=''/><br/>
+	    <br/>
 	    <input type='submit' value='Importer'/>
 	  </form>
 	</div>

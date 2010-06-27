@@ -45,7 +45,7 @@ public class JPATheme implements Theme, Serializable {
 
     @Basic(optional = false)
     @Column(name = "Password", nullable = false, length = 100)
-    private String password;
+    private String password = "not used";
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
@@ -84,16 +84,6 @@ public class JPATheme implements Theme, Serializable {
     @Override
     public void setNom(String nom) {
         this.nom = nom;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     @Override

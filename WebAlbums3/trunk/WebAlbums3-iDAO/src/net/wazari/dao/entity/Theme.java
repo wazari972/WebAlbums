@@ -20,8 +20,6 @@ public interface Theme extends Serializable {
 
     String getNom();
 
-    String getPassword();
-
     List<TagTheme> getTagThemeList();
 
     void setAlbumList(List<Album> albumList);
@@ -29,8 +27,6 @@ public interface Theme extends Serializable {
     void setId(Integer id);
 
     void setNom(String nom);
-
-    void setPassword(String password);
 
     void setTagThemeList(List<TagTheme> tagThemeList);
 
