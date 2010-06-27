@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.Iterator;
 import java.util.logging.Logger;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
@@ -55,9 +56,12 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public void deleteByPhoto(Photo enrPhoto) {
-        //TODO java.util.ConcurrentModificationException
-        for (TagPhoto enrTp : enrPhoto.getTagPhotoList()) {
-            remove(enrTp);
+        Iterator<TagPhoto> it = enrPhoto.getTagPhotoList().iterator() ;
+        while (it.hasNext()) {
+            TagPhoto enrTagPhoto = it.next() ;
+            enrTagPhoto.getTag().getTagPhotoList().remove(enrTagPhoto);
+            it.remove();
+            em.remove(enrTagPhoto);
         }
     }
 
