@@ -1,22 +1,12 @@
 package system;
 
-import java.io.IOException;
-import java.io.File ;
 import java.util.Iterator ;
 import java.util.Arrays ;
 import java.util.List ;
 import java.util.ArrayList ;
-
-import constante.Path ;
 import util.ImageUtil ;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-
 import engine.WebPage ;
-import entity.Album ;
-import entity.Tag ;
 import entity.Photo ;
 import org.hibernate.Query;
 import javax.servlet.http.HttpServletRequest;
