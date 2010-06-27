@@ -1,0 +1,85 @@
+package net.wazari.service.entity.util;
+
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+
+import net.wazari.dao.entity.Photo;
+
+import java.text.ParseException;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import net.wazari.dao.AlbumFacadeLocal;
+import net.wazari.dao.PhotoFacadeLocal;
+import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Utilisateur;
+import net.wazari.service.exception.WebAlbumsServiceException;
+
+/**
+ * This is the object class that relates to the Album table.
+ * Any customizations belong here.
+ */
+@Stateless
+public class AlbumUtil {
+
+    @EJB
+    AlbumFacadeLocal albumDAO;
+    @EJB
+    UtilisateurFacadeLocal userDAO;
+    @EJB
+    PhotoFacadeLocal photoDAO;
+    @EJB
+    PhotoUtil photoUtil;
+    private static final Logger log = Logger.getLogger(AlbumUtil.class.toString());
+
+    public void setTagsToPhoto(Album enrAlbum, Integer[] tags, Boolean force) throws WebAlbumsServiceException {
+
+        for (Photo enrPhoto : enrAlbum.getPhotoList()) {
+            log.log(Level.INFO, "apply tags to {0}", enrPhoto);
+            if (force) {
+
+                photoUtil.setTags(enrPhoto, tags);
+            } else {
+                photoUtil.addTags(enrPhoto, tags);
+            }
+        }
+
+    }
+
+    public void setDateStr(Album a, String date) throws WebAlbumsServiceException{
+        if (date != null) {
+            try {
+                //verification
+                new SimpleDateFormat("yyyy-MM-dd").parse(date);
+                a.setDate(date);
+            } catch (ParseException e) {
+            }
+        }
+    }
+
+    public void setNom(Album a, String nom) throws WebAlbumsServiceException {
+        if (nom == null) {
+            return;
+        }
+
+        a.setNom(nom);
+    }
+
+    public void updateDroit(Album a, Integer droit) throws WebAlbumsServiceException {
+        if (userDAO.find(droit) == null) {
+            return;
+        }
+        Utilisateur enrDroit = userDAO.find(droit);
+        if (enrDroit.equals(a.getDroit())) {
+            return;
+        }
+
+        a.setDroit(enrDroit);
+        for (Photo enrPhoto : a.getPhotoList()) {
+            enrPhoto.setDroit(null);
+        }
+    }
+
+
+}
