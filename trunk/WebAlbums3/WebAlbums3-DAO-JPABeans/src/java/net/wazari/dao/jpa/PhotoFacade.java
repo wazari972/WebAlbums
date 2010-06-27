@@ -47,7 +47,8 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
     @Override
     public void remove(Photo photo) {
-        em.remove(em.merge(photo));
+        photo.getAlbum().getPhotoList().remove(photo);
+        em.remove(photo);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
         Query q = em.createQuery(rq
                 ).setParameter("albumId", albumId);
-        if (bornes.getFirstElement() != null) {
+        if (bornes != null && bornes.getFirstElement() != null) {
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getPhotoSize());
         }
@@ -82,14 +83,21 @@ public class PhotoFacade implements PhotoFacadeLocal {
                 .setParameter("albumId", albumId) ;
         Long size = (Long) qSize.getSingleResult() ;
 
-        return new SubsetOf<Photo>(bornes, q.getResultList(), size);
+        List<Photo> subset = q.getResultList() ;
+        if (bornes == null || bornes.getFirstElement() == null)
+            return new SubsetOf<Photo>(subset) ;
+            else return new SubsetOf<Photo>(bornes, subset, size);
 
     }
 
     @Override
     public Photo loadByPath(String path) {
-        String rq = "FROM JPAPhoto p WHERE p.path = :path";
-        return (JPAPhoto) em.createQuery(rq).setParameter("path", path).getSingleResult();
+        try {
+            String rq = "FROM JPAPhoto p WHERE p.path = :path";
+            return (JPAPhoto) em.createQuery(rq).setParameter("path", path).getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 
     @Override

@@ -56,7 +56,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
                 " ORDER BY a.date DESC ";
         Query q = em.createQuery(rq) ;
         if (topFirst == TopFirst.TOP) {
-            q.setFirstResult(1);
+            q.setFirstResult(0);
             q.setMaxResults(bornes.getNbElement());
         } else {
             q.setFirstResult(bornes.getFirstElement());
@@ -84,13 +84,17 @@ public class AlbumFacade implements AlbumFacadeLocal {
 
     @Override
     public Album loadByNameDate(String name, String date) {
-        String rq = "FROM JPAAlbum a " +
-                " WHERE a.date = :date " +
-                " AND a.nom = :nom";
-        return (JPAAlbum) em.createQuery(rq)
-                .setParameter("date", date)
-                .setParameter("nom", name)
-                .getSingleResult();
+        try {
+            String rq = "FROM JPAAlbum a " +
+                    " WHERE a.date = :date " +
+                    " AND a.nom = :nom";
+            return (JPAAlbum) em.createQuery(rq)
+                    .setParameter("date", date)
+                    .setParameter("nom", name)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 
     @Override

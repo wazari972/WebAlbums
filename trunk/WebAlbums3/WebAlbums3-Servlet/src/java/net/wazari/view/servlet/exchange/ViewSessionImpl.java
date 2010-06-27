@@ -96,7 +96,9 @@ public class ViewSessionImpl implements
 
     @Override
     public boolean getSuppr() {
-        return "Oui je veux supprimer".equals(getString("suppr"));
+        String suppr = getString("suppr") ;
+        return "Oui je veux supprimer cette photo".equals(suppr) ||
+                "Oui je veux supprimer cet album".equals(suppr);
     }
 
     @Override

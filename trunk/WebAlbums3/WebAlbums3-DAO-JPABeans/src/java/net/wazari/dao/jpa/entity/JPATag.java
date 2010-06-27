@@ -154,7 +154,7 @@ public class JPATag implements Tag, Serializable {
 
     @Override
     public String toString() {
-        return "net.wazari.dao.jpa.entity.JPATag[id=" + id +"."+getId()+ "]";
+        return "net.wazari.dao.jpa.entity.JPATag[id=" +getId()+ "]";
     }
 
 }

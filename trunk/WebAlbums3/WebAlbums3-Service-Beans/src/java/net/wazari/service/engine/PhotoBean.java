@@ -66,7 +66,7 @@ public class PhotoBean implements PhotoLocal {
     private WebPageLocal webPageService;
     @EJB
     private WebPageLocal webService;
-    private FilesFinder finder = new FilesFinder();
+    @EJB private FilesFinder finder ;
     @EJB private SystemToolsLocal sysTools ;
 
     @Override

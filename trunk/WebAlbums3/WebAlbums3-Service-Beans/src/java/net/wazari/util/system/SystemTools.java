@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.facades.SubsetOf;
@@ -28,13 +27,12 @@ import net.wazari.util.system.IImageUtil.FileUtilWrapperCallBack;
 
 @Stateless
 public class SystemTools implements SystemToolsLocal {
+    
     private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName()) ;
     private static final List<IImageUtil> wrappers = new ArrayList<IImageUtil>(2);
     private static final ISystemUtil systemUtil ;
     @EJB
     private UtilisateurFacadeLocal userDAO;
-    @EJB
-    private ThemeFacadeLocal themeDAO;
     @EJB
     private PhotoFacadeLocal photoDAO;
     @EJB
@@ -54,6 +52,7 @@ public class SystemTools implements SystemToolsLocal {
         log.log(Level.INFO, "+++ Loading services for \"{0}\"", IImageUtil.class.getCanonicalName());
         ServiceLoader<IImageUtil> servicesImg = ServiceLoader.load(IImageUtil.class);
         for (IImageUtil current : servicesImg) {
+            log.log(Level.INFO, "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
             wrappers.add(current);
         }
         
@@ -62,10 +61,16 @@ public class SystemTools implements SystemToolsLocal {
         
         if (servicesSys.iterator().hasNext()) {
             systemUtil = servicesSys.iterator().next();
+            log.log(Level.INFO, "+++ Adding \"{0}\"", systemUtil.getClass().getCanonicalName());
         } else {
             systemUtil = null ;
         }
     }
+
+    public static boolean init() {
+        return true ;
+    }
+
     private static Process execPS(String[] cmd) {
         try {
             log.log(Level.INFO, "exec: {0}", Arrays.toString(cmd));
@@ -105,13 +110,19 @@ public class SystemTools implements SystemToolsLocal {
         }
     }
     private static IImageUtil getWrapper(String type, String ext) {
+        IImageUtil img = null ;
         for (IImageUtil util : wrappers) {
             if (util.support(type, ext)) {
                 return util;
             }
+            if (img == null) {
+                if (util.support("image", null)) {
+                    img = util ;
+                }
+            }
         }
-        log.log(Level.WARNING, "no wrapper for {0}", type);
-        return getWrapper("image", null);
+        log.log(Level.WARNING, "no wrapper for {0}, trying image wrapper({1})", new Object[]{type, img});
+        return img ;
     }
 
     private File buildTempDir(ViewSession vSession, String type, Integer id) {

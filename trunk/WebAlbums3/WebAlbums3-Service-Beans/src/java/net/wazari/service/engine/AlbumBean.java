@@ -52,7 +52,7 @@ public class AlbumBean implements AlbumLocal {
     private PhotoFacadeLocal photoDAO;
     @EJB
     private WebPageLocal webPageService;
-    private FilesFinder finder;
+    @EJB private FilesFinder finder;
 
     @Override
     public XmlBuilder treatAlbmEDIT(ViewSessionAlbumEdit vSession,

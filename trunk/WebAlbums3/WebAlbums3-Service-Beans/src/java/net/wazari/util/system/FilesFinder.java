@@ -9,8 +9,11 @@ import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
@@ -28,9 +31,12 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.ImageResizer;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.SystemToolsLocal;
 
+@Stateless
 public class FilesFinder {
-
+    private static final Logger log = Logger.getLogger(FilesFinder.class.getCanonicalName()) ;
+    
     @EJB
     private ThemeFacadeLocal themeDAO;
     @EJB
@@ -44,7 +50,7 @@ public class FilesFinder {
     @EJB
     private PhotoUtil photoUtil;
     @EJB
-    private SystemTools sysTools;
+    private SystemToolsLocal sysTools;
 
     private static final int DEFAULT_USER = 3;
     public static final SimpleDateFormat DATE_STANDARD = new SimpleDateFormat("yyyy-MM-dd");
@@ -430,9 +436,13 @@ public class FilesFinder {
         if (msg != null) {
             output.add("Exception", msg.toString());
         }
+        log.log(Level.WARNING, "FilesFinder: {0}", msg);
     }
 
     private static void info(XmlBuilder output, Object msg) {
-        output.add("message", msg.toString());
+        if (msg != null) {
+            output.add("message", msg.toString());
+        }
+        log.log(Level.INFO, "FilesFinder: {0}", msg);
     }
 }

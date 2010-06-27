@@ -68,6 +68,14 @@ public class SubsetOf<T> {
     public SubsetOf(Bornes bornes, List<T> subset, Long setSize) {
         this.bornes = bornes;
         this.subset = subset;
-        bornes.setNbElement(setSize) ;
+        if (bornes != null) {
+            bornes.setNbElement(setSize) ;
+        }
+    }
+
+    public SubsetOf(List<T> subset) {
+        this.bornes = null ;
+        this.subset = subset;
+        this.setSize = subset.size() ;
     }
 }

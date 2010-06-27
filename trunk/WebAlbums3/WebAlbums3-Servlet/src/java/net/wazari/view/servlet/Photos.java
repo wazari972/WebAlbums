@@ -41,7 +41,7 @@ public class Photos extends HttpServlet {
         if (Action.SUBMIT == action && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
             submit = photoService.treatPhotoSUBMIT((ViewSessionPhotoSubmit) vSession,correct);
         }
-
+        
         if ((Action.EDIT == action || !correct) && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
             output = photoService.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
 

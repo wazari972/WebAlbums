@@ -16,7 +16,6 @@ import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.entity.*;
 
 import net.wazari.service.ConfigLocal;
-import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exception.WebAlbumsServiceException;
 
@@ -29,7 +28,7 @@ public class ConfigBean implements ConfigLocal {
     @EJB private GeolocalisationFacadeLocal geoDAO ;
     @EJB private TagThemeFacadeLocal tagThemeDAO ;
     @EJB private TagPhotoFacadeLocal tagPhotoDAO ;
-    @EJB private WebPageLocal webPageService ;
+    @EJB private FilesFinder filesFinder ;
 
     @Override
     public XmlBuilder treatIMPORT(ViewSessionConfig vSession)
@@ -39,7 +38,7 @@ public class ConfigBean implements ConfigLocal {
         String passwrd = vSession.getPassword();
 
             output.add("message", "Begining ...");
-            boolean correct = new FilesFinder().importAuthor(vSession, theme, passwrd, output, vSession.getConfiguration());
+            boolean correct = filesFinder.importAuthor(vSession, theme, passwrd, output, vSession.getConfiguration());
 
             if (correct) {
                 output.add("message", "Well done !");
