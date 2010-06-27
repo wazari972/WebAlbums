@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.jpa.entity.JPATheme;
@@ -52,19 +53,27 @@ public class ThemeFacade implements ThemeFacadeLocal {
 
     @Override
     public JPATheme loadByName(String themeName) {
-        String rq = "FROM JPATheme t WHERE t.nom = :nom";
+        try {
+            String rq = "FROM JPATheme t WHERE t.nom = :nom";
 
-        return (JPATheme) em.createQuery(rq)
-                .setParameter("nom", themeName)
-                .getSingleResult();
+          return (JPATheme) em.createQuery(rq)
+                    .setParameter("nom", themeName)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 
     @Override
     public JPATheme find(Integer id) {
-        String rq = "FROM JPATheme t WHERE t.id = :id";
-        return (JPATheme) em.createQuery(rq)
-                .setParameter("id", id)
-                .getSingleResult() ;
+        try {
+            String rq = "FROM JPATheme t WHERE t.id = :id";
+            return (JPATheme) em.createQuery(rq)
+                    .setParameter("id", id)
+                    .getSingleResult() ;
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 
     @Override

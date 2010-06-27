@@ -222,7 +222,7 @@ public class PhotoUtil {
                 }
             }
         } catch (JpegProcessingException e) {
-            log.log(Level.WARNING, "Exception JPEG durant le traitement exif : {0}", e);
+            log.log(Level.WARNING, "Exception JPEG durant le traitement exif : {0}", e.getMessage());
             log.warning(path);
         } catch (URISyntaxException e) {
             log.log(Level.WARNING, "URISyntaxException durant le traitement exif : {0}", e);
