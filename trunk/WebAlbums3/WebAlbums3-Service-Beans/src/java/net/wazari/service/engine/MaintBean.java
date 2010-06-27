@@ -16,15 +16,12 @@ import net.wazari.service.MaintLocal;
 public class MaintBean implements MaintLocal {
 
     private static String getPath(Configuration conf) {
-        return conf.getDataPath() + conf.getSep();
+        return conf.getBackupPath();
     }
     @EJB MaintFacadeLocal mainBean ;
 
     public XmlBuilder treatMAINT(ViewSessionMaint vSession) {
         MaintAction action = vSession.getMaintAction();
-
-        String param = vSession.getParam();
-        String value = vSession.getValue();
 
         XmlBuilder output = new XmlBuilder("maint");
         if (MaintAction.FULL_IMPORT == action) {

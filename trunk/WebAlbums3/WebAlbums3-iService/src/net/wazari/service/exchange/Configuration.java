@@ -22,6 +22,8 @@ public interface Configuration {
 
     String getRootPath();
 
+    String getBackupPath();
+
     String getTempPath();
 
     String getConfigFilePath() ;

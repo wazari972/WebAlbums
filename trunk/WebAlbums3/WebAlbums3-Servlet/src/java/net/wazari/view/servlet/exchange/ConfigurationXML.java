@@ -45,7 +45,7 @@ public class ConfigurationXML implements Configuration {
             log.log(Level.INFO, "Configuration correctly loaded from {0}", file.getAbsolutePath());
             log.info(XmlUtils.print((ConfigurationXML)conf, ConfigurationXML.class));
         } catch (Exception e) {
-            log.warning("Exception while loading the Configuration from "+file+"->"+e.getMessage());
+            log.log(Level.WARNING, "Exception while loading the Configuration from {0}->{1}", new Object[]{file, e.getMessage()});
         }
     }
     public static Configuration getConf() {
@@ -168,6 +168,11 @@ public class ConfigurationXML implements Configuration {
     }
 
     @Override
+    public String getBackupPath() {
+        return getRootPath() + SEP + directories.backup;
+    }
+
+    @Override
     public String getImagesPath() {
         return getDataPath() + SEP + directories.images;
     }
@@ -212,6 +217,8 @@ public class ConfigurationXML implements Configuration {
         private String ftp = "ftp";
         @XmlElement
         private String temp = "tmp";
+        @XmlElement
+        private String backup = "backup";
         @XmlElement
         private String confFile = "conf/conf.xml";
     }
