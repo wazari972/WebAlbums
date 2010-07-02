@@ -1,11 +1,11 @@
 package net.wazari.util.system.wrapper;
 
-import net.wazari.util.system.IImageUtil;
-import net.wazari.util.system.IImageUtil.FileUtilWrapperCallBack;
+import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.ProcessCallback;
 
 
 
-public class TotemImageUtil implements IImageUtil {
+public class TotemImageUtil implements Importer {
 
     public boolean support(String type, String ext) {
         if (type != null) {
@@ -24,19 +24,19 @@ public class TotemImageUtil implements IImageUtil {
 
     }
 
-    public boolean thumbnail(FileUtilWrapperCallBack cb, String source, String dest, int height) {
+    public boolean thumbnail(ProcessCallback cb, String source, String dest, int height) {
         return 0 == cb.execWaitFor(new String[]{"totem-video-thumbnailer", "-s", "" + height, source, dest});
     }
 
-    public boolean rotate(FileUtilWrapperCallBack cb, String degrees, String source, String dest) {
+    public boolean rotate(ProcessCallback cb, String degrees, String source, String dest) {
         return true;
     }
 
-    public boolean shrink(FileUtilWrapperCallBack cb, String source, String dest, int width) {
+    public boolean shrink(ProcessCallback cb, String source, String dest, int width) {
         return true;
     }
 
-    public void fullscreen(FileUtilWrapperCallBack cb, String path) {
+    public void fullscreen(ProcessCallback cb, String path) {
         if (path == null) {
             return;
         }

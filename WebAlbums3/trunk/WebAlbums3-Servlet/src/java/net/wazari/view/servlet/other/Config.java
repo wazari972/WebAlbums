@@ -47,30 +47,25 @@ public class Config extends HttpServlet {
             log.log(Level.INFO, "Other/Config action:{0}", action);
             if ("CREATE_DIRS".equals(action)) {
                 Configuration conf = ConfigurationXML.getConf();
-                File data = new File(conf.getDataPath()) ;
-                if (!(data.isDirectory() || data.mkdirs())) {
-                    log.log(Level.WARNING, "Couldn''t create data dir at {0}", conf.getDataPath());
-                } else {
-                    List<String> directories = Arrays.asList(
-                            new String[]{
-                                conf.getBackupPath(), conf.getTempPath(),
-                                conf.getFtpPath(), conf.getImagesPath(), conf.getMiniPath()});
-                    for (String dir : directories) {
-                        File currentFile = new File(dir) ;
-                        if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
-                            log.log(Level.WARNING, "Couldn''t create {0}", dir);
-                        }
-                    }
-                    File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
-                    if (!(confFile.isDirectory() || confFile.mkdirs())) {
-                        log.log(Level.WARNING, "Couldn''t create path to {0}",
-                                conf.getConfigFilePath());
-                    } else {
-                        File file = new File(ConfigurationXML.getConf().getConfigFilePath());
-                        XmlUtils.save(file, ConfigurationXML.class,
-                                (ConfigurationXML) ConfigurationXML.getConf());
-                    }
 
+                List<String> directories = Arrays.asList(
+                        new String[]{
+                            conf.getBackupPath(), conf.getTempPath(), conf.getPluginsPath(),
+                            conf.getFtpPath(), conf.getImagesPath(), conf.getMiniPath()});
+                for (String dir : directories) {
+                    File currentFile = new File(dir) ;
+                    if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
+                        log.log(Level.WARNING, "Couldn''t create {0}", dir);
+                    }
+                }
+                File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
+                if (!(confFile.isDirectory() || confFile.mkdirs())) {
+                    log.log(Level.WARNING, "Couldn''t create path to {0}",
+                            conf.getConfigFilePath());
+                } else {
+                    File file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                    XmlUtils.save(file, ConfigurationXML.class,
+                            (ConfigurationXML) ConfigurationXML.getConf());
                 }
 
             } else if ("PRINT".equals(action)) {

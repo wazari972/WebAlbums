@@ -9,11 +9,6 @@ package net.wazari.service.exchange;
  * @author pk033
  */
 public interface Configuration {
-
-    String getData();
-
-    String getDataPath();
-
     String getImagesPath();
 
     String getFtpPath();
@@ -27,6 +22,8 @@ public interface Configuration {
     String getTempPath();
 
     String getConfigFilePath() ;
+
+    String getPluginsPath();
 
     boolean hasInternet();
 

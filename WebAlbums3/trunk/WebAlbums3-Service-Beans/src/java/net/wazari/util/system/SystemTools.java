@@ -1,5 +1,6 @@
 package net.wazari.util.system;
 
+import net.wazari.common.plugins.System;
 import java.util.logging.Level;
 import net.wazari.service.SystemToolsLocal;
 import java.io.BufferedReader;
@@ -14,7 +15,6 @@ import java.util.ServiceLoader;
 
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
 import javax.ejb.Stateful;
 import net.wazari.common.util.ClassPathUtil;
 import net.wazari.dao.PhotoFacadeLocal;
@@ -25,16 +25,17 @@ import net.wazari.service.PhotoLocal.PhotoRequest;
 import net.wazari.service.PhotoLocal.TypeRequest;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.util.system.IImageUtil.FileUtilWrapperCallBack;
+import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.ProcessCallback;
 
 @Stateful
-@Singleton
+//@Singleton
 public class SystemTools implements SystemToolsLocal {
     
     private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName()) ;
     
-    private static final List<IImageUtil> wrappers = new LinkedList<IImageUtil>();
-    private static ISystemUtil systemUtil ;
+    private static final List<Importer> wrappers = new LinkedList<Importer>();
+    private static System systemUtil ;
 
     @EJB
     private UtilisateurFacadeLocal userDAO;
@@ -43,7 +44,7 @@ public class SystemTools implements SystemToolsLocal {
     @EJB
     private PhotoUtil photoUtil;
 
-    private static final FileUtilWrapperCallBack cb = new FileUtilWrapperCallBack() {
+    private static final ProcessCallback cb = new ProcessCallback() {
         public int execWaitFor(String[] cmd) {
             return SystemTools.execWaitFor(cmd) ;
         }
@@ -56,17 +57,20 @@ public class SystemTools implements SystemToolsLocal {
         return true ;
     }
 
-    public static void reloadPlugins(String path) {
-        ClassPathUtil.addDirToClasspath(null) ;
-        log.log(Level.INFO, "+++ Loading services for \"{0}\"", IImageUtil.class.getCanonicalName());
-        ServiceLoader<IImageUtil> servicesImg = ServiceLoader.load(IImageUtil.class);
-        for (IImageUtil current : servicesImg) {
+    public void reloadPlugins(String path) {
+        if (path != null) {
+            ClassPathUtil.addDirToClasspath(new File(path)) ;
+        }
+        wrappers.clear() ;
+        log.log(Level.INFO, "+++ Loading services for \"{0}\"", Importer.class.getCanonicalName());
+        ServiceLoader<Importer> servicesImg = ServiceLoader.load(Importer.class);
+        for (Importer current : servicesImg) {
             log.log(Level.INFO, "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
             wrappers.add(current);
         }
 
-        log.log(Level.INFO, "+++ Loading services for \"{0}\"", ISystemUtil.class.getCanonicalName());
-        ServiceLoader<ISystemUtil> servicesSys = ServiceLoader.load(ISystemUtil.class);
+        log.log(Level.INFO, "+++ Loading services for \"{0}\"", System.class.getCanonicalName());
+        ServiceLoader<System> servicesSys = ServiceLoader.load(System.class);
 
         if (servicesSys.iterator().hasNext()) {
             systemUtil = servicesSys.iterator().next();
@@ -74,6 +78,10 @@ public class SystemTools implements SystemToolsLocal {
         } else {
             systemUtil = null ;
         }
+    }
+
+    public List<Importer> getPluginList() {
+        return wrappers ;
     }
 
     private static Process execPS(String[] cmd) {
@@ -114,9 +122,9 @@ public class SystemTools implements SystemToolsLocal {
             }
         }
     }
-    private static IImageUtil getWrapper(String type, String ext) {
-        IImageUtil img = null ;
-        for (IImageUtil util : wrappers) {
+    private static Importer getWrapper(String type, String ext) {
+        Importer img = null ;
+        for (Importer util : wrappers) {
             if (util.support(type, ext)) {
                 return util;
             }
@@ -195,7 +203,7 @@ public class SystemTools implements SystemToolsLocal {
         File dir = null;
         int i = 0;
         boolean first = true;
-        IImageUtil util = getWrapper("image", null);
+        Importer util = getWrapper("image", null);
         for (Photo enrPhoto : lstPhoto.subset) {
             if (first) {
                 dir = buildTempDir(vSession, type, id);
@@ -228,7 +236,7 @@ public class SystemTools implements SystemToolsLocal {
         }
         String ext = photoUtil.getExtention(vSession, enrPhoto) ;
         File fPhoto = new File(dir, enrPhoto.getId() + "-" + width + "." + ext );
-        IImageUtil util = getWrapper(enrPhoto.getType(), ext);
+        Importer util = getWrapper(enrPhoto.getType(), ext);
         if (util == null) {
             return photoUtil.getImagePath(vSession, enrPhoto);
         }

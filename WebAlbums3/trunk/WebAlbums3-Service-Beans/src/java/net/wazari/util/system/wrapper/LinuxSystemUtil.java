@@ -7,16 +7,16 @@ package net.wazari.util.system.wrapper;
 
 import java.io.File;
 import java.util.logging.Logger;
-import net.wazari.util.system.IImageUtil.FileUtilWrapperCallBack;
-import net.wazari.util.system.ISystemUtil;
+import net.wazari.common.plugins.ProcessCallback;
+import net.wazari.common.plugins.System;
 /**
  *
  * @author pk033
  */
-public class LinuxSystemUtil implements ISystemUtil{
+public class LinuxSystemUtil implements System{
     private static final Logger log = Logger.getLogger(LinuxSystemUtil.class.getCanonicalName()) ;
     
-    public boolean link(FileUtilWrapperCallBack cb, String source, File dest) {
+    public boolean link(ProcessCallback cb, String source, File dest) {
         return 0 == cb.execWaitFor(new String[]{"ln", "-s", source, dest.toString()});
     }
 }

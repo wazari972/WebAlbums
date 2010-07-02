@@ -130,13 +130,7 @@ public class ConfigurationXML implements Configuration {
 
     }
 
-    /** Pathes **/
-    @Override
-    public String getData() {
-
-        return directories.data;
-
-    }
+    /** Paths **/
 
     @Override
     public String getRootPath() {
@@ -167,7 +161,6 @@ public class ConfigurationXML implements Configuration {
 
     }
 
-    @Override
     public String getDataPath() {
         return getRootPath() + SEP + directories.data;
     }
@@ -197,6 +190,11 @@ public class ConfigurationXML implements Configuration {
     public String getTempPath() {
         return getDataPath() + SEP + directories.temp;
     }
+
+    @Override
+    public String getPluginsPath() {
+        return getDataPath() + SEP + directories.plugins;
+    }
     
     @Override
     public String getConfigFilePath() {
@@ -223,6 +221,8 @@ public class ConfigurationXML implements Configuration {
         private String backup = "backup";
         @XmlElement
         private String confFile = "conf/conf.xml";
+
+        private String plugins = "plugins";
     }
 
     private static class Sizes {
