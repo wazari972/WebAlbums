@@ -60,10 +60,9 @@ public class JPATheme implements Theme, Serializable {
         this.id = id;
     }
 
-    public JPATheme(Integer id, String nom, String password) {
+    public JPATheme(Integer id, String nom) {
         this.id = id;
         this.nom = nom;
-        this.password = password;
     }
 
     @Override

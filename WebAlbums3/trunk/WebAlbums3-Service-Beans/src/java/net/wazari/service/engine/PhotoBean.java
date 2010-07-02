@@ -96,7 +96,7 @@ public class PhotoBean implements PhotoLocal {
             String desc = vSession.getDesc();
             enrPhoto.setDescription(desc);
 
-            String user = vSession.getUser();
+            String user = vSession.getDroit();
             if (user != null) {
                 boolean valid = false ;
                 try {

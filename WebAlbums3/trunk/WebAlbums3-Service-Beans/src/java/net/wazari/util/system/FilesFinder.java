@@ -95,10 +95,8 @@ public class FilesFinder {
                 }
 
                 info(out, "Le theme n'est pas dans la table");
-                enrTheme = themeDAO.newTheme();
-                enrTheme.setNom(themeName);
+                enrTheme = themeDAO.newTheme(themeName);
 
-                themeDAO.create(enrTheme);
                 info(out, "Le theme a correctement été ajouté");
                 correct = true;
 

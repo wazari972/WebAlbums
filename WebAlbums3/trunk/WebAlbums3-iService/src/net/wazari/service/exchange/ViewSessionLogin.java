@@ -7,6 +7,7 @@ package net.wazari.service.exchange;
 
 import java.security.Principal;
 import net.wazari.dao.entity.Theme;
+import net.wazari.dao.entity.Utilisateur;
 
 /**
  *
@@ -20,14 +21,9 @@ public interface ViewSessionLogin extends ViewSession {
 
         void setSessionManager(Boolean sessionManager);
 
-        void setUserId(Integer userId);
-
         void setRootSession(Boolean asThemeManager);
 
-        void setUserName(String userName);
-
-        
-        String getUserPass();
+        void setUser(Utilisateur enrUser);
 
         boolean isAuthenticated();
 
@@ -36,4 +32,8 @@ public interface ViewSessionLogin extends ViewSession {
         void login(String user, String passwd);
 
         void setEditionMode(EditMode editMode);
+
+        String getUserName();
+
+        String getUserPass();
     }

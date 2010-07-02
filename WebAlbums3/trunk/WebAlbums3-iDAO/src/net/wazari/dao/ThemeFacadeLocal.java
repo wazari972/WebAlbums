@@ -19,13 +19,6 @@ import net.wazari.dao.entity.Theme;
 @Local
 @DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface ThemeFacadeLocal {
-
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void create(Theme theme);
-
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void edit(Theme theme);
-
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void remove(Theme theme);
 
@@ -39,5 +32,8 @@ public interface ThemeFacadeLocal {
     Theme find(Integer themeId);
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    Theme newTheme();
+    Theme newTheme(int i, String string);
+
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    Theme newTheme(String string);
 }

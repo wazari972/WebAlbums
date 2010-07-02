@@ -19,6 +19,7 @@ import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.exchange.ViewSessionLogin;
 
 /**
  *
@@ -64,8 +65,11 @@ public interface WebPageLocal {
     XmlBuilder xmlPage(XmlBuilder from, Bornes bornes) ;
 
     @PermitAll
-    XmlBuilder xmlLogin(ViewSession vSession) ;
+    XmlBuilder xmlLogin(ViewSessionLogin vSession) ;
 
     @PermitAll
     XmlBuilder xmlAffichage(ViewSession vSession) ;
+
+    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    void populateEntities();
 }

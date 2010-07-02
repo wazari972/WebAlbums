@@ -18,7 +18,7 @@ public interface ViewSessionPhoto extends ViewSession {
 
         boolean getRepresent();
 
-        String getUser();
+        String getDroit() ;
 
         Integer[] getNewTag();
 

@@ -26,6 +26,7 @@ import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 
 /**
@@ -37,7 +38,8 @@ public class DispatcherBean {
 
     private static final Logger log = Logger.getLogger(DispatcherBean.class.getCanonicalName());
     static {
-        log.warning("WebAlbums3-Servlet DispatcherBean loaded !");
+        log.warning("WebAlbums3-Servlet is being loaded ... ");
+        log.log(Level.INFO, "RootPath: {0}", ConfigurationXML.getConf().getRootPath());
     }
 
     public DispatcherBean() {
@@ -190,7 +192,7 @@ public class DispatcherBean {
 
             if (!isComplete) {
                 try {
-                    output.add(webPageService.xmlLogin(vSession));
+                    output.add(webPageService.xmlLogin((ViewSessionLogin) vSession));
                 } catch (Exception e) {
                     log.log(Level.WARNING, "An exception occured during xmlLogin: {0}", e.toString());
                 }

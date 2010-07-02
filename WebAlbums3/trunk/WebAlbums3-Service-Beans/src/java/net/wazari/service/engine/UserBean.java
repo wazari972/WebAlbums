@@ -25,7 +25,7 @@ public class UserBean implements UserLocal {
     private UtilisateurFacadeLocal userDAO;
     @EJB
     private ThemeFacadeLocal themeDAO;
-    
+
     @Override
     public boolean logon(ViewSessionLogin vSession, HttpServletRequest request) {
 
@@ -36,27 +36,29 @@ public class UserBean implements UserLocal {
         log.log(Level.INFO, "Login with theme={0}, principal={1}", new Object[]{themeId, pr}) ;
 
         //user must be authenticated
-        if (pr == null) return false ;
+        if (pr == null) {
+            log.warning("User not authenticated") ;
+            return false ;
+        }
 
         //look up the Theme entity
         if (themeId == null) return false;
         Theme enrTheme = themeDAO.find(themeId);
         if (enrTheme == null) {
+            log.warning("No such theme in the database: "+themeId) ;
+            log.warning("No such theme in the database: "+themeDAO.findAll()) ;
             return false;
         }
-
         
         //check Root session special ID
         boolean isRootSession = enrTheme.getId().equals(-1) ;
         boolean asThemeManager = false ;
-
 
         String userName = pr.getName() ;
         log.log(Level.FINE, "UserPrincipal :{0}", userName) ;
         log.log(Level.FINE, "Role admin    :{0}", request.isUserInRole(UserLocal.ADMIN_ROLE)) ;
         log.log(Level.FINE, "Role view     :{0}", request.isUserInRole(UserLocal.VIEWER_ROLE)) ;
 
-        int userId ;
         //allow +User to be logged as theme manager with given user view
         if (userName.indexOf('+') != -1) {
             asThemeManager = true;
@@ -66,23 +68,21 @@ public class UserBean implements UserLocal {
         Utilisateur enrUtil = userDAO.loadByName(userName);
         log.log(Level.INFO, "database lookup returned: {0}", enrUtil) ;
         if (enrUtil == null) {
-            asThemeManager = true ;
-            userId = -1 ;
-        } else {
-            userId = enrUtil.getId() ;
-        }
+            log.warning("No such user in the database: "+userName) ;
+            log.warning("No such user in the database: "+userDAO.findAll()) ;
+            return false ;
+        } 
 
         //no manager if not in admin group
-        if (!request.isUserInRole(UserLocal.ADMIN_ROLE)) {
-            asThemeManager = false;
+        if (request.isUserInRole(UserLocal.ADMIN_ROLE)) {
+            asThemeManager = true;
         }
 
-        log.log(Level.INFO, "saveUser ({0}-{1})", new Object[]{userName, userId});
-        vSession.setUserName(userName);
-        vSession.setUserId(userId);
+        log.log(Level.INFO, "saveUser ({0}-{1})", new Object[]{enrUtil.getNom(), enrUtil.getId()});
+        vSession.setUser(enrUtil);
 
-        log.log(Level.INFO,"saveProperties (manager={0}, editionMode={1}" +
-                ", rootSession="+"{2})", new Object[]{asThemeManager, ViewSession.EditMode.EDITION, isRootSession});
+        log.log(Level.INFO,"saveProperties (manager={0}, editionMode={1}, rootSession={2})",
+                new Object[]{asThemeManager, ViewSession.EditMode.EDITION, isRootSession});
         vSession.setSessionManager(asThemeManager) ;
         vSession.setEditionMode(ViewSession.EditMode.EDITION) ;
         vSession.setRootSession(isRootSession);
@@ -95,8 +95,7 @@ public class UserBean implements UserLocal {
 
     @Override
     public void cleanUpSession(ViewSessionLogin vSession) {
-        vSession.setUserName(null);
-        vSession.setUserId(null);
+        vSession.setUser(null);
         vSession.setSessionManager(null) ;
         vSession.setEditionMode(null) ;
         vSession.setRootSession(null);

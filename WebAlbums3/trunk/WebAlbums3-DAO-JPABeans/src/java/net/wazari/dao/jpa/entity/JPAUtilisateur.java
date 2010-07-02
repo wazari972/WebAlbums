@@ -108,6 +108,6 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
 
     @Override
     public String toString() {
-        return "net.wazari.dao.jpa.entity.JPAUtilisateur[id=" + id + "]";
+        return "net.wazari.dao.jpa.entity.JPAUtilisateur[id=" + id +": "+getNom()+ "]";
     }
 }

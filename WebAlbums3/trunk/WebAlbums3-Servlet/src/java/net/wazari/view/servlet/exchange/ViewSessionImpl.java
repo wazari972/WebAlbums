@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.wazari.dao.entity.Theme;
+import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession.Action;
@@ -136,6 +137,11 @@ public class ViewSessionImpl implements
         return getString("userPass");
     }
 
+    @Override
+    public String getUserName() {
+        return getString("userName") ;
+    }
+
     /** ** **/
     @Override
     public Integer getThemeId() {
@@ -173,15 +179,9 @@ public class ViewSessionImpl implements
         return getSessionObject("tempDir", File.class);
     }
 
-    /** ** **/
     @Override
-    public Integer getUserId() {
-        return getSessionObject("userId", Integer.class);
-    }
-
-    @Override
-    public void setUserId(Integer userId) {
-        setSessionObject("userId", userId);
+    public void setUser(Utilisateur enrUser) {
+        setSessionObject("user", enrUser);
     }
 
     /** ** **/
@@ -208,17 +208,6 @@ public class ViewSessionImpl implements
     @Override
     public void setRootSession(Boolean rootSession) {
         setSessionObject("rootSession", rootSession);
-    }
-
-    /** ** **/
-    @Override
-    public String getUserName() {
-        return getSessionObject("userName", String.class);
-    }
-
-    @Override
-    public void setUserName(String userName) {
-        setSessionObject("userName", userName);
     }
 
     /** ** **/
@@ -283,8 +272,8 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public String getUser() {
-        return getString("user");
+    public Utilisateur getUser() {
+        return getObject("utilisateur", Utilisateur.class);
     }
 
     @Override
@@ -521,6 +510,11 @@ public class ViewSessionImpl implements
     private static void setSessionObject(String key, Object val, HttpSession session) {
         log.log(Level.INFO, "setSessionObject param:{0} val:{1}", new Object[]{key, val});
         session.setAttribute(key, val);
+    }
+
+    @Override
+    public String getDroit() {
+        return getString("user") ;
     }
 
     public static class ViewSessionLoginImpl implements ViewSessionSession {

@@ -27,16 +27,6 @@ public class ThemeFacade implements ThemeFacadeLocal {
     private EntityManager em;
 
     @Override
-    public void create(Theme theme) {
-        em.persist(theme);
-    }
-
-    @Override
-    public void edit(Theme theme) {
-        em.merge(theme);
-    }
-
-    @Override
     public void remove(Theme theme) {
         em.remove(em.merge(theme));
     }
@@ -77,7 +67,17 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
-    public Theme newTheme() {
-        return new JPATheme() ;
+    public Theme newTheme(int id, String name) {
+        Theme enrTheme = new JPATheme(id, name) ;
+        em.merge(enrTheme) ;
+        return enrTheme ;
+    }
+
+    @Override
+    public Theme newTheme(String name) {
+        Theme enrTheme = new JPATheme() ;
+        enrTheme.setNom(name) ;
+        em.merge(enrTheme) ;
+        return enrTheme ;
     }
 }

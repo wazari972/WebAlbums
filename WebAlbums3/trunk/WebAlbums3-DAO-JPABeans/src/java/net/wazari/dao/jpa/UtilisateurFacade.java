@@ -33,18 +33,8 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     private EntityManager em;
 
     @Override
-    public void create(Utilisateur utilisateur) {
-        em.persist(utilisateur);
-    }
-
-    @Override
-    public void edit(Utilisateur utilisateur) {
-        em.merge(utilisateur);
-    }
-
-    @Override
-    public void remove(Utilisateur utilisateur) {
-        em.remove(em.merge(utilisateur));
+    public void newUser(int id, String nom) {
+        em.merge(new JPAUtilisateur(id, nom));
     }
 
     @Override

@@ -20,7 +20,7 @@ public class WebAlbumsDAOBean {
     
     private static final String PERSISTENCE_UNIT_DERBY = "WebAlbums-Derby" ;
     private static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_DERBY ;
     
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
@@ -41,10 +41,10 @@ public class WebAlbumsDAOBean {
                     "FROM JPAAlbum a, JPAPhoto p " +
                     "WHERE a.id = p.album AND (" +
                     //albums autorisé
-                    "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUserId() + "') " +
+                    "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUser().getId() + "') " +
                     "OR " +
                     //albums ayant au moins une photo autorisée
-                    "(p.droit >= '" + session.getUserId() + "')" +
+                    "(p.droit >= '" + session.getUser().getId() + "')" +
                     ") ";
         }
         rq = " " + album + ".id IN (" + processListID(session, rq, true) + ") ";
@@ -61,10 +61,10 @@ public class WebAlbumsDAOBean {
         if (!session.isSessionManager()) {
             rq += " AND (" +
                     //albums autorisé
-                    "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUserId() + "') " +
+                    "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUser().getId() + "') " +
                     "OR " +
                     //albums ayant au moins une photo autorisée
-                    "(p.droit >= '" + session.getUserId() + "')" +
+                    "(p.droit >= '" + session.getUser().getId() + "')" +
                     ")";
         }
 

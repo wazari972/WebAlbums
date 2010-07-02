@@ -5,6 +5,7 @@
 package net.wazari.service.exchange;
 
 import java.io.File;
+import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
 
 /**
@@ -43,7 +44,7 @@ public interface ViewSession extends ServiceSession {
 
     Action getAction();
 
-    String getUserName();
+    Utilisateur getUser();
 
     boolean isAuthenticated();
 

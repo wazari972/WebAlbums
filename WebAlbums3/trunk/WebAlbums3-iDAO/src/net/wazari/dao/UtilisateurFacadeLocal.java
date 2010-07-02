@@ -22,13 +22,7 @@ public interface UtilisateurFacadeLocal {
     final static String VIEWER_ROLE = "VIEWER" ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void create(Utilisateur utilisateur);
-
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void edit(Utilisateur utilisateur);
-
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void remove(Utilisateur utilisateur);
+    void newUser(int id, String name);
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     Utilisateur loadByName(String name) ;

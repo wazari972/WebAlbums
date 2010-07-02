@@ -6,6 +6,7 @@
 package net.wazari.dao.exchange;
 
 import net.wazari.dao.entity.Theme;
+import net.wazari.dao.entity.Utilisateur;
 
 
 /**
@@ -16,7 +17,7 @@ public interface ServiceSession {
 
     Theme getTheme();
 
-    Integer getUserId();
+    Utilisateur getUser();
 
     boolean isRootSession();
 

@@ -132,7 +132,7 @@ public class SystemTools implements SystemToolsLocal {
         }
 
         //build temp/USER
-        File dir = new File(root, userDAO.find(vSession.getUserId()).getNom());
+        File dir = new File(root, vSession.getUser().getNom());
         if (!dir.isDirectory() && !dir.mkdir()) {
             return null;
         }

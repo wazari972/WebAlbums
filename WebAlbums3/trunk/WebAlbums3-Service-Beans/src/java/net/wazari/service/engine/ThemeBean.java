@@ -23,7 +23,9 @@ public class ThemeBean implements ThemeLocal {
     private static final Logger log = Logger.getLogger(ThemeBean.class.getName());
     
     @EJB
-    ThemeFacadeLocal themeDAO;
+    private ThemeFacadeLocal themeDAO;
+    @EJB
+    private WebPageLocal webService ;
 
     @Override
     public XmlBuilder getThemeList(ViewSession vSession) {
@@ -31,6 +33,10 @@ public class ThemeBean implements ThemeLocal {
         //afficher la liste des themes
 
         List<Theme> lst = themeDAO.findAll();
+        if (lst.isEmpty()) {
+            webService.populateEntities() ;
+            lst = themeDAO.findAll();
+        }
         for (Theme enrTheme : lst) {
             output.add(new XmlBuilder("theme", enrTheme.getNom()).addAttribut("id", enrTheme.getId()));
         }

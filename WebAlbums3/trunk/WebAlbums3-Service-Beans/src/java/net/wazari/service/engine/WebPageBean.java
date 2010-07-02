@@ -1,5 +1,6 @@
 package net.wazari.service.engine;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -28,6 +29,8 @@ import net.wazari.service.util.google.GooglePoint;
 import net.wazari.service.util.google.GooglePoint.Point;
 
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.dao.ThemeFacadeLocal;
+import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.util.system.SystemTools;
 
 @Stateless
@@ -41,6 +44,9 @@ public class WebPageBean implements WebPageLocal {
     private TagPhotoFacadeLocal tagPhotoDAO;
     @EJB
     private TagFacadeLocal tagDAO;
+    @EJB
+    private ThemeFacadeLocal themeDAO;
+
     private static final long serialVersionUID = -8157612278920872716L;
     private static final Logger log = Logger.getLogger(WebPageBean.class.getName());
 
@@ -116,15 +122,16 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
-    public XmlBuilder xmlLogin(ViewSession vSession) {
+    public XmlBuilder xmlLogin(ViewSessionLogin vSession) {
         XmlBuilder login = new XmlBuilder("login");
-        String theme = "Not logged in";
+
         Theme enrTheme = vSession.getTheme();
-        if (enrTheme != null) {
-            theme = enrTheme.getNom();
-        }
-        login.add("theme", theme);
-        login.add("user", vSession.getUserName());
+        Utilisateur enrUtil = vSession.getUser() ;
+        Principal principal = vSession.getUserPrincipal() ;
+        login.add("theme", enrTheme == null ? "Not logged in" : enrTheme.getNom());
+        login.add("user", enrUtil == null ? 
+            (principal == null ? "Not logged in" :"("+principal.getName()+")") : enrUtil.getNom());
+        
         log.log(Level.INFO, "logged as manager? {0}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {
             login.add("admin");
@@ -484,5 +491,15 @@ public class WebPageBean implements WebPageLocal {
             throws WebAlbumsServiceException {
         return displayListLBNI(mode, vSession, ids, box,
                 "tags", null);
+    }
+
+    @Override
+    public void populateEntities() {
+        log.warning("Database empty, creating Root theme and Users");
+        themeDAO.newTheme(-1, "Root") ;
+        userDAO.newUser(1, "admin");
+        userDAO.newUser(2, "Famille");
+        userDAO.newUser(3, "Amis");
+        userDAO.newUser(4, "Autre");
     }
 }
