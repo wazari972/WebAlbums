@@ -11,12 +11,15 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Tag;
 
@@ -24,6 +27,8 @@ import net.wazari.dao.entity.Tag;
  *
  * @author kevinpouget
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "Geolocalisation")
 public class JPAGeolocalisation implements Geolocalisation, Serializable {
@@ -31,19 +36,23 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @XmlAttribute
     @Id
     @Basic(optional = false)
     @Column(name = "Tag", nullable = false)
     private Integer tag;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Lat", nullable = false, length = 20)
     private String lat;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Longitude", nullable = false, length = 20)
     private String longitude;
 
+    @XmlElement
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag jPATag;

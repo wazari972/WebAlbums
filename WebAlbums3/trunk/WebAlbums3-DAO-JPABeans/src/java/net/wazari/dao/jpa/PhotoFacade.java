@@ -142,4 +142,11 @@ public class PhotoFacade implements PhotoFacadeLocal {
     public Photo newPhoto() {
         return new JPAPhoto() ;
     }
+
+    @Override
+    public List<Photo> findAll() {
+        String rq = "SELECT o FROM JPAPhoto o";
+        return (List<Photo>) em.createQuery(rq)
+                .getResultList();
+    }
 }

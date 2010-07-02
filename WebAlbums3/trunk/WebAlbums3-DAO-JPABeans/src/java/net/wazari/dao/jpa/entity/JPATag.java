@@ -19,6 +19,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
@@ -28,6 +33,8 @@ import net.wazari.dao.entity.TagTheme;
  *
  * @author kevinpouget
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "Tag")
 public class JPATag implements Tag, Serializable {
@@ -35,16 +42,19 @@ public class JPATag implements Tag, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "TagType", nullable = false)
     private int tagType;
@@ -55,6 +65,7 @@ public class JPATag implements Tag, Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
+    @XmlElement
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jPATag", fetch = FetchType.LAZY)
     private JPAGeolocalisation jPAGeolocalisation;
 

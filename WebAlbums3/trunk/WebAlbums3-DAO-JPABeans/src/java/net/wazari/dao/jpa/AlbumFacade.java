@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.List;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.logging.Logger;
@@ -112,5 +113,13 @@ public class AlbumFacade implements AlbumFacadeLocal {
     @Override
     public Album newAlbum() {
         return new JPAAlbum();
+    }
+
+    @Override
+    public List<Album> findAll() {
+        String rq = "SELECT o FROM JPAAlbum o";
+        return (List<Album>) em.createQuery(rq)
+                .getResultList();
+
     }
 }

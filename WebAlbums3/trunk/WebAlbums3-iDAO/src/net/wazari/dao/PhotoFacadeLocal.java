@@ -46,4 +46,7 @@ public interface PhotoFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     Photo newPhoto();
+
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    List<Photo> findAll();
 }

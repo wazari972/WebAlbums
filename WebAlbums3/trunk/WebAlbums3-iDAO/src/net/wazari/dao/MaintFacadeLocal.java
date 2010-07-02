@@ -17,19 +17,13 @@ import javax.ejb.Local;
 @DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface MaintFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    boolean treatImportDDL() ;
-
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    boolean treatExportDDL(String path) ;
-
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void treatImportXML(String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void treatExportXML(String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
-    void treatTruncateXML(String path) ;
+    void treatTruncateDB() ;
     
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void treatFullImport(String path) ;

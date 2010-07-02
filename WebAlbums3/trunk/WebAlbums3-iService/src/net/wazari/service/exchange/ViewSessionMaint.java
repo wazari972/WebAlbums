@@ -12,7 +12,7 @@ package net.wazari.service.exchange;
 public interface ViewSessionMaint extends ViewSession {
     enum MaintAction {
         FULL_IMPORT,
-        EXPORT_XML, IMPORT_XML, TRUNCATE_XML,
+        EXPORT_XML, IMPORT_XML, TRUNCATE_DB,
         EXPORT_DDL, IMPORT_DDL,
         UPDATE_BOOL, UPDATE_STR, UPDATE
     }

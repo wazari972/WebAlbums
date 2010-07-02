@@ -20,6 +20,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
@@ -28,6 +33,8 @@ import net.wazari.dao.entity.TagPhoto;
  *
  * @author kevinpouget
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "Photo")
 public class JPAPhoto implements Photo, Serializable {
@@ -35,52 +42,66 @@ public class JPAPhoto implements Photo, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Path", nullable = false, length = 100)
     private String path;
 
+    @XmlElement
     @Column(name = "Description", length = 200)
     private String description;
 
+    @XmlElement
     @Column(name = "Model", length = 100)
     private String model;
 
+    @XmlElement
     @Column(name = "Date", length = 50)
     private String date;
 
     @Column(name = "Iso", length = 50)
     private String iso;
 
+    @XmlElement
     @Column(name = "Exposure", length = 50)
     private String exposure;
 
+    @XmlElement
     @Column(name = "Focal", length = 50)
     private String focal;
 
+    @XmlElement
     @Column(name = "Flash", length = 50)
     private String flash;
 
+    @XmlElement
     @Column(name = "Height", length = 50)
     private String height;
 
+    @XmlElement
     @Column(name = "Width", length = 50)
     private String width;
 
+    @XmlElement
     @Column(name = "Type", length = 50)
     private String type;
 
+    @XmlElement
     @JoinColumn(name = "Droit", nullable = true)
     private Integer droit;
 
+    @XmlElement
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "photo", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
+    @XmlElement
     @JoinColumn(name = "Album", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAAlbum album;

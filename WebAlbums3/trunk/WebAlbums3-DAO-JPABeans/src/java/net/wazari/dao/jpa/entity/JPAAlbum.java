@@ -20,6 +20,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
@@ -31,38 +36,47 @@ import net.wazari.dao.entity.Utilisateur;
  */
 @Entity
 @Table(name = "Album")
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class JPAAlbum implements Album, Serializable {
     private static final Logger log = Logger.getLogger(JPAGeolocalisation.class.getName());
 
     private static final long serialVersionUID = 1L;
 
+    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
+    @XmlElement
     @Column(name = "Description", length = 255)
     private String description;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Date", nullable = false, length = 10)
     private String date;
 
+    @XmlElement
     @JoinColumn(name = "Picture", nullable = true)
     private Integer picture;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAPhoto> jPAPhotoList;
 
+    @XmlElement
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAUtilisateur droit;
     
+    @XmlElement
     @JoinColumn(name = "Theme", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;

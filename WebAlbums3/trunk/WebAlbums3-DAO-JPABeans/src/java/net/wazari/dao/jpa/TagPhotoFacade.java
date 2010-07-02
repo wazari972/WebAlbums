@@ -107,4 +107,11 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     public TagPhoto newTagPhoto() {
         return new JPATagPhoto() ;
     }
+
+    @Override
+    public List<TagPhoto> findAll() {
+        String rq = "SELECT o FROM JPATagPhoto o";
+        return (List<TagPhoto>) em.createQuery(rq)
+                .getResultList();
+    }
 }

@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.List;
 import java.util.logging.Logger;
 import net.wazari.dao.*;
 import javax.ejb.EJB;
@@ -62,5 +63,12 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     @Override
     public TagTheme newTagTheme() {
         return new JPATagTheme();
+    }
+
+    @Override
+    public List<TagTheme> findAll() {
+        String rq = "SELECT o FROM JPATagTheme o";
+        return (List<TagTheme>) em.createQuery(rq)
+                .getResultList();
     }
 }

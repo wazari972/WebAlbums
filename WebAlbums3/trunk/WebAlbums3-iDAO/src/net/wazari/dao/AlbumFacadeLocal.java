@@ -5,6 +5,7 @@
 
 package net.wazari.dao;
 
+import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import net.wazari.dao.exchange.ServiceSession;
@@ -28,6 +29,9 @@ public interface AlbumFacadeLocal {
         ALLOWED_ONLY, THEME_ONLY, ALLOWED_AND_THEME
     }
     
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    List<Album> findAll();
+
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void create(Album album);
 

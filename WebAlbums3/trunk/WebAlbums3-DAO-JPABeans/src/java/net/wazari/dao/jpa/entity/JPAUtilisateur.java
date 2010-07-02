@@ -18,6 +18,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Utilisateur;
 
@@ -25,6 +30,8 @@ import net.wazari.dao.entity.Utilisateur;
  *
  * @author kevinpouget
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "Utilisateur")
 public class JPAUtilisateur implements Utilisateur, Serializable {
@@ -32,12 +39,14 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;

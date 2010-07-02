@@ -49,4 +49,7 @@ public interface TagPhotoFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     TagPhoto newTagPhoto();
+
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    List<TagPhoto> findAll();
 }

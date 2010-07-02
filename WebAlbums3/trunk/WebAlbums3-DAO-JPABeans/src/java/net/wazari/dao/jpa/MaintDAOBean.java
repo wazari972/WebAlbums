@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,15 +27,11 @@ import org.dbunit.dataset.stream.StreamingDataSet;
 import org.dbunit.dataset.xml.FlatDtdDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlProducer;
-import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
-import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-
 import org.hibernate.JDBCException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
-
 import org.xml.sax.InputSource;
 
 /**
@@ -52,178 +49,26 @@ public class MaintDAOBean implements MaintFacadeLocal {
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean treatImportDDL() {
-        SchemaExport export = new SchemaExport(new Configuration());
-        //export.setImportFile(getPath()+"WebAlbums.sql");
-        //export.setDelimiter(";");
-
-        export.create(false, true);
-
-        if (export.getExceptions().isEmpty()) {
-            return true;
-        }
-
-        boolean correct = false;
-        for (Exception e : (List<Exception>) export.getExceptions()) {
-            e.printStackTrace();
-            if (e.toString().contains("Index already exists")) {
-                correct = true;
-            }
-        }
-
-        return correct;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean treatExportDDL(String path) {
-        SchemaExport export = new SchemaExport(new Configuration());
-        String file = path + "WebAlbums.sql";
-        export.setOutputFile(file);
-        export.setDelimiter(";");
-        export.create(true, true);
-
-        if (export.getExceptions().isEmpty()) {
-            return true;
-        }
-
-        boolean correct = false;
-        for (Exception e : (List<Exception>) export.getExceptions()) {
-            e.printStackTrace();
-            if (e.toString().contains("Index already exists")) {
-                correct = true;
-            }
-        }
-
-        return correct;
-    }
+    @EJB ImportExporter xml ;
 
     @Override
     public void treatImportXML(final String path) {
-        final String filename = path + "WebAlbums";
-
-        try {
-            HibernateEntityManager hem = (HibernateEntityManager) em.getDelegate();
-            @SuppressWarnings("deprecation")
-            Connection jdbcConnection = hem.getSession().connection();
-            log.log(Level.WARNING, "Importing XML from:{0}", filename);
-            new Work() {
-
-                @Override
-                public void execute(Connection cx) throws JDBCException {
-                    try {
-                        IDatabaseConnection connection = new DatabaseConnection(cx);
-                        DatabaseConfig config = connection.getConfig();
-                        //if (isMySQL) {
-                        //    config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-                        //} else {
-                        //    config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-                        //}
-                        for (String table : TABLES) {
-                            String file = filename+"."+table+ ".xml" ;
-                            log.log(Level.WARNING, "Exporting XML to: {0}", file);
-                            IDataSetProducer producer = new FlatXmlProducer(new InputSource(file), false, true);
-                            IDataSet dataSet = new StreamingDataSet(producer);
-                            DatabaseOperation.INSERT.execute(connection, dataSet);
-                        }
-                    } catch (SQLException ex) {
-                        log.log(Level.SEVERE, null, ex);
-                    } catch (DatabaseUnitException ex) {
-                        log.log(Level.SEVERE, null, ex);
-                    }
-                }
-            }.execute(jdbcConnection);
-
-        } catch (JDBCException e) {
-            e.printStackTrace();
-        }
+        xml.importXml(path);
     }
-
-    private static final List<String> TABLES = Arrays.asList(new String[] {
-        "Theme", "Utilisateur",
-        "Tag", "Geolocalisation",
-        "Album", "Photo",
-        "TagPhoto", "TagTheme"}) ;
     
     @Override
     public void treatExportXML(String path) {
-        final String filename = path + "WebAlbums";
-        try {
-            log.log(Level.WARNING, "Exporting XML to:{0} .xml and .dtd", filename);
-            HibernateEntityManager hem = (HibernateEntityManager) em.getDelegate();
-            @SuppressWarnings("deprecation")
-            Connection jdbcConnection = hem.getSession().connection();
-            new Work() {
-
-                @Override
-                public void execute(Connection cx) throws JDBCException {
-                    try {
-                        IDatabaseConnection connection = new DatabaseConnection(cx);
-                        DatabaseConfig config = connection.getConfig();
-                        //config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
-                        // full database export
-                        for (String table : TABLES) {
-                            String file = filename+"."+table+ ".xml" ;
-                            log.log(Level.WARNING, "Exporting XML to: {0}", file);
-                            FlatXmlDataSet.write(connection.createDataSet(new String[]{table}), new FileOutputStream(file));
-                        }
-                        FlatDtdDataSet.write(connection.createDataSet(), new FileOutputStream(filename + ".dtd"));
-                    } catch (DatabaseUnitException ex) {
-                        Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
-                        Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }.execute(jdbcConnection);
-
-        } catch (JDBCException e) {
-            e.printStackTrace();
-        }
+        xml.exportXml(path);
     }
 
     @Override
-    public void treatTruncateXML(final String path) {
-        try {
-            HibernateEntityManager hem = (HibernateEntityManager) em.getDelegate();
-            @SuppressWarnings("deprecation")
-            Connection jdbcConnection = hem.getSession().connection();
-
-            new Work() {
-
-                @Override
-                public void execute(Connection cx) throws JDBCException {
-                    try {
-                        IDatabaseConnection connection = new DatabaseConnection(cx);
-                        String file = path + "WebPage.xml";
-                        DatabaseConfig config = connection.getConfig();
-                        
-                        //    config.setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new HsqldbDataTypeFactory());
-                        
-                        boolean enableColumnSensing = true;
-                        IDataSetProducer producer = new FlatXmlProducer(new InputSource(file), false, enableColumnSensing);
-                        IDataSet dataSet = new StreamingDataSet(producer);
-                        DatabaseOperation.TRUNCATE_TABLE.execute(connection, dataSet);
-                    } catch (DatabaseUnitException ex) {
-                        Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }.execute(jdbcConnection);
-            
-        } catch (JDBCException e) {
-            e.printStackTrace();
-        } 
+    public void treatTruncateDB() {
+        xml.truncateDb();
     }
 
     @Override
     public void treatFullImport(String path) {
-        if (treatImportDDL()) {
-            treatImportXML(path);
-        }
+        treatTruncateDB();
+        treatImportXML(path);
     }
 }

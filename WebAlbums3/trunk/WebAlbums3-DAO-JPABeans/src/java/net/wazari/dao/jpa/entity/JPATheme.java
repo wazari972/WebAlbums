@@ -18,6 +18,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Theme;
@@ -26,6 +31,8 @@ import net.wazari.dao.entity.Theme;
  *
  * @author kevinpouget
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "Theme")
 public class JPATheme implements Theme, Serializable {
@@ -33,20 +40,24 @@ public class JPATheme implements Theme, Serializable {
     
     private static final long serialVersionUID = 1L;
 
+    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "Password", nullable = false, length = 100)
     private String password = "not used";
 
+    @XmlElement
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
 

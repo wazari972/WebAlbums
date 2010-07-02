@@ -22,8 +22,6 @@ import net.wazari.service.AlbumLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.AlbumUtil;
 import net.wazari.service.exchange.ViewSessionAlbum;
-import net.wazari.service.exchange.ViewSession.Action;
-import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
@@ -43,9 +41,9 @@ public class AlbumBean implements AlbumLocal {
     private static final int TOP = 5;
 
     @EJB
-    AlbumFacadeLocal albumDAO;
+    private AlbumFacadeLocal albumDAO;
     @EJB
-    AlbumUtil albumUtil;
+    private AlbumUtil albumUtil;
     @EJB
     private UtilisateurFacadeLocal userDAO;
     @EJB

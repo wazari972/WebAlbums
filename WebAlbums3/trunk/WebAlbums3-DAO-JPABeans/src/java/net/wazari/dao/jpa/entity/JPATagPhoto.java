@@ -17,6 +17,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
@@ -25,6 +30,8 @@ import net.wazari.dao.entity.TagPhoto;
  *
  * @author kevinpouget
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "TagPhoto")
 public class JPATagPhoto implements TagPhoto, Serializable {
@@ -32,16 +39,19 @@ public class JPATagPhoto implements TagPhoto, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @XmlAttribute
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID", nullable = false)
     private Long id;
 
+    @XmlElement
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag tag;
 
+    @XmlElement
     @JoinColumn(name = "Photo", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAPhoto photo;

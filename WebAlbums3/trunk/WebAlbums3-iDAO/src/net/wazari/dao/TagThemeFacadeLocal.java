@@ -5,6 +5,7 @@
 
 package net.wazari.dao;
 
+import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -31,4 +32,7 @@ public interface TagThemeFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     TagTheme newTagTheme();
+
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    List<TagTheme> findAll();
 }

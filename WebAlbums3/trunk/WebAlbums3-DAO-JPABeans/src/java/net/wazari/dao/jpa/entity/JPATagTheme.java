@@ -17,6 +17,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Theme;
@@ -25,6 +30,8 @@ import net.wazari.dao.entity.Theme;
  *
  * @author kevinpouget
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "TagTheme")
 public class JPATagTheme implements TagTheme, Serializable {
@@ -32,22 +39,27 @@ public class JPATagTheme implements TagTheme, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @XmlElement
     @Column(name = "Photo")
     private Integer photo;
 
+    @XmlElement
     @Column(name = "isVisible")
     private Boolean isVisible;
 
+    @XmlElement
     @JoinColumn(name = "Theme", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
 
+    @XmlElement
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag tag;
