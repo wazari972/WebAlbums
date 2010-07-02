@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
-import net.wazari.view.servlet.utils.XmlUtils;
+import net.wazari.common.util.XmlUtils;
 
 /**
  *
@@ -67,7 +67,8 @@ public class Config extends HttpServlet {
                                 conf.getConfigFilePath());
                     } else {
                         File file = new File(ConfigurationXML.getConf().getConfigFilePath());
-                        XmlUtils.save(file, ConfigurationXML.class);
+                        XmlUtils.save(file, ConfigurationXML.class,
+                                (ConfigurationXML) ConfigurationXML.getConf());
                     }
 
                 }
@@ -83,7 +84,8 @@ public class Config extends HttpServlet {
                 File file = new File(ConfigurationXML.getConf().getConfigFilePath());
                 file.getParentFile().mkdirs();
 
-                XmlUtils.save(file, ConfigurationXML.class);
+                XmlUtils.save(file, ConfigurationXML.class, 
+                        (ConfigurationXML) ConfigurationXML.getConf());
 
                 out.println("Saved into " + file.getCanonicalPath());
             } else if ("RELOAD".equals(action)) {
