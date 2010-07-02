@@ -79,26 +79,8 @@ public class ConfigurationXML implements Configuration {
     private Sizes sizes = new Sizes();
     @XmlElement
     private Properties properties = new Properties();
-    @XmlTransient
-    private String homeDir = null;
 
-    private ConfigurationXML() {
-
-        //home_dir is used if root_dir is relative (./ or ../)
-
-        homeDir = System.getProperty("user.dir");
-
-        if ("\\".equals(SEP)) {
-
-            //on Windows, rewrite the path with / instead of    \
-
-            //for URLs
-
-            homeDir = homeDir.replace("\\", "/");
-
-        }
-
-    }
+    private ConfigurationXML(){}
 
     @Override
     public boolean hasInternet() {
