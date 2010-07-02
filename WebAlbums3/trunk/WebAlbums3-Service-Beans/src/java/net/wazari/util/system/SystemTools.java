@@ -7,14 +7,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
-import java.util.ArrayList;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.ServiceLoader;
 
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
+import javax.ejb.Stateful;
+import net.wazari.common.util.ClassPathUtil;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
@@ -25,12 +27,15 @@ import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.system.IImageUtil.FileUtilWrapperCallBack;
 
-@Stateless
+@Stateful
+@Singleton
 public class SystemTools implements SystemToolsLocal {
     
     private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName()) ;
-    private static final List<IImageUtil> wrappers = new ArrayList<IImageUtil>(2);
-    private static final ISystemUtil systemUtil ;
+    
+    private static final List<IImageUtil> wrappers = new LinkedList<IImageUtil>();
+    private static ISystemUtil systemUtil ;
+
     @EJB
     private UtilisateurFacadeLocal userDAO;
     @EJB
@@ -47,28 +52,28 @@ public class SystemTools implements SystemToolsLocal {
         }
     } ;
 
-    static {
+    public static boolean init() {
+        return true ;
+    }
 
+    public static void reloadPlugins(String path) {
+        ClassPathUtil.addDirToClasspath(null) ;
         log.log(Level.INFO, "+++ Loading services for \"{0}\"", IImageUtil.class.getCanonicalName());
         ServiceLoader<IImageUtil> servicesImg = ServiceLoader.load(IImageUtil.class);
         for (IImageUtil current : servicesImg) {
             log.log(Level.INFO, "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
             wrappers.add(current);
         }
-        
+
         log.log(Level.INFO, "+++ Loading services for \"{0}\"", ISystemUtil.class.getCanonicalName());
         ServiceLoader<ISystemUtil> servicesSys = ServiceLoader.load(ISystemUtil.class);
-        
+
         if (servicesSys.iterator().hasNext()) {
             systemUtil = servicesSys.iterator().next();
             log.log(Level.INFO, "+++ Adding \"{0}\"", systemUtil.getClass().getCanonicalName());
         } else {
             systemUtil = null ;
         }
-    }
-
-    public static boolean init() {
-        return true ;
     }
 
     private static Process execPS(String[] cmd) {
