@@ -4,7 +4,11 @@
  */
 package net.wazari.view.servlet.exchange;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -28,12 +32,23 @@ public class ConfigurationXML implements Configuration {
     private static final Logger log = Logger.getLogger(ConfigurationXML.class.getName());
 
     private static final String SEP = File.separator;
-    private static String rootDir = "/photo" ;
+    private static String rootPath = "/photo" ;
 
-    public static void setRootDir(String initParameter) {
-        ConfigurationXML.rootDir = initParameter ;
+    static {
+        try {
+            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String line = reader.readLine();
+            if (line != null) rootPath = line ;
+            else {
+                log.log(Level.SEVERE, "Could not read RootPath from file: empty");
+            }
+        } catch (IOException ex) {
+            log.log(Level.SEVERE, "Could not read RootPath from file: {0}", ex.getMessage());
+        }
+        log.log(Level.WARNING, "Root path retrieved: "+rootPath);
     }
-
+    
     private static Configuration conf ;
     static {
         conf = new ConfigurationXML() ;
@@ -45,7 +60,8 @@ public class ConfigurationXML implements Configuration {
             log.log(Level.INFO, "Configuration correctly loaded from {0}", file.getAbsolutePath());
             log.info(XmlUtils.print((ConfigurationXML)conf, ConfigurationXML.class));
         } catch (Exception e) {
-            log.log(Level.WARNING, "Exception while loading the Configuration from {0}->{1}", new Object[]{file, e.getMessage()});
+            log.log(Level.WARNING, "Exception while loading the Configuration from {1}", e.getCause().getMessage());
+            log.log(Level.SEVERE, "Using default configuration ...");
         }
     }
     public static Configuration getConf() {
@@ -143,19 +159,27 @@ public class ConfigurationXML implements Configuration {
 
     @Override
     public String getRootPath() {
-
-        if (directories.rootDir == null) {
+        if (rootPath == null) {
+            log.warning("Rootpath null ...");
             return null;
         }
 
-        String rootPath = directories.rootDir;
+        File rootDirFile = new File (rootPath) ;
+        if (!rootDirFile.exists()) {
+            log.warning("Rootpath doesn't exists ...");
+            return null ;
+        }
+        if (!rootDirFile.isDirectory()) {
+            log.warning("Rootpath is not a directory ...");
+            return null ;
+        }
 
-        //if rootDir is relative
-
-        if (rootPath.charAt(0) == '.') {
-
-            rootPath = homeDir + SEP + directories.rootDir;
-
+        if (!rootDirFile.isAbsolute()) {
+            try {
+                rootPath = rootDirFile.getAbsoluteFile().getCanonicalPath();
+            } catch (IOException ex) {
+                log.warning("Couldn't unrelativize the path:" +ex.getMessage());
+            }
         }
 
         return rootPath;
@@ -169,7 +193,7 @@ public class ConfigurationXML implements Configuration {
 
     @Override
     public String getBackupPath() {
-        return getRootPath() + SEP + directories.backup;
+        return getDataPath() + SEP + directories.backup;
     }
 
     @Override
@@ -204,9 +228,6 @@ public class ConfigurationXML implements Configuration {
     }
 
     private static class Directories {
-
-        @XmlAttribute
-        private String rootDir = ConfigurationXML.rootDir ;
         @XmlElement
         private String data = "data";
         @XmlElement

@@ -7,8 +7,8 @@ package net.wazari.view.servlet.other;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -16,10 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import net.wazari.service.exchange.Configuration;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.utils.XmlUtils;
 
@@ -27,11 +24,10 @@ import net.wazari.view.servlet.utils.XmlUtils;
  *
  * @author kevinpouget
  */
-@WebServlet(
-    name = "ViewConfig",
-    urlPatterns = {"/Other/Config"}
-)
+@WebServlet(name = "ViewConfig",
+urlPatterns = {"/Other/Config"})
 public class Config extends HttpServlet {
+
     private static final Logger log = Logger.getLogger(Config.class.getName());
 
     /** 
@@ -49,36 +45,63 @@ public class Config extends HttpServlet {
             String action = request.getParameter("action");
 
             log.log(Level.INFO, "Other/Config action:{0}", action);
-            if ("PRINT".equals(action)) {
+            if ("CREATE_DIRS".equals(action)) {
+                Configuration conf = ConfigurationXML.getConf();
+                File data = new File(conf.getDataPath()) ;
+                if (!(data.isDirectory() || data.mkdirs())) {
+                    log.log(Level.WARNING, "Couldn''t create data dir at {0}", conf.getDataPath());
+                } else {
+                    List<String> directories = Arrays.asList(
+                            new String[]{
+                                conf.getBackupPath(), conf.getTempPath(),
+                                conf.getFtpPath(), conf.getImagesPath(), conf.getMiniPath()});
+                    for (String dir : directories) {
+                        File currentFile = new File(dir) ;
+                        if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
+                            log.log(Level.WARNING, "Couldn''t create {0}", dir);
+                        }
+                    }
+                    File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
+                    if (!(confFile.isDirectory() || confFile.mkdirs())) {
+                        log.log(Level.WARNING, "Couldn''t create path to {0}",
+                                conf.getConfigFilePath());
+                    } else {
+                        File file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                        XmlUtils.save(file, ConfigurationXML.class);
+                    }
+
+                }
+
+            } else if ("PRINT".equals(action)) {
                 response.setContentType("text/xml;charset=UTF-8");
-                
-                String xml = XmlUtils.print((ConfigurationXML)ConfigurationXML.getConf(),
-                        ConfigurationXML.class) ;
-                
-                out.println(xml) ;
+
+                String xml = XmlUtils.print((ConfigurationXML) ConfigurationXML.getConf(),
+                        ConfigurationXML.class);
+
+                out.println(xml);
             } else if ("SAVE".equals(action)) {
-                File file = new File(ConfigurationXML.getConf().getConfigFilePath()) ;
+                File file = new File(ConfigurationXML.getConf().getConfigFilePath());
                 file.getParentFile().mkdirs();
 
-                XmlUtils.save(file, ConfigurationXML.class) ;
-                
-                out.println("Saved into "+file.getCanonicalPath());
+                XmlUtils.save(file, ConfigurationXML.class);
+
+                out.println("Saved into " + file.getCanonicalPath());
             } else if ("RELOAD".equals(action)) {
-                File file = new File(ConfigurationXML.getConf().getConfigFilePath()) ;
+                File file = new File(ConfigurationXML.getConf().getConfigFilePath());
                 file.getParentFile().mkdirs();
 
-                ConfigurationXML conf = XmlUtils.reload(file, ConfigurationXML.class) ;
+                ConfigurationXML conf = XmlUtils.reload(file, ConfigurationXML.class);
 
                 ConfigurationXML.setConf(conf);
-                
-                out.println("Reloaded "+file.getCanonicalPath());
+
+                out.println("Reloaded " + file.getCanonicalPath());
             } else {
 
-                out.println("nothing to do ...") ;
+                out.println("nothing to do ...");
             }
 
         } catch (Exception e) {
-            log.info("action:"+e.getMessage());
+            log.info("action:" + e.getMessage());
             e.printStackTrace();
         } finally {
             out.close();
