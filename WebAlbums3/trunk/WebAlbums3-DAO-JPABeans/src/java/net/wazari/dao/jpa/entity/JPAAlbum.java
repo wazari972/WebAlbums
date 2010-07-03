@@ -20,11 +20,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
@@ -59,27 +61,36 @@ public class JPAAlbum implements Album, Serializable {
     @Column(name = "Description", length = 255)
     private String description;
 
-    @XmlElement
+    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "Date", nullable = false, length = 10)
     private String date;
 
-    @XmlElement
+    @XmlAttribute
     @JoinColumn(name = "Picture", nullable = true)
     private Integer picture;
 
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAPhoto> jPAPhotoList;
 
-    @XmlElement
+    @XmlTransient
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAUtilisateur droit;
     
-    @XmlElement
+    @XmlTransient
     @JoinColumn(name = "Theme", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
+
+    @XmlTransient
+    @Transient
+    private Integer themeId ;
+
+    @XmlTransient
+    @Transient
+    private Integer droitId ;
 
     public JPAAlbum() {
     }
@@ -124,6 +135,7 @@ public class JPAAlbum implements Album, Serializable {
         this.description = description;
     }
 
+    @Override
     public String getDate() {
         return date;
     }
@@ -171,6 +183,32 @@ public class JPAAlbum implements Album, Serializable {
     @Override
     public void setTheme(Theme theme) {
         this.theme = (JPATheme) theme;
+    }
+
+    @XmlAttribute
+    public Integer getDroitId() {
+        if (droit == null) {
+            return null ;
+        } else {
+            return droit.getId() ;
+        }
+    }
+
+    public void setDroitId(Integer droitId) {
+        this.droitId = droitId ;
+    }
+
+    @XmlAttribute
+    public Integer getThemeId() {
+        if (theme == null) {
+            return null ;
+        } else {
+            return theme.getId() ;
+        }
+    }
+
+    public void setThemeId(Integer themeId) {
+        this.themeId = themeId ;
     }
 
     @Override

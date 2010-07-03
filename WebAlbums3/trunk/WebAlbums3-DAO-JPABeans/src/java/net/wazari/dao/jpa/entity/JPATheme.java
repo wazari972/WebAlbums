@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Theme;
@@ -57,10 +58,11 @@ public class JPATheme implements Theme, Serializable {
     @Column(name = "Password", nullable = false, length = 100)
     private String password = "not used";
 
-    @XmlElement
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
 
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
 

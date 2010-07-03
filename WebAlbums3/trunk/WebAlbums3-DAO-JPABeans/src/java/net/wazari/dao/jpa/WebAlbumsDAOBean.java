@@ -18,9 +18,9 @@ import javax.ejb.Stateless;
 public class WebAlbumsDAOBean {
     private static final Logger log = Logger.getLogger(WebAlbumsDAOBean.class.getName());
     
-    private static final String PERSISTENCE_UNIT_DERBY = "WebAlbums-Derby" ;
-    private static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_DERBY ;
+    public static final String PERSISTENCE_UNIT_DERBY = "WebAlbums-Derby" ;
+    public static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
     
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)

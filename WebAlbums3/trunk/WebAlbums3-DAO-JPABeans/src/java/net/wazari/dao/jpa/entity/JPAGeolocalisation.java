@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Tag;
 
@@ -52,7 +53,7 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
     @Column(name = "Longitude", nullable = false, length = 20)
     private String longitude;
 
-    @XmlElement
+    @XmlTransient
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag jPATag;

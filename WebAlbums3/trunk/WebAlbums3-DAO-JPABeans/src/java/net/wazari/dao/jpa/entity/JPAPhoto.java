@@ -20,11 +20,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
@@ -66,6 +68,7 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "Date", length = 50)
     private String date;
 
+    @XmlElement
     @Column(name = "Iso", length = 50)
     private String iso;
 
@@ -93,18 +96,22 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "Type", length = 50)
     private String type;
 
-    @XmlElement
+    @XmlAttribute
     @JoinColumn(name = "Droit", nullable = true)
     private Integer droit;
 
-    @XmlElement
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "photo", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
-    @XmlElement
+    @XmlTransient
     @JoinColumn(name = "Album", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAAlbum album;
+
+    @XmlTransient
+    @Transient
+    private Integer albumId ;
 
     public JPAPhoto() {
     }
@@ -266,6 +273,19 @@ public class JPAPhoto implements Photo, Serializable {
     @Override
     public void setAlbum(Album album) {
         this.album = (JPAAlbum) album;
+    }
+
+    @XmlAttribute
+    public Integer getAlbumId() {
+        if (album == null) {
+            return null ;
+        } else {
+            return album.getId() ;
+        }
+    }
+
+    public void setAlbumId(Integer albumId) {
+        this.albumId = albumId ;
     }
 
     @Override

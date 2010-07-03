@@ -17,11 +17,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
@@ -39,22 +41,30 @@ public class JPATagPhoto implements TagPhoto, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
+    @XmlTransient
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @XmlElement
+    @XmlTransient
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag tag;
 
-    @XmlElement
+    @XmlTransient
     @JoinColumn(name = "Photo", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAPhoto photo;
+
+    @XmlTransient
+    @Transient
+    private Integer tagId ;
+
+    @XmlTransient
+    @Transient
+    private Integer photoId ;
 
     public JPATagPhoto() {
     }
@@ -91,6 +101,33 @@ public class JPATagPhoto implements TagPhoto, Serializable {
     @Override
     public void setPhoto(Photo photo) {
         this.photo = (JPAPhoto) photo;
+        
+    }
+
+    @XmlAttribute
+    public Integer getPhotoId() {
+        if (photo == null) {
+            return null ;
+        } else {
+            return photo.getId() ;
+        }
+    }
+
+    public void setPhotoId(Integer photoId) {
+        this.photoId = photoId ;
+    }
+
+    @XmlAttribute
+    public Integer getTagId() {
+        if (tag == null) {
+            return null ;
+        } else {
+            return tag.getId() ;
+        }
+    }
+
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId ;
     }
 
     @Override

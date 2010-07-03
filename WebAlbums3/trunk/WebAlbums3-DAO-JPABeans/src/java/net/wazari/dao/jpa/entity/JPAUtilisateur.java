@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Utilisateur;
 
@@ -51,6 +52,7 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "droit", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
 

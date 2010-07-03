@@ -53,7 +53,8 @@ public class XMLImportExport implements ImportExporter {
         WebAlbumsXML web = new WebAlbumsXML(themeDAO.findAll(), userDAO.findAll(), albumDAO.findAll(),
                 photoDAO.findAll(), tagDAO.findAll(), tagThemeDAO.findAll(), tagPhotoDAO.findAll()) ;
         try {
-            log.info(XmlUtils.print(web, WebAlbumsXML.class));
+            XmlUtils.save(new File(path+"WebAlbums.xml"), WebAlbumsXML.class, web);
+            log.log(Level.INFO, "XML Saved!");
         } catch (JAXBException ex) {
             log.log(Level.SEVERE, null, ex);
         }
@@ -61,7 +62,7 @@ public class XMLImportExport implements ImportExporter {
 
     public void importXml(String path) {
         try {
-            WebAlbumsXML web = XmlUtils.reload(new File(path+"WebAlbum.xml"), WebAlbumsXML.class);
+            WebAlbumsXML web = XmlUtils.reload(new File(path+"WebAlbums.xml"), WebAlbumsXML.class);
 
             for (Object enr : web.getThemes()) {
                 em.merge(enr);
@@ -99,7 +100,6 @@ public class XMLImportExport implements ImportExporter {
     }
     
     public void truncateDb() {
-
         for (Object enr : themeDAO.findAll()) {
             em.remove(enr);
         }

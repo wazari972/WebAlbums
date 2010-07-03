@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
@@ -54,14 +55,16 @@ public class JPATag implements Tag, Serializable {
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
-    @XmlElement
+    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "TagType", nullable = false)
     private int tagType;
 
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
 
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
