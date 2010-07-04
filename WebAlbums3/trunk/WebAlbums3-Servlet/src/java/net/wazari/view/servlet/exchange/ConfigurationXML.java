@@ -153,8 +153,12 @@ public class ConfigurationXML implements Configuration {
             try {
                 rootPath = rootDirFile.getAbsoluteFile().getCanonicalPath();
             } catch (IOException ex) {
-                log.warning("Couldn't unrelativize the path:" +ex.getMessage());
+                log.log(Level.WARNING, "Couldn''t unrelativize the path:{0}", ex.getMessage());
             }
+        }
+
+        if (!rootPath.endsWith(SEP)) {
+            rootPath += SEP ;
         }
 
         return rootPath;
@@ -162,43 +166,43 @@ public class ConfigurationXML implements Configuration {
     }
 
     public String getDataPath() {
-        return getRootPath() + SEP + directories.data + SEP;
+        return getRootPath() + directories.data + SEP;
     }
 
     @Override
     public String getBackupPath() {
-        return getDataPath() + SEP + directories.backup + SEP;
+        return getDataPath() + directories.backup + SEP;
     }
 
     @Override
     public String getImagesPath() {
-        return getDataPath() + SEP + directories.images + SEP;
+        return getDataPath() + directories.images + SEP;
     }
 
     @Override
     public String getFtpPath() {
-        return getDataPath() + SEP + directories.ftp + SEP;
+        return getDataPath() + directories.ftp + SEP;
 
     }
 
     @Override
     public String getMiniPath() {
-        return getDataPath() + SEP + directories.mini + SEP;
+        return getDataPath() + directories.mini + SEP;
     }
 
     @Override
     public String getTempPath() {
-        return getDataPath() + SEP + directories.temp + SEP;
+        return getDataPath() + directories.temp + SEP;
     }
 
     @Override
     public String getPluginsPath() {
-        return getDataPath() + SEP + directories.plugins + SEP;
+        return getDataPath() + directories.plugins + SEP;
     }
     
     @Override
     public String getConfigFilePath() {
-        return getDataPath() + SEP + directories.confFile;
+        return getDataPath() + directories.confFile;
     }
 
     @Override

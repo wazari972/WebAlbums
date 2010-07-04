@@ -68,10 +68,14 @@ public class Config extends HttpServlet {
                             conf.getConfigFilePath());
                     out.println(Level.WARNING+" Couldn't create path to "+ conf.getConfigFilePath()+"<BR/>") ;
                 } else {
-                    File file = new File(ConfigurationXML.getConf().getConfigFilePath());
-                    XmlUtils.save(file, ConfigurationXML.class,
-                            (ConfigurationXML) ConfigurationXML.getConf());
-                    out.println(Level.INFO+" Config file saved in "+ conf.getConfigFilePath()+"<BR/>") ;
+                    if (!confFile.exists()) {
+                        File file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                        XmlUtils.save(file, ConfigurationXML.class,
+                                (ConfigurationXML) ConfigurationXML.getConf());
+                        out.println(Level.INFO+" Config file saved in "+ conf.getConfigFilePath()+"<BR/>") ;
+                   } else {
+                        out.println(Level.INFO+" Config file already exists in "+ conf.getConfigFilePath()+"<BR/>") ;
+                   }
                 }
 
             } else {
