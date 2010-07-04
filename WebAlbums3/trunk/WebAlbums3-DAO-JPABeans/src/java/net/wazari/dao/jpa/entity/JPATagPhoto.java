@@ -74,16 +74,6 @@ public class JPATagPhoto implements TagPhoto, Serializable {
     }
 
     @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
     public Tag getTag() {
         return tag;
     }
@@ -107,7 +97,7 @@ public class JPATagPhoto implements TagPhoto, Serializable {
     @XmlAttribute
     public Integer getPhotoId() {
         if (photo == null) {
-            return null ;
+            return photoId ;
         } else {
             return photo.getId() ;
         }
@@ -120,7 +110,7 @@ public class JPATagPhoto implements TagPhoto, Serializable {
     @XmlAttribute
     public Integer getTagId() {
         if (tag == null) {
-            return null ;
+            return tagId ;
         } else {
             return tag.getId() ;
         }
@@ -151,7 +141,7 @@ public class JPATagPhoto implements TagPhoto, Serializable {
 
     @Override
     public String toString() {
-        return "net.wazari.dao.jpa.entity.JPATagPhoto[id=" + id + "]";
+        return "net.wazari.dao.jpa.entity.JPATagPhoto[Tag=" + (getTag() == null ? "null" : getTag().getId()) + ", Photo="+(getPhoto() == null ? "null" : getPhoto().getId())+"]";
     }
 
 }

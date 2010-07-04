@@ -13,9 +13,6 @@ import java.io.Serializable;
  * @author kevinpouget
  */
 public interface TagTheme extends Serializable {
-
-    Integer getId();
-
     Boolean getIsVisible();
 
     Integer getPhoto();
@@ -23,8 +20,6 @@ public interface TagTheme extends Serializable {
     Tag getTag();
 
     Theme getTheme();
-
-    void setId(Integer id);
 
     void setIsVisible(Boolean isVisible);
 

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Utilisateur;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -43,7 +44,10 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
     @XmlAttribute
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
+    @GenericGenerator(name="IdOrGenerated",
+                      strategy="net.wazari.dao.jpa.entity.idGenerator.UseIdOrGenerate"
+    )
     @Column(name = "ID", nullable = false)
     private Integer id;
 

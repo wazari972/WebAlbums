@@ -7,12 +7,13 @@ package net.wazari.dao.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import net.wazari.dao.entity.facades.EntityWithId;
 
 /**
  *
  * @author kevinpouget
  */
-public interface Tag extends Serializable {
+public interface Tag extends Serializable, EntityWithId {
 
     Geolocalisation getGeolocalisation();
 

@@ -12,14 +12,9 @@ import java.io.Serializable;
  * @author kevinpouget
  */
 public interface TagPhoto extends Serializable {
-
-    Long getId();
-
     Photo getPhoto();
 
     Tag getTag();
-
-    void setId(Long id);
 
     void setPhoto(Photo photo);
 

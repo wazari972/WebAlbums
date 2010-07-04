@@ -31,6 +31,7 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -48,7 +49,10 @@ public class JPAAlbum implements Album, Serializable {
     @XmlAttribute
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
+    @GenericGenerator(name="IdOrGenerated",
+                      strategy="net.wazari.dao.jpa.entity.idGenerator.UseIdOrGenerate"
+    )
     @Column(name = "ID", nullable = false)
     private Integer id;
 
@@ -86,11 +90,11 @@ public class JPAAlbum implements Album, Serializable {
 
     @XmlTransient
     @Transient
-    private Integer themeId ;
+    private Integer themeId = null ;
 
     @XmlTransient
     @Transient
-    private Integer droitId ;
+    private Integer droitId = null ;
 
     public JPAAlbum() {
     }
@@ -188,7 +192,7 @@ public class JPAAlbum implements Album, Serializable {
     @XmlAttribute
     public Integer getDroitId() {
         if (droit == null) {
-            return null ;
+            return droitId ;
         } else {
             return droit.getId() ;
         }
@@ -201,7 +205,7 @@ public class JPAAlbum implements Album, Serializable {
     @XmlAttribute
     public Integer getThemeId() {
         if (theme == null) {
-            return null ;
+            return themeId ;
         } else {
             return theme.getId() ;
         }

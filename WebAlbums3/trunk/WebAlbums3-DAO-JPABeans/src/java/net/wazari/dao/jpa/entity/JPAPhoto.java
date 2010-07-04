@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -47,7 +48,10 @@ public class JPAPhoto implements Photo, Serializable {
     @XmlAttribute
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
+    @GenericGenerator(name="IdOrGenerated",
+                      strategy="net.wazari.dao.jpa.entity.idGenerator.UseIdOrGenerate"
+    )
     @Column(name = "ID", nullable = false)
     private Integer id;
 
@@ -278,7 +282,7 @@ public class JPAPhoto implements Photo, Serializable {
     @XmlAttribute
     public Integer getAlbumId() {
         if (album == null) {
-            return null ;
+            return albumId ;
         } else {
             return album.getId() ;
         }

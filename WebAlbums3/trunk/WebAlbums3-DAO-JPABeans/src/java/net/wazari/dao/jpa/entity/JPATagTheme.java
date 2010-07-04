@@ -83,16 +83,6 @@ public class JPATagTheme implements TagTheme, Serializable {
     }
 
     @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
     public Integer getPhoto() {
         return photo;
     }
@@ -142,7 +132,7 @@ public class JPATagTheme implements TagTheme, Serializable {
     @XmlAttribute
     public Integer getThemeId() {
         if (theme == null) {
-            return null ;
+            return themeId ;
         } else {
             return theme.getId() ;
         }
@@ -155,7 +145,7 @@ public class JPATagTheme implements TagTheme, Serializable {
     @XmlAttribute
     public Integer getTagId() {
         if (tag == null) {
-            return null ;
+            return tagId ;
         } else {
             return tag.getId() ;
         }
@@ -171,7 +161,7 @@ public class JPATagTheme implements TagTheme, Serializable {
             return false;
         }
         JPATagTheme other = (JPATagTheme) object;
-        if ((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.getId().equals(other.getId()))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -179,7 +169,7 @@ public class JPATagTheme implements TagTheme, Serializable {
 
     @Override
     public String toString() {
-        return "net.wazari.dao.jpa.entity.JPATagTheme[id=" + id + "]";
+        return "net.wazari.dao.jpa.entity.JPATagTheme[Tag=" + (getTag() == null ? "null" : getTag().getId()) + ", Theme="+(getTheme() == null ? "null" : getTheme().getId())+"]";
     }
 
 }

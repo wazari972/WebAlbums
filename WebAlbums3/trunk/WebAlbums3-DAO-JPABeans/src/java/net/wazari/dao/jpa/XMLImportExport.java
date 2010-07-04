@@ -6,6 +6,8 @@
 package net.wazari.dao.jpa;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -22,7 +24,19 @@ import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.jpa.entity.xml.WebAlbumsXML;
 import net.wazari.common.util.XmlUtils ;
+import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.Tag;
+import net.wazari.dao.entity.Theme;
+import net.wazari.dao.entity.Utilisateur;
+import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.JPAGeolocalisation;
+import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPATag;
+import net.wazari.dao.jpa.entity.JPATagPhoto;
+import net.wazari.dao.jpa.entity.JPATagTheme;
+import net.wazari.dao.jpa.entity.JPATheme;
+import net.wazari.dao.jpa.entity.JPAUtilisateur;
 /**
  *
  * @author kevinpouget
@@ -63,36 +77,98 @@ public class XMLImportExport implements ImportExporter {
     public void importXml(String path) {
         try {
             WebAlbumsXML web = XmlUtils.reload(new File(path+"WebAlbums.xml"), WebAlbumsXML.class);
-
-            for (Object enr : web.getThemes()) {
-                em.merge(enr);
+            if (web == null) {
+                log.warning("Couldn't load the XML backup ...");
+                return ;
             }
 
-            for (Object enr : web.getUtilisateurs()) {
-                em.merge(enr);
+            Map<Integer, JPATag> tags = new HashMap<Integer, JPATag>(web.getTags().size()) ;
+            Map<Integer, JPAPhoto> photos = new HashMap<Integer, JPAPhoto>(web.getPhotos().size()) ;
+            Map<Integer, JPATheme> themes = new HashMap<Integer, JPATheme>(web.getThemes().size()) ;
+            Map<Integer, JPAAlbum> albums = new HashMap<Integer, JPAAlbum>(web.getAlbums().size()) ;
+            Map<Integer, JPAUtilisateur> users = new HashMap<Integer, JPAUtilisateur>(web.getUtilisateurs().size()) ;
+
+            for (JPATheme enrTheme : web.getThemes()) {
+                log.log(Level.INFO, "Theme: {0}", enrTheme) ;
+                em.merge(enrTheme);
+                themes.put(enrTheme.getId(), enrTheme) ;
+            }
+            
+            for (JPAUtilisateur enrUser : web.getUtilisateurs()) {
+                log.log(Level.INFO, "User: {0}", enrUser) ;
+                em.merge(enrUser);
+                users.put(enrUser.getId(), enrUser) ;
             }
 
-            for (Object enr : web.getAlbums()) {
-                em.merge(enr);
+            log.log(Level.INFO, "Import {0} Album",web.getAlbums().size()) ;
+            for (JPAAlbum enrAlbum : web.getAlbums()) {
+                log.log(Level.FINE, "Album: {0}", enrAlbum) ;
+
+                //Theme enrTheme = themeDAO.find(enrAlbum.getThemeId()) ;
+                //enrAlbum.setTheme(enrTheme) ;
+                enrAlbum.setTheme(themes.get(enrAlbum.getThemeId())) ;
+
+                //Utilisateur enrUser = userDAO.find(enrAlbum.getDroitId()) ;
+                //enrAlbum.setDroit(enrUser) ;
+                enrAlbum.setDroit(users.get(enrAlbum.getDroitId())) ;
+
+                em.merge(enrAlbum);
+                albums.put(enrAlbum.getId(), enrAlbum) ;
             }
 
-            for (Object enr : web.getPhotos()) {
-                em.merge(enr);
+            log.log(Level.INFO, "Import {0} Photo",web.getPhotos().size()) ;
+            for (JPAPhoto enrPhoto : web.getPhotos()) {
+                log.log(Level.FINE, "Photo: {0} ({1})", new Object[]{enrPhoto, enrPhoto.getAlbumId()}) ;
+
+                //Album enrAlbum = albumDAO.find(enrPhoto.getAlbumId()) ;
+                //enrPhoto.setAlbum(enrAlbum) ;
+                enrPhoto.setAlbum(albums.get(enrPhoto.getAlbumId())) ;
+
+                em.merge(enrPhoto);
+                photos.put(enrPhoto.getId(), enrPhoto) ;
             }
 
+            log.log(Level.INFO, "Import {0} Tag",web.getTags().size()) ;
             for (JPATag enrTag : web.getTags()) {
+                log.log(Level.FINE, "Tag: {0}", enrTag) ;
+
+                JPAGeolocalisation enrGeo = enrTag.getGeolocalisation() ;
+                if (enrGeo != null) {
+                    enrGeo.setTag1(enrTag);
+                    log.log(Level.FINE, "\tGeo: {0}", enrGeo) ;
+                }
                 em.merge(enrTag);
-                if (enrTag.getGeolocalisation() != null) {
-                    em.merge(enrTag.getGeolocalisation()) ;
-                 }
+                tags.put(enrTag.getId(), enrTag) ;
             }
 
-            for (Object enr : web.getTagPhoto()) {
-                em.merge(enr);
+            log.log(Level.INFO, "Import {0} TagPhoto",web.getTagPhoto().size()) ;
+            for (JPATagPhoto enrTagPhoto : web.getTagPhoto()) {
+                log.log(Level.FINE, "TagPhoto: {0}", enrTagPhoto) ;
+
+                //Tag enrTag = tagDAO.find(enrTagPhoto.getTagId()) ;
+                //enrTagPhoto.setTag(enrTag) ;
+                enrTagPhoto.setTag(tags.get(enrTagPhoto.getTagId())) ;
+
+                //Photo enrPhoto = photoDAO.find(enrTagPhoto.getPhotoId()) ;
+                //enrTagPhoto.setPhoto(enrPhoto) ;
+                enrTagPhoto.setPhoto(photos.get(enrTagPhoto.getPhotoId())) ;
+
+                em.merge(enrTagPhoto);
             }
 
-            for (Object enr : web.getTagThemes()) {
-                em.merge(enr);
+            log.log(Level.INFO, "Import {0} TagThemes",web.getTagThemes().size()) ;
+            for (JPATagTheme enrTagTheme : web.getTagThemes()) {
+                log.log(Level.FINE, "TagTheme: {0}", enrTagTheme) ;
+
+                //Tag enrTag = tagDAO.find(enrTagTheme.getTagId()) ;
+                //enrTagTheme.setTag(enrTag) ;
+                enrTagTheme.setTag(tags.get(enrTagTheme.getTagId())) ;
+
+                //Theme enrTheme = themeDAO.find(enrTagTheme.getThemeId()) ;
+                //enrTagTheme.setTheme(enrTheme) ;
+                enrTagTheme.setTheme(themes.get(enrTagTheme.getThemeId())) ;
+
+                em.merge(enrTagTheme);
             }
         } catch (JAXBException ex) {
             log.log(Level.SEVERE, null, ex);

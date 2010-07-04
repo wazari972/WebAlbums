@@ -4,6 +4,7 @@ package net.wazari.service.engine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -130,9 +131,13 @@ public class AlbumBean implements AlbumLocal {
             Integer iPhoto = enrAlbum.getPicture();
             if (iPhoto != null) {
                 Photo enrPhoto = photoDAO.find(iPhoto) ;
-                details.add("photoID", enrPhoto.getId());
-                details.add("miniWidth", enrPhoto.getWidth());
-                details.add("miniHeight", enrPhoto.getHeight());
+                if (enrPhoto != null) {
+                    details.add("photoID", enrPhoto.getId());
+                    details.add("miniWidth", enrPhoto.getWidth());
+                    details.add("miniHeight", enrPhoto.getHeight());
+                } else {
+                    log.log(Level.WARNING, "Invalid photo ({0}) for album {1}", new Object[]{iPhoto, enrAlbum.getId()});
+                }
             }
             
             details.add("description", enrAlbum.getDescription());

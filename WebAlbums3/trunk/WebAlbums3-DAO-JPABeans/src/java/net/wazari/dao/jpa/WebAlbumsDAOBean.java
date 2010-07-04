@@ -20,7 +20,8 @@ public class WebAlbumsDAOBean {
     
     public static final String PERSISTENCE_UNIT_DERBY = "WebAlbums-Derby" ;
     public static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
+    public static final String PERSISTENCE_UNIT_MySQL_Test = "WebAlbums-MySQL-Test" ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Test ;
     
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)

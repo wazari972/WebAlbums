@@ -6,13 +6,14 @@
 package net.wazari.dao.entity;
 
 import java.util.List;
+import net.wazari.dao.entity.facades.EntityWithId;
 import net.wazari.dao.entity.facades.PhotoOrAlbum;
 
 /**
  *
  * @author kevinpouget
  */
-public interface Album extends PhotoOrAlbum {
+public interface Album extends PhotoOrAlbum, EntityWithId {
 
     String getDate();
 

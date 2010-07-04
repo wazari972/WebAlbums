@@ -20,6 +20,8 @@ import net.wazari.service.exchange.ViewSessionLogin;
 @Stateless
 public class UserBean implements UserLocal {
     private static final Logger log = Logger.getLogger(UserBean.class.getCanonicalName()) ;
+    public static final int THEME_ROOT_ID = 1 ;
+
     private static final long serialVersionUID = 1L;
     @EJB
     private UtilisateurFacadeLocal userDAO;
@@ -51,7 +53,7 @@ public class UserBean implements UserLocal {
         }
         
         //check Root session special ID
-        boolean isRootSession = enrTheme.getId().equals(-1) ;
+        boolean isRootSession = enrTheme.getId().equals(THEME_ROOT_ID) ;
         boolean asThemeManager = false ;
 
         String userName = pr.getName() ;
@@ -68,8 +70,8 @@ public class UserBean implements UserLocal {
         Utilisateur enrUtil = userDAO.loadByName(userName);
         log.log(Level.INFO, "database lookup returned: {0}", enrUtil) ;
         if (enrUtil == null) {
-            log.warning("No such user in the database: "+userName) ;
-            log.warning("No such user in the database: "+userDAO.findAll()) ;
+            log.log(Level.WARNING, "No such user in the database: {0}", userName) ;
+            log.log(Level.WARNING, "No such user in the database: {0}", userDAO.findAll()) ;
             return false ;
         } 
 

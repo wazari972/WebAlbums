@@ -162,38 +162,38 @@ public class ConfigurationXML implements Configuration {
     }
 
     public String getDataPath() {
-        return getRootPath() + SEP + directories.data;
+        return getRootPath() + SEP + directories.data + SEP;
     }
 
     @Override
     public String getBackupPath() {
-        return getDataPath() + SEP + directories.backup;
+        return getDataPath() + SEP + directories.backup + SEP;
     }
 
     @Override
     public String getImagesPath() {
-        return getDataPath() + SEP + directories.images;
+        return getDataPath() + SEP + directories.images + SEP;
     }
 
     @Override
     public String getFtpPath() {
-        return getDataPath() + SEP + directories.ftp;
+        return getDataPath() + SEP + directories.ftp + SEP;
 
     }
 
     @Override
     public String getMiniPath() {
-        return getDataPath() + SEP + directories.mini;
+        return getDataPath() + SEP + directories.mini + SEP;
     }
 
     @Override
     public String getTempPath() {
-        return getDataPath() + SEP + directories.temp;
+        return getDataPath() + SEP + directories.temp + SEP;
     }
 
     @Override
     public String getPluginsPath() {
-        return getDataPath() + SEP + directories.plugins;
+        return getDataPath() + SEP + directories.plugins + SEP;
     }
     
     @Override

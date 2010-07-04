@@ -496,7 +496,7 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public void populateEntities() {
         log.warning("Database empty, creating Root theme and Users");
-        themeDAO.newTheme(-1, "Root") ;
+        themeDAO.newTheme(UserBean.THEME_ROOT_ID, "Root") ;
         userDAO.newUser(1, "admin");
         userDAO.newUser(2, "Famille");
         userDAO.newUser(3, "Amis");

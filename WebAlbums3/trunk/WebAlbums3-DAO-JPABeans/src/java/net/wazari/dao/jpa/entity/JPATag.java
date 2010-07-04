@@ -29,6 +29,7 @@ import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.entity.TagTheme;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -46,7 +47,10 @@ public class JPATag implements Tag, Serializable {
     @XmlAttribute
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
+    @GenericGenerator(name="IdOrGenerated",
+                      strategy="net.wazari.dao.jpa.entity.idGenerator.UseIdOrGenerate"
+    )
     @Column(name = "ID", nullable = false)
     private Integer id;
 
