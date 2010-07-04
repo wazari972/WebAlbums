@@ -56,7 +56,7 @@ public class JPATag implements Tag, Serializable {
 
     @XmlElement
     @Basic(optional = false)
-    @Column(name = "Nom", nullable = false, length = 100)
+    @Column(name = "Nom", nullable = false, length = 40)
     private String nom;
 
     @XmlAttribute

@@ -51,7 +51,7 @@
 	      <tr>
 		<td>Nom :</td>
 		<td>
-		  <input id="newTag" name="nom" type='text' size='20' maxlength='20'/>
+		  <input id="newTag" name="nom" type='text' size='20' maxlength='40'/>
 		  <input type='button' value='Goto' onClick="showAddress(document.newTag.nom.value);return false"/>
 		  <input id="mapLoader" type="button" value="load map" onclick="loadMaps();"/>
 		</td>
