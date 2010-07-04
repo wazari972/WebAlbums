@@ -96,6 +96,7 @@ public class DispatcherBean {
         log.log(Level.WARNING, "============= <{0}> =============", page);
                 
         long debut = System.currentTimeMillis();
+        response.setContentType("text/xml");
 
         XmlBuilder output = new XmlBuilder("root");
 
@@ -149,6 +150,7 @@ public class DispatcherBean {
                         } else {
                             log.finer("CHOIX special page");
                             output = choixServlet.displayChxScript(vSession);
+                            response.setContentType("text/javascript;charset=UTF-8");
                             isComplete = true;
                         }
                     } else if (page == Page.ALBUM) {
@@ -214,7 +216,6 @@ public class DispatcherBean {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     private static void doWrite(HttpServletResponse response, XmlBuilder output, String xslFile, boolean isComplete, ViewSession vSession) {
-        response.setContentType("text/xml");
         try {
             PrintWriter sortie = response.getWriter();
 

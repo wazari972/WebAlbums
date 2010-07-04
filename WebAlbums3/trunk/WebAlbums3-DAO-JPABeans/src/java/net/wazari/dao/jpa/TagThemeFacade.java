@@ -5,6 +5,8 @@
 package net.wazari.dao.jpa;
 
 import java.util.List;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 import net.wazari.dao.*;
 import javax.ejb.EJB;
@@ -12,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.jpa.entity.JPATagTheme;
 
@@ -44,17 +47,30 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
         em.remove(em.merge(tagTheme));
     }
 
+    private static Random rand = new Random() ;
     @Override
     public TagTheme loadByTagTheme(Integer tagId, Integer themeId) {
         if (tagId == null || themeId == null) return null ;
+
         try {
-            String rq = "FROM JPATagTheme tt " +
-                    "WHERE tt.tag.id = :tagId " +
-                    " AND tt.theme.id = :themeId ";
-            return (TagTheme) em.createQuery(rq)
-                    .setParameter("tagId", tagId)
-                    .setParameter("themeId", themeId)
-                    .getSingleResult();
+            if (themeId != ThemeFacadeLocal.THEME_ROOT_ID) {
+                String rq = "FROM JPATagTheme tt " +
+                        "WHERE tt.tag.id = :tagId " +
+                        " AND tt.theme.id = :themeId ";
+                return (TagTheme) em.createQuery(rq)
+                        .setParameter("tagId", tagId)
+                        .setParameter("themeId", themeId)
+                        .getSingleResult();
+            } else {
+                String rq = "FROM JPATagTheme tt " +
+                        "WHERE tt.tag.id = :tagId " ;
+
+                List<TagTheme> lst = em.createQuery(rq)
+                        .setParameter("tagId", tagId)
+                        .getResultList();
+                if (lst.isEmpty()) return null ;
+                return lst.get(rand.nextInt(lst.size())) ;
+            }
         } catch (NoResultException e) {
             return null ;
         }

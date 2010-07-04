@@ -20,7 +20,6 @@ import net.wazari.service.exchange.ViewSessionLogin;
 @Stateless
 public class UserBean implements UserLocal {
     private static final Logger log = Logger.getLogger(UserBean.class.getCanonicalName()) ;
-    public static final int THEME_ROOT_ID = 1 ;
 
     private static final long serialVersionUID = 1L;
     @EJB
@@ -55,7 +54,7 @@ public class UserBean implements UserLocal {
         }
         
         //check Root session special ID
-        boolean isRootSession = enrTheme.getId().equals(THEME_ROOT_ID) ;
+        boolean isRootSession = enrTheme.getId().equals(ThemeFacadeLocal.THEME_ROOT_ID) ;
         boolean asThemeManager = false ;
 
         String userName = pr.getName() ;

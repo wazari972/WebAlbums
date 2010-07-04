@@ -278,12 +278,14 @@ public class WebPageBean implements WebPageLocal {
             //first, prepare the information (type, id, nom)
             if (box == Box.MAP_SCRIPT) {
                 if (enrTag.getTagType() == 3) {
-                    //TODO handle correctly the Root theme
                     //ensure that this tag is displayed in this theme
-                    //(in root theme, diplay all of theme
+                    //(in root theme, diplay all of theme)
                     TagTheme enrTagTh = tagThemeDAO.loadByTagTheme(enrTag.getId(), vSession.getTheme().getId());
                     if (enrTagTh != null && !enrTagTh.getIsVisible()) {
-                        continue;
+                        //Root session can see all the tags, otherwise restrict
+                        if (!vSession.isRootSession()) {
+                            continue;
+                        }
                     }
 
                     //get its geoloc
@@ -496,7 +498,7 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public void populateEntities() {
         log.warning("Database empty, creating Root theme and Users");
-        themeDAO.newTheme(UserBean.THEME_ROOT_ID, "Root") ;
+        themeDAO.newTheme(ThemeFacadeLocal.THEME_ROOT_ID, "Root") ;
         userDAO.newUser(1, "admin");
         userDAO.newUser(2, "Famille");
         userDAO.newUser(3, "Amis");
