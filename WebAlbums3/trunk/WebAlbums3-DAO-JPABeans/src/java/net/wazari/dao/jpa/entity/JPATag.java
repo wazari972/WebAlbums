@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -38,7 +39,9 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "Tag")
+@Table(name = "Tag",
+    uniqueConstraints = {@UniqueConstraint(columnNames={"Nom"})}
+)
 public class JPATag implements Tag, Serializable {
     private static final Logger log = Logger.getLogger(JPATag.class.getName());
 

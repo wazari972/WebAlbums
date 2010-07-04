@@ -5,14 +5,28 @@
 
 package net.wazari.common.plugins;
 
+import java.util.List;
+
 /**
  *
  * @author kevinpouget
  */
 public interface Importer {
-    String getName() ;
+    enum Capability {
+        SHRINK, THUMBNAIL, ROTATE, FILE_FULLSCREEN, DIR_FULLSCREEN
+    }
+    enum SanityStatus {
+        FAIL, PASS
+    }
     
-    boolean support(String type, String ext);
+    String getName() ;
+    String getVersion() ;
+    String getDescription();
+    String getSupportedFilesDesc();
+    
+    Capability[] supports();
+
+    boolean supports(String type, String ext, Capability cap);
 
     boolean shrink(ProcessCallback cb, String source, String dest, int width);
 
@@ -21,4 +35,6 @@ public interface Importer {
     boolean rotate(ProcessCallback cb, String degrees, String source, String dest);
 
     void fullscreen(ProcessCallback cb, String path);
+
+    SanityStatus sanityCheck(ProcessCallback cb) ;
 }

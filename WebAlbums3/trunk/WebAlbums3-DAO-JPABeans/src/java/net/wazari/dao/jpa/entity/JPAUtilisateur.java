@@ -18,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,7 +36,9 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "Utilisateur")
+@Table(name = "Utilisateur",
+    uniqueConstraints = {@UniqueConstraint(columnNames={"Nom"})}
+)
 public class JPAUtilisateur implements Utilisateur, Serializable {
     private static final Logger log = Logger.getLogger(JPAUtilisateur.class.getName());
 

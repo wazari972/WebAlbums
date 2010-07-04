@@ -1,2 +1,3 @@
-net.wazari.util.system.wrapper.ImageMagickImageUtil
-net.wazari.util.system.wrapper.TotemImageUtil
+net.wazari.util.system.wrapper.EyeOfGnomeWrapper
+net.wazari.util.system.wrapper.ImageMagickWrapper
+net.wazari.util.system.wrapper.TotemWrapper

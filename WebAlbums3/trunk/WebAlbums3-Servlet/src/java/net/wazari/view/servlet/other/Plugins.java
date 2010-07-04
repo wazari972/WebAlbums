@@ -19,6 +19,7 @@ import net.wazari.service.SystemToolsLocal;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.System;
 import net.wazari.common.plugins.PluginInfo;
 import net.wazari.common.util.XmlUtils;
 
@@ -41,7 +42,6 @@ public class Plugins  extends HttpServlet{
         String action = request.getParameter("action");
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        ViewSessionImpl vSession = new ViewSessionImpl(request, response, this.getServletContext()) ;
         try {
             log.log(Level.INFO, "action:{0}", action);
             if ("RELOAD_PLUGINS".equals(action)) {
@@ -50,15 +50,18 @@ public class Plugins  extends HttpServlet{
             
             PluginInfo info = new PluginInfo() ;
             for (Importer imp :systemTools.getPluginList()) {
-                info.addPlugin(imp);
+                info.addImporter(imp);
             }
-            response.setContentType("text/xml;charset=UTF-8");
+            info.setUsedSystem(systemTools.getUsedSystem()) ;
+            for (System sys :systemTools.getNotUsedSystemList()) {
+                info.addNotUsedSystem(sys);
+            }
 
             String xml = XmlUtils.print(info, PluginInfo.class);
 
             out.println(xml);
         } catch (Exception e) {
-            log.info("action:" + e.getMessage());
+            log.log(Level.INFO, "action:{0}", e.getMessage());
             e.printStackTrace();
         } finally {
             out.close();

@@ -1,15 +1,13 @@
 package net.wazari.util.system;
 
+import net.wazari.common.plugins.Importer.Capability;
 import net.wazari.common.plugins.System;
 import java.util.logging.Level;
 import net.wazari.service.SystemToolsLocal;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ServiceLoader;
 
@@ -18,7 +16,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import net.wazari.common.util.ClassPathUtil;
 import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.service.PhotoLocal.PhotoRequest;
@@ -31,111 +28,80 @@ import net.wazari.common.plugins.ProcessCallback;
 @Stateful
 //@Singleton
 public class SystemTools implements SystemToolsLocal {
-    
-    private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName()) ;
-    
-    private static final List<Importer> wrappers = new LinkedList<Importer>();
-    private static System systemUtil ;
 
-    @EJB
-    private UtilisateurFacadeLocal userDAO;
+    private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName());
+    private static final List<Importer> validWrappers = new LinkedList<Importer>();
+    private static final List<Importer> invalidWrappers = new LinkedList<Importer>();
+    private static System system = null ;
+    private static final List<System> notUsedSystems = new LinkedList<System>();
     @EJB
     private PhotoFacadeLocal photoDAO;
     @EJB
     private PhotoUtil photoUtil;
-
-    private static final ProcessCallback cb = new ProcessCallback() {
-        public int execWaitFor(String[] cmd) {
-            return SystemTools.execWaitFor(cmd) ;
-        }
-        public void exec(String[] cmd) {
-            SystemTools.execPS(cmd) ;
-        }
-    } ;
+    private static final ProcessCallback cb = ProcessCallback.getProcessCallBack();
 
     public static boolean init() {
-        return true ;
+        return true;
     }
 
+    @Override
     public void reloadPlugins(String path) {
         if (path != null) {
-            ClassPathUtil.addDirToClasspath(new File(path)) ;
+            ClassPathUtil.addDirToClasspath(new File(path));
         }
-        wrappers.clear() ;
+        validWrappers.clear();
+        invalidWrappers.clear();
         log.log(Level.INFO, "+++ Loading services for \"{0}\"", Importer.class.getCanonicalName());
         ServiceLoader<Importer> servicesImg = ServiceLoader.load(Importer.class);
         for (Importer current : servicesImg) {
             log.log(Level.INFO, "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
-            wrappers.add(current);
+            if (current.sanityCheck(cb) == Importer.SanityStatus.PASS) {
+                validWrappers.add(current);
+            } else {
+                invalidWrappers.add(current);
+            }
         }
 
         log.log(Level.INFO, "+++ Loading services for \"{0}\"", System.class.getCanonicalName());
         ServiceLoader<System> servicesSys = ServiceLoader.load(System.class);
-
-        if (servicesSys.iterator().hasNext()) {
-            systemUtil = servicesSys.iterator().next();
-            log.log(Level.INFO, "+++ Adding \"{0}\"", systemUtil.getClass().getCanonicalName());
-        } else {
-            systemUtil = null ;
+        this.system = null ;
+        for (System current : servicesSys) {
+            log.log(Level.INFO, "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
+            if (system == null && current.sanityCheck(cb) == Importer.SanityStatus.PASS) {
+                system = current;
+            } else {
+                notUsedSystems.add(current);
+            }
         }
     }
 
+    @Override
     public List<Importer> getPluginList() {
-        return wrappers ;
+        List<Importer> wrappers = new LinkedList<Importer>(validWrappers);
+        wrappers.addAll(invalidWrappers);
+        return wrappers;
     }
 
-    private static Process execPS(String[] cmd) {
-        try {
-            log.log(Level.INFO, "exec: {0}", Arrays.toString(cmd));
-            return Runtime.getRuntime().exec(cmd);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    @Override
+    public List<System> getNotUsedSystemList() {
+        return notUsedSystems ;
     }
-    
-    private static int execWaitFor(String[] cmd) {
-        Process ps = execPS(cmd);
-        if (ps == null) {
-            return -1;
-        }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-        String str = null;
-        while (true) {
-            try {
-                while ((str = reader.readLine()) != null) {
-                    log.info(str);
-                }
-
-                reader = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
-                while ((str = reader.readLine()) != null) {
-                    log.log(Level.INFO, "err - {0}", str);
-                }
-                int ret = ps.waitFor();
-                log.log(Level.INFO, "ret:{0}", ret);
-
-                return ret;
-
-            } catch (InterruptedException e) {
-            } catch (IOException e) {
-            }
-        }
+    @Override
+    public System getUsedSystem() {
+        return system ;
     }
-    private static Importer getWrapper(String type, String ext) {
-        Importer img = null ;
-        for (Importer util : wrappers) {
-            if (util.support(type, ext)) {
+
+
+    private static Importer getWrapper(String type, String ext, Importer.Capability cap) {
+        Importer img = null;
+        for (Importer util : validWrappers) {
+            if (util.supports(type, ext, cap)) {
                 return util;
-            }
-            if (img == null) {
-                if (util.support("image", null)) {
-                    img = util ;
-                }
             }
         }
         log.log(Level.WARNING, "no wrapper for {0}, trying image wrapper({1})", new Object[]{type, img});
-        return img ;
+        return img;
     }
 
     private File buildTempDir(ViewSession vSession, String type, Integer id) {
@@ -187,14 +153,14 @@ public class SystemTools implements SystemToolsLocal {
         return dir;
     }
 
-    @SuppressWarnings("unchecked")
-    public void fullscreen(ViewSession vSession,PhotoRequest rq, String type, Integer id, Integer page) {
+    @Override
+    public boolean fullscreen(ViewSession vSession, PhotoRequest rq, String type, Integer id, Integer page) {
         page = (page == null ? 0 : page);
-        if (systemUtil == null) {
+        if (system == null) {
             log.warning("No ISystemUtil available ...");
-            return ;
+            return false;
         }
-        SubsetOf<Photo> lstPhoto ;
+        SubsetOf<Photo> lstPhoto;
         if (rq.type == TypeRequest.PHOTO) {
             lstPhoto = photoDAO.loadFromAlbum(vSession, rq.albumId, null);
         } else {
@@ -203,18 +169,21 @@ public class SystemTools implements SystemToolsLocal {
         File dir = null;
         int i = 0;
         boolean first = true;
-        Importer util = getWrapper("image", null);
+        Importer util = getWrapper("image", null, Importer.Capability.DIR_FULLSCREEN);
+        if (util == null) {
+            return false;
+        }
         for (Photo enrPhoto : lstPhoto.subset) {
             if (first) {
                 dir = buildTempDir(vSession, type, id);
                 if (dir == null) {
-                    return;
+                    return false;
                 }
             }
 
             int currentPage = i / vSession.getPhotoSize();
             File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
-            systemUtil.link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
+            system.link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
 
             if (first && page == currentPage) {
                 util.fullscreen(cb, fPhoto.toString());
@@ -223,8 +192,10 @@ public class SystemTools implements SystemToolsLocal {
             fPhoto.deleteOnExit();
             i++;
         }
+        return true;
     }
 
+    @Override
     public String shrink(ViewSession vSession, Photo enrPhoto, int width) {
         if (width >= new Integer(enrPhoto.getWidth())) {
             return photoUtil.getImagePath(vSession, enrPhoto);
@@ -234,9 +205,9 @@ public class SystemTools implements SystemToolsLocal {
         if (dir == null) {
             return null;
         }
-        String ext = photoUtil.getExtention(vSession, enrPhoto) ;
-        File fPhoto = new File(dir, enrPhoto.getId() + "-" + width + "." + ext );
-        Importer util = getWrapper(enrPhoto.getType(), ext);
+        String ext = photoUtil.getExtention(vSession, enrPhoto);
+        File fPhoto = new File(dir, enrPhoto.getId() + "-" + width + "." + ext);
+        Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.SHRINK);
         if (util == null) {
             return photoUtil.getImagePath(vSession, enrPhoto);
         }
@@ -246,21 +217,28 @@ public class SystemTools implements SystemToolsLocal {
 
         return fPhoto.toString();
     }
-    
-    public boolean support(String type, String ext) {
-        return getWrapper(type, ext) != null;
-    }
 
+    @Override
     public boolean thumbnail(String type, String ext, String source, String dest, int height) {
-        return getWrapper(type, ext).thumbnail(cb, source, dest, height) ;
+        Importer wrapper = getWrapper(type, ext, Importer.Capability.THUMBNAIL);
+        if (wrapper == null) {
+            return false;
+        } else {
+            return wrapper.thumbnail(cb, source, dest, height);
+        }
     }
 
+    @Override
     public boolean rotate(String type, String ext, String degrees, String source, String dest) {
-        return getWrapper(type, ext).rotate(cb, degrees, source, dest) ;
+        Importer wrapper = getWrapper(type, ext, Importer.Capability.ROTATE);
+        if (wrapper == null) {
+            return false;
+        } else {
+            return wrapper.rotate(cb, degrees, source, dest);
+        }
     }
 
-    public void remove(String toString) {
-
+    public boolean supports(String type, String ext, Capability capability) {
+        return getWrapper(type, ext, capability) != null;
     }
 }
-

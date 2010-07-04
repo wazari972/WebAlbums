@@ -18,10 +18,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Tag;
@@ -35,7 +35,9 @@ import net.wazari.dao.entity.Theme;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "TagTheme")
+@Table(name = "TagTheme",
+    uniqueConstraints = {@UniqueConstraint(columnNames={"Tag", "Theme"})}
+)
 public class JPATagTheme implements TagTheme, Serializable {
     private static final Logger log = Logger.getLogger(JPATagTheme.class.getName());
 

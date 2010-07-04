@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -39,7 +40,9 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "Photo")
+@Table(name = "Photo",
+    uniqueConstraints = {@UniqueConstraint(columnNames={"Path"})}
+)
 public class JPAPhoto implements Photo, Serializable {
     private static final Logger log = Logger.getLogger(JPAPhoto.class.getName());
 

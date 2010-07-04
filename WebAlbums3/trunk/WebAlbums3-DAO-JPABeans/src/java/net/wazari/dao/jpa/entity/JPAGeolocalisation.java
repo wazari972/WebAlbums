@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,7 +32,9 @@ import net.wazari.dao.entity.Tag;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "Geolocalisation")
+@Table(name = "Geolocalisation",
+    uniqueConstraints = {@UniqueConstraint(columnNames={"Lat", "Longitude"})}
+)
 public class JPAGeolocalisation implements Geolocalisation, Serializable {
     private static final Logger log = Logger.getLogger(JPAGeolocalisation.class.getName());
 

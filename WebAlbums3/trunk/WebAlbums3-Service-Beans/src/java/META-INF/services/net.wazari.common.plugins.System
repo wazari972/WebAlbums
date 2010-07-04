@@ -1,1 +1,1 @@
-net.wazari.util.system.wrapper.LinuxSystemUtil
+net.wazari.util.system.wrapper.UnixSystem
