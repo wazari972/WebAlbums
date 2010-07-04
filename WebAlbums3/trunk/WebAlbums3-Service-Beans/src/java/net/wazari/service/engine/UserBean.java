@@ -40,6 +40,7 @@ public class UserBean implements UserLocal {
         //user must be authenticated
         if (pr == null) {
             log.warning("User not authenticated") ;
+            cleanUpSession(vSession);
             return false ;
         }
 
@@ -49,6 +50,7 @@ public class UserBean implements UserLocal {
         if (enrTheme == null) {
             log.warning("No such theme in the database: "+themeId) ;
             log.warning("No such theme in the database: "+themeDAO.findAll()) ;
+            cleanUpSession(vSession);
             return false;
         }
         
@@ -61,17 +63,12 @@ public class UserBean implements UserLocal {
         log.log(Level.FINE, "Role admin    :{0}", request.isUserInRole(UserLocal.ADMIN_ROLE)) ;
         log.log(Level.FINE, "Role view     :{0}", request.isUserInRole(UserLocal.VIEWER_ROLE)) ;
 
-        //allow +User to be logged as theme manager with given user view
-        if (userName.indexOf('+') != -1) {
-            asThemeManager = true;
-            userName = userName.substring(1);
-        }
-
         Utilisateur enrUtil = userDAO.loadByName(userName);
         log.log(Level.INFO, "database lookup returned: {0}", enrUtil) ;
         if (enrUtil == null) {
             log.log(Level.WARNING, "No such user in the database: {0}", userName) ;
             log.log(Level.WARNING, "No such user in the database: {0}", userDAO.findAll()) ;
+            cleanUpSession(vSession);
             return false ;
         } 
 
