@@ -48,6 +48,7 @@ public class Config extends HttpServlet {
             if ("CREATE_DIRS".equals(action)) {
                 Configuration conf = ConfigurationXML.getConf();
 
+                out.println("Root path:"+conf.getRootPath()+"<BR/>") ;
                 List<String> directories = Arrays.asList(
                         new String[]{
                             conf.getBackupPath(), conf.getTempPath(), conf.getPluginsPath(),
@@ -55,46 +56,50 @@ public class Config extends HttpServlet {
                 for (String dir : directories) {
                     File currentFile = new File(dir) ;
                     if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
-                        log.log(Level.WARNING, "Couldn''t create {0}", dir);
+                        log.log(Level.WARNING, "Couldn't create {0}", dir);
+                        out.println(Level.WARNING+" Couldn't create "+ dir+"<BR/>") ;
+                    } else {
+                        out.println(dir+"<BR/>") ;
                     }
                 }
                 File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
                 if (!(confFile.isDirectory() || confFile.mkdirs())) {
-                    log.log(Level.WARNING, "Couldn''t create path to {0}",
+                    log.log(Level.WARNING, "Couldn't create path to {0}",
                             conf.getConfigFilePath());
+                    out.println(Level.WARNING+" Couldn't create path to "+ conf.getConfigFilePath()+"<BR/>") ;
                 } else {
                     File file = new File(ConfigurationXML.getConf().getConfigFilePath());
                     XmlUtils.save(file, ConfigurationXML.class,
                             (ConfigurationXML) ConfigurationXML.getConf());
+                    out.println(Level.INFO+" Config file saved in "+ conf.getConfigFilePath()+"<BR/>") ;
                 }
 
-            } else if ("PRINT".equals(action)) {
+            } else {
+                if ("SAVE".equals(action)) {
+                    File file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                    file.getParentFile().mkdirs();
+
+                    XmlUtils.save(file, ConfigurationXML.class,
+                            (ConfigurationXML) ConfigurationXML.getConf());
+
+                    log.log(Level.INFO, "ConfigurationXML Saved into {0}", file.getCanonicalPath());
+                } else if ("RELOAD".equals(action)) {
+
+                    File file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                    file.getParentFile().mkdirs();
+
+                    ConfigurationXML conf = XmlUtils.reload(file, ConfigurationXML.class);
+
+                    ConfigurationXML.setConf(conf);
+                    log.log(Level.INFO, "ConfigurationXML Reloaded from {0}", file.getCanonicalPath()) ;
+                }
                 response.setContentType("text/xml;charset=UTF-8");
 
                 String xml = XmlUtils.print((ConfigurationXML) ConfigurationXML.getConf(),
                         ConfigurationXML.class);
 
                 out.println(xml);
-            } else if ("SAVE".equals(action)) {
-                File file = new File(ConfigurationXML.getConf().getConfigFilePath());
-                file.getParentFile().mkdirs();
 
-                XmlUtils.save(file, ConfigurationXML.class, 
-                        (ConfigurationXML) ConfigurationXML.getConf());
-
-                out.println("Saved into " + file.getCanonicalPath());
-            } else if ("RELOAD".equals(action)) {
-                File file = new File(ConfigurationXML.getConf().getConfigFilePath());
-                file.getParentFile().mkdirs();
-
-                ConfigurationXML conf = XmlUtils.reload(file, ConfigurationXML.class);
-
-                ConfigurationXML.setConf(conf);
-
-                out.println("Reloaded " + file.getCanonicalPath());
-            } else {
-
-                out.println("nothing to do ...");
             }
 
         } catch (Exception e) {

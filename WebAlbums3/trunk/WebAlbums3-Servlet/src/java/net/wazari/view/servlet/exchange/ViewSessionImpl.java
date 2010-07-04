@@ -445,16 +445,6 @@ public class ViewSessionImpl implements
         return getObject("action", MaintAction.class);
     }
 
-    @Override
-    public String getParam() {
-        return getObject("param", String.class);
-    }
-
-    @Override
-    public String getValue() {
-        return getObject("value", String.class);
-    }
-
     private void setSessionObject(String string, Object value) {
         setSessionObject(string, value, request.getSession());
     }

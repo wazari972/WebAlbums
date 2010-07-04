@@ -10,6 +10,8 @@ package net.wazari.common.plugins;
  * @author kevinpouget
  */
 public interface Importer {
+    String getName() ;
+    
     boolean support(String type, String ext);
 
     boolean shrink(ProcessCallback cb, String source, String dest, int width);

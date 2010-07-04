@@ -28,4 +28,8 @@ public class ImageMagickImageUtil implements Importer {
         }
         cb.exec(new String[]{"eog", "--fullscreen", path});
     }
+
+    public String getName() {
+        return "Image Magick wrapper" ;
+    }
 }

@@ -25,14 +25,10 @@ public class MaintBean implements MaintLocal {
         MaintAction action = vSession.getMaintAction();
 
         XmlBuilder output = new XmlBuilder("maint");
-        if (MaintAction.FULL_IMPORT == action) {
-            maintDAO.treatFullImport(getPath(vSession.getConfiguration()));
-        } else if (MaintAction.EXPORT_XML == action) {
+        if (MaintAction.EXPORT_XML == action) {
             maintDAO.treatExportXML(getPath(vSession.getConfiguration()));
         } else if (MaintAction.IMPORT_XML == action) {
             maintDAO.treatImportXML(getPath(vSession.getConfiguration()));
-        } else if (MaintAction.TRUNCATE_DB == action) {
-            maintDAO.treatTruncateDB();
 
         } else if (MaintAction.UPDATE == action) {
 

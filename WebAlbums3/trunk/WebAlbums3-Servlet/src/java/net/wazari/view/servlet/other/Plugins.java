@@ -19,6 +19,8 @@ import net.wazari.service.SystemToolsLocal;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.PluginInfo;
+import net.wazari.common.util.XmlUtils;
 
 /**
  *
@@ -37,18 +39,27 @@ public class Plugins  extends HttpServlet{
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
         ViewSessionImpl vSession = new ViewSessionImpl(request, response, this.getServletContext()) ;
         try {
             log.log(Level.INFO, "action:{0}", action);
             if ("RELOAD_PLUGINS".equals(action)) {
                 systemTools.reloadPlugins(ConfigurationXML.getConf().getPluginsPath());
-            } else if ("LIST_IMPORT_PLUGINS".equals(action)) {
-                for (Importer imp :systemTools.getPluginList()) {
-                    log.info("*"+imp.getClass());
-                }
             }
+            
+            PluginInfo info = new PluginInfo() ;
+            for (Importer imp :systemTools.getPluginList()) {
+                info.addPlugin(imp);
+            }
+            response.setContentType("text/xml;charset=UTF-8");
+
+            String xml = XmlUtils.print(info, PluginInfo.class);
+
+            out.println(xml);
+        } catch (Exception e) {
+            log.info("action:" + e.getMessage());
+            e.printStackTrace();
         } finally {
             out.close();
         }
@@ -89,4 +100,6 @@ public class Plugins  extends HttpServlet{
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+
 }

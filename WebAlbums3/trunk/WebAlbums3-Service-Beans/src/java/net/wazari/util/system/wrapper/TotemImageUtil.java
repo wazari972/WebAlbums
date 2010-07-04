@@ -42,4 +42,8 @@ public class TotemImageUtil implements Importer {
         }
         cb.exec(new String[]{"totem", path});
     }
+
+    public String getName() {
+        return "Totem Wrapper" ;
+    }
 }
