@@ -53,7 +53,6 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
     )
     @Column(name = "ID", nullable = false)
     private Integer id;
-
     @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)

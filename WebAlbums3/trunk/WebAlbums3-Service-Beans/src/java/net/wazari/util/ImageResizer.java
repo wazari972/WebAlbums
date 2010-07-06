@@ -11,96 +11,64 @@ import java.net.URL;
 import java.util.Stack;
 
 import java.util.logging.Logger;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.exchange.Configuration;
 
-public class ImageResizer implements Runnable {
+@Stateless
+public class ImageResizer {
 
     private static final Logger log = Logger.getLogger(ImageResizer.class.toString());
     private static final int HEIGHT = 200;
-    private Stack<Element> stack = new Stack<Element>();
-    private boolean initialized = false;
-    private boolean finished = false;
-    private File author;
-    private boolean done;
-    private Configuration conf;
+    @EJB
     private SystemToolsLocal sysTool;
 
-    public ImageResizer(Configuration conf, SystemToolsLocal sysTool) {
-        this.conf = conf;
-        this.sysTool = sysTool;
-    }
-    private int sleep = 15;
-
-    public void run() {
+    @Asynchronous
+    public void resize(Configuration conf, Stack<Element> stack, File author) {
         log.info("Starting the ImageResizer Thread");
-        initialized = true;
-        done = false;
+
         Element current;
-        while (!done) {
+        while (!stack.empty()) {
             log.info("Looping");
-            if (stack.empty()) {
-                if (finished) {
-                    if (this.author != null && this.author.isDirectory()) {
-                        log.log(Level.INFO, "Nettoyage du dossier {0}", this.author);
-                        File[] lst = this.author.listFiles();
 
-                        //supprimer recursivement tous les dossiers de ce repertoire
-                        for (File f : lst) {
-                            clean(f);
-                        }
-                    } else {
-                        log.info("Pas de dossier à nettoyer");
-                    }
-                    done = true;
-                } else {
-                    //if not finished, wait a second
-                    try {
-                        log.log(Level.INFO, "Waiting for the stack to grow {0}", sleep);
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                    }
-                    sleep--;
-                    if (sleep == 0) {
-                        done = true ;
-                        return;
-                    }
+            current = stack.pop();
+            log.info(current.path);
+
+            log.info("Resizing...");
+            try {
+                if (!thumbnail(current, conf)) {
+                    continue;
                 }
-            } else {
-                sleep = 15;
-                current = stack.pop();
-                log.info(current.path);
 
-                log.info("Resizing...");
-                try {
-                    if (!thumbnail(current, conf)) {
-                        continue;
-                    }
-
-                    log.info("Moving...");
-                    if (!move(current, conf)) {
-                        continue;
-                    }
-
-                    log.info("Done !");
-                } catch (URISyntaxException e) {
-                    log.log(Level.INFO, "URISyntaxException {0}", e);
-                } catch (MalformedURLException e) {
-                    log.log(Level.INFO, "MalformedURLException {0}", e);
-                } catch (IOException e) {
-                    log.log(Level.INFO, "IOExceptionLException {0}", e);
+                log.info("Moving...");
+                if (!move(current, conf)) {
+                    continue;
                 }
+
+                log.info("Done !");
+            } catch (URISyntaxException e) {
+                log.log(Level.INFO, "URISyntaxException {0}", e);
+            } catch (MalformedURLException e) {
+                log.log(Level.INFO, "MalformedURLException {0}", e);
+            } catch (IOException e) {
+                log.log(Level.INFO, "IOExceptionLException {0}", e);
             }
+
+        }
+        if (author != null && author.isDirectory()) {
+            log.log(Level.INFO, "Nettoyage du dossier {0}", author);
+            File[] lst = author.listFiles();
+
+            //supprimer recursivement tous les dossiers de ce repertoire
+            for (File f : lst) {
+                clean(f);
+            }
+        } else {
+            log.info("Pas de dossier à nettoyer");
         }
         log.info("Finished !");
-    }
-
-    public void push(Element elt) {
-        stack.push(elt);
-    }
-
-    public void terminate() {
-        this.finished = true;
     }
 
     public static void clean(File rep) {
@@ -172,13 +140,5 @@ public class ImageResizer implements Runnable {
             this.image = image;
             this.type = type;
         }
-    }
-
-    public boolean isDone() {
-        return !initialized || done;
-    }
-
-    public int getStackSize() {
-        return this.stack.size();
     }
 }

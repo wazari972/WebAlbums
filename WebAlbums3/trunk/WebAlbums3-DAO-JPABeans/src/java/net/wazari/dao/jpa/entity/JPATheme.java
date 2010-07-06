@@ -48,10 +48,10 @@ public class JPATheme implements Theme, Serializable {
     @XmlAttribute
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
+    @GeneratedValue(strategy=GenerationType.IDENTITY/*, generator="IdOrGenerated")
     @GenericGenerator(name="IdOrGenerated",
-                      strategy="net.wazari.dao.jpa.entity.idGenerator.UseIdOrGenerate"
-    )
+                      strategy="org.hibernate.annotations.GenericGenerator.UseIdOrGenerate"
+    */)
     @Column(name = "ID", nullable = false)
     private Integer id;
 

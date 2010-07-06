@@ -94,14 +94,15 @@ public class SystemTools implements SystemToolsLocal {
 
 
     private static Importer getWrapper(String type, String ext, Importer.Capability cap) {
-        Importer img = null;
+        Importer wrap = null;
         for (Importer util : validWrappers) {
             if (util.supports(type, ext, cap)) {
-                return util;
+                wrap = util;
+                break ;
             }
         }
-        log.log(Level.WARNING, "no wrapper for {0}, trying image wrapper({1})", new Object[]{type, img});
-        return img;
+        log.log(Level.WARNING, "Wrapper for {0}-{1}: {2}", new Object[]{type, ext, wrap});
+        return wrap;
     }
 
     private File buildTempDir(ViewSession vSession, String type, Integer id) {
