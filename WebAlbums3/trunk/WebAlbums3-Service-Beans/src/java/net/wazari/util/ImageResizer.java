@@ -62,6 +62,7 @@ public class ImageResizer implements Runnable {
                     }
                     sleep--;
                     if (sleep == 0) {
+                        done = true ;
                         return;
                     }
                 }

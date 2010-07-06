@@ -39,9 +39,9 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "Tag",
+@Table(name = "Tag"/*,
     uniqueConstraints = {@UniqueConstraint(columnNames={"Nom"})}
-)
+*/)
 public class JPATag implements Tag, Serializable {
     private static final Logger log = Logger.getLogger(JPATag.class.getName());
 

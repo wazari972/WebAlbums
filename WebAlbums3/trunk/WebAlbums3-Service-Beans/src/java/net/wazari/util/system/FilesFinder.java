@@ -212,7 +212,7 @@ public class FilesFinder {
                         enrAlbum.setDroit(userDAO.find(DEFAULT_USER));
 
                         info(out, "## On tente d'ajouter l'album dans la base");
-                        albumDAO.create(enrAlbum);
+                        albumDAO.edit(enrAlbum);
                         info(out, "## On vient de lui donner l'ID " + enrAlbum.getId());
 
                     } else {

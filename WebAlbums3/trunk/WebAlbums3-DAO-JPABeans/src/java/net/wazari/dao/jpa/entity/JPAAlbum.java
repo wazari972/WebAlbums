@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -50,10 +49,10 @@ public class JPAAlbum implements Album, Serializable {
     @XmlAttribute
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
-    @GenericGenerator(name="IdOrGenerated",
-                      strategy="net.wazari.dao.jpa.entity.idGenerator.UseIdOrGenerate"
-    )
+    @GeneratedValue(strategy=GenerationType.IDENTITY /*, generator="IdOrGenerated")
+    @GenericGenerator(name="IdOrGenerated"
+                      ,strategy="net.wazari.dao.jpa.entity.idGenerator.UseIdOrGenerate"
+    */)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
