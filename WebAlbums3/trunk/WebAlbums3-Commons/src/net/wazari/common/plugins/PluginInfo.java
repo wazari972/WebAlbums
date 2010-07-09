@@ -8,7 +8,6 @@ package net.wazari.common.plugins;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -34,6 +33,7 @@ public class PluginInfo {
         plug.version = importer.getVersion() ;
         plug.description = importer.getDescription() ;
         plug.capabilities = Arrays.asList(importer.supports()) ;
+        plug.priority = importer.getPriority();
         plug.supportedFiles = importer.getSupportedFilesDesc() ;
         plug.sanityCheck = importer.sanityCheck(ProcessCallback.getProcessCallBack());
 
@@ -64,5 +64,6 @@ public class PluginInfo {
         @XmlElement List<Importer.Capability> capabilities ;
         @XmlElement String supportedFiles ;
         @XmlElement Importer.SanityStatus sanityCheck ;
+        @XmlElement int priority;
     }
 }

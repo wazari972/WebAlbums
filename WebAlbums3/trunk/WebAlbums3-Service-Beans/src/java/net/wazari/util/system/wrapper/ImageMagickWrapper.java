@@ -1,6 +1,7 @@
 package net.wazari.util.system.wrapper;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 import net.wazari.common.plugins.Importer;
 import net.wazari.common.plugins.Metadata;
 import net.wazari.common.plugins.ProcessCallback;
@@ -39,6 +40,7 @@ public class ImageMagickWrapper implements Importer {
 
     @Override
     public boolean supports(String type, String ext, Capability cap) {
+        log.info("supports "+type+"-"+cap);
         if (type.contains("image"))
             return Arrays.asList(supports()).contains(cap) ;
         else return false ;
@@ -77,4 +79,5 @@ public class ImageMagickWrapper implements Importer {
     public int getPriority() {
         return 8 ;
     }
+    private static final Logger log = Logger.getLogger(ImageMagickWrapper.class.getName());
 }

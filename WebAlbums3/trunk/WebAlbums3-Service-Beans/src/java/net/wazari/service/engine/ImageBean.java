@@ -33,7 +33,7 @@ public class ImageBean implements ImageLocal {
     @EJB private PhotoFacadeLocal photoDAO ;
     @EJB private PhotoUtil photoUtil ;
 
-    private SystemTools sysTools ;
+    @EJB private SystemTools sysTools ;
 
     @Override
     public XmlBuilder treatIMG(ViewSessionImages vSession)

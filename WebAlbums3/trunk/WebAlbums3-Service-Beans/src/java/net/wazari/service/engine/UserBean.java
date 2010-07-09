@@ -47,8 +47,8 @@ public class UserBean implements UserLocal {
         if (themeId == null) return false;
         Theme enrTheme = themeDAO.find(themeId);
         if (enrTheme == null) {
-            log.warning("No such theme in the database: "+themeId) ;
-            log.warning("No such theme in the database: "+themeDAO.findAll()) ;
+            log.log(Level.WARNING, "No such theme in the database: {0}", themeId) ;
+            log.log(Level.WARNING, "No such theme in the database: {0}", themeDAO.findAll()) ;
             cleanUpSession(vSession);
             return false;
         }

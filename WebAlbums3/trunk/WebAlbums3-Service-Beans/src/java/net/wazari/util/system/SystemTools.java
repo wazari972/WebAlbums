@@ -45,7 +45,7 @@ public class SystemTools {
                 break ;
             }
         }
-        log.log(Level.WARNING, "Wrapper for {0}-{1}: {2}", new Object[]{type, ext, wrap});
+        log.log(Level.WARNING, "Wrapper for {3}@{0}-{1}: {2}", new Object[]{type, ext, wrap, cap});
         return wrap;
     }
 
@@ -140,8 +140,13 @@ public class SystemTools {
     }
 
     public String shrink(ViewSession vSession, Photo enrPhoto, int width) {
-        if (width >= new Integer(enrPhoto.getWidth())) {
-            return photoUtil.getImagePath(vSession, enrPhoto);
+        try {
+            if (width >= new Integer(enrPhoto.getWidth())) {
+                return photoUtil.getImagePath(vSession, enrPhoto);
+            }
+        } catch (NumberFormatException e) {
+            log.log(Level.SEVERE, "Photo {0} doesnt have a valid width:{1}", new Object[]{enrPhoto, enrPhoto.getWidth()});
+            //return photoUtil.getImagePath(vSession, enrPhoto);
         }
 
         File dir = buildTempDir(vSession, "shrinked", null);

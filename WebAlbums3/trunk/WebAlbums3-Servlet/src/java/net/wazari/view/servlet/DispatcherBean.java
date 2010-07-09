@@ -128,7 +128,7 @@ public class DispatcherBean {
                 log.log(Level.FINE, "XSL-style{0}", xslFile);
                 //try to logon and set the theme
                 if (vSession.getThemeId() != null) {
-                    log.fine("Try to logon");
+                    log.info("Try to logon");
                     boolean ret = userService.logon((ViewSessionLogin) vSession, request);
                     log.log(Level.FINER, "Logon result: {0}", ret);
                 }

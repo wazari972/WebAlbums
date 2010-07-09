@@ -173,12 +173,17 @@ public class ViewSessionImpl implements
         setSessionObject("details", newValue);
     }
 
-    /** ** **/
     @Override
     public File getTempDir() {
         return getSessionObject("tempDir", File.class);
     }
 
+    /** ** **/
+    @Override
+    public Utilisateur getUser() {
+        return getSessionObject("user", Utilisateur.class);
+    }
+    
     @Override
     public void setUser(Utilisateur enrUser) {
         setSessionObject("user", enrUser);
@@ -269,11 +274,6 @@ public class ViewSessionImpl implements
     @Override
     public String getWidth() {
         return getString("width");
-    }
-
-    @Override
-    public Utilisateur getUser() {
-        return getObject("utilisateur", Utilisateur.class);
     }
 
     @Override

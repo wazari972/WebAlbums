@@ -70,7 +70,7 @@ public class PluginManager implements PluginManagerLocal{
             }
         }
 
-        Importer[] sortedWrappers = (Importer[]) validWrappers.toArray();
+        Importer[] sortedWrappers = validWrappers.toArray(new Importer[validWrappers.size()]);
         Arrays.sort(sortedWrappers, new Comparator<Importer>() {
 
             public int compare(Importer o1, Importer o2) {

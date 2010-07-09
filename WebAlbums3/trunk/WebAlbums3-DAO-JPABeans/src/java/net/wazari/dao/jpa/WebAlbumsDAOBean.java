@@ -54,19 +54,19 @@ public class WebAlbumsDAOBean {
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToPhotosAllowed(ServiceSession session, String photo) {
-        String rq = null;
-
-        rq = "SELECT p.id " +
+        String rq = "SELECT p.id " +
                 " FROM JPAPhoto p, JPAAlbum a " +
                 " WHERE p.album = a.id ";
         if (!session.isSessionManager()) {
+            log.info("---") ;
+            log.info("User: "+session.getUser()) ;
             rq += " AND (" +
                     //albums autorisé
                     "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUser().getId() + "') " +
                     "OR " +
                     //albums ayant au moins une photo autorisée
                     "(p.droit >= '" + session.getUser().getId() + "')" +
-                    ")";
+                    ")"; 
         }
 
         rq = " " + photo + ".id IN (" + processListID(session, rq, true) + ") ";
