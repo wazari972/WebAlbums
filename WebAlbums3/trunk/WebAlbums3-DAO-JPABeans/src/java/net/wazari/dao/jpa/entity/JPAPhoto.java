@@ -41,7 +41,7 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "Photo",
-    uniqueConstraints = {@UniqueConstraint(columnNames={"Path"})}
+    uniqueConstraints = {@UniqueConstraint(columnNames={"PhotoPath"})}
 )
 public class JPAPhoto implements Photo, Serializable {
     private static final Logger log = Logger.getLogger(JPAPhoto.class.getName());
