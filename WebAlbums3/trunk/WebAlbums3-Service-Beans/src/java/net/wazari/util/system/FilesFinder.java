@@ -41,7 +41,7 @@ public class FilesFinder {
 
     private static final String SEP = File.separator;
     private static final int DEFAULT_USER = 3;
-    public static final SimpleDateFormat DATE_STANDARD = new SimpleDateFormat("yyyy-MM-dd");
+    
     private static final Logger log = Logger.getLogger(FilesFinder.class.getCanonicalName());
     @EJB
     private ThemeFacadeLocal themeDAO;
@@ -173,7 +173,7 @@ public class FilesFinder {
                 info(out, "## NOM  : " + nom);
                 try {
                     strDate = album.getName().substring(0, 10);
-                    Date date = DATE_STANDARD.parse(strDate);
+                    Date date = Album.DATE_STANDARD.parse(strDate);
                     info(out, "## DATE : " + date);
 
                 } catch (ParseException e) {

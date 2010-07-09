@@ -21,6 +21,7 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 @Local
 @DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface AlbumFacadeLocal {
+
     enum TopFirst {
         TOP, FIRST
     }
@@ -51,6 +52,15 @@ public interface AlbumFacadeLocal {
     SubsetOf<Album> queryAlbums(ServiceSession session,
             Restriction restrict, TopFirst topFirst, Bornes bornes) ;
 
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    SubsetOf<Album> queryRandomFromYear(ServiceSession session,
+            Restriction restrict, Bornes bornes, String date);
+
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    Album loadFirstAlbum(ServiceSession session, Restriction restrict) ;
+
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    Album loadLastAlbum(ServiceSession session, Restriction restrict) ;
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Album loadIfAllowed(ServiceSession session, int id) ;
 

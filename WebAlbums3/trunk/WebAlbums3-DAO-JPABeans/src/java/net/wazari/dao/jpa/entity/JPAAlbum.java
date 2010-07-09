@@ -31,6 +31,7 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -48,10 +49,10 @@ public class JPAAlbum implements Album, Serializable {
     @XmlAttribute
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY/*, generator="IdOrGenerated")
+    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
     @GenericGenerator(name="IdOrGenerated",
-                      strategy="org.hibernate.annotations.GenericGenerator.UseIdOrGenerate"
-    */)
+                      strategy="net.wazari.dao.jpa.entity.idGenerator.UseIdOrGenerate"
+    )
     @Column(name = "ID", nullable = false)
     private Integer id;
 
@@ -66,7 +67,7 @@ public class JPAAlbum implements Album, Serializable {
 
     @XmlAttribute
     @Basic(optional = false)
-    @Column(name = "Date", nullable = false, length = 10)
+    @Column(name = "AlbumDate", nullable = false, length = 10)
     private String date;
 
     @XmlAttribute

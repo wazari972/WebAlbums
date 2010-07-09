@@ -45,6 +45,10 @@ function loadAlbums() {
     loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
 }
 
+function loadYears() {
+    loadExernals('yearsLoader', 'Albums?special=YEARS', 'years') ;
+}
+
 function callURL(url) {
     if(window.XMLHttpRequest) {// Firefox 
 	xhr_object_XML = new XMLHttpRequest();

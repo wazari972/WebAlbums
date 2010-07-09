@@ -101,6 +101,23 @@
 	</div>
       </div>
     </div>
+
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
+      <div class="content">
+	<h1>Annees <input id="yearsLoader" type="button" value="load years" onclick="loadYears();"/></h1>
+	<div class="body">
+	  <div id="years" style="overflow:auto">
+	    <center>
+	      <img src="static/images/loading.gif"/>
+	    </center>
+	  </div>
+	</div>
+      </div>
+    </div>
+
   </xsl:template>
 
 </xsl:stylesheet>

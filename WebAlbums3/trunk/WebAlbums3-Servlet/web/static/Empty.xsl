@@ -78,6 +78,21 @@
     </td>
   </xsl:template>
 
+ <xsl:template match="/root/albums/years">
+   <table>
+       <xsl:apply-templates select="year" />
+   </table>
+ </xsl:template>
+
+ <xsl:template match="year">
+     <tr><th><xsl:value-of select="@year"/></th></tr>
+     <tr>
+         <table>
+            <xsl:apply-templates select="album" />
+        </table>
+     </tr>
+ </xsl:template>
+
  <xsl:template match="/root/albums/top5">
    <table>
      <tr>
@@ -85,7 +100,8 @@
      </tr>
    </table>
  </xsl:template>
- <xsl:template match="top5/album">
+
+ <xsl:template match="album">
    <td>
       <table>
 	<tr>
@@ -119,6 +135,7 @@
       </table>
     </td>
   </xsl:template>
+
   <xsl:template match="/root/maint">
     <html>
       <body>
@@ -128,6 +145,7 @@
       </body>
     </html>
   </xsl:template>
+
   <xsl:template match="action">
     <b>action=<xsl:value-of select="."/></b>
     <br/>

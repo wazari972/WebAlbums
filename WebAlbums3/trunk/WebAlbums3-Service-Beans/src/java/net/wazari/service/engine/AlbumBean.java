@@ -185,6 +185,45 @@ public class AlbumBean implements AlbumLocal {
         }
         return top5.validate();
     }
+    private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy") ;
+    
+    @Override
+    public XmlBuilder treatYEARS(ViewSessionAlbum vSession) {
+        XmlBuilder years = new XmlBuilder("years");
+
+        Album enrFirstAlbum = albumDAO.loadFirstAlbum(vSession, Restriction.ALLOWED_AND_THEME);
+        Album enrLastAlbum = albumDAO.loadLastAlbum(vSession, Restriction.ALLOWED_AND_THEME);
+
+        int firstYear = 2011 ;
+        int lastYear = 2011 ;
+        try {
+            firstYear = Integer.parseInt(YEAR.format(Album.DATE_STANDARD.parse(enrFirstAlbum.getDate())));
+            lastYear =  Integer.parseInt(YEAR.format(Album.DATE_STANDARD.parse(enrLastAlbum.getDate()))) ;
+        } catch (ParseException ex) {
+            Logger.getLogger(AlbumBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
+        for (Integer currentYear = firstYear; currentYear <= lastYear; currentYear++) {
+            XmlBuilder year = new XmlBuilder("year").addAttribut("year", currentYear);
+            int i = 0;
+            SubsetOf<Album> albums = albumDAO.queryRandomFromYear(vSession, Restriction.ALLOWED_AND_THEME, new Bornes(TOP), currentYear.toString()) ;
+            for (Album enrAlbum : albums.subset) {
+                XmlBuilder album = new XmlBuilder("album");
+                album.add("id", enrAlbum.getId());
+                album.add("count", i);
+                album.add("nom", enrAlbum.getNom());
+                if (enrAlbum.getPicture() != null) {
+                    album.add("photo", enrAlbum.getPicture());
+                }
+                year.add(album) ;
+            }
+            years.add(year);
+        }
+
+
+        return years.validate();
+    }
 
     @Override
     public XmlBuilder treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession)

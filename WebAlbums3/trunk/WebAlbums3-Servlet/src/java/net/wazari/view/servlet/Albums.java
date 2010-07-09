@@ -40,6 +40,8 @@ public class Albums extends HttpServlet{
         Special special = vSession.getSpecial();
         if (special == Special.TOP5) {
             return output.add(albumService.treatTOP(vSession));
+        } else  if (special == Special.YEARS) {
+            return output.add(albumService.treatYEARS(vSession));
         }
 
         Action action = vSession.getAction();

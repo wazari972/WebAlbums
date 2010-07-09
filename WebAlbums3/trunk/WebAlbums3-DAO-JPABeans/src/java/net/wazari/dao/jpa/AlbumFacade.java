@@ -71,6 +71,54 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    public SubsetOf<Album> queryRandomFromYear(ServiceSession session,
+            Restriction restrict, Bornes bornes, String date) {
+        String rq = "FROM "+JPAAlbum.class.getName()+" a " +
+                " WHERE " + (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.restrictToAlbumsAllowed(session, "a") : "1 = 1") + " " +
+                " AND " + (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1") + " " +
+                " AND a.date LIKE :date "+
+                " ORDER BY RAND() ";
+        Query q = em.createQuery(rq)
+               .setParameter("date", date+"%")
+               .setFirstResult(0)
+               .setMaxResults(bornes.getNbElement());
+
+        Long size = (long) bornes.getNbElement() ;
+
+        return new SubsetOf<Album>(bornes, q.getResultList(), size);
+    }
+
+    @Override
+    public Album loadFirstAlbum(ServiceSession session,
+            Restriction restrict) {
+        return loadFirstLastAlbum(session, restrict, ORDER.ASC) ;
+    }
+    
+    @Override
+    public Album loadLastAlbum(ServiceSession session,
+            Restriction restrict) {
+        return loadFirstLastAlbum(session, restrict, ORDER.DESC) ;
+    }
+
+    private enum ORDER {ASC, DESC}
+    private Album loadFirstLastAlbum(ServiceSession session,
+            Restriction restrict, ORDER order) {
+        try {
+            String rq = "FROM "+JPAAlbum.class.getName()+" a " +
+                    " WHERE " + (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.restrictToAlbumsAllowed(session, "a") : "1 = 1") + " " +
+                    " AND " + (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1") + " " +
+                    " ORDER BY a.date "+order;
+            Query q = em.createQuery(rq)
+                   .setFirstResult(0)
+                   .setMaxResults(1);
+
+            return (Album) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
+    }
+
+    @Override
     public Album loadIfAllowed(ServiceSession session, int id) {
         try {
             String rq = "FROM JPAAlbum a " +

@@ -14,8 +14,7 @@ import net.wazari.dao.exchange.ServiceSession;
  */
 public interface ViewSession extends ServiceSession {
     enum Special {
-
-        TOP5, FULLSCREEN, CLOUD, PERSONS, PLACES, RSS, UPDATE
+        TOP5, FULLSCREEN, CLOUD, PERSONS, PLACES, RSS, UPDATE, YEARS
     }
 
     enum Action {

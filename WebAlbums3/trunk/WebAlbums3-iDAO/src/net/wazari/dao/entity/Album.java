@@ -5,6 +5,7 @@
 
 package net.wazari.dao.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import net.wazari.dao.entity.facades.EntityWithId;
 import net.wazari.dao.entity.facades.PhotoOrAlbum;
@@ -14,6 +15,7 @@ import net.wazari.dao.entity.facades.PhotoOrAlbum;
  * @author kevinpouget
  */
 public interface Album extends PhotoOrAlbum, EntityWithId {
+    SimpleDateFormat DATE_STANDARD = new SimpleDateFormat("yyyy-MM-dd");
 
     String getDate();
 
