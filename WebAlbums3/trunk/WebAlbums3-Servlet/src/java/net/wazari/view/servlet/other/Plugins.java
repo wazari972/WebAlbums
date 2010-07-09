@@ -15,9 +15,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.service.SystemToolsLocal;
+import net.wazari.service.PluginManagerLocal;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
-import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import net.wazari.common.plugins.Importer;
 import net.wazari.common.plugins.System;
 import net.wazari.common.plugins.PluginInfo;
@@ -35,7 +34,7 @@ public class Plugins  extends HttpServlet{
     private static final Logger log = Logger.getLogger(Plugins.class.getName());
 
     @EJB
-    private SystemToolsLocal systemTools;
+    private PluginManagerLocal systemTools;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -7,10 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Stack;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,11 +28,9 @@ import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 
-import net.wazari.util.ImageResizer;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
-import net.wazari.service.SystemToolsLocal;
-import net.wazari.util.ImageResizer.Element;
+import net.wazari.util.system.ImageResizer.Element;
 
 @Stateless
 public class FilesFinder {
@@ -56,7 +52,7 @@ public class FilesFinder {
     @EJB
     private PhotoUtil photoUtil;
     @EJB
-    private SystemToolsLocal sysTools;
+    private SystemTools sysTools;
     @EJB
     private ImageResizer resizer;
 
@@ -306,7 +302,8 @@ public class FilesFinder {
             enrPhoto = photoDAO.newPhoto();
             enrPhoto.setDescription("");
             enrPhoto.setPath(photoPath);
-            photoUtil.retreiveExif(enrPhoto, "file://" + photo.getAbsolutePath());
+
+            sysTools.retreiveMetadata(type, null, enrPhoto, photo.getAbsolutePath());
             enrPhoto.setAlbum(enrAlbum);
             enrPhoto.setType(type);
             info(out, "### Album " + enrPhoto.getAlbum());

@@ -5,15 +5,13 @@
 
 package net.wazari.common.plugins;
 
-import java.util.List;
-
 /**
  *
  * @author kevinpouget
  */
 public interface Importer {
     enum Capability {
-        SHRINK, THUMBNAIL, ROTATE, FILE_FULLSCREEN, DIR_FULLSCREEN
+        SHRINK, THUMBNAIL, ROTATE, FILE_FULLSCREEN, DIR_FULLSCREEN, META_DATA
     }
     enum SanityStatus {
         FAIL, PASS
@@ -36,5 +34,9 @@ public interface Importer {
 
     void fullscreen(ProcessCallback cb, String path);
 
+    boolean setMetadata(Metadata data, String path);
+
     SanityStatus sanityCheck(ProcessCallback cb) ;
+
+    int getPriority() ;
 }

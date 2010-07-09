@@ -1,4 +1,4 @@
-package net.wazari.util;
+ package net.wazari.util.system;
 
 import java.util.logging.Level;
 import net.wazari.common.util.StringUtil;
@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.exchange.Configuration;
 
 @Stateless
@@ -23,7 +22,7 @@ public class ImageResizer {
     private static final Logger log = Logger.getLogger(ImageResizer.class.toString());
     private static final int HEIGHT = 200;
     @EJB
-    private SystemToolsLocal sysTool;
+    private SystemTools sysTool;
 
     @Asynchronous
     public void resize(Configuration conf, Stack<Element> stack, File author) {

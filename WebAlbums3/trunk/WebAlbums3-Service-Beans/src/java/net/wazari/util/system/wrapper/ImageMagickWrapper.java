@@ -2,6 +2,7 @@ package net.wazari.util.system.wrapper;
 
 import java.util.Arrays;
 import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.Metadata;
 import net.wazari.common.plugins.ProcessCallback;
 
 
@@ -38,7 +39,7 @@ public class ImageMagickWrapper implements Importer {
 
     @Override
     public boolean supports(String type, String ext, Capability cap) {
-        if ((type != null && type.contains("image")))
+        if (type.contains("image"))
             return Arrays.asList(supports()).contains(cap) ;
         else return false ;
     }
@@ -62,7 +63,18 @@ public class ImageMagickWrapper implements Importer {
         return "Wrapper for the Image Magick toolbox" ;
     }
 
+    @Override
     public String getSupportedFilesDesc() {
         return "all kind of photos" ;
+    }
+
+    @Override
+    public boolean setMetadata(Metadata data, String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getPriority() {
+        return 8 ;
     }
 }

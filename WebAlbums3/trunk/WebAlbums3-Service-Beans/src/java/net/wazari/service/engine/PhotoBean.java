@@ -1,6 +1,5 @@
 package net.wazari.service.engine;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
@@ -24,7 +23,6 @@ import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.PhotoLocal;
-import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
@@ -41,6 +39,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.View
 import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.util.system.SystemTools;
 
 
 @Stateless
@@ -67,7 +66,7 @@ public class PhotoBean implements PhotoLocal {
     @EJB
     private WebPageLocal webService;
     @EJB private FilesFinder finder ;
-    @EJB private SystemToolsLocal sysTools ;
+    @EJB private SystemTools sysTools ;
 
     @Override
     public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,

@@ -1,7 +1,6 @@
 package net.wazari.service.engine;
 
 import java.util.logging.Level;
-import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.SessionManagerLocal;
 import java.io.File;
 import java.util.UUID;
@@ -9,13 +8,14 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.service.exchange.ViewSessionSession;
+import net.wazari.util.system.SystemTools;
 
 @Stateless
 public class SessionManagerBean implements SessionManagerLocal {
 
     private static final Logger log = Logger.getLogger(SessionManagerBean.class.toString());
 
-    @EJB SystemToolsLocal sysTools ;
+    @EJB SystemTools sysTools ;
     /* Session Listener */
     @Override
     public void sessionCreated(ViewSessionSession vSession) {

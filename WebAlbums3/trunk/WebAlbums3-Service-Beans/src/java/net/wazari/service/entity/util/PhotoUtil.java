@@ -1,21 +1,13 @@
 package net.wazari.service.entity.util;
 
-import com.drew.imaging.jpeg.JpegProcessingException;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifReader;
 import java.util.logging.Level;
 import net.wazari.dao.entity.Theme;
 import javax.swing.ImageIcon;
 import java.awt.Image;
 
-import java.io.File;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,11 +21,10 @@ import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.exception.WebAlbumsDaoException;
-import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.util.system.SystemTools;
 
 /**
  * This is the object class that relates to the Photo table.
@@ -44,7 +35,7 @@ public class PhotoUtil {
 
     private static final Logger log = Logger.getLogger(PhotoUtil.class.toString());
     private static final long serialVersionUID = 1L;
-    @EJB SystemToolsLocal sysTools ;
+    @EJB SystemTools sysTools ;
     @EJB
     TagPhotoFacadeLocal tagPhotoDAO;
     @EJB
@@ -160,79 +151,6 @@ public class PhotoUtil {
             output.add(data);
         }
         return output.validate();
-    }
-
-    public void retreiveExif(ViewSession vSession, Photo p) {
-        String sep = vSession.getConfiguration().getSep() ;
-        String path = vSession.getConfiguration().getImagesPath() + sep + p.getPath();
-        retreiveExif(p, path);
-    }
-
-    public void retreiveExif(Photo p, String path) {
-        try {
-            File photo = new File(new URI(StringUtil.escapeURL(path)));
-            ExifReader ex = new ExifReader(photo);
-            Iterator it = ex.extract().getDirectoryIterator();
-            while (it.hasNext()) {
-                Directory dir = (Directory) it.next();
-                Iterator it2 = dir.getTagIterator();
-                while (it2.hasNext()) {
-                    Tag t = (Tag) it2.next();
-                    boolean model = false,
-                            date = false,
-                            iso = false,
-                            expo = false,
-                            focal = false,
-                            height = false,
-                            width = false,
-                            flash = false;
-
-                    if (!model && t.getTagName().equals("Model")) {
-                        p.setModel(escapeBracket(t.toString()));
-
-                        model = true;
-                    } else if (!date && t.getTagName().equals("Date/Time")) {
-                        p.setDate(escapeBracket(t.toString()));
-                        date = true;
-
-                    } else if (!iso && t.getTagName().equals("ISO Speed Ratings")) {
-                        p.setIso(escapeBracket(t.toString()));
-                        iso = true;
-
-                    } else if (!expo && t.getTagName().equals("Exposure Time")) {
-                        p.setExposure(escapeBracket(t.toString()));
-                        expo = true;
-
-                    } else if (!focal && t.getTagName().equals("Focal Length")) {
-                        p.setFocal(escapeBracket(t.toString()));
-                        focal = true;
-
-                    } else if (!height && t.getTagName().equals("Exif Image Height")) {
-                        p.setHeight(escapeBracket(t.toString()));
-                        height = true;
-
-                    } else if (!width && t.getTagName().equals("Exif Image Width")) {
-                        p.setWidth(escapeBracket(t.toString()));
-                        width = true;
-
-                    } else if (!flash && t.getTagName().equals("Flash")) {
-                        p.setFlash(escapeBracket(t.toString()));
-                        flash = true;
-                    }
-                }
-            }
-        } catch (JpegProcessingException e) {
-            log.log(Level.WARNING, "Exception JPEG durant le traitement exif : {0}", e.getMessage());
-            log.warning(path);
-        } catch (URISyntaxException e) {
-            log.log(Level.WARNING, "URISyntaxException durant le traitement exif : {0}", e);
-            log.warning(path);
-        }
-    }
-
-    private String escapeBracket(String str) {
-        int pos = str.indexOf("]");
-        return str.substring(pos + 2);
     }
 
     public boolean rotate(ViewSession vSession, Photo p, String degrees)

@@ -7,6 +7,7 @@ package net.wazari.util.system.wrapper;
 
 import java.util.Arrays;
 import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.Metadata;
 import net.wazari.common.plugins.ProcessCallback;
 
 /**
@@ -69,6 +70,7 @@ public class EyeOfGnomeWrapper implements Importer {
         }
     }
 
+    @Override
     public String getDescription() {
         return "Wrapper for EyeOfGnome image visualizer" ;
     }
@@ -76,5 +78,14 @@ public class EyeOfGnomeWrapper implements Importer {
     @Override
     public String getSupportedFilesDesc() {
         return "all kind of photos" ;
+    }
+
+    @Override
+    public boolean setMetadata(Metadata data, String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getPriority() {
+        return 6 ;
     }
 }

@@ -18,7 +18,6 @@ import net.wazari.dao.entity.Tag;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.PhotoLocal.PhotoRequest;
 import net.wazari.service.PhotoLocal.TypeRequest;
-import net.wazari.service.SystemToolsLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSession.Box;
@@ -30,6 +29,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.util.system.SystemTools;
 
 @Stateless
 public class TagBean implements TagLocal {
@@ -40,7 +40,7 @@ public class TagBean implements TagLocal {
     @EJB private TagThemeFacadeLocal tagThemeDAO ;
     @EJB private PhotoLocal photoLocal ;
     @EJB private WebPageLocal webService ;
-    @EJB private SystemToolsLocal sysTools ;
+    @EJB private SystemTools sysTools ;
 
     @Override
     public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,Boolean correct) throws WebAlbumsServiceException {

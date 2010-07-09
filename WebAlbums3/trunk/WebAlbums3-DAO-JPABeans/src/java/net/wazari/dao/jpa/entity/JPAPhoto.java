@@ -60,7 +60,7 @@ public class JPAPhoto implements Photo, Serializable {
 
     @XmlElement
     @Basic(optional = false)
-    @Column(name = "Path", nullable = false, length = 100)
+    @Column(name = "PhotoPath", nullable = false, length = 100)
     private String path;
 
     @XmlElement
@@ -72,7 +72,7 @@ public class JPAPhoto implements Photo, Serializable {
     private String model;
 
     @XmlElement
-    @Column(name = "Date", length = 50)
+    @Column(name = "DateMeta", length = 50)
     private String date;
 
     @XmlElement

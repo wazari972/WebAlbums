@@ -2,6 +2,7 @@ package net.wazari.util.system.wrapper;
 
 import java.util.Arrays;
 import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.Metadata;
 import net.wazari.common.plugins.ProcessCallback;
 
 public class TotemWrapper implements Importer {
@@ -86,5 +87,15 @@ public class TotemWrapper implements Importer {
     @Override
     public String getSupportedFilesDesc() {
         return "all kind of videos and ASF" ;
+    }
+
+    @Override
+    public boolean setMetadata(Metadata data, String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getPriority() {
+        return 9 ;
     }
 }
