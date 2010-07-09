@@ -4,9 +4,11 @@ import net.wazari.common.plugins.Importer.Capability;
 import java.util.logging.Level;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateful;
+import javax.ejb.Singleton;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.facades.SubsetOf;
@@ -18,8 +20,7 @@ import net.wazari.common.plugins.Importer;
 import net.wazari.common.plugins.ProcessCallback;
 import net.wazari.service.PluginManagerLocal;
 
-@Stateful
-//@Singleton
+@Singleton
 public class SystemTools {
 
     private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName());
@@ -33,13 +34,20 @@ public class SystemTools {
 
     static final ProcessCallback cb = ProcessCallback.getProcessCallBack();
 
-    public static boolean init() {
+    public static boolean initate() {
         return true;
+    }
+
+    @PostConstruct
+    public void init() {
+         plugins.reloadPlugins(null);
     }
 
     private Importer getWrapper(String type, String ext, Importer.Capability cap) {
         Importer wrap = null;
+        
         for (Importer util : plugins.getWorkingPlugins()) {
+            log.log(Level.WARNING, "Test {0}: {1}", new Object[]{util.getName(), Arrays.asList(util.supports())});
             if (util.supports(type, ext, cap)) {
                 wrap = util;
                 break ;
@@ -190,6 +198,10 @@ public class SystemTools {
     
     public boolean retreiveMetadata(String type, String ext, Photo photo, String path) {
         Importer wrapper = getWrapper(type, ext, Importer.Capability.META_DATA);
-        return wrapper.setMetadata(photo, path) ;
+        if (wrapper == null) {
+            return false ;
+        } else {
+            return wrapper.setMetadata(photo, path) ;
+        }
     }
 }

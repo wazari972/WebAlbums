@@ -51,7 +51,7 @@ public class WebPageBean implements WebPageLocal {
     private static final Logger log = Logger.getLogger(WebPageBean.class.getName());
 
     static {
-        log.log(Level.WARNING, "FilesFinder.initialized {0}", SystemTools.init());
+        log.log(Level.WARNING, "FilesFinder.initialized {0}", SystemTools.initate());
         log.warning("Loading WebAlbums3-Service-Beans");
     }
     public static final int USER_CHEAT = 0;

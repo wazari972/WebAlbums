@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateful;
+import javax.ejb.Singleton;
 import net.wazari.common.plugins.Importer;
 import net.wazari.common.util.ClassPathUtil;
 import net.wazari.service.PluginManagerLocal;
@@ -22,7 +22,8 @@ import net.wazari.common.plugins.System ;
  *
  * @author kevinpouget
  */
-@Stateful
+
+@Singleton
 public class PluginManager implements PluginManagerLocal{
     private static final Logger log = Logger.getLogger(PluginManager.class.getCanonicalName());
 
@@ -80,7 +81,7 @@ public class PluginManager implements PluginManagerLocal{
         }) ;
         validWrappers.clear() ;
         validWrappers.addAll(Arrays.asList(sortedWrappers)) ;
-
+        
         log.log(Level.INFO, "+++ Loading services for \"{0}\"", System.class.getCanonicalName());
         ServiceLoader<System> servicesSys = ServiceLoader.load(System.class);
         this.system = null ;
