@@ -1,3 +1,5 @@
 net.wazari.util.system.wrapper.EyeOfGnomeWrapper
 net.wazari.util.system.wrapper.ImageMagickWrapper
 net.wazari.util.system.wrapper.TotemWrapper
+net.wazari.util.system.wrapper.FfmpegWrapper
+net.wazari.util.system.wrapper.OSXQuickLookWrapper

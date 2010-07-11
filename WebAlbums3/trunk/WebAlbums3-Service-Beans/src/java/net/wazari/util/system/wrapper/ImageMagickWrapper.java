@@ -1,6 +1,7 @@
 package net.wazari.util.system.wrapper;
 
 import java.util.Arrays;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.wazari.common.plugins.Importer;
 import net.wazari.common.plugins.Metadata;
@@ -19,7 +20,7 @@ public class ImageMagickWrapper implements Importer {
     }
 
     @Override
-    public boolean rotate(ProcessCallback cb, String degrees, String source, String dest) {
+    public boolean rotate(ProcessCallback cb, String degrees , String source, String dest) {
         return 0 == cb.execWaitFor(new String[]{"convert", "-rotate", degrees, source, dest});
     }
 
@@ -40,7 +41,6 @@ public class ImageMagickWrapper implements Importer {
 
     @Override
     public boolean supports(String type, String ext, Capability cap) {
-        log.info("supports "+type+"-"+cap);
         if (type.contains("image"))
             return Arrays.asList(supports()).contains(cap) ;
         else return false ;
