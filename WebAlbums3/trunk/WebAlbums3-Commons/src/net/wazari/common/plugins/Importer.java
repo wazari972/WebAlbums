@@ -11,7 +11,7 @@ package net.wazari.common.plugins;
  */
 public interface Importer {
     enum Capability {
-        SHRINK, THUMBNAIL, ROTATE, FILE_FULLSCREEN, DIR_FULLSCREEN, META_DATA
+        SHRINK, THUMBNAIL, ROTATE, FULLSCREEN_SINGLE, FULLSCREEN_MULTIPLE, META_DATA
     }
     enum SanityStatus {
         FAIL, PASS
@@ -32,7 +32,9 @@ public interface Importer {
 
     boolean rotate(ProcessCallback cb, String degrees, String source, String dest);
 
-    void fullscreen(ProcessCallback cb, String path);
+    void fullscreenMultiple(ProcessCallback cb, String path);
+
+    void fullscreenFile(ProcessCallback cb, String path);
 
     boolean setMetadata(Metadata data, String path);
 

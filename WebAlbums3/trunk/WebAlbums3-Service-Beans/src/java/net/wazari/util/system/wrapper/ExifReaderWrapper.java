@@ -10,8 +10,6 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifReader;
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -19,7 +17,6 @@ import java.util.logging.Logger;
 import net.wazari.common.plugins.Importer;
 import net.wazari.common.plugins.Metadata;
 import net.wazari.common.plugins.ProcessCallback;
-import net.wazari.common.util.StringUtil;
 
 /**
  *
@@ -76,7 +73,7 @@ public class ExifReaderWrapper implements Importer {
     }
 
     @Override
-    public void fullscreen(ProcessCallback cb, String path) {
+    public void fullscreenMultiple(ProcessCallback cb, String path) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -155,5 +152,9 @@ public class ExifReaderWrapper implements Importer {
     @Override
     public int getPriority() {
         return 7 ;
+    }
+
+    public void fullscreenFile(ProcessCallback cb, String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

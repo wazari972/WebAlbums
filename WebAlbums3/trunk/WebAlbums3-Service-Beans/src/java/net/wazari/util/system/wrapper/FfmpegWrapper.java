@@ -5,7 +5,6 @@
 
 package net.wazari.util.system.wrapper;
 
-import java.io.File;
 import java.util.Arrays;
 import net.wazari.common.plugins.Importer;
 import net.wazari.common.plugins.Metadata;
@@ -62,7 +61,7 @@ public class FfmpegWrapper implements Importer {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void fullscreen(ProcessCallback cb, String path) {
+    public void fullscreenMultiple(ProcessCallback cb, String path) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -80,5 +79,9 @@ public class FfmpegWrapper implements Importer {
 
     public int getPriority() {
         return 4 ;
+    }
+
+    public void fullscreenFile(ProcessCallback cb, String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

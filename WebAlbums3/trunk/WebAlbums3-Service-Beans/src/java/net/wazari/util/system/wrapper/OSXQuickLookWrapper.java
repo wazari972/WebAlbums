@@ -16,7 +16,7 @@ import net.wazari.common.plugins.ProcessCallback;
  * @author kevinpouget
  */
 public class OSXQuickLookWrapper implements Importer {
-
+    private static final String PREVIEW = "/Applications/Preview.app/Contents/MacOS/Preview" ;
     public String getName() {
         return "OSX QuickLook wrapper" ;
     }
@@ -71,8 +71,8 @@ public class OSXQuickLookWrapper implements Importer {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void fullscreen(ProcessCallback cb, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void fullscreenMultiple(ProcessCallback cb, String path) {
+        cb.exec(new String[]{PREVIEW, path});
     }
 
     public boolean setMetadata(Metadata data, String path) {
@@ -80,7 +80,8 @@ public class OSXQuickLookWrapper implements Importer {
     }
 
     public SanityStatus sanityCheck(ProcessCallback cb) {
-        if (cb.execWaitFor(new String[]{"qlmanage", "-h"}) == 0) {
+        if ((cb.execWaitFor(new String[]{"qlmanage", "-h"}) == 0
+        && new File(PREVIEW).canExecute())) {
             return SanityStatus.PASS;
         } else {
             return SanityStatus.FAIL ;
@@ -89,6 +90,10 @@ public class OSXQuickLookWrapper implements Importer {
 
     public int getPriority() {
         return 3 ;
+    }
+
+    public void fullscreenFile(ProcessCallback cb, String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

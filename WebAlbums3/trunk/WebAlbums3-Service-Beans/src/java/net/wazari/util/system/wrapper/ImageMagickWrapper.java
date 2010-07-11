@@ -1,7 +1,6 @@
 package net.wazari.util.system.wrapper;
 
 import java.util.Arrays;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.wazari.common.plugins.Importer;
 import net.wazari.common.plugins.Metadata;
@@ -47,7 +46,7 @@ public class ImageMagickWrapper implements Importer {
     }
 
     @Override
-    public void fullscreen(ProcessCallback cb, String path) {
+    public void fullscreenMultiple(ProcessCallback cb, String path) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -80,4 +79,8 @@ public class ImageMagickWrapper implements Importer {
         return 8 ;
     }
     private static final Logger log = Logger.getLogger(ImageMagickWrapper.class.getName());
+
+    public void fullscreenFile(ProcessCallback cb, String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -28,7 +28,7 @@ public class EyeOfGnomeWrapper implements Importer {
 
     @Override
     public Capability[] supports() {
-        return new Capability[] {Capability.DIR_FULLSCREEN, Capability.FILE_FULLSCREEN} ;
+        return new Capability[] {Capability.FULLSCREEN_MULTIPLE, Capability.FULLSCREEN_SINGLE} ;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class EyeOfGnomeWrapper implements Importer {
     }
 
     @Override
-    public void fullscreen(ProcessCallback cb, String path) {
+    public void fullscreenMultiple(ProcessCallback cb, String path) {
         if (path == null) {
             return;
         }
@@ -87,5 +87,9 @@ public class EyeOfGnomeWrapper implements Importer {
 
     public int getPriority() {
         return 6 ;
+    }
+
+    public void fullscreenFile(ProcessCallback cb, String path) {
+        fullscreenMultiple(cb, path);
     }
 }

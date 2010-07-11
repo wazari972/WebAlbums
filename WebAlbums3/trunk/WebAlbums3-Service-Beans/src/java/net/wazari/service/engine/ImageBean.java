@@ -75,6 +75,11 @@ public class ImageBean implements ImageLocal {
             } else {
                 filepath = (mode == ImgMode.GRAND ? photoUtil.getImagePath(vSession, enrPhoto) : photoUtil.getMiniPath(vSession, enrPhoto));
             }
+            if (mode == ImgMode.FULLSCREEN) {
+                 sysTools.fullscreenImage(vSession, enrPhoto);
+                 return null ;
+            }
+
             filepath = "file://" + filepath;
 
             //null = correct, true = incorrect, but contentType already set

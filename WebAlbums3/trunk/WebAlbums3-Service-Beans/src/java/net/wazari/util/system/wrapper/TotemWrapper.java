@@ -25,7 +25,7 @@ public class TotemWrapper implements Importer {
 
     @Override
     public Capability[] supports() {
-        return new Capability[] {Capability.THUMBNAIL, Capability.FILE_FULLSCREEN} ;
+        return new Capability[] {Capability.THUMBNAIL, Capability.FULLSCREEN_SINGLE} ;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TotemWrapper implements Importer {
     }
 
     @Override
-    public void fullscreen(ProcessCallback cb, String path) {
+    public void fullscreenFile(ProcessCallback cb, String path) {
         if (path == null) {
             return;
         }
@@ -97,5 +97,9 @@ public class TotemWrapper implements Importer {
     @Override
     public int getPriority() {
         return 9 ;
+    }
+
+    public void fullscreenMultiple(ProcessCallback cb, String path) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

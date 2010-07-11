@@ -106,7 +106,7 @@ public class SystemTools {
         return dir;
     }
 
-    public boolean fullscreen(ViewSession vSession, PhotoRequest rq, String type, Integer id, Integer page) {
+    public boolean fullscreenMultiple(ViewSession vSession, PhotoRequest rq, String type, Integer id, Integer page) {
         page = (page == null ? 0 : page);
         if (plugins.getUsedSystem() == null) {
             log.warning("No ISystemUtil available ...");
@@ -121,7 +121,7 @@ public class SystemTools {
         File dir = null;
         int i = 0;
         boolean first = true;
-        Importer util = getWrapper("image", null, Importer.Capability.DIR_FULLSCREEN);
+        Importer util = getWrapper("image", null, Importer.Capability.FULLSCREEN_MULTIPLE);
         if (util == null) {
             return false;
         }
@@ -138,7 +138,7 @@ public class SystemTools {
             plugins.getUsedSystem().link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
 
             if (first && page == currentPage) {
-                util.fullscreen(cb, fPhoto.toString());
+                util.fullscreenMultiple(cb, fPhoto.toString());
                 first = false;
             }
             fPhoto.deleteOnExit();
@@ -172,6 +172,23 @@ public class SystemTools {
         fPhoto.deleteOnExit();
 
         return fPhoto.toString();
+    }
+
+    public boolean fullscreenImage(ViewSession vSession, Photo enrPhoto) {
+
+        File dir = buildTempDir(vSession, "fullscreen", null);
+        if (dir == null) {
+            return false;
+        }
+        String ext = photoUtil.getExtention(vSession, enrPhoto);
+        Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.FULLSCREEN_SINGLE);
+        if (util == null) {
+            return false;
+        }
+
+        util.fullscreenFile(cb, photoUtil.getImagePath(vSession, enrPhoto));
+
+        return true ;
     }
 
     public boolean thumbnail(String type, String ext, String source, String dest, int height) {

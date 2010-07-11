@@ -92,7 +92,7 @@ public class TagBean implements TagLocal {
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, listTagId) ;
             Special special = vSession.getSpecial();
             if (Special.FULLSCREEN == special) {
-                sysTools.fullscreen(vSession, rq, "Tags", null, page);
+                sysTools.fullscreenMultiple(vSession, rq, "Tags", null, page);
                 return null;
             } else {
                 output.add(photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay)vSession, thisPage, submit));

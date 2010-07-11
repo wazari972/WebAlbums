@@ -93,7 +93,7 @@ public class DispatcherBean {
             log.info("Authenticated the session");
             request.authenticate(response) ;
         }
-        log.log(Level.WARNING, "============= <{0}> =============", page);
+        log.log(Level.INFO, "============= <{0}> =============", page);
                 
         long debut = System.currentTimeMillis();
         response.setContentType("text/xml");
@@ -211,7 +211,7 @@ public class DispatcherBean {
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
-        log.log(Level.INFO, "============= {0}: {1} =============", new Object[]{page, time});
+        log.log(Level.WARNING, "============= {0}: {1} =============", new Object[]{page, time});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

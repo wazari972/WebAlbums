@@ -219,7 +219,7 @@ public class PhotoBean implements PhotoLocal {
             
             PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, albumId) ;
             if (Special.FULLSCREEN == special) {
-                sysTools.fullscreen(vSession, rq, "Albums", enrAlbum.getId(), page);
+                sysTools.fullscreenMultiple(vSession, rq, "Albums", enrAlbum.getId(), page);
             }
 
             XmlBuilder thisPage = new XmlBuilder(null);
