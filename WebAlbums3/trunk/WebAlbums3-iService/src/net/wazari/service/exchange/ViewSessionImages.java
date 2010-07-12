@@ -13,9 +13,7 @@ import java.io.OutputStream;
  * @author kevin
  */
 public interface ViewSessionImages extends ViewSession {
-    enum ImgMode {
-        PETIT, GRAND, SHRINK
-    ,   FULLSCREEN}
+    enum ImgMode {PETIT, GRAND, SHRINK, FULLSCREEN}
 
     Integer getId();
 

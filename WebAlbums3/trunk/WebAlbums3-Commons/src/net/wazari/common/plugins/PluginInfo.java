@@ -50,6 +50,7 @@ public class PluginInfo {
     }
 
     public void setUsedSystem(System syst) {
+        if (syst == null) return ;
         log.warning("------") ; 
         System = new Plugin() ;
         System.name = syst.getName() ;

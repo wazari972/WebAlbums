@@ -15,7 +15,7 @@ import net.wazari.common.plugins.ProcessCallback;
  *
  * @author kevinpouget
  */
-public class OSXQuickLookWrapper implements Importer {
+public class OSXToolsWrapper implements Importer {
     private static final String PREVIEW = "/Applications/Preview.app/Contents/MacOS/Preview" ;
     public String getName() {
         return "OSX QuickLook wrapper" ;
@@ -34,11 +34,11 @@ public class OSXQuickLookWrapper implements Importer {
     }
 
     public Capability[] supports() {
-        return new Capability[]{Capability.THUMBNAIL} ;
+        return new Capability[]{Capability.THUMBNAIL, Capability.FULLSCREEN_SINGLE} ;
     }
 
     public boolean supports(String type, String ext, Capability cap) {
-        if (type.contains("video"))
+        if (type.contains("video") || type.contains("image"))
             return Arrays.asList(supports()).contains(cap) ;
         else return false ;
     }
@@ -72,7 +72,7 @@ public class OSXQuickLookWrapper implements Importer {
     }
 
     public void fullscreenMultiple(ProcessCallback cb, String path) {
-        cb.exec(new String[]{PREVIEW, path});
+         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public boolean setMetadata(Metadata data, String path) {
@@ -93,7 +93,7 @@ public class OSXQuickLookWrapper implements Importer {
     }
 
     public void fullscreenFile(ProcessCallback cb, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        cb.exec(new String[]{PREVIEW, path});
     }
 
 }
