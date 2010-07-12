@@ -194,6 +194,7 @@ public class AlbumBean implements AlbumLocal {
         Album enrFirstAlbum = albumDAO.loadFirstAlbum(vSession, Restriction.ALLOWED_AND_THEME);
         Album enrLastAlbum = albumDAO.loadLastAlbum(vSession, Restriction.ALLOWED_AND_THEME);
 
+        if (enrFirstAlbum == null || enrLastAlbum == null) return years ;
         int firstYear = 2011 ;
         int lastYear = 2011 ;
         try {

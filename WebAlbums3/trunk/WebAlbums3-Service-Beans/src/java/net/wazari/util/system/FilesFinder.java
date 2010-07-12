@@ -59,6 +59,12 @@ public class FilesFinder {
     public boolean importAuthor(ViewSession vSession,
             String themeName,
             XmlBuilder out, Configuration conf) {
+        if (String.CASE_INSENSITIVE_ORDER.compare("root", themeName) == 0) {
+            info(out, "root is a reserved keyword");
+            out.addException("root is a reserved keyword");
+            out.validate();
+            return false;
+        }
 
         boolean correct = false;
         Stack<Element> stack = new Stack<Element>();
@@ -71,12 +77,6 @@ public class FilesFinder {
         //si l'auteur n'est pas encore dans la base de données,
         //on l'ajoute
         if (enrTheme == null) {
-            if (String.CASE_INSENSITIVE_ORDER.compare("root", themeName) == 0) {
-                out.addException("root is a reserved keyword");
-                out.validate();
-                return false;
-            }
-
             if (themeName.contains(" ")) {
                 out.addException("pas d'espace dans le nom du theme");
                 out.validate();
@@ -85,7 +85,7 @@ public class FilesFinder {
 
             info(out, "Le theme n'est pas dans la table");
             enrTheme = themeDAO.newTheme(themeName);
-
+            enrTheme = themeDAO.loadByName(enrTheme.getNom()) ;
             info(out, "Le theme a correctement été ajouté");
             correct = true;
 
