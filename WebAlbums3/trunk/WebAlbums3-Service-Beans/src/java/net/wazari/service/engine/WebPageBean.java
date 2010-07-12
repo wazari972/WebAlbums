@@ -135,9 +135,6 @@ public class WebPageBean implements WebPageLocal {
         log.log(Level.INFO, "logged as manager? {0}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {
             login.add("admin");
-            if (vSession.getEditionMode() == EditMode.EDITION) {
-                login.add("edit");
-            }
         }
         log.log(Level.INFO, "logged as root? {0}", vSession.isRootSession());
         if (vSession.isRootSession()) {
@@ -152,6 +149,9 @@ public class WebPageBean implements WebPageLocal {
         XmlBuilder affichage = new XmlBuilder("affichage");
         if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
             if (vSession.getEditionMode() == EditMode.EDITION) {
+                affichage.add("edit");
+                affichage.add("massedit");
+            } else if (vSession.getEditionMode() == EditMode.NORMAL) {
                 affichage.add("edit");
             }
             affichage.add("edition", vSession.getEditionMode());

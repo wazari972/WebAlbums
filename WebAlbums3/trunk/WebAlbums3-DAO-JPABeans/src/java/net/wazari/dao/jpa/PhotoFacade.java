@@ -120,7 +120,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
         Query q = em.createQuery(rqSelect+rqFrom);
         //TODO this might not be the better implementation ...
         int size = q.getResultList().size() ;
-        if (bornes.getFirstElement() != null) {
+        if (bornes != null && bornes.getFirstElement() != null) {
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getPhotoSize());
         }

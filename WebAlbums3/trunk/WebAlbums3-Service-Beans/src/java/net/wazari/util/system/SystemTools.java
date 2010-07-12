@@ -109,7 +109,12 @@ public class SystemTools {
     public boolean fullscreenMultiple(ViewSession vSession, PhotoRequest rq, String type, Integer id, Integer page) {
         page = (page == null ? 0 : page);
         if (plugins.getUsedSystem() == null) {
-            log.warning("No ISystemUtil available ...");
+            log.warning("No System plugin available ...");
+            return false;
+        }
+        Importer util = getWrapper("image", null, Importer.Capability.FULLSCREEN_MULTIPLE);
+        if (util == null) {
+            log.warning("No Importer plugin available ...");
             return false;
         }
         SubsetOf<Photo> lstPhoto;
@@ -121,10 +126,7 @@ public class SystemTools {
         File dir = null;
         int i = 0;
         boolean first = true;
-        Importer util = getWrapper("image", null, Importer.Capability.FULLSCREEN_MULTIPLE);
-        if (util == null) {
-            return false;
-        }
+
         for (Photo enrPhoto : lstPhoto.subset) {
             if (first) {
                 dir = buildTempDir(vSession, type, id);
