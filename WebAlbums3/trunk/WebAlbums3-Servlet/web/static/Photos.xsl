@@ -32,7 +32,7 @@
       <div class="body">
 	<a><xsl:attribute name="name"><xsl:value-of select="details/photoID" /></xsl:attribute></a>
 	<xsl:apply-templates select="message"/>
-	<xsl:if test="/root/login/edit">
+	<xsl:if test="/root/affichage/massedit">
 	  <input>
 	    <xsl:attribute name="type">checkbox</xsl:attribute>
 	    <xsl:attribute name="class">massEdit</xsl:attribute>
@@ -46,7 +46,7 @@
   </xsl:template>
 
   <xsl:template match="massEdit">
-    <xsl:if test="count(/root/login/edit)!=0">
+    <xsl:if test="/root/affichage/massedit">
       <script type='text/javascript' src="static/scripts/MassEdit.js" />
       <div class="item">
 	<div class="body">

@@ -58,7 +58,7 @@
 	      </xsl:attribute>
 	      <img src="static/images/out.png" height="30px"/>
 	    </a>
-	    <xsl:if test="/root/login/edit">
+	    <xsl:if test="/root/affichage/edit">
 	      &#160;
 	      <a title="Edition de l'album">
 		<xsl:attribute name="href">

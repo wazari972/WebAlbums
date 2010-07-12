@@ -95,7 +95,7 @@
 	  <img src="static/images/dossier.gif" width="25px"/>
 	</a>
       </xsl:if>
-      <xsl:if test="/root/login/edit">
+      <xsl:if test="/root/affichage/edit">
 	<a title="Edition">
 	  <xsl:attribute name="href">
 	    <xsl:if test="/root/photos">
