@@ -10,21 +10,22 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.wazari.common.plugins.Importer.ProcessCallback;
 
 /**
  *
  * @author kevinpouget
  */
-public class ProcessCallback {
-    private static final Logger log = Logger.getLogger(ProcessCallback.class.getName());
+public class ProcessCallbackImpl implements ProcessCallback {
+    private static final Logger log = Logger.getLogger(ProcessCallbackImpl.class.getName());
 
-    private static final ProcessCallback cb = new ProcessCallback() ;
+    private static final ProcessCallbackImpl cb = new ProcessCallbackImpl() ;
 
     public static ProcessCallback getProcessCallBack () {
         return cb ;
     }
 
-    private ProcessCallback(){}
+    private ProcessCallbackImpl(){}
 
     private Process execPS(String[] cmd) {
         try {

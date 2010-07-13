@@ -5,14 +5,21 @@
 
 package net.wazari.common.plugins;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.common.util.ClassPathUtil;
 
 /**
  *
@@ -23,19 +30,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PluginInfo {
     private static final Logger log = Logger.getLogger(PluginInfo.class.getName());
     
-    @XmlElement List<Plugin> Importer = new LinkedList<Plugin>() ;
+    @XmlElementWrapper(name="Importers") List<Plugin> Importer = new LinkedList<Plugin>() ;
     @XmlElement Plugin System = null ;
-    @XmlElement List<Plugin> NotUsedSystems = new LinkedList<Plugin>() ;
+    @XmlElementWrapper(name="NotUsedSystems") List<Plugin> NotUsedSystems = new LinkedList<Plugin>() ;
 
     public void addImporter(Importer importer) {
         Plugin plug = new Plugin() ;
         plug.name = importer.getName() ;
         plug.version = importer.getVersion() ;
-        plug.description = importer.getDescription() ;
-        plug.capabilities = Arrays.asList(importer.supports()) ;
+        plug.description = importer.getTargetSystem() ;
+        plug.capability = Arrays.asList(importer.supports()) ;
         plug.priority = importer.getPriority();
         plug.supportedFiles = importer.getSupportedFilesDesc() ;
-        plug.sanityCheck = importer.sanityCheck(ProcessCallback.getProcessCallBack());
+        plug.sanityCheck = importer.sanityCheck(ProcessCallbackImpl.getProcessCallBack());
 
         Importer.add(plug);
     }
@@ -44,7 +51,7 @@ public class PluginInfo {
         Plugin plug = new Plugin() ;
         plug.name = syst.getName() ;
         plug.version = syst.getVersion() ;
-        plug.sanityCheck = syst.sanityCheck(ProcessCallback.getProcessCallBack());
+        plug.sanityCheck = syst.sanityCheck(ProcessCallbackImpl.getProcessCallBack());
 
         NotUsedSystems.add(plug);
     }
@@ -55,14 +62,14 @@ public class PluginInfo {
         System = new Plugin() ;
         System.name = syst.getName() ;
         System.version = syst.getVersion() ;
-        System.sanityCheck = syst.sanityCheck(ProcessCallback.getProcessCallBack());
+        System.sanityCheck = syst.sanityCheck(ProcessCallbackImpl.getProcessCallBack());
     }
 
     private static class Plugin {
         @XmlElement String name ;
         @XmlElement String version ;
         @XmlElement String description ;
-        @XmlElement List<Importer.Capability> capabilities ;
+        @XmlElementWrapper(name="Capabilities") List<Importer.Capability> capability ;
         @XmlElement String supportedFiles ;
         @XmlElement Importer.SanityStatus sanityCheck ;
         @XmlElement int priority;

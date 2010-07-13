@@ -2,7 +2,6 @@ package net.wazari.common.util;
 
 //retrieved from
 //http://www.solitarygeek.com/java/a-simple-pluggable-java-application/
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -13,8 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ClassPathUtil {
-    private static Logger log = Logger.getLogger(ClassPathUtil.class.getName());
 
+    private static Logger log = Logger.getLogger(ClassPathUtil.class.getName());
     private static final Class[] PARAMS = new Class[]{URL.class};
 
     /**
@@ -22,22 +21,24 @@ public class ClassPathUtil {
      * @param directory
      * @throws IOException
      */
-    public static void addDirToClasspath(File directory) {
+    public static ClassLoader addDirToClasspath(File directory) {
+        MyURLClassLoader myCl = new MyURLClassLoader() ;
         if (directory.exists()) {
             File[] files = directory.listFiles();
             for (int i = 0; i < files.length; i++) {
                 File file = files[i];
                 if (file.getName().endsWith(".jar")) {
                     try {
-                        addURL(file.toURI().toURL());
+                        myCl.addURL(file.toURI().toURL());
                     } catch (MalformedURLException ex) {
-                        log.log(Level.SEVERE, "MalformedURLException: {0}", ex.getMessage());
+                        log.log(Level.SEVERE, "MalformedURLException: ", ex);
                     }
                 }
             }
         } else {
             log.log(Level.WARNING, "The directory \"{0}\" does not exist!", directory);
         }
+        return myCl ;
     }
 
     /**
@@ -61,8 +62,18 @@ public class ClassPathUtil {
             method.invoke(sysLoader, new Object[]{u});
             log.log(Level.INFO, "ADD {0}: OK!", u);
         } catch (Throwable t) {
-            t.printStackTrace();
-            log.severe("Error, could not add URL to system classloader");
+            log.log(Level.SEVERE, "Error, could not add URL to system classloader", t);
+        }
+    }
+
+    private static class MyURLClassLoader extends URLClassLoader {
+        public MyURLClassLoader() {
+            super(new URL[]{}, Thread.currentThread().getContextClassLoader());
+        }
+
+        @Override
+        public void addURL(URL url) {
+            super.addURL(url);
         }
     }
 }
