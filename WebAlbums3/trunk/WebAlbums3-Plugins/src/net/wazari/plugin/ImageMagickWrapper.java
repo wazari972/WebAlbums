@@ -2,10 +2,13 @@ package net.wazari.plugin;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
-import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.GenericImporter;
+import net.wazari.common.plugins.Importer.Capability;
+import net.wazari.common.plugins.Importer.ProcessCallback;
+import net.wazari.common.plugins.Importer.SanityStatus;
 
 
-public class ImageMagickWrapper implements Importer {
+public class ImageMagickWrapper extends GenericImporter {
     @Override
     public boolean shrink(ProcessCallback cb, String source, String dest, int width) {
         return 0 == cb.execWaitFor(new String[]{"convert", "-resize", "" + width + "x", source, dest});
@@ -44,11 +47,6 @@ public class ImageMagickWrapper implements Importer {
     }
 
     @Override
-    public void fullscreenMultiple(ProcessCallback cb, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public SanityStatus sanityCheck(ProcessCallback cb) {
         if (cb.execWaitFor(new String[]{"convert", "--version"}) == 0){
             return SanityStatus.PASS;
@@ -65,11 +63,6 @@ public class ImageMagickWrapper implements Importer {
     @Override
     public String getSupportedFilesDesc() {
         return "photos" ;
-    }
-
-    @Override
-    public boolean setMetadata(Metadata data, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

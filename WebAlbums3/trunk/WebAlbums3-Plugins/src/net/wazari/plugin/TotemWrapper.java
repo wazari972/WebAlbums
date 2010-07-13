@@ -1,9 +1,12 @@
 package net.wazari.plugin;
 
 import java.util.Arrays;
-import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.GenericImporter;
+import net.wazari.common.plugins.Importer.Capability;
+import net.wazari.common.plugins.Importer.ProcessCallback;
+import net.wazari.common.plugins.Importer.SanityStatus;
 
-public class TotemWrapper implements Importer {
+public class TotemWrapper extends GenericImporter {
 
     private boolean supports(String type, String ext) {
         if (type != null) {
@@ -36,16 +39,6 @@ public class TotemWrapper implements Importer {
     @Override
     public boolean thumbnail(ProcessCallback cb, String source, String dest, int height) {
         return 0 == cb.execWaitFor(new String[]{"totem-video-thumbnailer", "-s", "" + height, source, dest});
-    }
-
-    @Override
-    public boolean rotate(ProcessCallback cb, String degrees, String source, String dest) {
-        return true;
-    }
-
-    @Override
-    public boolean shrink(ProcessCallback cb, String source, String dest, int width) {
-        return true;
     }
 
     @Override
@@ -88,16 +81,7 @@ public class TotemWrapper implements Importer {
     }
 
     @Override
-    public boolean setMetadata(Metadata data, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public int getPriority() {
         return 9 ;
-    }
-
-    public void fullscreenMultiple(ProcessCallback cb, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -6,13 +6,17 @@
 package net.wazari.plugin;
 
 import java.util.Arrays;
-import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.GenericImporter;
+import net.wazari.common.plugins.Importer.Capability;
+import net.wazari.common.plugins.Importer.Metadata;
+import net.wazari.common.plugins.Importer.ProcessCallback;
+import net.wazari.common.plugins.Importer.SanityStatus;
 
 /**
  *
  * @author kevinpouget
  */
-public class FfmpegWrapper implements Importer {
+public class FfmpegWrapper  extends GenericImporter {
 
     public String getName() {
         return "ffmpeg wrapper" ;
@@ -40,10 +44,6 @@ public class FfmpegWrapper implements Importer {
         else return false ;
     }
 
-    public boolean shrink(ProcessCallback cb, String source, String dest, int width) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public boolean thumbnail(ProcessCallback cb, String source, String dest, int height) {
         int width = (int)(height*16.)/9 ;
         return 0 == cb.execWaitFor(new String[]{"ffmpeg", "-i", source,
@@ -53,18 +53,6 @@ public class FfmpegWrapper implements Importer {
         "-f", "rawvideo",
         "-s", width+"x"+height,
         "-y", dest});
-    }
-
-    public boolean rotate(ProcessCallback cb, String degrees, String source, String dest) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void fullscreenMultiple(ProcessCallback cb, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean setMetadata(Metadata data, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public SanityStatus sanityCheck(ProcessCallback cb) {
@@ -77,9 +65,5 @@ public class FfmpegWrapper implements Importer {
 
     public int getPriority() {
         return 4 ;
-    }
-
-    public void fullscreenFile(ProcessCallback cb, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

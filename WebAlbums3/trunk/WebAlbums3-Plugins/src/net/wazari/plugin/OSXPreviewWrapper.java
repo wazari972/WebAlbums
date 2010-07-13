@@ -5,18 +5,25 @@
 
 package net.wazari.plugin;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.logging.Logger;
 import net.wazari.common.plugins.GenericImporter;
+import net.wazari.common.plugins.Importer.Capability;
+import net.wazari.common.plugins.Importer.ProcessCallback;
+import net.wazari.common.plugins.Importer.SanityStatus;
 
 /**
  *
  * @author kevinpouget
  */
-public class EyeOfGnomeWrapper extends GenericImporter {
+public class OSXPreviewWrapper  extends GenericImporter {
+    private static final String PREVIEW = "/Applications/Preview.app/Contents/MacOS/Preview" ;
+    private static final Logger log = Logger.getLogger(OSXPreviewWrapper.class.getName());
 
     @Override
     public String getName() {
-        return "Eye of Gnome wrapper" ;
+        return "OSX Preview wrapper" ;
     }
 
     @Override
@@ -25,28 +32,30 @@ public class EyeOfGnomeWrapper extends GenericImporter {
     }
 
     @Override
+    public String getTargetSystem() {
+        return "OSX" ;
+    }
+
+    @Override
+    public String getSupportedFilesDesc() {
+        return "images" ;
+    }
+
+    @Override
     public Capability[] supports() {
-        return new Capability[] {Capability.FULLSCREEN_MULTIPLE, Capability.FULLSCREEN_SINGLE} ;
+        return new Capability[]{Capability.FULLSCREEN_SINGLE} ;
     }
 
     @Override
     public boolean supports(String type, String ext, Capability cap) {
-        if ((type != null && type.contains("image")))
+        if (type.contains("image"))
             return Arrays.asList(supports()).contains(cap) ;
         else return false ;
     }
 
     @Override
-    public void fullscreenMultiple(ProcessCallback cb, String path) {
-        if (path == null) {
-            return;
-        }
-        cb.exec(new String[]{"eog", "--fullscreen", path});
-    }
-
-    @Override
     public SanityStatus sanityCheck(ProcessCallback cb) {
-        if (cb.execWaitFor(new String[]{"eog", "--help"}) == 0){
+        if (new File(PREVIEW).canExecute()) {
             return SanityStatus.PASS;
         } else {
             return SanityStatus.FAIL ;
@@ -54,20 +63,12 @@ public class EyeOfGnomeWrapper extends GenericImporter {
     }
 
     @Override
-    public String getTargetSystem() {
-        return "Linux/Gnome" ;
+    public int getPriority() {
+        return 3 ;
     }
 
     @Override
-    public String getSupportedFilesDesc() {
-        return "photos" ;
-    }
-
-    public int getPriority() {
-        return 6 ;
-    }
-
     public void fullscreenFile(ProcessCallback cb, String path) {
-        fullscreenMultiple(cb, path);
+        cb.exec(new String[]{PREVIEW, path});
     }
 }

@@ -14,13 +14,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.GenericImporter;
 
 /**
  *
  * @author kevinpouget
  */
-public class ExifReaderWrapper implements Importer {
+public class ExifReaderWrapper extends GenericImporter {
     private static final Logger log = Logger.getLogger(ExifReaderWrapper.class.getName());
 
     @Override
@@ -57,21 +57,6 @@ public class ExifReaderWrapper implements Importer {
 
     @Override
     public boolean shrink(ProcessCallback cb, String source, String dest, int width) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean thumbnail(ProcessCallback cb, String source, String dest, int height) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean rotate(ProcessCallback cb, String degrees, String source, String dest) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void fullscreenMultiple(ProcessCallback cb, String path) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -150,9 +135,5 @@ public class ExifReaderWrapper implements Importer {
     @Override
     public int getPriority() {
         return 7 ;
-    }
-
-    public void fullscreenFile(ProcessCallback cb, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
