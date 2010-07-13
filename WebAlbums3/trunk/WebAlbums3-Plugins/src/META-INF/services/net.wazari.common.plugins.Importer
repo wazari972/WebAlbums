@@ -1,0 +1,6 @@
+net.wazari.plugin.ImageMagickWrapper
+net.wazari.plugin.TotemWrapper
+net.wazari.plugin.FfmpegWrapper
+net.wazari.plugin.OSXToolsWrapper
+net.wazari.plugin.ExifReaderWrapper
+net.wazari.plugin.EyeOfGnomeWrapper
