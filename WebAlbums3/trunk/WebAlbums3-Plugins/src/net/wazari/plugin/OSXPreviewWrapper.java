@@ -43,7 +43,7 @@ public class OSXPreviewWrapper  extends GenericImporter {
 
     @Override
     public Capability[] supports() {
-        return new Capability[]{Capability.FULLSCREEN_SINGLE} ;
+        return new Capability[]{Capability.FULLSCREEN_SINGLE, Capability.FULLSCREEN_MULTIPLE} ;
     }
 
     @Override
@@ -69,6 +69,11 @@ public class OSXPreviewWrapper  extends GenericImporter {
 
     @Override
     public void fullscreenFile(ProcessCallback cb, String path) {
+        cb.exec(new String[]{PREVIEW, path});
+    }
+
+    @Override
+    public void fullscreenMultiple(ProcessCallback cb, String path) {
         cb.exec(new String[]{PREVIEW, path});
     }
 }

@@ -97,7 +97,7 @@ public class SystemTools {
                         return null;
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.log(Level.WARNING, "IOException", e);
                     return null;
                 }
             }
@@ -109,7 +109,7 @@ public class SystemTools {
     }
 
     public boolean fullscreenMultiple(ViewSession vSession, PhotoRequest rq, String type, Integer id, Integer page) {
-        page = (page == null ? 0 : page);
+        int pageAsked = (page == null ? 0 : page);
         if (plugins.getUsedSystem() == null) {
             log.warning("No System plugin available ...");
             return false;
@@ -128,7 +128,7 @@ public class SystemTools {
         File dir = null;
         int i = 0;
         boolean first = true;
-
+        log.log(Level.WARNING, "Fullscreen multiple: page asked:{0}", pageAsked);
         for (Photo enrPhoto : lstPhoto.subset) {
             if (first) {
                 dir = buildTempDir(vSession, type, id);
@@ -138,10 +138,11 @@ public class SystemTools {
             }
 
             int currentPage = i / vSession.getPhotoSize();
+            log.log(Level.INFO, "Fullscreen multiple: current page:{0}", currentPage);
             File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
             plugins.getUsedSystem().link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
 
-            if (first && page == currentPage) {
+            if (first && currentPage ==  pageAsked) {
                 util.fullscreenMultiple(cb, fPhoto.toString());
                 first = false;
             }
