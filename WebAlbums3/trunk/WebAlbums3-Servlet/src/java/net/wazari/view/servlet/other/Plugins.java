@@ -60,8 +60,7 @@ public class Plugins  extends HttpServlet{
 
             out.println(xml);
         } catch (Exception e) {
-            log.log(Level.INFO, "action:{0}", e.getMessage());
-            e.printStackTrace();
+            log.log(Level.WARNING, "Exception during the plugin handling", e);
         } finally {
             out.close();
         }
