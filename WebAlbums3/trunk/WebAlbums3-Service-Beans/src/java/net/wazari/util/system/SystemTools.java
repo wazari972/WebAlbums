@@ -17,7 +17,9 @@ import net.wazari.service.PhotoLocal.TypeRequest;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.common.plugins.Importer;
-import net.wazari.common.plugins.ProcessCallback;
+import net.wazari.common.plugins.Importer.Metadata;
+import net.wazari.common.plugins.Importer.ProcessCallback;
+import net.wazari.common.plugins.ProcessCallbackImpl;
 import net.wazari.service.PluginManagerLocal;
 
 @Singleton
@@ -32,7 +34,7 @@ public class SystemTools {
     @EJB
     private PluginManagerLocal plugins ;
 
-    static final ProcessCallback cb = ProcessCallback.getProcessCallBack();
+    static final ProcessCallback cb = ProcessCallbackImpl.getProcessCallBack();
 
     public static boolean initate() {
         return true;
@@ -220,7 +222,7 @@ public class SystemTools {
         if (wrapper == null) {
             return false ;
         } else {
-            return wrapper.setMetadata(photo, path) ;
+            return wrapper.setMetadata((Metadata)photo, path) ;
         }
     }
 }
