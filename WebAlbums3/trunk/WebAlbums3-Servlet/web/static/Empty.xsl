@@ -78,19 +78,17 @@
     </td>
   </xsl:template>
 
- <xsl:template match="/root/albums/years">
-   <table>
-       <xsl:apply-templates select="year" />
-   </table>
+<xsl:template match="/root/albums/years">
+   <xsl:apply-templates select="year" />
  </xsl:template>
 
  <xsl:template match="year">
-     <tr><th><xsl:value-of select="@year"/></th></tr>
-     <tr>
-         <table>
+     <div style="overflow: auto;">
+        <b><xsl:value-of select="@year"/></b>
+        <table>
             <xsl:apply-templates select="album" />
         </table>
-     </tr>
+     </div>
  </xsl:template>
 
  <xsl:template match="/root/albums/top5">
