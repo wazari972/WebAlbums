@@ -107,7 +107,9 @@ public class DispatcherBean {
         try {
             xslFile = "static/Display.xsl";
             if (page == Page.USER) {
-                output.add(userServlet.treatLogin((ViewSessionLogin) vSession,request)) ;
+                XmlBuilder resp = userServlet.treatLogin((ViewSessionLogin) vSession,request, response) ;
+                if (resp == null) return ;
+                output.add(resp) ;
             } else if (page == Page.VOID) {
                 output.add(indexServlet.treatVOID(vSession));
             } else if (page == Page.MAINT) {

@@ -27,7 +27,7 @@ public class Users extends HttpServlet {
     private static final long serialVersionUID = 1L;
     @EJB private DispatcherBean dispatcher ;
 
-    public XmlBuilder treatLogin(ViewSessionLogin vSession, HttpServletRequest request) {
+    public XmlBuilder treatLogin(ViewSessionLogin vSession, HttpServletRequest request, HttpServletResponse response) throws IOException {
         XmlBuilder output = new XmlBuilder("userLogin");
         try {
             Action action = vSession.getAction();
@@ -48,6 +48,8 @@ public class Users extends HttpServlet {
                 request.login(userName, pass);
                 output.add("valid");
                 log.log(Level.INFO, "authentication: {0}", valid);
+                response.sendRedirect("Index");
+                return null ;
             } else {
                 output.add("login");
             }
