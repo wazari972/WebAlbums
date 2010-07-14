@@ -29,9 +29,11 @@ public class MaintBean implements MaintLocal {
             maintDAO.treatExportXML(getPath(vSession.getConfiguration()));
         } else if (MaintAction.IMPORT_XML == action) {
             maintDAO.treatImportXML(getPath(vSession.getConfiguration()));
+        } else if (MaintAction.PRINT_STATS == action) {
+            maintDAO.treatDumpStats();
 
-        } else if (MaintAction.UPDATE == action) {
-
+        } else if (MaintAction.UPDATE_DAO == action) {
+            maintDAO.treatUpdate();
         } else {
             for (MaintAction act : Arrays.asList(MaintAction.values())) {
                 output.add("action", act);

@@ -22,14 +22,15 @@ public class WebAlbumsDAOBean {
     public static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
     public static final String PERSISTENCE_UNIT_MySQL_Test = "WebAlbums-MySQL-Test" ;
     public static final String PERSISTENCE_UNIT_MySQL_Test2 = "WebAlbums-MySQL-Test2" ;
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Test2 ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Test ;
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String processListID(ServiceSession session, String rq, boolean restrict) {
+        String newRq = rq ;
         if (restrict && ! session.isRootSession()) {
-            rq += " AND " + restrictToThemeAllowed(session, "a") + " ";
+            newRq += " AND " + restrictToThemeAllowed(session, "a") + " ";
         }
-        return rq;
+        return newRq;
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
@@ -58,8 +59,6 @@ public class WebAlbumsDAOBean {
                 " FROM JPAPhoto p, JPAAlbum a " +
                 " WHERE p.album = a.id ";
         if (!session.isSessionManager()) {
-            log.info("---") ;
-            log.info("User: "+session.getUser()) ;
             rq += " AND (" +
                     //albums autorisé
                     "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUser().getId() + "') " +

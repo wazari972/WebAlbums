@@ -198,6 +198,7 @@ public class AlbumBean implements AlbumLocal {
         int firstYear = 2011 ;
         int lastYear = 2011 ;
         try {
+            log.info(enrFirstAlbum.toString()) ;
             firstYear = Integer.parseInt(YEAR.format(Album.DATE_STANDARD.parse(enrFirstAlbum.getDate())));
             lastYear =  Integer.parseInt(YEAR.format(Album.DATE_STANDARD.parse(enrLastAlbum.getDate()))) ;
         } catch (ParseException ex) {

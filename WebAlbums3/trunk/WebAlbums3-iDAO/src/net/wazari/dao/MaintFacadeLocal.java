@@ -27,4 +27,10 @@ public interface MaintFacadeLocal {
     
     @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
     void treatFullImport(String path) ;
+
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    void treatDumpStats() ;
+
+    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    void treatUpdate();
 }

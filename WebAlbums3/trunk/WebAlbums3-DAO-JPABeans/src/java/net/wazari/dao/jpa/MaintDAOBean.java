@@ -4,14 +4,24 @@
  */
 package net.wazari.dao.jpa;
 
+import java.lang.management.ManagementFactory;
 import java.sql.Connection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import net.wazari.dao.MaintFacadeLocal;
 import org.hibernate.JDBCException;
+import org.hibernate.ejb.EntityManagerImpl;
+import org.hibernate.jmx.StatisticsService;
 
 /**
  *
@@ -52,5 +62,41 @@ public class MaintDAOBean implements MaintFacadeLocal {
         if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) return ;
         treatTruncateDB();
         treatImportXML(path);
+    }
+
+    @Override
+    public void treatUpdate() {
+        try {
+            log.info("registering Hibernate statistics MBean");
+
+            ObjectName hibernateMBeanName = new ObjectName("Hibernate:type=statistics,application=WebAlbums");
+
+            StatisticsService mBean = new StatisticsService();
+            mBean.setStatisticsEnabled(true);
+            mBean.setSessionFactory(((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory());
+            try {
+                ManagementFactory.getPlatformMBeanServer().unregisterMBean(hibernateMBeanName);
+                log.warning("HibernateJMX was correctly undeployed");
+            } catch (InstanceNotFoundException ex) {
+                log.warning("HibernateJMX was not deployed");
+            }
+            ManagementFactory.getPlatformMBeanServer().registerMBean(mBean, hibernateMBeanName);
+        } catch (InstanceAlreadyExistsException ex) {
+            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MBeanRegistrationException ex) {
+            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotCompliantMBeanException ex) {
+            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (MalformedObjectNameException ex) {
+            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException ex) {
+            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @Override
+    public void treatDumpStats() {
+        ((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory().getStatistics().logSummary();
+
+        
     }
 }
