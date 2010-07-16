@@ -24,6 +24,11 @@ import net.wazari.dao.jpa.entity.*;
  */
 @XmlRootElement
 public class WebAlbumsXML {
+    public static final Class<?>[] clazzez = new Class<?>[]
+    {WebAlbumsXML.class, JPATheme.class, JPATheme.class, JPAUtilisateur.class,
+    JPAAlbum.class, JPAPhoto.class, JPATag.class, JPATagTheme.class,
+     JPATagPhoto.class} ;
+
     @XmlElement private Themes Themes ;
     @XmlElement private Utilisateurs Utilisateurs ;
     @XmlElement private Albums Albums ;
@@ -32,16 +37,7 @@ public class WebAlbumsXML {
     @XmlElement private TagThemes TagThemes ;
     @XmlElement private TagPhotos TagPhoto ;
 
-    /* ** Informe the JAXB context about these classes */
-    @XmlElement private final JPATheme t = null ;
-    @XmlElement private final JPAUtilisateur u = null ;
-    @XmlElement private final JPAAlbum a = null ;
-    @XmlElement private final JPAPhoto p = null ;
-    @XmlElement private final JPATag ta = null ;
-    @XmlElement private final JPATagTheme tt = null ;
-    @XmlElement private final JPATagPhoto tp = null ;
-
-    public WebAlbumsXML(){}
+    private WebAlbumsXML(){}
     
     public WebAlbumsXML(List<Theme> themes, List<Utilisateur> utilisateurs, List<Album> albums, List<Photo> photos, 
             List<Tag> tags, List<TagTheme> tagThemes, List<TagPhoto> tagPhoto)

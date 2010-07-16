@@ -5,7 +5,7 @@
 package net.wazari.util.system;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -80,16 +80,13 @@ public class PluginManager implements PluginManagerLocal {
             }
         }
 
-        Importer[] sortedWrappers = validWrappers.toArray(new Importer[validWrappers.size()]);
-        Arrays.sort(sortedWrappers, new Comparator<Importer>() {
+        Collections.sort(validWrappers, new Comparator<Importer>() {
 
             public int compare(Importer o1, Importer o2) {
 
-                return o1.getPriority() - o2.getPriority();
+                return o2.getPriority() - o1.getPriority();
             }
         });
-        validWrappers.clear();
-        validWrappers.addAll(Arrays.asList(sortedWrappers));
 
         log.log(Level.INFO, "+++ Loading services for \"{0}\"", System.class.getCanonicalName());
         ServiceLoader<System> servicesSys = ServiceLoader.load(System.class, cl);

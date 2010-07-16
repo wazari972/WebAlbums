@@ -18,7 +18,7 @@ import javax.xml.bind.Unmarshaller;
  * @author kevinpouget
  */
 public class XmlUtils {
-    public static <T> void save(File file, Class<T> clazz, T obj) throws JAXBException {
+    public static <T> void save(File file, T obj, Class<?> ... clazz) throws JAXBException {
         //Create JAXB Context
         JAXBContext jc = JAXBContext.newInstance(clazz);
         //Create marshaller
@@ -28,7 +28,7 @@ public class XmlUtils {
         marshaller.marshal(obj, file);
     }
 
-    public static <T> String print(T xml, Class<T> clazz) throws JAXBException {
+    public static <T> String print(T xml, Class<?> ... clazz) throws JAXBException {
         //Create JAXB Context
         JAXBContext jc = JAXBContext.newInstance(clazz);
 
@@ -42,7 +42,7 @@ public class XmlUtils {
         return writer.toString() ;
     }
 
-    public static <T> T reload (File file, Class<T> clazz) throws JAXBException {
+    public static <T> T reload (File file, Class<?> ... clazz) throws JAXBException {
         //Create JAXB Context
         JAXBContext jc = JAXBContext.newInstance(clazz);
         Unmarshaller um = jc.createUnmarshaller();

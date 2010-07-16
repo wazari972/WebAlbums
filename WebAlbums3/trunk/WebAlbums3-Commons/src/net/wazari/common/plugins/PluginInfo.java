@@ -5,21 +5,16 @@
 
 package net.wazari.common.plugins;
 
-import java.io.File;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.wazari.common.util.ClassPathUtil;
+import net.wazari.common.plugins.Importer.SanityStatus;
 
 /**
  *
@@ -30,7 +25,8 @@ import net.wazari.common.util.ClassPathUtil;
 public class PluginInfo {
     private static final Logger log = Logger.getLogger(PluginInfo.class.getName());
     
-    @XmlElementWrapper(name="Importers") List<Plugin> Importer = new LinkedList<Plugin>() ;
+    @XmlElementWrapper(name="Importers") List<Plugin> WorkingImporters = new LinkedList<Plugin>() ;
+    @XmlElementWrapper(name="Importers") List<Plugin> FailingImporters = new LinkedList<Plugin>() ;
     @XmlElement Plugin System = null ;
     @XmlElementWrapper(name="NotUsedSystems") List<Plugin> NotUsedSystems = new LinkedList<Plugin>() ;
 
@@ -44,7 +40,12 @@ public class PluginInfo {
         plug.supportedFiles = importer.getSupportedFilesDesc() ;
         plug.sanityCheck = importer.sanityCheck(ProcessCallbackImpl.getProcessCallBack());
 
-        Importer.add(plug);
+        if (plug.sanityCheck == SanityStatus.PASS) {
+            WorkingImporters.add(plug);
+        } else {
+            FailingImporters.add(plug);
+        }
+        
     }
 
     public void addNotUsedSystem(System syst) {

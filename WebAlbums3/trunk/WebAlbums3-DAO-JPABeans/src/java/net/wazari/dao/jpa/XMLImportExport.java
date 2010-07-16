@@ -64,7 +64,7 @@ public class XMLImportExport implements ImportExporter {
         WebAlbumsXML web = new WebAlbumsXML(themeDAO.findAll(), userDAO.findAll(), albumDAO.findAll(),
                 photoDAO.findAll(), tagDAO.findAll(), tagThemeDAO.findAll(), tagPhotoDAO.findAll()) ;
         try {
-            XmlUtils.save(new File(path+FILENAME), WebAlbumsXML.class, web);
+            XmlUtils.save(new File(path+FILENAME), web, WebAlbumsXML.clazzez);
             log.log(Level.INFO, "XML Saved!");
         } catch (JAXBException ex) {
             log.log(Level.SEVERE, null, ex);
@@ -74,7 +74,7 @@ public class XMLImportExport implements ImportExporter {
     @Override
     public void importXml(String path) {
         try {
-            WebAlbumsXML web = XmlUtils.reload(new File(path+FILENAME), WebAlbumsXML.class);
+            WebAlbumsXML web = XmlUtils.reload(new File(path+FILENAME), WebAlbumsXML.clazzez);
             if (web == null) {
                 log.warning("Couldn't load the XML backup ...");
                 return ;

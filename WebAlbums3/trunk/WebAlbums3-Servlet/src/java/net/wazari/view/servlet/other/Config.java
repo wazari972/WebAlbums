@@ -70,8 +70,7 @@ public class Config extends HttpServlet {
                 } else {
                     if (!confFile.exists()) {
                         File file = new File(ConfigurationXML.getConf().getConfigFilePath());
-                        XmlUtils.save(file, ConfigurationXML.class,
-                                (ConfigurationXML) ConfigurationXML.getConf());
+                        XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
                         out.println(Level.INFO+" Config file saved in "+ conf.getConfigFilePath()+"<BR/>") ;
                    } else {
                         out.println(Level.INFO+" Config file already exists in "+ conf.getConfigFilePath()+"<BR/>") ;
@@ -83,8 +82,7 @@ public class Config extends HttpServlet {
                     File file = new File(ConfigurationXML.getConf().getConfigFilePath());
                     file.getParentFile().mkdirs();
 
-                    XmlUtils.save(file, ConfigurationXML.class,
-                            (ConfigurationXML) ConfigurationXML.getConf());
+                    XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
 
                     log.log(Level.INFO, "ConfigurationXML Saved into {0}", file.getCanonicalPath());
                 } else if ("RELOAD".equals(action)) {
