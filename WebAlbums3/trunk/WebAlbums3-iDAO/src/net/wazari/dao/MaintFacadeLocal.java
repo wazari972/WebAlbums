@@ -14,23 +14,23 @@ import javax.ejb.Local;
  * @author kevinpouget
  */
 @Local
-@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface MaintFacadeLocal {
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatImportXML(String path) ;
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatExportXML(String path) ;
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatTruncateDB() ;
     
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatFullImport(String path) ;
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatDumpStats() ;
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatUpdate();
 }

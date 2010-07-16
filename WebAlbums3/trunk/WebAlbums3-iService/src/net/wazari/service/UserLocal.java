@@ -4,6 +4,7 @@
  */
 package net.wazari.service;
 
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +16,18 @@ import net.wazari.service.exchange.ViewSessionLogin;
  * @author kevin
  */
 @Local
+
+@DeclareRoles({UserLocal.USER_ADMIN, UserLocal.USER_FAMILLE, UserLocal.USER_AMIS, UserLocal.USER_AUTRES,
+UserLocal.MANAGER_ROLE, UserLocal.VIEWER_ROLE})
 public interface UserLocal {
-    public final static String ADMIN_ROLE = UtilisateurFacadeLocal.ADMIN_ROLE ;
-    public final static String VIEWER_ROLE = UtilisateurFacadeLocal.VIEWER_ROLE;
-    
+    String MANAGER_ROLE = UtilisateurFacadeLocal.MANAGER_ROLE ;
+    String VIEWER_ROLE  = UtilisateurFacadeLocal.VIEWER_ROLE  ;
+
+    String USER_ADMIN   = "Admin"   ;
+    String USER_FAMILLE = "Famille" ;
+    String USER_AMIS    = "Amis"    ;
+    String USER_AUTRES  = "Autres"  ;
+
     @PermitAll
     boolean logon(ViewSessionLogin vSession, HttpServletRequest request) ;
     @PermitAll

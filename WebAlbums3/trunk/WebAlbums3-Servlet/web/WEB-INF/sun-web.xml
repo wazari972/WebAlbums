@@ -1,20 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE sun-web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Application Server 9.0 Servlet 2.5//EN" "http://www.sun.com/software/appserver/dtds/sun-web-app_2_5-0.dtd">
+
 <sun-web-app error-url="">
-  <context-root>/WebAlbums3-Servlet</context-root>
-  <security-role-mapping>
-    <role-name>ADMIN</role-name>
-    <group-name>Admin</group-name>
-  </security-role-mapping>
-  <security-role-mapping>
-    <role-name>VIEWER</role-name>
-    <group-name>Users</group-name>
-    <group-name>Admin</group-name>
-  </security-role-mapping>
-  <class-loader delegate="true"/>
-  <jsp-config>
-    <property name="keepgenerated" value="true">
-      <description>Keep a copy of the generated servlet class' java code.</description>
-    </property>
-  </jsp-config>
+    <context-root>/WebAlbums3-Servlet</context-root>
+  
+    <security-role-mapping>
+        <role-name>VIEWER</role-name>
+        <group-name>Admin</group-name>
+        <group-name>Famille</group-name>
+        <group-name>Amis</group-name>
+        <group-name>Autres</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>MANAGER</role-name>
+        <group-name>Manager</group-name>
+    </security-role-mapping>
+ 
+    <security-role-mapping>
+        <role-name>Admin</role-name>
+        <group-name>Admin</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>Famille</role-name>
+        <group-name>Famille</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>Amis</role-name>
+        <group-name>Amis</group-name>
+    </security-role-mapping>
+    
+    <security-role-mapping>
+        <role-name>Autres</role-name>
+        <group-name>Autres</group-name>
+    </security-role-mapping>
+
+    <class-loader delegate="true"/>
+  
+    <jsp-config>
+        <property name="keepgenerated" value="true">
+            <description>Keep a copy of the generated servlet class' java code.</description>
+        </property>
+    </jsp-config>
+  
 </sun-web-app>

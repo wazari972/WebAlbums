@@ -30,6 +30,7 @@ import net.wazari.service.util.google.GooglePoint.Point;
 
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.ThemeFacadeLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.util.system.SystemTools;
 
@@ -54,7 +55,6 @@ public class WebPageBean implements WebPageLocal {
         log.log(Level.WARNING, "FilesFinder.initialized {0}", SystemTools.initate());
         log.warning("Loading WebAlbums3-Service-Beans");
     }
-    public static final int USER_CHEAT = 0;
 
     @Override
     public EditMode getNextEditionMode(ViewSession vSession) {
@@ -498,10 +498,10 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public void populateEntities() {
         log.warning("Database empty, creating Root theme and Users");
-        themeDAO.newTheme(ThemeFacadeLocal.THEME_ROOT_ID, "Root") ;
-        userDAO.newUser(1, "admin");
-        userDAO.newUser(2, "Famille");
-        userDAO.newUser(3, "Amis");
-        userDAO.newUser(4, "Autre");
+        themeDAO.newTheme(ThemeFacadeLocal.THEME_ROOT_ID, ThemeFacadeLocal.THEME_ROOT_NAME) ;
+        userDAO.newUser(1, UserLocal.USER_ADMIN);
+        userDAO.newUser(2, UserLocal.USER_FAMILLE);
+        userDAO.newUser(3, UserLocal.USER_AMIS);
+        userDAO.newUser(4, UserLocal.USER_AUTRES);
     }
 }

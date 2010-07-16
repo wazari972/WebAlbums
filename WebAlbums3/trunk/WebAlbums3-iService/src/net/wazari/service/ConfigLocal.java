@@ -5,6 +5,7 @@
 
 package net.wazari.service;
 
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -16,24 +17,24 @@ import net.wazari.common.util.XmlBuilder;
  * @author kevin
  */
 @Local
-@RolesAllowed({UserLocal.ADMIN_ROLE})
+@DeclareRoles({UserLocal.MANAGER_ROLE})
 public interface ConfigLocal {
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatDELTAG(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatIMPORT(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatMODGEO(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatMODTAG(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatMODVIS(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatNEWTAG(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
 }

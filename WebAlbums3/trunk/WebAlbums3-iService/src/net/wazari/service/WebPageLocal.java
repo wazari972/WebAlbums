@@ -6,6 +6,7 @@
 package net.wazari.service;
 
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -26,7 +27,7 @@ import net.wazari.service.exchange.ViewSessionLogin;
  * @author kevin
  */
 @Local
-@RolesAllowed({UserLocal.VIEWER_ROLE})
+@DeclareRoles({UserLocal.VIEWER_ROLE})
 public interface WebPageLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     Bornes calculBornes(Integer page, Integer eltAsked, int taille);
@@ -70,6 +71,6 @@ public interface WebPageLocal {
     @PermitAll
     XmlBuilder xmlAffichage(ViewSession vSession) ;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     void populateEntities();
 }

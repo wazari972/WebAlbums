@@ -6,10 +6,10 @@
 package net.wazari.service;
 
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.*;
 import net.wazari.common.util.XmlBuilder;
 
@@ -18,7 +18,7 @@ import net.wazari.common.util.XmlBuilder;
  * @author kevin
  */
 @Local
-@RolesAllowed({UserLocal.VIEWER_ROLE, UserLocal.ADMIN_ROLE})
+@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface PhotoLocal {
     enum TypeRequest {
         PHOTO, TAG
@@ -43,13 +43,13 @@ public interface PhotoLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder displayPhoto(PhotoRequest rq, ViewSessionPhotoDisplay vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatPhotoEDIT(ViewSessionPhotoEdit vSession, XmlBuilder submit) throws WebAlbumsServiceException;
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException ;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,Boolean correct) throws WebAlbumsServiceException ;
 
 }

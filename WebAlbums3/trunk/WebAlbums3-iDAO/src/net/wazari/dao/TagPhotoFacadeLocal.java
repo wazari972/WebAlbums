@@ -20,19 +20,19 @@ import net.wazari.dao.entity.TagPhoto;
  * @author kevin
  */
 @Local
-@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface TagPhotoFacadeLocal {
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void create(TagPhoto tagPhoto);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void edit(TagPhoto tagPhoto);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void remove(TagPhoto tagPhoto);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void deleteByPhoto(Photo enrPhoto) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
@@ -47,9 +47,9 @@ public interface TagPhotoFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     List<Tag> selectUnusedTags(ServiceSession sSession) ;
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     TagPhoto newTagPhoto();
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     List<TagPhoto> findAll();
 }

@@ -15,7 +15,5 @@ import net.wazari.service.exchange.ViewSessionMaint;
  */
 @Local
 public interface MaintLocal {
-
     XmlBuilder treatMAINT(ViewSessionMaint vSession);
-
 }

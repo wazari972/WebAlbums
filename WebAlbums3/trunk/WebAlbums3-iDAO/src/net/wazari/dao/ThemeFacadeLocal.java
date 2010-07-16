@@ -17,14 +17,15 @@ import net.wazari.dao.entity.Theme;
  * @author kevin
  */
 @Local
-@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface ThemeFacadeLocal {
-    int THEME_ROOT_ID = 1 ;
-    
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    int    THEME_ROOT_ID   = 1 ;
+    String THEME_ROOT_NAME = "Root" ;
+
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void remove(Theme theme);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Theme loadByName(String themeName) ;
 
     @PermitAll
@@ -33,9 +34,9 @@ public interface ThemeFacadeLocal {
     @PermitAll
     Theme find(Integer themeId);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Theme newTheme(int i, String string);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Theme newTheme(String string);
 }

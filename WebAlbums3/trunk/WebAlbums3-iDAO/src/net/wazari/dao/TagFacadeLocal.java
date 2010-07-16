@@ -18,15 +18,15 @@ import net.wazari.dao.entity.Tag;
  * @author kevin
  */
 @Local
-@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface TagFacadeLocal {
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void create(Tag tag);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void edit(Tag tag);
     
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void remove(Tag tag);
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
@@ -41,15 +41,15 @@ public interface TagFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) ;
     
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     List<Tag> getNoSuchTags(ServiceSession sSession, List<Tag> tags) ;
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Tag find(Integer integer);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     List<Tag> findAll();
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Tag newTag();
 }

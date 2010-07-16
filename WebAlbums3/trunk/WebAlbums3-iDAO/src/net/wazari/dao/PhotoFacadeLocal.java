@@ -18,15 +18,15 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
  * @author kevin
  */
 @Local
-@DeclareRoles({UtilisateurFacadeLocal.ADMIN_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface PhotoFacadeLocal {
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void create(Photo photo);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void edit(Photo photo);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void remove(Photo photo);
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
@@ -35,7 +35,7 @@ public interface PhotoFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     SubsetOf<Photo> loadFromAlbum(ServiceSession session, int albumId, Bornes bornes);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Photo loadByPath(String path);
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
@@ -44,9 +44,9 @@ public interface PhotoFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Photo find(Integer photoID);
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Photo newPhoto();
 
-    @RolesAllowed(UtilisateurFacadeLocal.ADMIN_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     List<Photo> findAll();
 }

@@ -5,6 +5,7 @@
 
 package net.wazari.service;
 
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -17,15 +18,15 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
  * @author kevin
  */
 @Local
-@RolesAllowed({UserLocal.VIEWER_ROLE, UserLocal.ADMIN_ROLE})
+@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface TagLocal {
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession, Boolean correct) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder treatTagDISPLAY(ViewSessionTag vSession, XmlBuilder submit) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.ADMIN_ROLE)
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatTagEDIT(ViewSessionTag vSession, XmlBuilder submit) throws WebAlbumsServiceException ;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
