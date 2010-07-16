@@ -2,8 +2,6 @@ package net.wazari.service.util.google ;
 
 import java.util.List ;
 import java.util.ArrayList ;
-import net.wazari.service.exchange.Configuration;
-
 
 public class GooglePoint extends GoogleMap {
   private static int current = 0 ;
@@ -55,18 +53,17 @@ public class GooglePoint extends GoogleMap {
     this.displayInfo = info ;
   }
 
-  public String getInitFunction(Configuration conf) {
+  public String getInitFunction() {
     return "function loadMap() {\n"+
       "  if (GBrowserIsCompatible()) {\n"+
-      getInitCode(conf)+"\n"+
+      getInitCode()+"\n"+
       "  }\n"+
       "}\n" ;
   }
   
-  public String getInitCode(Configuration conf) {
+  public String getInitCode() {
     if (points.isEmpty()) return "//point list is empty\n" ;
-    else if (!conf.hasInternet()) return "//no internet\n" ;
-
+    
     StringBuilder str = new StringBuilder() ;
     str.append("function createMarker"+id+"(latlng, message) {\n")
        .append("   var marker = new GMarker(latlng);\n")

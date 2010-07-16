@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import net.wazari.service.exchange.Configuration;
 
 public class GoogleHeader {
 
@@ -30,12 +29,10 @@ public class GoogleHeader {
                 + "key=" + googleKeys.get(server);
     }
 
-    public String script(Configuration conf) {
-        if (maps == null) {
+    public String script() {
+        if (maps == null) 
             return "";
-        } else if (!conf.hasInternet()) {
-            return "";
-        }
+
 
         StringBuilder str = new StringBuilder();
         str.append(
@@ -45,7 +42,7 @@ public class GoogleHeader {
                 + "     // Clicking the marker will hide it\n");
 
         for (GoogleMap m : maps) {
-            str.append(m.getInitCode(conf));
+            str.append(m.getInitCode());
         }
         str.append(
                 "     \n"
@@ -53,17 +50,15 @@ public class GoogleHeader {
                 + "}\n");
         str.append("\n\n");
         for (GoogleMap m : maps) {
-            str.append(m.getFunctions(conf));
+            str.append(m.getFunctions());
         }
 
         maps = new ArrayList<GoogleMap>();
         return str.toString();
     }
 
-    public String bodyAttributes(Configuration conf) {
+    public String bodyAttributes() {
         if (maps == null) {
-            return "";
-        } else if (!conf.hasInternet()) {
             return "";
         }
 

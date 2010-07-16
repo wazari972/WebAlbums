@@ -82,37 +82,9 @@ public class ConfigurationXML implements Configuration {
     private ConfigurationXML(){}
 
     @Override
-    public boolean hasInternet() {
-
-        return properties.hasInternet;
-
-    }
-
-    @Override
     public boolean isReadOnly() {
 
         return properties.isReadOnly;
-
-    }
-    
-    @Override
-    public boolean wantAlightenDb() {
-
-        return properties.alightenDb;
-
-    }
-
-    @Override
-    public boolean wantStats() {
-
-        return properties.wantStats;
-
-    }
-
-    @Override
-    public boolean wantXsl() {
-
-        return properties.wantXsl;
 
     }
 
@@ -240,14 +212,6 @@ public class ConfigurationXML implements Configuration {
     private static class Properties {
 
         @XmlElement
-        private boolean hasInternet = true;
-        @XmlElement
         private boolean isReadOnly = false;
-        @XmlElement
-        private boolean alightenDb = false;
-        @XmlElement
-        private boolean wantStats = false;
-        @XmlElement
-        private boolean wantXsl = true;
     }
 }

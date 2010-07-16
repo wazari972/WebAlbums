@@ -1,6 +1,5 @@
 package net.wazari.service.util.google ;
 
-import net.wazari.service.exchange.Configuration;
 
 
 public class GoogleSearch extends GoogleMap {
@@ -9,7 +8,7 @@ public class GoogleSearch extends GoogleMap {
 	this.lng = lng ;
 	this.lat = lat ;
     }
-    public String getInitCode(Configuration conf) {
+    public String getInitCode() {
 	String init = 
 "        var map = new GMap2(document.getElementById('"+getMapName()+"'));\n"+
 "        map.addControl(new GSmallMapControl());\n"+
@@ -54,7 +53,7 @@ public class GoogleSearch extends GoogleMap {
     }
     
     @Override
-    public String getFunctions(Configuration conf) {
+    public String getFunctions() {
 	String fct = 
 " function showAddress(address) {\n"+
 "      var map = new GMap2(document.getElementById('"+getMapName()+"'));\n"+
