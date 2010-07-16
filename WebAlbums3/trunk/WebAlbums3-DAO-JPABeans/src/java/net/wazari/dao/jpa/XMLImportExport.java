@@ -40,6 +40,7 @@ import net.wazari.dao.jpa.entity.JPAUtilisateur;
 public class XMLImportExport implements ImportExporter {
     private static final Logger log = Logger.getLogger(XMLImportExport.class.getName());
 
+    private static final String FILENAME = "WebAlbums."+WebAlbumsDAOBean.PERSISTENCE_UNIT+".xml" ;
     @EJB
     private TagThemeFacadeLocal tagThemeDAO;
     @EJB
@@ -57,21 +58,23 @@ public class XMLImportExport implements ImportExporter {
     
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
-    
+
+    @Override
     public void exportXml(String path) {
         WebAlbumsXML web = new WebAlbumsXML(themeDAO.findAll(), userDAO.findAll(), albumDAO.findAll(),
                 photoDAO.findAll(), tagDAO.findAll(), tagThemeDAO.findAll(), tagPhotoDAO.findAll()) ;
         try {
-            XmlUtils.save(new File(path+"WebAlbums.xml"), WebAlbumsXML.class, web);
+            XmlUtils.save(new File(path+FILENAME), WebAlbumsXML.class, web);
             log.log(Level.INFO, "XML Saved!");
         } catch (JAXBException ex) {
             log.log(Level.SEVERE, null, ex);
         }
     }
 
+    @Override
     public void importXml(String path) {
         try {
-            WebAlbumsXML web = XmlUtils.reload(new File(path+"WebAlbums.xml"), WebAlbumsXML.class);
+            WebAlbumsXML web = XmlUtils.reload(new File(path+FILENAME), WebAlbumsXML.class);
             if (web == null) {
                 log.warning("Couldn't load the XML backup ...");
                 return ;
@@ -169,7 +172,8 @@ public class XMLImportExport implements ImportExporter {
             log.log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    @Override
     public void truncateDb() {
         for (Object enr : themeDAO.findAll()) {
             em.remove(enr);
