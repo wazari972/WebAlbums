@@ -255,9 +255,8 @@ public class DispatcherBean {
                         "<!ENTITY laquo  \"&#171;\" >" +
                         "<!ENTITY raquo  \"&#187;\" >" +
                         "]>");
-                if (vSession.getConfiguration().wantXsl()) {
-                    output.addHeader("<?xml-stylesheet type=\"text/xsl\" href=\"" + xslFile + "\"?>");
-                }
+                
+                output.addHeader("<?xml-stylesheet type=\"text/xsl\" href=\"" + xslFile + "\"?>");
             }
             sortie.println(output.toString());
 

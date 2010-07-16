@@ -1,6 +1,7 @@
 package net.wazari.view.servlet;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -46,7 +47,7 @@ public class Albums extends HttpServlet{
 
         Action action = vSession.getAction();
         XmlBuilder submit = null;
-        if(vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+        if(vSession.isSessionManager()) {
             //prepare SUBMIT message
             if (action == Action.SUBMIT) {
                 submit = albumService.treatAlbmSUBMIT((ViewSessionAlbumSubmit) vSession);
@@ -111,4 +112,5 @@ public class Albums extends HttpServlet{
     public String getServletInfo() {
         return "Displays the albums of the theme";
     }// </editor-fold>
+    private static final Logger log = Logger.getLogger(Albums.class.getName());
 }

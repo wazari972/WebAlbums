@@ -81,7 +81,7 @@ public class UserBean implements UserLocal {
         }
 
         //no manager if not in admin group
-        if (request.isUserInRole(UserLocal.MANAGER_ROLE)) {
+        if (request.isUserInRole(UserLocal.MANAGER_ROLE) && !vSession.getConfiguration().isReadOnly()) {
             asThemeManager = true;
         }
 

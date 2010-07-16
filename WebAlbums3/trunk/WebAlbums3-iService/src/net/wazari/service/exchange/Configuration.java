@@ -25,15 +25,7 @@ public interface Configuration {
 
     String getPluginsPath();
 
-    boolean hasInternet();
-
     boolean isReadOnly();
-
-    boolean wantAlightenDb();
-
-    boolean wantStats();
-
-    boolean wantXsl();
 
     int getAlbumSize();
 

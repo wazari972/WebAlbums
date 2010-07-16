@@ -1,5 +1,6 @@
 package net.wazari.view.servlet;
 
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -47,7 +48,7 @@ public class Tags extends HttpServlet {
         XmlBuilder submit = null;
         Boolean correct = true;
 
-        if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+        if (vSession.isSessionManager()) {
             if (Action.SUBMIT == action) {
                 submit = tagService.treatPhotoSUBMIT((ViewSessionPhotoSubmit)vSession, correct);
             }
@@ -106,4 +107,5 @@ public class Tags extends HttpServlet {
     public String getServletInfo() {
         return "Displays photos related to a tag";
     }// </editor-fold>
+    private static final Logger log = Logger.getLogger(Tags.class.getName());
 }

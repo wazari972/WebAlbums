@@ -146,7 +146,7 @@ public class AlbumBean implements AlbumLocal {
             details.add(webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE));
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
-            if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+            if (vSession.isSessionManager()) {
                 if (inEditionMode != EditMode.VISITE) {
                     details.add(enrAlbum.getDroit().getNom());
                     details.add("userInside", userDAO.loadUserInside(enrAlbum.getId()));

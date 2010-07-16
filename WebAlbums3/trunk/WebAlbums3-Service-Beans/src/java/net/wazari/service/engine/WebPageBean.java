@@ -147,7 +147,7 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public XmlBuilder xmlAffichage(ViewSession vSession) {
         XmlBuilder affichage = new XmlBuilder("affichage");
-        if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+        if (vSession.isSessionManager()) {
             if (vSession.getEditionMode() == EditMode.EDITION) {
                 affichage.add("edit");
                 affichage.add("massedit");
@@ -366,7 +366,7 @@ public class WebPageBean implements WebPageLocal {
             xmlResult.add(GooglePoint.getBody());
         } else if (box == Box.MAP_SCRIPT) {
             xmlResult = XmlBuilder.newText();
-            xmlResult.addText(map.getInitFunction(vSession.getConfiguration()));
+            xmlResult.addText(map.getInitFunction());
         }
 
 

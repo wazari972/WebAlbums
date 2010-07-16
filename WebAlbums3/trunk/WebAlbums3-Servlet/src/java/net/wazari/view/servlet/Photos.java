@@ -1,6 +1,7 @@
 package net.wazari.view.servlet;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -38,11 +39,11 @@ public class Photos extends HttpServlet {
         XmlBuilder submit = null;
         Boolean correct = true;
 
-        if (Action.SUBMIT == action && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+        if (Action.SUBMIT == action && vSession.isSessionManager()) {
             submit = photoService.treatPhotoSUBMIT((ViewSessionPhotoSubmit) vSession,correct);
         }
         
-        if ((Action.EDIT == action || !correct) && vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+        if ((Action.EDIT == action || !correct) && vSession.isSessionManager()) {
             output = photoService.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
 
             XmlBuilder return_to = new XmlBuilder("return_to");
@@ -107,4 +108,5 @@ public class Photos extends HttpServlet {
     public String getServletInfo() {
         return "Displays the photos of an album";
     }// </editor-fold>
+    private static final Logger log = Logger.getLogger(Photos.class.getName());
 }

@@ -1,5 +1,6 @@
 package net.wazari.view.servlet;
 
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class Config extends HttpServlet {
         XmlBuilder output = new XmlBuilder("config");
 
         Action action = vSession.getAction();
-        if (vSession.isSessionManager() && !vSession.getConfiguration().isReadOnly()) {
+        if (vSession.isSessionManager()) {
 
             output.add("map");
             if (action == Action.IMPORT) {
@@ -142,4 +143,5 @@ public class Config extends HttpServlet {
     public String getServletInfo() {
         return "Configuration page";
     }// </editor-fold>
+    private static final Logger log = Logger.getLogger(Config.class.getName());
 }

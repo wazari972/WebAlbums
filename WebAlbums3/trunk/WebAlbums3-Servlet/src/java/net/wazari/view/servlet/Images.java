@@ -1,5 +1,6 @@
 package net.wazari.view.servlet;
 
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
@@ -79,4 +80,5 @@ public class Images extends HttpServlet {
     public String getServletInfo() {
         return "Displays a photo, miniature or full size";
     }// </editor-fold>
+    private static final Logger log = Logger.getLogger(Images.class.getName());
 }
