@@ -45,7 +45,7 @@ public class ConfigurationXML implements Configuration {
         } catch (IOException ex) {
             log.log(Level.SEVERE, "Could not read RootPath from file: {0}", ex.getMessage());
         }
-        log.log(Level.WARNING, "Root path retrieved: "+rootPath);
+        log.log(Level.WARNING, "Root path retrieved: {0}", rootPath);
     }
     
     private static Configuration conf ;
