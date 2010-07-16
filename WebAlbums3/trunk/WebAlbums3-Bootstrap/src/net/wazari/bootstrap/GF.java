@@ -13,6 +13,7 @@ package net.wazari.bootstrap;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +39,7 @@ public class GF {
     public static void main(String[] args) throws LifecycleException, IOException, InterruptedException {
         Server server = startServer(8081) ;
         try {
-            //createUsers(server);
+            createUsers(server);
             createJDBC(server);
 
             //if (true) return ;
@@ -46,6 +47,10 @@ public class GF {
             log.info("Deploying ");
             String appName = deployer.deploy(new File(PATH_EAR, "WebAlbums3-ea.ear"), null);
             log.log(Level.INFO, "Deployed {0}", appName);
+
+            new ServerSocket(8082).accept().close() ;
+
+            server.stop();
         } catch (Throwable t) {
             t.printStackTrace() ;
             server.stop();
@@ -84,13 +89,17 @@ public class GF {
         return report.getTopMessagePart().getChildren() ;
     }
 
-    private static void createUsers(Server server) throws Throwable {
+    private static void createUsers(Server server) {
         ParameterMap params = new ParameterMap();
         params.add("groups", "Admin");
         params.add("groups", "Manager");
         params.add("username", "Kevin");
         params.add("userpassword", "pass");
-        asAdmin(server, "create-file-user", params);
+        try {
+            asAdmin(server, "create-file-user", params);
+        } catch (Throwable t){
+            t.printStackTrace();
+        }
     }
 
     private static void createJDBC(Server server) throws Throwable {
