@@ -7,6 +7,7 @@
     </session-config>
     <welcome-file-list>
         <welcome-file>Index</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     <security-constraint>
         <display-name>Authenticate users</display-name>
