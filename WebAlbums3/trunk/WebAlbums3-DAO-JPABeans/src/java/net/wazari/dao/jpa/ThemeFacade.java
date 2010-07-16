@@ -48,6 +48,8 @@ public class ThemeFacade implements ThemeFacadeLocal {
 
           return (JPATheme) em.createQuery(rq)
                     .setParameter("nom", themeName)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null ;
@@ -60,6 +62,8 @@ public class ThemeFacade implements ThemeFacadeLocal {
             String rq = "FROM JPATheme t WHERE t.id = :id";
             return (JPATheme) em.createQuery(rq)
                     .setParameter("id", id)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
                     .getSingleResult() ;
         } catch (NoResultException e) {
             return null ;

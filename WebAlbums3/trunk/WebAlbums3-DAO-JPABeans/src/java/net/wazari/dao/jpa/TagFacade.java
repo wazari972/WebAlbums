@@ -58,7 +58,10 @@ public class TagFacade implements TagFacadeLocal {
                 " AND " + webDAO.restrictToThemeAllowed(session, "a") + " " +
                 " GROUP BY t.id "+
                 " ORDER BY t.nom ";
-        List<Object[]> lst = em.createQuery(rq).getResultList();
+        List<Object[]> lst = em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
+                .getResultList();
         Map<Tag, Long> ret = new LinkedHashMap <Tag, Long>();
         for (Object[] current : lst) {
             ret.put((JPATag) current[0], (Long) current[1]);
@@ -82,7 +85,10 @@ public class TagFacade implements TagFacadeLocal {
                     "AND " + webDAO.restrictToThemeAllowed(session, "a") + " ";
         }
 
-        return em.createQuery(rq).setParameter("type", type).getResultList();
+        return em.createQuery(rq).setParameter("type", type)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
+                .getResultList();
     }
 
     @Override
@@ -91,7 +97,10 @@ public class TagFacade implements TagFacadeLocal {
             String rq = "FROM JPATag t " +
                     " WHERE t.nom = :nom ";
 
-            return (JPATag) em.createQuery(rq).setParameter("nom", nom).getSingleResult();
+            return (JPATag) em.createQuery(rq).setParameter("nom", nom)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
+                    .getSingleResult();
         } catch (NoResultException e) {
             return null ;
         }
@@ -109,7 +118,10 @@ public class TagFacade implements TagFacadeLocal {
             rq += " AND ta.tagType = '3' ";
         }
         rq += " ORDER BY ta.nom";
-        return em.createQuery(rq).getResultList();
+        return em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
+                .getResultList();
     }
 
     @Override
@@ -118,7 +130,10 @@ public class TagFacade implements TagFacadeLocal {
                 " FROM JPATag ta " +
                 " WHERE ta.id NOT IN (" + getIdList(tags) + ") " +
                 " ORDER BY ta.nom";
-        return em.createQuery(rq).getResultList();
+        return em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
+                .getResultList();
     }
 
     private static String getIdList(List<Tag> lst) {
@@ -135,6 +150,7 @@ public class TagFacade implements TagFacadeLocal {
             String rq = "FROM JPATag t where t.id = :id";
             return  (JPATag) em.createQuery(rq)
                     .setParameter("id", id)
+                    .setHint("org.hibernate.cacheable", true)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null ;
@@ -144,7 +160,10 @@ public class TagFacade implements TagFacadeLocal {
     @Override
     public List<Tag> findAll() {
         String rq = "FROM JPATag t";
-        return em.createQuery(rq).getResultList() ;
+        return em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
+                .getResultList() ;
     }
 
     @Override

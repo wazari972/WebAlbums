@@ -63,7 +63,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getAlbumSize());
         }
-
+        q.setHint("org.hibernate.cacheable", true) ;
+        q.setHint("org.hibernate.readOnly", true) ;
         Query qSize = em.createQuery("SELECT count(*) "+rq) ;
         Long size = (Long) qSize.getSingleResult() ;
 
@@ -82,7 +83,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
                .setParameter("date", date+"%")
                .setFirstResult(0)
                .setMaxResults(bornes.getNbElement());
-
+        q.setHint("org.hibernate.cacheable", true)
+         .setHint("org.hibernate.readOnly", true) ;
         Long size = (long) bornes.getNbElement() ;
 
         return new SubsetOf<Album>(bornes, q.getResultList(), size);
@@ -110,7 +112,9 @@ public class AlbumFacade implements AlbumFacadeLocal {
                     " ORDER BY a.date "+order;
             Query q = em.createQuery(rq)
                    .setFirstResult(0)
-                   .setMaxResults(1);
+                   .setMaxResults(1)
+                   .setHint("org.hibernate.cacheable", true)
+                   .setHint("org.hibernate.readOnly", true) ;
 
             return (Album) q.getSingleResult();
         } catch (NoResultException e) {
@@ -125,7 +129,10 @@ public class AlbumFacade implements AlbumFacadeLocal {
                     " WHERE " + webDAO.restrictToAlbumsAllowed(session, "a") + " " +
                     " AND a.id = :id ";
 
-            return (JPAAlbum) em.createQuery(rq).setParameter("id", id).getSingleResult();
+            return (JPAAlbum) em.createQuery(rq).setParameter("id", id)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
+                    .getSingleResult();
         } catch (NoResultException e) {
             return null ;
         }
@@ -140,6 +147,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
             return (JPAAlbum) em.createQuery(rq)
                     .setParameter("date", date)
                     .setParameter("nom", name)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null ;
@@ -152,6 +161,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
             String rq = "SELECT a FROM JPAAlbum a WHERE a.id = :id";
         return (JPAAlbum) em.createQuery(rq)
                 .setParameter("id", albumId)
+                .setHint("org.hibernate.cacheable", true)
                 .getSingleResult();
         } catch (NoResultException e) {
             return null ;
@@ -167,6 +177,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
     public List<Album> findAll() {
         String rq = "SELECT o FROM JPAAlbum o";
         return (List<Album>) em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getResultList();
 
     }

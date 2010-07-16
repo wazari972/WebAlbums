@@ -60,6 +60,8 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
                 return (TagTheme) em.createQuery(rq)
                         .setParameter("tagId", tagId)
                         .setParameter("themeId", themeId)
+                        .setHint("org.hibernate.cacheable", true)
+                        .setHint("org.hibernate.readOnly", true)
                         .getSingleResult();
             } else {
                 String rq = "FROM JPATagTheme tt " +
@@ -67,6 +69,8 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
 
                 List<TagTheme> lst = em.createQuery(rq)
                         .setParameter("tagId", tagId)
+                        .setHint("org.hibernate.cacheable", true)
+                        .setHint("org.hibernate.readOnly", true)
                         .getResultList();
                 if (lst.isEmpty()) return null ;
                 return lst.get(rand.nextInt(lst.size())) ;
@@ -85,6 +89,8 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     public List<TagTheme> findAll() {
         String rq = "SELECT o FROM JPATagTheme o";
         return (List<TagTheme>) em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getResultList();
     }
 }

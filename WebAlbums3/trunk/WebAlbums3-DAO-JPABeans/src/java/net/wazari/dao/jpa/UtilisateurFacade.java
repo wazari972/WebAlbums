@@ -5,6 +5,7 @@
 
 package net.wazari.dao.jpa;
 
+import java.util.logging.Level;
 import net.wazari.dao.*;
 import java.util.List;
 import java.util.logging.Logger;
@@ -43,9 +44,11 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
             String rq = "FROM JPAUtilisateur u WHERE u.nom = :nom";
             return (JPAUtilisateur) em.createQuery(rq)
                     .setParameter("nom", name)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
         } catch (NoResultException e) {
-            log.info("No user with name +"+name+"+");
+            log.log(Level.INFO, "No user with name +{0}+", name);
             return null ;
         }
     }
@@ -55,6 +58,8 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
         String rq = "SELECT u FROM JPAUtilisateur u, JPAAlbum a WHERE u.id = a.droit AND a.id = :albumId";
         return (JPAUtilisateur) em.createQuery(rq)
                 .setParameter("albumId", albumId)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getSingleResult();
     }
 
@@ -67,6 +72,8 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
                 " AND p.droit != null AND p.droit != 0";
         return  em.createQuery(rq)
                 .setParameter("albumId", albumId)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getResultList();
     }
 
@@ -76,6 +83,8 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
             String rq = "FROM JPAUtilisateur u WHERE u.id = :id";
             return (JPAUtilisateur) em.createQuery(rq)
                     .setParameter("id", droit)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null ;
@@ -85,6 +94,9 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     @Override
     public List<Utilisateur> findAll() {
         String rq = "FROM JPAUtilisateur u";
-        return em.createQuery(rq).getResultList() ;
+        return em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
+                .getResultList() ;
     }
 }

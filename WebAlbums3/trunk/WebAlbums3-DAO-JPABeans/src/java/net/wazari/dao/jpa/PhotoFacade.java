@@ -58,7 +58,10 @@ public class PhotoFacade implements PhotoFacadeLocal {
                     " WHERE p.id = :id " +
                     (session == null ? "" : " AND " + webDAO.restrictToPhotosAllowed(session, "p")) + " ";
 
-            return (JPAPhoto) em.createQuery(rq).setParameter("id", id).getSingleResult();
+            return (JPAPhoto) em.createQuery(rq).setParameter("id", id)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
+                    .getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -83,7 +86,10 @@ public class PhotoFacade implements PhotoFacadeLocal {
                 .setParameter("albumId", albumId) ;
         Long size = (Long) qSize.getSingleResult() ;
 
-        List<Photo> subset = q.getResultList() ;
+        List<Photo> subset = q
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
+                    .getResultList() ;
         if (bornes == null || bornes.getFirstElement() == null)
             return new SubsetOf<Photo>(subset) ;
             else return new SubsetOf<Photo>(bornes, subset, size);
@@ -117,7 +123,9 @@ public class PhotoFacade implements PhotoFacadeLocal {
         rqFrom += " GROUP BY p.id ";
         rqFrom += " ORDER BY p.path DESC ";
 
-        Query q = em.createQuery(rqSelect+rqFrom);
+        Query q = em.createQuery(rqSelect+rqFrom)
+                      .setHint("org.hibernate.cacheable", true)
+                      .setHint("org.hibernate.readOnly", true);
         //TODO this might not be the better implementation ...
         int size = q.getResultList().size() ;
         if (bornes != null && bornes.getFirstElement() != null) {
@@ -132,7 +140,9 @@ public class PhotoFacade implements PhotoFacadeLocal {
     public Photo find(Integer id) {
         try {
             String rq = "FROM JPAPhoto p WHERE p.id = :id";
-            return (JPAPhoto) em.createQuery(rq).setParameter("id", id).getSingleResult();
+            return (JPAPhoto) em.createQuery(rq).setParameter("id", id)
+                    .setHint("org.hibernate.cacheable", true)
+                    .getSingleResult();
         } catch (NoResultException e) {
             return null ;
         }
@@ -147,6 +157,8 @@ public class PhotoFacade implements PhotoFacadeLocal {
     public List<Photo> findAll() {
         String rq = "SELECT o FROM JPAPhoto o";
         return (List<Photo>) em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getResultList();
     }
 }

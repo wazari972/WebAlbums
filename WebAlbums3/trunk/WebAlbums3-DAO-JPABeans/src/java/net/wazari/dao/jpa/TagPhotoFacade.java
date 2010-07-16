@@ -73,6 +73,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
                 "AND photo.id = tp.photo ";
         return em.createQuery(rq)
                 .setParameter("album", enrAlbum)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getResultList();
     }
 
@@ -82,6 +84,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
         return (JPATagPhoto) em.createQuery(rq)
                 .setParameter("photoId", photoId)
                 .setParameter("tagId", tagId)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getSingleResult();
     }
 
@@ -100,6 +104,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
                             " AND a.theme = :themeId ";
         return em.createQuery(rq)
                 .setParameter("themeId", session.getTheme())
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getResultList();
     }
 
@@ -112,6 +118,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     public List<TagPhoto> findAll() {
         String rq = "SELECT o FROM JPATagPhoto o";
         return (List<TagPhoto>) em.createQuery(rq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
                 .getResultList();
     }
 }
