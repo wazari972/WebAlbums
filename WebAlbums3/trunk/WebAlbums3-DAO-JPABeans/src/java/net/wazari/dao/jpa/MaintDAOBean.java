@@ -22,6 +22,8 @@ import net.wazari.dao.MaintFacadeLocal;
 import org.hibernate.JDBCException;
 import org.hibernate.ejb.EntityManagerImpl;
 import org.hibernate.jmx.StatisticsService;
+import org.hibernate.stat.QueryStatistics;
+import org.hibernate.stat.Statistics;
 
 /**
  *
@@ -29,23 +31,26 @@ import org.hibernate.jmx.StatisticsService;
  */
 @Stateless
 public class MaintDAOBean implements MaintFacadeLocal {
+
     private static final Logger log = Logger.getLogger(MaintDAOBean.class.getName());
 
     private static interface Work {
+
         void execute(Connection connection) throws JDBCException;
     }
-
-    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
-
-    @EJB ImportExporter xml ;
+    @EJB
+    ImportExporter xml;
 
     @Override
     public void treatImportXML(final String path) {
-        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) return ;
+        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+            return;
+        }
         xml.importXml(path);
     }
-    
+
     @Override
     public void treatExportXML(String path) {
         xml.exportXml(path);
@@ -53,13 +58,17 @@ public class MaintDAOBean implements MaintFacadeLocal {
 
     @Override
     public void treatTruncateDB() {
-        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) return ;
+        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+            return;
+        }
         xml.truncateDb();
     }
 
     @Override
     public void treatFullImport(String path) {
-        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) return ;
+        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+            return;
+        }
         treatTruncateDB();
         treatImportXML(path);
     }
@@ -93,10 +102,19 @@ public class MaintDAOBean implements MaintFacadeLocal {
             Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @Override
     public void treatDumpStats() {
-        ((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory().getStatistics().logSummary();
+        Statistics stats = ((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory().getStatistics();
 
-        
+        stats.logSummary();
+        for (String query : stats.getQueries()) {
+            QueryStatistics qStats = stats.getQueryStatistics(query);
+            log.info(query);
+            log.log(Level.INFO, "\tgetExecutionCount {0}", qStats.getExecutionCount());
+            log.log(Level.INFO, "\tgetExecutionAvgTime {0}", qStats.getExecutionAvgTime());
+            log.log(Level.INFO, "\tgetExecutionMaxTime {0}", qStats.getExecutionMaxTime());
+            log.log(Level.INFO, "\tgetExecutionRowCount {0}", qStats.getExecutionRowCount());
+        }
     }
 }
