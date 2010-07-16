@@ -129,8 +129,19 @@ public class WebPageBean implements WebPageLocal {
         Utilisateur enrUtil = vSession.getUser() ;
         Principal principal = vSession.getUserPrincipal() ;
         login.add("theme", enrTheme == null ? "Not logged in" : enrTheme.getNom());
-        login.add("user", enrUtil == null ? 
-            (principal == null ? "Not logged in" :"("+principal.getName()+")") : enrUtil.getNom());
+        String strUser  ;
+        if (enrUtil == null) {
+            strUser = "Not logged in" ;
+        } else {
+            strUser = enrUtil.getNom() ;
+        }
+        if (principal != null) {
+            strUser = principal.getName()+" ("+strUser+")" ;
+        }
+        if (vSession.isSessionManager()) {
+            strUser += "*" ;
+        }
+        login.add("user", strUser);
         
         log.log(Level.INFO, "logged as manager? {0}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {
@@ -156,8 +167,10 @@ public class WebPageBean implements WebPageLocal {
             }
             affichage.add("edition", vSession.getEditionMode());
         }
-        affichage.add("maps", "Avec Carte");
+        affichage.add("maps", "Sans Carte");
         affichage.add("details", vSession.getDetails());
+
+        if (vSession.isRemoteAccess()) affichage.add("remote") ;
 
         return affichage;
     }

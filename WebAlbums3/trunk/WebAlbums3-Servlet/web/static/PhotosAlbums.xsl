@@ -82,12 +82,14 @@
 	</a>
       </xsl:if>
       <xsl:if test="not(/root/albums)">
-        <a title="Photo en plein-ecran">
-            <xsl:attribute name="href">
-                javascript:callURL('Images?id=<xsl:value-of select="photoID" />&amp;mode=FULLSCREEN');
-            </xsl:attribute>
-            <img src="static/images/out.png" width="25px"/>
-        </a>
+        <xsl:if test="count(/root/affichage/remote) = 0">
+            <a title="Photo en plein-ecran">
+                <xsl:attribute name="href">
+                    javascript:callURL('Images?id=<xsl:value-of select="photoID" />&amp;mode=FULLSCREEN');
+                </xsl:attribute>
+                <img src="static/images/out.png" width="25px"/>
+            </a>
+        </xsl:if>
       </xsl:if>
       <xsl:if test="/root/tags">
 	<a title="Liens vers l'album">

@@ -507,6 +507,13 @@ public class ViewSessionImpl implements
         return getString("user") ;
     }
 
+    @Override
+    public boolean isRemoteAccess() {
+        log.log(Level.INFO, "local: {0}", request.getLocalAddr()) ;
+        log.log(Level.INFO, "remote: {0}", request.getRemoteAddr()) ;
+        return !request.getLocalAddr().equals(request.getRemoteHost()) ;
+    }
+
     public static class ViewSessionLoginImpl implements ViewSessionSession {
         private HttpSession session ;
         public ViewSessionLoginImpl (HttpSession session) {

@@ -109,6 +109,8 @@ public class SystemTools {
     }
 
     public boolean fullscreenMultiple(ViewSession vSession, PhotoRequest rq, String type, Integer id, Integer page) {
+        if (vSession.isRemoteAccess()) return false ;
+
         int pageAsked = (page == null ? 0 : page);
         if (plugins.getUsedSystem() == null) {
             log.warning("No System plugin available ...");
@@ -180,7 +182,8 @@ public class SystemTools {
     }
 
     public boolean fullscreenImage(ViewSession vSession, Photo enrPhoto) {
-
+        if (vSession.isRemoteAccess()) return false ;
+        
         File dir = buildTempDir(vSession, "fullscreen", null);
         if (dir == null) {
             return false;

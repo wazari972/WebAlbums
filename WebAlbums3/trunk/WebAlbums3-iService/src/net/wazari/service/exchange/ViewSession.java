@@ -54,4 +54,6 @@ public interface ViewSession extends ServiceSession {
     Configuration getConfiguration();
     
     Integer getThemeId();
+
+    boolean isRemoteAccess();
 }
