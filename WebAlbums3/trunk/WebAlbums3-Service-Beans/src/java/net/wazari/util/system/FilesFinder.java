@@ -385,11 +385,9 @@ public class FilesFinder {
             out.validate();
             return true;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             warn(out, "MalformedURLException " + url);
             warn(out, e.toString());
         } catch (URISyntaxException e) {
-            e.printStackTrace();
             warn(out, "URISyntaxException " + url);
             warn(out, e.toString());
         }

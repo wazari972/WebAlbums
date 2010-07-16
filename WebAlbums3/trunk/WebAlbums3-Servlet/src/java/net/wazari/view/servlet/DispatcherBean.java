@@ -185,7 +185,7 @@ public class DispatcherBean {
             
             output.validate();
         } catch (WebAlbumsServiceException e) {
-            e.printStackTrace();
+            log.log(Level.WARNING, "WebAlbumsServiceException {0}", e) ;
             output.cancel();
         } 
         log.log(Level.FINE, "============= Footer (written:{0}, complete:{1})=============", new Object[]{isWritten, isComplete});
@@ -264,7 +264,7 @@ public class DispatcherBean {
             sortie.flush();
             sortie.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "IOException: {0}", e);
         }
     }
 

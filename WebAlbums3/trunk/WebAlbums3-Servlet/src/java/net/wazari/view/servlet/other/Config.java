@@ -107,8 +107,7 @@ public class Config extends HttpServlet {
             }
 
         } catch (Exception e) {
-            log.info("action:" + e.getMessage());
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Exception:{0}", e);
         } finally {
             out.close();
         }

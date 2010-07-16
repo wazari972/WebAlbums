@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
 import net.wazari.service.exchange.ViewSessionImages;
 
 import java.net.ConnectException;
@@ -90,7 +91,7 @@ public class ImageBean implements ImageLocal {
                 output.validate();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "{0}: ", new Object[]{e.getClass().getSimpleName(), e}) ;
             output.addException("Exception", e.getMessage());
             output.validate();
         }
@@ -107,8 +108,8 @@ public class ImageBean implements ImageLocal {
             InputStream in = null;
 
 
-            filepath = StringUtil.escapeURL(filepath);
-            URLConnection conn = new URL(filepath).openConnection();
+            String safeFilepath = StringUtil.escapeURL(filepath);
+            URLConnection conn = new URL(safeFilepath).openConnection();
             in = conn.getInputStream();
 
             int bufferSize = (int) Math.min(conn.getContentLength(), 4 * 1024);
@@ -117,7 +118,7 @@ public class ImageBean implements ImageLocal {
 
 
             uniq = true;
-            vSession.setContentDispositionFilename(new File(filepath).getName() + "\"");
+            vSession.setContentDispositionFilename(new File(safeFilepath).getName() + "\"");
             vSession.setContentLength(conn.getContentLength());
             vSession.setContentType(type);
             OutputStream out = vSession.getOutputStream();
@@ -129,14 +130,14 @@ public class ImageBean implements ImageLocal {
 
             return null;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            log.log(Level.WARNING, "MalformedURLException: {0}", e.getMessage()) ;
             output.addException("MalformedURLException", filepath);
 
         } catch (ConnectException e) {
-            e.printStackTrace();
+            log.log(Level.WARNING, "ConnectException: {0}", e.getMessage()) ;
             output.addException("ConnectException", filepath);
         } catch (IOException e) {
-            log.warning("IOException " + filepath + "(" + e.getMessage() + ")");
+            log.log(Level.WARNING, "IOException {0}({1})", new Object[]{filepath, e.getMessage()});
             output.addException("IOException", filepath + "(" + e.getMessage() + ")");
         }
         return uniq;

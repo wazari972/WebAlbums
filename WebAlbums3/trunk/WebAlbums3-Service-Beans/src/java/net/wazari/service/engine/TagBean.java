@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.ejb.EJB;
@@ -168,11 +170,12 @@ public class TagBean implements TagLocal {
             }
             xmlSpec.validate();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "{0}:", new Object[]{e.getClass().getSimpleName(), e}) ;
 
             xmlSpec.cancel();
             xmlSpec.addException(e);
         }
         return xmlSpec.validate();
     }
+    private static final Logger log = Logger.getLogger(TagBean.class.getName());
 }

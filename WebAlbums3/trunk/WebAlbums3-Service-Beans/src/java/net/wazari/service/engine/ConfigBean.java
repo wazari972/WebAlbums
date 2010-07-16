@@ -2,6 +2,7 @@ package net.wazari.service.engine;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -64,24 +65,19 @@ public class ConfigBean implements ConfigLocal {
             output.addException("Pas de tag selectionné ...");
             return output.validate();
         }
-        try {
-            Tag enrTag = tagDAO.find(tag);
-            if (tag == null) {
-                output.addException("Le Tag #" + tag + " n'est pas dans la base ...");
-                return output.validate();
-            }
 
-            output.add("oldName", enrTag.getNom());
-
-            enrTag.setNom(nouveau);
-            tagDAO.edit(enrTag);
-            output.add("newName", nouveau);
-
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            output.cancel();
-            output.addException("NoSuchElementException", e);
+        Tag enrTag = tagDAO.find(tag);
+        if (tag == null) {
+            output.addException("Le Tag #" + tag + " n'est pas dans la base ...");
+            return output.validate();
         }
+
+        output.add("oldName", enrTag.getNom());
+
+        enrTag.setNom(nouveau);
+        tagDAO.edit(enrTag);
+        output.add("newName", nouveau);
+
         return output.validate();
     }
 
@@ -179,77 +175,70 @@ public class ConfigBean implements ConfigLocal {
             return output.validate();
         }
 
-        try {
-            if (nom != null && !nom.isEmpty()) {
-                String msg = "";
-                String liste = "";
+     
+        if (nom != null && !nom.isEmpty()) {
+            String msg = "";
+            String liste = "";
 
-                Tag enrTag = tagDAO.loadByName(nom);
-                if (enrTag == null) {
-                    if (0 > type || type > 3) {
-                        output.addException("Type incorrect (" + type + ") ...");
-                        return output.validate();
-                    }
-                    enrTag = tagDAO.newTag();
-
-                    enrTag.setNom(nom);
-                    enrTag.setTagType(type);
-                    tagDAO.create(enrTag);
-                    output.add("message", "TAG == " + enrTag.getId() + " ==");
-                    if (type == 3) {
-                        String longit = vSession.getLng();
-                        String lat = vSession.getLat();
-                        msg = " (" + longit + "/" + lat + ")";
-                        if (longit == null || lat == null) {
-                            output.cancel();
-                            output.addException("La geoloc " + msg + " n'est pas correcte...");
-                            tagDAO.remove(enrTag);
-
-                            return output.validate();
-                        }
-
-                        Geolocalisation geo = geoDAO.newGeolocalisation();
-                        geo.setTag(enrTag.getId());
-                        geo.setLongitude(longit);
-                        geo.setLat(lat);
-                        geo.setTag1(enrTag);
-                        geoDAO.create(geo);
-                    }
-
-                    switch (type) {
-                        case 1:
-                            liste = "Who";
-                            break;
-                        case 2:
-                            liste = "What";
-                            break;
-                        case 3:
-                            liste = "Where";
-                            break;
-                    }
-
-                    output.add("message", "Tag '" + nom + msg + "' correctement ajouté à la liste " + liste);
-                } else {
-                    output.cancel();
-                    output.addException("Le Tag " + nom + " est déjà présent dans la base ...");
-                    output.addException(enrTag.getId() + " - " + enrTag.getNom());
-
+            Tag enrTag = tagDAO.loadByName(nom);
+            if (enrTag == null) {
+                if (0 > type || type > 3) {
+                    output.addException("Type incorrect (" + type + ") ...");
                     return output.validate();
                 }
+                enrTag = tagDAO.newTag();
+
+                enrTag.setNom(nom);
+                enrTag.setTagType(type);
+                tagDAO.create(enrTag);
+                output.add("message", "TAG == " + enrTag.getId() + " ==");
+                if (type == 3) {
+                    String longit = vSession.getLng();
+                    String lat = vSession.getLat();
+                    msg = " (" + longit + "/" + lat + ")";
+                    if (longit == null || lat == null) {
+                        output.cancel();
+                        output.addException("La geoloc " + msg + " n'est pas correcte...");
+                        tagDAO.remove(enrTag);
+
+                        return output.validate();
+                    }
+
+                    Geolocalisation geo = geoDAO.newGeolocalisation();
+                    geo.setTag(enrTag.getId());
+                    geo.setLongitude(longit);
+                    geo.setLat(lat);
+                    geo.setTag1(enrTag);
+                    geoDAO.create(geo);
+                }
+
+                switch (type) {
+                    case 1:
+                        liste = "Who";
+                        break;
+                    case 2:
+                        liste = "What";
+                        break;
+                    case 3:
+                        liste = "Where";
+                        break;
+                }
+
+                output.add("message", "Tag '" + nom + msg + "' correctement ajouté à la liste " + liste);
             } else {
                 output.cancel();
-                output.addException("Le nom du tag est vide ...");
+                output.addException("Le Tag " + nom + " est déjà présent dans la base ...");
+                output.addException(enrTag.getId() + " - " + enrTag.getNom());
 
                 return output.validate();
             }
-
-
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
+        } else {
             output.cancel();
-            output.addException("NumberFormatException", "Erreur dans le cast de l'un des nombres");
+            output.addException("Le nom du tag est vide ...");
 
+            return output.validate();
         }
+
         return output.validate();
     }
 
@@ -306,4 +295,5 @@ public class ConfigBean implements ConfigLocal {
 
         }
     }
+    private static final Logger log = Logger.getLogger(ConfigBean.class.getName());
 }

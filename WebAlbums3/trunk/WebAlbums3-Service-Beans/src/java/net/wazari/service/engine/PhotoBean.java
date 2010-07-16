@@ -41,7 +41,6 @@ import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.util.system.SystemTools;
 
-
 @Stateless
 public class PhotoBean implements PhotoLocal {
 
@@ -65,123 +64,118 @@ public class PhotoBean implements PhotoLocal {
     private WebPageLocal webPageService;
     @EJB
     private WebPageLocal webService;
-    @EJB private FilesFinder finder ;
-    @EJB private SystemTools sysTools ;
+    @EJB
+    private FilesFinder finder;
+    @EJB
+    private SystemTools sysTools;
 
     @Override
     public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,
             Boolean correct) throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder(null);
         Integer photoID = vSession.getId();
-        String rq = null;
-        try {
-            Photo enrPhoto = photoDAO.loadIfAllowed(vSession, photoID);
 
-            if (enrPhoto == null) {
-                output.addException("Impossible de trouver cette photo " +
-                        "(" + photoID + (vSession.isRootSession() ? "" : "/" + vSession.getTheme()) + ")");
-                return output.validate();
-            }
-            
-            //supprimer ?
-            if (vSession.getSuppr()) {
-                XmlBuilder suppr_msg = new XmlBuilder("suppr_msg");
-                finder.deletePhoto(enrPhoto, suppr_msg, vSession.getConfiguration());
-                output.add(suppr_msg);
-                return output.validate();
-            }
-            
-            //mise à jour des tag/description
-            String desc = vSession.getDesc();
-            enrPhoto.setDescription(desc);
+        Photo enrPhoto = photoDAO.loadIfAllowed(vSession, photoID);
 
-            String user = vSession.getDroit();
-            if (user != null) {
-                boolean valid = false ;
-                try {
-                    Integer userId = null ;
-
-                    if ("null".equals(user)) {
-                         valid = true ;
-                    } else if (userDAO.find(Integer.parseInt(user)) != null) {
-                        valid = true ;
-                        userId = Integer.parseInt(user) ;
-                    } else {
-                        log.log(Level.WARNING, "Unknown userId:{0}", user);
-                    }
-
-                    if (valid) {
-                        log.log(Level.INFO, "Set Droit to:{0}", userId);
-                        enrPhoto.setDroit(userId);
-                    }
-
-                } catch (NumberFormatException e) {
-                    log.log(Level.WARNING, "Cannot parse userId:{0}", user);
-                }
-            }
-            
-            Integer[] tags = vSession.getNewTag();
-            photoUtil.setTags(enrPhoto, tags);
-
-            photoDAO.edit(enrPhoto);
-
-            //utiliser cette photo comme representante de l'album ?
-            Boolean represent = vSession.getRepresent();
-            if (represent) {
-                Album enrAlbum = enrPhoto.getAlbum();
-                if (enrAlbum == null) {
-                    output.addException("Exception", "Impossible d'acceder l'album à representer " +
-                            "(" + enrPhoto.getAlbum() + ")");
-                    return output.validate();
-                }
-
-                enrAlbum.setPicture(enrPhoto.getId());
-                albumDAO.edit(enrAlbum);
-            }
-
-            //utiliser cette photo pour representer le tag de ce theme
-            Tag enrTag = tagDAO.find(vSession.getTagPhoto()) ;
-            if (enrTag != null) {
-                Theme actualTheme = enrPhoto.getAlbum().getTheme();
-
-                TagTheme enrTagTh = null;
-                for (TagTheme enrTTCurrent : enrTag.getTagThemeList()) {
-                    if (enrTTCurrent.getTheme().getId().equals(actualTheme.getId())) {
-                        enrTagTh = enrTTCurrent;
-                        break;
-                    }
-                }
-
-                if (enrTagTh == null) {
-                    log.warning("CREATE TAG") ;
-                    //creer un tagTheme pour cette photo/tag/theme
-                    enrTagTh = tagThemeDAO.newTagTheme();
-
-                    enrTagTh.setTheme(actualTheme);
-                    enrTagTh.setTag(enrTag);
-                    //par défaut le tag est visible
-                    enrTagTh.setIsVisible(true);
-
-                    tagThemeDAO.create(enrTagTh);
-                } else {
-                    log.warning("EDIT TAG") ;
-                }
-                //changer la photo representant ce tag/theme
-                enrTagTh.setPhoto(enrPhoto.getId());
-
-                log.log(Level.INFO, "edit {0}", enrTagTh);
-                tagThemeDAO.edit(enrTagTh);
-            }
-
-            output.add("message", " Photo (" + enrPhoto.getId() + ") " +
-                    "correctement mise à jour !");
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-
-            output.cancel();
-            output.addException("NoSuchElementException", "Impossible d'accerder à la photo à modifier (" + photoID + ")");
-            output.addException("NoSuchElementException", rq);
+        if (enrPhoto == null) {
+            output.addException("Impossible de trouver cette photo "
+                    + "(" + photoID + (vSession.isRootSession() ? "" : "/" + vSession.getTheme()) + ")");
+            return output.validate();
         }
+
+        //supprimer ?
+        if (vSession.getSuppr()) {
+            XmlBuilder suppr_msg = new XmlBuilder("suppr_msg");
+            finder.deletePhoto(enrPhoto, suppr_msg, vSession.getConfiguration());
+            output.add(suppr_msg);
+            return output.validate();
+        }
+
+        //mise à jour des tag/description
+        String desc = vSession.getDesc();
+        enrPhoto.setDescription(desc);
+
+        String user = vSession.getDroit();
+        if (user != null) {
+            boolean valid = false;
+            try {
+                Integer userId = null;
+
+                if ("null".equals(user)) {
+                    valid = true;
+                } else if (userDAO.find(Integer.parseInt(user)) != null) {
+                    valid = true;
+                    userId = Integer.parseInt(user);
+                } else {
+                    log.log(Level.WARNING, "Unknown userId:{0}", user);
+                }
+
+                if (valid) {
+                    log.log(Level.INFO, "Set Droit to:{0}", userId);
+                    enrPhoto.setDroit(userId);
+                }
+
+            } catch (NumberFormatException e) {
+                log.log(Level.WARNING, "Cannot parse userId:{0}", user);
+            }
+        }
+
+        Integer[] tags = vSession.getNewTag();
+        photoUtil.setTags(enrPhoto, tags);
+
+        photoDAO.edit(enrPhoto);
+
+        //utiliser cette photo comme representante de l'album ?
+        Boolean represent = vSession.getRepresent();
+        if (represent) {
+            Album enrAlbum = enrPhoto.getAlbum();
+            if (enrAlbum == null) {
+                output.addException("Exception", "Impossible d'acceder l'album à representer "
+                        + "(" + enrPhoto.getAlbum() + ")");
+                return output.validate();
+            }
+
+            enrAlbum.setPicture(enrPhoto.getId());
+            albumDAO.edit(enrAlbum);
+        }
+
+        //utiliser cette photo pour representer le tag de ce theme
+        Tag enrTag = tagDAO.find(vSession.getTagPhoto());
+        if (enrTag != null) {
+            Theme actualTheme = enrPhoto.getAlbum().getTheme();
+
+            TagTheme enrTagTh = null;
+            for (TagTheme enrTTCurrent : enrTag.getTagThemeList()) {
+                if (enrTTCurrent.getTheme().getId().equals(actualTheme.getId())) {
+                    enrTagTh = enrTTCurrent;
+                    break;
+                }
+            }
+
+            if (enrTagTh == null) {
+                log.warning("CREATE TAG");
+                //creer un tagTheme pour cette photo/tag/theme
+                enrTagTh = tagThemeDAO.newTagTheme();
+
+                enrTagTh.setTheme(actualTheme);
+                enrTagTh.setTag(enrTag);
+                //par défaut le tag est visible
+                enrTagTh.setIsVisible(true);
+
+                tagThemeDAO.create(enrTagTh);
+            } else {
+                log.warning("EDIT TAG");
+            }
+            //changer la photo representant ce tag/theme
+            enrTagTh.setPhoto(enrPhoto.getId());
+
+            log.log(Level.INFO, "edit {0}", enrTagTh);
+            tagThemeDAO.edit(enrTagTh);
+        }
+
+        output.add("message", " Photo (" + enrPhoto.getId() + ") "
+                + "correctement mise à jour !");
+
         return output.validate();
     }
 
@@ -197,42 +191,36 @@ public class PhotoBean implements PhotoLocal {
         page = (page == null ? 0 : page);
 
         Album enrAlbum = null;
-        try {
-            enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
 
-            if (enrAlbum == null) {
-                output.addException("L'album (" + albumId + ") n'existe pas " +
-                        "ou n'est pas accessible...");
-                return output.validate();
-            }
-            XmlBuilder album = new XmlBuilder("album");
-            output.add(album);
+        enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
 
-            album.add("id", enrAlbum.getId());
-            album.add("count", albmCount);
-            album.add("title", enrAlbum.getNom());
-            album.add(enrAlbum.getDroit().getNom());
-            album.add(StringUtil.xmlDate(enrAlbum.getDate(), null));
-            album.add(new XmlBuilder("details")
-                    .add("description", enrAlbum.getDescription())
-                    .add("photoID", enrAlbum.getPicture()));
-            
-            PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, albumId) ;
-            if (Special.FULLSCREEN == special) {
-                sysTools.fullscreenMultiple(vSession, rq, "Albums", enrAlbum.getId(), page);
-            }
-
-            XmlBuilder thisPage = new XmlBuilder(null);
-            thisPage.add("name", "Photos");
-            thisPage.add("album", albumId);
-            thisPage.add("albmCount", albmCount);
-            output.add(displayPhoto(rq, vSession, thisPage, submit));
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            output.cancel();
-            output.addException("NullPointerException", "Quelque chose n'existe pas ... " + e);
+        if (enrAlbum == null) {
+            output.addException("L'album (" + albumId + ") n'existe pas "
+                    + "ou n'est pas accessible...");
+            return output.validate();
         }
+        XmlBuilder album = new XmlBuilder("album");
+        output.add(album);
+
+        album.add("id", enrAlbum.getId());
+        album.add("count", albmCount);
+        album.add("title", enrAlbum.getNom());
+        album.add(enrAlbum.getDroit().getNom());
+        album.add(StringUtil.xmlDate(enrAlbum.getDate(), null));
+        album.add(new XmlBuilder("details").add("description", enrAlbum.getDescription()).add("photoID", enrAlbum.getPicture()));
+
+        PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, albumId);
+        if (Special.FULLSCREEN == special) {
+            sysTools.fullscreenMultiple(vSession, rq, "Albums", enrAlbum.getId(), page);
+        }
+
+        XmlBuilder thisPage = new XmlBuilder(null);
+        thisPage.add("name", "Photos");
+        thisPage.add("album", albumId);
+        thisPage.add("albmCount", albmCount);
+        output.add(displayPhoto(rq, vSession, thisPage, submit));
+
+
         return output.validate();
     }
 
@@ -267,13 +255,13 @@ public class PhotoBean implements PhotoLocal {
         output.add(webService.displayListIBTNI(Mode.TAG_USED, vSession, enrPhoto,
                 Box.LIST,
                 null, null));
-        Utilisateur enrUtil = userDAO.find(enrPhoto.getDroit()) ;
+        Utilisateur enrUtil = userDAO.find(enrPhoto.getDroit());
         output.add(webService.displayListDroit(enrUtil, enrAlbum.getDroit().getId()));
         output.validate();
 
         return output.validate();
     }
-    
+
     @Override
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlBuilder displayPhoto(PhotoRequest rq,
@@ -288,13 +276,13 @@ public class PhotoBean implements PhotoLocal {
         Integer photoID = vSession.getId();
         Integer scount = vSession.getCount();
         Bornes bornes = webService.calculBornes(page, scount, vSession.getPhotoSize());
-        SubsetOf<Photo> lstP ;
+        SubsetOf<Photo> lstP;
         if (rq.type == TypeRequest.PHOTO) {
             lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes);
         } else {
             lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes);
         }
-        
+
         String degrees = "0";
         Integer tag = null;
         int countME = 0;
@@ -302,7 +290,7 @@ public class PhotoBean implements PhotoLocal {
         boolean reSelect = false;
         boolean current = false;
 
-        Turn turn = null ;
+        Turn turn = null;
         if (inEditionMode == EditMode.EDITION) {
             try {
                 Action action = vSession.getAction();
@@ -323,6 +311,7 @@ public class PhotoBean implements PhotoLocal {
             }
         }
 
+        boolean submitted = false ;
         int count = bornes.getFirstElement();
         for (Photo enrPhoto : lstP.subset) {
             XmlBuilder photo = new XmlBuilder("photo");
@@ -364,7 +353,7 @@ public class PhotoBean implements PhotoLocal {
             if (enrPhoto.getId().equals(photoID)) {
                 if (submit != null) {
                     photo.add(submit);
-                    submit = null;
+                    submitted = true ;
                 }
             }
             if (inEditionMode == EditMode.EDITION) {
@@ -384,9 +373,9 @@ public class PhotoBean implements PhotoLocal {
                     Box.NONE));
             details.add("albumID", enrPhoto.getAlbum().getId());
             //liste des utilisateurs pouvant voir cette photo
-            if (vSession.isSessionManager() &&
-                    inEditionMode != EditMode.VISITE) {
-                Utilisateur enrUser = userDAO.find(enrPhoto.getDroit())  ;
+            if (vSession.isSessionManager()
+                    && inEditionMode != EditMode.VISITE) {
+                Utilisateur enrUser = userDAO.find(enrPhoto.getDroit());
                 if (enrUser != null) {
                     details.add("user", enrUser.getNom());
                 } else {
@@ -403,7 +392,7 @@ public class PhotoBean implements PhotoLocal {
             count++;
         }
 
-        if (submit != null) {
+        if (!submitted && submit != null) {
             output.add(submit);
         }
 
@@ -416,8 +405,8 @@ public class PhotoBean implements PhotoLocal {
                 if (countME == 0 || Turn.RIEN == turn) {
                     msg = "Aucune modification faite ... ?";
                 } else {
-                    msg = "" + countME + " photo" +
-                            (countME == 1 ? " a été modifiée" : "s ont été modifées");
+                    msg = "" + countME + " photo"
+                            + (countME == 1 ? " a été modifiée" : "s ont été modifées");
                 }
                 massEdit.add("message", msg);
             }

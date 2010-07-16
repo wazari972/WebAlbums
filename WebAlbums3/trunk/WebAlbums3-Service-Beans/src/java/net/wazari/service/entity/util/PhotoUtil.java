@@ -173,7 +173,7 @@ public class PhotoUtil {
                 themeName = enrTh.getNom();
             }
         } catch (WebAlbumsDaoException e) {
-            e.printStackTrace();
+            log.log(Level.WARNING, "WebAlbumsDaoException {0}", e);
             throw new WebAlbumsServiceException(WebAlbumsDaoException.JDBCException,
                     "Erreur dans Photo.rotate()");
         }
