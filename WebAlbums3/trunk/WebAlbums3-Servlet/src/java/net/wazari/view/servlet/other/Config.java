@@ -45,7 +45,9 @@ public class Config extends HttpServlet {
             String action = request.getParameter("action");
 
             log.log(Level.INFO, "Other/Config action:{0}", action);
-            if ("CREATE_DIRS".equals(action)) {
+            if ("LOGOUT".equals(action)) {
+                request.logout(); 
+            } else if ("CREATE_DIRS".equals(action)) {
                 Configuration conf = ConfigurationXML.getConf();
 
                 out.println("Root path:"+conf.getRootPath()+"<BR/>") ;

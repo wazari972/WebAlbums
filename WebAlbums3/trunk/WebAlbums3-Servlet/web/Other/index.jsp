@@ -18,6 +18,7 @@
         <ul>
             <li><a href="Config?action=SAVE">SAVE</a></li>
             <li><a href="Config?action=RELOAD">RELOAD</a></li>
+            <li><a href="Config?action=LOGOUT">LOGOUT</a></li>
             <li><a href="Config">PRINT</a></li>
         </ul>
         <h1>Display</h1>

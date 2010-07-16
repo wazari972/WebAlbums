@@ -32,7 +32,6 @@ public class Users extends HttpServlet {
         try {
             Action action = vSession.getAction();
             log.log(Level.INFO, "Action: {0}", action);
-            boolean valid = false;
             if (Action.LOGIN == action) {
 
                 String userName = vSession.getUserName();
@@ -47,7 +46,7 @@ public class Users extends HttpServlet {
 
                 request.login(userName, pass);
                 output.add("valid");
-                log.log(Level.INFO, "authentication: {0}", valid);
+                log.log(Level.INFO, "authentication");
                 response.sendRedirect("Index");
                 return null ;
             } else {
