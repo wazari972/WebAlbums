@@ -151,6 +151,7 @@ public class TagFacade implements TagFacadeLocal {
             return  (JPATag) em.createQuery(rq)
                     .setParameter("id", id)
                     .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null ;

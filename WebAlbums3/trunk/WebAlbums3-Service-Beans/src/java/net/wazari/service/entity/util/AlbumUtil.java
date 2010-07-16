@@ -67,10 +67,10 @@ public class AlbumUtil {
     }
 
     public void updateDroit(Album a, Integer droit) throws WebAlbumsServiceException {
-        if (userDAO.find(droit) == null) {
+        Utilisateur enrDroit = userDAO.find(droit);
+        if (enrDroit == null) {
             return;
         }
-        Utilisateur enrDroit = userDAO.find(droit);
         if (enrDroit.equals(a.getDroit())) {
             return;
         }
@@ -80,6 +80,4 @@ public class AlbumUtil {
             enrPhoto.setDroit(null);
         }
     }
-
-
 }

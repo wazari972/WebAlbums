@@ -121,7 +121,6 @@ public class ConfigBean implements ConfigLocal {
     public XmlBuilder treatMODVIS(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("modVis");
-        String rq = null;
 
         if (vSession.isRootSession()) {
             output.addException("impossible to change visibility on the root session");
@@ -143,8 +142,6 @@ public class ConfigBean implements ConfigLocal {
                 output.addException("Impossible de trouver ce tag (" + tag + ") ...");
                 return output.validate();
             }
-            //le tag existe
-            rq = "done";
 
             enrTagTheme = tagThemeDAO.newTagTheme();
             enrTagTheme.setTheme(vSession.getTheme());

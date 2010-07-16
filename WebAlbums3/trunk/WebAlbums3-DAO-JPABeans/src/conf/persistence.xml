@@ -35,10 +35,13 @@
       <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.use_sql_comments" value="true"/>
       <property name="hibernate.hbm2ddl.auto" value="update"/>
-      <property name="hibernate.cache.use_query_cacke" value="true"/>
+      <property name="hibernate.cache.use_query_cache" value="true"/>
       <property name="hibernate.cache.use_second_level_cache" value="true"/>
+      <property name="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.EhCacheProvider"/>
     </properties>
   </persistence-unit>
+
+
   <persistence-unit name="WebAlbums-MySQL-Test2" transaction-type="JTA">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>jdbc/mysqlWebAlbumsTest2</jta-data-source>

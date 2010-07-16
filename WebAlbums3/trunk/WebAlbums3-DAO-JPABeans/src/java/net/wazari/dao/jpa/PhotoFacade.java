@@ -60,7 +60,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
             return (JPAPhoto) em.createQuery(rq).setParameter("id", id)
                     .setHint("org.hibernate.cacheable", true)
-                    .setHint("org.hibernate.readOnly", true)
+                    .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
