@@ -60,11 +60,6 @@ public class JPATheme implements Theme, Serializable {
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
-    @XmlElement
-    @Basic(optional = false)
-    @Column(name = "Password", nullable = false, length = 100)
-    private String password = "not used";
-
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
