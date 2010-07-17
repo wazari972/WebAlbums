@@ -32,23 +32,26 @@ import org.glassfish.api.embedded.Server;
  */
 public class GF {
     private static final String PATH_RES = "/Users/kevinpouget/Assembla/WebAlbums3/trunk/WebAlbums3-DAO-JPABeans/setup/" ;
-    private static final String PATH_EAR = "/Users/kevinpouget/Assembla/WebAlbums3/trunk/WebAlbums3-ea/dist/" ;
+    private static final String PATH_EAR = "." ;
+    private static final int PORT = 8081 ;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws LifecycleException, IOException, InterruptedException {
-        Server server = startServer(8081) ;
+        Server server = startServer(PORT) ;
         try {
             createUsers(server);
             createJDBC(server);
-
-            //if (true) return ;
+            
             EmbeddedDeployer deployer = server.getDeployer();
             log.info("Deploying ");
             String appName = deployer.deploy(new File(PATH_EAR, "WebAlbums3-ea.ear"), null);
             log.log(Level.INFO, "Deployed {0}", appName);
 
-            new ServerSocket(8082).accept().close() ;
+            log.log(Level.INFO, "Ready to server at http://localhost:{0}/WebAlbuns3-Servlet", Integer.toString(PORT));
+            log.log(Level.INFO, "Connect to http://localhost:{0} to shutdown the server", Integer.toString(PORT+1));
+
+            new ServerSocket(PORT+1).accept().close() ;
 
             server.stop();
         } catch (Throwable t) {
@@ -58,7 +61,7 @@ public class GF {
     }
 
     private static Server startServer(int port) throws LifecycleException, IOException {
-        Server.Builder builder = new Server.Builder("web-test");
+        Server.Builder builder = new Server.Builder("WebAlbums");
         Server server = builder.build();
         server.addContainer(ContainerBuilder.Type.all);
         server.start();
