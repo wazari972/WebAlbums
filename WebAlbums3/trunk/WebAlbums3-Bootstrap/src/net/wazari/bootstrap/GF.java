@@ -13,6 +13,7 @@ package net.wazari.bootstrap;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,25 +38,47 @@ public class GF {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws LifecycleException, IOException, InterruptedException {
+    public static void main(String[] args) throws LifecycleException, IOException, InterruptedException, Throwable {
+        Logger.getLogger("").setLevel(Level.ALL);
+        log.warning("Starting WebAlbums GF bootstrap") ;
+        
+        File ear =  new File(PATH_EAR, "WebAlbums3-ea.ear") ;
+        if (!ear.isFile()) {
+            log.log(Level.SEVERE, "Impossible to open the ear file at {0}", ear.getPath());
+            return ;
+        }
+        try {
+            new ServerSocket(PORT).close();
+            new ServerSocket(PORT+1).close();
+        } catch (BindException e) {
+            log.log(Level.WARNING, "Port {0} or {1} already in use", new Object[]{PORT, PORT + 1}) ;
+            return ;
+        }
+
         Server server = startServer(PORT) ;
+
+        File keyfile = new File("keyfile") ;
+        if (keyfile.exists()) {
+            log.warning("delete ./keyfile ") ;
+            keyfile.delete();
+        }
+
         try {
             createUsers(server);
             createJDBC(server);
-            
+            log.info("getDeployer ");
             EmbeddedDeployer deployer = server.getDeployer();
-            log.info("Deploying ");
-            String appName = deployer.deploy(new File(PATH_EAR, "WebAlbums3-ea.ear"), null);
+            log.info("deploy");
+            String appName = deployer.deploy(ear, null);
             log.log(Level.INFO, "Deployed {0}", appName);
 
-            log.log(Level.INFO, "Ready to server at http://localhost:{0}/WebAlbuns3-Servlet", Integer.toString(PORT));
+            log.log(Level.INFO, "Ready to server at http://localhost:{0}/WebAlbums3-Servlet", Integer.toString(PORT));
             log.log(Level.INFO, "Connect to http://localhost:{0} to shutdown the server", Integer.toString(PORT+1));
 
             new ServerSocket(PORT+1).accept().close() ;
 
             server.stop();
-        } catch (Throwable t) {
-            t.printStackTrace() ;
+        } finally {
             server.stop();
         }
     }
@@ -78,7 +101,7 @@ public class GF {
         ActionReport report = server.getHabitat().getComponent(ActionReport.class);
         log.log(Level.INFO, "Invok {0} {1}", new Object[]{command, params});
         
-        log.info("command invoked");
+        log.log(Level.INFO, "command \"{0}\" invoked", command);
         if (params == null) {
             runner.getCommandInvocation(command, report).execute();
         } else {
@@ -88,7 +111,7 @@ public class GF {
             report.writeReport(System.out);
             throw report.getFailureCause() ;
         }
-
+        log.log(Level.INFO, "command finished with {0}", report.getActionExitCode());
         return report.getTopMessagePart().getChildren() ;
     }
 
@@ -101,7 +124,7 @@ public class GF {
         try {
             asAdmin(server, "create-file-user", params);
         } catch (Throwable t){
-            t.printStackTrace();
+            //t.printStackTrace();
         }
     }
 
