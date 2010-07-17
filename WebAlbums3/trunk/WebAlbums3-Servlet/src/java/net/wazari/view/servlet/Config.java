@@ -82,6 +82,11 @@ public class Config extends HttpServlet {
             if (Action.DELTAG == action) {
                 output.add(configService.treatDELTAG(vSession));
             }
+
+            //suppression d'un tag
+            if (Action.DELTHEME == action) {
+                output.add(configService.treatDELTHEME(vSession));
+            }
             output.add(webPageService.displayListLB(Mode.TAG_USED, vSession, null,
                     Box.MULTIPLE));
             output.add(webPageService.displayListLB(Mode.TAG_GEO, vSession, null,

@@ -1,7 +1,7 @@
 package net.wazari.service.engine;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
@@ -13,6 +13,7 @@ import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.dao.ThemeFacadeLocal;
 
 import net.wazari.dao.entity.*;
 
@@ -32,6 +33,8 @@ public class ConfigBean implements ConfigLocal {
     private TagThemeFacadeLocal tagThemeDAO;
     @EJB
     private TagPhotoFacadeLocal tagPhotoDAO;
+    @EJB
+    private ThemeFacadeLocal themeDAO;
     @EJB
     private FilesFinder filesFinder;
 
@@ -244,7 +247,6 @@ public class ConfigBean implements ConfigLocal {
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("delTag");
 
-        String rq = null;
         int tagID = vSession.getTag();
 
         try {
@@ -292,5 +294,24 @@ public class ConfigBean implements ConfigLocal {
 
         }
     }
+
+    public XmlBuilder treatDELTHEME(ViewSessionConfig vSession) throws WebAlbumsServiceException {
+        XmlBuilder output = new XmlBuilder("delTheme");
+        try {
+            if (vSession.isRootSession()) {
+                output.add("message", "Impossible de supprimer le theme Root") ;
+                return output.validate() ;
+            }
+
+            themeDAO.remove(vSession.getTheme());
+            output.add("message", "Theme correctement supprimer") ;
+            return output.validate();
+        } catch (Exception e) {
+            log.log(Level.WARNING, "error while removing the theme: {0}", e);
+            output.add("message", "error while removing the theme: "+e.getMessage()) ;
+            return output.validate() ;
+        }
+    }
+
     private static final Logger log = Logger.getLogger(ConfigBean.class.getName());
 }

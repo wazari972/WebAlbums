@@ -236,6 +236,26 @@
 	</div>
       </div>
     </div>
+
+    <div class="item">
+      <a name="delTheme"/>
+      <div class="date">
+	<span>*</span>
+      </div>
+      <div class="content">
+	<a name="delTheme"/>
+	<h1>/!\Suppression du theme/!\</h1>
+	<div class="body">
+            <xsl:apply-templates select="delTheme"/>
+            <center>
+              <form action='Config#delTheme' method='POST'>
+                <input type='hidden' name='action' value='DELTHEME'/>
+                <input type='submit' value='GO !'/>
+              </form>
+          </center>
+	</div>
+      </div>
+    </div>
   </xsl:template>
 
   <xsl:template match="map">

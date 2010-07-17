@@ -21,14 +21,14 @@ function getGoogleKey() {
 }
 
 function loadMaps() {
+    document.getElementById ("mapChoix").innerHTML = "" ;
+    document.getElementById('mapLoader').style.visibility = "hidden";
     var script = document.createElement("script");
     script.setAttribute("src", ["http://maps.google.com/maps?file=api&v=2.x&key=",
         getGoogleKey(),
         "&c&async=2&callback=loadMap"].join(''));
     script.setAttribute("type", "text/javascript");
     document.documentElement.firstChild.appendChild(script);
- 
-    document.getElementById('mapLoader').style.visibility = "hidden";
 }
 
 function loadCloud() {
