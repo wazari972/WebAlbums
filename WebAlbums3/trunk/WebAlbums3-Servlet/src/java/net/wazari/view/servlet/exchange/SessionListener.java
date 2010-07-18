@@ -5,8 +5,10 @@
 
 package net.wazari.view.servlet.exchange;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -31,6 +33,10 @@ public class SessionListener implements HttpSessionListener {
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
         log.warning("Session Destroyed") ;
-        sessionService.sessionDestroyed(new ViewSessionLoginImpl(se.getSession()));
+        try {
+            sessionService.sessionDestroyed(new ViewSessionLoginImpl(se.getSession()));
+        } catch (EJBException e) {
+            log.log(Level.WARNING, "Too late: {0}", e.getMessage()) ;
+        }
     }
 }
