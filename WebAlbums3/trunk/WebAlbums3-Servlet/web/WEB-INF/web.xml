@@ -49,4 +49,20 @@
         <description>Read-only access</description>
         <role-name>VIEWER</role-name>
     </security-role>
+    <security-role>
+        <description>View all the pictures</description>
+        <role-name>Admin</role-name>
+    </security-role>
+    <security-role>
+        <description>View all the Famille pictures</description>
+        <role-name>Famille</role-name>
+    </security-role>
+    <security-role>
+        <description>View all the Amis pictures</description>
+        <role-name>Amis</role-name>
+    </security-role>
+    <security-role>
+        <description>View all the Autres pictures</description>
+        <role-name>Autres</role-name>
+    </security-role>
 </web-app>

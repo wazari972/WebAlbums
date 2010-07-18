@@ -213,7 +213,7 @@ public class DispatcherBean {
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
-        log.log(Level.WARNING, "============= {0}: {1} =============", new Object[]{page, time});
+        log.log(Level.WARNING, "============= <{0}/>: {1} =============", new Object[]{page, time});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
