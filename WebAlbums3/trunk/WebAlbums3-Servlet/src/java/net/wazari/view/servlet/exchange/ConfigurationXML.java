@@ -39,26 +39,30 @@ public class ConfigurationXML implements Configuration {
             String prop = System.getProperty("root.path") ;
             if (prop != null) path = prop ;
             else {
+                log.warning("No 'root.path' property found, trying local RootPath.conf ...") ;
                 InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                 String line = reader.readLine();
                 if (line != null) path = line ;
                 else {
                     log.log(Level.SEVERE, "Could not read RootPath from file: empty");
+                    throw new IllegalArgumentException("Could not read Rootpath from "+path+": empty") ;
                 }
             }
         } catch (IOException ex) {
             log.log(Level.SEVERE, "Could not read RootPath from file: {0}", ex.getMessage());
         }
+
         if (path != null) {
             File rootDirFile = new File (path) ;
             if (!rootDirFile.exists()) {
-                log.warning("Rootpath doesn't exists ...");
-                path = null ;
-            } else
-            if (!rootDirFile.isDirectory()) {
-                log.warning("Rootpath is not a directory ...");
-                path = null ;
+                log.severe("Rootpath doesn't exists ...");
+                throw new IllegalArgumentException("Rootpath "+path+" doesn't exists ...") ;
+
+            } else if (!rootDirFile.isDirectory()) {
+                log.severe("Rootpath is not a directory ...");
+                throw new IllegalArgumentException("Rootpath "+path+" is not a directory ...") ;
+
             } else {
                 if (!rootDirFile.isAbsolute()) {
                     try {
@@ -73,6 +77,8 @@ public class ConfigurationXML implements Configuration {
                 }
             }
         }
+        if (path == null) throw new IllegalArgumentException("Could not work out a valid root path ...") ;
+
         rootPath = path ;
         log.log(Level.WARNING, "Root path retrieved: {0}", rootPath);
     }
