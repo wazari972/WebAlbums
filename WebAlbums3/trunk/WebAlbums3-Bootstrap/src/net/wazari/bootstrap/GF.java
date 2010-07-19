@@ -181,9 +181,9 @@ public class GF {
 
         params.add("username", usr.name);
         params.add("userpassword", usr.password);
-        for (String group :usr.groups) {
-            params.add("groups", group);
-        }
+        
+        params.add("groups", usr.groups);
+        
         
         asAdmin(server, "create-file-user", params);
     }
@@ -211,7 +211,7 @@ public class GF {
             User usr = new User() ;
             usr.name = "Kevin" ;
             usr.password = "" ;
-            usr.groups = Arrays.asList(new String[]{"Admin", "Manager"}) ;
+            usr.groups = "Admin:Manager" ;
             cfg.user.add(usr) ;
 
             if (!cfgFile.exists()) {
@@ -272,7 +272,7 @@ public class GF {
         static class User {
             @XmlAttribute String name ;
             @XmlAttribute String password ;
-            @XmlElement List<String> groups ;
+            @XmlAttribute String groups ;
         }
     }
 }
