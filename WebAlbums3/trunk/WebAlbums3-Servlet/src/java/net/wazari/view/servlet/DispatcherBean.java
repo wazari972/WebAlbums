@@ -4,9 +4,18 @@
  */
 package net.wazari.view.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Formatter;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -38,6 +47,7 @@ public class DispatcherBean {
 
     private static final Logger log = Logger.getLogger(DispatcherBean.class.getCanonicalName());
     static {
+        prepareLogs();
         log.warning("WebAlbums3-Servlet is being loaded ... ");
         log.log(Level.INFO, "RootPath: {0}", ConfigurationXML.getConf().getRootPath());
     }
@@ -214,6 +224,114 @@ public class DispatcherBean {
             doWrite(response, output, xslFile, isComplete, vSession);
         }
         log.log(Level.WARNING, "============= <{0}/>: {1} =============", new Object[]{page, time});
+    }
+
+    private static final String LOG_DIR = "logs/";
+
+    private static void prepareLogs() {
+        // ROOT logger
+        Logger rootLogger = Logger.getLogger("");
+        for (Handler hand : rootLogger.getHandlers()) if (hand instanceof ConsoleHandler) rootLogger.removeHandler(hand);
+
+        rootLogger.setLevel(Level.INFO);
+        //ConsoleHandler
+        ConsoleHandler ch = new ConsoleHandler();
+        ch.setFormatter(new MyFormatter(true));
+        ch.setLevel(Level.ALL) ;
+        rootLogger.addHandler(ch);
+
+        //FileHandler
+        try {
+
+            new File(LOG_DIR).mkdirs();
+            FileHandler serverFH = new FileHandler(LOG_DIR+"Server.log",
+                    /*limit */ 1000000,
+                    /*count */ 1,
+                    /*append*/ true);
+            serverFH.setLevel(Level.ALL) ;
+            serverFH.setFormatter(new MyFormatter(false));
+            rootLogger.addHandler(serverFH);
+        } catch (IOException e) {}
+
+        Logger webalbumsLogger = Logger.getLogger("net.wazari");
+        webalbumsLogger.setLevel(Level.ALL);
+        //FileHandler
+        try {
+            new File(LOG_DIR).mkdirs();
+            // Create a file handler that uses the custom formatter
+            FileHandler webalbumsFH = new FileHandler(LOG_DIR+"WebAlbums.log",
+                    /*limit */ 1000000,
+                    /*count */ 1,
+                    /*append*/ false);
+
+            webalbumsFH.setFormatter(new MyFormatter(false));
+            webalbumsLogger.addHandler(webalbumsFH);
+            webalbumsFH.setLevel(Level.ALL);
+            FileHandler webalbumsWarningFH = new FileHandler(LOG_DIR+"WebAlbums.warnings.%g.log",
+                    /*limit */ 1000000,
+                    /*count */ 5,
+                    /*append*/ true);
+            webalbumsWarningFH.setFormatter(new MyFormatter(false));
+            webalbumsWarningFH.setLevel(Level.WARNING);
+            webalbumsLogger.addHandler(webalbumsWarningFH);
+        } catch (IOException e) {}
+/*
+        log.finest("finest");
+        log.finer("finer");
+        log.fine("fine");
+        log.config("config");
+        log.info("info");
+        log.warning("warning");
+        log.severe("severe");
+ */
+    }
+
+    public static class MyFormatter extends Formatter {
+        private boolean breakLines ;
+        public MyFormatter(boolean breakLines) {
+            this.breakLines = breakLines ;
+        }
+
+        private static  final DateFormat df = new SimpleDateFormat("MMM dd HH:mm:ss.SSS");
+
+
+        @Override
+        public String format(LogRecord record) {
+            StringBuilder builder = new StringBuilder(1000);
+            builder.append(df.format(new Date(record.getMillis())));
+            builder.append("|").append(record.getLevel());
+
+            for (int count = record.getLevel().toString().length(); count < 8; count++)builder.append(" ") ;
+            builder.append("|").append(record.getSourceClassName()).append(".");
+            builder.append(record.getSourceMethodName()).append("|");
+
+            if (breakLines) builder.append("\n");
+
+            builder.append(formatMessage(record));
+            builder.append("\n");
+
+            if (record.getThrown() != null) {
+                Throwable t = record.getThrown() ;
+                Throwable cause = null ;
+
+                while (t != null) {
+                    builder.append(cause == null ? "" : "\t Caused by: ")
+                            .append(t.getClass().getCanonicalName()).append("@")
+                            .append(t.getMessage()).append("\n");
+                    cause = t ;
+                    t = t.getCause() ;
+                }
+
+                for (StackTraceElement st : cause.getStackTrace()) {
+                    builder.append("\t\t at ").append(st.toString()).append("\n") ;
+                }
+                builder.append("----\n") ;
+            }
+
+            return builder.toString();
+
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
