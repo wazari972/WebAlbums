@@ -31,20 +31,49 @@ public class ConfigurationXML implements Configuration {
     private static final Logger log = Logger.getLogger(ConfigurationXML.class.getName());
 
     private static final String SEP = File.separator;
-    private static String rootPath = "/photo" ;
+    private static final String rootPath  ;
 
     static {
+        String path = null ;
         try {
-            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-            String line = reader.readLine();
-            if (line != null) rootPath = line ;
+            String prop = System.getProperty("WEBALBUMS_ROOT_PATH") ;
+            if (prop != null) path = prop ;
             else {
-                log.log(Level.SEVERE, "Could not read RootPath from file: empty");
+                InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                String line = reader.readLine();
+                if (line != null) path = line ;
+                else {
+                    log.log(Level.SEVERE, "Could not read RootPath from file: empty");
+                }
             }
         } catch (IOException ex) {
             log.log(Level.SEVERE, "Could not read RootPath from file: {0}", ex.getMessage());
         }
+        if (path != null) {
+            File rootDirFile = new File (path) ;
+            if (!rootDirFile.exists()) {
+                log.warning("Rootpath doesn't exists ...");
+                path = null ;
+            } else
+            if (!rootDirFile.isDirectory()) {
+                log.warning("Rootpath is not a directory ...");
+                path = null ;
+            } else {
+                if (!rootDirFile.isAbsolute()) {
+                    try {
+                        path = rootDirFile.getAbsoluteFile().getCanonicalPath();
+                    } catch (IOException ex) {
+                        log.log(Level.WARNING, "Couldn''t unrelativize the path:{0}", ex.getMessage());
+                    }
+                }
+            
+                if (!path.endsWith(SEP)) {
+                    path += SEP ;
+                }
+            }
+        }
+        rootPath = path ;
         log.log(Level.WARNING, "Root path retrieved: {0}", rootPath);
     }
     
@@ -106,33 +135,6 @@ public class ConfigurationXML implements Configuration {
 
     @Override
     public String getRootPath() {
-        if (rootPath == null) {
-            log.warning("Rootpath null ...");
-            return null;
-        }
-
-        File rootDirFile = new File (rootPath) ;
-        if (!rootDirFile.exists()) {
-            log.warning("Rootpath doesn't exists ...");
-            return null ;
-        }
-        if (!rootDirFile.isDirectory()) {
-            log.warning("Rootpath is not a directory ...");
-            return null ;
-        }
-
-        if (!rootDirFile.isAbsolute()) {
-            try {
-                rootPath = rootDirFile.getAbsoluteFile().getCanonicalPath();
-            } catch (IOException ex) {
-                log.log(Level.WARNING, "Couldn''t unrelativize the path:{0}", ex.getMessage());
-            }
-        }
-
-        if (!rootPath.endsWith(SEP)) {
-            rootPath += SEP ;
-        }
-
         return rootPath;
 
     }
