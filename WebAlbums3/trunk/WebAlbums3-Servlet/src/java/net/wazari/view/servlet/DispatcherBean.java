@@ -254,7 +254,7 @@ public class DispatcherBean {
         } catch (IOException e) {}
 
         Logger webalbumsLogger = Logger.getLogger("net.wazari");
-        webalbumsLogger.setLevel(Level.ALL);
+        webalbumsLogger.setLevel(Level.WARNING);
         //FileHandler
         try {
             new File(LOG_DIR).mkdirs();
