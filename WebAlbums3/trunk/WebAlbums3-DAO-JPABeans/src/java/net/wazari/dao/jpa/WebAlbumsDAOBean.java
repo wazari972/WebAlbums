@@ -22,7 +22,7 @@ public class WebAlbumsDAOBean {
     public static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
     public static final String PERSISTENCE_UNIT_MySQL_Test = "WebAlbums-MySQL-Test" ;
     public static final String PERSISTENCE_UNIT_MySQL_Test2 = "WebAlbums-MySQL-Test2" ;
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Test2 ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String processListID(ServiceSession session, String rq, boolean restrict) {
