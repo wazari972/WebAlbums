@@ -36,7 +36,7 @@ public class ConfigurationXML implements Configuration {
     static {
         String path = null ;
         try {
-            String prop = System.getProperty("WEBALBUMS_ROOT_PATH") ;
+            String prop = System.getProperty("root.path") ;
             if (prop != null) path = prop ;
             else {
                 InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
