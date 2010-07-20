@@ -9,6 +9,8 @@ package net.wazari.service.exchange;
  * @author pk033
  */
 public interface Configuration {
+    boolean isPathURL() ;
+
     String getImagesPath();
 
     String getFtpPath();

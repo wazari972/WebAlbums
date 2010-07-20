@@ -76,6 +76,12 @@ public class ImageBean implements ImageLocal {
             } else {
                 filepath = (mode == ImgMode.GRAND ? photoUtil.getImagePath(vSession, enrPhoto) : photoUtil.getMiniPath(vSession, enrPhoto));
             }
+
+            if (vSession.getConfiguration().isPathURL()) {
+                vSession.redirect(filepath) ;
+                return null ;
+            }
+
             if (mode == ImgMode.FULLSCREEN) {
                  sysTools.fullscreenImage(vSession, enrPhoto);
                  return null ;
@@ -83,6 +89,7 @@ public class ImageBean implements ImageLocal {
 
             filepath = "file://" + filepath;
 
+           
             //null = correct, true = incorrect, but contentType already set
             Boolean correct = sendFile(vSession, filepath, type, output);
             if (correct == null || correct) {

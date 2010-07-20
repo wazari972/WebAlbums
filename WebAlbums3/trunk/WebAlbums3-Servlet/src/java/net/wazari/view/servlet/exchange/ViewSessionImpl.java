@@ -514,6 +514,15 @@ public class ViewSessionImpl implements
         return !request.getLocalAddr().equals(request.getRemoteHost()) ;
     }
 
+    @Override
+    public void redirect(String filepath) {
+        try {
+            response.sendRedirect(filepath);
+        } catch (IOException ex) {
+            Logger.getLogger(ViewSessionImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static class ViewSessionLoginImpl implements ViewSessionSession {
         private HttpSession session ;
         public ViewSessionLoginImpl (HttpSession session) {

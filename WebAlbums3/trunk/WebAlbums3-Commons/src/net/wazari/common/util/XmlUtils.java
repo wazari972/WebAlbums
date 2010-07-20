@@ -7,6 +7,9 @@ package net.wazari.common.util;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -42,10 +45,10 @@ public class XmlUtils {
         return writer.toString() ;
     }
 
-    public static <T> T reload (File file, Class<?> ... clazz) throws JAXBException {
+    public static <T> T reload (InputStream is, Class<?> ... clazz) throws JAXBException {
         //Create JAXB Context
         JAXBContext jc = JAXBContext.newInstance(clazz);
         Unmarshaller um = jc.createUnmarshaller();
-        return (T) um.unmarshal(file) ;
+        return (T) um.unmarshal(is) ;
     }
 }

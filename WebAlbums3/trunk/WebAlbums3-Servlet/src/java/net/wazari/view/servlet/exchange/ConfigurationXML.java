@@ -6,9 +6,11 @@ package net.wazari.view.servlet.exchange;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -32,7 +34,7 @@ public class ConfigurationXML implements Configuration {
 
     private static final String SEP = File.separator;
     private static final String rootPath  ;
-
+    private static final boolean isPathURL ;
     static {
         String path = null ;
         try {
@@ -53,7 +55,11 @@ public class ConfigurationXML implements Configuration {
             log.log(Level.SEVERE, "Could not read RootPath from file: {0}", ex.getMessage());
         }
 
-        if (path != null) {
+        if (path == null) {
+            throw new IllegalArgumentException("Could not work out a valid root path ...") ;
+        }
+        if (!path.startsWith("http://")) {
+            isPathURL = false ;
             File rootDirFile = new File (path) ;
             if (!rootDirFile.exists()) {
                 log.severe("Rootpath doesn't exists ...");
@@ -63,22 +69,26 @@ public class ConfigurationXML implements Configuration {
                 log.severe("Rootpath is not a directory ...");
                 throw new IllegalArgumentException("Rootpath "+path+" is not a directory ...") ;
 
-            } else {
-                if (!rootDirFile.isAbsolute()) {
-                    try {
-                        path = rootDirFile.getAbsoluteFile().getCanonicalPath();
-                    } catch (IOException ex) {
-                        log.log(Level.WARNING, "Couldn''t unrelativize the path:{0}", ex.getMessage());
-                    }
-                }
-            
-                if (!path.endsWith(SEP)) {
-                    path += SEP ;
+            }
+
+            if (!rootDirFile.isAbsolute()) {
+                try {
+                    path = rootDirFile.getAbsoluteFile().getCanonicalPath();
+                } catch (IOException ex) {
+                    log.log(Level.WARNING, "Couldn''t unrelativize the path:{0}", ex.getMessage());
                 }
             }
+            if (!path.endsWith(SEP)) {
+                path += SEP ;
+            }
+        } else {
+            isPathURL = true ;
+            if (!path.endsWith("/")) {
+                path += "/" ;
+            }
         }
-        if (path == null) throw new IllegalArgumentException("Could not work out a valid root path ...") ;
 
+            
         rootPath = path ;
         log.log(Level.WARNING, "Root path retrieved: {0}", rootPath);
     }
@@ -87,14 +97,18 @@ public class ConfigurationXML implements Configuration {
     static {
         conf = new ConfigurationXML() ;
         
-        File file = null ;
         try {
-            file = new File(conf.getConfigFilePath()) ;
-            conf = XmlUtils.reload(file , ConfigurationXML.class) ;
-            log.log(Level.INFO, "Configuration correctly loaded from {0}", file.getAbsolutePath());
+            InputStream is = null ;
+            if (isPathURL) {
+                is = new URL(conf.getConfigFilePath()).openStream() ;
+            } else {
+                is = new FileInputStream(new File(conf.getConfigFilePath())) ;
+            }
+            conf = XmlUtils.reload(is , ConfigurationXML.class) ;
+            log.log(Level.INFO, "Configuration correctly loaded from {0}", conf.getConfigFilePath());
             log.info(XmlUtils.print((ConfigurationXML)conf, ConfigurationXML.class));
         } catch (Exception e) {
-            log.log(Level.WARNING, "Exception while loading the Configuration from {1}", e.getCause().getMessage());
+            log.log(Level.WARNING, "Exception while loading the Configuration from {0}", e);
             log.log(Level.SEVERE, "Using default configuration ...");
         }
     }
@@ -119,7 +133,7 @@ public class ConfigurationXML implements Configuration {
     @Override
     public boolean isReadOnly() {
 
-        return properties.isReadOnly;
+        return properties.isReadOnly || isPathURL ;
 
     }
 
@@ -188,6 +202,11 @@ public class ConfigurationXML implements Configuration {
     @Override
     public String getSep() {
         return SEP ;
+    }
+
+    @Override
+    public boolean isPathURL() {
+        return isPathURL ;
     }
 
     private static class Directories {

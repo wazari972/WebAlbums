@@ -5,6 +5,7 @@
 package net.wazari.view.servlet.other;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -92,7 +93,7 @@ public class Config extends HttpServlet {
                     File file = new File(ConfigurationXML.getConf().getConfigFilePath());
                     file.getParentFile().mkdirs();
 
-                    ConfigurationXML conf = XmlUtils.reload(file, ConfigurationXML.class);
+                    ConfigurationXML conf = XmlUtils.reload(new FileInputStream(file), ConfigurationXML.class);
 
                     ConfigurationXML.setConf(conf);
                     log.log(Level.INFO, "ConfigurationXML Reloaded from {0}", file.getCanonicalPath()) ;

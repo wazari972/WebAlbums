@@ -6,6 +6,7 @@
 package net.wazari.dao.jpa;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -74,7 +75,7 @@ public class XMLImportExport implements ImportExporter {
     @Override
     public void importXml(String path) {
         try {
-            WebAlbumsXML web = XmlUtils.reload(new File(path+FILENAME), WebAlbumsXML.clazzez);
+            WebAlbumsXML web = XmlUtils.reload(new FileInputStream(new File(path+FILENAME)), WebAlbumsXML.clazzez);
             if (web == null) {
                 log.warning("Couldn't load the XML backup ...");
                 return ;
@@ -168,7 +169,7 @@ public class XMLImportExport implements ImportExporter {
 
                 em.merge(enrTagTheme);
             }
-        } catch (JAXBException ex) {
+        } catch (Exception ex) {
             log.log(Level.SEVERE, null, ex);
         }
     }
@@ -180,6 +181,10 @@ public class XMLImportExport implements ImportExporter {
         }
 
         for (Object enr : userDAO.findAll()) {
+            em.remove(enr);
+        }
+
+        for (Object enr : tagDAO.findAll()) {
             em.remove(enr);
         }
     }

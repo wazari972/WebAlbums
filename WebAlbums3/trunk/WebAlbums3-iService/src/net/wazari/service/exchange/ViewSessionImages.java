@@ -13,6 +13,7 @@ import java.io.OutputStream;
  * @author kevin
  */
 public interface ViewSessionImages extends ViewSession {
+
     enum ImgMode {PETIT, GRAND, SHRINK, FULLSCREEN}
 
     Integer getId();
@@ -26,6 +27,8 @@ public interface ViewSessionImages extends ViewSession {
     void setContentLength(int contentLength);
 
     void setContentType(String type);
+
+    void redirect(String filepath);
 
     OutputStream getOutputStream() throws IOException;
 }
