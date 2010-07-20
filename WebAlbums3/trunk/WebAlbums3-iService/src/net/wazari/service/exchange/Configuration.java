@@ -34,4 +34,6 @@ public interface Configuration {
     int getPhotoSize();
 
     String getSep();
+
+    boolean wantsProtectDB() ;
 }

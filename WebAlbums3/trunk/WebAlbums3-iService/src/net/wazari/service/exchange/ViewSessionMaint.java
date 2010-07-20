@@ -13,7 +13,7 @@ public interface ViewSessionMaint extends ViewSession {
     enum MaintAction {
         EXPORT_XML, IMPORT_XML,
         UPDATE
-    ,   UPDATE_DAO, PRINT_STATS}
+    ,   UPDATE_DAO, PRINT_STATS, TRUNCATE_DB}
 
     MaintAction getMaintAction() ;
 }

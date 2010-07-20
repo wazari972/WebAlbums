@@ -23,7 +23,7 @@ public interface ThemeFacadeLocal {
     String THEME_ROOT_NAME = "Root" ;
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    void remove(Theme theme);
+    void remove(Theme theme, boolean protect);
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Theme loadByName(String themeName) ;

@@ -132,23 +132,17 @@ public class ConfigurationXML implements Configuration {
 
     @Override
     public boolean isReadOnly() {
-
         return properties.isReadOnly || isPathURL ;
-
     }
 
     @Override
     public int getAlbumSize() {
-
         return sizes.albums;
-
     }
 
     @Override
     public int getPhotoSize() {
-
         return sizes.photos;
-
     }
 
     /** Paths **/
@@ -209,6 +203,11 @@ public class ConfigurationXML implements Configuration {
         return isPathURL ;
     }
 
+    @Override
+    public boolean wantsProtectDB() {
+        return properties.protectDB ;
+    }
+
     private static class Directories {
         @XmlElement
         private String data = "data";
@@ -240,5 +239,8 @@ public class ConfigurationXML implements Configuration {
 
         @XmlElement
         private boolean isReadOnly = false;
+
+        @XmlElement
+        private boolean protectDB = true;
     }
 }

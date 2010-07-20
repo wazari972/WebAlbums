@@ -22,7 +22,6 @@ import net.wazari.dao.MaintFacadeLocal;
 import org.hibernate.JDBCException;
 import org.hibernate.ejb.EntityManagerImpl;
 import org.hibernate.jmx.StatisticsService;
-import org.hibernate.stat.QueryStatistics;
 import org.hibernate.stat.Statistics;
 
 /**
@@ -44,8 +43,8 @@ public class MaintDAOBean implements MaintFacadeLocal {
     ImportExporter xml;
 
     @Override
-    public void treatImportXML(final String path) {
-        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+    public void treatImportXML(boolean protect, final String path) {
+        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
             return;
         }
         xml.importXml(path);
@@ -57,20 +56,20 @@ public class MaintDAOBean implements MaintFacadeLocal {
     }
 
     @Override
-    public void treatTruncateDB() {
-        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+    public void treatTruncateDB(boolean protect) {
+        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
             return;
         }
         xml.truncateDb();
     }
 
     @Override
-    public void treatFullImport(String path) {
-        if (WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+    public void treatFullImport(boolean protect, String path) {
+        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
             return;
         }
-        treatTruncateDB();
-        treatImportXML(path);
+        treatTruncateDB(protect);
+        treatImportXML(protect, path);
     }
 
     @Override

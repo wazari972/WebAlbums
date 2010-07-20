@@ -17,16 +17,16 @@ import javax.ejb.Local;
 @DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface MaintFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    void treatImportXML(String path) ;
+    void treatImportXML(boolean protect, String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatExportXML(String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    void treatTruncateDB() ;
+    void treatTruncateDB(boolean protect) ;
     
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    void treatFullImport(String path) ;
+    void treatFullImport(boolean protect, String path) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatDumpStats() ;

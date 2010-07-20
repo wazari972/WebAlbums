@@ -28,7 +28,9 @@ public class MaintBean implements MaintLocal {
         if (MaintAction.EXPORT_XML == action) {
             maintDAO.treatExportXML(getPath(vSession.getConfiguration()));
         } else if (MaintAction.IMPORT_XML == action) {
-            maintDAO.treatImportXML(getPath(vSession.getConfiguration()));
+            maintDAO.treatImportXML(vSession.getConfiguration().wantsProtectDB(), getPath(vSession.getConfiguration()));
+        } else if (MaintAction.TRUNCATE_DB == action) {
+            maintDAO.treatTruncateDB(vSession.getConfiguration().wantsProtectDB());
         } else if (MaintAction.PRINT_STATS == action) {
             maintDAO.treatDumpStats();
 

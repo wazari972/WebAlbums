@@ -303,7 +303,7 @@ public class ConfigBean implements ConfigLocal {
                 return output.validate() ;
             }
 
-            themeDAO.remove(vSession.getTheme());
+            themeDAO.remove(vSession.getTheme(), vSession.getConfiguration().wantsProtectDB());
             output.add("message", "Theme correctement supprimer") ;
             return output.validate();
         } catch (Exception e) {
