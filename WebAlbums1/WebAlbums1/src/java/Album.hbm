@@ -14,15 +14,18 @@
  	  <property name="Nom" type="string">
 	    <column name="Nom" sql-type="char(100)" not-null="true" />
 	  </property>
-	  
+
+	  
  	  <property name="Description" type="string">
 	    <column name="Description" not-null="false" />
 	  </property>
-	  
+
+	  
  	  <property name="Theme" type="integer" index="theme" update="false">
 	    <column name="Theme" sql-type="int" not-null="true" />
 	  </property>
-	  
+
+	  
  	  <property name="Date" type="string">
 	    <column name="Date" sql-type="char(10)" not-null="true" />
 	  </property>
