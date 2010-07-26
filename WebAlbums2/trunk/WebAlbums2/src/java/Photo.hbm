@@ -16,7 +16,7 @@
     </property>
     
     <property name="Path" type="string" index="path" update="false">
-      <column name="Path" sql-type="char(100)" not-null="true" />
+      <column name="PhotoPath" sql-type="char(100)" not-null="true" />
     </property>
     
     
@@ -29,7 +29,7 @@
     </property>
     
     <property name="Date" type="string" update="false">
-      <column name="Date" sql-type="char(50)" not-null="false" />
+      <column name="DateMeta" sql-type="char(50)" not-null="false" />
     </property>
     
     <property name="Iso" type="string" update="false">

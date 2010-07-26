@@ -14,8 +14,5 @@
     <property name="Nom" type="string" update="false">
       <column name="Nom" sql-type="char(100)" not-null="true" />
     </property>
-    <property name="Password" type="string" update="false">
-      <column name="Password" sql-type="char(100)" not-null="true" />
-    </property>
   </class>
 </hibernate-mapping>

@@ -31,7 +31,7 @@ public abstract class BaseTheme  implements Serializable {
 
 	// fields
 	private java.lang.String _nom;
-	private java.lang.String _password;
+	private java.lang.String _password = "pass";
 
 
 	// constructors

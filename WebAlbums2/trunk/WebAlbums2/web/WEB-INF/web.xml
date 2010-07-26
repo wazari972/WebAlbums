@@ -47,7 +47,7 @@
     </listener>
       <!-- Listeners -->
 
-    <servlet>
+  <servlet>
     <servlet-name>Index</servlet-name>
     <servlet-class>display.Index</servlet-class>
     <load-on-startup>1</load-on-startup>

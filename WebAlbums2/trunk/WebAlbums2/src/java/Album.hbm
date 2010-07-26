@@ -24,7 +24,7 @@
     </property>
     
     <property name="Date" type="string">
-      <column name="Date" sql-type="char(10)" not-null="true" />
+      <column name="AlbumDate" sql-type="char(10)" not-null="true" />
     </property>
 
     <property name="Picture" type="int" update="true">
