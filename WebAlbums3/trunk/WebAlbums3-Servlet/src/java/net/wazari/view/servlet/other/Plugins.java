@@ -42,7 +42,7 @@ public class Plugins  extends HttpServlet{
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            log.info( "action:{0}", action);
+            log.info( "action:{}", action);
             if ("RELOAD_PLUGINS".equals(action)) {
                 systemTools.reloadPlugins(ConfigurationXML.getConf().getPluginsPath());
             }

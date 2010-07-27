@@ -36,7 +36,7 @@ public class SessionListener implements HttpSessionListener {
         try {
             sessionService.sessionDestroyed(new ViewSessionLoginImpl(se.getSession()));
         } catch (EJBException e) {
-            log.warn( "Too late: {0}", e.getMessage()) ;
+            log.warn( "Too late: {}", e.getMessage()) ;
         }
     }
 }

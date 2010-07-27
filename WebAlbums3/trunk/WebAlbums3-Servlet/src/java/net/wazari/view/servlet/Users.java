@@ -31,11 +31,11 @@ public class Users extends HttpServlet {
         XmlBuilder output = new XmlBuilder("userLogin");
         try {
             Action action = vSession.getAction();
-            log.info( "Action: {0}", action);
+            log.info( "Action: {}", action);
             if (Action.LOGIN == action) {
 
                 String userName = vSession.getUserName();
-                log.info( "userName: {0}", userName);
+                log.info( "userName: {}", userName);
                 if (userName == null) {
                     output.add("denied");
                     output.add("login");

@@ -40,12 +40,12 @@ public class Display extends HttpServlet {
         PrintWriter out = response.getWriter();
         ViewSessionImpl vSession = new ViewSessionImpl(request, response, this.getServletContext()) ;
         try {
-            log.info( "action:{0}", action);
+            log.info( "action:{}", action);
             if ("NEXT_EDITION".equals(action)) {
                  EditMode edit = vSession.getEditionMode() ;
                  edit.ordinal();
                  EditMode nextEdit = EditMode.values()[(edit.ordinal()+1) % EditMode.values().length] ;
-                 log.info( "Change EditMode from {0} to {1}", new Object[]{edit, nextEdit});
+                 log.info( "Change EditMode from {} to {}", new Object[]{edit, nextEdit});
                  vSession.setEditionMode(nextEdit);
             } else if ("SWAP_DETAILS".equals(action)) {
                 boolean details = vSession.getDetails() ;

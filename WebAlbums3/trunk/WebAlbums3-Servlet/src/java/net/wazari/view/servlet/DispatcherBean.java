@@ -40,7 +40,7 @@ public class DispatcherBean {
     static {
         //prepareLogs();
         log.warn("WebAlbums3-Servlet is being loaded ... ");
-        log.info( "RootPath: {0}", ConfigurationXML.getConf().getRootPath());
+        log.info( "RootPath: {}", ConfigurationXML.getConf().getRootPath());
     }
 
     public DispatcherBean() {
@@ -94,7 +94,7 @@ public class DispatcherBean {
             log.info("Authenticated the session");
             request.authenticate(response) ;
         }
-        log.info( "============= <{0}> =============", page);
+        log.info( "============= <{}> =============", page);
                 
         long debut = System.currentTimeMillis();
         response.setContentType("text/xml");
@@ -118,22 +118,22 @@ public class DispatcherBean {
                 xslFile = "static/Empty.xsl";
                 output.add(maintServlet.treatMaint((ViewSessionMaint) vSession));
             } else {
-                log.info( "============= Login: {0} =============", request.getUserPrincipal());
+                log.info( "============= Login: {} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
                 if (special != null) {
-                    log.info( "Special XSL-style ({0})", special);
+                    log.info( "Special XSL-style ({})", special);
                     if ("RSS".equals(special)) {
                         xslFile = "static/Rss.xsl";
                     } else {
                         xslFile = "static/Empty.xsl";
                     }
                 }
-                log.trace( "XSL-style{0}", xslFile);
+                log.trace( "XSL-style{}", xslFile);
                 //try to logon and set the theme
                 if (vSession.getThemeId() != null) {
                     log.info("Try to logon");
                     boolean ret = userService.logon((ViewSessionLogin) vSession, request);
-                    log.trace( "Logon result: {0}", ret);
+                    log.trace( "Logon result: {}", ret);
                 }
                 //from here on, the theme must be saved
                 if (vSession.getTheme() == null){
@@ -176,9 +176,9 @@ public class DispatcherBean {
                         } else {
                             output.add(ret);
                         }
-                        log.trace( "IMAGE written? {0}", isWritten);
+                        log.trace( "IMAGE written? {}", isWritten);
                     } else {
-                        log.trace( "VOID page? ({0})", page);
+                        log.trace( "VOID page? ({})", page);
                         output.add(indexServlet.treatVOID(vSession));
                     }
                 }
@@ -186,10 +186,10 @@ public class DispatcherBean {
             
             output.validate();
         } catch (WebAlbumsServiceException e) {
-            log.warn( "WebAlbumsServiceException {0}", e) ;
+            log.warn( "WebAlbumsServiceException", e) ;
             output.cancel();
         } 
-        log.trace( "============= Footer (written:{0}, complete:{1})=============", new Object[]{isWritten, isComplete});
+        log.trace( "============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, isComplete});
         long fin = System.currentTimeMillis();
         float time = ((float) (fin - debut) / 1000);
         if (!isWritten) {
@@ -199,12 +199,12 @@ public class DispatcherBean {
                 try {
                     output.add(webPageService.xmlLogin((ViewSessionLogin) vSession));
                 } catch (Exception e) {
-                    log.warn( "An exception occured during xmlLogin: {0}", e.toString());
+                    log.warn( "An exception occured during xmlLogin:", e);
                 }
                 try {
                     output.add(webPageService.xmlAffichage(vSession));
                 } catch (Exception e) {
-                    log.warn( "An exception occured during xmlAffichage: {0}", e.toString());
+                    log.warn( "An exception occured during xmlAffichage:", e);
                 }
 
                 XmlBuilder xmlStats = new XmlBuilder("stats");
@@ -214,7 +214,7 @@ public class DispatcherBean {
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
-        log.warn( "============= <{0}/>: {1} =============", new Object[]{page, time});
+        log.warn( "============= <{}/>: {} =============", new Object[]{page, time});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -264,7 +264,7 @@ public class DispatcherBean {
             sortie.flush();
             sortie.close();
         } catch (IOException e) {
-            log.error( "IOException: {0}", e);
+            log.error( "IOException: ", e);
         }
     }
 

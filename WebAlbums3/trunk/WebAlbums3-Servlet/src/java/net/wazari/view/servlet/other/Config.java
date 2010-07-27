@@ -45,7 +45,7 @@ public class Config extends HttpServlet {
         try {
             String action = request.getParameter("action");
 
-            log.info( "Other/Config action:{0}", action);
+            log.info( "Other/Config action:{}", action);
             if ("LOGOUT".equals(action)) {
                 request.logout(); 
             } else if ("CREATE_DIRS".equals(action)) {
@@ -59,7 +59,7 @@ public class Config extends HttpServlet {
                 for (String dir : directories) {
                     File currentFile = new File(dir) ;
                     if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
-                        log.warn( "Couldn't create {0}", dir);
+                        log.warn( "Couldn't create {}", dir);
                         out.println("WARNING Couldn't create "+ dir+"<BR/>") ;
                     } else {
                         out.println(dir+"<BR/>") ;
@@ -67,7 +67,7 @@ public class Config extends HttpServlet {
                 }
                 File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
                 if (!(confFile.isDirectory() || confFile.mkdirs())) {
-                    log.warn( "Couldn't create path to {0}",
+                    log.warn( "Couldn't create path to {}",
                             conf.getConfigFilePath());
                     out.println("WARNING Couldn't create path to "+ conf.getConfigFilePath()+"<BR/>") ;
                 } else {
@@ -87,7 +87,7 @@ public class Config extends HttpServlet {
 
                     XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
 
-                    log.info( "ConfigurationXML Saved into {0}", file.getCanonicalPath());
+                    log.info( "ConfigurationXML Saved into {}", file.getCanonicalPath());
                 } else if ("RELOAD".equals(action)) {
 
                     File file = new File(ConfigurationXML.getConf().getConfigFilePath());
@@ -96,7 +96,7 @@ public class Config extends HttpServlet {
                     ConfigurationXML conf = XmlUtils.reload(new FileInputStream(file), ConfigurationXML.class);
 
                     ConfigurationXML.setConf(conf);
-                    log.info( "ConfigurationXML Reloaded from {0}", file.getCanonicalPath()) ;
+                    log.info( "ConfigurationXML Reloaded from {}", file.getCanonicalPath()) ;
                 }
                 response.setContentType("text/xml;charset=UTF-8");
 

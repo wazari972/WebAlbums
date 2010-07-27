@@ -52,7 +52,7 @@ public class ConfigurationXML implements Configuration {
                 }
             }
         } catch (IOException ex) {
-            log.error( "Could not read RootPath from file: {0}", ex.getMessage());
+            log.error( "Could not read RootPath from file: {}", ex.getMessage());
         }
 
         if (path == null) {
@@ -75,7 +75,7 @@ public class ConfigurationXML implements Configuration {
                 try {
                     path = rootDirFile.getAbsoluteFile().getCanonicalPath();
                 } catch (IOException ex) {
-                    log.warn( "Couldn''t unrelativize the path:{0}", ex.getMessage());
+                    log.warn( "Couldn''t unrelativize the path:{}", ex.getMessage());
                 }
             }
             if (!path.endsWith(SEP)) {
@@ -90,7 +90,7 @@ public class ConfigurationXML implements Configuration {
 
             
         rootPath = path ;
-        log.warn( "Root path retrieved: {0}", rootPath);
+        log.warn( "Root path retrieved: {}", rootPath);
     }
     
     private static Configuration conf ;
@@ -105,10 +105,10 @@ public class ConfigurationXML implements Configuration {
                 is = new FileInputStream(new File(conf.getConfigFilePath())) ;
             }
             conf = XmlUtils.reload(is , ConfigurationXML.class) ;
-            log.info( "Configuration correctly loaded from {0}", conf.getConfigFilePath());
+            log.info( "Configuration correctly loaded from {}", conf.getConfigFilePath());
             log.info(XmlUtils.print((ConfigurationXML)conf, ConfigurationXML.class));
         } catch (Exception e) {
-            log.warn( "Exception while loading the Configuration from {0}", e);
+            log.warn( "Exception while loading the Configuration from {}", e);
             log.error( "Using default configuration ...");
         }
     }
