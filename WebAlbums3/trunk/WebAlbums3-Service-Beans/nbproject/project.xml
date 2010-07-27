@@ -10,9 +10,9 @@
             <included-library dirs="200">reference.WebAlbums3-iDAO.jar</included-library>
             <included-library dirs="200">reference.WebAlbums3-Commons.jar</included-library>
             <included-library dirs="200">reference.WebAlbums3-Plugins.jar</included-library>
-            <included-library dirs="200">file.reference.CP-DB-dbunit-2.4.5.jar</included-library>
-            <included-library dirs="200">file.reference.CP-EXIF-metadata-extractor-2.3.1.jar</included-library>
             <included-library dirs="200">file.reference.CP-Log-slf4j-api-1.6.0.jar</included-library>
+            <included-library dirs="200">file.reference.RT-Log-logback-classic-0.9.24.jar</included-library>
+            <included-library dirs="200">file.reference.RT-Log-logback-core-0.9.24.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
