@@ -1,7 +1,8 @@
 package net.wazari.plugin;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.wazari.common.plugins.GenericImporter;
 import net.wazari.common.plugins.Importer.Capability;
 import net.wazari.common.plugins.Importer.ProcessCallback;
@@ -69,7 +70,7 @@ public class ImageMagickWrapper extends GenericImporter {
     public int getPriority() {
         return 8 ;
     }
-    private static final Logger log = Logger.getLogger(ImageMagickWrapper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ImageMagickWrapper.class.getName());
 
     public void fullscreenFile(ProcessCallback cb, String path) {
         throw new UnsupportedOperationException("Not supported yet.");

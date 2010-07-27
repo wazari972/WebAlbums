@@ -1,7 +1,8 @@
 package net.wazari.view.servlet;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -112,5 +113,5 @@ public class Albums extends HttpServlet{
     public String getServletInfo() {
         return "Displays the albums of the theme";
     }// </editor-fold>
-    private static final Logger log = Logger.getLogger(Albums.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Albums.class.getName());
 }

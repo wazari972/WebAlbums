@@ -12,8 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.Singleton;
 import net.wazari.common.plugins.Importer;
 import net.wazari.common.util.ClassPathUtil;
@@ -27,7 +27,7 @@ import net.wazari.common.plugins.System;
 @Singleton
 public class PluginManager implements PluginManagerLocal {
 
-    private static final Logger log = Logger.getLogger(PluginManager.class.getCanonicalName());
+    private static final Logger log = LoggerFactory.getLogger(PluginManager.class.getCanonicalName());
     private final List<Importer> validWrappers = new LinkedList<Importer>();
     private final List<Importer> invalidWrappers = new LinkedList<Importer>();
     private System system = null;
@@ -58,25 +58,25 @@ public class PluginManager implements PluginManagerLocal {
     public void reloadPlugins(String path) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader() ;
         if (path != null) {
-            log.log(Level.INFO, "+++Adding plugins from {0}", path);
+            log.info( "+++Adding plugins from {0}", path);
             cl = ClassPathUtil.addDirToClasspath(new File(path));
         }
         validWrappers.clear();
         invalidWrappers.clear();
-        log.log(Level.INFO, "+++ Loading services for \"{0}\"", Importer.class.getCanonicalName());
+        log.info( "+++ Loading services for \"{0}\"", Importer.class.getCanonicalName());
         ServiceLoader<Importer> servicesImg = ServiceLoader.load(Importer.class, cl);
         Iterator<Importer> itImg = servicesImg.iterator();
         while (itImg.hasNext()) {
             try {
                 Importer current = itImg.next();
-                log.log(Level.INFO, "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
+                log.info( "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
                 if (current.sanityCheck(SystemTools.cb) == Importer.SanityStatus.PASS) {
                     validWrappers.add(current);
                 } else {
                     invalidWrappers.add(current);
                 }
             } catch (ServiceConfigurationError e) {
-                log.log(Level.WARNING, "Couldn''t load the service...", e);
+                log.warn( "Couldn''t load the service...", e);
             }
         }
 
@@ -88,21 +88,21 @@ public class PluginManager implements PluginManagerLocal {
             }
         });
 
-        log.log(Level.INFO, "+++ Loading services for \"{0}\"", System.class.getCanonicalName());
+        log.info( "+++ Loading services for \"{0}\"", System.class.getCanonicalName());
         ServiceLoader<System> servicesSys = ServiceLoader.load(System.class, cl);
         this.system = null;
         Iterator<System> itSyst = servicesSys.iterator();
         while (itSyst.hasNext()) {
             try {
                 System current = itSyst.next();
-                log.log(Level.INFO, "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
+                log.info( "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
                 if (system == null && current.sanityCheck(SystemTools.cb) == Importer.SanityStatus.PASS) {
                     system = current;
                 } else {
                     notUsedSystems.add(current);
                 }
             } catch (ServiceConfigurationError e) {
-                log.log(Level.WARNING, "Couldn''t load the service...", e);
+                log.warn( "Couldn''t load the service...", e);
             }
         }
     }

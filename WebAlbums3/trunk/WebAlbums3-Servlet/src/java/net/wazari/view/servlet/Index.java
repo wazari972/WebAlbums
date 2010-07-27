@@ -3,7 +3,8 @@ package net.wazari.view.servlet;
 
 import java.io.IOException;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletConfig;
@@ -25,7 +26,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 @Stateless
 public class Index extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(Index.class.getName()) ;
+    private static final Logger log = LoggerFactory.getLogger(Index.class.getName()) ;
     
     @EJB DispatcherBean dispatcher ;
 

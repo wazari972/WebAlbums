@@ -1,6 +1,7 @@
 package net.wazari.view.servlet;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -93,5 +94,5 @@ public class Choix extends HttpServlet {
     public String getServletInfo() {
         return "Displays the choice page";
     }// </editor-fold>
-    private static final Logger log = Logger.getLogger(Choix.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Choix.class.getName());
 }

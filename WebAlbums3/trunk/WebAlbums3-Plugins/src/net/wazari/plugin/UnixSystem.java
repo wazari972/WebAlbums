@@ -6,7 +6,8 @@
 package net.wazari.plugin;
 
 import java.io.File;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.Importer.SanityStatus;
 import net.wazari.common.plugins.System;
@@ -15,7 +16,7 @@ import net.wazari.common.plugins.System;
  * @author pk033
  */
 public class UnixSystem implements System{
-    private static final Logger log = Logger.getLogger(UnixSystem.class.getCanonicalName()) ;
+    private static final Logger log = LoggerFactory.getLogger(UnixSystem.class.getCanonicalName()) ;
     
     public boolean link(ProcessCallback cb, String source, File dest) {
         return 0 == cb.execWaitFor(new String[]{"ln", "-s", source, dest.toString()});

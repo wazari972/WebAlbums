@@ -5,7 +5,8 @@
 package net.wazari.dao.jpa.entity.idGenerator;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.wazari.dao.entity.facades.EntityWithId;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.SessionImplementor;
@@ -16,7 +17,7 @@ import org.hibernate.id.IdentityGenerator;
  * @author kevinpouget
  */
 public class UseIdOrGenerate extends IdentityGenerator {
-    private static final Logger log = Logger.getLogger(UseIdOrGenerate.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(UseIdOrGenerate.class.getName());
 
     @Override
     public Serializable generate(SessionImplementor session, Object obj) throws HibernateException {

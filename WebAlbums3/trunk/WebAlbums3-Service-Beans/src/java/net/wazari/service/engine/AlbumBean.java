@@ -4,8 +4,8 @@ package net.wazari.service.engine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -37,7 +37,7 @@ import net.wazari.common.util.XmlBuilder;
 
 @Stateless
 public class AlbumBean implements AlbumLocal {
-    private static final Logger log = Logger.getLogger(AlbumBean.class.getCanonicalName()) ;
+    private static final Logger log = LoggerFactory.getLogger(AlbumBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
     private static final int TOP = 5;
 
@@ -136,7 +136,7 @@ public class AlbumBean implements AlbumLocal {
                     details.add("miniWidth", enrPhoto.getWidth());
                     details.add("miniHeight", enrPhoto.getHeight());
                 } else {
-                    log.log(Level.WARNING, "Invalid photo ({0}) for album {1}", new Object[]{iPhoto, enrAlbum.getId()});
+                    log.warn("Invalid photo ({0}) for album {1}", new Object[]{iPhoto, enrAlbum.getId()});
                 }
             }
             
@@ -202,7 +202,7 @@ public class AlbumBean implements AlbumLocal {
             firstYear = Integer.parseInt(YEAR.format(Album.DATE_STANDARD.parse(enrFirstAlbum.getDate())));
             lastYear =  Integer.parseInt(YEAR.format(Album.DATE_STANDARD.parse(enrLastAlbum.getDate()))) ;
         } catch (ParseException ex) {
-            Logger.getLogger(AlbumBean.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn("ParseException", ex);
         }
         
 

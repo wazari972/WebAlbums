@@ -5,8 +5,8 @@
 
 package net.wazari.view.servlet.exchange;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.servlet.annotation.WebListener;
@@ -22,21 +22,21 @@ import net.wazari.view.servlet.exchange.ViewSessionImpl.ViewSessionLoginImpl;
 @WebListener
 public class SessionListener implements HttpSessionListener {
     @EJB SessionManagerLocal sessionService ;
-    private static final Logger log = Logger.getLogger(SessionListener.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(SessionListener.class.getName());
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {
-        log.warning("Session created") ;
+        log.warn("Session created") ;
         sessionService.sessionCreated(new ViewSessionLoginImpl(se.getSession()));
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
-        log.warning("Session Destroyed") ;
+        log.warn("Session Destroyed") ;
         try {
             sessionService.sessionDestroyed(new ViewSessionLoginImpl(se.getSession()));
         } catch (EJBException e) {
-            log.log(Level.WARNING, "Too late: {0}", e.getMessage()) ;
+            log.warn( "Too late: {0}", e.getMessage()) ;
         }
     }
 }

@@ -6,7 +6,8 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,7 +37,7 @@ import net.wazari.dao.entity.Tag;
     uniqueConstraints = {@UniqueConstraint(columnNames={"Lat", "Longitude"})}
 )
 public class JPAGeolocalisation implements Geolocalisation, Serializable {
-    private static final Logger log = Logger.getLogger(JPAGeolocalisation.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(JPAGeolocalisation.class.getName());
 
     private static final long serialVersionUID = 1L;
 

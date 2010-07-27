@@ -1,12 +1,12 @@
 package net.wazari.service.entity.util;
 
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
 
 import net.wazari.dao.entity.Photo;
 
 import java.text.ParseException;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.AlbumFacadeLocal;
@@ -31,12 +31,12 @@ public class AlbumUtil {
     PhotoFacadeLocal photoDAO;
     @EJB
     PhotoUtil photoUtil;
-    private static final Logger log = Logger.getLogger(AlbumUtil.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(AlbumUtil.class.toString());
 
     public void setTagsToPhoto(Album enrAlbum, Integer[] tags, Boolean force) throws WebAlbumsServiceException {
 
         for (Photo enrPhoto : enrAlbum.getPhotoList()) {
-            log.log(Level.INFO, "apply tags to {0}", enrPhoto);
+            log.info( "apply tags to {0}", enrPhoto);
             if (force) {
 
                 photoUtil.setTags(enrPhoto, tags);

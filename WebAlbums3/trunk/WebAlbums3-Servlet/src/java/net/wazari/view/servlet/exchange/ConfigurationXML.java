@@ -13,8 +13,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +30,7 @@ import net.wazari.common.util.XmlUtils;
 @XmlRootElement(name = "Configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConfigurationXML implements Configuration {
-    private static final Logger log = Logger.getLogger(ConfigurationXML.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationXML.class.getName());
 
     private static final String SEP = File.separator;
     private static final String rootPath  ;
@@ -41,18 +41,18 @@ public class ConfigurationXML implements Configuration {
             String prop = System.getProperty("root.path") ;
             if (prop != null) path = prop ;
             else {
-                log.warning("No 'root.path' property found, trying local RootPath.conf ...") ;
+                log.warn("No 'root.path' property found, trying local RootPath.conf ...") ;
                 InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                 String line = reader.readLine();
                 if (line != null) path = line ;
                 else {
-                    log.log(Level.SEVERE, "Could not read RootPath from file: empty");
+                    log.error( "Could not read RootPath from file: empty");
                     throw new IllegalArgumentException("Could not read Rootpath from "+path+": empty") ;
                 }
             }
         } catch (IOException ex) {
-            log.log(Level.SEVERE, "Could not read RootPath from file: {0}", ex.getMessage());
+            log.error( "Could not read RootPath from file: {0}", ex.getMessage());
         }
 
         if (path == null) {
@@ -62,11 +62,11 @@ public class ConfigurationXML implements Configuration {
             isPathURL = false ;
             File rootDirFile = new File (path) ;
             if (!rootDirFile.exists()) {
-                log.severe("Rootpath doesn't exists ...");
+                log.error("Rootpath doesn't exists ...");
                 throw new IllegalArgumentException("Rootpath "+path+" doesn't exists ...") ;
 
             } else if (!rootDirFile.isDirectory()) {
-                log.severe("Rootpath is not a directory ...");
+                log.error("Rootpath is not a directory ...");
                 throw new IllegalArgumentException("Rootpath "+path+" is not a directory ...") ;
 
             }
@@ -75,7 +75,7 @@ public class ConfigurationXML implements Configuration {
                 try {
                     path = rootDirFile.getAbsoluteFile().getCanonicalPath();
                 } catch (IOException ex) {
-                    log.log(Level.WARNING, "Couldn''t unrelativize the path:{0}", ex.getMessage());
+                    log.warn( "Couldn''t unrelativize the path:{0}", ex.getMessage());
                 }
             }
             if (!path.endsWith(SEP)) {
@@ -90,7 +90,7 @@ public class ConfigurationXML implements Configuration {
 
             
         rootPath = path ;
-        log.log(Level.WARNING, "Root path retrieved: {0}", rootPath);
+        log.warn( "Root path retrieved: {0}", rootPath);
     }
     
     private static Configuration conf ;
@@ -105,11 +105,11 @@ public class ConfigurationXML implements Configuration {
                 is = new FileInputStream(new File(conf.getConfigFilePath())) ;
             }
             conf = XmlUtils.reload(is , ConfigurationXML.class) ;
-            log.log(Level.INFO, "Configuration correctly loaded from {0}", conf.getConfigFilePath());
+            log.info( "Configuration correctly loaded from {0}", conf.getConfigFilePath());
             log.info(XmlUtils.print((ConfigurationXML)conf, ConfigurationXML.class));
         } catch (Exception e) {
-            log.log(Level.WARNING, "Exception while loading the Configuration from {0}", e);
-            log.log(Level.SEVERE, "Using default configuration ...");
+            log.warn( "Exception while loading the Configuration from {0}", e);
+            log.error( "Using default configuration ...");
         }
     }
     public static Configuration getConf() {

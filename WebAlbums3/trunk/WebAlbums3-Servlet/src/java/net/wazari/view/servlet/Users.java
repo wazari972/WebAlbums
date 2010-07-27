@@ -3,9 +3,9 @@ package net.wazari.view.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -23,7 +23,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 )
 @Stateless
 public class Users extends HttpServlet {
-    private static final Logger log = Logger.getLogger(Users.class.getCanonicalName()) ;
+    private static final Logger log = LoggerFactory.getLogger(Users.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
     @EJB private DispatcherBean dispatcher ;
 
@@ -31,11 +31,11 @@ public class Users extends HttpServlet {
         XmlBuilder output = new XmlBuilder("userLogin");
         try {
             Action action = vSession.getAction();
-            log.log(Level.INFO, "Action: {0}", action);
+            log.info( "Action: {0}", action);
             if (Action.LOGIN == action) {
 
                 String userName = vSession.getUserName();
-                log.log(Level.INFO, "userName: {0}", userName);
+                log.info( "userName: {0}", userName);
                 if (userName == null) {
                     output.add("denied");
                     output.add("login");
@@ -46,7 +46,7 @@ public class Users extends HttpServlet {
 
                 request.login(userName, pass);
                 output.add("valid");
-                log.log(Level.INFO, "authentication");
+                log.info( "authentication");
                 response.sendRedirect("Index");
                 return null ;
             } else {

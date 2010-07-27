@@ -6,8 +6,8 @@ package net.wazari.dao.jpa;
 
 import java.lang.management.ManagementFactory;
 import java.sql.Connection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.management.InstanceAlreadyExistsException;
@@ -31,7 +31,7 @@ import org.hibernate.stat.Statistics;
 @Stateless
 public class MaintDAOBean implements MaintFacadeLocal {
 
-    private static final Logger log = Logger.getLogger(MaintDAOBean.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(MaintDAOBean.class.getName());
 
     private static interface Work {
 
@@ -84,21 +84,21 @@ public class MaintDAOBean implements MaintFacadeLocal {
             mBean.setSessionFactory(((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory());
             try {
                 ManagementFactory.getPlatformMBeanServer().unregisterMBean(hibernateMBeanName);
-                log.warning("HibernateJMX was correctly undeployed");
+                log.warn("HibernateJMX was correctly undeployed");
             } catch (InstanceNotFoundException ex) {
-                log.warning("HibernateJMX was not deployed");
+                log.warn("HibernateJMX was not deployed");
             }
             ManagementFactory.getPlatformMBeanServer().registerMBean(mBean, hibernateMBeanName);
         } catch (InstanceAlreadyExistsException ex) {
-            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("InstanceAlreadyExistsException", ex);
         } catch (MBeanRegistrationException ex) {
-            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("MBeanRegistrationException", ex);
         } catch (NotCompliantMBeanException ex) {
-            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("NotCompliantMBeanException", ex);
         } catch (MalformedObjectNameException ex) {
-            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("MalformedObjectNameException", ex);
         } catch (NullPointerException ex) {
-            Logger.getLogger(MaintDAOBean.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("NullPointerException", ex);
         }
     }
 
@@ -116,4 +116,5 @@ public class MaintDAOBean implements MaintFacadeLocal {
             //log.log(Level.INFO, "\tgetExecutionRowCount {0}", qStats.getExecutionRowCount());
         }
     }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(MaintDAOBean.class.getName());
 }

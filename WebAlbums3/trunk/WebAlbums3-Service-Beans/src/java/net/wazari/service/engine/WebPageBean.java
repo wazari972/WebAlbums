@@ -4,8 +4,10 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -49,11 +51,11 @@ public class WebPageBean implements WebPageLocal {
     private ThemeFacadeLocal themeDAO;
 
     private static final long serialVersionUID = -8157612278920872716L;
-    private static final Logger log = Logger.getLogger(WebPageBean.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(WebPageBean.class.getName());
 
     static {
-        log.log(Level.WARNING, "FilesFinder.initialized {0}", SystemTools.initate());
-        log.warning("Loading WebAlbums3-Service-Beans");
+        log.warn( "FilesFinder.initialized {0}", SystemTools.initate());
+        log.warn("Loading WebAlbums3-Service-Beans");
     }
 
     @Override
@@ -143,11 +145,11 @@ public class WebPageBean implements WebPageLocal {
         }
         login.add("user", strUser);
         
-        log.log(Level.INFO, "logged as manager? {0}", vSession.isSessionManager());
+        log.info( "logged as manager? {0}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {
             login.add("admin");
         }
-        log.log(Level.INFO, "logged as root? {0}", vSession.isRootSession());
+        log.info( "logged as root? {0}", vSession.isRootSession());
         if (vSession.isRootSession()) {
             login.add("root");
         }
@@ -233,15 +235,15 @@ public class WebPageBean implements WebPageLocal {
             if (mode != Mode.TAG_USED && mode != Mode.TAG_GEO) {
                 throw new RuntimeException("Don't want to process mode " + mode + " when not logged at manager");
             }
-            log.log(Level.INFO, "Load visible tags (only for geo?{0})", geoOnly);
+            log.info( "Load visible tags (only for geo?{0})", geoOnly);
             tags = tagDAO.loadVisibleTags(vSession, geoOnly);
         } else /* current manager*/ {
 
             if (mode == Mode.TAG_USED || mode == Mode.TAG_GEO) {
-                log.log(Level.INFO, "Load visible tags (only for geo?{0})", geoOnly);
+                log.info( "Load visible tags (only for geo?{0})", geoOnly);
                 tags = tagDAO.loadVisibleTags(vSession, geoOnly);
             } else if (mode == Mode.TAG_ALL) {
-                log.log(Level.INFO, "Load all tags");
+                log.info( "Load all tags");
                 //afficher tous les tags
                 tags = tagDAO.findAll();
             } else if (mode == Mode.TAG_NUSED || mode == Mode.TAG_NEVER) {
@@ -249,15 +251,15 @@ public class WebPageBean implements WebPageLocal {
                 //select the tags not used [in this theme]
                 if (mode == Mode.TAG_NEVER || vSession.isRootSession()) {
                     //select all the tags used
-                    log.log(Level.INFO, "Select disting tags");
+                    log.info( "Select disting tags");
                     notWantedTags = tagPhotoDAO.selectDistinctTags();
 
                 } else /* TAG_NUSED*/ {
                     //select all the tags used in photo of this theme
-                    log.log(Level.INFO, "Select not used tags");
+                    log.info( "Select not used tags");
                     notWantedTags = tagPhotoDAO.selectUnusedTags(vSession);
                 }
-                log.log(Level.INFO, "Select no such tags");
+                log.info( "Select no such tags");
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);
 
             } else /* not handled mode*/ {
@@ -276,7 +278,7 @@ public class WebPageBean implements WebPageLocal {
             map = new GooglePoint(name);
         }
 
-        log.log(Level.INFO, "Mode: {0}, Box: {1}, list: {2}", new Object[]{mode, box, ids});
+        log.info( "Mode: {0}, Box: {1}, list: {2}", new Object[]{mode, box, ids});
         xmlResult.addComment("Mode: " + mode);
         xmlResult.addComment("Box:" + box);
         xmlResult.addComment("List: " + ids);
@@ -510,7 +512,7 @@ public class WebPageBean implements WebPageLocal {
 
     @Override
     public void populateEntities() {
-        log.warning("Database empty, creating Root theme and Users");
+        log.warn("Database empty, creating Root theme and Users");
         themeDAO.newTheme(ThemeFacadeLocal.THEME_ROOT_ID, ThemeFacadeLocal.THEME_ROOT_NAME) ;
         userDAO.newUser(1, UserLocal.USER_ADMIN);
         userDAO.newUser(2, UserLocal.USER_FAMILLE);

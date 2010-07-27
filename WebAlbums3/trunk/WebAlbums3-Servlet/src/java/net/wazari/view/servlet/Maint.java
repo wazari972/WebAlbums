@@ -6,8 +6,8 @@
 package net.wazari.view.servlet;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -31,7 +31,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 @Stateless
 public class Maint extends HttpServlet {
    
-    private static final Logger log = Logger.getLogger(Maint.class.getCanonicalName()) ;
+    private static final Logger log = LoggerFactory.getLogger(Maint.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
     @EJB private DispatcherBean dispatcher ;
     @EJB private MaintLocal maintService ;
@@ -51,7 +51,7 @@ public class Maint extends HttpServlet {
         try {
             return maintService.treatMAINT(vSession) ;
         } catch (Exception e) {
-            log.log(Level.WARNING, "An exception occured in treatMaint:{0}", e.getMessage());
+            log.warn( "An exception occured in treatMaint:{0}", e.getMessage());
             return null ;
         }
     }

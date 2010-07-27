@@ -5,7 +5,8 @@
 package net.wazari.dao.jpa;
 
 import java.util.Iterator;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
@@ -25,7 +26,7 @@ import net.wazari.dao.jpa.entity.JPATagPhoto;
  */
 @Stateless
 public class TagPhotoFacade implements TagPhotoFacadeLocal {
-    private static final Logger log = Logger.getLogger(TagPhotoFacade.class.getName()) ;
+    private static final Logger log = LoggerFactory.getLogger(TagPhotoFacade.class.getName()) ;
     
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;

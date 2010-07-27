@@ -9,8 +9,8 @@ import java.net.URLConnection;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -38,7 +38,7 @@ public class FilesFinder {
     private static final String SEP = File.separator;
     private static final int DEFAULT_USER = 3;
     
-    private static final Logger log = Logger.getLogger(FilesFinder.class.getCanonicalName());
+    private static final Logger log = LoggerFactory.getLogger(FilesFinder.class.getCanonicalName());
     @EJB
     private ThemeFacadeLocal themeDAO;
     @EJB
@@ -398,13 +398,13 @@ public class FilesFinder {
         if (msg != null) {
             output.add("Exception", msg.toString());
         }
-        log.log(Level.WARNING, "FilesFinder: {0}", msg);
+        log.warn("FilesFinder: {0}", msg);
     }
 
     private static void info(XmlBuilder output, Object msg) {
         if (msg != null) {
             output.add("message", msg.toString());
         }
-        log.log(Level.INFO, "FilesFinder: {0}", msg);
+        log.info( "FilesFinder: {0}", msg);
     }
 }

@@ -12,8 +12,8 @@ import com.drew.metadata.exif.ExifReader;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.wazari.common.plugins.GenericImporter;
 
 /**
@@ -21,7 +21,7 @@ import net.wazari.common.plugins.GenericImporter;
  * @author kevinpouget
  */
 public class ExifReaderWrapper extends GenericImporter {
-    private static final Logger log = Logger.getLogger(ExifReaderWrapper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ExifReaderWrapper.class.getName());
 
     @Override
     public String getName() {
@@ -116,8 +116,8 @@ public class ExifReaderWrapper extends GenericImporter {
             }
             return true ;
         } catch (JpegProcessingException e) {
-            log.log(Level.WARNING, "Exception JPEG durant le traitement exif : {0}", e.getMessage());
-            log.warning(path);
+            log.warn( "Exception JPEG durant le traitement exif : {0}", e.getMessage());
+            log.warn(path);
         }
         return false ;
     }

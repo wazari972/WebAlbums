@@ -7,7 +7,8 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,7 +43,7 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JPAAlbum implements Album, Serializable {
-    private static final Logger log = Logger.getLogger(JPAGeolocalisation.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(JPAGeolocalisation.class.getName());
 
     private static final long serialVersionUID = 1L;
 

@@ -6,8 +6,8 @@ package net.wazari.view.servlet.other;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,7 +24,7 @@ import net.wazari.view.servlet.exchange.ViewSessionImpl;
 urlPatterns = {"/Other/Display"})
 public class Display extends HttpServlet {
 
-    private static final Logger log = Logger.getLogger(Display.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Display.class.getName());
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -40,12 +40,12 @@ public class Display extends HttpServlet {
         PrintWriter out = response.getWriter();
         ViewSessionImpl vSession = new ViewSessionImpl(request, response, this.getServletContext()) ;
         try {
-            log.log(Level.INFO, "action:{0}", action);
+            log.info( "action:{0}", action);
             if ("NEXT_EDITION".equals(action)) {
                  EditMode edit = vSession.getEditionMode() ;
                  edit.ordinal();
                  EditMode nextEdit = EditMode.values()[(edit.ordinal()+1) % EditMode.values().length] ;
-                 log.log(Level.INFO, "Change EditMode from {0} to {1}", new Object[]{edit, nextEdit});
+                 log.info( "Change EditMode from {0} to {1}", new Object[]{edit, nextEdit});
                  vSession.setEditionMode(nextEdit);
             } else if ("SWAP_DETAILS".equals(action)) {
                 boolean details = vSession.getDetails() ;

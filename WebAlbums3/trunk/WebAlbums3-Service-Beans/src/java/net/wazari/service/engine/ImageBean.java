@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.logging.Level;
 import net.wazari.service.exchange.ViewSessionImages;
 
 import java.net.ConnectException;
@@ -12,7 +11,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -29,7 +29,7 @@ import net.wazari.util.system.SystemTools;
 
 @Stateless
 public class ImageBean implements ImageLocal {
-    private static final Logger log = Logger.getLogger(ImageBean.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ImageBean.class.getName());
     private static final long serialVersionUID = 1L;
     @EJB private PhotoFacadeLocal photoDAO ;
     @EJB private PhotoUtil photoUtil ;
@@ -98,7 +98,7 @@ public class ImageBean implements ImageLocal {
                 output.validate();
             }
         } catch (Exception e) {
-            log.log(Level.SEVERE, "{0}: ", new Object[]{e.getClass().getSimpleName(), e}) ;
+            log.warn(e.getClass().toString(), "{0}: ", new Object[]{e.getClass().getSimpleName(), e}) ;
             output.addException("Exception", e.getMessage());
             output.validate();
         }
@@ -137,14 +137,14 @@ public class ImageBean implements ImageLocal {
 
             return null;
         } catch (MalformedURLException e) {
-            log.log(Level.WARNING, "MalformedURLException: {0}", e.getMessage()) ;
+            log.warn( "MalformedURLException: {0}", e.getMessage()) ;
             output.addException("MalformedURLException", filepath);
 
         } catch (ConnectException e) {
-            log.log(Level.WARNING, "ConnectException: {0}", e.getMessage()) ;
+            log.warn( "ConnectException: {0}", e.getMessage()) ;
             output.addException("ConnectException", filepath);
         } catch (IOException e) {
-            log.log(Level.WARNING, "IOException {0}({1})", new Object[]{filepath, e.getMessage()});
+            log.warn( "IOException {0}({1})", new Object[]{filepath, e.getMessage()});
             output.addException("IOException", filepath + "(" + e.getMessage() + ")");
         }
         return uniq;

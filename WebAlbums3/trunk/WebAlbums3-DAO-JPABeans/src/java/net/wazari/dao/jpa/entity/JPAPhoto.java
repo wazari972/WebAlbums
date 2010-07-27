@@ -7,7 +7,8 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,7 +45,7 @@ import org.hibernate.annotations.GenericGenerator;
     uniqueConstraints = {@UniqueConstraint(columnNames={"PhotoPath"})}
 )
 public class JPAPhoto implements Photo, Serializable {
-    private static final Logger log = Logger.getLogger(JPAPhoto.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(JPAPhoto.class.getName());
 
     private static final long serialVersionUID = 1L;
 

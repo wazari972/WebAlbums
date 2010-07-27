@@ -7,8 +7,8 @@ package net.wazari.view.servlet.other;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,7 +31,7 @@ import net.wazari.common.util.XmlUtils;
     urlPatterns = {"/Other/Plugins"}
 )
 public class Plugins  extends HttpServlet{
-    private static final Logger log = Logger.getLogger(Plugins.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Plugins.class.getName());
 
     @EJB
     private PluginManagerLocal systemTools;
@@ -42,7 +42,7 @@ public class Plugins  extends HttpServlet{
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-            log.log(Level.INFO, "action:{0}", action);
+            log.info( "action:{0}", action);
             if ("RELOAD_PLUGINS".equals(action)) {
                 systemTools.reloadPlugins(ConfigurationXML.getConf().getPluginsPath());
             }
@@ -60,7 +60,7 @@ public class Plugins  extends HttpServlet{
 
             out.println(xml);
         } catch (Exception e) {
-            log.log(Level.WARNING, "Exception during the plugin handling", e);
+            log.warn( "Exception during the plugin handling", e);
         } finally {
             out.close();
         }

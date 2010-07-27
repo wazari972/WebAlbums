@@ -5,7 +5,8 @@
 package net.wazari.dao.jpa;
 
 import java.util.LinkedHashMap;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
@@ -24,7 +25,7 @@ import net.wazari.dao.jpa.entity.JPATag;
  */
 @Stateless
 public class TagFacade implements TagFacadeLocal {
-    private static final Logger log = Logger.getLogger(TagFacade.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(TagFacade.class.getName());
     
     @EJB
     WebAlbumsDAOBean webDAO;

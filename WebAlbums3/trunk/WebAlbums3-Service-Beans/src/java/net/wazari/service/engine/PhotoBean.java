@@ -1,9 +1,9 @@
 package net.wazari.service.engine;
 
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -44,7 +44,7 @@ import net.wazari.util.system.SystemTools;
 @Stateless
 public class PhotoBean implements PhotoLocal {
 
-    private static final Logger log = Logger.getLogger(PhotoBean.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(PhotoBean.class.toString());
     private static final long serialVersionUID = 1L;
     @EJB
     PhotoUtil photoUtil;
@@ -107,16 +107,16 @@ public class PhotoBean implements PhotoLocal {
                     valid = true;
                     userId = Integer.parseInt(user);
                 } else {
-                    log.log(Level.WARNING, "Unknown userId:{0}", user);
+                    log.warn( "Unknown userId:{0}", user);
                 }
 
                 if (valid) {
-                    log.log(Level.INFO, "Set Droit to:{0}", userId);
+                    log.info("Set Droit to:{0}", userId);
                     enrPhoto.setDroit(userId);
                 }
 
             } catch (NumberFormatException e) {
-                log.log(Level.WARNING, "Cannot parse userId:{0}", user);
+                log.warn( "Cannot parse userId:{0}", user);
             }
         }
 
@@ -153,7 +153,7 @@ public class PhotoBean implements PhotoLocal {
             }
 
             if (enrTagTh == null) {
-                log.warning("CREATE TAG");
+                log.warn("CREATE TAG");
                 //creer un tagTheme pour cette photo/tag/theme
                 enrTagTh = tagThemeDAO.newTagTheme();
 
@@ -164,12 +164,12 @@ public class PhotoBean implements PhotoLocal {
 
                 tagThemeDAO.create(enrTagTh);
             } else {
-                log.warning("EDIT TAG");
+                log.warn("EDIT TAG");
             }
             //changer la photo representant ce tag/theme
             enrTagTh.setPhoto(enrPhoto.getId());
 
-            log.log(Level.INFO, "edit {0}", enrTagTh);
+            log.info( "edit {0}", enrTagTh);
             tagThemeDAO.edit(enrTagTh);
         }
 

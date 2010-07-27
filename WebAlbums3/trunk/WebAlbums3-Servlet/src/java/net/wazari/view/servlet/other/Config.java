@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,7 +29,7 @@ import net.wazari.common.util.XmlUtils;
 urlPatterns = {"/Other/Config"})
 public class Config extends HttpServlet {
 
-    private static final Logger log = Logger.getLogger(Config.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Config.class.getName());
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -45,7 +45,7 @@ public class Config extends HttpServlet {
         try {
             String action = request.getParameter("action");
 
-            log.log(Level.INFO, "Other/Config action:{0}", action);
+            log.info( "Other/Config action:{0}", action);
             if ("LOGOUT".equals(action)) {
                 request.logout(); 
             } else if ("CREATE_DIRS".equals(action)) {
@@ -59,24 +59,24 @@ public class Config extends HttpServlet {
                 for (String dir : directories) {
                     File currentFile = new File(dir) ;
                     if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
-                        log.log(Level.WARNING, "Couldn't create {0}", dir);
-                        out.println(Level.WARNING+" Couldn't create "+ dir+"<BR/>") ;
+                        log.warn( "Couldn't create {0}", dir);
+                        out.println("WARNING Couldn't create "+ dir+"<BR/>") ;
                     } else {
                         out.println(dir+"<BR/>") ;
                     }
                 }
                 File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
                 if (!(confFile.isDirectory() || confFile.mkdirs())) {
-                    log.log(Level.WARNING, "Couldn't create path to {0}",
+                    log.warn( "Couldn't create path to {0}",
                             conf.getConfigFilePath());
-                    out.println(Level.WARNING+" Couldn't create path to "+ conf.getConfigFilePath()+"<BR/>") ;
+                    out.println("WARNING Couldn't create path to "+ conf.getConfigFilePath()+"<BR/>") ;
                 } else {
                     if (!confFile.exists()) {
                         File file = new File(ConfigurationXML.getConf().getConfigFilePath());
                         XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
-                        out.println(Level.INFO+" Config file saved in "+ conf.getConfigFilePath()+"<BR/>") ;
+                        out.println("INFO Config file saved in "+ conf.getConfigFilePath()+"<BR/>") ;
                    } else {
-                        out.println(Level.INFO+" Config file already exists in "+ conf.getConfigFilePath()+"<BR/>") ;
+                        out.println("INFO Config file already exists in "+ conf.getConfigFilePath()+"<BR/>") ;
                    }
                 }
 
@@ -87,7 +87,7 @@ public class Config extends HttpServlet {
 
                     XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
 
-                    log.log(Level.INFO, "ConfigurationXML Saved into {0}", file.getCanonicalPath());
+                    log.info( "ConfigurationXML Saved into {0}", file.getCanonicalPath());
                 } else if ("RELOAD".equals(action)) {
 
                     File file = new File(ConfigurationXML.getConf().getConfigFilePath());
@@ -96,7 +96,7 @@ public class Config extends HttpServlet {
                     ConfigurationXML conf = XmlUtils.reload(new FileInputStream(file), ConfigurationXML.class);
 
                     ConfigurationXML.setConf(conf);
-                    log.log(Level.INFO, "ConfigurationXML Reloaded from {0}", file.getCanonicalPath()) ;
+                    log.info( "ConfigurationXML Reloaded from {0}", file.getCanonicalPath()) ;
                 }
                 response.setContentType("text/xml;charset=UTF-8");
 
@@ -108,7 +108,7 @@ public class Config extends HttpServlet {
             }
 
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Exception:{0}", e);
+            log.error(e.getClass().toString(), e);
         } finally {
             out.close();
         }

@@ -9,11 +9,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClassPathUtil {
 
-    private static Logger log = Logger.getLogger(ClassPathUtil.class.getName());
+    private static Logger log = LoggerFactory.getLogger(ClassPathUtil.class.getName());
     private static final Class[] PARAMS = new Class[]{URL.class};
 
     /**
@@ -31,12 +32,12 @@ public class ClassPathUtil {
                     try {
                         myCl.addURL(file.toURI().toURL());
                     } catch (MalformedURLException ex) {
-                        log.log(Level.SEVERE, "MalformedURLException: ", ex);
+                        log.error( "MalformedURLException: ", ex);
                     }
                 }
             }
         } else {
-            log.log(Level.WARNING, "The directory \"{0}\" does not exist!", directory);
+            log.warn( "The directory \"{0}\" does not exist!", directory);
         }
         return myCl ;
     }
@@ -51,7 +52,7 @@ public class ClassPathUtil {
         URL urls[] = sysLoader.getURLs();
         for (int i = 0; i < urls.length; i++) {
             if (urls[i].toString().equalsIgnoreCase(u.toString())) {
-                log.log(Level.INFO, "URL {0} is already in the CLASSPATH", u);
+                log.info( "URL {0} is already in the CLASSPATH", u);
                 return;
             }
         }
@@ -60,9 +61,9 @@ public class ClassPathUtil {
             Method method = sysclass.getDeclaredMethod("addURL", PARAMS);
             method.setAccessible(true);
             method.invoke(sysLoader, new Object[]{u});
-            log.log(Level.INFO, "ADD {0}: OK!", u);
+            log.info( "ADD {0}: OK!", u);
         } catch (Throwable t) {
-            log.log(Level.SEVERE, "Error, could not add URL to system classloader", t);
+            log.error ("Error, could not add URL to system classloader", t);
         }
     }
 

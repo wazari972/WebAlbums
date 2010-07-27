@@ -1,6 +1,7 @@
 package net.wazari.view.servlet;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -107,5 +108,5 @@ public class Tags extends HttpServlet {
     public String getServletInfo() {
         return "Displays photos related to a tag";
     }// </editor-fold>
-    private static final Logger log = Logger.getLogger(Tags.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(Tags.class.getName());
 }

@@ -1,11 +1,13 @@
 package net.wazari.util.system;
 
 import net.wazari.common.plugins.Importer.Capability;
-import java.util.logging.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -25,7 +27,7 @@ import net.wazari.service.PluginManagerLocal;
 @Singleton
 public class SystemTools {
 
-    private static final Logger log = Logger.getLogger(SystemTools.class.getCanonicalName());
+    private static final Logger log = LoggerFactory.getLogger(SystemTools.class.getCanonicalName());
 
     @EJB
     private PhotoFacadeLocal photoDAO;
@@ -49,13 +51,13 @@ public class SystemTools {
         Importer wrap = null;
         
         for (Importer util : plugins.getWorkingPlugins()) {
-            log.log(Level.WARNING, "Test {0}: {1}", new Object[]{util.getName(), Arrays.asList(util.supports())});
+            log.warn( "Test {0}: {1}", new Object[]{util.getName(), Arrays.asList(util.supports())});
             if (util.supports(type, ext, cap)) {
                 wrap = util;
                 break ;
             }
         }
-        log.log(Level.WARNING, "Wrapper for {3}@{0}-{1}: {2}", new Object[]{type, ext, wrap, cap});
+        log.warn( "Wrapper for {3}@{0}-{1}: {2}", new Object[]{type, ext, wrap, cap});
         return wrap;
     }
 
@@ -97,7 +99,7 @@ public class SystemTools {
                         return null;
                     }
                 } catch (IOException e) {
-                    log.log(Level.WARNING, "IOException", e);
+                    log.warn( "IOException", e);
                     return null;
                 }
             }
@@ -113,12 +115,12 @@ public class SystemTools {
 
         int pageAsked = (page == null ? 0 : page);
         if (plugins.getUsedSystem() == null) {
-            log.warning("No System plugin available ...");
+            log.warn("No System plugin available ...");
             return false;
         }
         Importer util = getWrapper("image", null, Importer.Capability.FULLSCREEN_MULTIPLE);
         if (util == null) {
-            log.warning("No Importer plugin available ...");
+            log.warn("No Importer plugin available ...");
             return false;
         }
         SubsetOf<Photo> lstPhoto;
@@ -130,7 +132,7 @@ public class SystemTools {
         File dir = null;
         int i = 0;
         boolean first = true;
-        log.log(Level.WARNING, "Fullscreen multiple: page asked:{0}", pageAsked);
+        log.warn( "Fullscreen multiple: page asked:{0}", pageAsked);
         for (Photo enrPhoto : lstPhoto.subset) {
             if (first) {
                 dir = buildTempDir(vSession, type, id);
@@ -140,7 +142,7 @@ public class SystemTools {
             }
 
             int currentPage = i / vSession.getPhotoSize();
-            log.log(Level.INFO, "Fullscreen multiple: current page:{0}", currentPage);
+            log.info( "Fullscreen multiple: current page:{0}", currentPage);
             File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
             plugins.getUsedSystem().link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
 
@@ -160,7 +162,7 @@ public class SystemTools {
                 return photoUtil.getImagePath(vSession, enrPhoto);
             }
         } catch (NumberFormatException e) {
-            log.log(Level.SEVERE, "Photo {0} doesnt have a valid width:{1}", new Object[]{enrPhoto, enrPhoto.getWidth()});
+            log.error( "Photo {0} doesnt have a valid width:{1}", new Object[]{enrPhoto, enrPhoto.getWidth()});
             //return photoUtil.getImagePath(vSession, enrPhoto);
         }
 

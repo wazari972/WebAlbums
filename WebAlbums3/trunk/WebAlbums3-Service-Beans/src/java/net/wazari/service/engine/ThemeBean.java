@@ -5,7 +5,8 @@
 package net.wazari.service.engine;
 
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import net.wazari.service.*;
 import javax.ejb.Stateless;
@@ -20,7 +21,7 @@ import net.wazari.common.util.XmlBuilder;
  */
 @Stateless
 public class ThemeBean implements ThemeLocal {
-    private static final Logger log = Logger.getLogger(ThemeBean.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ThemeBean.class.getName());
     
     @EJB
     private ThemeFacadeLocal themeDAO;

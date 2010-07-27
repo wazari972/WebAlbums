@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -39,7 +39,7 @@ import net.wazari.dao.jpa.entity.JPAUtilisateur;
  */
 @Stateless
 public class XMLImportExport implements ImportExporter {
-    private static final Logger log = Logger.getLogger(XMLImportExport.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(XMLImportExport.class.getName());
 
     private static final String FILENAME = "WebAlbums."+WebAlbumsDAOBean.PERSISTENCE_UNIT+".xml" ;
     @EJB
@@ -66,9 +66,9 @@ public class XMLImportExport implements ImportExporter {
                 photoDAO.findAll(), tagDAO.findAll(), tagThemeDAO.findAll(), tagPhotoDAO.findAll()) ;
         try {
             XmlUtils.save(new File(path+FILENAME), web, WebAlbumsXML.clazzez);
-            log.log(Level.INFO, "XML Saved!");
+            log.info( "XML Saved!");
         } catch (JAXBException ex) {
-            log.log(Level.SEVERE, null, ex);
+            log.error("JAXBException", ex);
         }
     }
 
@@ -77,7 +77,7 @@ public class XMLImportExport implements ImportExporter {
         try {
             WebAlbumsXML web = XmlUtils.reload(new FileInputStream(new File(path+FILENAME)), WebAlbumsXML.clazzez);
             if (web == null) {
-                log.warning("Couldn't load the XML backup ...");
+                log.warn("Couldn't load the XML backup ...");
                 return ;
             }
 
@@ -88,20 +88,20 @@ public class XMLImportExport implements ImportExporter {
             Map<Integer, JPAUtilisateur> users = new HashMap<Integer, JPAUtilisateur>(web.getUtilisateurs().size()) ;
 
             for (JPATheme enrTheme : web.getThemes()) {
-                log.log(Level.INFO, "Theme: {0}", enrTheme) ;
+                log.info( "Theme: {0}", enrTheme) ;
                 em.merge(enrTheme);
                 themes.put(enrTheme.getId(), enrTheme) ;
             }
             
             for (JPAUtilisateur enrUser : web.getUtilisateurs()) {
-                log.log(Level.INFO, "User: {0}", enrUser) ;
+                log.info( "User: {0}", enrUser) ;
                 em.merge(enrUser);
                 users.put(enrUser.getId(), enrUser) ;
             }
 
-            log.log(Level.INFO, "Import {0} Album",web.getAlbums().size()) ;
+            log.info( "Import {0} Album",web.getAlbums().size()) ;
             for (JPAAlbum enrAlbum : web.getAlbums()) {
-                log.log(Level.FINE, "Album: {0}", enrAlbum) ;
+                log.trace( "Album: {0}", enrAlbum) ;
 
                 //Theme enrTheme = themeDAO.find(enrAlbum.getThemeId()) ;
                 //enrAlbum.setTheme(enrTheme) ;
@@ -115,9 +115,9 @@ public class XMLImportExport implements ImportExporter {
                 albums.put(enrAlbum.getId(), enrAlbum) ;
             }
 
-            log.log(Level.INFO, "Import {0} Photo",web.getPhotos().size()) ;
+            log.info( "Import {0} Photo",web.getPhotos().size()) ;
             for (JPAPhoto enrPhoto : web.getPhotos()) {
-                log.log(Level.FINE, "Photo: {0} ({1})", new Object[]{enrPhoto, enrPhoto.getAlbumId()}) ;
+                log.trace( "Photo: {0} ({1})", new Object[]{enrPhoto, enrPhoto.getAlbumId()}) ;
 
                 //Album enrAlbum = albumDAO.find(enrPhoto.getAlbumId()) ;
                 //enrPhoto.setAlbum(enrAlbum) ;
@@ -127,22 +127,22 @@ public class XMLImportExport implements ImportExporter {
                 photos.put(enrPhoto.getId(), enrPhoto) ;
             }
 
-            log.log(Level.INFO, "Import {0} Tag",web.getTags().size()) ;
+            log.info( "Import {0} Tag",web.getTags().size()) ;
             for (JPATag enrTag : web.getTags()) {
-                log.log(Level.FINE, "Tag: {0}", enrTag) ;
+                log.trace( "Tag: {0}", enrTag) ;
 
                 JPAGeolocalisation enrGeo = enrTag.getGeolocalisation() ;
                 if (enrGeo != null) {
                     enrGeo.setTag1(enrTag);
-                    log.log(Level.FINE, "\tGeo: {0}", enrGeo) ;
+                    log.trace( "\tGeo: {0}", enrGeo) ;
                 }
                 em.merge(enrTag);
                 tags.put(enrTag.getId(), enrTag) ;
             }
 
-            log.log(Level.INFO, "Import {0} TagPhoto",web.getTagPhoto().size()) ;
+            log.info( "Import {0} TagPhoto",web.getTagPhoto().size()) ;
             for (JPATagPhoto enrTagPhoto : web.getTagPhoto()) {
-                log.log(Level.FINE, "TagPhoto: {0}", enrTagPhoto) ;
+                log.trace( "TagPhoto: {0}", enrTagPhoto) ;
 
                 //Tag enrTag = tagDAO.find(enrTagPhoto.getTagId()) ;
                 //enrTagPhoto.setTag(enrTag) ;
@@ -155,9 +155,9 @@ public class XMLImportExport implements ImportExporter {
                 em.merge(enrTagPhoto);
             }
 
-            log.log(Level.INFO, "Import {0} TagThemes",web.getTagThemes().size()) ;
+            log.info( "Import {0} TagThemes",web.getTagThemes().size()) ;
             for (JPATagTheme enrTagTheme : web.getTagThemes()) {
-                log.log(Level.FINE, "TagTheme: {0}", enrTagTheme) ;
+                log.trace( "TagTheme: {0}", enrTagTheme) ;
 
                 //Tag enrTag = tagDAO.find(enrTagTheme.getTagId()) ;
                 //enrTagTheme.setTag(enrTag) ;
@@ -170,7 +170,7 @@ public class XMLImportExport implements ImportExporter {
                 em.merge(enrTagTheme);
             }
         } catch (Exception ex) {
-            log.log(Level.SEVERE, null, ex);
+            log.error(ex.getClass().toString(), ex);
         }
     }
 

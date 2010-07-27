@@ -1,6 +1,5 @@
 package net.wazari.service.entity.util;
 
-import java.util.logging.Level;
 import net.wazari.dao.entity.Theme;
 import javax.swing.ImageIcon;
 import java.awt.Image;
@@ -11,7 +10,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.TagFacadeLocal;
@@ -33,7 +33,7 @@ import net.wazari.util.system.SystemTools;
 @Stateless
 public class PhotoUtil {
 
-    private static final Logger log = Logger.getLogger(PhotoUtil.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(PhotoUtil.class.toString());
     private static final long serialVersionUID = 1L;
     @EJB SystemTools sysTools ;
     @EJB
@@ -54,7 +54,7 @@ public class PhotoUtil {
     public void addTags(Photo p, Integer[] tags)
             throws WebAlbumsServiceException {
 
-        log.log(Level.INFO, "add tags to photo {0}", p);
+        log.info( "add tags to photo {0}", p);
         if (tags == null) {
             return;
         }
@@ -63,7 +63,7 @@ public class PhotoUtil {
         //ajouter les nouveaux tags
         //qui ne sont pas encore dans la liste existante
         for (int i = 0; i < tags.length; i++) {
-            log.log(Level.INFO, "add tag {0}", tags[i]);
+            log.info( "add tag {0}", tags[i]);
             boolean already = false;
 
             //verifier que le tag est bien dans la base
@@ -83,13 +83,13 @@ public class PhotoUtil {
                     TagPhoto nouveau = tagPhotoDAO.newTagPhoto();
                     nouveau.setPhoto(p);
                     nouveau.setTag(enrTag);
-                    log.log(Level.INFO, "Ajout du tag : {0}", enrTag.getNom());
+                    log.info( "Ajout du tag : {0}", enrTag.getNom());
                     tagPhotoDAO.create(nouveau);
                 } else {
-                    log.log(Level.INFO, "already: {0}", enrTag.getNom());
+                    log.info( "already: {0}", enrTag.getNom());
                 }
             } else {
-                log.log(Level.WARNING, "Erreur dans l''id du Tag : {0}: introuvable !", tags[i]);
+                log.warn( "Erreur dans l''id du Tag : {0}: introuvable !", tags[i]);
             }
         }
     }
@@ -173,7 +173,7 @@ public class PhotoUtil {
                 themeName = enrTh.getNom();
             }
         } catch (WebAlbumsDaoException e) {
-            log.log(Level.WARNING, "WebAlbumsDaoException {0}", e);
+            log.warn( "WebAlbumsDaoException {0}", e);
             throw new WebAlbumsServiceException(WebAlbumsDaoException.JDBCException,
                     "Erreur dans Photo.rotate()");
         }
@@ -183,7 +183,7 @@ public class PhotoUtil {
         String path = p.getPath();
         String mini = vSession.getConfiguration().getMiniPath() + sep + themeName + sep + path;
         String image = vSession.getConfiguration().getImagesPath() + sep + themeName + sep + path;
-        log.log(Level.INFO, "Rotation de {0}degres de {1}", new Object[]{degrees, path});
+        log.info( "Rotation de {0}degres de {1}", new Object[]{degrees, path});
         if (sysTools.rotate(null, null, degrees, mini + ".png", mini + ".png")) {
             if (!sysTools.rotate(null, null, degrees, image, image)) {
                 sysTools.rotate(null, null, "-" + degrees, mini + ".png", mini + ".png");

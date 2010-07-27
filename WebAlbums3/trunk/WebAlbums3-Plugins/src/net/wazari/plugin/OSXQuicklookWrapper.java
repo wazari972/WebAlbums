@@ -7,7 +7,8 @@ package net.wazari.plugin;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.wazari.common.plugins.GenericImporter;
 import net.wazari.common.plugins.Importer.Capability;
 import net.wazari.common.plugins.Importer.ProcessCallback;
@@ -18,7 +19,7 @@ import net.wazari.common.plugins.Importer.SanityStatus;
  * @author kevinpouget
  */
 public class OSXQuicklookWrapper extends GenericImporter {
-    private static final Logger log = Logger.getLogger(OSXQuicklookWrapper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(OSXQuicklookWrapper.class.getName());
 
     @Override
     public String getName() {
@@ -73,10 +74,10 @@ public class OSXQuicklookWrapper extends GenericImporter {
             if (ret == 0) {
                 return true ;
             } else {
-                log.warning("copy failed ...");
+                log.warn("copy failed ...");
             }
         } else {
-            log.warning("thumnail creation failed ...");
+            log.warn("thumnail creation failed ...");
         }
         return false ;
     }

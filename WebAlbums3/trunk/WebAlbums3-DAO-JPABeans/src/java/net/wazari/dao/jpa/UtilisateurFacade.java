@@ -5,10 +5,10 @@
 
 package net.wazari.dao.jpa;
 
-import java.util.logging.Level;
 import net.wazari.dao.*;
 import java.util.List;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -23,10 +23,10 @@ import net.wazari.dao.jpa.entity.JPAUtilisateur;
  */
 @Stateless
 public class UtilisateurFacade implements UtilisateurFacadeLocal {
-    private static final Logger log = Logger.getLogger(UtilisateurFacade.class.getCanonicalName()) ;
+    private static final Logger log = LoggerFactory.getLogger(UtilisateurFacade.class.getCanonicalName()) ;
 
     static {
-        log.warning("Loading WebAlbums3-DAO-JPABeans");
+        log.warn("Loading WebAlbums3-DAO-JPABeans");
     }
     @EJB AlbumFacadeLocal albumDAO ;
 
@@ -48,7 +48,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
                     .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
         } catch (NoResultException e) {
-            log.log(Level.INFO, "No user with name +{0}+", name);
+            log.info ( "No user with name +{0}+", name);
             return null ;
         }
     }

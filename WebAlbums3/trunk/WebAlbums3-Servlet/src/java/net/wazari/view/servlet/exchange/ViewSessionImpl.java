@@ -10,8 +10,8 @@ import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +56,7 @@ public class ViewSessionImpl implements
         ViewSessionImages, ViewSessionPhotoDisplayMassEdit,
         ViewSessionMaint{
 
-    private static final Logger log = Logger.getLogger(ViewSessionImpl.class.getCanonicalName());
+    private static final Logger log = LoggerFactory.getLogger(ViewSessionImpl.class.getCanonicalName());
     private HttpServletRequest request;
     private HttpServletResponse response;
     
@@ -398,7 +398,7 @@ public class ViewSessionImpl implements
 
     private String[] getParamArray(String name) {
         String[] ret = request.getParameterValues(name);
-        log.log(Level.INFO, "getParamArray param:{0} returned {1}", new Object[]{name, Arrays.toString(ret)});
+        log.info( "getParamArray param:{0} returned {1}", new Object[]{name, Arrays.toString(ret)});
         return ret;
     }
 
@@ -431,7 +431,7 @@ public class ViewSessionImpl implements
         try {
             request.login(user, passwd);
         } catch (ServletException ex) {
-            Logger.getLogger(ViewSessionImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.warn("ServletException", ex);
         }
     }
 
@@ -473,18 +473,18 @@ public class ViewSessionImpl implements
             } else if (type.isEnum()) {
                 ret = (T) Enum.valueOf((Class) type, val);
             } else {
-                log.log(Level.INFO, "Unknown class {0} for parameter {1}", new Object[]{type, name});
+                log.info( "Unknown class {0} for parameter {1}", new Object[]{type, name});
             }
         } catch (ClassCastException e) {
-            log.log(Level.INFO, "Can''t cast value {0} into class {1}", new Object[]{val, type});
+            log.info( "Can''t cast value {0} into class {1}", new Object[]{val, type});
         } catch (NullPointerException e) {
-            log.log(Level.INFO, "NullPointerException with {0} for class {1}", new Object[]{val, type});
+            log.info( "NullPointerException with {0} for class {1}", new Object[]{val, type});
         } catch (NumberFormatException e) {
-            log.log(Level.INFO, "NumberFormatException with {0} for class {1}", new Object[]{val, type});
+            log.info( "NumberFormatException with {0} for class {1}", new Object[]{val, type});
         } catch (IllegalArgumentException e) {
-            log.log(Level.INFO, "IllegalArgumentException with {0} for class {1}", new Object[]{val, type});
+            log.info( "IllegalArgumentException with {0} for class {1}", new Object[]{val, type});
         }
-        log.log(Level.INFO, "getObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
+        log.info( "getObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
         return ret;
     }
 
@@ -493,12 +493,12 @@ public class ViewSessionImpl implements
         if (ret == null && request != null) {
             ret = getObject(name, type, request);
         }
-        log.log(Level.INFO, "getSessionObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
+        log.info( "getSessionObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
         return ret;
     }
 
     private static void setSessionObject(String key, Object val, HttpSession session) {
-        log.log(Level.INFO, "setSessionObject param:{0} val:{1}", new Object[]{key, val});
+        log.info( "setSessionObject param:{0} val:{1}", new Object[]{key, val});
         session.setAttribute(key, val);
     }
 
@@ -509,8 +509,8 @@ public class ViewSessionImpl implements
 
     @Override
     public boolean isRemoteAccess() {
-        log.log(Level.INFO, "local: {0}", request.getLocalAddr()) ;
-        log.log(Level.INFO, "remote: {0}", request.getRemoteAddr()) ;
+        log.info( "local: {0}", request.getLocalAddr()) ;
+        log.info( "remote: {0}", request.getRemoteAddr()) ;
         return !request.getLocalAddr().equals(request.getRemoteHost()) ;
     }
 
@@ -519,7 +519,7 @@ public class ViewSessionImpl implements
         try {
             response.sendRedirect(filepath);
         } catch (IOException ex) {
-            Logger.getLogger(ViewSessionImpl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error("IOException", ex);
         }
     }
 

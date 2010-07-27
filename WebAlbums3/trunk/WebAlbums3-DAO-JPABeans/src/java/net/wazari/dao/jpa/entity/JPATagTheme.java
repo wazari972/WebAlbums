@@ -6,7 +6,8 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,7 +40,7 @@ import net.wazari.dao.entity.Theme;
     uniqueConstraints = {@UniqueConstraint(columnNames={"Tag", "Theme"})}
 )
 public class JPATagTheme implements TagTheme, Serializable {
-    private static final Logger log = Logger.getLogger(JPATagTheme.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(JPATagTheme.class.getName());
 
     private static final long serialVersionUID = 1L;
 

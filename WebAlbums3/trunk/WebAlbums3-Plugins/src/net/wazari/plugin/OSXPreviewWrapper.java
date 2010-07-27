@@ -7,7 +7,8 @@ package net.wazari.plugin;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.wazari.common.plugins.GenericImporter;
 import net.wazari.common.plugins.Importer.Capability;
 import net.wazari.common.plugins.Importer.ProcessCallback;
@@ -19,7 +20,7 @@ import net.wazari.common.plugins.Importer.SanityStatus;
  */
 public class OSXPreviewWrapper  extends GenericImporter {
     private static final String PREVIEW = "/Applications/Preview.app/Contents/MacOS/Preview" ;
-    private static final Logger log = Logger.getLogger(OSXPreviewWrapper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(OSXPreviewWrapper.class.getName());
 
     @Override
     public String getName() {

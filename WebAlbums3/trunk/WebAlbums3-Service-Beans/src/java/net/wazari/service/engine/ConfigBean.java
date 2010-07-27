@@ -1,8 +1,8 @@
 package net.wazari.service.engine;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -307,11 +307,11 @@ public class ConfigBean implements ConfigLocal {
             output.add("message", "Theme correctement supprimer") ;
             return output.validate();
         } catch (Exception e) {
-            log.log(Level.WARNING, "error while removing the theme: {0}", e);
+            log.warn("error while removing the theme: {0}", e);
             output.add("message", "error while removing the theme: "+e.getMessage()) ;
             return output.validate() ;
         }
     }
 
-    private static final Logger log = Logger.getLogger(ConfigBean.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ConfigBean.class.getName());
 }

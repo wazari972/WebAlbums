@@ -16,11 +16,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.BindException;
 import java.net.ServerSocket;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -52,29 +51,29 @@ public class GF {
      */
     public static void main(String[] args) throws LifecycleException, IOException, InterruptedException, Throwable {
         long timeStart = System.currentTimeMillis() ;
-        log.warning("Starting WebAlbums GF bootstrap");
+        log.warn("Starting WebAlbums GF bootstrap");
 
         Config cfg = Config.load();
         
         log.info(Config.print(cfg)) ;
         File keyfile = new File("keyfile");
         if (keyfile.exists()) {
-            log.warning("delete ./keyfile ");
+            log.warn("delete ./keyfile ");
             keyfile.delete();
         }
 
         File earfile = new File(cfg.webAlbumsEAR);
         if (!earfile.exists()) {
-            log.log(Level.WARNING, "The earFile {0} doesn't exist ...", cfg.webAlbumsEAR);
+            log.warn( "The earFile {0} doesn't exist ...", cfg.webAlbumsEAR);
             return;
         }
-        log.log(Level.WARNING, "Using EAR: {0}", earfile);
+        log.warn( "Using EAR: {0}", earfile);
 
         try {
             new ServerSocket(cfg.port).close();
             new ServerSocket(cfg.port + 1).close();
         } catch (BindException e) {
-            log.log(Level.WARNING, "Port {0} or {1} already in use", new Object[]{cfg.port, cfg.port + 1});
+            log.warn( "Port {0} or {1} already in use", new Object[]{cfg.port, cfg.port + 1});
             return;
         }
 
@@ -83,7 +82,7 @@ public class GF {
         try {
             File installDirGF = new File(cfg.glassfishDIR);
             installDirGF = installDirGF.getCanonicalFile();
-            log.log(Level.WARNING, "Using Glassfish FS: {0}", installDirGF);
+            log.warn( "Using Glassfish FS: {0}", installDirGF);
             
 
             EmbeddedFileSystem.Builder efsb = new EmbeddedFileSystem.Builder();
@@ -108,13 +107,13 @@ public class GF {
             String appName = null;
             DeployCommandParameters params = new DeployCommandParameters();
             appName = deployer.deploy(new File(cfg.webAlbumsEAR), params);
-            log.log(Level.INFO, "Deployed {0}", appName);
+            log.info( "Deployed {0}", appName);
 
             long loadingTime = System.currentTimeMillis();
             float time = ((float) (loadingTime - timeStart) / 1000);
 
-            log.log(Level.INFO, "Ready to server at http://localhost:{0}/WebAlbums3-Servlet after {1}s", new Object[] {Integer.toString(cfg.port), time});
-            log.log(Level.INFO, "Connect to http://localhost:{0} to shutdown the server", Integer.toString(cfg.port + 1));
+            log.info( "Ready to server at http://localhost:{0}/WebAlbums3-Servlet after {1}s", new Object[] {Integer.toString(cfg.port), time});
+            log.info( "Connect to http://localhost:{0} to shutdown the server", Integer.toString(cfg.port + 1));
 
             ServerSocket servSocker = new ServerSocket(cfg.port + 1);
             servSocker.accept().close();
@@ -129,7 +128,7 @@ public class GF {
             }
 
             if (keyfile.exists()) {
-                log.warning("delete ./keyfile ");
+                log.warn("delete ./keyfile ");
                 keyfile.delete();
             }
         }
@@ -155,15 +154,15 @@ public class GF {
     private static List<MessagePart> asAdmin(Server server, String command, ParameterMap params) throws Throwable {
         CommandRunner runner = server.getHabitat().getComponent(CommandRunner.class);
         ActionReport report = server.getHabitat().getComponent(ActionReport.class);
-        log.log(Level.INFO, "Invoke {0} {1}", new Object[]{command, params});
+        log.info( "Invoke {0} {1}", new Object[]{command, params});
 
-        log.log(Level.INFO, "command \"{0}\" invoked", command);
+        log.info( "command \"{0}\" invoked", command);
         if (params == null) {
             runner.getCommandInvocation(command, report).execute();
         } else {
             runner.getCommandInvocation(command, report).parameters(params).execute();
         }
-        log.log(Level.INFO, "command finished with {0}", report.getActionExitCode());
+        log.info( "command finished with {0}", report.getActionExitCode());
 
         if (report.hasFailures()) {
             if (report.getFailureCause() != null) {
@@ -194,7 +193,7 @@ public class GF {
         params.add("", path );
         asAdmin(server, "add-resources", params);
     }
-    private static final Logger log = Logger.getLogger(GF.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(GF.class.getName());
 
     @XmlRootElement
 

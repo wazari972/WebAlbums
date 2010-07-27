@@ -4,7 +4,8 @@
  */
 package net.wazari.dao.jpa;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
@@ -16,7 +17,7 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class WebAlbumsDAOBean {
-    private static final Logger log = Logger.getLogger(WebAlbumsDAOBean.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(WebAlbumsDAOBean.class.getName());
     
     public static final String PERSISTENCE_UNIT_DERBY = "WebAlbums-Derby" ;
     public static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
