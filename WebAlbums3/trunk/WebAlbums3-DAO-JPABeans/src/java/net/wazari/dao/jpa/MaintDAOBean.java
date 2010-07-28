@@ -33,10 +33,6 @@ public class MaintDAOBean implements MaintFacadeLocal {
 
     private static final Logger log = LoggerFactory.getLogger(MaintDAOBean.class.getName());
 
-    private static interface Work {
-
-        void execute(Connection connection) throws JDBCException;
-    }
     @PersistenceContext(unitName = WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
     @EJB
@@ -116,5 +112,5 @@ public class MaintDAOBean implements MaintFacadeLocal {
             //log.log(Level.INFO, "\tgetExecutionRowCount {}", qStats.getExecutionRowCount());
         }
     }
-    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(MaintDAOBean.class.getName());
+    
 }

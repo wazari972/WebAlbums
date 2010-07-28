@@ -450,11 +450,13 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${libs.hibernate-persistence.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.wicket-1.4.9.jar}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.hibernate-persistence.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.wicket-1.4.9.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">
