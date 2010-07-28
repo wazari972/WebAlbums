@@ -107,16 +107,16 @@ public class PhotoBean implements PhotoLocal {
                     valid = true;
                     userId = Integer.parseInt(user);
                 } else {
-                    log.warn( "Unknown userId:{0}", user);
+                    log.warn( "Unknown userId:{}", user);
                 }
 
                 if (valid) {
-                    log.info("Set Droit to:{0}", userId);
+                    log.info("Set Droit to:{}", userId);
                     enrPhoto.setDroit(userId);
                 }
 
             } catch (NumberFormatException e) {
-                log.warn( "Cannot parse userId:{0}", user);
+                log.warn( "Cannot parse userId:{}", user);
             }
         }
 
@@ -169,7 +169,7 @@ public class PhotoBean implements PhotoLocal {
             //changer la photo representant ce tag/theme
             enrTagTh.setPhoto(enrPhoto.getId());
 
-            log.info( "edit {0}", enrTagTh);
+            log.info( "edit {}", enrTagTh);
             tagThemeDAO.edit(enrTagTh);
         }
 

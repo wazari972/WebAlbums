@@ -48,16 +48,16 @@ public class ImageResizer {
 
                 log.info("Done !");
             } catch (URISyntaxException e) {
-                log.info( "URISyntaxException {0}", e);
+                log.info( "URISyntaxException {}", e);
             } catch (MalformedURLException e) {
-                log.info( "MalformedURLException {0}", e);
+                log.info( "MalformedURLException {}", e);
             } catch (IOException e) {
-                log.info( "IOExceptionLException {0}", e);
+                log.info( "IOExceptionLException {}", e);
             }
 
         }
         if (author != null && author.isDirectory()) {
-            log.info( "Nettoyage du dossier {0}", author);
+            log.info( "Nettoyage du dossier {}", author);
             File[] lst = author.listFiles();
 
             //supprimer recursivement tous les dossiers de ce repertoire
@@ -77,9 +77,9 @@ public class ImageResizer {
             }
             //on fait rien
 
-            log.warn( "Fichier trouv\u00e9 {0} !", rep);
+            log.warn( "Fichier trouv\u00e9 {} !", rep);
         } else if (rep.isDirectory()) {
-            log.info( "Suppression du dossier {0} ...", rep);
+            log.info( "Suppression du dossier {} ...", rep);
             File[] lst = rep.listFiles();
 
             //supprimer recursivement tous les dossiers vides de ce repertoire
@@ -93,11 +93,11 @@ public class ImageResizer {
 
     private static boolean move(Element elt, Configuration conf) throws MalformedURLException, URISyntaxException {
         String url = "file://" + conf.getImagesPath() + conf.getSep() + elt.path;
-        log.info( "SOURCE = {0}", url);
+        log.info( "SOURCE = {}", url);
         URI uri = new URL(StringUtil.escapeURL(url)).toURI();
         File destination = new File(uri);
         destination.getParentFile().mkdirs();
-        log.info( "Move {0} to {1}", new Object[]{elt.image, destination});
+        log.info( "Move {} to {}", new Object[]{elt.image, destination});
 
         if (!elt.image.renameTo(destination)) {
             log.info("Impossible de déplacer ...");
@@ -106,17 +106,17 @@ public class ImageResizer {
 
         return true;
     }
-
+    
     private boolean thumbnail(Element source, Configuration conf) throws URISyntaxException, IOException {
         String path = conf.getMiniPath() + conf.getSep() + source.path + ".png";
 
         File destination = new File(path);
         File parent = destination.getParentFile();
         if (!parent.isDirectory() && !parent.mkdirs()) {
-            log.warn( "Impossible de creer le dossier destination ({0})", parent);
+            log.warn( "Impossible de creer le dossier destination ({})", parent);
             return false;
         } else {
-            log.warn( "Repertoires parents cr\u00e9es ({0})", parent);
+            log.warn( "Repertoires parents cr\u00e9es ({})", parent);
             String ext = null;
             int idx = source.image.getName().lastIndexOf('.');
             if (idx != -1) {

@@ -54,7 +54,7 @@ public class PhotoUtil {
     public void addTags(Photo p, Integer[] tags)
             throws WebAlbumsServiceException {
 
-        log.info( "add tags to photo {0}", p);
+        log.info( "add tags to photo {}", p);
         if (tags == null) {
             return;
         }
@@ -63,7 +63,7 @@ public class PhotoUtil {
         //ajouter les nouveaux tags
         //qui ne sont pas encore dans la liste existante
         for (int i = 0; i < tags.length; i++) {
-            log.info( "add tag {0}", tags[i]);
+            log.info( "add tag {}", tags[i]);
             boolean already = false;
 
             //verifier que le tag est bien dans la base
@@ -83,13 +83,13 @@ public class PhotoUtil {
                     TagPhoto nouveau = tagPhotoDAO.newTagPhoto();
                     nouveau.setPhoto(p);
                     nouveau.setTag(enrTag);
-                    log.info( "Ajout du tag : {0}", enrTag.getNom());
+                    log.info( "Ajout du tag : {}", enrTag.getNom());
                     tagPhotoDAO.create(nouveau);
                 } else {
-                    log.info( "already: {0}", enrTag.getNom());
+                    log.info( "already: {}", enrTag.getNom());
                 }
             } else {
-                log.warn( "Erreur dans l''id du Tag : {0}: introuvable !", tags[i]);
+                log.warn( "Erreur dans l''id du Tag : {}: introuvable !", tags[i]);
             }
         }
     }
@@ -173,7 +173,7 @@ public class PhotoUtil {
                 themeName = enrTh.getNom();
             }
         } catch (WebAlbumsDaoException e) {
-            log.warn( "WebAlbumsDaoException {0}", e);
+            log.warn( "WebAlbumsDaoException {}", e);
             throw new WebAlbumsServiceException(WebAlbumsDaoException.JDBCException,
                     "Erreur dans Photo.rotate()");
         }
@@ -183,7 +183,7 @@ public class PhotoUtil {
         String path = p.getPath();
         String mini = vSession.getConfiguration().getMiniPath() + sep + themeName + sep + path;
         String image = vSession.getConfiguration().getImagesPath() + sep + themeName + sep + path;
-        log.info( "Rotation de {0}degres de {1}", new Object[]{degrees, path});
+        log.info( "Rotation de {}degres de {}", new Object[]{degrees, path});
         if (sysTools.rotate(null, null, degrees, mini + ".png", mini + ".png")) {
             if (!sysTools.rotate(null, null, degrees, image, image)) {
                 sysTools.rotate(null, null, "-" + degrees, mini + ".png", mini + ".png");

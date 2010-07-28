@@ -307,7 +307,7 @@ public class ConfigBean implements ConfigLocal {
             output.add("message", "Theme correctement supprimer") ;
             return output.validate();
         } catch (Exception e) {
-            log.warn("error while removing the theme: {0}", e);
+            log.warn("error while removing the theme: {}", e);
             output.add("message", "error while removing the theme: "+e.getMessage()) ;
             return output.validate() ;
         }

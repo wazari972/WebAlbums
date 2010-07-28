@@ -29,11 +29,11 @@ public class ProcessCallbackImpl implements ProcessCallback {
 
     private Process execPS(String[] cmd) {
         try {
-            log.info( "exec: {0}", Arrays.toString(cmd));
+            log.info( "exec: {}", Arrays.toString(cmd));
 
             return Runtime.getRuntime().exec(cmd);
         } catch (Exception e) {
-            log.warn( "Couldn''t execute the process:{0}", e.getMessage());
+            log.warn( "Couldn''t execute the process:{}", e.getMessage());
             return null;
         }
     }
@@ -61,10 +61,10 @@ public class ProcessCallbackImpl implements ProcessCallback {
                 reader = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
 
                 while ((str = reader.readLine()) != null) {
-                    log.info( "err - {0}", str);
+                    log.info( "err - {}", str);
                 }
                 int ret = ps.waitFor();
-                log.info( "ret:{0}", ret);
+                log.info( "ret:{}", ret);
 
                 return ret;
 

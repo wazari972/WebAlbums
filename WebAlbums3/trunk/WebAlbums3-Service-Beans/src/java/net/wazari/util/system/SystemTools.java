@@ -51,13 +51,13 @@ public class SystemTools {
         Importer wrap = null;
         
         for (Importer util : plugins.getWorkingPlugins()) {
-            log.warn( "Test {0}: {1}", new Object[]{util.getName(), Arrays.asList(util.supports())});
+            log.warn( "Test {}: {}", new Object[]{util.getName(), Arrays.asList(util.supports())});
             if (util.supports(type, ext, cap)) {
                 wrap = util;
                 break ;
             }
         }
-        log.warn( "Wrapper for {3}@{0}-{1}: {2}", new Object[]{type, ext, wrap, cap});
+        log.warn( "Wrapper for {}@{}-{}: {}", new Object[]{type, ext, wrap, cap});
         return wrap;
     }
 
@@ -132,7 +132,7 @@ public class SystemTools {
         File dir = null;
         int i = 0;
         boolean first = true;
-        log.warn( "Fullscreen multiple: page asked:{0}", pageAsked);
+        log.warn( "Fullscreen multiple: page asked:{}", pageAsked);
         for (Photo enrPhoto : lstPhoto.subset) {
             if (first) {
                 dir = buildTempDir(vSession, type, id);
@@ -142,7 +142,7 @@ public class SystemTools {
             }
 
             int currentPage = i / vSession.getPhotoSize();
-            log.info( "Fullscreen multiple: current page:{0}", currentPage);
+            log.info( "Fullscreen multiple: current page:{}", currentPage);
             File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
             plugins.getUsedSystem().link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
 
@@ -162,7 +162,7 @@ public class SystemTools {
                 return photoUtil.getImagePath(vSession, enrPhoto);
             }
         } catch (NumberFormatException e) {
-            log.error( "Photo {0} doesnt have a valid width:{1}", new Object[]{enrPhoto, enrPhoto.getWidth()});
+            log.error( "Photo {} doesnt have a valid width:{}", new Object[]{enrPhoto, enrPhoto.getWidth()});
             //return photoUtil.getImagePath(vSession, enrPhoto);
         }
 

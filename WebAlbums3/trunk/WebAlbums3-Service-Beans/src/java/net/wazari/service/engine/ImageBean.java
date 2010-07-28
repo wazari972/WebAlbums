@@ -98,7 +98,7 @@ public class ImageBean implements ImageLocal {
                 output.validate();
             }
         } catch (Exception e) {
-            log.warn(e.getClass().toString(), "{0}: ", new Object[]{e.getClass().getSimpleName(), e}) ;
+            log.warn(e.getClass().toString(), "{}: ", new Object[]{e.getClass().getSimpleName(), e}) ;
             output.addException("Exception", e.getMessage());
             output.validate();
         }
@@ -137,14 +137,14 @@ public class ImageBean implements ImageLocal {
 
             return null;
         } catch (MalformedURLException e) {
-            log.warn( "MalformedURLException: {0}", e.getMessage()) ;
+            log.warn( "MalformedURLException: {}", e.getMessage()) ;
             output.addException("MalformedURLException", filepath);
 
         } catch (ConnectException e) {
-            log.warn( "ConnectException: {0}", e.getMessage()) ;
+            log.warn( "ConnectException: {}", e.getMessage()) ;
             output.addException("ConnectException", filepath);
         } catch (IOException e) {
-            log.warn( "IOException {0}({1})", new Object[]{filepath, e.getMessage()});
+            log.warn( "IOException {}({})", new Object[]{filepath, e.getMessage()});
             output.addException("IOException", filepath + "(" + e.getMessage() + ")");
         }
         return uniq;

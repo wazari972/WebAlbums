@@ -398,13 +398,13 @@ public class FilesFinder {
         if (msg != null) {
             output.add("Exception", msg.toString());
         }
-        log.warn("FilesFinder: {0}", msg);
+        log.warn("FilesFinder: {}", msg);
     }
 
     private static void info(XmlBuilder output, Object msg) {
         if (msg != null) {
             output.add("message", msg.toString());
         }
-        log.info( "FilesFinder: {0}", msg);
+        log.info( "FilesFinder: {}", msg);
     }
 }

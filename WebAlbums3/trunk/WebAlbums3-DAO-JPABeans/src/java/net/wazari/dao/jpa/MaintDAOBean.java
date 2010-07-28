@@ -110,10 +110,10 @@ public class MaintDAOBean implements MaintFacadeLocal {
         for (String query : stats.getQueries()) {
             //QueryStatistics qStats = stats.getQueryStatistics(query);
             log.info(query);
-            //log.log(Level.INFO, "\tgetExecutionCount {0}", qStats.getExecutionCount());
-            //log.log(Level.INFO, "\tgetExecutionAvgTime {0}", qStats.getExecutionAvgTime());
-            //log.log(Level.INFO, "\tgetExecutionMaxTime {0}", qStats.getExecutionMaxTime());
-            //log.log(Level.INFO, "\tgetExecutionRowCount {0}", qStats.getExecutionRowCount());
+            //log.log(Level.INFO, "\tgetExecutionCount {}", qStats.getExecutionCount());
+            //log.log(Level.INFO, "\tgetExecutionAvgTime {}", qStats.getExecutionAvgTime());
+            //log.log(Level.INFO, "\tgetExecutionMaxTime {}", qStats.getExecutionMaxTime());
+            //log.log(Level.INFO, "\tgetExecutionRowCount {}", qStats.getExecutionRowCount());
         }
     }
     private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(MaintDAOBean.class.getName());

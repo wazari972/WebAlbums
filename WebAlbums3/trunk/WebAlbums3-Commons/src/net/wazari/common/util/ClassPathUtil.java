@@ -37,7 +37,7 @@ public class ClassPathUtil {
                 }
             }
         } else {
-            log.warn( "The directory \"{0}\" does not exist!", directory);
+            log.warn( "The directory \"{}\" does not exist!", directory);
         }
         return myCl ;
     }
@@ -52,7 +52,7 @@ public class ClassPathUtil {
         URL urls[] = sysLoader.getURLs();
         for (int i = 0; i < urls.length; i++) {
             if (urls[i].toString().equalsIgnoreCase(u.toString())) {
-                log.info( "URL {0} is already in the CLASSPATH", u);
+                log.info( "URL {} is already in the CLASSPATH", u);
                 return;
             }
         }
@@ -61,7 +61,7 @@ public class ClassPathUtil {
             Method method = sysclass.getDeclaredMethod("addURL", PARAMS);
             method.setAccessible(true);
             method.invoke(sysLoader, new Object[]{u});
-            log.info( "ADD {0}: OK!", u);
+            log.info( "ADD {}: OK!", u);
         } catch (Throwable t) {
             log.error ("Error, could not add URL to system classloader", t);
         }

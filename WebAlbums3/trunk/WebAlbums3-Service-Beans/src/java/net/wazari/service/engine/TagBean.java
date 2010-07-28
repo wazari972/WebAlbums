@@ -170,7 +170,7 @@ public class TagBean implements TagLocal {
             }
             xmlSpec.validate();
         } catch (Exception e) {
-            log.warn(e.getClass().toString(), "{0}:", new Object[]{e.getClass().getSimpleName(), e}) ;
+            log.warn(e.getClass().toString(), "{}:", new Object[]{e.getClass().getSimpleName(), e}) ;
 
             xmlSpec.cancel();
             xmlSpec.addException(e);

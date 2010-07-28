@@ -36,7 +36,7 @@ public class AlbumUtil {
     public void setTagsToPhoto(Album enrAlbum, Integer[] tags, Boolean force) throws WebAlbumsServiceException {
 
         for (Photo enrPhoto : enrAlbum.getPhotoList()) {
-            log.info( "apply tags to {0}", enrPhoto);
+            log.info( "apply tags to {}", enrPhoto);
             if (force) {
 
                 photoUtil.setTags(enrPhoto, tags);

@@ -51,7 +51,7 @@ public class Maint extends HttpServlet {
         try {
             return maintService.treatMAINT(vSession) ;
         } catch (Exception e) {
-            log.warn( "An exception occured in treatMaint:{0}", e.getMessage());
+            log.warn( "An exception occured in treatMaint:{}", e.getMessage());
             return null ;
         }
     }

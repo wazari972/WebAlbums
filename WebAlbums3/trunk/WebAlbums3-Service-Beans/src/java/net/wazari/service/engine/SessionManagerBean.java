@@ -19,7 +19,7 @@ public class SessionManagerBean implements SessionManagerLocal {
     /* Session Listener */
     @Override
     public void sessionCreated(ViewSessionSession vSession) {
-        log.info( "Session created {0}", getUID());
+        log.info( "Session created {}", getUID());
         File temp = new File(vSession.getConfiguration().getTempPath() + vSession.getConfiguration().getSep() + getUID());
         log.info(temp.toString());
         if (!temp.mkdir()) {
@@ -27,7 +27,7 @@ public class SessionManagerBean implements SessionManagerLocal {
         } else {
             temp.deleteOnExit();
         }
-        log.info( "temp dir created: {0}", temp);
+        log.info( "temp dir created: {}", temp);
         vSession.setTempDir(temp) ;
     }
 
@@ -35,10 +35,10 @@ public class SessionManagerBean implements SessionManagerLocal {
     public void sessionDestroyed(ViewSessionSession vSession) {
         File temp = vSession.getTempDir() ;
         if (temp != null) {
-            log.info( "temp dir deleted: {0}", temp);
+            log.info( "temp dir deleted: {}", temp);
             temp.delete();
         }
-        log.info( "Session destroyed {0}", getUID());
+        log.info( "Session destroyed {}", getUID());
     }
     
     private String getUID() {

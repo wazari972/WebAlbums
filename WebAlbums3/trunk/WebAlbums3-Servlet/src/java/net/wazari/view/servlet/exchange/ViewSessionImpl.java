@@ -398,7 +398,7 @@ public class ViewSessionImpl implements
 
     private String[] getParamArray(String name) {
         String[] ret = request.getParameterValues(name);
-        log.info( "getParamArray param:{0} returned {1}", new Object[]{name, Arrays.toString(ret)});
+        log.info( "getParamArray param:{} returned {}", new Object[]{name, Arrays.toString(ret)});
         return ret;
     }
 
@@ -473,18 +473,18 @@ public class ViewSessionImpl implements
             } else if (type.isEnum()) {
                 ret = (T) Enum.valueOf((Class) type, val);
             } else {
-                log.info( "Unknown class {0} for parameter {1}", new Object[]{type, name});
+                log.info( "Unknown class {} for parameter {}", new Object[]{type, name});
             }
         } catch (ClassCastException e) {
-            log.info( "Can''t cast value {0} into class {1}", new Object[]{val, type});
+            log.info( "Can''t cast value {} into class {}", new Object[]{val, type});
         } catch (NullPointerException e) {
-            log.info( "NullPointerException with {0} for class {1}", new Object[]{val, type});
+            log.info( "NullPointerException with {} for class {}", new Object[]{val, type});
         } catch (NumberFormatException e) {
-            log.info( "NumberFormatException with {0} for class {1}", new Object[]{val, type});
+            log.info( "NumberFormatException with {} for class {}", new Object[]{val, type});
         } catch (IllegalArgumentException e) {
-            log.info( "IllegalArgumentException with {0} for class {1}", new Object[]{val, type});
+            log.info( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
         }
-        log.info( "getObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
+        log.info( "getObject param:{} type:{} returned {}", new Object[]{name, type, ret});
         return ret;
     }
 
@@ -493,12 +493,12 @@ public class ViewSessionImpl implements
         if (ret == null && request != null) {
             ret = getObject(name, type, request);
         }
-        log.info( "getSessionObject param:{0} type:{1} returned {2}", new Object[]{name, type, ret});
+        log.info( "getSessionObject param:{} type:{} returned {}", new Object[]{name, type, ret});
         return ret;
     }
 
     private static void setSessionObject(String key, Object val, HttpSession session) {
-        log.info( "setSessionObject param:{0} val:{1}", new Object[]{key, val});
+        log.info( "setSessionObject param:{} val:{}", new Object[]{key, val});
         session.setAttribute(key, val);
     }
 

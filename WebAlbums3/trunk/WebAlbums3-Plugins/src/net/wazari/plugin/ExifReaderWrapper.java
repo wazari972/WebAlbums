@@ -116,7 +116,7 @@ public class ExifReaderWrapper extends GenericImporter {
             }
             return true ;
         } catch (JpegProcessingException e) {
-            log.warn( "Exception JPEG durant le traitement exif : {0}", e.getMessage());
+            log.warn( "Exception JPEG durant le traitement exif : {}", e.getMessage());
             log.warn(path);
         }
         return false ;

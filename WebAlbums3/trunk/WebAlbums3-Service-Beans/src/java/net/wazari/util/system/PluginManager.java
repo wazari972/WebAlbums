@@ -58,18 +58,18 @@ public class PluginManager implements PluginManagerLocal {
     public void reloadPlugins(String path) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader() ;
         if (path != null) {
-            log.info( "+++Adding plugins from {0}", path);
+            log.info( "+++Adding plugins from {}", path);
             cl = ClassPathUtil.addDirToClasspath(new File(path));
         }
         validWrappers.clear();
         invalidWrappers.clear();
-        log.info( "+++ Loading services for \"{0}\"", Importer.class.getCanonicalName());
+        log.info( "+++ Loading services for \"{}\"", Importer.class.getCanonicalName());
         ServiceLoader<Importer> servicesImg = ServiceLoader.load(Importer.class, cl);
         Iterator<Importer> itImg = servicesImg.iterator();
         while (itImg.hasNext()) {
             try {
                 Importer current = itImg.next();
-                log.info( "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
+                log.info( "+++ Adding \"{}\"", current.getClass().getCanonicalName());
                 if (current.sanityCheck(SystemTools.cb) == Importer.SanityStatus.PASS) {
                     validWrappers.add(current);
                 } else {
@@ -88,14 +88,14 @@ public class PluginManager implements PluginManagerLocal {
             }
         });
 
-        log.info( "+++ Loading services for \"{0}\"", System.class.getCanonicalName());
+        log.info( "+++ Loading services for \"{}\"", System.class.getCanonicalName());
         ServiceLoader<System> servicesSys = ServiceLoader.load(System.class, cl);
         this.system = null;
         Iterator<System> itSyst = servicesSys.iterator();
         while (itSyst.hasNext()) {
             try {
                 System current = itSyst.next();
-                log.info( "+++ Adding \"{0}\"", current.getClass().getCanonicalName());
+                log.info( "+++ Adding \"{}\"", current.getClass().getCanonicalName());
                 if (system == null && current.sanityCheck(SystemTools.cb) == Importer.SanityStatus.PASS) {
                     system = current;
                 } else {

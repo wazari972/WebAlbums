@@ -136,7 +136,7 @@ public class AlbumBean implements AlbumLocal {
                     details.add("miniWidth", enrPhoto.getWidth());
                     details.add("miniHeight", enrPhoto.getHeight());
                 } else {
-                    log.warn("Invalid photo ({0}) for album {1}", new Object[]{iPhoto, enrAlbum.getId()});
+                    log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrAlbum.getId()});
                 }
             }
             

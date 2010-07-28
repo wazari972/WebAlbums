@@ -38,7 +38,6 @@ public class DispatcherBean {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherBean.class.getCanonicalName());
     static {
-        //prepareLogs();
         log.warn("WebAlbums3-Servlet is being loaded ... ");
         log.info( "RootPath: {}", ConfigurationXML.getConf().getRootPath());
     }

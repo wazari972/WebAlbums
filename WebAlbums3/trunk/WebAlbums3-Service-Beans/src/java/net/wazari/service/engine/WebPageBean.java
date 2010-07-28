@@ -54,7 +54,7 @@ public class WebPageBean implements WebPageLocal {
     private static final Logger log = LoggerFactory.getLogger(WebPageBean.class.getName());
 
     static {
-        log.warn( "FilesFinder.initialized {0}", SystemTools.initate());
+        log.warn( "FilesFinder.initialized {}", SystemTools.initate());
         log.warn("Loading WebAlbums3-Service-Beans");
     }
 
@@ -145,11 +145,11 @@ public class WebPageBean implements WebPageLocal {
         }
         login.add("user", strUser);
         
-        log.info( "logged as manager? {0}", vSession.isSessionManager());
+        log.info( "logged as manager? {}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {
             login.add("admin");
         }
-        log.info( "logged as root? {0}", vSession.isRootSession());
+        log.info( "logged as root? {}", vSession.isRootSession());
         if (vSession.isRootSession()) {
             login.add("root");
         }
@@ -235,12 +235,12 @@ public class WebPageBean implements WebPageLocal {
             if (mode != Mode.TAG_USED && mode != Mode.TAG_GEO) {
                 throw new RuntimeException("Don't want to process mode " + mode + " when not logged at manager");
             }
-            log.info( "Load visible tags (only for geo?{0})", geoOnly);
+            log.info( "Load visible tags (only for geo?{})", geoOnly);
             tags = tagDAO.loadVisibleTags(vSession, geoOnly);
         } else /* current manager*/ {
 
             if (mode == Mode.TAG_USED || mode == Mode.TAG_GEO) {
-                log.info( "Load visible tags (only for geo?{0})", geoOnly);
+                log.info( "Load visible tags (only for geo?{})", geoOnly);
                 tags = tagDAO.loadVisibleTags(vSession, geoOnly);
             } else if (mode == Mode.TAG_ALL) {
                 log.info( "Load all tags");
@@ -278,7 +278,7 @@ public class WebPageBean implements WebPageLocal {
             map = new GooglePoint(name);
         }
 
-        log.info( "Mode: {0}, Box: {1}, list: {2}", new Object[]{mode, box, ids});
+        log.info( "Mode: {}, Box: {}, list: {}", new Object[]{mode, box, ids});
         xmlResult.addComment("Mode: " + mode);
         xmlResult.addComment("Box:" + box);
         xmlResult.addComment("List: " + ids);
