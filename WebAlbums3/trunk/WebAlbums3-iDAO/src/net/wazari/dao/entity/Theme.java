@@ -31,4 +31,7 @@ public interface Theme extends Serializable, EntityWithId {
 
     void setTagThemeList(List<TagTheme> tagThemeList);
 
+    Integer getPicture() ;
+
+    void setPicture(Integer picture) ;
 }

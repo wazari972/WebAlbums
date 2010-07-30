@@ -69,6 +69,11 @@ public class JPATheme implements Theme, Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
 
+    @XmlAttribute
+    @Column(name = "Picture", nullable = true)
+    private Integer picture;
+
+
     public JPATheme() {
     }
 
@@ -119,6 +124,16 @@ public class JPATheme implements Theme, Serializable {
     @Override
     public void setAlbumList(List<Album> jPAAlbumList) {
         this.jPAAlbumList = (List) jPAAlbumList;
+    }
+
+    @Override
+    public Integer getPicture() {
+        return picture;
+    }
+
+    @Override
+    public void setPicture(Integer picture) {
+        this.picture = picture;
     }
 
     @Override

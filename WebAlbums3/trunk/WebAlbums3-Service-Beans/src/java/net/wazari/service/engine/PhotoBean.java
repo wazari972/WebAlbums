@@ -142,6 +142,14 @@ public class PhotoBean implements PhotoLocal {
             albumDAO.edit(enrAlbum);
         }
 
+        //utiliser cette photo comme representante de l'album ?
+        Boolean themeBackground = vSession.getThemeBackground();
+        if (themeBackground) {
+            Theme enrTheme = enrPhoto.getAlbum().getTheme();
+
+            themeDAO.setPicture(enrTheme, enrPhoto.getId());
+        }
+
         //utiliser cette photo pour representer le tag de ce theme
         Tag enrTag = tagDAO.find(vSession.getTagPhoto());
         if (enrTag != null) {

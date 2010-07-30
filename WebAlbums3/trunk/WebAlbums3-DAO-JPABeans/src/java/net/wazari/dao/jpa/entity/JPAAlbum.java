@@ -72,7 +72,7 @@ public class JPAAlbum implements Album, Serializable {
     private String date;
 
     @XmlAttribute
-    @JoinColumn(name = "Picture", nullable = true)
+    @Column(name = "Picture", nullable = true)
     private Integer picture;
 
     @XmlTransient

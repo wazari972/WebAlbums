@@ -23,6 +23,8 @@ public interface ViewSessionPhoto extends ViewSession {
         Integer[] getNewTag();
 
         Integer[] getTags();
+
+        boolean getThemeBackground();
     }
     interface ViewSessionPhotoEdit extends ViewSessionPhoto {
 

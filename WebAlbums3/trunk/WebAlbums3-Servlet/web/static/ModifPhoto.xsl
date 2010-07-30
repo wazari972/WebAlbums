@@ -67,6 +67,7 @@
 	      <xsl:with-param name="name">tagPhoto</xsl:with-param>
 	    </xsl:apply-templates>
 	    <br/>
+            Theme background ? <input type='checkbox' name='themeBackground' value='y' /><br/>
 	    Droits de visibilité : <xsl:apply-templates select="userList"/>
 	    <br/>
 	    <br/>

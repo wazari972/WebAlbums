@@ -77,15 +77,23 @@ public class ThemeFacade implements ThemeFacadeLocal {
     @Override
     public Theme newTheme(int id, String name) {
         Theme enrTheme = new JPATheme(id, name) ;
-        em.merge(enrTheme) ;
-        return enrTheme ;
+        
+        return em.merge(enrTheme) ;
     }
 
     @Override
     public Theme newTheme(String name) {
         Theme enrTheme = new JPATheme() ;
         enrTheme.setNom(name) ;
-        em.merge(enrTheme) ;
-        return enrTheme ;
+        
+        return em.merge(enrTheme) ;
+    }
+
+    @Override
+    public void setPicture(Theme enrTheme, Integer pict) {
+        if (enrTheme != null) {
+            enrTheme.setPicture(pict);
+            em.merge(enrTheme) ;
+        }
     }
 }
