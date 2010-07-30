@@ -64,7 +64,7 @@ public class GF {
 
         File earfile = new File(cfg.webAlbumsEAR);
         if (!earfile.exists()) {
-            log.warn( "The earFile {} doesn't exist ...", cfg.webAlbumsEAR);
+            log.warn( "The earFile {} doesn't exist ...", earfile.getAbsolutePath());
             return;
         }
         log.warn( "Using EAR: {}", earfile);
@@ -254,7 +254,7 @@ public class GF {
             //Create marshaller
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
+            file.getParentFile().mkdirs();
             marshaller.marshal(obj, file);
         }
         @XmlAttribute
