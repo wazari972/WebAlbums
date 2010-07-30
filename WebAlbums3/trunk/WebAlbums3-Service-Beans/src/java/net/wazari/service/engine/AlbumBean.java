@@ -35,6 +35,7 @@ import net.wazari.common.util.StringUtil;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.XmlBuilder;
 import org.perf4j.StopWatch;
+import org.perf4j.aop.Profiled;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
@@ -99,6 +100,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
+    @Profiled
     public XmlBuilder displayAlbum(XmlBuilder output,
             ViewSessionAlbumDisplay vSession,
             XmlBuilder submit,

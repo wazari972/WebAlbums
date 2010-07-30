@@ -30,6 +30,7 @@ import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.perf4j.StopWatch;
+import org.perf4j.aop.Profiled;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
 /**
@@ -79,6 +80,7 @@ public class DispatcherBean {
         PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT
     }
 
+    @Profiled(tag = "dispatch_{$1}")
     public void treat(ServletContext context,
             Page page,
             HttpServletRequest request,

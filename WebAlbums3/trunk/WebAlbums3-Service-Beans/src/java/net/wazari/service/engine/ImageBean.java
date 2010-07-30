@@ -27,6 +27,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
+import org.perf4j.aop.Profiled;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
@@ -39,8 +40,11 @@ public class ImageBean implements ImageLocal {
     @EJB private SystemTools sysTools ;
 
     @Override
+    @Profiled
     public XmlBuilder treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
+        StopWatch stopWatch = new Slf4JStopWatch("treatIMG", log) ;
+
         XmlBuilder output = new XmlBuilder("img");
         Integer imgId = vSession.getId();
 
@@ -48,7 +52,6 @@ public class ImageBean implements ImageLocal {
         mode = (mode == null ? ImgMode.PETIT : mode) ;
         String filepath = null;
         String type = null;
-        StopWatch stopWatch = new Slf4JStopWatch("treatIMG", log) ;
         try {
             if (imgId == null) {
                 output.addException("No photo asked ... (id=null)");

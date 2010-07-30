@@ -14,6 +14,7 @@ import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionLogin;
 import org.perf4j.StopWatch;
+import org.perf4j.aop.Profiled;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
@@ -27,6 +28,7 @@ public class UserBean implements UserLocal {
     private ThemeFacadeLocal themeDAO;
 
     @Override
+    @Profiled
     public boolean logon(ViewSessionLogin vSession, HttpServletRequest request) {
         StopWatch stopWatch = new Slf4JStopWatch("logon", log) ;
         try {
