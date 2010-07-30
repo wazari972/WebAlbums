@@ -34,6 +34,8 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.common.util.StringUtil;
 import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.XmlBuilder;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class AlbumBean implements AlbumLocal {
@@ -101,7 +103,7 @@ public class AlbumBean implements AlbumLocal {
             ViewSessionAlbumDisplay vSession,
             XmlBuilder submit,
             XmlBuilder thisPage) throws WebAlbumsServiceException {
-
+        StopWatch stopWatch = new Slf4JStopWatch("displayAlbum", log) ;
         EditMode inEditionMode = vSession.getEditionMode();
         Integer albumId = vSession.getId();
         Integer page = vSession.getPage();
@@ -163,7 +165,7 @@ public class AlbumBean implements AlbumLocal {
         }
 
         output.add(webPageService.xmlPage(thisPage, bornes));
-
+        stopWatch.stop() ;
         return output.validate();
     }
 

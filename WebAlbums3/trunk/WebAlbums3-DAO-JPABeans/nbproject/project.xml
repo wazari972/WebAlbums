@@ -8,7 +8,6 @@
             <included-library dirs="200">reference.WebAlbums3-iDAO.jar</included-library>
             <included-library dirs="200">libs.hibernate-persistence.classpath</included-library>
             <included-library dirs="200">reference.WebAlbums3-Commons.jar</included-library>
-            <included-library dirs="200">file.reference.wicket-1.4.9.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

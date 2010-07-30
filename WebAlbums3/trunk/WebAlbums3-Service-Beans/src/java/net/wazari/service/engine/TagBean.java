@@ -32,6 +32,8 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.util.system.SystemTools;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class TagBean implements TagLocal {
@@ -67,6 +69,7 @@ public class TagBean implements TagLocal {
 
     @Override
     public XmlBuilder treatTagDISPLAY(ViewSessionTag vSession, XmlBuilder submit) throws WebAlbumsServiceException {
+        StopWatch stopWatch = new Slf4JStopWatch("treatTagDISPLAY", log) ;
         XmlBuilder output = new XmlBuilder(null) ;
         Integer[] tags = vSession.getTagAsked();
         Integer page = vSession.getPage();
@@ -100,7 +103,7 @@ public class TagBean implements TagLocal {
                 output.add(photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay)vSession, thisPage, submit));
             }
         }
-
+        stopWatch.stop();
         return output.validate();
     }
 

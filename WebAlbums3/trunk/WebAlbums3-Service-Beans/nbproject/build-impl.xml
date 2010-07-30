@@ -469,6 +469,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.RT-Log-logback-core-0.9.24.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${file.reference.CP-Apache-commos-lang.2.5.jar}" todir="${dist.ear.dir}/lib"/>
@@ -481,6 +482,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.RT-Log-logback-core-0.9.24.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

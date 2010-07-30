@@ -28,6 +28,9 @@ import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
+import org.apache.commons.lang.time.DurationFormatUtils;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 /**
  *
@@ -82,7 +85,7 @@ public class DispatcherBean {
             HttpServletResponse response)
             throws IOException, ServletException 
     {
-
+        StopWatch stopWatch = new Slf4JStopWatch("dispatch", log) ;
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
@@ -95,7 +98,6 @@ public class DispatcherBean {
         }
         log.info( "============= <{}> =============", page);
                 
-        long debut = System.currentTimeMillis();
         response.setContentType("text/xml");
 
         XmlBuilder output = new XmlBuilder("root");
@@ -127,57 +129,57 @@ public class DispatcherBean {
                         xslFile = "static/Empty.xsl";
                     }
                 }
-                log.trace( "XSL-style{}", xslFile);
+                log.debug( "XSL-style{}", xslFile);
                 //try to logon and set the theme
                 if (vSession.getThemeId() != null) {
                     log.info("Try to logon");
                     boolean ret = userService.logon((ViewSessionLogin) vSession, request);
-                    log.trace( "Logon result: {}", ret);
+                    log.debug( "Logon result: {}", ret);
                 }
                 //from here on, the theme must be saved
                 if (vSession.getTheme() == null){
                     if (special == null) {
-                        log.trace("Not logged in, not a special page, display VOID page");
+                        log.debug("Not logged in, not a special page, display VOID page");
                         output.add(indexServlet.treatVOID(vSession));
                     } else {
                         isComplete = true;
                         output = new XmlBuilder("nothing");
-                        log.trace("Not logged in, special request, nothing to display ...");
+                        log.debug("Not logged in, special request, nothing to display ...");
                     }
                 } else {
                     if (page == Page.CHOIX) {
                         if (special == null) {
-                            log.trace("CHOIX page");
+                            log.debug("CHOIX page");
                             output.add(choixServlet.displayCHX(vSession));
                         } else {
-                            log.trace("CHOIX special page");
+                            log.debug("CHOIX special page");
                             output = choixServlet.displayChxScript(vSession);
                             response.setContentType("text/javascript;charset=UTF-8");
                             isComplete = true;
                         }
                     } else if (page == Page.ALBUM) {
-                        log.trace("ALBUM page");
+                        log.debug("ALBUM page");
                         output.add(albumServlet.treatALBM((ViewSessionAlbum) vSession));
                     } else if (page == Page.PHOTO) {
-                        log.trace("PHOTO page");
+                        log.debug("PHOTO page");
                         output.add(photoServlet.treatPHOTO((ViewSessionPhoto) vSession));
                     } else if (page == Page.CONFIG) {
-                        log.trace("CONFIG page");
+                        log.debug("CONFIG page");
                         output.add(configServlet.treatCONFIG((ViewSessionConfig) vSession));
                     } else if (page == Page.TAGS) {
-                        log.trace("TAGS page");
+                        log.debug("TAGS page");
                         output.add(tagServlet.treatTAGS((ViewSessionTag) vSession));
                     } else if (page == Page.IMAGE) {
-                        log.trace("IMAGE page");
+                        log.debug("IMAGE page");
                         XmlBuilder ret = imageServlet.treatIMG((ViewSessionImages) vSession);
                         if (ret == null) {
                             isWritten = true;
                         } else {
                             output.add(ret);
                         }
-                        log.trace( "IMAGE written? {}", isWritten);
+                        log.debug( "IMAGE written? {}", isWritten);
                     } else {
-                        log.trace( "VOID page? ({})", page);
+                        log.debug( "VOID page? ({})", page);
                         output.add(indexServlet.treatVOID(vSession));
                     }
                 }
@@ -188,9 +190,8 @@ public class DispatcherBean {
             log.warn( "WebAlbumsServiceException", e) ;
             output.cancel();
         } 
-        log.trace( "============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, isComplete});
-        long fin = System.currentTimeMillis();
-        float time = ((float) (fin - debut) / 1000);
+        log.debug( "============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, isComplete});
+        stopWatch.stop() ;
         if (!isWritten) {
             preventCaching(request, response);
 
@@ -208,12 +209,14 @@ public class DispatcherBean {
 
                 XmlBuilder xmlStats = new XmlBuilder("stats");
                 output.add(xmlStats);
-                xmlStats.add("time", time);
+                xmlStats.add("time", stopWatch.getElapsedTime());
 
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
-        log.warn( "============= <{}/>: {} =============", new Object[]{page, time});
+
+
+        log.warn( "============= <{}/>: {} =============", new Object[]{page, DurationFormatUtils.formatDurationWords(stopWatch.getElapsedTime(), true, true)});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

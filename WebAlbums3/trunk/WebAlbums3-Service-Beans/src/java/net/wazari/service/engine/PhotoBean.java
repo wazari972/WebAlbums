@@ -40,6 +40,8 @@ import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.util.system.SystemTools;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -181,6 +183,7 @@ public class PhotoBean implements PhotoLocal {
 
     @Override
     public XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException {
+        StopWatch stopWatch = new Slf4JStopWatch("treatPhotoDISPLAY", log) ;
         XmlBuilder output = new XmlBuilder(null);
         //afficher les photos
         //afficher la liste des albums de cet theme
@@ -220,7 +223,7 @@ public class PhotoBean implements PhotoLocal {
         thisPage.add("albmCount", albmCount);
         output.add(displayPhoto(rq, vSession, thisPage, submit));
 
-
+        stopWatch.stop() ;
         return output.validate();
     }
 

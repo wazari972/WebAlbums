@@ -101,7 +101,7 @@ public class XMLImportExport implements ImportExporter {
 
             log.info( "Import {} Album",web.getAlbums().size()) ;
             for (JPAAlbum enrAlbum : web.getAlbums()) {
-                log.trace( "Album: {}", enrAlbum) ;
+                log.debug( "Album: {}", enrAlbum) ;
 
                 //Theme enrTheme = themeDAO.find(enrAlbum.getThemeId()) ;
                 //enrAlbum.setTheme(enrTheme) ;
@@ -117,7 +117,7 @@ public class XMLImportExport implements ImportExporter {
 
             log.info( "Import {} Photo",web.getPhotos().size()) ;
             for (JPAPhoto enrPhoto : web.getPhotos()) {
-                log.trace( "Photo: {} ({})", new Object[]{enrPhoto, enrPhoto.getAlbumId()}) ;
+                log.debug( "Photo: {} ({})", new Object[]{enrPhoto, enrPhoto.getAlbumId()}) ;
 
                 //Album enrAlbum = albumDAO.find(enrPhoto.getAlbumId()) ;
                 //enrPhoto.setAlbum(enrAlbum) ;
@@ -129,12 +129,12 @@ public class XMLImportExport implements ImportExporter {
 
             log.info( "Import {} Tag",web.getTags().size()) ;
             for (JPATag enrTag : web.getTags()) {
-                log.trace( "Tag: {}", enrTag) ;
+                log.debug( "Tag: {}", enrTag) ;
 
                 JPAGeolocalisation enrGeo = enrTag.getGeolocalisation() ;
                 if (enrGeo != null) {
                     enrGeo.setTag1(enrTag);
-                    log.trace( "\tGeo: {}", enrGeo) ;
+                    log.debug( "\tGeo: {}", enrGeo) ;
                 }
                 em.merge(enrTag);
                 tags.put(enrTag.getId(), enrTag) ;
@@ -142,7 +142,7 @@ public class XMLImportExport implements ImportExporter {
 
             log.info( "Import {} TagPhoto",web.getTagPhoto().size()) ;
             for (JPATagPhoto enrTagPhoto : web.getTagPhoto()) {
-                log.trace( "TagPhoto: {}", enrTagPhoto) ;
+                log.debug( "TagPhoto: {}", enrTagPhoto) ;
 
                 //Tag enrTag = tagDAO.find(enrTagPhoto.getTagId()) ;
                 //enrTagPhoto.setTag(enrTag) ;
@@ -157,7 +157,7 @@ public class XMLImportExport implements ImportExporter {
 
             log.info( "Import {} TagThemes",web.getTagThemes().size()) ;
             for (JPATagTheme enrTagTheme : web.getTagThemes()) {
-                log.trace( "TagTheme: {}", enrTagTheme) ;
+                log.debug( "TagTheme: {}", enrTagTheme) ;
 
                 //Tag enrTag = tagDAO.find(enrTagTheme.getTagId()) ;
                 //enrTagTheme.setTag(enrTag) ;
