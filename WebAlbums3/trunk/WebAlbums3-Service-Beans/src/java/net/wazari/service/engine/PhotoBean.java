@@ -151,9 +151,11 @@ public class PhotoBean implements PhotoLocal {
             File backgroundDir = new File(vSession.getConfiguration()
                     .getTempPath()+vSession.getTheme().getNom()) ;
             log.info("Delete and create background dir: {}", backgroundDir) ;
-            for (File child : backgroundDir.listFiles()) {
-                if (!child.delete()) {
-                    log.warn("Could not remove background file: {}",child);
+            if (backgroundDir.listFiles() != null) {
+                for (File child : backgroundDir.listFiles()) {
+                    if (!child.delete()) {
+                        log.warn("Could not remove background file: {}",child);
+                    }
                 }
             }
         }

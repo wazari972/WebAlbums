@@ -10,6 +10,8 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,9 @@ import javax.ejb.Stateless;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.Theme;
 
 import net.wazari.service.ImageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
@@ -35,6 +39,7 @@ public class ImageBean implements ImageLocal {
     @EJB private PhotoUtil photoUtil ;
 
     @EJB private SystemTools sysTools ;
+    @EJB private ThemeFacadeLocal themeDAO ;
 
     @Override
     public XmlBuilder treatIMG(ViewSessionImages vSession)
@@ -48,10 +53,17 @@ public class ImageBean implements ImageLocal {
         mode = (mode == null ? ImgMode.PETIT : mode) ;
         String filepath = null;
         String type = null;
+        Theme enrThemeForBackground = vSession.getTheme() ;;
         try {
             if (mode == ImgMode.BACKGROUND) {
-                if (vSession.getTheme() != null && vSession.getTheme().getPicture() != null) {
-                    imgId = vSession.getTheme().getPicture() ;
+                if (vSession.isRootSession()) {
+                    List<Theme> lstThemes = themeDAO.findAll() ;
+                    enrThemeForBackground = lstThemes.get(new Random().nextInt(lstThemes.size())) ;
+                    log.info("Using Theme[{}] for root background picture", enrThemeForBackground);
+                 
+                }
+                if (enrThemeForBackground != null) {
+                    imgId = enrThemeForBackground.getPicture() ;
                 }
             }
             if (imgId == null) {
@@ -84,7 +96,7 @@ public class ImageBean implements ImageLocal {
                 final int SIZE = 1280 ;
 
                 String backgroundpath =  vSession.getConfiguration()
-                        .getTempPath()+vSession.getTheme().getNom()+File.separator+SIZE+".jpg" ;
+                        .getTempPath()+enrThemeForBackground.getNom()+File.separator+SIZE+".jpg" ;
 
                 if (!new File (backgroundpath).exists()) {
                     filepath = sysTools.shrink(vSession, enrPhoto, SIZE, backgroundpath);
