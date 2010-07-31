@@ -30,7 +30,7 @@
         </style>
         <link href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
       </head>
-      <body>
+      <body id="body">
 	<script src="static/scripts/tools.js" type="text/javascript" />
 	<xsl:apply-templates select="/root/choix/map"/>
 	<xsl:apply-templates select="/root/config/map"/>

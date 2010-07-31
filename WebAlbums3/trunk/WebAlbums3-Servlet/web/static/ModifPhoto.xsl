@@ -67,7 +67,12 @@
 	      <xsl:with-param name="name">tagPhoto</xsl:with-param>
 	    </xsl:apply-templates>
 	    <br/>
-            Theme background ? <input type='checkbox' name='themeBackground' value='y' /><br/>
+            Theme background ? <input type='checkbox' name='themeBackground' value='y' />
+            <input type="button" value="Try it!">
+            <xsl:attribute name="ONCLICK">
+	      updateBackground(<xsl:value-of select="id" />) ;
+	    </xsl:attribute>
+            </input><br />
 	    Droits de visibilité : <xsl:apply-templates select="userList"/>
 	    <br/>
 	    <br/>
