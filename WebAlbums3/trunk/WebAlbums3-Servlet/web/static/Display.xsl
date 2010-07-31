@@ -22,17 +22,15 @@
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-	<link href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
+	
+        <style type="text/css">          body {
+                <xsl:if test="count(/root/affichage/background) = 0">background: #62993B url(static/images/back_all.jpg?notempty) fixed no-repeat;</xsl:if>
+                <xsl:if test="count(/root/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>
+          }
+        </style>
+        <link href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
       </head>
       <body>
-        <xsl:attribute name="STYLE">
-            style="background: #62993B
-            url(
-<xsl:when test="/root/affichage/background">../Images?id=<xsl:value-of select="/root/affichage/background" />&amp;mode=GRAND</xsl:when>
-<xsl:when test="not(/root/affichage/background)">images/back_all.jpg</xsl:when>
-)
-            fixed no-repeat;
-
 	<script src="static/scripts/tools.js" type="text/javascript" />
 	<xsl:apply-templates select="/root/choix/map"/>
 	<xsl:apply-templates select="/root/config/map"/>

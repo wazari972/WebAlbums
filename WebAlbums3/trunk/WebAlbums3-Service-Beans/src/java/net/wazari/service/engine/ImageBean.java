@@ -26,9 +26,6 @@ import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.util.system.SystemTools;
-import org.perf4j.StopWatch;
-import org.perf4j.aop.Profiled;
-import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class ImageBean implements ImageLocal {
@@ -40,10 +37,9 @@ public class ImageBean implements ImageLocal {
     @EJB private SystemTools sysTools ;
 
     @Override
-    @Profiled
     public XmlBuilder treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch("treatIMG", log) ;
+        //StopWatch stopWatch = new Slf4JStopWatch("treatIMG", log) ;
 
         XmlBuilder output = new XmlBuilder("img");
         Integer imgId = vSession.getId();
@@ -53,6 +49,11 @@ public class ImageBean implements ImageLocal {
         String filepath = null;
         String type = null;
         try {
+            if (mode == ImgMode.BACKGROUND) {
+                if (vSession.getTheme() != null && vSession.getTheme().getPicture() != null) {
+                    imgId = vSession.getTheme().getPicture() ;
+                }
+            }
             if (imgId == null) {
                 output.addException("No photo asked ... (id=null)");
                 return output.validate();
@@ -69,20 +70,34 @@ public class ImageBean implements ImageLocal {
                 return output.validate();
             }
 
-            type = (mode == ImgMode.PETIT || enrPhoto.getType() == null ? "image/jpeg" : enrPhoto.getType());
-
+            type = (mode == ImgMode.PETIT || enrPhoto.getType() == null ? "image/png" : enrPhoto.getType());
             if (mode == ImgMode.SHRINK) {
                 String width = vSession.getWidth();
                 try {
                     filepath = sysTools.shrink(vSession, enrPhoto, new Integer(width));
+                    log.warn("Shrinked filepath: {}", filepath) ;
                 } catch (NumberFormatException e) {
                     output.addException("Impossible de parser le nombre " + width);
                     return output.validate();
                 }
-            } else {
-                filepath = (mode == ImgMode.GRAND ? photoUtil.getImagePath(vSession, enrPhoto) : photoUtil.getMiniPath(vSession, enrPhoto));
-            }
+            } else if (mode == ImgMode.BACKGROUND) {
+                final int SIZE = 1280 ;
 
+                String backgroundpath =  vSession.getConfiguration()
+                        .getTempPath()+vSession.getTheme().getNom()+File.separator+SIZE+".jpg" ;
+
+                if (!new File (backgroundpath).exists()) {
+                    filepath = sysTools.shrink(vSession, enrPhoto, SIZE, backgroundpath);
+                } else {
+                    filepath = backgroundpath ;
+                }
+                
+            } else if (mode == ImgMode.GRAND) {
+                filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
+            } else {
+                filepath = photoUtil.getMiniPath(vSession, enrPhoto);
+            }
+            log.warn("Open image {}", filepath);
             if (vSession.getConfiguration().isPathURL()) {
                 vSession.redirect(filepath) ;
                 return null ;
@@ -108,7 +123,7 @@ public class ImageBean implements ImageLocal {
             output.addException("Exception", e.getMessage());
             output.validate();
         } finally {
-            stopWatch.stop() ;
+            //stopWatch.stop() ;
         }
         return output;
     }

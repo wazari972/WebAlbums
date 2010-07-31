@@ -117,4 +117,4 @@ function checkValidity(buttonName, listName) {
 
 }
 
-addLoadEvent(loadMaps);
+addLoadEvent(loadMaps("map_search", "mapLoader"));

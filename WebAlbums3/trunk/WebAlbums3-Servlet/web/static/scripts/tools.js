@@ -1,3 +1,10 @@
+
+function pleaseConfirm(form) {
+    if (confirm("Really ?")) {
+        document.getElementById(form).submit() ;
+    }
+}
+
 function updateAffichage(option) {
     if (option == 'edition') {
         callURL('Other/Display?action=NEXT_EDITION');
@@ -20,9 +27,9 @@ function getGoogleKey() {
     [window.location.host] ;
 }
 
-function loadMaps() {
-    document.getElementById ("mapChoix").innerHTML = "" ;
-    document.getElementById('mapLoader').style.visibility = "hidden";
+function loadMaps(divName, btName) {
+    document.getElementById (divName).innerHTML = "" ;
+    document.getElementById(btName).style.visibility = "hidden";
     var script = document.createElement("script");
     script.setAttribute("src", ["http://maps.google.com/maps?file=api&v=2.x&key=",
         getGoogleKey(),

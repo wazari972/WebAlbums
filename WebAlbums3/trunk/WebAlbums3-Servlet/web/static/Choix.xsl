@@ -88,14 +88,13 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Géolocalisation 
-	  <input id="mapLoader" type="button" value="load map" onclick="loadMaps();"/>
+	<h1>Géolocalisations
+	  <input id="mapLoader" type="button" value="load map" onclick="loadMaps('mapChoix', 'mapLoader');"/>
 	</h1>
 	<div class="body">
 	  <center>
-	    <div style="width: 400px; height: 400px">
-	      <xsl:attribute name="id"><xsl:value-of select="map/name"/></xsl:attribute>
-	      <img src="static/images/loading.gif"/>
+	    <div style="width: 400px; height: 400px" id="mapChoix">
+              <img src="static/images/loading.gif"/>
 	    </div>
 	  </center>
 	</div>

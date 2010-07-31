@@ -94,6 +94,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
         if (enrTheme != null) {
             enrTheme.setPicture(pict);
             em.merge(enrTheme) ;
+            log.info("Assign Photo[{}] to Theme[{}]", pict, enrTheme.getNom());
         }
     }
 }

@@ -283,7 +283,7 @@ public class ViewSessionImpl implements
 
     @Override
     public boolean getThemeBackground() {
-        return "y".equals(getString("representTheme"));
+        return "y".equals(getString("themeBackground"));
     }
 
     @Override

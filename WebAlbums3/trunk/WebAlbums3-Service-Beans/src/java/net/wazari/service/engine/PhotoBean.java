@@ -1,5 +1,7 @@
 package net.wazari.service.engine;
 
+import java.io.File;
+import java.lang.String;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
@@ -40,9 +42,6 @@ import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.util.system.SystemTools;
-import org.perf4j.StopWatch;
-import org.perf4j.aop.Profiled;
-import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -146,8 +145,17 @@ public class PhotoBean implements PhotoLocal {
         Boolean themeBackground = vSession.getThemeBackground();
         if (themeBackground) {
             Theme enrTheme = enrPhoto.getAlbum().getTheme();
-
+            log.warn("Assign theme background {}",enrPhoto) ;
             themeDAO.setPicture(enrTheme, enrPhoto.getId());
+            vSession.getTheme().setPicture(enrPhoto.getId());
+            File backgroundDir = new File(vSession.getConfiguration()
+                    .getTempPath()+vSession.getTheme().getNom()) ;
+            log.info("Delete and create background dir: {}", backgroundDir) ;
+            for (File child : backgroundDir.listFiles()) {
+                if (!child.delete()) {
+                    log.warn("Could not remove background file: {}",child);
+                }
+            }
         }
 
         //utiliser cette photo pour representer le tag de ce theme
@@ -191,9 +199,8 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
-    @Profiled
     public XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch("treatPhotoDISPLAY", log) ;
+        //StopWatch stopWatch = new Slf4JStopWatch("treatPhotoDISPLAY", log) ;
 
         XmlBuilder output = new XmlBuilder(null);
         //afficher les photos
@@ -234,7 +241,7 @@ public class PhotoBean implements PhotoLocal {
         thisPage.add("albmCount", albmCount);
         output.add(displayPhoto(rq, vSession, thisPage, submit));
 
-        stopWatch.stop() ;
+        //stopWatch.stop() ;
         return output.validate();
     }
 

@@ -21,14 +21,14 @@
 	<h1>Imports d'albums</h1>
 	<div class="body">
 	  <xsl:apply-templates select="import"/>
-	  <form action='Config#import' method='POST'>
+	  <form action='Config#import' method='POST' id="formImport">
 	    <input type='hidden' name='action' value='IMPORT'/>
 	    <input type='text' name='importTheme' size='20' maxlenght='20'>
 	      <xsl:attribute name="value"><xsl:value-of select="/root/login/theme"/>
 	      </xsl:attribute>
 	    </input>
 	    <br/>
-	    <input type='submit' value='Importer'/>
+	    <input onClick='javascript:pleaseConfirm("formImport")' type='button' value='Importer'/>
 	  </form>
 	</div>
       </div>
@@ -69,7 +69,7 @@
 	      </tr>
 	      <tr>
 		<td colspan='2'>
-		  <div id='map_search' style='width: 400px; height: 250px'></div><br/> 
+		  <div id='map_search' style='width: 400px; height: 250px'></div><br/>
 		</td>
 	      </tr>
 	      <tr>	
@@ -250,7 +250,7 @@
             <center>
               <form action='Config#delTheme' method='POST'>
                 <input type='hidden' name='action' value='DELTHEME'/>
-                <input type='submit' value='GO !'/>
+                <input onClick='javascript:pleaseConfirm("formImport")' type='button' value='Go for it !'/>
               </form>
           </center>
 	</div>

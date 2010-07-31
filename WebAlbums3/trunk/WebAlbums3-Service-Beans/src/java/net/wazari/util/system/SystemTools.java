@@ -49,15 +49,15 @@ public class SystemTools {
 
     private Importer getWrapper(String type, String ext, Importer.Capability cap) {
         Importer wrap = null;
-        
+        String typeSafe = type == null ? "image" : type ;
         for (Importer util : plugins.getWorkingPlugins()) {
             log.warn( "Test {}: {}", new Object[]{util.getName(), Arrays.asList(util.supports())});
-            if (util.supports(type, ext, cap)) {
+            if (util.supports(typeSafe, ext, cap)) {
                 wrap = util;
                 break ;
             }
         }
-        log.warn( "Wrapper for {}@{}-{}: {}", new Object[]{type, ext, wrap, cap});
+        log.warn( "Wrapper for {}@{}-{}: {}", new Object[]{typeSafe, ext, wrap, cap});
         return wrap;
     }
 
@@ -157,6 +157,16 @@ public class SystemTools {
     }
 
     public String shrink(ViewSession vSession, Photo enrPhoto, int width) {
+        File dir = buildTempDir(vSession, "shrinked", null);
+        if (dir == null) {
+            return null;
+        }
+        String ext = photoUtil.getExtention(vSession, enrPhoto);
+        File fPhoto = new File(dir, enrPhoto.getId() + "-" + width + "." + ext);
+        return shrink(vSession, enrPhoto, width, fPhoto.getAbsolutePath()) ;
+    }
+
+    public String shrink(ViewSession vSession, Photo enrPhoto, int width, String target) {
         try {
             if (width >= new Integer(enrPhoto.getWidth())) {
                 return photoUtil.getImagePath(vSession, enrPhoto);
@@ -166,12 +176,9 @@ public class SystemTools {
             //return photoUtil.getImagePath(vSession, enrPhoto);
         }
 
-        File dir = buildTempDir(vSession, "shrinked", null);
-        if (dir == null) {
-            return null;
-        }
         String ext = photoUtil.getExtention(vSession, enrPhoto);
-        File fPhoto = new File(dir, enrPhoto.getId() + "-" + width + "." + ext);
+        File fPhoto = new File (target) ;
+        fPhoto.getParentFile().mkdirs() ;
         Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.SHRINK);
         if (util == null) {
             return photoUtil.getImagePath(vSession, enrPhoto);

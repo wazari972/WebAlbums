@@ -28,10 +28,6 @@ import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
-import org.apache.commons.lang.time.DurationFormatUtils;
-import org.perf4j.StopWatch;
-import org.perf4j.aop.Profiled;
-import org.perf4j.slf4j.Slf4JStopWatch;
 
 /**
  *
@@ -80,14 +76,14 @@ public class DispatcherBean {
         PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT
     }
 
-    @Profiled(tag = "dispatch_{$1}")
+    
     public void treat(ServletContext context,
             Page page,
             HttpServletRequest request,
             HttpServletResponse response)
             throws IOException, ServletException 
     {
-        StopWatch stopWatch = new Slf4JStopWatch("dispatch", log) ;
+        //StopWatch stopWatch = new Slf4JStopWatch("dispatch", log) ;
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
@@ -193,7 +189,7 @@ public class DispatcherBean {
             output.cancel();
         } 
         log.debug( "============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, isComplete});
-        stopWatch.stop() ;
+        //stopWatch.stop() ;
         if (!isWritten) {
             preventCaching(request, response);
 
@@ -211,14 +207,14 @@ public class DispatcherBean {
 
                 XmlBuilder xmlStats = new XmlBuilder("stats");
                 output.add(xmlStats);
-                xmlStats.add("time", stopWatch.getElapsedTime());
+                //xmlStats.add("time", stopWatch.getElapsedTime());
 
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
 
 
-        log.warn( "============= <{}/>: {} =============", new Object[]{page, DurationFormatUtils.formatDurationWords(stopWatch.getElapsedTime(), true, true)});
+        //log.warn( "============= <{}/>: {} =============", new Object[]{page, DurationFormatUtils.formatDurationWords(stopWatch.getElapsedTime(), true, true)});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
