@@ -85,7 +85,7 @@ public class TagFacade implements TagFacadeLocal {
                     "AND " + webDAO.restrictToPhotosAllowed(session, "p") + " " +
                     "AND " + webDAO.restrictToThemeAllowed(session, "a") + " ";
         }
-
+        rq += " ORDER BY t.nom " ;
         return em.createQuery(rq).setParameter("type", type)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
