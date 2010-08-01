@@ -14,7 +14,10 @@ import net.wazari.dao.entity.Utilisateur;
  * @author kevin
  */
 public interface ServiceSession {
-
+    enum ListOrder {
+        ASC, DESC, RANDOM, DEFAULT
+    }
+    
     Theme getTheme();
 
     Utilisateur getUser();

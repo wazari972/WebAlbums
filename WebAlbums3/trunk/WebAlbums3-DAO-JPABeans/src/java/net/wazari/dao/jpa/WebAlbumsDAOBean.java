@@ -10,6 +10,7 @@ import javax.annotation.security.RolesAllowed;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import javax.ejb.Stateless;
+import net.wazari.dao.exchange.ServiceSession.ListOrder;
 
 /**
  *
@@ -83,5 +84,16 @@ public class WebAlbumsDAOBean {
 
     }
 
+    static String getOrder(ListOrder order, String field) {
+        String rq = " ORDER BY " ;
+        if (order == null) return "" ;
+        switch(order) {
+            case ASC: return rq+field+" ASC" ;
+            case DESC: return rq+field+" DESC" ;
+            case RANDOM: return rq+"RAND()" ;
+            case DEFAULT:
+            default: return "" ;
+        }
+    }
 
 }

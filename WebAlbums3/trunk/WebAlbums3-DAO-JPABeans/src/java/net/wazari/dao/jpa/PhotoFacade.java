@@ -18,6 +18,7 @@ import javax.persistence.Query;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 
 /**
@@ -69,11 +70,11 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
-    public SubsetOf<Photo> loadFromAlbum(ServiceSession session, int albumId, Bornes bornes) {
+    public SubsetOf<Photo> loadFromAlbum(ServiceSession session, int albumId, Bornes bornes, ListOrder order) {
         String rq = "FROM JPAPhoto p " +
                 " WHERE p.album.id = :albumId " +
                 (session == null ? "" : " AND " + webDAO.restrictToPhotosAllowed(session, "p")) + " " +
-                " ORDER BY p.path";
+                WebAlbumsDAOBean.getOrder(order, "p.path");
 
         Query q = em.createQuery(rq
                 ).setParameter("albumId", albumId);
@@ -108,7 +109,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
-    public SubsetOf<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Bornes bornes) {
+    public SubsetOf<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Bornes bornes, ListOrder order) {
         //creation de la requete
         String rqSelect = "SELECT p " ;
         String rqFrom   =" FROM JPAPhoto p, JPAAlbum a, JPATagPhoto tp " +
@@ -121,8 +122,9 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
         rqFrom += " AND " + webDAO.restrictToPhotosAllowed(session, "p") + " ";
         rqFrom += " AND " + webDAO.restrictToThemeAllowed(session, "a") + " ";
-        rqFrom += " GROUP BY p.id ";
-        rqFrom += " ORDER BY p.path DESC ";
+        rqFrom += " GROUP BY p.id " ;
+        rqFrom += WebAlbumsDAOBean.getOrder(order, "p.path");
+        
 
         Query q = em.createQuery(rqSelect+rqFrom)
                       .setHint("org.hibernate.cacheable", true)

@@ -14,7 +14,6 @@ import javax.ejb.EJB;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.TagFacadeLocal;
-import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.entity.Tag;
 
 import net.wazari.service.PhotoLocal;
@@ -39,7 +38,6 @@ public class TagBean implements TagLocal {
     private static final long serialVersionUID = 1L;
 
     @EJB private TagFacadeLocal tagDAO ;
-    @EJB private TagThemeFacadeLocal tagThemeDAO ;
     @EJB private PhotoLocal photoLocal ;
     @EJB private WebPageLocal webService ;
     @EJB private SystemTools sysTools ;

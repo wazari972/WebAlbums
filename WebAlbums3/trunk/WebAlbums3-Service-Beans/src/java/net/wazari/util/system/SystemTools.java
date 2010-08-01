@@ -22,6 +22,7 @@ import net.wazari.common.plugins.Importer;
 import net.wazari.common.plugins.Importer.Metadata;
 import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.ProcessCallbackImpl;
+import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.service.PluginManagerLocal;
 
 @Singleton
@@ -125,9 +126,9 @@ public class SystemTools {
         }
         SubsetOf<Photo> lstPhoto;
         if (rq.type == TypeRequest.PHOTO) {
-            lstPhoto = photoDAO.loadFromAlbum(vSession, rq.albumId, null);
+            lstPhoto = photoDAO.loadFromAlbum(vSession, rq.albumId, null, ListOrder.ASC);
         } else {
-            lstPhoto = photoDAO.loadByTags(vSession, rq.listTagId, null);
+            lstPhoto = photoDAO.loadByTags(vSession, rq.listTagId, null, ListOrder.DESC);
         }
         File dir = null;
         int i = 0;

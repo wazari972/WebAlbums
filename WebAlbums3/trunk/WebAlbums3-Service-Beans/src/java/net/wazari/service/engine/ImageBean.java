@@ -10,6 +10,7 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -21,9 +22,13 @@ import javax.ejb.Stateless;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
+import net.wazari.dao.entity.facades.SubsetOf;
+import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession.ListOrder;
 
 import net.wazari.service.ImageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
@@ -36,6 +41,7 @@ public class ImageBean implements ImageLocal {
     private static final Logger log = LoggerFactory.getLogger(ImageBean.class.getName());
     private static final long serialVersionUID = 1L;
     @EJB private PhotoFacadeLocal photoDAO ;
+    @EJB private TagFacadeLocal tagDAO ;
     @EJB private PhotoUtil photoUtil ;
 
     @EJB private SystemTools sysTools ;
@@ -53,9 +59,24 @@ public class ImageBean implements ImageLocal {
         mode = (mode == null ? ImgMode.PETIT : mode) ;
         String filepath = null;
         String type = null;
-        Theme enrThemeForBackground = vSession.getTheme() ;;
+        Theme enrThemeForBackground = vSession.getTheme() ;
         try {
-            if (mode == ImgMode.BACKGROUND) {
+            if (mode == ImgMode.RANDOM_TAG) {
+                if (tagDAO.find(imgId) != null) {
+                    List<Integer> tagLst = Arrays.asList(new Integer[]{imgId});
+                    SubsetOf<Photo> photos = photoDAO.loadByTags(vSession, tagLst, new Bornes(1), ListOrder.RANDOM);
+                    if (!photos.subset.isEmpty()) {
+                        imgId = photos.subset.get(0).getId() ;
+                        mode = ImgMode.GRAND ;
+                    } else {
+                        log.warn("No photo in tag: {}",imgId);
+                        imgId = null ;
+                    }
+                } else {
+                    log.warn("No such tag: {}",imgId);
+                    imgId = null ;
+                }
+            } else if (mode == ImgMode.BACKGROUND) {
                 if (vSession.isRootSession()) {
                     List<Theme> lstThemes = themeDAO.findAll() ;
                     enrThemeForBackground = lstThemes.get(new Random().nextInt(lstThemes.size())) ;
@@ -66,6 +87,8 @@ public class ImageBean implements ImageLocal {
                     imgId = enrThemeForBackground.getPicture() ;
                 }
             }
+
+
             if (imgId == null) {
                 output.addException("No photo asked ... (id=null)");
                 return output.validate();
@@ -131,7 +154,7 @@ public class ImageBean implements ImageLocal {
                 output.validate();
             }
         } catch (Exception e) {
-            log.warn(e.getClass().toString(), "{}: ", new Object[]{e.getClass().getSimpleName(), e}) ;
+            log.warn ("{}: {} ", e.getClass().getSimpleName(), e) ;
             output.addException("Exception", e.getMessage());
             output.validate();
         } finally {

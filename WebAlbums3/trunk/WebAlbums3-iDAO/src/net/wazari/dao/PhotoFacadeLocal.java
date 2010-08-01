@@ -12,6 +12,7 @@ import javax.ejb.Local;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession.ListOrder;
 
 /**
  *
@@ -33,13 +34,13 @@ public interface PhotoFacadeLocal {
     Photo loadIfAllowed(ServiceSession session, int id);
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    SubsetOf<Photo> loadFromAlbum(ServiceSession session, int albumId, Bornes bornes);
+    SubsetOf<Photo> loadFromAlbum(ServiceSession session, int albumId, Bornes bornes, ListOrder order);
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Photo loadByPath(String path);
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    SubsetOf<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Bornes bornes);
+    SubsetOf<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Bornes bornes, ListOrder order);
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Photo find(Integer photoID);

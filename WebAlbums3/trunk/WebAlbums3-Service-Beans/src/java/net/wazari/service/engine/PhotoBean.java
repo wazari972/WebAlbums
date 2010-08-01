@@ -41,6 +41,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.View
 import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.util.system.SystemTools;
 
 @Stateless
@@ -301,9 +302,9 @@ public class PhotoBean implements PhotoLocal {
         Bornes bornes = webService.calculBornes(page, scount, vSession.getPhotoSize());
         SubsetOf<Photo> lstP;
         if (rq.type == TypeRequest.PHOTO) {
-            lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes);
+            lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, ListOrder.DESC);
         } else {
-            lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes);
+            lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, ListOrder.ASC);
         }
 
         String degrees = "0";

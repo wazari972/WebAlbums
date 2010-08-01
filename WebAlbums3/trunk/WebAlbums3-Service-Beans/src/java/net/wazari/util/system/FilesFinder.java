@@ -30,6 +30,7 @@ import net.wazari.service.exchange.ViewSession;
 
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.util.system.ImageResizer.Element;
 
 @Stateless
@@ -325,7 +326,7 @@ public class FilesFinder {
 
     public boolean deleteAlbum(Album enrAlbum, XmlBuilder out, Configuration conf) {
 
-        SubsetOf<Photo> lstP = photoDAO.loadFromAlbum(null, enrAlbum.getId(), null);
+        SubsetOf<Photo> lstP = photoDAO.loadFromAlbum(null, enrAlbum.getId(), null, ListOrder.DEFAULT);
 
         boolean correct = true;
         for (Photo enrPhoto : lstP.subset) {
