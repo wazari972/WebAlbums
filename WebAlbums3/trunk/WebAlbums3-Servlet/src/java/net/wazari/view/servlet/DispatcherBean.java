@@ -26,8 +26,12 @@ import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.dao.entity.Theme;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
+import org.apache.commons.lang.time.DurationFormatUtils;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 /**
  *
@@ -83,7 +87,8 @@ public class DispatcherBean {
             HttpServletResponse response)
             throws IOException, ServletException 
     {
-        //StopWatch stopWatch = new Slf4JStopWatch("dispatch", log) ;
+        Page actualPage = page ;
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
@@ -136,9 +141,11 @@ public class DispatcherBean {
                 }
                 //from here on, the theme must be saved
                 if (vSession.getTheme() == null){
+                    actualPage = Page.VOID ;
                     if (special == null) {
                         log.debug("Not logged in, not a special page, display VOID page");
                         output.add(indexServlet.treatVOID(vSession));
+
                     } else {
                         isComplete = true;
                         output = new XmlBuilder("nothing");
@@ -179,6 +186,7 @@ public class DispatcherBean {
                     } else {
                         log.debug( "VOID page? ({})", page);
                         output.add(indexServlet.treatVOID(vSession));
+                        actualPage = Page.VOID ;
                     }
                 }
             }
@@ -189,7 +197,9 @@ public class DispatcherBean {
             output.cancel();
         } 
         log.debug( "============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, isComplete});
-        //stopWatch.stop() ;
+        Theme currentTheme = vSession.getTheme() ;
+        stopWatch.stop("View.dispatch."+page+(vSession.getSpecial() != null ? "."+vSession.getSpecial() :"")+(currentTheme != null ? "."+currentTheme.getNom() : "NoTheme")) ;
+        String strTime = DurationFormatUtils.formatDuration(stopWatch.getElapsedTime(), "m'min' s's' S'ms'", false) ;
         if (!isWritten) {
             preventCaching(request, response);
 
@@ -204,17 +214,14 @@ public class DispatcherBean {
                 } catch (Exception e) {
                     log.warn( "An exception occured during xmlAffichage:", e);
                 }
-
-                XmlBuilder xmlStats = new XmlBuilder("stats");
-                output.add(xmlStats);
-                //xmlStats.add("time", stopWatch.getElapsedTime());
+                output.add("time", strTime);
 
             }
             doWrite(response, output, xslFile, isComplete, vSession);
         }
 
 
-        //log.warn( "============= <{}/>: {} =============", new Object[]{page, DurationFormatUtils.formatDurationWords(stopWatch.getElapsedTime(), true, true)});
+        log.warn( "============= <{}/>: {} =============", new Object[]{page, strTime});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

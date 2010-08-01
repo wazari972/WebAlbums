@@ -33,7 +33,9 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.common.util.StringUtil;
 import net.wazari.util.system.FilesFinder;
-import net.wazari.common.util.XmlBuilder;
+import net.wazari.common.util.XmlBuilder ;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class AlbumBean implements AlbumLocal {
@@ -101,7 +103,7 @@ public class AlbumBean implements AlbumLocal {
             ViewSessionAlbumDisplay vSession,
             XmlBuilder submit,
             XmlBuilder thisPage) throws WebAlbumsServiceException {
-        //StopWatch stopWatch = new Slf4JStopWatch("displayAlbum", log) ;
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         EditMode inEditionMode = vSession.getEditionMode();
         Integer albumId = vSession.getId();
         Integer page = vSession.getPage();
@@ -163,12 +165,13 @@ public class AlbumBean implements AlbumLocal {
         }
 
         output.add(webPageService.xmlPage(thisPage, bornes));
-        //stopWatch.stop() ;
+        stopWatch.stop("Service.displayAlbum") ;
         return output.validate();
     }
 
     @Override
     public XmlBuilder treatTOP(ViewSessionAlbum vSession) {
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlBuilder top5 = new XmlBuilder("top5");
 
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, TopFirst.TOP, new Bornes(TOP));
@@ -183,12 +186,14 @@ public class AlbumBean implements AlbumLocal {
             }
             top5.add(album);
         }
+        stopWatch.stop("Service.treatTOP") ;
         return top5.validate();
     }
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy") ;
     
     @Override
     public XmlBuilder treatYEARS(ViewSessionAlbum vSession) {
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlBuilder years = new XmlBuilder("years");
 
         Album enrFirstAlbum = albumDAO.loadFirstAlbum(vSession, Restriction.ALLOWED_AND_THEME);
@@ -223,14 +228,14 @@ public class AlbumBean implements AlbumLocal {
             years.add(year);
         }
 
-
+        stopWatch.stop("Service.treatYEARS") ;
         return years.validate();
     }
 
     @Override
     public XmlBuilder treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession)
             throws WebAlbumsServiceException {
-
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlBuilder output = new XmlBuilder(null);
         Integer albumId = vSession.getId();
 
@@ -277,7 +282,7 @@ public class AlbumBean implements AlbumLocal {
         albumDAO.edit(enrAlbum);
 
         output.add("message", "Album (" + enrAlbum.getId() + ") correctement mise à jour !");
-
+        stopWatch.stop("Service.treatSUBMIT") ;
         return output.validate();
     }
 

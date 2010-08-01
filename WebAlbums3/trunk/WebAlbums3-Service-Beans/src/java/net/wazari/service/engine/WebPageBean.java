@@ -33,6 +33,8 @@ import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.util.system.SystemTools;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class WebPageBean implements WebPageLocal {
@@ -191,7 +193,8 @@ public class WebPageBean implements WebPageLocal {
             Box box,
             String name,
             String info)
-            throws WebAlbumsServiceException {
+            throws WebAlbumsServiceException
+    {
 
         String type = "unknown";
         List<TagPhoto> list = null;
@@ -225,7 +228,9 @@ public class WebPageBean implements WebPageLocal {
             Box box,
             String name,
             String info)
-            throws WebAlbumsServiceException {
+            throws WebAlbumsServiceException 
+    {
+        StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
         XmlBuilder xmlResult = null;
         List<Tag> tags = null;
 
@@ -384,7 +389,7 @@ public class WebPageBean implements WebPageLocal {
             xmlResult.addText(map.getInitFunction());
         }
 
-
+        stopWatch.stop() ;
         return xmlResult.validate();
     }
 
@@ -394,6 +399,7 @@ public class WebPageBean implements WebPageLocal {
         if (right == null && albmRight == null) {
             throw new NullPointerException("Droit and Album cannot be null");
         }
+        StopWatch stopWatch = new Slf4JStopWatch("Service.displayListDroit", log) ;
 
         XmlBuilder output = new XmlBuilder("userList");
         boolean hasSelected = false;
@@ -428,7 +434,7 @@ public class WebPageBean implements WebPageLocal {
         if (!hasSelected) {
             throw new NoSuchElementException("Right problem: " + right + ", " + albmRight + " (" + lstUsr + ")");
         }
-
+        stopWatch.stop();
         return output.validate();
     }
 
@@ -445,8 +451,7 @@ public class WebPageBean implements WebPageLocal {
             String name,
             String info)
             throws WebAlbumsServiceException {
-        XmlBuilder output = displayListLBNI(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT, name, info);
-        return output;
+        return displayListLBNI(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT, name, info);
     }
     //display a list into STR
     //according to the MODE

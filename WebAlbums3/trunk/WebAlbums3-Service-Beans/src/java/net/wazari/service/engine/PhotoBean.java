@@ -43,6 +43,8 @@ import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.util.system.SystemTools;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -75,6 +77,7 @@ public class PhotoBean implements PhotoLocal {
     @Override
     public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,
             Boolean correct) throws WebAlbumsServiceException {
+        StopWatch stopWatch = new Slf4JStopWatch("Service.treatPhotoSUBMIT", log) ;
         XmlBuilder output = new XmlBuilder(null);
         Integer photoID = vSession.getId();
 
@@ -198,12 +201,13 @@ public class PhotoBean implements PhotoLocal {
         output.add("message", " Photo (" + enrPhoto.getId() + ") "
                 + "correctement mise à jour !");
 
+        stopWatch.stop() ;
         return output.validate();
     }
 
     @Override
     public XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException {
-        //StopWatch stopWatch = new Slf4JStopWatch("treatPhotoDISPLAY", log) ;
+        StopWatch stopWatch = new Slf4JStopWatch("Service.treatPhotoDISPLAY", log) ;
 
         XmlBuilder output = new XmlBuilder(null);
         //afficher les photos
@@ -244,7 +248,7 @@ public class PhotoBean implements PhotoLocal {
         thisPage.add("albmCount", albmCount);
         output.add(displayPhoto(rq, vSession, thisPage, submit));
 
-        //stopWatch.stop() ;
+        stopWatch.stop() ;
         return output.validate();
     }
 
@@ -293,6 +297,8 @@ public class PhotoBean implements PhotoLocal {
             XmlBuilder thisPage,
             XmlBuilder submit)
             throws WebAlbumsServiceException {
+        StopWatch stopWatch = new Slf4JStopWatch("Service.displayPhoto."+rq.type, log) ;
+
         XmlBuilder output = new XmlBuilder(null);
 
         EditMode inEditionMode = vSession.getEditionMode();
@@ -302,7 +308,7 @@ public class PhotoBean implements PhotoLocal {
         Bornes bornes = webService.calculBornes(page, scount, vSession.getPhotoSize());
         SubsetOf<Photo> lstP;
         if (rq.type == TypeRequest.PHOTO) {
-            lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, ListOrder.DESC);
+            lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, ListOrder.ASC);
         } else {
             lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, ListOrder.ASC);
         }
@@ -320,6 +326,7 @@ public class PhotoBean implements PhotoLocal {
                 Action action = vSession.getAction();
                 if (Action.MASSEDIT == action) {
                     turn = vSession.getMassEdit().getTurn();
+                    stopWatch.setTag(stopWatch.getTag()+".MASSEDIT."+turn) ;
                     if (turn == Turn.LEFT) {
                         degrees = "270";
                     } else if (turn == Turn.RIGHT) {
@@ -437,6 +444,12 @@ public class PhotoBean implements PhotoLocal {
             output.add(massEdit);
         }
         output.add(webPageService.xmlPage(thisPage, bornes));
+        if (countME == 0) {
+            stopWatch.stop() ;
+        } else {
+            stopWatch.stop(stopWatch.getTag(), ""+countME+" photos modified") ;
+
+        }
         return output.validate();
     }
 }

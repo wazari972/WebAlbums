@@ -188,12 +188,6 @@
       </div>
     </div>
  </xsl:template>
- <xsl:template match="/root/stats">
-   <div id="footer">
-     <p>Page générée en <xsl:value-of select="time"/>s. Copyright 2009.</p>
-     <p>Design by <a href="http://www.metamorphozis.com/" title="Flash Templates">Flash Templates</a></p>
-   </div>
- </xsl:template>
 
  <xsl:template match="exif">
    <table>    

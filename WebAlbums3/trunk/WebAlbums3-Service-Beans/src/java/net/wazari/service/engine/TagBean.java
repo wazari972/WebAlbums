@@ -31,10 +31,12 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.util.system.SystemTools;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class TagBean implements TagLocal {
-
+    private static final Logger log = LoggerFactory.getLogger(TagBean.class.getName());
     private static final long serialVersionUID = 1L;
 
     @EJB private TagFacadeLocal tagDAO ;
@@ -65,7 +67,7 @@ public class TagBean implements TagLocal {
 
     @Override
     public XmlBuilder treatTagDISPLAY(ViewSessionTag vSession, XmlBuilder submit) throws WebAlbumsServiceException {
-        //StopWatch stopWatch = new Slf4JStopWatch("treatTagDISPLAY", log) ;
+        StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagDISPLAY", log) ;
         XmlBuilder output = new XmlBuilder(null) ;
         Integer[] tags = vSession.getTagAsked();
         Integer page = vSession.getPage();
@@ -94,17 +96,19 @@ public class TagBean implements TagLocal {
             Special special = vSession.getSpecial();
             if (Special.FULLSCREEN == special) {
                 sysTools.fullscreenMultiple(vSession, rq, "Tags", null, page);
+                stopWatch.stop("Service.treatTagDISPLAY.FULLSCREEN") ;
                 return null;
             } else {
                 output.add(photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay)vSession, thisPage, submit));
             }
         }
-        //stopWatch.stop() ;
+        stopWatch.stop() ;
         return output.validate();
     }
 
     @Override
     public XmlBuilder treatTagCloud(ViewSessionTag vSession){
+        StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagCloud", log) ;
         XmlBuilder cloud = new XmlBuilder("cloud");
 
         int sizeScale = 200;
@@ -121,14 +125,15 @@ public class TagBean implements TagLocal {
                     .addAttribut("nb", current)
                     .addAttribut("id", enrTag.getId()));
         }
-
+        stopWatch.stop() ;
         return cloud.validate();
     }
 
     @Override
     public XmlBuilder treatTagPersonsPlaces(ViewSessionTag vSession) {
         Special special = vSession.getSpecial();
-        
+        StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagPersonsPlaces."+special, log) ;
+
         XmlBuilder xmlSpec = new XmlBuilder(special.toString().toLowerCase());
 
         int type;
@@ -174,7 +179,7 @@ public class TagBean implements TagLocal {
             xmlSpec.cancel();
             xmlSpec.addException(e);
         }
+        stopWatch.stop() ;
         return xmlSpec.validate();
     }
-    private static final Logger log = LoggerFactory.getLogger(TagBean.class.getName());
 }

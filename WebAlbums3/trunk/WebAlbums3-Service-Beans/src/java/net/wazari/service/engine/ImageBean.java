@@ -35,6 +35,8 @@ import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.util.system.SystemTools;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @Stateless
 public class ImageBean implements ImageLocal {
@@ -50,13 +52,14 @@ public class ImageBean implements ImageLocal {
     @Override
     public XmlBuilder treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
-        //StopWatch stopWatch = new Slf4JStopWatch("treatIMG", log) ;
+        ImgMode mode = vSession.getImgMode();
+        mode = (mode == null ? ImgMode.PETIT : mode) ;
+
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
         XmlBuilder output = new XmlBuilder("img");
         Integer imgId = vSession.getId();
 
-        ImgMode mode = vSession.getImgMode();
-        mode = (mode == null ? ImgMode.PETIT : mode) ;
         String filepath = null;
         String type = null;
         Theme enrThemeForBackground = vSession.getTheme() ;
@@ -135,17 +138,20 @@ public class ImageBean implements ImageLocal {
             log.warn("Open image {}", filepath);
             if (vSession.getConfiguration().isPathURL()) {
                 vSession.redirect(filepath) ;
+                stopWatch.stop(stopWatch.getTag()+".redirect") ;
                 return null ;
             }
 
             if (mode == ImgMode.FULLSCREEN) {
                  sysTools.fullscreenImage(vSession, enrPhoto);
+                 stopWatch.stop(stopWatch.getTag()+".fullscreen") ;
                  return null ;
             }
 
             filepath = "file://" + filepath;
 
-           
+
+            stopWatch.lap("Service.treatIMG."+mode) ;
             //null = correct, true = incorrect, but contentType already set
             Boolean correct = sendFile(vSession, filepath, type, output);
             if (correct == null || correct) {
@@ -153,13 +159,12 @@ public class ImageBean implements ImageLocal {
             } else {
                 output.validate();
             }
+            stopWatch.stop("Service.treatIMG."+mode+".sendFile") ;
         } catch (Exception e) {
             log.warn ("{}: {} ", e.getClass().getSimpleName(), e) ;
             output.addException("Exception", e.getMessage());
             output.validate();
-        } finally {
-            //stopWatch.stop() ;
-        }
+        } 
         return output;
     }
 

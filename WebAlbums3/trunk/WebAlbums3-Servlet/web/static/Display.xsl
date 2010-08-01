@@ -96,7 +96,10 @@
 		<xsl:apply-templates select="/root/*/page"/>
 		<xsl:call-template name="print_return_link" />
 	      </div>
-	      <xsl:apply-templates select="/root/stats"/>
+	      <div id="footer">
+                 <p>Page générée en <xsl:value-of select="/root/time"/>.</p>
+                 <p>Design by <a href="http://www.metamorphozis.com/" title="Flash Templates">Flash Templates</a>, Copyright 2009.</p>
+              </div>
 	    </div>
 	  </div>
 	</div>

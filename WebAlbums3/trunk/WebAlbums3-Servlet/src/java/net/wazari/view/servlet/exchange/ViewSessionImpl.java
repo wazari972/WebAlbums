@@ -258,7 +258,7 @@ public class ViewSessionImpl implements
 
     @Override
     public boolean getVisible() {
-        return "yes".equals(getString("visible"));
+        return "y".equals(getString("visible"));
     }
 
     @Override
@@ -489,7 +489,7 @@ public class ViewSessionImpl implements
         } catch (IllegalArgumentException e) {
             log.info( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
         }
-        log.info( "getObject param:{} type:{} returned {}", new Object[]{name, type, ret});
+        log.debug( "getObject param:{} type:{} returned {}", new Object[]{name, type, ret});
         return ret;
     }
 
@@ -498,7 +498,7 @@ public class ViewSessionImpl implements
         if (ret == null && request != null) {
             ret = getObject(name, type, request);
         }
-        log.info( "getSessionObject param:{} type:{} returned {}", new Object[]{name, type, ret});
+        log.debug( "getSessionObject param:{} type:{} returned {}", new Object[]{name, type, ret});
         return ret;
     }
 
