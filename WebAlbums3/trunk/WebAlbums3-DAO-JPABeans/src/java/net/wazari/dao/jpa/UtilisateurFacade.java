@@ -65,16 +65,17 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
 
     @Override
     public List<Utilisateur> loadUserInside(int albumId) {
-        String rq = "SELECT DISTINCT u " +
-                " FROM JPAPhoto p, JPAUtilisateur u " +
-                " WHERE u.id = p.droit " +
-                " AND p.album.id = :albumId " +
-                " AND p.droit != null AND p.droit != 0";
-        return  em.createQuery(rq)
-                .setParameter("albumId", albumId)
-                .setHint("org.hibernate.cacheable", true)
-                .setHint("org.hibernate.readOnly", true)
-                .getResultList();
+        StringBuilder rq = new StringBuilder(80);
+        rq.append("SELECT DISTINCT u ")
+            .append(" FROM JPAPhoto p, JPAUtilisateur u ")
+            .append(" WHERE u.id = p.droit ")
+            .append(" AND p.album.id = :albumId ")
+            .append(" AND p.droit != null AND p.droit != 0");
+        return em.createQuery(rq.toString())
+            .setParameter("albumId", albumId)
+            .setHint("org.hibernate.cacheable", true)
+            .setHint("org.hibernate.readOnly", true)
+            .getResultList();
     }
 
     @Override

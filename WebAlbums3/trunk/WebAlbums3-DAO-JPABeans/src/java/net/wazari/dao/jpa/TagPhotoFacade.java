@@ -68,11 +68,12 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public List<TagPhoto> queryByAlbum(Album enrAlbum) {
-        String rq = "SELECT DISTINCT tp " +
-                "FROM JPAPhoto photo, JPATagPhoto tp " +
-                "WHERE photo.album = :album " +
-                "AND photo.id = tp.photo ";
-        return em.createQuery(rq)
+        StringBuilder rq = new StringBuilder(80);
+        rq.append("SELECT DISTINCT tp ")
+            .append("FROM JPAPhoto photo, JPATagPhoto tp ")
+            .append("WHERE photo.album = :album ")
+            .append("AND photo.id = tp.photo ");
+        return em.createQuery(rq.toString())
                 .setParameter("album", enrAlbum)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
@@ -98,12 +99,13 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public List<Tag> selectUnusedTags(ServiceSession session) {
-        String rq = "SELECT DISTINCT tp.tag " +
-                            "FROM JPATagPhoto tp, JPAPhoto p, JPAAlbum a " +
-                            "WHERE " +
-                            " tp.photo = p.id AND p.album = a.id " +
-                            " AND a.theme = :themeId ";
-        return em.createQuery(rq)
+        StringBuilder rq = new StringBuilder(80);
+        rq.append("SELECT DISTINCT tp.tag ")
+            .append("FROM JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
+            .append("WHERE " )
+            .append(" tp.photo = p.id AND p.album = a.id " )
+            .append(" AND a.theme = :themeId ");
+        return em.createQuery(rq.toString())
                 .setParameter("themeId", session.getTheme())
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)

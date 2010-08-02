@@ -49,6 +49,7 @@
         <property name="URL" value="jdbc:mysql://127.0.0.1/WebAlbums_test"/>
         <property name="User" value="wazari972"/>
         <property name="Password" value="ijaheb"/>
+        <property name="characterEncoding" value="latin1"/>
     </jdbc-connection-pool>
 
     <jdbc-resource enabled="true" jndi-name="jdbc/mysqlWebAlbumsTest2" object-type="user" pool-name="cpMySQLWebAlbumsTest2">

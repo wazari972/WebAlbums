@@ -50,16 +50,18 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public Map<Tag, Long> queryIDNameCount(ServiceSession session) {
-        String rq = "SELECT t, count( tp.photo ) AS count " +
-                " FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a " +
-                " WHERE t.id = tp.tag " +
-                " AND tp.photo = p.id " +
-                " AND p.album = a.id " +
-                " AND " + webDAO.restrictToPhotosAllowed(session, "p") + " " +
-                " AND " + webDAO.restrictToThemeAllowed(session, "a") + " " +
-                " GROUP BY t.id "+
-                " ORDER BY t.nom ";
-        List<Object[]> lst = em.createQuery(rq)
+        StringBuilder rq = new StringBuilder(80);
+        rq.append("SELECT t, count( tp.photo ) AS count ")
+          .append(" FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
+          .append(" WHERE t.id = tp.tag ")
+          .append(" AND tp.photo = p.id ")
+          .append(" AND p.album = a.id ")
+          .append(" AND " )
+          .append(webDAO.restrictToPhotosAllowed(session, "p") )
+          .append(" AND ")
+          .append(webDAO.restrictToThemeAllowed(session, "a"))
+          .append(" ORDER BY t.nom ");
+        List<Object[]> lst = em.createQuery(rq.toString())
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -72,21 +74,24 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public List<Tag> queryAllowedTagByType(ServiceSession session, int type) {
-        String rq;
+        StringBuilder rq = new StringBuilder(80);
+
         if (session.isRootSession()) {
-            rq = "FROM JPATag t WHERE t.tagType = :type";
+            rq.append("FROM JPATag t WHERE t.tagType = :type") ;
         } else {
-            rq = "SELECT DISTINCT t " +
-                    "FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a " +
-                    "WHERE t.tagType = :type " +
-                    "AND t.id = tp.tag " +
-                    "AND tp.photo = p.id " +
-                    "AND p.album = a.id " +
-                    "AND " + webDAO.restrictToPhotosAllowed(session, "p") + " " +
-                    "AND " + webDAO.restrictToThemeAllowed(session, "a") + " ";
+            rq.append("SELECT DISTINCT t ")
+              .append("FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
+              .append("WHERE t.tagType = :type ")
+              .append("AND t.id = tp.tag ")
+              .append("AND tp.photo = p.id ")
+              .append("AND p.album = a.id ")
+              .append("AND ")
+              .append(webDAO.restrictToPhotosAllowed(session, "p"))
+              .append(" AND ")
+              .append(webDAO.restrictToThemeAllowed(session, "a"));
         }
-        rq += " ORDER BY t.nom " ;
-        return em.createQuery(rq).setParameter("type", type)
+        rq.append(" ORDER BY t.nom ") ;
+        return em.createQuery(rq.toString()).setParameter("type", type)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -95,8 +100,7 @@ public class TagFacade implements TagFacadeLocal {
     @Override
     public Tag loadByName(String nom) {
             try {
-            String rq = "FROM JPATag t " +
-                    " WHERE t.nom = :nom ";
+            String rq = "FROM JPATag t WHERE t.nom = :nom ";
 
             return (JPATag) em.createQuery(rq).setParameter("nom", nom)
                     .setHint("org.hibernate.cacheable", true)
@@ -109,17 +113,20 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) {
-        String rq = "SELECT DISTINCT ta " +
-                "FROM JPATag ta, JPATagPhoto tp, JPAPhoto p, JPAAlbum a " +
-                "WHERE  ta.id = tp.tag AND tp.photo = p.id AND p.album = a.id " +
-                "AND " + webDAO.restrictToPhotosAllowed(sSession, "p") + " " +
-                "AND " + webDAO.restrictToThemeAllowed(sSession, "a") + " ";
+        StringBuilder rq = new StringBuilder(80);
+        rq.append("SELECT DISTINCT ta ")
+              .append("FROM JPATag ta, JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
+              .append("WHERE  ta.id = tp.tag AND tp.photo = p.id AND p.album = a.id ")
+              .append("AND ")
+              .append(webDAO.restrictToPhotosAllowed(sSession, "p"))
+              .append("AND ")
+              .append(webDAO.restrictToThemeAllowed(sSession, "a"));
 
         if (restrictToGeo) {
-            rq += " AND ta.tagType = '3' ";
+            rq.append(" AND ta.tagType = '3' ") ;
         }
-        rq += " ORDER BY ta.nom";
-        return em.createQuery(rq)
+        rq.append(" ORDER BY ta.nom");
+        return em.createQuery(rq.toString())
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -127,22 +134,26 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public List<Tag> getNoSuchTags(ServiceSession sSession, List<Tag> tags) {
-        String rq = "SELECT DISTINCT ta " +
-                " FROM JPATag ta " +
-                " WHERE ta.id NOT IN (" + getIdList(tags) + ") " +
-                " ORDER BY ta.nom";
-        return em.createQuery(rq)
+        StringBuilder rq = new StringBuilder(80);
+        rq.append("SELECT DISTINCT ta ")
+              .append(" FROM JPATag ta ")
+              .append(" WHERE ta.id NOT IN (")
+              .append(getIdList(tags) )
+              .append( ") " )
+              .append(" ORDER BY ta.nom");
+        return em.createQuery(rq.toString())
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
     }
 
-    private static String getIdList(List<Tag> lst) {
-        String ret = "-1 ";
+    private static StringBuilder getIdList(List<Tag> lst) {
+        StringBuilder rq = new StringBuilder(30);
+        rq.append( "-1 ") ;
         for (Tag enrTag : lst) {
-            ret += ", " + enrTag.getId();
+            rq.append(", ").append(enrTag.getId());
         }
-        return ret;
+        return rq ;
     }
 
     @Override

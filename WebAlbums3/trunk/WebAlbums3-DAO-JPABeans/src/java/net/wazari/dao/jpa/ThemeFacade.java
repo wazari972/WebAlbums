@@ -38,7 +38,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     @Override
     public List<Theme> findAll() {
         try {
-            return em.createQuery("select object(o) from JPATheme as o").getResultList();
+            return em.createQuery("SELECT object(o) FROM JPATheme AS o").getResultList();
         } catch (javax.persistence.PersistenceException e) {
             log.warn("Database query failed ...");
             return new ArrayList<Theme>() ;

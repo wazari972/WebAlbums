@@ -27,51 +27,62 @@ public class WebAlbumsDAOBean {
     public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public String processListID(ServiceSession session, String rq, boolean restrict) {
-        String newRq = rq ;
+public StringBuilder processListID(ServiceSession session, StringBuilder rq, boolean restrict) {
+        StringBuilder newRq = new StringBuilder(rq) ;
         if (restrict && ! session.isRootSession()) {
-            newRq += " AND " + restrictToThemeAllowed(session, "a") + " ";
+            newRq.append(" AND ").append(restrictToThemeAllowed(session, "a"));
         }
         return newRq;
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public String restrictToAlbumsAllowed(ServiceSession session, String album) {
-        String rq = null;
+    public StringBuilder restrictToAlbumsAllowed(ServiceSession session, String album) {
+        StringBuilder rq = null;
         if (session.isSessionManager()) {
-            rq = "SELECT a.id FROM JPAAlbum a WHERE 1 = 1 ";
+            rq = new StringBuilder("SELECT a.id FROM JPAAlbum a WHERE 1 = 1 ");
         } else {
-            rq = "SELECT a.id " +
-                    "FROM JPAAlbum a, JPAPhoto p " +
-                    "WHERE a.id = p.album AND (" +
+            rq = new StringBuilder(80)
+                .append("SELECT a.id ")
+                .append("FROM JPAAlbum a, JPAPhoto p ")
+                .append("WHERE a.id = p.album AND (")
                     //albums autorisé
-                    "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUser().getId() + "') " +
-                    "OR " +
+                .append("((p.droit = 0 OR p.droit is null) AND a.droit >= '")
+                .append(session.getUser().getId())
+                .append("') OR ")
                     //albums ayant au moins une photo autorisée
-                    "(p.droit >= '" + session.getUser().getId() + "')" +
-                    ") ";
+                .append("(p.droit >= '")
+                .append(session.getUser().getId())
+                .append("')")
+                .append(") ");
         }
-        rq = " " + album + ".id IN (" + processListID(session, rq, true) + ") ";
-        return rq;
+        return new StringBuilder(50).append(" ").append(album).append(".id IN (").append(processListID(session, rq, true) ).append(") ");
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToPhotosAllowed(ServiceSession session, String photo) {
-        String rq = "SELECT p.id " +
-                " FROM JPAPhoto p, JPAAlbum a " +
-                " WHERE p.album = a.id ";
+        StringBuilder rq = new StringBuilder(80);
+        rq.append("SELECT p.id ")
+            .append(" FROM JPAPhoto p, JPAAlbum a ")
+            .append(" WHERE p.album = a.id ");
         if (!session.isSessionManager()) {
-            rq += " AND (" +
+            rq.append(" AND (")
                     //albums autorisé
-                    "((p.droit = 0 OR p.droit is null) AND a.droit >= '" + session.getUser().getId() + "') " +
-                    "OR " +
+            .append("((p.droit = 0 OR p.droit is null) AND a.droit >= '")
+            .append(session.getUser().getId())
+            .append("') OR ")
                     //albums ayant au moins une photo autorisée
-                    "(p.droit >= '" + session.getUser().getId() + "')" +
-                    ")"; 
+            .append("(p.droit >= '")
+            .append(session.getUser().getId())
+            .append("')" )
+            .append(")");
         }
 
-        rq = " " + photo + ".id IN (" + processListID(session, rq, true) + ") ";
-        return rq;
+        return new StringBuilder(50)
+            .append(" ")
+            .append(photo )
+            .append(".id IN (" )
+            .append(processListID(session, rq, true) )
+            .append(") ").toString();
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
@@ -79,20 +90,32 @@ public class WebAlbumsDAOBean {
         if (session.isRootSession()) {
             return " 1 = 1";
         } else {
-            return " " + album + ".theme = '" + session.getTheme().getId() + "' ";
+            return new StringBuilder(25)
+            .append(" " )
+            .append(album )
+            .append(".theme = '")
+            .append( session.getTheme().getId())
+            .append( "' ").toString();
         }
 
     }
 
-    static String getOrder(ListOrder order, String field) {
-        String rq = " ORDER BY " ;
-        if (order == null) return "" ;
+    static StringBuilder getOrder(ListOrder order, String field) {
+        StringBuilder rq = new StringBuilder(25)
+            .append(" ORDER BY ") ;
+        if (order == null) return new StringBuilder("") ;
         switch(order) {
-            case ASC: return rq+field+" ASC" ;
-            case DESC: return rq+field+" DESC" ;
-            case RANDOM: return rq+"RAND()" ;
+            case ASC: return rq
+            .append(field)
+            .append(" ASC") ;
+            case DESC: return rq
+            .append(field)
+            .append(" DESC") ;
+            case RANDOM: return rq
+            .append(field)
+            .append(" RAND()") ;
             case DEFAULT:
-            default: return "" ;
+            default: return new StringBuilder("") ;
         }
     }
 

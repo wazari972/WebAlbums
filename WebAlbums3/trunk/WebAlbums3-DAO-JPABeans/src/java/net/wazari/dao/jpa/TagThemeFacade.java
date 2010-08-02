@@ -5,7 +5,6 @@
 package net.wazari.dao.jpa;
 
 import java.util.List;
-import java.util.List;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.jpa.entity.JPATagTheme;
 
@@ -55,18 +53,18 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
 
         try {
             if (themeId != ThemeFacadeLocal.THEME_ROOT_ID) {
-                String rq = "FROM JPATagTheme tt " +
-                        "WHERE tt.tag.id = :tagId " +
-                        " AND tt.theme.id = :themeId ";
-                return (TagTheme) em.createQuery(rq)
+                StringBuilder rq = new StringBuilder(80);
+                rq.append("FROM JPATagTheme tt ")
+                .append("WHERE tt.tag.id = :tagId ")
+                .append(" AND tt.theme.id = :themeId ");
+                return (TagTheme) em.createQuery(rq.toString())
                         .setParameter("tagId", tagId)
                         .setParameter("themeId", themeId)
                         .setHint("org.hibernate.cacheable", true)
                         .setHint("org.hibernate.readOnly", false)
                         .getSingleResult();
             } else {
-                String rq = "FROM JPATagTheme tt " +
-                        "WHERE tt.tag.id = :tagId " ;
+                String rq = "FROM JPATagTheme tt  WHERE tt.tag.id = :tagId " ;
 
                 List<TagTheme> lst = em.createQuery(rq)
                         .setParameter("tagId", tagId)
