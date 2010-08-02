@@ -89,6 +89,7 @@ public class DispatcherBean {
     {
         Page actualPage = page ;
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
+        request.setCharacterEncoding("UTF-8") ;
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
@@ -198,7 +199,7 @@ public class DispatcherBean {
         } 
         log.debug( "============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, isComplete});
         Theme currentTheme = vSession.getTheme() ;
-        stopWatch.stop("View.dispatch."+page+(vSession.getSpecial() != null ? "."+vSession.getSpecial() :"")+(currentTheme != null ? "."+currentTheme.getNom() : "NoTheme")) ;
+        stopWatch.stop("View.dispatch."+actualPage+(vSession.getSpecial() != null ? "."+vSession.getSpecial() :"")+(currentTheme != null ? "."+currentTheme.getNom() : "NoTheme")) ;
         String strTime = DurationFormatUtils.formatDuration(stopWatch.getElapsedTime(), "m'min' s's' S'ms'", false) ;
         if (!isWritten) {
             preventCaching(request, response);

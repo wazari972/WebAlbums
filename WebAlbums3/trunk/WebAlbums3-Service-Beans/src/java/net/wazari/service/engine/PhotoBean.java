@@ -1,7 +1,6 @@
 package net.wazari.service.engine;
 
 import java.io.File;
-import java.lang.String;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
@@ -43,6 +42,7 @@ import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.util.system.SystemTools;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
@@ -99,7 +99,7 @@ public class PhotoBean implements PhotoLocal {
 
         //mise à jour des tag/description
         String desc = vSession.getDesc();
-        enrPhoto.setDescription(desc);
+        enrPhoto.setDescription(StringEscapeUtils.escapeXml(desc));
 
         String user = vSession.getDroit();
         if (user != null) {
