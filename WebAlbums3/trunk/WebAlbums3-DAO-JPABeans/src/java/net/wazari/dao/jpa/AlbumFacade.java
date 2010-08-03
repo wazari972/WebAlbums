@@ -131,7 +131,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
                 .append(JPAAlbum.class.getName())
                 .append(" a " )
                 .append(" WHERE ")
-                .append(" AND ")
+                //.append(" AND ")
                 .append(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1 ")
                 .append(WebAlbumsDAOBean.getOrder(order, "a.date")) ;
             Query q = em.createQuery(rq.toString())

@@ -60,6 +60,7 @@ public class TagFacade implements TagFacadeLocal {
           .append(webDAO.restrictToPhotosAllowed(session, "p") )
           .append(" AND ")
           .append(webDAO.restrictToThemeAllowed(session, "a"))
+          .append(" GROUP BY t.id ")
           .append(" ORDER BY t.nom ");
         List<Object[]> lst = em.createQuery(rq.toString())
                 .setHint("org.hibernate.cacheable", true)

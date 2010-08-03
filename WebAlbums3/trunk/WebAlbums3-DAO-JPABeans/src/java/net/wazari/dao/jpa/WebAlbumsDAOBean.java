@@ -88,7 +88,7 @@ public StringBuilder processListID(ServiceSession session, StringBuilder rq, boo
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToThemeAllowed(ServiceSession session, String album) {
         if (session.isRootSession()) {
-            return " 1 = 1";
+            return " 1 = 1 ";
         } else {
             return new StringBuilder(25)
             .append(" " )
