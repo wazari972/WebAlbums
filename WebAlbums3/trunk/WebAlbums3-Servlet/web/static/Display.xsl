@@ -22,22 +22,18 @@
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-	
-        <style type="text/css">          body {
-                <xsl:if test="count(/root/affichage/background) = 0">background: #62993B url(static/images/back_all.jpg?notempty) fixed no-repeat;</xsl:if>
-                <xsl:if test="count(/root/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>
-          }
-        </style>
-        <link href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
+	<link href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
+	<script src="static/scripts/lytebox/lytebox.js" type="text/javascript" language="javascript" />
+	<link  href="static/scripts/lytebox/lytebox.css" rel="stylesheet" type="text/css" media="screen" />
       </head>
-      <body id="body">
+      <body>
 	<script src="static/scripts/tools.js" type="text/javascript" />
 	<xsl:apply-templates select="/root/choix/map"/>
 	<xsl:apply-templates select="/root/config/map"/>
 
 	<div id="header"> 
 	  <div id="logo">
-	    <h1>WebAlbums 3</h1>
+	    <h1>WebAlbums 4</h1>
 	    <h2>by Kevin POUGET</h2>
 	  </div>
 	  
@@ -96,10 +92,7 @@
 		<xsl:apply-templates select="/root/*/page"/>
 		<xsl:call-template name="print_return_link" />
 	      </div>
-	      <div id="footer">
-                 <p>Page générée en <xsl:value-of select="/root/time"/>.</p>
-                 <p>Design by <a href="http://www.metamorphozis.com/" title="Flash Templates">Flash Templates</a>, Copyright 2009.</p>
-              </div>
+	      <xsl:apply-templates select="/root/stats"/>
 	    </div>
 	  </div>
 	</div>

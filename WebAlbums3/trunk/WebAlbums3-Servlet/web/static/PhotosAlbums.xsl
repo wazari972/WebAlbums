@@ -12,8 +12,8 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="details">
-    <a>
-      <xsl:attribute name="HREF">
+    <a rel="lytebox[page]">
+      <xsl:attribute name="HREF">	
 	<xsl:if test="/root/photos or /root/tags">
 	  Images?id=<xsl:value-of select="photoID" />&amp;mode=GRAND
 	</xsl:if> 
