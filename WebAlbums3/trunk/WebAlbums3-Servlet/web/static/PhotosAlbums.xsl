@@ -12,7 +12,7 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="details">
-    <a rel="lytebox[page]">
+    <a rel="shadowbox[page];player=img">
       <xsl:attribute name="HREF">	
 	<xsl:if test="/root/photos or /root/tags">
 	  Images?id=<xsl:value-of select="photoID" />&amp;mode=GRAND

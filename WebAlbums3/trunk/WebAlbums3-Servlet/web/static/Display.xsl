@@ -23,8 +23,12 @@
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
 	<link href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
-	<script src="static/scripts/lytebox/lytebox.js" type="text/javascript" language="javascript" />
-	<link  href="static/scripts/lytebox/lytebox.css" rel="stylesheet" type="text/css" media="screen" />
+	
+	<link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
+	<script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
+	<script type="text/javascript">
+	  Shadowbox.init(); 
+	</script>
       </head>
       <body>
 	<script src="static/scripts/tools.js" type="text/javascript" />
