@@ -39,16 +39,22 @@
 	    <xsl:if test="$style = 'list'">
 	      <option value="-1">==========</option>
 	    </xsl:if>
-	    
-	    <xsl:apply-templates select="who">
-	      <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
-	    </xsl:apply-templates>
-	    <xsl:apply-templates select="what">
-	      <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
-	    </xsl:apply-templates>
-	    <xsl:apply-templates select="where">
-	      <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
-	    </xsl:apply-templates>
+            
+	    <optgroup label="Who">
+                <xsl:apply-templates select="who">
+                  <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                </xsl:apply-templates>
+            </optgroup>
+            <optgroup label="What">
+                <xsl:apply-templates select="what">
+                  <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                </xsl:apply-templates>
+            </optgroup>
+            <optgroup label="Where">
+                <xsl:apply-templates select="where">
+                  <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                </xsl:apply-templates>
+            </optgroup>
 	  </SELECT>
 	</xsl:if>
 	
@@ -81,10 +87,7 @@
 	</xsl:if>
 
 	[<xsl:value-of select="name(.)"/>] <xsl:value-of select="."/>
-      </OPTION>
-      <xsl:if test="position() = last()">
-	<option value="-1">==========</option>
-      </xsl:if>      
+      </OPTION>    
     </xsl:if>      
     
     <xsl:if test="not($style = 'list' or $style = 'multiple')">

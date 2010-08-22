@@ -11,11 +11,6 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="/root/choix/map">
-    <script src="Choix?special=map.js" type='text/javascript'></script>
-    <script src="static/scripts/Choix.js" type='text/javascript'></script>
-  </xsl:template>
-
   <xsl:template match="/root/choix">
     <div class="item">
       <div class="date">
@@ -88,13 +83,11 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Géolocalisations
-	  <input id="mapLoader" type="button" value="load map" onclick="loadMaps('mapChoix', 'mapLoader');"/>
-	</h1>
+	<h1>Géolocalisations</h1>
 	<div class="body">
 	  <center>
 	    <div style="width: 400px; height: 400px" id="mapChoix">
-              <img src="static/images/loading.gif"/>
+             <!--<img src="static/images/loading.gif"/>-->
 	    </div>
 	  </center>
 	</div>

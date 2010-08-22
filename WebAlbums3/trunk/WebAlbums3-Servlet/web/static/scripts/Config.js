@@ -1,109 +1,77 @@
-function loadMap() {
-    if (GBrowserIsCompatible()) {
-	// Creates a marker at the given point
-	// Clicking the marker will hide it
-        var map = new GMap2(document.getElementById('map_search'));
-        map.addControl(new GSmallMapControl());
-        map.addControl(new GMapTypeControl());
-        var center = new GLatLng(51.5001524, -0.1262362);
-        map.setCenter(center, 15);
-        geocoder = new GClientGeocoder();
-        var marker = new GMarker(center, {draggable: false});
-        map.addOverlay(marker);
-        document.getElementById('latID').value = center.lat().toFixed(7);
-        document.getElementById('lngID').value = center.lng().toFixed(7);
+//Useful links:
+// http://code.google.com/apis/maps/documentation/javascript/reference.html#Marker
+// http://code.google.com/apis/maps/documentation/javascript/services.html#Geocoding
+// http://jqueryui.com/demos/autocomplete/#remote-with-cache
 
-	document.getElementById('latID_2').value = center.lat().toFixed(7);
-        document.getElementById('lngID_2').value = center.lng().toFixed(7);
-        
-	GEvent.addListener(map, 'moveend', function() {
-	    map.clearOverlays();
-            var center = map.getCenter();
-	    var marker = new GMarker(center, {draggable: false});
-	    map.addOverlay(marker);
-	    document.getElementById('latID').value = center.lat().toFixed(7);
-       	    document.getElementById('lngID').value = center.lng().toFixed(7);
-	    
-	    document.getElementById('latID_2').value = center.lat().toFixed(7);
-       	    document.getElementById('lngID_2').value = center.lng().toFixed(7);
-	});
-	GEvent.addListener(map, 'moveend', function() {
-	    map.clearOverlays();
-	    var center = map.getCenter();
-	    var marker = new GMarker(center, {draggable: true});
-	    map.addOverlay(marker);
-	    document.getElementById('latID').value = center.lat().toFixed(7);
-	    document.getElementById('lngID').value = center.lng().toFixed(7);
-	    
-	    document.getElementById('latID_2').value = center.lat().toFixed(7);
-       	    document.getElementById('lngID_2').value = center.lng().toFixed(7);
-	    
-	    GEvent.addListener(marker, 'dragend', function() {
-		var pt = marker.getPoint();
-		map.panTo(pt);
-		document.getElementById('latID').value = pt.lat().toFixed(7);
-		document.getElementById('lngID').value = pt.lng().toFixed(7);
-		
-		document.getElementById('latID_2').value = center.lat().toFixed(7);
-       		document.getElementById('lngID_2').value = center.lng().toFixed(7);
-	    });
-	});
-    }
+var geocoder;
+var map;
+var marker;
+
+function initialize(){
+    //MAP
+    var latlng = new google.maps.LatLng(41.659,-4.714);
+    var options = {
+	zoom: 16,
+	center: latlng,
+	mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    map = new google.maps.Map(document.getElementById("map_search"), options);
+
+    //GEOCODER
+    geocoder = new google.maps.Geocoder();
+
+    marker = new google.maps.Marker({
+	map: map,
+	draggable: true
+  });
+
 }
 
-function showAddress(address) {
-    var map = new GMap2(document.getElementById('map_search'));
-    map.addControl(new GSmallMapControl());
-    map.addControl(new GMapTypeControl());
-    if (geocoder) {
-        geocoder.getLatLng(
-            address,
-            function(point) {
-		if (!point) {
-		    alert(address + ' not found');
-		} else {
-		    document.getElementById('latID').value = point.lat().toFixed(7);
-		    document.getElementById('lngID').value = point.lng().toFixed(7);
-		    map.clearOverlays();
-		    map.setCenter(point, 14);
-		    var marker = new GMarker(point, {draggable: true});
-		    map.addOverlay(marker);
-		    GEvent.addListener(marker, 'dragend', function() {
-			var pt = marker.getPoint();
-			map.panTo(pt);
-			document.getElementById('latID').value = pt.lat().toFixed(7);
-			document.getElementById('lngID').value = pt.lng().toFixed(7);
+$(document).ready(function() {
 
-			document.getElementById('latID_2').value = center.lat().toFixed(7);
-       			document.getElementById('lngID_2').value = center.lng().toFixed(7);
-		    });
-        
-        	    GEvent.addListener(map, 'moveend', function() {
-			map.clearOverlays();
-			var center = map.getCenter();
-			var marker = new GMarker(center, {draggable: true});
-			map.addOverlay(marker);
-			document.getElementById('latID').value = center.lat().toFixed(7);
-			document.getElementById('lngID').value = center.lng().toFixed(7);
-			
-			document.getElementById('latID_2').value = center.lat().toFixed(7);
-       			document.getElementById('lngID_2').value = center.lng().toFixed(7);
+    initialize();
 
-			GEvent.addListener(marker, 'dragend', function() {
-			    var pt = marker.getPoint();
-			    map.panTo(pt);
-			    document.getElementById('latID').value = pt.lat().toFixed(7);
-			    document.getElementById('lngID').value = pt.lng().toFixed(7);
+    $(function() {
+	$("#newTag").autocomplete({
+	    //This bit uses the geocoder to fetch address values
+	    source: function(request, response) {
+		geocoder.geocode( {'newTag': request.term }, function(results, status) {
+		    response($.map(results, function(item) {
+			return {
+			    label:  item.formatted_address,
+			    value: item.formatted_address,
+			    latitude: item.geometry.location.lat(),
+			    longitude: item.geometry.location.lng()
+			}
+		    }));
+		})
+	    },
+	    //This bit is executed upon selection of an address
+	    select: function(event, ui) {
+		$("#latID").val(ui.item.latitude);
+		$("#lngID").val(ui.item.longitude);
+		var location = new google.maps.LatLng(ui.item.latitude, ui.item.longitude);
+		marker.setPosition(location);
+		map.setCenter(location);
+	    }
+	});
+    });
 
-			    document.getElementById('latID_2').value = center.lat().toFixed(7);
-       			    document.getElementById('lngID_2').value = center.lng().toFixed(7);
-			});
-		    });
+    //Add listener to marker for reverse geocoding
+    google.maps.event.addListener(marker, 'drag', function() {
+	geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
+	    if (status == google.maps.GeocoderStatus.OK) {
+		if (results[0]) {
+		    $('#newTag').val(results[0].formatted_address);
+		    $('#latID').val(marker.getPosition().lat());
+		    $('#lngID').val(marker.getPosition().lng());
 		}
-            }
-        );
-    }
-}
+	    }
+	});
+    });
+
+});
 
 function checkValidity(buttonName, listName) {
     var button = document.getElementById(buttonName)
@@ -116,5 +84,3 @@ function checkValidity(buttonName, listName) {
     }
 
 }
-
-addLoadEvent(loadMaps("map_search", "mapLoader"));

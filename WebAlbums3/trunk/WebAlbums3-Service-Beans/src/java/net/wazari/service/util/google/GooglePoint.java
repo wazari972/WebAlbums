@@ -7,8 +7,6 @@ public class GooglePoint extends GoogleMap {
   private static int current = 0 ;
 
   private List<Point> points = new ArrayList<Point>();
-  private String id = "" ;
-  private boolean displayInfo = true ;
   private String name ;
   
   static public class Point {
@@ -49,55 +47,45 @@ public class GooglePoint extends GoogleMap {
     } catch (RuntimeException e) {}
   }
 
-  public void displayInfo(boolean info) {
-    this.displayInfo = info ;
-  }
-
   public String getInitFunction() {
-    return "function loadMap() {\n"+
-      "  if (GBrowserIsCompatible()) {\n"+
+    return "function initialize() {\n"+
       getInitCode()+"\n"+
-      "  }\n"+
       "}\n" ;
   }
   
   public String getInitCode() {
     if (points.isEmpty()) return "//point list is empty\n" ;
-    
-    StringBuilder str = new StringBuilder() ;
-    str.append("function createMarker"+id+"(latlng, message) {\n")
-       .append("   var marker = new GMarker(latlng);\n")
-       .append("   marker.value = 1;\n");
-    if (displayInfo) {
-      str.append("   GEvent.addListener(marker,'click', function() {\n")
-         .append("           map"+id+".openInfoWindowHtml(latlng, message);\n")
-         .append("       });\n");
-    }
-    str.append("   return marker;\n")
-       .append("}\n");
-    
-    str.append("var map"+id+" ")
-       .append("= new GMap2(document.getElementById('"+getMapName()+"'));\n")
-       .append("     \n")
-       .append("     var bounds"+id+" = new GLatLngBounds ();\n");
+
+    StringBuilder str = new StringBuilder(150) ;
+
+    str.append("var imageBounds = new google.maps.LatLngBounds() ;\n") ;
     for (Point p : points) {
-      str.append("     var "+p.varName+id+" "+
-		 "= new GLatLng("+p.lat+", "+p.lng+");\n");
-      str.append("     bounds"+id+".extend("+p.varName+id+");\n");
+      str.append("var "+p.varName+" = new google.maps.LatLng("+p.lat+", "+p.lng+");\n");
+      str.append("imageBounds.extends("+p.varName+") ;\n");
     }
-    str.append("map"+id+".setCenter(bounds"+id+".getCenter() , 13);\n")
-       .append("var zoomLevel"+id+" = map"+id+".getBoundsZoomLevel(bounds"+id+");\n")
-       .append("map"+id+".setZoom(zoomLevel"+id+");\n")
-       .append("\n");
+    
+    str.append("var optionsCarte = {\n");
+    str.append("    zoom: 13,\n");
+    str.append("    center: imageBounds.getCenter(),\n");
+    str.append("    mapTypeId: google.maps.MapTypeId.ROADMAP\n");
+    str.append("};\n");
+    
+    str.append("var maCarte = new google.maps.Map(document.getElementById("+getMapName()+"), optionsCarte);\n");
+    
+    for (Point p : points) {
+      str.append("var "+p.varName+"IW = new google.maps.InfoWindow({\n");
+      str.append("    content: \""+p.msg+"\"\n");
+      str.append("});\n");
+
+      str.append("var "+p.varName+"OM = {\n");
+      str.append("    position: "+p.varName+",\n");
+      str.append("    map: maCarte\n");
+      str.append("}\n");
+      str.append("var "+p.varName+"M = new google.maps.Marker("+p.varName+"OM);\n");
       
-    for (Point p : points) {
-      str.append("     map"+id+".addOverlay(createMarker"+id+"("+
-		 p.varName+id+", \""+p.msg+"\"));\n");
-    }
-    
-    if (displayInfo) {
-      str.append("     map"+id+".addControl(new GSmallMapControl());\n")
-         .append("     map"+id+".addControl(new GMapTypeControl());\n");
+      str.append("google.maps.event.addListener("+p.varName+"M, 'click', function() {\n");
+      str.append("    infowindow.open(maCarte,"+p.varName+"M);\n");
+      str.append("});\n");
     }
         
     return str.toString() ;

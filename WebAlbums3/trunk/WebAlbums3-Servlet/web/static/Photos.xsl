@@ -68,7 +68,7 @@
 	    <tr><td>&#160;</td></tr>
 	    <tr>
 	      <td><input type='radio' name='turn' value='TAG' /></td>
-	      <td>Tagger avec</td>
+	      <td><label for="massTagList">Tagger avec</label></td>
 	      <td rowspan='3'>
 		<xsl:apply-templates select="tags">
 		  <xsl:with-param name="style">list</xsl:with-param>
@@ -79,7 +79,7 @@
 	    </tr>
 	    <tr>
 	      <td><input type='radio' name='turn' value='UNTAG' /></td>
-	      <td>Enlever le tag</td>
+	      <td><label for="massTagList">Enlever le tag</label></td>
 	    </tr>
 	    <xsl:if test="/root/tags">
 	      <tr>
@@ -89,7 +89,7 @@
 		  </xsl:attribute>
 		</input>
 		<td><input type='radio' name='turn' value='movtag' /></td>
-		<td>Déplacer depuis <b><xsl:value-of select="/root/tags/title/tags/*[1]"/></b> vers</td>
+		<td><label for="massTagList">Déplacer depuis </label><b><xsl:value-of select="/root/tags/title/tags/*[1]"/></b> vers</td>
 	      </tr>
 	    </xsl:if>
 	    <tr><td>&#160;</td></tr>

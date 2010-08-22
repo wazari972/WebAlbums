@@ -191,7 +191,6 @@ public class DispatcherBean {
                     }
                 }
             }
-            
             output.validate();
         } catch (WebAlbumsServiceException e) {
             log.warn( "WebAlbumsServiceException", e) ;

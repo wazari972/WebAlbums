@@ -12,6 +12,7 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
+  
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
@@ -22,22 +23,40 @@
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
+        <style type="text/css">          body {
+             <xsl:if test="count(/root/affichage/background) = 0">background: #62993B url(static/images/back_all.jpg?notempty) fixed no-repeat;</xsl:if>
+             <xsl:if test="count(/root/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>
+          }
+        </style>
+        <script src="static/scripts/tools.js" type="text/javascript" />
 	<link href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
-	
-	<link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
-	<script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
-	<script type="text/javascript">
-	  Shadowbox.init(); 
-	</script>
+	<script type="text/javascript" src="static/scripts/jquery/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/jquery-ui-1.8.1.custom.min.js"></script>
+
+        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+	<xsl:if test="count(/root/config) != 0">
+            <script type="text/javascript" src="static/scripts/Config.js"/>
+        </xsl:if>
+        
+        <xsl:if test="count(/root/choix) != 0">
+            <script src="Choix?special=map.js" type='text/javascript'></script>
+            <script src="static/scripts/Choix.js" type='text/javascript'></script>
+        </xsl:if>
+
+        <xsl:if test="count(/root/photo) != 0 || count(/root/tags) != 0">
+            <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
+            <script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
+            <script type="text/javascript">
+                Shadowbox.init();
+            </script>
+        </xsl:if>
+
       </head>
       <body>
-	<script src="static/scripts/tools.js" type="text/javascript" />
-	<xsl:apply-templates select="/root/choix/map"/>
-	<xsl:apply-templates select="/root/config/map"/>
-
 	<div id="header"> 
 	  <div id="logo">
-	    <h1>WebAlbums 4</h1>
+	    <h1>WebAlbums 3</h1>
 	    <h2>by Kevin POUGET</h2>
 	  </div>
 	  
@@ -46,7 +65,7 @@
 	      <li><a href="Index" title="Retour aux thèmes">Thème</a></li>
 	      <li><a href="Choix" title="Choix">Choix</a></li>
 	      <xsl:if test="count(/root/login/admin)!=0">
-		<li><a href="Config" title="Configuration">Config</a></li>
+		<li><a href="Config.html" rel="shadowbox;width=480;height=204" title="Configuration">Config</a></li>
 	      </xsl:if>
               <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
 	    </ul>	

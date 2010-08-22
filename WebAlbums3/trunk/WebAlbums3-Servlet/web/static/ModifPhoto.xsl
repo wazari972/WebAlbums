@@ -33,8 +33,8 @@
 	      <xsl:call-template name="get_validate_addr" />
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
-	    Description:
-	    <textarea name='desc' rows='5' cols='60'>
+	    <label for="desc">Description:</label>
+	    <textarea id="desc" name='desc' rows='5' cols='60'>
 	      <xsl:value-of select="description" />
 	    </textarea>
 	    <br/>
@@ -53,27 +53,28 @@
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
 	    </xsl:apply-templates>
-	    <br/>	    
-	    "Oui je veux supprimer cette photo" (définitif !)
-	    <input autocomplete='off' type='text' name='suppr' size='33' maxlength='33'/>
+	    <br/>
+            <label for="sure">"Oui je veux supprimer cette photo" (définitif !)</label>
+	    <input id="sure" autocomplete='off' type='text' name='suppr' size='33' maxlength='33'/>
 	    <br/>
 	    <br/>
-	    Representer l'album ? <input type='checkbox' name='represent' value='y' /><br/>
-	    Representer le tag ? 
+	    <label for="represent"></label>Representer l'album ? <input type='checkbox' id="represent" name='represent' value='y' /><br/>
+	    <label for="tagPhoto">Representer le tag ?</label> 
 	    <xsl:apply-templates select="tags">
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	      <xsl:with-param name="box">LIST</xsl:with-param>
 	      <xsl:with-param name="style">list</xsl:with-param>
 	      <xsl:with-param name="name">tagPhoto</xsl:with-param>
+              <xsl:with-param name="id">tagPhoto</xsl:with-param>
 	    </xsl:apply-templates>
 	    <br/>
-            Theme background ? <input type='checkbox' name='themeBackground' value='y' />
+            <label for="bg">Theme background ? </label><input id="bg" type='checkbox' name='themeBackground' value='y' />
             <input type="button" value="Try it!">
             <xsl:attribute name="ONCLICK">
 	      updateBackground(<xsl:value-of select="id" />) ;
 	    </xsl:attribute>
             </input><br />
-	    Droits de visibilité : <xsl:apply-templates select="userList"/>
+	    <label>Droits de visibilité : </label><xsl:apply-templates select="userList"/>
 	    <br/>
 	    <br/>
 

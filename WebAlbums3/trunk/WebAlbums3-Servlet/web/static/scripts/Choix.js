@@ -2,4 +2,7 @@ addLoadEvent(loadYears) ;
 addLoadEvent(loadAlbums) ;
 addLoadEvent(loadPersons) ;
 addLoadEvent(loadPlaces) ;
-addLoadEvent(loadMaps("mapChoix", "mapLoader")) ;
+
+$(document).ready(function() {
+    initialize();
+});

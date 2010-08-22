@@ -25,7 +25,7 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
     name = "Config",
-    urlPatterns = {"/Config"}
+    urlPatterns = {"/Config.html"}
 )
 @Stateless
 public class Config extends HttpServlet {
