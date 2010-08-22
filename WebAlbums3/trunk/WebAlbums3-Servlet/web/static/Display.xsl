@@ -23,13 +23,15 @@
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
+        <link  href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
+
         <style type="text/css">          body {
              <xsl:if test="count(/root/affichage/background) = 0">background: #62993B url(static/images/back_all.jpg?notempty) fixed no-repeat;</xsl:if>
              <xsl:if test="count(/root/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>
           }
         </style>
+
         <script src="static/scripts/tools.js" type="text/javascript" />
-	<link href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
 	<script type="text/javascript" src="static/scripts/jquery/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="static/scripts/jquery/jquery-ui-1.8.1.custom.min.js"></script>
 
@@ -44,11 +46,15 @@
             <script src="static/scripts/Choix.js" type='text/javascript'></script>
         </xsl:if>
 
-        <xsl:if test="count(/root/photo) != 0 || count(/root/tags) != 0">
+        <xsl:if test="count(/root/photo) != 0 or count(/root/tags) != 0">
             <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
             <script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
             <script type="text/javascript">
-                Shadowbox.init();
+                Shadowbox.init({
+                    handleUnsupported:  "remove",
+                    modal:     true
+                });
+
             </script>
         </xsl:if>
 
@@ -65,7 +71,7 @@
 	      <li><a href="Index" title="Retour aux thèmes">Thème</a></li>
 	      <li><a href="Choix" title="Choix">Choix</a></li>
 	      <xsl:if test="count(/root/login/admin)!=0">
-		<li><a href="Config.html" rel="shadowbox;width=480;height=204" title="Configuration">Config</a></li>
+		<li><a href="Config.html" rel="shadowbox" title="Configuration">Config</a></li>
 	      </xsl:if>
               <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
 	    </ul>	
@@ -115,7 +121,10 @@
 		<xsl:apply-templates select="/root/*/page"/>
 		<xsl:call-template name="print_return_link" />
 	      </div>
-	      <xsl:apply-templates select="/root/stats"/>
+	      <div id="footer">
+                 <p>Page générée en <xsl:value-of select="time"/>s. Copyright 2009.</p>
+                 <p>Design by <a href="http://www.metamorphozis.com/" title="Flash Templates">Flash Templates</a></p>
+              </div>
 	    </div>
 	  </div>
 	</div>
