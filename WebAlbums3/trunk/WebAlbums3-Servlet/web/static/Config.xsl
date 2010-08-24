@@ -10,8 +10,8 @@
   %xhtml-special;
   %xhtml-symbol;
   ]>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="config">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:template match="">
     <div class="item">
       <a name="import"/>
       <div class="date">
@@ -21,7 +21,7 @@
 	<h1>Imports d'albums</h1>
 	<div class="body">
 	  <xsl:apply-templates select="import"/>
-	  <form action='Config#import' method='POST' id="formImport">
+	  <form action='#import' method='POST' id="formImport">
 	    <input type='hidden' name='action' value='IMPORT'/>
 	    <input type='text' name='importTheme' size='20' maxlenght='20'>
 	      <xsl:attribute name="value"><xsl:value-of select="/root/login/theme"/>
@@ -42,7 +42,7 @@
       <div class="content">
 	<h1>Ajout d'un tag</h1>
 	<div class="body">
-	  <form action='Config#newTag' method='POST' name='newTag' >
+	  <form action='#newTag' method='POST' name='newTag' >
 	    <xsl:apply-templates select="newTag">
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	    </xsl:apply-templates>
@@ -99,7 +99,7 @@
 	<h1>Modification d'une localisation</h1>
 	<div class="body">
 	  <xsl:apply-templates select="modGeo"/>
-	  <form action='Config#modGeo' method='POST'>
+	  <form action='#modGeo' method='POST'>
 	    <input type='hidden' name='action' value='MODGEO'/>
 	    <table>
 	      <tr>
@@ -141,7 +141,7 @@
       <div class="content">
 	<h1>Renommage d'un tag</h1>
 	<div class="body">
-	  <form action='Config#modTag' method='POST' >
+	  <form action='#modTag' method='POST' >
 	    <xsl:apply-templates select="modTag"/>
 	    <input type='hidden' name='action' value='MODTAG'/>
 	    <table>
@@ -179,7 +179,7 @@
 	<h1>Changement de visibilité d'un tag</h1>
 	<div class="body">
 	  <xsl:apply-templates select="modVis"/>
-	  <form action='Config#modVis' method='POST'>
+	  <form action='#modVis' method='POST'>
 	    <input type='hidden' name='action' value='MODVIS'/>
 	    <table>
 	      <tr>
@@ -217,7 +217,7 @@
 	<h1>Suppression d'un tag</h1>
 	<div class="body">
 	  <xsl:apply-templates select="delTag"/>
-	  <form action='Config#delTag' method='POST'>
+	  <form action='#delTag' method='POST'>
 	    <input type='hidden' name='action' value='DELTAG'/>
 	    <label for="lstDelTag">Tag : </label>
 	    <xsl:apply-templates select="tags">
@@ -246,7 +246,7 @@
 	<div class="body">
             <xsl:apply-templates select="delTheme"/>
             <center>
-              <form action='Config#delTheme' method='POST'>
+              <form action='#delTheme' method='POST'>
                 <input type='hidden' name='action' value='DELTHEME'/>
                 <input onClick='javascript:pleaseConfirm("formImport")' type='button' value='Go for it !'/>
               </form>

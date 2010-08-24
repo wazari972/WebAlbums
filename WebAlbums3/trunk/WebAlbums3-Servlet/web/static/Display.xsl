@@ -10,7 +10,7 @@
   %xhtml-special;
   %xhtml-symbol;
   ]>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   
   <xsl:template match="/">
@@ -122,7 +122,7 @@
 		<xsl:call-template name="print_return_link" />
 	      </div>
 	      <div id="footer">
-                 <p>Page générée en <xsl:value-of select="time"/>s. Copyright 2009.</p>
+                 <p>Page générée en <xsl:value-of select="/root/time"/>s. Copyright 2009.</p>
                  <p>Design by <a href="http://www.metamorphozis.com/" title="Flash Templates">Flash Templates</a></p>
               </div>
 	    </div>
