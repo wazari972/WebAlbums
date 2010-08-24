@@ -211,7 +211,7 @@ public class AlbumBean implements AlbumLocal {
         }
         
 
-        for (Integer currentYear = firstYear; currentYear <= lastYear; currentYear++) {
+        for (Integer currentYear = lastYear; currentYear <= firstYear; currentYear--) {
             XmlBuilder year = new XmlBuilder("year").addAttribut("year", currentYear);
             int i = 0;
             SubsetOf<Album> albums = albumDAO.queryRandomFromYear(vSession, Restriction.ALLOWED_AND_THEME, new Bornes(TOP), currentYear.toString()) ;
