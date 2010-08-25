@@ -4,6 +4,7 @@ package net.wazari.service.engine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
@@ -185,12 +186,43 @@ public class AlbumBean implements AlbumLocal {
                 album.add("photo", enrAlbum.getPicture());
             }
             top5.add(album);
+            i++ ;
         }
         stopWatch.stop("Service.treatTOP") ;
         return top5.validate();
     }
+
+    @Override
+    public XmlBuilder treatSELECT(ViewSessionAlbum vSession) {
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
+        XmlBuilder select = new XmlBuilder("select");
+
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, TopFirst.ALL, null) ;
+        int i = 0 ;
+        for (Album enrAlbum : albums.subset) {
+            XmlBuilder album = new XmlBuilder("album");
+            album.add("id", enrAlbum.getId());
+            album.add("count", i);
+            album.add("nom", enrAlbum.getNom());
+            album.add("date", enrAlbum.getDate());
+            try {
+                album.add("time", new SimpleDateFormat("yyyy-MM-dd").parse(enrAlbum.getDate()).getTime());
+            } catch (ParseException ex) {
+                album.add("time", new Date().getTime()) ;
+            }
+
+            if (enrAlbum.getPicture() != null) {
+                album.add("photo", enrAlbum.getPicture());
+            }
+            select.add(album);
+            i++ ;
+        }
+
+        stopWatch.stop("Service.treatSELECT") ;
+        return select.validate();
+    }
+
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy") ;
-    
     @Override
     public XmlBuilder treatYEARS(ViewSessionAlbum vSession) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;

@@ -39,4 +39,7 @@ public interface AlbumLocal {
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlBuilder treatYEARS(ViewSessionAlbum vSession);
+
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlBuilder treatSELECT(ViewSessionAlbum vSession);
 }

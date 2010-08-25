@@ -10,7 +10,7 @@
   %xhtml-special;
   %xhtml-symbol;
   ]>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="/root/choix">
     <div class="item">
       <div class="date">
@@ -21,7 +21,7 @@
 	<div class="body">
 	  <div id="albums" style="overflow:auto;">
 	    <center>
-	      <img src="static/images/loading.gif"/>
+	      <!--<img src="static/images/loading.gif"/>-->
 	    </center>
 	  </div>
 	</div>
@@ -37,7 +37,7 @@
 	<div class="body">
 	  <div id="persons" style="overflow:auto">
 	    <center>
-	      <img src="static/images/loading.gif"/>
+	      <!--<img src="static/images/loading.gif"/>-->
 	    </center>
 	  </div>
 	</div>
@@ -53,7 +53,7 @@
 	<div class="body">
 	  <div id="places" style="overflow:auto">
 	    <center>
-	      <img src="static/images/loading.gif"/>
+	      <!--<img src="static/images/loading.gif"/>-->
 	    </center>
 	  </div>
 	</div>
@@ -68,12 +68,12 @@
 	<form action="Tags">
 	  <h1>Choix par Tags <input type="submit" value="OK"/></h1>
 	  <div class="body">
-	    <center>
+	    <!--<center>
 	      <xsl:apply-templates select="tags">
 		<xsl:with-param name="mode">TAG_USED</xsl:with-param>
 		<xsl:with-param name="style">multiple</xsl:with-param>
 	      </xsl:apply-templates>
-	    </center>
+	    </center>-->
 	  </div>
 	</form>
       </div>
@@ -86,9 +86,9 @@
 	<h1>Géolocalisations</h1>
 	<div class="body">
 	  <center>
-	    <div style="width: 400px; height: 400px" id="mapChoix">
-             <!--<img src="static/images/loading.gif"/>-->
-	    </div>
+	    <!--<div style="width: 400px; height: 400px" id="mapChoix">
+             <img src="static/images/loading.gif"/>
+	    </div>-->
 	  </center>
 	</div>
       </div>
@@ -103,6 +103,22 @@
 	<div class="body">
 	  <div id="years" style="overflow:auto">
 	    <center>
+	      <!--<img src="static/images/loading.gif"/>-->
+	    </center>
+	  </div>
+	</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
+      <div class="content">
+	<h1>Selection<input id="selectLoader" type="button" value="load selection" onclick="loadSelect();"/></h1>
+	<div class="body">
+	  <div id="select" style="overflow:none">
+	    <center>
 	      <img src="static/images/loading.gif"/>
 	    </center>
 	  </div>
@@ -111,5 +127,4 @@
     </div>
 
   </xsl:template>
-
 </xsl:stylesheet>

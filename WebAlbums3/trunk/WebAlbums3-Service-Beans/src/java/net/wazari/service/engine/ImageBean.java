@@ -35,6 +35,8 @@ import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.util.system.SystemTools;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
@@ -136,6 +138,8 @@ public class ImageBean implements ImageLocal {
                 filepath = photoUtil.getMiniPath(vSession, enrPhoto);
             }
             log.warn("Open image {}", filepath);
+
+            //redirect if the image can be accessed from HTTP
             if (vSession.getConfiguration().isPathURL()) {
                 vSession.redirect(filepath) ;
                 stopWatch.stop(stopWatch.getTag()+".redirect") ;
@@ -177,8 +181,12 @@ public class ImageBean implements ImageLocal {
         try {
             InputStream in = null;
 
-
-            String safeFilepath = StringUtil.escapeURL(filepath);
+            String safeFilepath = filepath ;
+            log.warn(safeFilepath) ;
+            safeFilepath = StringEscapeUtils.unescapeHtml(safeFilepath);
+            log.warn(safeFilepath) ;
+            safeFilepath = StringUtil.escapeURL(filepath);
+            log.warn(safeFilepath) ;
             URLConnection conn = new URL(safeFilepath).openConnection();
             in = conn.getInputStream();
 

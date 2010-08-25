@@ -22,22 +22,6 @@ function loadCloud() {
     loadExernals('cloudLoader', 'Tags?special=CLOUD', 'cloud') ;
 }
 
-function loadPersons() {
-    loadExernals('personsLoader', 'Tags?special=PERSONS', 'persons') ;
-}
-
-function loadPlaces() {
-    loadExernals('placesLoader', 'Tags?special=PLACES', 'places') ;
-}
-
-function loadAlbums() {
-    loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
-}
-
-function loadYears() {
-    loadExernals('yearsLoader', 'Albums?special=YEARS', 'years') ;
-}
-
 function callURL(url) {
     xhr_object_XSL = getNewHTTPObject();
 
@@ -151,4 +135,4 @@ function updateBackground(id) {
     document.getElementById("body").style.backgroundImage = "url(Images?id="+id+"&mode=SHRINK&width=1280)"
 }
 
-addLoadEvent(loadCloud())
+//addLoadEvent(loadCloud())

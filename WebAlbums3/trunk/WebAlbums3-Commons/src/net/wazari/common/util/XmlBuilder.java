@@ -14,7 +14,7 @@ public class XmlBuilder {
     public static final Type TEXT = Type.TEXT;
     public static final Type COMMENT = Type.COMMENT;
     private Type type = Type.NORMAL;
-    private StringBuilder text = new StringBuilder();
+    private StringBuilder text = new StringBuilder(500);
     private List<String> header = new LinkedList<String>();
     private List<XmlBuilder> content = new LinkedList<XmlBuilder>();
     private List<XmlBuilder> contentTemp = new LinkedList<XmlBuilder>();
@@ -183,50 +183,50 @@ public class XmlBuilder {
             this.content.add(0, this.exception);
         }
 
-        String str = "";
+        StringBuilder str = new StringBuilder(500);
         for (String head : header) {
-            str += space + head + "\n";
+            str.append(space).append(head).append("\n");
         }
 
         if (name != null) {
-            str += space + "<" + name;
+            str.append(space).append("<").append(name);
             for (String key : attrib.keySet()) {
                 String attribute = attrib.get(key);
                 if (attribute == null || "".equals(attribute)) {
                     continue;
                 }
-                str += " " + key + "=\"" + attrib.get(key) + "\"";
+                str.append(" ").append(key).append("=\"").append(attrib.get(key)).append("\"");
             }
 
             if (value == null && content.isEmpty()) {
-                str += "/>\n";
-                return str;
+                str.append("/>\n");
+                return str.toString();
             } else {
-                str += ">";
+                str.append(">");
             }
 
             if (value != null) {
-                str += StringUtil.escapeXML(value);
+                str.append(StringUtil.escapeXML(value));
             }
         }
 
         if (!content.isEmpty()) {
             if (name != null) {
-                str += "\n";
+                str.append("\n");
             }
 
             for (XmlBuilder balise : content) {
-                str += balise.toString(indent + 1);
+                str.append(balise.toString(indent + 1));
             }
         }
 
         if (name != null) {
             if (!content.isEmpty()) {
-                str += space;
+                str.append(space);
             }
-            str += "</" + name + ">\n";
+            str.append("</").append(name).append(">\n");
         }
-        return str;
+        return str.toString();
     }
 
     private String indent(int nb) {
@@ -234,10 +234,10 @@ public class XmlBuilder {
             return "";
         }
 
-        String indentation = "";
+        StringBuilder indentation = new StringBuilder(nb);
         for (int i = 0; i < nb; i++) {
-            indentation += "  ";
+            indentation.append("  ");
         }
-        return indentation;
+        return indentation.toString();
     }
 }

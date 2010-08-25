@@ -10,7 +10,7 @@
   %xhtml-special;
   %xhtml-symbol;
   ]>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   
   <xsl:template match="/">
@@ -32,32 +32,29 @@
         </style>
 
         <script src="static/scripts/tools.js" type="text/javascript" />
-	<script type="text/javascript" src="static/scripts/jquery/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="static/scripts/jquery/jquery-ui-1.8.1.custom.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>
 
-        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-
+        <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
+        <script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
+        <script type="text/javascript">
+            Shadowbox.init({
+                handleUnsupported:  "remove",
+                modal:     true
+            });
+        </script>
+        
 	<xsl:if test="count(/root/config) != 0">
+            <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
             <script type="text/javascript" src="static/scripts/Config.js"/>
         </xsl:if>
         
         <xsl:if test="count(/root/choix) != 0">
-            <script src="Choix?special=map.js" type='text/javascript'></script>
+            <script type="text/javascript" srcd="http://maps.google.com/maps/api/js?sensor=false"></script>
+            <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" media="screen"/>
+	    <script src="Choix?special=map.js" type='text/javascript'></script>
             <script src="static/scripts/Choix.js" type='text/javascript'></script>
         </xsl:if>
-
-        <xsl:if test="count(/root/photo) != 0 or count(/root/tags) != 0">
-            <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
-            <script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
-            <script type="text/javascript">
-                Shadowbox.init({
-                    handleUnsupported:  "remove",
-                    modal:     true
-                });
-
-            </script>
-        </xsl:if>
-
       </head>
       <body>
 	<div id="header"> 
@@ -100,7 +97,7 @@
 		</ul>
 		<h3>Nuage de tags <input id="cloudLoader" type="button" value="load cloud" onclick="loadCloud();"/></h3>
 		<div id="cloud">
-		  <img src="static/images/loading.gif"/>
+		  <!--<img src="static/images/loading.gif"/>-->
 		</div>
 	      </div>
 	      <div id="left">

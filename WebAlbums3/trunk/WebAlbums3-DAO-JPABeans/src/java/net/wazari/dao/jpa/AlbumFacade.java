@@ -69,7 +69,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
         if (topFirst == TopFirst.TOP) {
             q.setFirstResult(0);
             q.setMaxResults(bornes.getNbElement());
-        } else {
+        } else if (topFirst == TopFirst.FIRST) {
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getAlbumSize());
         }

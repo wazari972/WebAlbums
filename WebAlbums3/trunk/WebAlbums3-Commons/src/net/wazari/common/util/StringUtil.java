@@ -112,6 +112,10 @@ public class StringUtil {
         return sb.toString();
     }
 
+    public static String unescapeHtml(String s) {
+        return StringEscapeUtils.unescapeHtml(s);
+    }
+
     public static String escapeSH(String s) {
         if (s == null) {
             return null;

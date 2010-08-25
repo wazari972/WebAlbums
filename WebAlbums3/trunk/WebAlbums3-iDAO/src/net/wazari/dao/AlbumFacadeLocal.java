@@ -23,7 +23,7 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 public interface AlbumFacadeLocal {
 
     enum TopFirst {
-        TOP, FIRST
+        TOP, FIRST, ALL
     }
 
     enum Restriction {

@@ -10,7 +10,7 @@
   %xhtml-special;
   %xhtml-symbol;
   ]>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:template match="/">
     <xsl:apply-templates select="/root/maint" />
@@ -31,6 +31,42 @@
     <center>
       <xsl:apply-templates select="tag"/>
     </center>
+  </xsl:template>
+
+  <xsl:template match="root/albums/select">
+    <p>
+        <label for="fromDate">Albums datés entre le </label>
+        <span id="fromDate" style="font-weight:bold;" />
+        <label for="toDate"> et le </label>
+        <span id="toDate" style="font-weight:bold;" />
+    </p>
+    <br/>
+    <div id="slider-range"></div>
+    <br/>
+    <script>
+     $("#slider-range").slider(sliderOption);
+     $("#fromDate").text(printDate(<xsl:value-of select="album[last()]/time"/>));
+     $("#toDate").text(printDate(<xsl:value-of select="album/time"/>));
+     $("#slider-range").slider( "option", "max", <xsl:value-of select="album/time"/>+$( "#slider-range" ).slider( "option", "step" ));
+     $("#slider-range").slider( "option", "min", <xsl:value-of select="album[last()]/time"/>);
+
+     $("#slider-range").slider( "option", "values", [<xsl:value-of select="album[last()]/time"/>, <xsl:value-of select="album/time"/>]);
+    </script>
+    <div style="overflow: auto; height: 400px">
+        <ul>
+        <xsl:for-each select="album">
+            <xsl:sort select="count(ancestor::*)" order="descending"/>
+            <li class="selectAlbum">
+                <xsl:attribute name="rel"><xsl:value-of select="time"/></xsl:attribute>
+                <label><xsl:value-of select="date"/></label> &#160;
+                <a>
+                    <xsl:attribute name="href">Photos?album=<xsl:value-of select="id"/>&amp;albmCount=<xsl:value-of select="count"/></xsl:attribute>
+                    <xsl:value-of select="nom"/>
+                </a>
+            </li>
+        </xsl:for-each>
+        </ul>
+    </div>
   </xsl:template>
 
   <xsl:template match="cloud/tag">

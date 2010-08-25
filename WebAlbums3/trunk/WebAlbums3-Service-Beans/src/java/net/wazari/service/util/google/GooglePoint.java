@@ -48,7 +48,7 @@ public class GooglePoint extends GoogleMap {
   }
 
   public String getInitFunction() {
-    return "function initialize() {\n"+
+    return "function loadGoogleMap() {\n"+
       getInitCode()+"\n"+
       "}\n" ;
   }
@@ -61,17 +61,18 @@ public class GooglePoint extends GoogleMap {
     str.append("var imageBounds = new google.maps.LatLngBounds() ;\n") ;
     for (Point p : points) {
       str.append("var "+p.varName+" = new google.maps.LatLng("+p.lat+", "+p.lng+");\n");
-      str.append("imageBounds.extends("+p.varName+") ;\n");
+      str.append("imageBounds.extend("+p.varName+") ;\n");
     }
     
-    str.append("var optionsCarte = {\n");
+    str.append("\nvar optionsCarte = {\n");
     str.append("    zoom: 13,\n");
     str.append("    center: imageBounds.getCenter(),\n");
     str.append("    mapTypeId: google.maps.MapTypeId.ROADMAP\n");
-    str.append("};\n");
+    str.append("};\n\n");
     
-    str.append("var maCarte = new google.maps.Map(document.getElementById("+getMapName()+"), optionsCarte);\n");
-    
+    str.append("var maCarte = new google.maps.Map(document.getElementById('"+getMapName()+"'), optionsCarte);\n");
+    str.append("maCarte.fitBounds( imageBounds );\n\n") ;
+
     for (Point p : points) {
       str.append("var "+p.varName+"IW = new google.maps.InfoWindow({\n");
       str.append("    content: \""+p.msg+"\"\n");
@@ -84,8 +85,8 @@ public class GooglePoint extends GoogleMap {
       str.append("var "+p.varName+"M = new google.maps.Marker("+p.varName+"OM);\n");
       
       str.append("google.maps.event.addListener("+p.varName+"M, 'click', function() {\n");
-      str.append("    infowindow.open(maCarte,"+p.varName+"M);\n");
-      str.append("});\n");
+      str.append("    "+p.varName+"IW.open(maCarte,"+p.varName+"M);\n");
+      str.append("});\n\n");
     }
         
     return str.toString() ;

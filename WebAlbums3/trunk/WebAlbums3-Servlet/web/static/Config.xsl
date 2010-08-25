@@ -10,8 +10,8 @@
   %xhtml-special;
   %xhtml-symbol;
   ]>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:template match="config">
     <div class="item">
       <a name="import"/>
       <div class="date">

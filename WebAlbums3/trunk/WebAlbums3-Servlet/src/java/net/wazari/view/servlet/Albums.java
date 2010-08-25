@@ -44,6 +44,8 @@ public class Albums extends HttpServlet{
             return output.add(albumService.treatTOP(vSession));
         } else  if (special == Special.YEARS) {
             return output.add(albumService.treatYEARS(vSession));
+        } else  if (special == Special.SELECT) {
+            return output.add(albumService.treatSELECT(vSession));
         }
 
         Action action = vSession.getAction();

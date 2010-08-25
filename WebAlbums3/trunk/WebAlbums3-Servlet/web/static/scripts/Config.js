@@ -6,9 +6,8 @@
 var geocoder;
 var map;
 var marker;
-
-function initialize(){
-    //MAP
+function loadGoogleMap() {
+        //MAP
     var latlng = new google.maps.LatLng(41.659,-4.714);
     var options = {
 	zoom: 16,
@@ -24,13 +23,7 @@ function initialize(){
     marker = new google.maps.Marker({
 	map: map,
 	draggable: true
-  });
-
-}
-
-$(document).ready(function() {
-
-    initialize();
+    });
 
     $(function() {
 	$("#newTag").autocomplete({
@@ -70,7 +63,10 @@ $(document).ready(function() {
 	    }
 	});
     });
+}
 
+$(document).ready(function() {
+    //loadGoogleMap() ;
 });
 
 function checkValidity(buttonName, listName) {
