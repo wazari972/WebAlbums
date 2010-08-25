@@ -130,7 +130,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
             .append(" GROUP BY p.id " )
             .append(WebAlbumsDAOBean.getOrder(order, "p.path"));
         
-
+            log.error(rq.toString()) ;
         Query q = em.createQuery(rq.toString())
                       .setHint("org.hibernate.cacheable", true)
                       .setHint("org.hibernate.readOnly", true);

@@ -66,31 +66,16 @@
       </div>
       <div class="content">
 	<form action="Tags">
-	  <h1>Choix par Tags <input type="submit" value="OK"/></h1>
+	  <h1>Choix par Tags</h1>
 	  <div class="body">
-	    <!--<center>
+	    <center>
 	      <xsl:apply-templates select="tags">
 		<xsl:with-param name="mode">TAG_USED</xsl:with-param>
 		<xsl:with-param name="style">multiple</xsl:with-param>
 	      </xsl:apply-templates>
-	    </center>-->
+	    </center>
 	  </div>
 	</form>
-      </div>
-    </div>
-    <div class="item">
-      <div class="date">
-	<span></span>
-      </div>
-      <div class="content">
-	<h1>Géolocalisations</h1>
-	<div class="body">
-	  <center>
-	    <!--<div style="width: 400px; height: 400px" id="mapChoix">
-             <img src="static/images/loading.gif"/>
-	    </div>-->
-	  </center>
-	</div>
       </div>
     </div>
 
@@ -125,6 +110,20 @@
 	</div>
       </div>
     </div>
-
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
+      <div class="content">
+	<h1>Géolocalisations</h1>
+	<div class="body">
+	  <center>
+	    <div style="width: 400px; height: 400px" id="mapChoix">
+             <!--<img src="static/images/loading.gif"/>-->
+	    </div>
+	  </center>
+	</div>
+      </div>
+    </div>
   </xsl:template>
 </xsl:stylesheet>

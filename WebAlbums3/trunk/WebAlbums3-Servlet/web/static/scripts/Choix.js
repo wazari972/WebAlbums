@@ -18,11 +18,11 @@ function loadSelect() {
     loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
 }
 
-//addLoadEvent(loadYears) ;
-//addLoadEvent(loadAlbums) ;
-//addLoadEvent(loadPersons) ;
-//addLoadEvent(loadPlaces) ;
-//addLoadEvent(loadGoogleMap) ;
+addLoadEvent(loadYears) ;
+addLoadEvent(loadAlbums) ;
+addLoadEvent(loadPersons) ;
+addLoadEvent(loadPlaces) ;
+addLoadEvent(loadGoogleMap) ;
 addLoadEvent(loadSelect) ;
 
 function printDate(strDate) {

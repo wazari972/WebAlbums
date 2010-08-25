@@ -96,7 +96,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
           .append(" AND " )
           .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1 ") )
           .append(" AND a.date LIKE :date ")
-          .append(" ORDER BY RAND() ");
+          .append(WebAlbumsDAOBean.getOrder(ListOrder.RANDOM, null));
         Query q = em.createQuery(rq.toString())
                .setParameter("date", date+"%")
                .setFirstResult(0)

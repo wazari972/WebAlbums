@@ -27,7 +27,7 @@ public class WebAlbumsDAOBean {
     public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-public StringBuilder processListID(ServiceSession session, StringBuilder rq, boolean restrict) {
+    public StringBuilder processListID(ServiceSession session, StringBuilder rq, boolean restrict) {
         StringBuilder newRq = new StringBuilder(rq) ;
         if (restrict && ! session.isRootSession()) {
             newRq.append(" AND ").append(restrictToThemeAllowed(session, "a"));
@@ -112,7 +112,6 @@ public StringBuilder processListID(ServiceSession session, StringBuilder rq, boo
             .append(field)
             .append(" DESC") ;
             case RANDOM: return rq
-            .append(field)
             .append(" RAND()") ;
             case DEFAULT:
             default: return new StringBuilder("") ;

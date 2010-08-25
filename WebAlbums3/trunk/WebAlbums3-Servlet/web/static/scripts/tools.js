@@ -135,4 +135,4 @@ function updateBackground(id) {
     document.getElementById("body").style.backgroundImage = "url(Images?id="+id+"&mode=SHRINK&width=1280)"
 }
 
-//addLoadEvent(loadCloud())
+addLoadEvent(loadCloud())

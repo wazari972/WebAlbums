@@ -75,6 +75,11 @@
       <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
       <xsl:attribute name="title"><xsl:value-of select="."/> : <xsl:value-of select="@nb"/></xsl:attribute>
       <xsl:value-of select="." />
+    </a>
+    <a>
+      <xsl:attribute name="href">Images?id=<xsl:value-of select="@id"/>&amp;mode=RANDOM_TAG</xsl:attribute>
+      <xsl:attribute name="title">Random imh</xsl:attribute>
+      &#9827;
     </a><br/>
   </xsl:template>
 
