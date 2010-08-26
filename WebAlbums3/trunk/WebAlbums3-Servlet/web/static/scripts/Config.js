@@ -3,80 +3,75 @@
 // http://code.google.com/apis/maps/documentation/javascript/services.html#Geocoding
 // http://jqueryui.com/demos/autocomplete/#remote-with-cache
 
+var mapstraction;
 var geocoder;
-var map;
-var marker;
-function loadGoogleMap() {
-        //MAP
-    var latlng = new google.maps.LatLng(41.659,-4.714);
-    var options = {
-	zoom: 16,
-	center: latlng,
-	mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
+var address;
 
-    map = new google.maps.Map(document.getElementById("map_search"), options);
+function loadMap() {
+    mapstraction = new Mapstraction('map_search','openlayers');
+    mapstraction.setCenterAndZoom(new LatLonPoint(0,0), 1);
 
-    //GEOCODER
-    geocoder = new google.maps.Geocoder();
+    // initialise the map with your choice of API
+    geocoder = new MapstractionGeocoder(geocode_return, 'google');
 
-    marker = new google.maps.Marker({
-	map: map,
-	draggable: true
-    });
+    address = new Object();
+    address.street = "1600 Pennsylvania Ave.";
+    address.locality = "Washington";
+    address.region = "DC";
+    address.country = "US";
 
-    $(function() {
-	$("#newTag").autocomplete({
-	    //This bit uses the geocoder to fetch address values
-	    source: function(request, response) {
-		geocoder.geocode( {'newTag': request.term }, function(results, status) {
-		    response($.map(results, function(item) {
-			return {
-			    label:  item.formatted_address,
-			    value: item.formatted_address,
-			    latitude: item.geometry.location.lat(),
-			    longitude: item.geometry.location.lng()
-			}
-		    }));
-		})
-	    },
-	    //This bit is executed upon selection of an address
-	    select: function(event, ui) {
-		$("#latID").val(ui.item.latitude);
-		$("#lngID").val(ui.item.longitude);
-		var location = new google.maps.LatLng(ui.item.latitude, ui.item.longitude);
-		marker.setPosition(location);
-		map.setCenter(location);
-	    }
-	});
-    });
-
-    //Add listener to marker for reverse geocoding
-    google.maps.event.addListener(marker, 'drag', function() {
-	geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
-	    if (status == google.maps.GeocoderStatus.OK) {
-		if (results[0]) {
-		    $('#newTag').val(results[0].formatted_address);
-		    $('#latID').val(marker.getPosition().lat());
-		    $('#lngID').val(marker.getPosition().lng());
-		}
-	    }
-	});
-    });
+    geocoder.geocode(address);
 }
-
 $(document).ready(function() {
-    //loadGoogleMap() ;
+    loadMap() ;
 });
 
-function checkValidity(buttonName, listName) {
-    var button = document.getElementById(buttonName)
-    var list = document.getElementById(listName)
+function geocode_return(geocoded_location) {
 
-    if (list.value == -1) {
-	button.disabled = true 
+    // display the map centered on a latitude and longitude (Google zoom levels)
+    mapstraction.setCenterAndZoom(geocoded_location.point, 15);
+
+    mapstraction.addControls({
+        pan: true,
+        zoom: 'small',
+        map_type: true
+    });
+    // create a marker positioned at a lat/lon
+    geocode_marker = new Marker(geocoded_location.point);
+
+    var address = geocoded_location.street + ", "
+    + geocoded_location.locality + ", "
+    + geocoded_location.region;
+    geocode_marker.setLabel("A");
+    geocode_marker.setInfoBubble(geocoded_location.address);
+
+    // display marker
+    mapstraction.addMarker(geocode_marker);
+
+    // open the marker
+    geocode_marker.openBubble();
+}
+
+function user_submit() {
+    var address = new Object();
+    address.address = document.getElementById('newTag').value;
+    alert(address.address)
+    geocoder.geocode(address);
+}
+$("#btGoto").bind("click", user_submit) ;
+
+function checkValidity() {
+    if ($("#lstNewTag").val() == 3) {
+        $("#btGoto").show() ;
     } else {
-	button.disabled = false 
+        $("#btGoto").hide() ;
     }
 
+    if ($("#lstNewTag").val() == -1) {
+	$("#valNewTag").attr('disabled', 'disabled'); ;
+    } else {
+	$("#valNewTag").attr('disabled', ''); ;
+    }
 }
+$("#lstNewTag").change(checkValidity) ;
+

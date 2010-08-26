@@ -95,8 +95,10 @@ function loadExernalsBottomEnd(xhr_object_XML, divId) {
     var xml_doc = xhr_object_XML.responseXML;
 
     var div = document.getElementById (divId);
-    div.style.display = "" ;
+    if (div == null) return ;
 
+    div.style.display = "" ;
+    div.innerHTML = "";
     // Use object detection to find out if we have
     // Firefox/Mozilla/Opera or IE XSLT support.
     if (typeof XSLTProcessor != "undefined") {
@@ -104,7 +106,6 @@ function loadExernalsBottomEnd(xhr_object_XML, divId) {
 
         xsl_proc.importStylesheet (xsl_doc);
         var node = xsl_proc.transformToFragment (xml_doc, document);
-        div.innerHTML = "";
         div.appendChild (node);
     } else if (typeof xml_doc.transformNode != "undefined") {
         div.innerHTML = xml_doc.transformNode (xsl_doc);

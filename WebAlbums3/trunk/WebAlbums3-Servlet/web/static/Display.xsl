@@ -12,7 +12,7 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
-  
+
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
@@ -49,8 +49,9 @@
                 <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
             </xsl:if>
         </xsl:if>
-	<xsl:if test="count(/root/config) != 0">
-            <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<xsl:if test="count(/root/confidg) != 0">
+            <script src="http://openlayers.org/api/OpenLayers.js"></script>
+            <script type="text/javascript" charset="utf-8" src="http://mapstraction.googlecode.com/svn/trunk/source/mxn.js?(openlayers)"></script>
             <script type="text/javascript" src="static/scripts/Config.js"/>
         </xsl:if>
         
@@ -63,6 +64,11 @@
         </xsl:if>
       </head>
       <body>
+          	<xsl:if test="count(/root/config) != 0">
+            <script src="http://openlayers.org/api/OpenLayers.js"></script>
+            <script type="text/javascript" charset="utf-8" src="http://mapstraction.googlecode.com/svn/trunk/source/mxn.js?(openlayers)"></script>
+            <script type="text/javascript" src="static/scripts/Config.js"/>
+        </xsl:if>
 	<div id="header"> 
 	  <div id="logo">
 	    <h1>WebAlbums 3</h1>
@@ -74,7 +80,7 @@
 	      <li><a href="Index" title="Retour aux thèmes">Thème</a></li>
 	      <li><a href="Choix" title="Choix">Choix</a></li>
 	      <xsl:if test="count(/root/login/admin)!=0">
-		<li><a href="Config.html" rel="shadowbox" title="Configuration">Config</a></li>
+		<li><a href="Config" rel="shadowbox" title="Configuration">Config</a></li>
 	      </xsl:if>
               <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
 	    </ul>	

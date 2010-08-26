@@ -53,11 +53,14 @@
 		<td>
 		  <input id="newTag" name="nom" type='text' size='20' maxlength='40'/>
                 </td>
+                <td align="left">
+                  <input type="button" value="Go to" id="btGoto" style="display: none;"/>
+                </td>
 	      </tr>
 	      <tr>
 		<td><label for="lstNewTag">Type :</label></td> 
 		<td>
-		  <select name='type' id="lstNewTag" onChange='javacript:checkValidity("valNewTag","lstNewTag")'>  
+		  <select name='type' id="lstNewTag">
 		    <option value='-1'>========</option>
 		    <option value='1' >[WHO]</option>
 		    <option value='2' >[WHAT]</option>
@@ -67,7 +70,9 @@
 	      </tr>
 	      <tr>
 		<td colspan='2'>
-		  <div id='map_search' style='width: 400px; height: 250px'></div><br/>
+		  <div id='map_search' style='width: 400px; height: 250px'>
+                      <script>document.write("hello");</script>
+                  </div><br/>
 		</td>
 	      </tr>
 	      <tr>	
