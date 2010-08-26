@@ -1,3 +1,26 @@
+function getGoogleKey() {
+    return {
+        '192.168.1.9:8080': 'ABQIAAAAFkDQEQAV0T9D_hG6NbawIhQEpPcd-ZFOiQgzblrnGR4NjGjTWBQ64M5_5gYa_GNCRsAEcIvPzGi_8A',
+        '192.168.2.1:8080': 'ABQIAAAAFkDQEQAV0T9D_hG6NbawIhTK_nMORFpGnrPZNOiBU8rqVz7MsBQhrMI2D0dZRhu72MzNFO09e-0lag',
+        '127.0.0.1:8080'  : 'ABQIAAAAFkDQEQAV0T9D_hG6NbawIhRi_j0U6kJrkFvY4-OX2XYmEAa76BQg7GDO1xjGmeDrxVVqn_kEo8MJ4A'
+    }
+    [window.location.host] ;
+}
+
+function loadMaps(divName, btName) {
+    document.getElementById (divName).innerHTML = "" ;
+
+    var bt = document.getElementById(btName)
+    if (bt != null) bt.style.visibility = "hidden";
+
+    var script = document.createElement("script");
+    script.setAttribute("src", ["http://maps.google.com/maps?file=api&v=2.x&key=",
+        getGoogleKey(),
+        "&c&async=2&callback=loadGoogleMap"].join(''));
+    script.setAttribute("type", "text/javascript");
+    document.documentElement.firstChild.appendChild(script);
+}
+
 
 function pleaseConfirm(form) {
     if (confirm("Really ?")) {

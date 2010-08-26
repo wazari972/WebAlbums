@@ -70,9 +70,8 @@
 	      </tr>
 	      <tr>
 		<td colspan='2'>
-		  <div id='map_search' style='width: 400px; height: 250px'>
-                      <script>document.write("hello");</script>
-                  </div><br/>
+		  <div id='map_search' style='width: 400px; height: 250px' />
+                  <br/>
 		</td>
 	      </tr>
 	      <tr>	
