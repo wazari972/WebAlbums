@@ -12,9 +12,6 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="/root/tags">
-    <xsl:if test="photo/exif">
-      <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
-    </xsl:if>
     <form method="post">
       <xsl:attribute name="action">
 	<xsl:call-template name="get_validate_addr" />

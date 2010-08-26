@@ -44,13 +44,19 @@
             });
         </script>
         
+        <xsl:if test="count(/root/photos) != 0 or count(/root/tags) != 0 ">
+            <xsl:if test="/root/photos/photo/exif or /root/tags/photo/exif">
+                <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
+            </xsl:if>
+        </xsl:if>
 	<xsl:if test="count(/root/config) != 0">
             <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
             <script type="text/javascript" src="static/scripts/Config.js"/>
         </xsl:if>
         
         <xsl:if test="count(/root/choix) != 0">
-            <script type="text/javascript" srcd="http://maps.google.com/maps/api/js?sensor=false"></script>
+            <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
+            <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
             <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" media="screen"/>
 	    <script src="Choix?special=map.js" type='text/javascript'></script>
             <script src="static/scripts/Choix.js" type='text/javascript'></script>

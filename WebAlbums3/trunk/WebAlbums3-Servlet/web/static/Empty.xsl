@@ -60,9 +60,19 @@
                 <xsl:attribute name="rel"><xsl:value-of select="time"/></xsl:attribute>
                 <label><xsl:value-of select="date"/></label> &#160;
                 <a>
+                    <xsl:attribute name="onmouseout">UnTip()</xsl:attribute>
+                    <xsl:attribute name="onmouseover">TagToTip('tip<xsl:value-of select="id" />')</xsl:attribute>
                     <xsl:attribute name="href">Photos?album=<xsl:value-of select="id"/>&amp;albmCount=<xsl:value-of select="count"/></xsl:attribute>
                     <xsl:value-of select="nom"/>
                 </a>
+                <span style="display: none;">
+                    <xsl:attribute name="id">tip<xsl:value-of select="id" /></xsl:attribute>
+                    <img>
+                        <xsl:attribute name="src">
+                        Images?id=<xsl:value-of select="photo" />&amp;mode=PETIT
+                        </xsl:attribute>
+                    </img>
+              </span>
             </li>
         </xsl:for-each>
         </ul>
@@ -77,9 +87,10 @@
       <xsl:value-of select="." />
     </a>
     <a>
+      <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
       <xsl:attribute name="href">Images?id=<xsl:value-of select="@id"/>&amp;mode=RANDOM_TAG</xsl:attribute>
-      <xsl:attribute name="title">Random imh</xsl:attribute>
-      &#9827;
+      <xsl:attribute name="title">Image aléatoire</xsl:attribute>
+      &#9830;
     </a><br/>
   </xsl:template>
 

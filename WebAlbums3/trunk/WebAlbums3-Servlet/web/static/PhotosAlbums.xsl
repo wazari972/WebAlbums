@@ -62,7 +62,7 @@
       </img>
     </a>
     <xsl:if test="../exif">
-      <span>
+      <span style="display: none;">
 	<xsl:attribute name="id">tip<xsl:value-of select="photoID" /></xsl:attribute>
 	<xsl:apply-templates select="../exif" />
       </span>

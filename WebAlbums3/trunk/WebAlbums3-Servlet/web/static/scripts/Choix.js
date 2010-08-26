@@ -18,12 +18,23 @@ function loadSelect() {
     loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
 }
 
-addLoadEvent(loadYears) ;
-addLoadEvent(loadAlbums) ;
-addLoadEvent(loadPersons) ;
-addLoadEvent(loadPlaces) ;
-addLoadEvent(loadGoogleMap) ;
-addLoadEvent(loadSelect) ;
+function showTags() {
+    $("#tagShower").hide() ;
+    $("#tags").show() ;
+}
+
+function preloadGoogleMap() {
+    $("#googleMapLoader").hide() ;
+    $("#mapChoix").width(400).height(400) ;
+    //loadGoogleMap() ;
+}
+
+//addLoadEvent(loadYears) ;
+//addLoadEvent(loadAlbums) ;
+//addLoadEvent(loadPersons) ;
+//addLoadEvent(loadPlaces) ;
+//addLoadEvent(prloadGoogleMap) ;
+//addLoadEvent(loadSelect) ;
 
 function printDate(strDate) {
     var dDate = new Date(parseInt(strDate)) ;
