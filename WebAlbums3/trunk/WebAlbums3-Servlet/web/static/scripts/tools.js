@@ -1,11 +1,6 @@
 
 
-function loadMaps(divName, btName) {
-    document.getElementById (divName).innerHTML = "" ;
-
-    var bt = document.getElementById(btName)
-    if (bt != null) bt.style.visibility = "hidden";
-
+function loadMaps() {
     var script = document.createElement("script");
     script.setAttribute("src", "http://maps.google.com/maps/api/js?sensor=false&callback=loadGoogleMap");
     script.setAttribute("type", "text/javascript");

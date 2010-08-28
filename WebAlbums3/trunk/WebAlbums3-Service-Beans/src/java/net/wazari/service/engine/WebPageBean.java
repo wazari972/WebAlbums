@@ -348,15 +348,21 @@ public class WebPageBean implements WebPageLocal {
             if (box == Box.MAP_SCRIPT) {
                 if (nom != null && (ids == null || ids.contains(tagId))) {
                     String msg;
-                    msg = String.format("<center><a href='Tags?tagAsked=%s'>%s</a></center>",
-                            tagId.getId(), p.name);
+                    
                     if (photo != null) {
-                        msg += String.format("<br/><img height='150px' alt='%s' "
-                                + "src='Images?"
-                                + "id=%d&amp;mode=PETIT' />",
+                        msg = String.format("<div style='height: 160px; width: 210px'> "
+                                + "<img height='150px' height='200px' alt='%s' title='%s' "
+                                + "src='Images?id=%d&amp;mode=PETIT' /></div>",
+                                p.name,
                                 p.name,
                                 photo);
+                    } else {
+                        msg = p.name ;
                     }
+                    
+                    msg = String.format("<a title='%s' href='Tags?tagAsked=%s'>%s</a>",
+                         p.name, tagId.getId(), msg);
+
 
                     p.setMsg(msg);
                     map.addPoint(p);

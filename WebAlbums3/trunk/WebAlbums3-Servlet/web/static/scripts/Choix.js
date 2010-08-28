@@ -26,7 +26,7 @@ function showTags() {
 function preloadGoogleMap() {
     $("#googleMapLoader").hide() ;
     $("#mapChoix").width(400).height(400) ;
-    //loadGoogleMap() ;
+    loadMaps();
 }
 
 //addLoadEvent(loadYears) ;

@@ -1,5 +1,5 @@
 
-addLoadEvent(loadMaps("map_search", ""));
+addLoadEvent(loadMaps);
 
 
 var geocoder;

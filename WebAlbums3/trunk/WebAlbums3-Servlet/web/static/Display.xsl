@@ -55,7 +55,6 @@
         
         <xsl:if test="count(/root/choix) != 0">
             <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
-            <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
             <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" media="screen"/>
 	    <script src="Choix?special=map.js" type='text/javascript'></script>
             <script src="static/scripts/Choix.js" type='text/javascript'></script>
