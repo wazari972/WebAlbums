@@ -54,7 +54,7 @@
 		  <input id="newTag" name="nom" type='text' size='20' maxlength='40'/>
                 </td>
                 <td align="left">
-                  <input type="button" value="Go to" id="btGoto" style="display: none;"/>
+                  <input type="button" value="Go to" id="btGoto"/>
                 </td>
 	      </tr>
 	      <tr>
@@ -77,13 +77,13 @@
 	      <tr>	
 		<td align='left'><label for="lngId">Long</label></td>
 		<td>
-		  <input id="lngID" name='long' type='text' size='20' maxlength='20'/>
+		  <input id="lngID" name='long' type='text' disabled="disabled" size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	      <tr>	
-		<td align='left'><label for="latId">Lat</label></td>
+		<td align='left'><label for="latID">Lat</label></td>
 		<td>
-		  <input id="latID" name='lat' type='text' size='20' maxlength='20'/>
+		  <input id="latID" name='lat' type='text' disabled="disabled" size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	    </table>
@@ -121,13 +121,13 @@
 	      <tr>	
 		<td align='left'><label for="lngID_2">Long</label></td>
 		<td>
-		  <input id="lngID_2" name='lng' type='text' size='20' maxlength='20'/>
+		  <input id="lngID_2" name='lng' disabled="disabled" type='text' size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	      <tr>	
 		<td align='left'><label for="latID_2">Lat</label></td>
 		<td>
-		  <input id="latID_2" name='lat' type='text' size='20' maxlength='20'/>
+		  <input id="latID_2" name='lat' disabled="disabled" type='text' size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	    </table>
