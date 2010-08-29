@@ -1,5 +1,5 @@
 
-addLoadEvent(loadMaps);
+addLoadEvent(loadMaps());
 
 
 var geocoder;
@@ -20,14 +20,10 @@ function loadGoogleMap() {
     //MapTypeId.TERRAIN
     }
     map = new google.maps.Map(document.getElementById("map_search"), myOptions);
-    // affichage infobulle
 
-    //fin affichage info bulle
     google.maps.event.addListener(map, 'click', function(event) {
         deleteOverlays();
         placeMarker(event.latLng);
-    //map.setZoom(18);
-    //alert(map.getCenter().lat() + "-" + map.getCenter().lng());
     });
 }
 

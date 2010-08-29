@@ -3,13 +3,6 @@
  * and open the template in the editor.
  */
 package net.wazari.bootstrap;
-/*
-
- * To change this template, choose Tools | Templates
-
- * and open the template in the editor.
-
- */
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +38,7 @@ import org.glassfish.api.embedded.Server;
  * @author pk033
  */
 public class GF {
-
+    private static final String SHUTDOWN_PORT_PPT = "SHUTDOWN_PORT" ;
     /**
      * @param args the command line arguments
      */
@@ -53,9 +46,12 @@ public class GF {
         long timeStart = System.currentTimeMillis() ;
         log.warn("Starting WebAlbums GF bootstrap");
 
+
         Config cfg = Config.load();
-        
+        Integer stopPort = cfg.port + 1;
         log.info(Config.print(cfg)) ;
+        System.setProperty(SHUTDOWN_PORT_PPT, stopPort.toString()) ;
+
         File keyfile = new File("keyfile");
         if (keyfile.exists()) {
             log.warn("delete ./keyfile ");
@@ -71,9 +67,9 @@ public class GF {
 
         try {
             new ServerSocket(cfg.port).close();
-            new ServerSocket(cfg.port + 1).close();
+            new ServerSocket(stopPort).close();
         } catch (BindException e) {
-            log.warn( "Port {} or {} already in use", new Object[]{cfg.port, cfg.port + 1});
+            log.warn( "Port {} or {} already in use", new Object[]{cfg.port, stopPort});
             return;
         }
 
@@ -113,9 +109,9 @@ public class GF {
             float time = ((float) (loadingTime - timeStart) / 1000);
 
             log.info( "Ready to server at http://localhost:{}/WebAlbums3-Servlet after {}s", new Object[] {Integer.toString(cfg.port), time});
-            log.info( "Connect to http://localhost:{} to shutdown the server", Integer.toString(cfg.port + 1));
+            log.info( "Connect to http://localhost:{} to shutdown the server", Integer.toString(stopPort));
 
-            ServerSocket servSocker = new ServerSocket(cfg.port + 1);
+            ServerSocket servSocker = new ServerSocket(stopPort);
             servSocker.accept().close();
             servSocker.close();
 

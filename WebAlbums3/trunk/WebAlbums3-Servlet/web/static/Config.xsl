@@ -258,6 +258,8 @@
 	</div>
       </div>
     </div>
+
+    <xsl:apply-templates select="shutdown" />
   </xsl:template>
 
   <xsl:template match="import|newTag|modTag|delTag|modGeo|modVis">
@@ -275,5 +277,27 @@
   </xsl:template>
   <xsl:template match="newLngLat">
     Nouvelle géolocalisation: <b> <xsl:value-of select="."/></b>
+  </xsl:template>
+
+  <xsl:template match="shutdown">
+    <div class="item">
+      <div class="date">
+	<span>*</span>
+      </div>
+      <div class="content">
+	<a name="delTheme"/>
+	<h1>Shutdown WebAlbums3's server</h1>
+	<div class="body">
+            <center>
+              <input id="btKill" type="button" value="Shutdown">
+                  <xsl:attribute name="onClick">
+                  javascript:alert("Bye-bye");$("#btKill").val("Dead!").attr('disabled', 'disabled');callURL("http://"+window.location.hostname+":<xsl:value-of select="."/>");
+                  </xsl:attribute>
+                  GO
+              </input>
+          </center>
+	</div>
+      </div>
+    </div>
   </xsl:template>
 </xsl:stylesheet>

@@ -29,6 +29,9 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 )
 @Stateless
 public class Config extends HttpServlet {
+
+    private static final String SHUTDOWN_PORT_PPT = "SHUTDOWN_PORT" ;
+
     private static final long serialVersionUID = 1L;
     @EJB private DispatcherBean dispatcher ;
     
@@ -88,6 +91,11 @@ public class Config extends HttpServlet {
             if (Action.DELTHEME == action) {
                 output.add(configService.treatDELTHEME(vSession));
             }
+
+            if (System.getProperty(SHUTDOWN_PORT_PPT) != null) {
+                output.add("shutdown", System.getProperty(SHUTDOWN_PORT_PPT)) ;
+            }
+            
             output.add(webPageService.displayListLB(Mode.TAG_USED, vSession, null,
                     Box.MULTIPLE));
             output.add(webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
