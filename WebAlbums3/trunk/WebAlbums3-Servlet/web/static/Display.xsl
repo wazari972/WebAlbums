@@ -23,8 +23,8 @@
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-        <link  href="static/styles.css" rel="stylesheet" type="text/css" media="screen" />
-
+        <link href="static/styles.css"     rel="stylesheet" type="text/css" media="screen" />
+        <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
         <style type="text/css">          body {
              <xsl:if test="count(/root/affichage/background) = 0">background: #62993B url(static/images/back_all.jpg?notempty) fixed no-repeat;</xsl:if>
              <xsl:if test="count(/root/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>

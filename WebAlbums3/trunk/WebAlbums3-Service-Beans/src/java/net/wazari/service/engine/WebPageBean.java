@@ -96,27 +96,42 @@ public class WebPageBean implements WebPageLocal {
         return bornes;
     }
 
+    private static final int NB_PAGES_BEF_AFT = 3 ;
     @Override
     public XmlBuilder xmlPage(XmlBuilder from, Bornes bornes) {
+        int current = bornes.getCurrentPage() ;
+        int last = bornes.getLastPage() ;
         XmlBuilder page = new XmlBuilder("page");
-        page.addComment("Page 0 .. " + bornes.getCurrentPage() + " .." + bornes.getLastPage());
+        page.addComment("Page 0 .. " +current + " .." + last);
         page.add("url", from);
-        int start = Math.max(0, bornes.getCurrentPage() - 5);
-        int stop = Math.min(bornes.getCurrentPage() + 5, bornes.getLastPage());
-        if (start != 0) {
+        int start = Math.max(0, current - NB_PAGES_BEF_AFT);
+        int stop = Math.min(current + NB_PAGES_BEF_AFT+1, last);
+        if (start >= 2) {
             page.add("first", 0);
+        } else if (start == 1) {
+            page.add("prev", 0);
         }
         for (int i = start; i < stop; i++) {
-            if (i == bornes.getCurrentPage() || bornes.getCurrentPage() == -1 && i == 0) {
+            if (i == current ||current == -1 && i == 0) {
                 page.add("current", i);
-            } else if (i < bornes.getCurrentPage()) {
+            } else if (i < current) {
                 page.add("prev", i);
             } else {
                 page.add("next", i);
             }
         }
-        if (stop != bornes.getLastPage()) {
-            page.add("last", stop);
+        if (stop == bornes.getLastPage() - 1) {
+            page.add("next",  last -1);
+        } else if (stop != last) {
+            page.add("last",  last -1);
+        }
+
+        if (current != 0) {
+            page.add("previ", current -1 );
+        }
+
+        if (current != last -1) {
+            page.add("nexti", current +1 );
         }
         page.validate();
 

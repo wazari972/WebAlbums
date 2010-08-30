@@ -133,17 +133,26 @@
   <xsl:template match="page">
     <div class="item">
       <div class="content">
-	<center>
-	  <xsl:apply-templates select="prev"/>
-	  <xsl:value-of select="current" />
-	  <xsl:apply-templates select="next"/>
-	</center>
+        <center>
+          <div class="pagination">
+              <xsl:apply-templates select="previ"/>
+              <xsl:apply-templates select="first"/>
+              <xsl:if test="first"><span>...</span></xsl:if>
+              <xsl:apply-templates select="prev"/>
+              <span class="current"><xsl:value-of select="current" /> </span>
+              <xsl:apply-templates select="next"/>
+              <xsl:if test="last">... </xsl:if>
+              <xsl:apply-templates select="last"/>
+              <xsl:apply-templates select="nexti"/>
+            </div>
+        </center>
       </div>
     </div>
     <br/>
+    <br/>
   </xsl:template>
 
-  <xsl:template match="prev|next">
+  <xsl:template match="prev|next|nexti|previ|first|last">
     <A>
       <xsl:attribute name="HREF">
 	<xsl:if test="/root/photos">
@@ -162,7 +171,15 @@
 &amp;page=<xsl:value-of select="." />
 	</xsl:if>
       </xsl:attribute>
-      <xsl:value-of select="." />
+      <xsl:if test="name(.) = 'nexti'">
+          Next »
+      </xsl:if>
+      <xsl:if test="name(.) = 'previ'">
+          « Previous
+      </xsl:if>
+      <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')">
+          <xsl:value-of select="." />
+      </xsl:if>
     </A>
   </xsl:template>
 
