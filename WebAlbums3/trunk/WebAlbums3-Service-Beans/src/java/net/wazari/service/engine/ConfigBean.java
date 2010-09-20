@@ -170,7 +170,8 @@ public class ConfigBean implements ConfigLocal {
         String nom = vSession.getNom();
         Integer type = vSession.getType();
 
-        if (type == null || type == -1) {
+        if (type == null || 0 > type || type > 3) {
+            log.warn("Invalid type: ", type);
             output.addException("Pas de type selectionné ...");
             return output.validate();
         }
@@ -182,10 +183,6 @@ public class ConfigBean implements ConfigLocal {
 
             Tag enrTag = tagDAO.loadByName(nom);
             if (enrTag == null) {
-                if (0 > type || type > 3) {
-                    output.addException("Type incorrect (" + type + ") ...");
-                    return output.validate();
-                }
                 enrTag = tagDAO.newTag();
 
                 enrTag.setNom(nom);
@@ -197,6 +194,7 @@ public class ConfigBean implements ConfigLocal {
                     String lat = vSession.getLat();
                     msg = " (" + longit + "/" + lat + ")";
                     if (longit == null || lat == null) {
+                        log.warn("Invalid geoloc: {}", msg) ;
                         output.cancel();
                         output.addException("La geoloc " + msg + " n'est pas correcte...");
                         tagDAO.remove(enrTag);
@@ -226,6 +224,7 @@ public class ConfigBean implements ConfigLocal {
 
                 output.add("message", "Tag '" + nom + msg + "' correctement ajouté à la liste " + liste);
             } else {
+                log.warn("The tag '{}' already exists ", nom);
                 output.cancel();
                 output.addException("Le Tag " + nom + " est déjà présent dans la base ...");
                 output.addException(enrTag.getId() + " - " + enrTag.getNom());

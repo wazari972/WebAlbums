@@ -77,13 +77,13 @@
 	      <tr>	
 		<td align='left'><label for="lngId">Long</label></td>
 		<td>
-		  <input id="lngID" name='long' type='text' disabled="disabled" size='20' maxlength='20'/>
+		  <input id="lngID" name='lng' type='text' size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	      <tr>	
 		<td align='left'><label for="latID">Lat</label></td>
 		<td>
-		  <input id="latID" name='lat' type='text' disabled="disabled" size='20' maxlength='20'/>
+		  <input id="latID" name='lat' type='text' size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	    </table>
@@ -105,32 +105,17 @@
 	  <xsl:apply-templates select="modGeo"/>
 	  <form action='#modGeo' method='POST'>
 	    <input type='hidden' name='action' value='MODGEO'/>
-	    <table>
-	      <tr>
-		<td align='left'><label for="lstModGeo">Tag : </label></td>
-		<td>
-		  <xsl:apply-templates select="tags">
-		    <xsl:with-param name="style">list</xsl:with-param>
-		    <xsl:with-param name="mode">TAG_GEO</xsl:with-param>
-		    <xsl:with-param name="name">tag</xsl:with-param>
-		    <xsl:with-param name="id">lstModGeo</xsl:with-param>
-		    <xsl:with-param name="onChange">javacript:checkValidity("valModGeo","lstModGeo")</xsl:with-param>
-		  </xsl:apply-templates>
-		</td>
-      	      </tr>
-	      <tr>	
-		<td align='left'><label for="lngID_2">Long</label></td>
-		<td>
-		  <input id="lngID_2" name='lng' disabled="disabled" type='text' size='20' maxlength='20'/>
-		</td>	
-	      </tr>
-	      <tr>	
-		<td align='left'><label for="latID_2">Lat</label></td>
-		<td>
-		  <input id="latID_2" name='lat' disabled="disabled" type='text' size='20' maxlength='20'/>
-		</td>	
-	      </tr>
-	    </table>
+
+            <xsl:apply-templates select="tags">
+              <xsl:with-param name="style">list</xsl:with-param>
+              <xsl:with-param name="mode">TAG_GEO</xsl:with-param>
+              <xsl:with-param name="name">tag</xsl:with-param>
+              <xsl:with-param name="id">lstModGeo</xsl:with-param>
+              <xsl:with-param name="onChange">javacript:checkValidity("valModGeo","lstModGeo")</xsl:with-param>
+            </xsl:apply-templates>
+		
+            <input id="lngID_2" name='lng' type='hidden'/>
+            <input id="latID_2" name='lat' type='hidden'/>
 	    <input id="valModGeo" type='submit' value='Valider' disabled="true"/>
 	  </form>
 	</div>

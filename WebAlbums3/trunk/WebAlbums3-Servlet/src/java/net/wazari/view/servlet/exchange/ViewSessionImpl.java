@@ -248,7 +248,7 @@ public class ViewSessionImpl implements
 
     @Override
     public String getLng() {
-        return getString("long");
+        return getString("lng");
     }
 
     @Override
@@ -465,11 +465,11 @@ public class ViewSessionImpl implements
     private static <T> T getObject(String name, Class<T> type, HttpServletRequest request) {
         T ret = null;
         String val = request.getParameter(name);
-        if (val == null) {
-            return null;
-        }
+
         try {
-            if (type == String.class) {
+            if (val == null) {
+                ret = null ;
+            } else if (type == String.class) {
                 ret = type.cast(val);
             } else if (type == Integer.class) {
                 ret = type.cast(Integer.parseInt(val));
