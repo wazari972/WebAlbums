@@ -42,11 +42,13 @@ function printDate(strDate) {
     return dateOut.substring(0, dateOut.length - 24) ;
 }
 
-function trimAlbums(min, max) {
+function trimAlbums(min, max, name) {
     $('.selectAlbum').each(function(index) {
         if (parseInt($(this).attr( 'rel'))  < min ) {
            $(this).hide() ;
         } else if (parseInt($(this).attr( 'rel'))  > max) {
+            $(this).hide() ;
+        } else if ($(this).text().indexOf(name) == -1) {
             $(this).hide() ;
         } else {
             $(this).show() ;
@@ -64,6 +66,6 @@ var sliderOption = {
   slide: function(event, ui) {
       $("#fromDate").text(printDate(ui.values[0]));
       $("#toDate").text(printDate(ui.values[1]));
-      trimAlbums(ui.values[0], ui.values[1]) ;
+      trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
   }
 } ;

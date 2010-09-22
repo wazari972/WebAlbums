@@ -12,7 +12,7 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="details">
-    <a rel="">
+    <a>
       <xsl:if test="/root/photos or /root/tags">
 	<xsl:attribute name="rel">
 	  shadowbox[page];player=img

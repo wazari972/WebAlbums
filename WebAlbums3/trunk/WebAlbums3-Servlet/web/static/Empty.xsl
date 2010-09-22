@@ -43,6 +43,7 @@
     <br/>
     <div id="slider-range"></div>
     <br/>
+    <p><label for="albmName"> et ayant pour nom </label> <input type="text" id="albmName"/></p>
     <script>
      $("#slider-range").slider(sliderOption);
      $("#fromDate").text(printDate(<xsl:value-of select="album[last()]/time"/>));
@@ -51,6 +52,15 @@
      $("#slider-range").slider( "option", "min", <xsl:value-of select="album[last()]/time"/>);
 
      $("#slider-range").slider( "option", "values", [<xsl:value-of select="album[last()]/time"/>, <xsl:value-of select="album/time"/>]);
+     $("#albmName").keyup(
+        function(){
+           trimAlbums($("#slider-range").slider( "option", "range", "min" ),
+                      $("#slider-range").slider( "option", "range", "max" ),
+                      $(this).val());
+
+        }
+     );
+
     </script>
     <div style="overflow: auto; height: 400px">
         <ul>
