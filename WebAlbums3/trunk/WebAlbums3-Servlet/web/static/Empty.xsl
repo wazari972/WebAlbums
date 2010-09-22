@@ -18,18 +18,32 @@
     <xsl:apply-templates select="/root/tags/cloud" />
     <xsl:apply-templates select="/root/tags/persons" />
     <xsl:apply-templates select="/root/tags/places" />
-    <xsl:if test="not(/root/tags/cloud or /root/tags/persons or
-    /root/tags/places)">
+    <xsl:if test="not(/root/tags/cloud 
+                   or /root/tags/persons
+                   or /root/tags/places)">
       <xsl:apply-templates select="/root/tags" />
     </xsl:if>
+
+
     <xsl:apply-templates select="/root/albums" />
 
-    <xsl:apply-templates select="/root/photos" />
+    <xsl:apply-templates select="/root/photos/random" />
+    <xsl:if test="not(/root/photos/random)">
+        <xsl:apply-templates select="/root/photos" />
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="/root/tags/cloud">
     <center>
       <xsl:apply-templates select="tag"/>
+    </center>
+  </xsl:template>
+
+
+  <xsl:include href="PhotosAlbums.xsl" />
+  <xsl:template match="/root/photos/random">
+    <center>
+      <xsl:apply-templates select="details"/>
     </center>
   </xsl:template>
 

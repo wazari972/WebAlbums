@@ -11,11 +11,15 @@ function loadAlbums() {
 }
 
 function loadYears() {
-    loadExernals('yearsLoader', 'Albums?special=YEARS', 'years') ;
+    loadExernals(null, 'Albums?special=YEARS', 'years') ;
 }
 
 function loadSelect() {
     loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
+}
+
+function loadRandPict() {
+    loadExernals(null, 'Photos?special=RANDOM', 'randPict') ;
 }
 
 function showTags() {
@@ -35,6 +39,7 @@ function preloadGoogleMap() {
 //addLoadEvent(loadPlaces) ;
 //addLoadEvent(prloadGoogleMap) ;
 //addLoadEvent(loadSelect) ;
+//addLoadEvent(loadRandPict) ;
 
 function printDate(strDate) {
     var dDate = new Date(parseInt(strDate)) ;

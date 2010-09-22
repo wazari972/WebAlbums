@@ -74,6 +74,18 @@
 	<span></span>
       </div>
       <div class="content">
+	<h1>Photo Aléatoire <input id="randPictLoader" type="button" value="+" onclick="loadRandPict();"/></h1>
+	<div class="body">
+	  <div id="randPict" style="overflow:auto"/>
+	</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
+      <div class="content">
 	<h1>Aléatoire par Annees <input id="yearsLoader" type="button" value="+" onclick="loadYears();"/></h1>
 	<div class="body">
 	  <div id="years" style="overflow:auto"/>

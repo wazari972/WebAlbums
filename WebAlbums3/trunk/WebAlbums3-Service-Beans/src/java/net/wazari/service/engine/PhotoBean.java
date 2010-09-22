@@ -2,6 +2,7 @@ package net.wazari.service.engine;
 
 import java.io.File;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ import net.wazari.util.system.FilesFinder;
 import net.wazari.common.util.StringUtil;
 import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.util.system.SystemTools;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.perf4j.StopWatch;
@@ -452,4 +454,21 @@ public class PhotoBean implements PhotoLocal {
         }
         return output.validate();
     }
+
+    @Override
+    public XmlBuilder treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException {
+
+        Photo enrPhoto = photoDAO.loadRandom(vSession);
+        XmlBuilder details = new XmlBuilder("details");
+        details.add("photoID", enrPhoto.getId());
+        details.add("description", enrPhoto.getDescription());
+        details.add("miniWidth", photoUtil.getWidth(vSession, enrPhoto, false));
+        details.add("miniHeight", photoUtil.getHeight(vSession, enrPhoto, false));
+        //tags de cette photo
+        details.add(webService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto, Box.NONE));
+        details.add("albumID", enrPhoto.getAlbum().getId());
+
+        return details ;
+    }
+
 }

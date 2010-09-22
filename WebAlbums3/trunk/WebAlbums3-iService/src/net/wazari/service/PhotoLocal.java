@@ -12,6 +12,7 @@ import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionPhoto.*;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.exchange.ViewSession;
 
 /**
  *
@@ -20,6 +21,7 @@ import net.wazari.common.util.XmlBuilder;
 @Local
 @DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface PhotoLocal {
+
     enum TypeRequest {
         PHOTO, TAG
     }
@@ -52,4 +54,6 @@ public interface PhotoLocal {
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,Boolean correct) throws WebAlbumsServiceException ;
 
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlBuilder treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException ;
 }

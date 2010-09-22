@@ -169,4 +169,24 @@ public class PhotoFacade implements PhotoFacadeLocal {
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
     }
+
+    @Override
+    public Photo loadRandom(ServiceSession session) {
+        try {
+            StringBuilder rq = new StringBuilder(80);
+            rq.append("SELECT p ")
+                .append(" FROM JPAPhoto p")
+                .append(" WHERE ")
+                .append(webDAO.restrictToPhotosAllowed(session, "p"))
+                .append(" AND " )
+                .append(webDAO.restrictToThemeAllowed(session, "p.album"))
+                .append(WebAlbumsDAOBean.getOrder(ListOrder.RANDOM, ""));
+            return (JPAPhoto) em.createQuery(rq.toString())
+                    .setFirstResult(0)
+                    .setMaxResults(1)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
+    }
 }

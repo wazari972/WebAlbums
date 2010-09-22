@@ -50,4 +50,7 @@ public interface PhotoFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     List<Photo> findAll();
+
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    Photo loadRandom(ServiceSession vSession);
 }

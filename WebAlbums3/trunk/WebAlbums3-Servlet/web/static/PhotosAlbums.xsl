@@ -95,7 +95,7 @@
             </a>
         </xsl:if>
       </xsl:if>
-      <xsl:if test="/root/tags">
+      <xsl:if test="/root/tags or /root/photos/random">
 	<a title="Liens vers l'album">
 	  <xsl:attribute name="href">Photos?album=<xsl:value-of select="albumID" /></xsl:attribute>
 	  <img src="static/images/dossier.gif" width="25px"/>

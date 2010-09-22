@@ -15,6 +15,7 @@ import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
+import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
@@ -39,6 +40,14 @@ public class Photos extends HttpServlet {
         XmlBuilder output;
         XmlBuilder submit = null;
         Boolean correct = true;
+
+        Special special = vSession.getSpecial();
+        if (special == Special.RANDOM) {
+            output = new XmlBuilder("photos");
+            XmlBuilder random = new XmlBuilder("random");
+            random.add(photoService.treatRANDOM(vSession)) ;
+            return output.add(random) ;
+        }
 
         if (Action.SUBMIT == action && vSession.isSessionManager()) {
             submit = photoService.treatPhotoSUBMIT((ViewSessionPhotoSubmit) vSession,correct);
