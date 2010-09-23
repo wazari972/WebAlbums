@@ -106,27 +106,35 @@ public class TagBean implements TagLocal {
         return output.validate();
     }
 
+    private static final int SIZE_SCALE = 200 ;
+    private static final int SIZE_MIN = 100 ;
     @Override
     public XmlBuilder treatTagCloud(ViewSessionTag vSession){
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagCloud", log) ;
         XmlBuilder cloud = new XmlBuilder("cloud");
 
-        int sizeScale = 200;
-        int sizeMin = 100;
         long max = 0;
         Map<Tag,Long> map = tagDAO.queryIDNameCount(vSession);
         for (long current : map.values()) if (current > max) max = current ;
 
         for (Tag enrTag : map.keySet()) {
-            long current = map.get(enrTag);
-            int size = (int) (sizeMin + ((double) current / max) * sizeScale);
-            cloud.add(new XmlBuilder("tag", enrTag.getNom())
-                    .addAttribut("size", size)
-                    .addAttribut("nb", current)
-                    .addAttribut("id", enrTag.getId()));
+            addTagAndSons(cloud, enrTag, map, max, "");
+
         }
         stopWatch.stop() ;
         return cloud.validate();
+    }
+
+    private static void addTagAndSons(XmlBuilder cloud, Tag enrParentTag, Map<Tag,Long> map, long max, String prefix) {
+        long current = map.get(enrParentTag);
+        int size = (int) (SIZE_MIN + ((double) current / max) * SIZE_SCALE);
+        cloud.add(new XmlBuilder("tag", prefix+enrParentTag.getNom())
+                .addAttribut("size", size)
+                .addAttribut("nb", current)
+                .addAttribut("id", enrParentTag.getId()));
+        for (Tag enrSonTag : enrParentTag.getSonList()) {
+            addTagAndSons(cloud, enrSonTag, map, max, prefix+"+");
+        }
     }
 
     @Override

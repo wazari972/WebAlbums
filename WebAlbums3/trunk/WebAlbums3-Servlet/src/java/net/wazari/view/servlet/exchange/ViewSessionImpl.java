@@ -370,6 +370,16 @@ public class ViewSessionImpl implements
         return response.getOutputStream();
     }
 
+    @Override
+    public Integer getParentTag() {
+        return getInteger("parentTag") ;
+    }
+
+    @Override
+    public Integer getSonTag() {
+        return getInteger("sonTag") ;
+    }
+
     /** ** ** ** **/
     private Integer getInteger(String name) {
         return getObject(name, Integer.class);

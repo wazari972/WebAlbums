@@ -71,6 +71,8 @@
 		  <xsl:with-param name="style">list</xsl:with-param>
 		  <xsl:with-param name="name">addTag</xsl:with-param>
 		  <xsl:with-param name="id">massTagList</xsl:with-param>
+                  <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+                  <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
 		</xsl:apply-templates>
 	      </td>
 	    </tr>

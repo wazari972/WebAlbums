@@ -11,19 +11,23 @@ package net.wazari.service.exchange;
  */
 public interface ViewSessionConfig extends ViewSession{
 
-    public String getNouveau();
+    String getNouveau();
 
-    public Integer getTag();
+    Integer getTag();
 
-    public String getLng();
+    String getLng();
 
-    public String getLat();
+    String getLat();
 
-    public boolean getVisible();
+    boolean getVisible();
 
-    public String getImportTheme();
+    String getImportTheme();
 
-    public String getNom();
+    String getNom();
 
-    public Integer getType();
+    Integer getType();
+
+    Integer getParentTag();
+
+    Integer getSonTag();
 }

@@ -16,6 +16,7 @@
     <xsl:param name="style">none</xsl:param>
     <xsl:param name="size">7</xsl:param>
     <xsl:param name="mode">TAG_USED</xsl:param>
+    <xsl:param name="mode2">NONE</xsl:param>
     <xsl:param name="box">MULTIPLE</xsl:param>
     <xsl:param name="onChange"></xsl:param>
     <xsl:param name="id"></xsl:param>
@@ -36,7 +37,8 @@
 	      <xsl:attribute name="id"><xsl:value-of select="$id" /></xsl:attribute>
 	    </xsl:if>
 	    <xsl:attribute name="name"><xsl:value-of select="$name"/></xsl:attribute>
-	    <xsl:if test="$style = 'list'">
+
+            <xsl:if test="$style = 'list'">
 	      <option value="-1">==========</option>
 	    </xsl:if>
             
@@ -55,6 +57,15 @@
                   <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
                 </xsl:apply-templates>
             </optgroup>
+                <xsl:if test="not($mode2 = 'NONE')">
+                    <xsl:if test="not(count(../tags[@mode = $mode2]/*) = 0)">
+                        <optgroup label="--- Never used ---">
+                            <xsl:apply-templates select="../tags[@mode = $mode2]/*">
+                                <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                            </xsl:apply-templates>
+                        </optgroup>
+                    </xsl:if>
+                </xsl:if>
 	  </SELECT>
 	</xsl:if>
 	

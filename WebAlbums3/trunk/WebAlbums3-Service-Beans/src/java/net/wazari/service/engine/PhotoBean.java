@@ -433,6 +433,8 @@ public class PhotoBean implements PhotoLocal {
             XmlBuilder massEdit = new XmlBuilder("massEdit");
             massEdit.add(webService.displayListBN(Mode.TAG_USED, vSession,
                     Box.LIST, "newTag"));
+            massEdit.add(webService.displayListBN(Mode.TAG_NEVER, vSession,
+                    Box.LIST, "newTag"));
             if (massEditParam) {
                 String msg;
                 if (countME == 0 || Turn.RIEN == turn) {

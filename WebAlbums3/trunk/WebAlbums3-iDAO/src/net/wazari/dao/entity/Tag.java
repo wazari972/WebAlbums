@@ -39,4 +39,9 @@ public interface Tag extends Serializable, EntityWithId {
 
     void setTagType(int tagType);
 
+    Tag getParent() ;
+    void setParent(Tag parent) ;
+
+    List<Tag> getSonList() ;
+    void setSonList(List<Tag> sonList) ;
 }

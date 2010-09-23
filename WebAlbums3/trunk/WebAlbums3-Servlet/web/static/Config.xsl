@@ -158,6 +158,48 @@
       </div>
     </div>
 
+    <div class="item">
+      <a name="linkTag"/>
+      <div class="date">
+	<span>*</span>
+      </div>
+      <div class="content">
+	<h1>Parenté des tags</h1>
+	<div class="body">
+	  <form action='#linkTag' method='POST' >
+	    <xsl:apply-templates select="modTag"/>
+	    <input type='hidden' name='action' value='LINKTAG'/>
+	    <table>
+	      <tr>
+		<td align='left'><label for="lstParentTag">Parent : </label></td>
+		<td>
+		  <xsl:apply-templates select="tags">
+		    <xsl:with-param name="style">list</xsl:with-param>
+		    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+		    <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
+                    <xsl:with-param name="name">parentTag</xsl:with-param>
+		    <xsl:with-param name="id">lstParentTag</xsl:with-param>
+		  </xsl:apply-templates>
+		</td>
+	      </tr>
+	      <tr>
+      		<td align='left'><label for="lstSonTag">Fils : </label></td>
+		<td>
+                  <xsl:apply-templates select="tags">
+		    <xsl:with-param name="style">list</xsl:with-param>
+		    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+		    <xsl:with-param name="name">sonTag</xsl:with-param>
+		    <xsl:with-param name="id">lstSonTag</xsl:with-param>
+		  </xsl:apply-templates>
+                </td>
+	      </tr>
+	    </table>
+	    <input type='submit' value='Valider' id="valLinkTag"/>
+	  </form>
+	</div>
+      </div>
+    </div>
+
     <xsl:if test="not(/root/login/root)">
     <div class="item">
       <a name="modVis"/>
@@ -218,7 +260,7 @@
 	    </xsl:apply-templates>
 	    <br/>
 	    <label for="sure">Yes ? </label><input type='text' id="sure" name='sure' size='3' maxlength='3'/><br/>
-	    <input type='submit' value='Valider' id="valDelTag" disabled="true" />
+	    <input type='submit' value='Valider' id="valDelTag" />
 	  </form>
 	</div>
       </div>

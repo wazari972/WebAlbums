@@ -19,7 +19,7 @@ public interface ViewSession extends ServiceSession {
 
     enum Action {
 
-        SUBMIT, EDIT, IMPORT, DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, MASSEDIT, LOGIN, DELTHEME
+        SUBMIT, EDIT, IMPORT, DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, MASSEDIT, LOGIN, DELTHEME, LINKTAG
     }
 
     enum EditMode {

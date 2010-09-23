@@ -82,6 +82,11 @@ public class Config extends HttpServlet {
                 output.add(configService.treatMODGEO(vSession));
             }
 
+            //liens de parenté
+            if (Action.LINKTAG == action) {
+                output.add(configService.treatLINKTAG(vSession));
+            }
+
             //suppression d'un tag
             if (Action.DELTAG == action) {
                 output.add(configService.treatDELTAG(vSession));

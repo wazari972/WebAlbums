@@ -242,6 +242,34 @@ public class ConfigBean implements ConfigLocal {
     }
 
     @Override
+    public XmlBuilder treatLINKTAG(ViewSessionConfig vSession) {
+        XmlBuilder output = new XmlBuilder("linkTag");
+
+        Integer parentId = vSession.getParentTag();
+        Integer sonId = vSession.getSonTag();
+
+        if (parentId == null || parentId == -1
+            || sonId == null    || sonId == -1)
+        {
+            output.addException("Pas de tag selectionné ...");
+            return output.validate();
+        }
+
+        Tag enrParentTag = tagDAO.find(parentId);
+        Tag enrSonTag = tagDAO.find(sonId);
+
+        if (enrParentTag == null || enrSonTag == null) {
+            output.addException("Invalid tag ... "+parentId+" or "+sonId);
+            return output.validate();
+        }
+        enrSonTag.setParent(enrParentTag);
+
+        output.add("message", "Tags correctement affiliés") ;
+        return output.validate();
+    }
+
+
+    @Override
     public XmlBuilder treatDELTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlBuilder output = new XmlBuilder("delTag");

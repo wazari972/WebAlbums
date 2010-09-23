@@ -40,4 +40,7 @@ public interface ConfigLocal {
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlBuilder treatDELTHEME(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
+    XmlBuilder treatLINKTAG(ViewSessionConfig vSession) throws WebAlbumsServiceException;
+
 }
