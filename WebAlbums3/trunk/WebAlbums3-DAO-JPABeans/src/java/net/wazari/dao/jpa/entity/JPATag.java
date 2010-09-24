@@ -17,6 +17,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -79,6 +81,16 @@ public class JPATag implements Tag, Serializable {
     @XmlElement
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jPATag", fetch = FetchType.LAZY)
     private JPAGeolocalisation jPAGeolocalisation;
+
+    @XmlTransient
+    @JoinColumn(name = "Parent", referencedColumnName = "ID", nullable = true)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    private JPATag parent;
+
+
+    @XmlTransient
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.LAZY)
+    private List<JPATag> sonList;
 
     public JPATag() {
     }
@@ -151,6 +163,26 @@ public class JPATag implements Tag, Serializable {
     @Override
     public void setGeolocalisation(Geolocalisation jPAGeolocalisation) {
         this.jPAGeolocalisation = (JPAGeolocalisation) jPAGeolocalisation;
+    }
+
+    @Override
+    public Tag getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(Tag parent) {
+        this.parent = (JPATag) parent;
+    }
+    
+    @Override
+    public List<Tag> getSonList() {
+        return (List) sonList;
+    }
+
+    @Override
+    public void setSonList(List<Tag> sonList) {
+        this.sonList = (List) sonList;
     }
 
     @Override

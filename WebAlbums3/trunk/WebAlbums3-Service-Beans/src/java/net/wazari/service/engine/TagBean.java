@@ -2,9 +2,11 @@ package net.wazari.service.engine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +108,24 @@ public class TagBean implements TagLocal {
         return output.validate();
     }
 
+    private static class PairTagXmlBuilder {
+        Tag tag ;
+        XmlBuilder xml ;
+
+        public PairTagXmlBuilder(Tag tag, XmlBuilder xml) {
+            this.tag = tag;
+            this.xml = xml;
+        }
+
+        public Tag getTag() {
+            return tag;
+        }
+
+        public XmlBuilder getXml() {
+            return xml;
+        }
+
+    }
     private static final int SIZE_SCALE = 200 ;
     private static final int SIZE_MIN = 100 ;
     @Override
@@ -117,24 +137,59 @@ public class TagBean implements TagLocal {
         Map<Tag,Long> map = tagDAO.queryIDNameCount(vSession);
         for (long current : map.values()) if (current > max) max = current ;
 
-        for (Tag enrTag : map.keySet()) {
-            addTagAndSons(cloud, enrTag, map, max, "");
+        Tag enrCurrentTag = null ;
+        Stack<PairTagXmlBuilder> enrSonStack = new Stack<PairTagXmlBuilder>() ;
+        while (!map.isEmpty()) {
+            //if we've got not --parent-- Tag to treat
+            if (enrCurrentTag == null) {
+                //take the first of the map
+                enrCurrentTag = map.keySet().iterator().next() ;
+            }
+            log.info("Current Tag: {}", enrCurrentTag) ;
+            if (enrCurrentTag.getParent() != null) {
+                //switch to the parent
+                enrCurrentTag = enrCurrentTag.getParent() ;
+                log.info("Switch to parent Tag: {}", enrCurrentTag) ;
+                continue ;
+            } 
 
+            enrSonStack.push(new PairTagXmlBuilder(enrCurrentTag, cloud)) ;
+            while (!enrSonStack.isEmpty()) {
+                log.info("The stack has {} elements", enrSonStack.size());
+                PairTagXmlBuilder pair = enrSonStack.pop() ;
+
+                Long nbElts = map.get(pair.tag);
+                if (nbElts == null) {
+                    nbElts = 0L ;
+                }
+                else {
+                    Object removed = map.remove(pair.tag) ;
+                    log.info("Removing entry {}:{} ", pair.tag.getNom(), removed) ;
+                    
+                }
+                log.info("Tag '{}' has {} pictures", pair.tag.getNom(), nbElts) ;
+                int size = (int) (SIZE_MIN + ((double) nbElts / max) * SIZE_SCALE);
+                XmlBuilder xmlParent = new XmlBuilder("tag")
+                    .addAttribut("size", size)
+                    .addAttribut("nb", nbElts)
+                    .addAttribut("id", pair.tag.getId()) 
+                    .addAttribut("name", pair.tag.getNom()) ;
+                pair.xml.add(xmlParent);
+
+                log.info("Tag {} has {} children",pair.tag.getNom(),pair.tag.getSonList().size()) ;
+                if (!pair.tag.getSonList().isEmpty()) {
+                    XmlBuilder xmlSon = new XmlBuilder("children") ;
+                    xmlParent.add(xmlSon) ;
+                    for (Tag enrSon : pair.tag.getSonList()) {
+                        log.info("Push {} in the stack", enrSon.getNom()) ;
+                        enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon)) ;
+                    }
+                }
+            }
+            enrCurrentTag = null ;
         }
         stopWatch.stop() ;
         return cloud.validate();
-    }
-
-    private static void addTagAndSons(XmlBuilder cloud, Tag enrParentTag, Map<Tag,Long> map, long max, String prefix) {
-        long current = map.get(enrParentTag);
-        int size = (int) (SIZE_MIN + ((double) current / max) * SIZE_SCALE);
-        cloud.add(new XmlBuilder("tag", prefix+enrParentTag.getNom())
-                .addAttribut("size", size)
-                .addAttribut("nb", current)
-                .addAttribut("id", enrParentTag.getId()));
-        for (Tag enrSonTag : enrParentTag.getSonList()) {
-            addTagAndSons(cloud, enrSonTag, map, max, prefix+"+");
-        }
     }
 
     @Override

@@ -33,13 +33,6 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="/root/tags/cloud">
-    <center>
-      <xsl:apply-templates select="tag"/>
-    </center>
-  </xsl:template>
-
-
   <xsl:include href="PhotosAlbums.xsl" />
   <xsl:template match="/root/photos/random">
     <center>
@@ -103,21 +96,41 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="cloud/tag">
-    <a> 
-      <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
-      <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
-      <xsl:attribute name="title"><xsl:value-of select="."/> : <xsl:value-of select="@nb"/></xsl:attribute>
-      <xsl:value-of select="." />
-    </a>
-    <a>
-      <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
-      <xsl:attribute name="href">Images?id=<xsl:value-of select="@id"/>&amp;mode=RANDOM_TAG</xsl:attribute>
-      <xsl:attribute name="title">Image aléatoire</xsl:attribute>
-      &#9830;
-    </a><br/>
+  <xsl:template match="/root/tags/cloud">
+      <a href="javascript:ddtreemenu.flatten('cloudTree', 'expand')">Expand All</a>
+    | <a href="javascript:ddtreemenu.flatten('cloudTree', 'contact')">Contact All</a>
+      <ul id="cloudTree" class="treeview">
+        <xsl:apply-templates select="tag"/>
+      </ul>
+      <script type="text/javascript">
+        ddtreemenu.createTree("cloudTree", false)
+      </script>
   </xsl:template>
 
+  <xsl:template match="cloud/tag|children/tag">
+      <li>
+        <a>
+          <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
+          <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
+          <xsl:attribute name="title"><xsl:value-of select="@name"/> : <xsl:value-of select="@nb"/></xsl:attribute>
+          <xsl:value-of select="@name" />
+        </a>
+        <a>
+          <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
+          <xsl:attribute name="href">Images?id=<xsl:value-of select="@id"/>&amp;mode=RANDOM_TAG</xsl:attribute>
+          <xsl:attribute name="title">Image aléatoire</xsl:attribute>
+          &#9830;
+        </a>
+        <xsl:apply-templates select="children"/>
+    </li>
+  </xsl:template>
+
+   <xsl:template match="children">
+      <ul rel="open">
+        <xsl:apply-templates select="tag"/>
+      </ul>
+  </xsl:template>
+  
   <xsl:template match="persons|places">
     <table>
       <tr>

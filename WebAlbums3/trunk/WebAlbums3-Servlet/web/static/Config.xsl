@@ -186,8 +186,9 @@
       		<td align='left'><label for="lstSonTag">Fils : </label></td>
 		<td>
                   <xsl:apply-templates select="tags">
-		    <xsl:with-param name="style">list</xsl:with-param>
+		    <xsl:with-param name="style">multiple</xsl:with-param>
 		    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+                    <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
 		    <xsl:with-param name="name">sonTag</xsl:with-param>
 		    <xsl:with-param name="id">lstSonTag</xsl:with-param>
 		  </xsl:apply-templates>

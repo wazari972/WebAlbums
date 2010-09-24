@@ -246,26 +246,32 @@ public class ConfigBean implements ConfigLocal {
         XmlBuilder output = new XmlBuilder("linkTag");
 
         Integer parentId = vSession.getParentTag();
-        Integer sonId = vSession.getSonTag();
+        Integer[] sonIds = vSession.getSonTags();
 
-        if (parentId == null || parentId == -1
-            || sonId == null    || sonId == -1)
+        if (parentId == null || sonIds == null)
         {
             output.addException("Pas de tag selectionné ...");
             return output.validate();
         }
 
         Tag enrParentTag = tagDAO.find(parentId);
-        Tag enrSonTag = tagDAO.find(sonId);
 
-        if (enrParentTag == null || enrSonTag == null) {
-            output.addException("Invalid tag ... "+parentId+" or "+sonId);
-            return output.validate();
+        for (Integer sonId : sonIds) {
+            Tag enrSonTag = tagDAO.find(sonId);
+            if (enrParentTag == null)
+                enrSonTag.setParent(null);
+            else if(isParentalityAllowed(enrParentTag, enrSonTag)) {
+                enrSonTag.setParent(enrParentTag);
+            }
         }
-        enrSonTag.setParent(enrParentTag);
-
         output.add("message", "Tags correctement affiliés") ;
         return output.validate();
+    }
+
+    private static boolean isParentalityAllowed(Tag enrParent, Tag enrSon) {
+        if (enrSon.getId().equals(enrParent.getId())) return false ;
+        else if (enrParent.getParent() == null) return true ;
+        else return isParentalityAllowed(enrParent.getParent(), enrSon) ;
     }
 
 

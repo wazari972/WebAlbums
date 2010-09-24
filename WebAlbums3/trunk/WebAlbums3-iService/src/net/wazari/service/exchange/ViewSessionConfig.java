@@ -29,5 +29,5 @@ public interface ViewSessionConfig extends ViewSession{
 
     Integer getParentTag();
 
-    Integer getSonTag();
+    Integer[] getSonTags();
 }

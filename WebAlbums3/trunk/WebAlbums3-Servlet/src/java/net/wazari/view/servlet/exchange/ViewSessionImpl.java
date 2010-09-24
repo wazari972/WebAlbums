@@ -376,8 +376,8 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public Integer getSonTag() {
-        return getInteger("sonTag") ;
+    public Integer[] getSonTags() {
+        return getIntArray("sonTag") ;
     }
 
     /** ** ** ** **/
