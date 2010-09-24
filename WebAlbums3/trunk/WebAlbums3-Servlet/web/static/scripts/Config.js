@@ -88,12 +88,30 @@ function updateLocation(lat, lng) {
     $("#latID_2").val(lat) ;
     $("#lngID_2").val(lng) ;
 }
-function checkValidity() {
-    if ($("#lstNewTag").val() == -1) {
-        $("#valNewTag").attr('disabled', 'disabled');
+
+function checkValidity(listId, validateBtId) {
+    if ($("#"+listId).val() == -1) {
+        $("#"+validateBtId).attr('disabled', 'disabled');
     } else {
-        $("#valNewTag").attr('disabled', '');
+        $("#"+validateBtId).attr('disabled', '');
     }
 }
-$("#lstNewTag").change(checkValidity) ;
 
+
+$("#lstNewTag").change(function () {
+    checkValidity("lstNewTag", "valNewTag")
+}) ;
+
+$("#importBt").click(function () {
+    pleaseConfirm("formImport")
+}) ;
+
+$("#delThemeBt").click(function () {
+    pleaseConfirm("formDelTheme")
+}) ;
+
+$("#btKill").click(function () {
+    alert("Bye-bye");
+    $(this).val("Dead!").attr('disabled', 'disabled');
+    alert($(this).attr('rel')) ;
+}) ;

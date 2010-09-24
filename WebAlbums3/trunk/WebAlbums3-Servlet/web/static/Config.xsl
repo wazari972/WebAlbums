@@ -28,7 +28,7 @@
 	      </xsl:attribute>
 	    </input>
 	    <br/>
-	    <input onClick='javascript:pleaseConfirm("formImport")' type='button' value='Importer'/>
+	    <input id="importBt" type='button' value='Importer'/>
 	  </form>
 	</div>
       </div>
@@ -278,9 +278,9 @@
 	<div class="body">
             <xsl:apply-templates select="delTheme"/>
             <center>
-              <form action='#delTheme' method='POST'>
+              <form action='#delTheme' method='POST' id="formDelTheme">
                 <input type='hidden' name='action' value='DELTHEME'/>
-                <input onClick='javascript:pleaseConfirm("formImport")' type='button' value='Go for it !'/>
+                <input id="delThemeBt" type='button' value='Go for it !'/>
               </form>
           </center>
 	</div>
@@ -318,8 +318,8 @@
 	<div class="body">
             <center>
               <input id="btKill" type="button" value="Shutdown">
-                  <xsl:attribute name="onClick">
-                  javascript:alert("Bye-bye");$("#btKill").val("Dead!").attr('disabled', 'disabled');callURL("http://"+window.location.hostname+":<xsl:value-of select="."/>");
+                  <xsl:attribute name="rel">
+                  http://"+window.location.hostname+":<xsl:value-of select="."/>
                   </xsl:attribute>
                   GO
               </input>

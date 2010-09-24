@@ -17,7 +17,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1><a href="Albums">Tous les Albums</a>&#160;<input id="albumsLoader" type="button" value="5 derniers" onclick="loadAlbums();"/></h1>
+	<h1><a href="Albums">Tous les Albums</a>&#160;<input id="albumsLoader" type="button" value="5 derniers"/></h1>
 	<div class="body">
 	  <div id="albums" style="overflow:auto;"/>
 	</div>
@@ -29,7 +29,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Hall of Fame <input id="personsLoader" type="button" value="+" onclick="loadPersons();"/></h1>
+	<h1>Hall of Fame <input id="personsLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <div id="persons" style="overflow:auto"/>
 	</div>
@@ -41,7 +41,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Places of the World <input id="placesLoader" type="button" value="+" onclick="loadPlaces();"/></h1>
+	<h1>Places of the World <input id="placesLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <div id="places" style="overflow:auto"/>
 	</div>
@@ -54,7 +54,7 @@
       </div>
       <div class="content">
 	<form action="Tags">
-	  <h1>Choix par Tags <input id="tagShower" type="button" value="+" onclick="showTags();"/></h1>
+	  <h1>Choix par Tags <input id="tagShower" type="button" value="+"/></h1>
 	  <div class="body">
               <div id="tags" style="display:none">
                 <center>
@@ -74,7 +74,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Photo Aléatoire <input id="randPictLoader" type="button" value="+" onclick="loadRandPict();"/></h1>
+	<h1>Photo Aléatoire <input id="randPictLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <div id="randPict" style="overflow:auto"/>
 	</div>
@@ -86,7 +86,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Aléatoire par Annees <input id="yearsLoader" type="button" value="+" onclick="loadYears();"/></h1>
+	<h1>Aléatoire par Annees <input id="yearsLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <div id="years" style="overflow:auto"/>
 	</div>
@@ -98,7 +98,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Recherche d'Albums <input id="selectLoader" type="button" value="+" onclick="loadSelect();"/></h1>
+	<h1>Recherche d'Albums <input id="selectLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <div id="select" style="overflow:none" />
 	</div>
@@ -109,7 +109,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Géolocalisations <input id="googleMapLoader" type="button" value="+" onclick="preloadGoogleMap();"/></h1>
+	<h1>Géolocalisations <input id="googleMapLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <center>
 	    <div id="mapChoix">

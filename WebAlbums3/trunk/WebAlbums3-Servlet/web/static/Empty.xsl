@@ -97,8 +97,17 @@
   </xsl:template>
 
   <xsl:template match="/root/tags/cloud">
+      <script type="text/javascript" src="static/scripts/treemenu/simpletreemenu.js">
+            /***********************************************
+            * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
+            * This notice MUST stay intact for legal use
+            * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+            * (http://www.dynamicdrive.com/dynamicindex1/navigate1.htm)
+            ***********************************************/
+      </script>
+      <link rel="stylesheet" type="text/css" href="static/scripts/treemenu/simpletree.css" />
       <a href="javascript:ddtreemenu.flatten('cloudTree', 'expand')">Expand All</a>
-    | <a href="javascript:ddtreemenu.flatten('cloudTree', 'contact')">Contact All</a>
+    | <a href="javascript:ddtreemenu.flatten('cloudTree', 'contract')">Contact All</a>
       <ul id="cloudTree" class="treeview">
         <xsl:apply-templates select="tag"/>
       </ul>

@@ -29,14 +29,7 @@
              <xsl:if test="count(/root/affichage/background) = 0">background: #62993B url(static/images/back_all.jpg?notempty) fixed no-repeat;</xsl:if>
              <xsl:if test="count(/root/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>
           }
-        </style>
-        <script type="text/javascript" src="static/scripts/treemenu/simpletreemenu.js">
-            /***********************************************
-            * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
-            * This notice MUST stay intact for legal use
-            * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
-            ***********************************************/
-        </script>
+        </style>s
         <script src="static/scripts/tools.js" type="text/javascript" />
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>

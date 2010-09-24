@@ -49,9 +49,9 @@ function printDate(strDate) {
 
 function trimAlbums(min, max, name) {
     $('.selectAlbum').each(function(index) {
-        if (parseInt($(this).attr( 'rel'))  < min ) {
+        if (parseInt($(this).attr('rel'))  < min ) {
            $(this).hide() ;
-        } else if (parseInt($(this).attr( 'rel'))  > max) {
+        } else if (parseInt($(this).attr('rel'))  > max) {
             $(this).hide() ;
         } else if ($(this).text().indexOf(name) == -1) {
             $(this).hide() ;
@@ -74,3 +74,35 @@ var sliderOption = {
       trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
   }
 } ;
+
+$("#albumsLoader").click(function () {
+    loadAlbums();
+}) ;
+
+$("#personsLoader").click(function () {
+    loadPersons();
+}) ;
+
+$("#placesLoader").click(function () {
+    loadPlaces();
+}) ;
+
+$("#tagShower").click(function () {
+    showTags();
+}) ;
+
+$("#randPictLoader").click(function () {
+    loadRandPict();
+}) ;
+
+$("#yearsLoader").click(function () {
+    loadYears();
+}) ;
+
+$("#selectLoader").click(function () {
+    loadSelect();
+}) ;
+
+$("#googleMapLoader").click(function () {
+    preloadGoogleMap();
+}) ;
