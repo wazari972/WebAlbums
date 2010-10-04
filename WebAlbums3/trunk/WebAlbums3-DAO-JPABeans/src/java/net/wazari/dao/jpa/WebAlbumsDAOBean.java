@@ -10,7 +10,21 @@ import javax.annotation.security.RolesAllowed;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
+import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.JPAPhoto;
+import net.wazari.dao.jpa.entity.metamodel.JPAAlbum_;
+import net.wazari.dao.jpa.entity.metamodel.JPAPhoto_;
+import net.wazari.dao.jpa.entity.metamodel.JPATheme_;
+import net.wazari.dao.jpa.entity.metamodel.JPAUtilisateur_;
 
 /**
  *
@@ -25,7 +39,117 @@ public class WebAlbumsDAOBean {
     public static final String PERSISTENCE_UNIT_MySQL_Test = "WebAlbums-MySQL-Test" ;
     public static final String PERSISTENCE_UNIT_MySQL_Test2 = "WebAlbums-MySQL-Test2" ;
     public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
-    
+
+    @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
+    private EntityManager em;
+
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public Predicate getRestrictionToAlbumsAllowed(ServiceSession session, Root<JPAAlbum> album, Restriction restrict) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        Predicate TRUE = cb.nullLiteral(Boolean.class).isNotNull() ;
+
+        if (!(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY)) return TRUE ;
+
+        CriteriaQuery<Integer> cq = cb.createQuery(Integer.class) ;
+        Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
+        Predicate where = TRUE ;
+        if (!session.isSessionManager()) {
+            //FROM JPAAlbum a, JPAPhoto p
+            Root<JPAPhoto> photo = cq.from(JPAPhoto.class);
+            where = cb.and(
+                        //a.id = p.album
+                        cb.equal(albm.get(JPAAlbum_.id), photo.get(JPAPhoto_.id)), 
+                        //and
+                        cb.or(
+                            cb.and(
+                                cb.or(
+                                    //p.droit is null
+                                    cb.isNull(photo.get(JPAPhoto_.droit)),
+                                    //or
+                                    //p.droit = 0
+                                    cb.equal(photo.get(JPAPhoto_.droit), 0)
+                                    ),
+                                //and
+                                //a.droit >= session.getUser().getId()
+                                cb.greaterThanOrEqualTo(albm.get(JPAAlbum_.droit).get(JPAUtilisateur_.id), session.getUser().getId())
+                                )
+                            ),
+                            //or
+                            //p.droit >=  session.getUser().getId()
+                            cb.greaterThanOrEqualTo(photo.get(JPAPhoto_.droit), session.getUser().getId())
+                        ) ;
+        }
+
+        where = cb.and(where,
+                       getRestrictionToCurrentTheme(session, albm)
+                   );
+        return album.get(JPAAlbum_.id).in(cq) ;
+    }
+
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public Predicate getRestrictionToPhotosAllowed(ServiceSession session, Root<JPAPhoto> photo, Restriction restrict) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        Predicate TRUE = cb.nullLiteral(Boolean.class).isNotNull() ;
+
+        if (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY) return TRUE ;
+        CriteriaQuery<Integer> cq = cb.createQuery(Integer.class) ;
+
+        //FROM JPAPhoto p, JPAAlbum a
+        Root<JPAAlbum> ralbm = cq.from(JPAAlbum.class);
+        Root<JPAPhoto> rphoto = cq.from(JPAPhoto.class);
+        //SELECT p.id
+        cq.select(rphoto.get(JPAPhoto_.id)) ;
+        cq.where(cb.and(
+                    //a.id = p.album
+                    cb.equal(ralbm.get(JPAAlbum_.id), rphoto.get(JPAPhoto_.id)),
+                    session.isSessionManager() ?
+                        TRUE :
+                        cb.and(
+                            //a.id = p.album
+                            cb.equal(ralbm.get(JPAAlbum_.id), rphoto.get(JPAPhoto_.id)), 
+                            //and
+                            cb.or(
+                                cb.and(
+                                    cb.or(
+                                        //p.droit is null
+                                        cb.isNull(rphoto.get(JPAPhoto_.droit)),
+                                        //or
+                                        //p.droit = 0
+                                        cb.equal(rphoto.get(JPAPhoto_.droit), 0)
+                                        ),
+                                    //and
+                                    //a.droit >= session.getUser().getId()
+                                    cb.greaterThanOrEqualTo(ralbm.get(JPAAlbum_.droit).get(JPAUtilisateur_.id), session.getUser().getId())
+                                    )
+                                ),
+                                //or
+                                //p.droit >=  session.getUser().getId()
+                                cb.greaterThanOrEqualTo(rphoto.get(JPAPhoto_.droit), session.getUser().getId())
+                            ),
+                            getRestrictionToCurrentTheme(session, ralbm)
+                        )
+                    ) ;
+        
+        return photo.get(JPAPhoto_.id).in(cq) ;
+        
+    }
+
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public Predicate getRestrictionToCurrentTheme(ServiceSession session, Root<JPAAlbum> albm) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        Predicate TRUE = cb.nullLiteral(Boolean.class).isNotNull() ;
+
+        if (session.isRootSession()) {
+            return TRUE ;
+        } else {
+            //albm.theme = session.getTheme().getId()
+            return cb.equal(albm.get(JPAAlbum_.theme).get(JPATheme_.id),
+                            session.getTheme().getId()) ;
+        }
+
+    }
+
+    @Deprecated
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public StringBuilder processListID(ServiceSession session, StringBuilder rq, boolean restrict) {
         StringBuilder newRq = new StringBuilder(rq) ;
@@ -35,6 +159,7 @@ public class WebAlbumsDAOBean {
         return newRq;
     }
 
+    @Deprecated
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public StringBuilder restrictToAlbumsAllowed(ServiceSession session, String album) {
         StringBuilder rq = null;
@@ -58,6 +183,7 @@ public class WebAlbumsDAOBean {
         return new StringBuilder(50).append(" ").append(album).append(".id IN (").append(processListID(session, rq, true) ).append(") ");
     }
 
+    @Deprecated
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToPhotosAllowed(ServiceSession session, String photo) {
         StringBuilder rq = new StringBuilder(80);
@@ -85,6 +211,7 @@ public class WebAlbumsDAOBean {
             .append(") ").toString();
     }
 
+    @Deprecated
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public String restrictToThemeAllowed(ServiceSession session, String album) {
         if (session.isRootSession()) {
@@ -100,6 +227,7 @@ public class WebAlbumsDAOBean {
 
     }
 
+    @Deprecated
     static StringBuilder getOrder(ListOrder order, String field) {
         StringBuilder rq = new StringBuilder(25)
             .append(" ORDER BY ") ;

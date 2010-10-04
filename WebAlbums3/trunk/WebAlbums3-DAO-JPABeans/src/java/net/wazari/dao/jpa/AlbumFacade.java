@@ -15,11 +15,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Root;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.metamodel.JPAAlbum_;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
@@ -56,16 +62,14 @@ public class AlbumFacade implements AlbumFacadeLocal {
     public SubsetOf<Album> queryAlbums(ServiceSession session,
             Restriction restrict, TopFirst topFirst, Bornes bornes) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
-        StringBuilder rq = new StringBuilder(80) ;
-        rq.append("FROM ")
-          .append(JPAAlbum.class.getName())
-          .append(" a ")
-          .append(" WHERE " )
-          .append(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.restrictToAlbumsAllowed(session, "a") : "1 = 1 " )
-          .append(" AND " )
-          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1 ") )
-          .append(" ORDER BY a.date DESC ") ;
-        Query q = em.createQuery(rq.toString()) ;
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+        Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
+        cq.where(webDAO.getRestrictionToAlbumsAllowed(session, albm, restrict)) ;
+        cq.orderBy(cb.desc(albm.get(JPAAlbum_.date))) ;
+
+        Query q = em.createQuery(cq) ;
         if (topFirst == TopFirst.TOP) {
             q.setFirstResult(0);
             q.setMaxResults(bornes.getNbElement());
@@ -75,17 +79,15 @@ public class AlbumFacade implements AlbumFacadeLocal {
         }
         q.setHint("org.hibernate.cacheable", true) ;
         q.setHint("org.hibernate.readOnly", true) ;
-        Query qSize = em.createQuery("SELECT count(*) "+rq) ;
 
         List<Album> lstAlbums = q.getResultList() ;
-        Long size = (Long) qSize.getSingleResult() ;
         stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstAlbums.size()+" albums returned") ;
-        return new SubsetOf<Album>(bornes, lstAlbums, size);
+        return new SubsetOf<Album>(bornes, lstAlbums, (long) lstAlbums.size());
     }
 
     @Override
     public SubsetOf<Album> queryRandomFromYear(ServiceSession session,
-            Restriction restrict, Bornes bornes, String date) {
+        Restriction restrict, Bornes bornes, String date) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         StringBuilder rq = new StringBuilder(80) ;
         rq.append("FROM ")

@@ -6,9 +6,16 @@
             <name>WebAlbums3-DAO-JPABeans</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <included-library dirs="200">reference.WebAlbums3-iDAO.jar</included-library>
-            <included-library dirs="200">libs.hibernate-persistence.classpath</included-library>
             <included-library dirs="200">reference.WebAlbums3-Commons.jar</included-library>
             <included-library dirs="200">file.reference.CP-Perf-perf4j-0.9.13.jar</included-library>
+            <included-library dirs="200">libs.javaee-api-6.0.classpath</included-library>
+            <included-library dirs="200">file.reference.CP-DB-hibernate3.jar</included-library>
+            <included-library dirs="200">file.reference.antlr-2.7.6.jar</included-library>
+            <included-library dirs="200">file.reference.cglib-2.2.jar</included-library>
+            <included-library dirs="200">file.reference.commons-collections-3.1.jar</included-library>
+            <included-library dirs="200">file.reference.dom4j-1.6.1.jar</included-library>
+            <included-library dirs="200">file.reference.javassist-3.9.0.GA.jar</included-library>
+            <included-library dirs="200">file.reference.jta-1.1.jar</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>

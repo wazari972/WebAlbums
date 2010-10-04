@@ -448,15 +448,29 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="compile" name="library-inclusion-in-archive">
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${libs.hibernate-persistence.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-DB-hibernate3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.antlr-2.7.6.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.cglib-2.2.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.commons-collections-3.1.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.dom4j-1.6.1.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.javassist-3.9.0.GA.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jta-1.1.jar}" todir="${build.classes.dir}"/>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.hibernate-persistence.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-DB-hibernate3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.antlr-2.7.6.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.cglib-2.2.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.commons-collections-3.1.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.dom4j-1.6.1.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.javassist-3.9.0.GA.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jta-1.1.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">
