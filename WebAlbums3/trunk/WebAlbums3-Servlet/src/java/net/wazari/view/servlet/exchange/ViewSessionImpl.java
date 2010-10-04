@@ -386,7 +386,7 @@ public class ViewSessionImpl implements
 
     @Override
     public String getBorderColor() {
-        return getString("parentTag") ;
+        return getString("borderColor") ;
     }
 
     /** ** ** ** **/

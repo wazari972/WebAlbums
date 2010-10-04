@@ -37,7 +37,7 @@ public class ImageMagickWrapper extends GenericImporter {
 
     @Override
     public Capability[] supports() {
-        return new Capability[] {Capability.ROTATE, Capability.SHRINK, Capability.THUMBNAIL} ;
+        return new Capability[] {Capability.ROTATE, Capability.SHRINK, Capability.THUMBNAIL, Capability.ADD_BORDER} ;
     }
 
     @Override
@@ -72,6 +72,7 @@ public class ImageMagickWrapper extends GenericImporter {
     }
     private static final Logger log = LoggerFactory.getLogger(ImageMagickWrapper.class.getName());
 
+    @Override
     public void addBorder(ProcessCallback cb, String imagePath, Integer borderWidth, String color) {
         cb.execWaitFor(new String[]{"convert", "-border", "" + borderWidth + "x"+borderWidth, "-bordercolor", color, imagePath, imagePath});
     }

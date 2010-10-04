@@ -25,6 +25,7 @@ import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.ProcessCallbackImpl;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.service.PluginManagerLocal;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 @Singleton
@@ -249,10 +250,10 @@ public class SystemTools {
 
         Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.ADD_BORDER);
         if (util == null) {
-            log.warn("No plugin available to add a border to {}@{}, don't change anything", enrPhoto.getType(), ext);
+            log.warn("No plugin available to add a border to {}@{}, nothing changed", enrPhoto.getType(), ext);
             return ;
         }
 
-        util.addBorder(cb, photoUtil.getImagePath(vSession, enrPhoto), borderWidth, color);
+        util.addBorder(cb, filepath, borderWidth, color == null ? "" : StringEscapeUtils.escapeJavaScript(color));
     }
 }
