@@ -8,7 +8,6 @@ package net.wazari.plugin;
 import java.util.Arrays;
 import net.wazari.common.plugins.GenericImporter;
 import net.wazari.common.plugins.Importer.Capability;
-import net.wazari.common.plugins.Importer.Metadata;
 import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.Importer.SanityStatus;
 

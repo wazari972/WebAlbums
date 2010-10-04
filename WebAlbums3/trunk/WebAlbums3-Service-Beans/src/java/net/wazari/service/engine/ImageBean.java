@@ -112,12 +112,25 @@ public class ImageBean implements ImageLocal {
 
             type = (mode == ImgMode.PETIT || enrPhoto.getType() == null ? "image/png" : enrPhoto.getType());
             if (mode == ImgMode.SHRINK) {
-                String width = vSession.getWidth();
+                
                 try {
-                    filepath = sysTools.shrink(vSession, enrPhoto, new Integer(width));
+                    Integer width = vSession.getWidth();
+                    filepath = sysTools.shrink(vSession, enrPhoto, width);
                     log.warn("Shrinked filepath: {}", filepath) ;
                 } catch (NumberFormatException e) {
-                    output.addException("Impossible de parser le nombre " + width);
+                    output.addException("Impossible de parser la taille demandee");
+                    return output.validate();
+                }
+
+                try {
+                    Integer borderWidth = vSession.getBorderWidth();
+                    if (borderWidth != null) {
+                        String color = vSession.getBorderColor() ;
+                        sysTools.addBorder(vSession, enrPhoto, new Integer(borderWidth), color, filepath);
+                        log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
+                    }
+                } catch (NumberFormatException e) {
+                    output.addException("Impossible de parser le taille de la bordure a ajouter");
                     return output.validate();
                 }
             } else if (mode == ImgMode.BACKGROUND) {

@@ -14,11 +14,15 @@ import java.io.OutputStream;
  */
 public interface ViewSessionImages extends ViewSession {
 
+    Integer getBorderWidth();
+
+    String getBorderColor();
+
     enum ImgMode {PETIT, GRAND, SHRINK, FULLSCREEN, BACKGROUND, RANDOM_TAG}
 
     Integer getId();
 
-    String getWidth();
+    Integer getWidth();
 
     ImgMode getImgMode();
 

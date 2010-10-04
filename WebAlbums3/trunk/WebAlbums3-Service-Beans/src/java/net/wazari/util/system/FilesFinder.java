@@ -304,7 +304,7 @@ public class FilesFinder {
             enrPhoto.setDescription("");
             enrPhoto.setPath(photoPath);
 
-            sysTools.retreiveMetadata(type, null, enrPhoto, photo.getAbsolutePath());
+            sysTools.retrieveMetadata(type, null, enrPhoto, photo.getAbsolutePath());
             enrPhoto.setAlbum(enrAlbum);
             enrPhoto.setType(type);
             info(out, "### Album " + enrPhoto.getAlbum());

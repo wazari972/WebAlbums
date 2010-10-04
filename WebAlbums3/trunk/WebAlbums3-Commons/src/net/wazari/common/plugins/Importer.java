@@ -10,10 +10,12 @@ package net.wazari.common.plugins;
  */
 public interface Importer {
 
+    void addBorder(ProcessCallback cb, String imagePath, Integer borderWidth, String color);
+
     enum Capability {
 
         SHRINK, THUMBNAIL, ROTATE, FULLSCREEN_SINGLE, FULLSCREEN_MULTIPLE, META_DATA
-    }
+    ,   ADD_BORDER}
 
     enum SanityStatus {
 

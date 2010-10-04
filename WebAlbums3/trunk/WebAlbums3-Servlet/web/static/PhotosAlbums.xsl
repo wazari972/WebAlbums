@@ -81,7 +81,7 @@
       <xsl:apply-templates select="user" />
       <xsl:if test="not(/root/albums)">
 	<a title="Photo réduite">
-	  <xsl:attribute name="href">Images?id=<xsl:value-of select="photoID" />&amp;mode=SHRINK&amp;width=800</xsl:attribute>
+	  <xsl:attribute name="href">Images?id=<xsl:value-of select="photoID" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
 	  <img src="static/images/reduire.gif" width="25px"/>
 	</a>
       </xsl:if>

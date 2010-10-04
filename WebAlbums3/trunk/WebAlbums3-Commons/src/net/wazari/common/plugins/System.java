@@ -18,5 +18,6 @@ public interface System {
     String getVersion() ;
     
     SanityStatus sanityCheck(ProcessCallback cb) ;
-    boolean link(ProcessCallback cb, String source, File dest);
+    boolean link(ProcessCallback cb, String source, String dest);
+    boolean copy(ProcessCallback cb, String source, String dest);
 }

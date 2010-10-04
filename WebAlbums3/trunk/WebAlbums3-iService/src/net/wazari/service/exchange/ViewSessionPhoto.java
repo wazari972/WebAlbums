@@ -54,11 +54,6 @@ public interface ViewSessionPhoto extends ViewSession {
         Integer getPage();
     }
 
-    interface ViewSessionPhotoSpecial extends ViewSessionPhoto {
-
-        String getWidth();
-    }
-
     Integer getId();
 
     Integer getTagPhoto();

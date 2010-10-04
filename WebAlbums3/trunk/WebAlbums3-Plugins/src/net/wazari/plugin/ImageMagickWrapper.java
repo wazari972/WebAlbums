@@ -72,7 +72,7 @@ public class ImageMagickWrapper extends GenericImporter {
     }
     private static final Logger log = LoggerFactory.getLogger(ImageMagickWrapper.class.getName());
 
-    public void fullscreenFile(ProcessCallback cb, String path) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void addBorder(ProcessCallback cb, String imagePath, Integer borderWidth, String color) {
+        cb.execWaitFor(new String[]{"convert", "-border", "" + borderWidth + "x"+borderWidth, "-bordercolor", color, imagePath, imagePath});
     }
 }

@@ -38,7 +38,6 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSpecial;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
 
@@ -51,7 +50,7 @@ public class ViewSessionImpl implements
         ViewSessionLogin,
         ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumEdit, ViewSessionAlbumSubmit,
         ViewSessionConfig,
-        ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit, ViewSessionPhotoSpecial,
+        ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit,
         ViewSessionTag,
         ViewSessionImages, ViewSessionPhotoDisplayMassEdit,
         ViewSessionMaint{
@@ -272,8 +271,8 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public String getWidth() {
-        return getString("width");
+    public Integer getWidth() {
+        return getInteger("width");
     }
 
     @Override
@@ -378,6 +377,16 @@ public class ViewSessionImpl implements
     @Override
     public Integer[] getSonTags() {
         return getIntArray("sonTag") ;
+    }
+
+    @Override
+    public Integer getBorderWidth() {
+        return getInteger("borderWidth") ;
+    }
+
+    @Override
+    public String getBorderColor() {
+        return getString("parentTag") ;
     }
 
     /** ** ** ** **/

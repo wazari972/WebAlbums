@@ -1,6 +1,7 @@
 package net.wazari.util.system;
 
 import net.wazari.common.plugins.Importer.Capability;
+import net.wazari.service.exchange.ViewSessionImages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
@@ -24,6 +25,7 @@ import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.ProcessCallbackImpl;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.service.PluginManagerLocal;
+import org.apache.commons.lang.StringUtils;
 
 @Singleton
 public class SystemTools {
@@ -145,7 +147,7 @@ public class SystemTools {
             int currentPage = i / vSession.getPhotoSize();
             log.info( "Fullscreen multiple: current page:{}", currentPage);
             File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
-            plugins.getUsedSystem().link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto);
+            plugins.getUsedSystem().link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto.toString());
 
             if (first && currentPage ==  pageAsked) {
                 util.fullscreenMultiple(cb, fPhoto.toString());
@@ -181,11 +183,13 @@ public class SystemTools {
         File fPhoto = new File (target) ;
         fPhoto.getParentFile().mkdirs() ;
         Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.SHRINK);
-        if (util == null) {
-            return photoUtil.getImagePath(vSession, enrPhoto);
+        if (util != null) {
+            util.shrink(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto.toString(), width);
+        } else {
+            log.warn("No plugin available to shrink {}@{}, just copy it across", enrPhoto.getType(), ext) ;
+            plugins.getUsedSystem().copy(cb, fPhoto.toString(), fPhoto.toString() );
         }
 
-        util.shrink(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto.toString(), width);
         fPhoto.deleteOnExit();
 
         return fPhoto.toString();
@@ -231,12 +235,24 @@ public class SystemTools {
         return getWrapper(type, ext, capability) != null;
     }
     
-    public boolean retreiveMetadata(String type, String ext, Photo photo, String path) {
+    public boolean retrieveMetadata(String type, String ext, Photo photo, String path) {
         Importer wrapper = getWrapper(type, ext, Importer.Capability.META_DATA);
         if (wrapper == null) {
             return false ;
         } else {
             return wrapper.setMetadata((Metadata)photo, path) ;
         }
+    }
+
+    public void addBorder(ViewSessionImages vSession, Photo enrPhoto, Integer borderWidth, String color, String filepath) {
+        String ext = photoUtil.getExtention(vSession, enrPhoto);
+
+        Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.ADD_BORDER);
+        if (util == null) {
+            log.warn("No plugin available to add a border to {}@{}, don't change anything", enrPhoto.getType(), ext);
+            return ;
+        }
+
+        util.addBorder(cb, photoUtil.getImagePath(vSession, enrPhoto), borderWidth, color);
     }
 }
