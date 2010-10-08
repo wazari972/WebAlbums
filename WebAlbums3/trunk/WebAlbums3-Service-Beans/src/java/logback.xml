@@ -14,9 +14,10 @@
             <maxFileSize>10000000</maxFileSize>
         </triggeringPolicy>
         <layout class="ch.qos.logback.classic.html.HTMLLayout">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss}, %p, %c, %t, %M %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %p %c %t %M %m%n</pattern>
         </layout>
     </appender>
+
     <appender name="RootFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>WebAlbums</file>
         <append>true</append>
@@ -34,14 +35,15 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss}, %p, %c, %M %m%n</pattern>
         </layout>
     </appender>
+
+
     <appender name="RootConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>info</level>
         </filter>
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <appender>
             <pattern>%d{yyyy-MM-dd HH:mm:ss}, %p, %c, %t, %L, %C{1} %m%n</pattern>
-
-        </layout>
+        </appender>
     </appender>
 
 

@@ -323,7 +323,8 @@ public class PhotoBean implements PhotoLocal {
         boolean current = false;
 
         Turn turn = null;
-        if (inEditionMode == EditMode.EDITION) {
+        if (vSession.isSessionManager()
+                && inEditionMode == EditMode.EDITION) {
             try {
                 Action action = vSession.getAction();
                 if (Action.MASSEDIT == action) {
@@ -389,7 +390,8 @@ public class PhotoBean implements PhotoLocal {
                     submitted = true ;
                 }
             }
-            if (inEditionMode == EditMode.EDITION) {
+            if (vSession.isSessionManager()
+                    && inEditionMode == EditMode.EDITION) {
                 if ((reSelect || reSelectThis) && current) {
                     photo.add("checked");
                 }
@@ -425,11 +427,13 @@ public class PhotoBean implements PhotoLocal {
             count++;
         }
 
-        if (!submitted && submit != null) {
+        if (vSession.isSessionManager()
+                && !submitted && submit != null) {
             output.add(submit);
         }
 
-        if (inEditionMode == EditMode.EDITION) {
+        if (vSession.isSessionManager()
+                && inEditionMode == EditMode.EDITION) {
             XmlBuilder massEdit = new XmlBuilder("massEdit");
             massEdit.add(webService.displayListBN(Mode.TAG_USED, vSession,
                     Box.LIST, "newTag"));

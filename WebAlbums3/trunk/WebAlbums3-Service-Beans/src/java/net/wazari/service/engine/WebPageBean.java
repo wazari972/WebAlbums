@@ -186,7 +186,9 @@ public class WebPageBean implements WebPageLocal {
         }
         affichage.add("maps", "Sans Carte");
         affichage.add("details", vSession.getDetails());
-        if (vSession.isRootSession() || vSession.getTheme() != null && vSession.getTheme().getPicture() != null) {
+        if (!vSession.getConfiguration().isPathURL() &&
+            (vSession.isRootSession() ||
+            vSession.getTheme() != null && vSession.getTheme().getPicture() != null)) {
             affichage.add("background") ;
         }
         if (vSession.isRemoteAccess()) affichage.add("remote") ;

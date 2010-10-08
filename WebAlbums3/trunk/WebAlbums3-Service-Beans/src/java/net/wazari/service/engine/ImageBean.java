@@ -36,7 +36,6 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.util.system.SystemTools;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
@@ -138,8 +137,9 @@ public class ImageBean implements ImageLocal {
 
                 String backgroundpath =  vSession.getConfiguration()
                         .getTempPath()+enrThemeForBackground.getNom()+File.separator+SIZE+".jpg" ;
-
-                if (!new File (backgroundpath).exists()) {
+                if (vSession.getConfiguration().isPathURL()) {
+                    filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
+                } else if (!new File (backgroundpath).exists()) {
                     filepath = sysTools.shrink(vSession, enrPhoto, SIZE, backgroundpath);
                 } else {
                     filepath = backgroundpath ;
@@ -154,19 +154,21 @@ public class ImageBean implements ImageLocal {
 
             //redirect if the image can be accessed from HTTP
             if (vSession.getConfiguration().isPathURL()) {
-                vSession.redirect(filepath) ;
-                stopWatch.stop(stopWatch.getTag()+".redirect") ;
-                return null ;
+                if (false) {
+                    vSession.redirect(filepath) ;
+                    stopWatch.stop(stopWatch.getTag()+".redirect") ;
+                    return null ;
+                }
+            } else {
+
+                if (mode == ImgMode.FULLSCREEN) {
+                     sysTools.fullscreenImage(vSession, enrPhoto);
+                     stopWatch.stop(stopWatch.getTag()+".fullscreen") ;
+                     return null ;
+                }
+
+                filepath = "file://" + filepath;
             }
-
-            if (mode == ImgMode.FULLSCREEN) {
-                 sysTools.fullscreenImage(vSession, enrPhoto);
-                 stopWatch.stop(stopWatch.getTag()+".fullscreen") ;
-                 return null ;
-            }
-
-            filepath = "file://" + filepath;
-
 
             stopWatch.lap("Service.treatIMG."+mode) ;
             //null = correct, true = incorrect, but contentType already set
