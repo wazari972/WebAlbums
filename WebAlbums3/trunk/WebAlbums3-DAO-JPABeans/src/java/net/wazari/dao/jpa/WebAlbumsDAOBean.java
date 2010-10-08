@@ -14,7 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
@@ -50,87 +49,86 @@ public class WebAlbumsDAOBean {
 
         if (!(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY)) return TRUE ;
 
-        CriteriaQuery<Integer> cq = cb.createQuery(Integer.class) ;
+        CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
         Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
+
         Predicate where = TRUE ;
         if (!session.isSessionManager()) {
             //FROM JPAAlbum a, JPAPhoto p
             Root<JPAPhoto> photo = cq.from(JPAPhoto.class);
             where = cb.and(
                         //a.id = p.album
-                        cb.equal(albm.get(JPAAlbum_.id), photo.get(JPAPhoto_.id)), 
+                        cb.equal(albm.<Integer>get("id"), photo.<Integer>get("id")),
                         //and
                         cb.or(
                             cb.and(
                                 cb.or(
                                     //p.droit is null
-                                    cb.isNull(photo.get(JPAPhoto_.droit)),
+                                    cb.isNull(photo.get("droit")),
                                     //or
                                     //p.droit = 0
-                                    cb.equal(photo.get(JPAPhoto_.droit), 0)
+                                    cb.equal(photo.get("droit"), 0)
                                     ),
                                 //and
                                 //a.droit >= session.getUser().getId()
-                                cb.greaterThanOrEqualTo(albm.get(JPAAlbum_.droit).get(JPAUtilisateur_.id), session.getUser().getId())
+                                cb.greaterThanOrEqualTo(albm.get("droit").<Integer>get("id"), session.getUser().getId())
                                 )
                             ),
                             //or
                             //p.droit >=  session.getUser().getId()
-                            cb.greaterThanOrEqualTo(photo.get(JPAPhoto_.droit), session.getUser().getId())
+                            cb.greaterThanOrEqualTo(photo.<Integer>get("droit"), session.getUser().getId())
                         ) ;
         }
 
-        where = cb.and(where,
+        cq.where(cb.and(where,
                        getRestrictionToCurrentTheme(session, albm)
-                   );
-        return album.get(JPAAlbum_.id).in(cq) ;
+                       ));
+        return album.get("id").in(cq) ;
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public Predicate getRestrictionToPhotosAllowed(ServiceSession session, Root<JPAPhoto> photo, Restriction restrict) {
+    public Predicate getRestrictionToPhotosAllowed(ServiceSession session, Root<JPAPhoto> photo) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         Predicate TRUE = cb.nullLiteral(Boolean.class).isNotNull() ;
 
-        if (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY) return TRUE ;
         CriteriaQuery<Integer> cq = cb.createQuery(Integer.class) ;
 
         //FROM JPAPhoto p, JPAAlbum a
         Root<JPAAlbum> ralbm = cq.from(JPAAlbum.class);
         Root<JPAPhoto> rphoto = cq.from(JPAPhoto.class);
         //SELECT p.id
-        cq.select(rphoto.get(JPAPhoto_.id)) ;
+        cq.select(rphoto.<Integer>get("id")) ;
         cq.where(cb.and(
-                    //a.id = p.album
-                    cb.equal(ralbm.get(JPAAlbum_.id), rphoto.get(JPAPhoto_.id)),
+                    //a.id = p.albumString
+                    cb.equal(ralbm.get("id"), rphoto.get("id")),
                     session.isSessionManager() ?
                         TRUE :
                         cb.and(
                             //a.id = p.album
-                            cb.equal(ralbm.get(JPAAlbum_.id), rphoto.get(JPAPhoto_.id)), 
+                            cb.equal(ralbm.get("id"), rphoto.get("id")),
                             //and
                             cb.or(
                                 cb.and(
                                     cb.or(
                                         //p.droit is null
-                                        cb.isNull(rphoto.get(JPAPhoto_.droit)),
+                                        cb.isNull(rphoto.get("droit")),
                                         //or
                                         //p.droit = 0
-                                        cb.equal(rphoto.get(JPAPhoto_.droit), 0)
+                                        cb.equal(rphoto.get("droit"), 0)
                                         ),
                                     //and
                                     //a.droit >= session.getUser().getId()
-                                    cb.greaterThanOrEqualTo(ralbm.get(JPAAlbum_.droit).get(JPAUtilisateur_.id), session.getUser().getId())
+                                    cb.greaterThanOrEqualTo(ralbm.get("droit").<Integer>get("id"), session.getUser().getId())
                                     )
                                 ),
                                 //or
                                 //p.droit >=  session.getUser().getId()
-                                cb.greaterThanOrEqualTo(rphoto.get(JPAPhoto_.droit), session.getUser().getId())
+                                cb.greaterThanOrEqualTo(rphoto.<Integer>get("droit"), session.getUser().getId())
                             ),
                             getRestrictionToCurrentTheme(session, ralbm)
                         )
                     ) ;
-        
-        return photo.get(JPAPhoto_.id).in(cq) ;
+        return photo.<Integer>get("id").in(cq) ;
         
     }
 
@@ -143,7 +141,7 @@ public class WebAlbumsDAOBean {
             return TRUE ;
         } else {
             //albm.theme = session.getTheme().getId()
-            return cb.equal(albm.get(JPAAlbum_.theme).get(JPATheme_.id),
+            return cb.equal(albm.get("theme").get("id"),
                             session.getTheme().getId()) ;
         }
 

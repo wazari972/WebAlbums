@@ -5,7 +5,6 @@
 package net.wazari.dao.jpa;
 
 import java.lang.management.ManagementFactory;
-import java.sql.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
@@ -19,7 +18,6 @@ import javax.management.ObjectName;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import net.wazari.dao.MaintFacadeLocal;
-import org.hibernate.JDBCException;
 import org.hibernate.ejb.EntityManagerImpl;
 import org.hibernate.jmx.StatisticsService;
 import org.hibernate.stat.Statistics;

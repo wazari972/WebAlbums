@@ -15,11 +15,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.ManagedType;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAPhoto;
+import net.wazari.dao.jpa.entity.metamodel.JPAPhoto_;
 
 /**
  *
@@ -62,6 +69,27 @@ public class PhotoFacade implements PhotoFacadeLocal {
                 .append(session == null ? "" : " AND " + webDAO.restrictToPhotosAllowed(session, "p")) ;
 
             return (JPAPhoto) em.createQuery(rq.toString()).setParameter("id", id)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", false)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public Photo loadIfMetaAllowed(ServiceSession session, int id) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            
+            CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
+            Root<JPAPhoto> photo = cq.from(JPAPhoto.class);
+            cq.where(
+                    cb.and(
+                        cb.equal(photo.get("id"), id),
+                        webDAO.getRestrictionToPhotosAllowed(session, photo)
+                        )
+                    ) ;
+            return (JPAPhoto) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
