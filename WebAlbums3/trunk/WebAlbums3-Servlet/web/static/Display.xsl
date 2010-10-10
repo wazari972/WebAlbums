@@ -74,7 +74,6 @@
 		<li><a href="Config" rel="shadowbox" title="Configuration">Config</a>
                     </li>
 	      </xsl:if>
-              <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
 	    </ul>	
 	  </div>
 	</div>
@@ -98,6 +97,7 @@
 		<ul>
 		  <li><xsl:value-of select="/root/login/theme" /></li>
 		  <li><xsl:value-of select="/root/login/user" /></li>
+                  <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
 		</ul>
 		<h3>Nuage de tags <input id="cloudLoader" type="button" value="load cloud" onclick="loadCloud();"/></h3>
 		<div id="cloud">
