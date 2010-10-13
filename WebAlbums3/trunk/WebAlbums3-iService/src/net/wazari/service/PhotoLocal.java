@@ -5,6 +5,7 @@
 
 package net.wazari.service;
 
+import java.util.Collection;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -12,6 +13,8 @@ import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionPhoto.*;
 import net.wazari.common.util.XmlBuilder;
+import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Tag;
 import net.wazari.service.exchange.ViewSession;
 
 /**
@@ -27,19 +30,19 @@ public interface PhotoLocal {
     }
     class PhotoRequest {
 
-        public PhotoRequest(TypeRequest type, Integer albumId) {
+        public PhotoRequest(TypeRequest type, Album albumId) {
             this.type = type;
             this.albumId = albumId ;
             this.listTagId = null ;
         }
-        public PhotoRequest(TypeRequest type, List<Integer> listTagId) {
+        public PhotoRequest(TypeRequest type, Collection<Tag> listTagId) {
             this.type = type;
             this.listTagId = listTagId ;
             this.albumId = null ;
         }
-        public Integer albumId ;
+        public Album albumId ;
         public TypeRequest type ;
-        public List<Integer> listTagId ;
+        public Collection<Tag> listTagId ;
     }
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)

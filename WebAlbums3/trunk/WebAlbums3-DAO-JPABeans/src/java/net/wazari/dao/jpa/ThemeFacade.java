@@ -29,7 +29,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
 
     @Override
     public void remove(Theme theme, boolean protect) {
-        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
             throw new IllegalStateException("cannot remove a theme while ProtectedDB is enabled") ;
         }
         em.remove(em.merge(theme));

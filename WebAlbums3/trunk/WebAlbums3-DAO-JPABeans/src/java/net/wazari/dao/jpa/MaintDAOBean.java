@@ -38,7 +38,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
 
     @Override
     public void treatImportXML(boolean protect, final String path) {
-        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
             return;
         }
         xml.importXml(path);
@@ -51,7 +51,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
 
     @Override
     public void treatTruncateDB(boolean protect) {
-        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
             return;
         }
         xml.truncateDb();
@@ -59,7 +59,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
 
     @Override
     public void treatFullImport(boolean protect, String path) {
-        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_MySQL) {
+        if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
             return;
         }
         treatTruncateDB(protect);

@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -25,6 +26,7 @@ import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
@@ -67,7 +69,7 @@ public class ImageBean implements ImageLocal {
         try {
             if (mode == ImgMode.RANDOM_TAG) {
                 if (tagDAO.find(imgId) != null) {
-                    List<Integer> tagLst = Arrays.asList(new Integer[]{imgId});
+                    Collection<Tag> tagLst = Arrays.asList(new Tag[]{tagDAO.find(imgId)});
                     SubsetOf<Photo> photos = photoDAO.loadByTags(vSession, tagLst, new Bornes(1), ListOrder.RANDOM);
                     if (!photos.subset.isEmpty()) {
                         imgId = photos.subset.get(0).getId() ;

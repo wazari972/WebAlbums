@@ -70,10 +70,6 @@
 	    <ul>
 	      <li><a href="Index" title="Retour aux thèmes">Thème</a></li>
 	      <li><a href="Choix" title="Choix">Choix</a></li>
-	      <xsl:if test="count(/root/login/admin)!=0">
-		<li><a href="Config" rel="shadowbox" title="Configuration">Config</a>
-                    </li>
-	      </xsl:if>
 	    </ul>	
 	  </div>
 	</div>
@@ -88,17 +84,24 @@
 			<xsl:when test="/root/affichage/details = 'false'">Sans Détails</xsl:when>
 			<xsl:when test="not(/root/affichage/details = 'false')">Avec Détails</xsl:when>
 		      </xsl:choose> </a></li>
-		  <xsl:if test="count(/root/login/admin)!=0">
-		    <li><a href="javascript:updateAffichage('edition');" title=""><xsl:value-of select="/root/affichage/edition" /></a></li>
-		  </xsl:if>
 		  </ul>
 
 		<h3>Connexion</h3>
 		<ul>
-		  <li><xsl:value-of select="/root/login/theme" /></li>
 		  <li><xsl:value-of select="/root/login/user" /></li>
-                  <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
+                  <li><xsl:value-of select="/root/login/theme" /></li>
+		  <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
 		</ul>
+                <xsl:if test="count(/root/login/admin)!=0">
+                    <h3>Administration</h3>
+                    <ul>
+                        <li>
+                            <a href="Config" rel="shadowbox" title="Configuration (box)">Config</a>
+                            <a href="Config" title="Configuration (new page)">uration</a>
+                        </li>
+                        <li><a href="javascript:updateAffichage('edition');" title=""><xsl:value-of select="/root/affichage/edition" /></a></li>
+                    </ul>
+                </xsl:if>
 		<h3>Nuage de tags <input id="cloudLoader" type="button" value="load cloud" onclick="loadCloud();"/></h3>
 		<div id="cloud">
 		  <!--<img src="static/images/loading.gif"/>-->

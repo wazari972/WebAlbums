@@ -2,10 +2,11 @@ package net.wazari.service.engine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,27 +75,32 @@ public class TagBean implements TagLocal {
         Integer[] tags = vSession.getTagAsked();
         Integer page = vSession.getPage();
 
-        XmlBuilder thisPage = new XmlBuilder(null);
-        thisPage.add("name", "Tags");
-        for (int i = 0; tags != null && i < tags.length; i++) {
-            thisPage.add("tagAsked", tags[i]);
-        }
-
+        boolean wantChildren = vSession.getWantTagChildren() ;
         if (tags != null) {
-            List<Tag> listTag = new ArrayList<Tag>(tags.length) ;
+            Set<Tag> tagSet = new HashSet<Tag>(tags.length) ;
             for (int tagId : Arrays.asList(tags)) {
                 try {
-                    listTag.add(tagDAO.find(tagId)) ;
+                    Tag enrTag = tagDAO.find(tagId) ;
+                    tagSet.add(enrTag) ;
+                    if (wantChildren) {
+                        tagSet.addAll(tagDAO.getChildren(enrTag));
+                    }
                 } catch (Exception e) {
-
+                    log.warn("Tag {} cannot be looked up", tagId);
                 }
             }
-            List<Integer> listTagId = Arrays.asList(tags) ;
+
+            XmlBuilder thisPage = new XmlBuilder(null);
+            thisPage.add("name", "Tags");
+            for (Tag enrCurrentTag : tagSet) {
+                thisPage.add("tagAsked", enrCurrentTag.getId());
+            }
+
             XmlBuilder title = new XmlBuilder("title");
-            title.add(webService.displayListLB(Mode.TAG_USED, vSession, listTag,
+            title.add(webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet),
                     Box.NONE));
             output.add(title);
-            PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, listTagId) ;
+            PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet) ;
             Special special = vSession.getSpecial();
             if (Special.FULLSCREEN == special) {
                 sysTools.fullscreenMultiple(vSession, rq, "Tags", null, page);

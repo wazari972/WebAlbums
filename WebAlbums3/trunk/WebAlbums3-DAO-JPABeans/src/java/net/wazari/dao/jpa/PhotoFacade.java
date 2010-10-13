@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.Collection;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
@@ -21,7 +22,9 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.ManagedType;
+import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
@@ -99,14 +102,14 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
-    public SubsetOf<Photo> loadFromAlbum(ServiceSession session, int albumId, Bornes bornes, ListOrder order) {
+    public SubsetOf<Photo> loadFromAlbum(ServiceSession session, Album album, Bornes bornes, ListOrder order) {
         StringBuilder rq = new StringBuilder(80);
         rq.append("FROM JPAPhoto p " )
             .append(" WHERE p.album.id = :albumId ")
             .append(session == null ? "" : " AND " + webDAO.restrictToPhotosAllowed(session, "p"))
             .append(WebAlbumsDAOBean.getOrder(order, "p.path"));
 
-        Query q = em.createQuery(rq.toString()).setParameter("albumId", albumId);
+        Query q = em.createQuery(rq.toString()).setParameter("albumId", album.getId());
         if (bornes != null && bornes.getFirstElement() != null) {
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getPhotoSize());
@@ -114,7 +117,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
 
         Query qSize = em.createQuery("SELECT count(*) "+rq)
-                .setParameter("albumId", albumId) ;
+                .setParameter("albumId", album.getId()) ;
         Long size = (Long) qSize.getSingleResult() ;
 
         List<Photo> subset = q
@@ -138,16 +141,16 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
-    public SubsetOf<Photo> loadByTags(ServiceSession session, List<Integer> listTagId, Bornes bornes, ListOrder order) {
+    public SubsetOf<Photo> loadByTags(ServiceSession session, Collection<Tag> listTag, Bornes bornes, ListOrder order) {
         //creation de la requete
         StringBuilder rq = new StringBuilder(80);
         rq.append("SELECT p ")
             .append(" FROM JPAPhoto p, JPAAlbum a, JPATagPhoto tp ")
             .append(" WHERE a.id = p.album and p.id = tp.photo")
             .append(" AND tp.tag in ('-1' ");
-        for (int id : listTagId) {
+        for (Tag enrTag : listTag) {
             rq.append(", '" )
-            .append(id )
+            .append(enrTag.getId() )
             .append( "'");
         }
         rq.append(")")

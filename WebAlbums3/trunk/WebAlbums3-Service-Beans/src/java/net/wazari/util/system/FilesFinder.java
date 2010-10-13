@@ -326,7 +326,7 @@ public class FilesFinder {
 
     public boolean deleteAlbum(Album enrAlbum, XmlBuilder out, Configuration conf) {
 
-        SubsetOf<Photo> lstP = photoDAO.loadFromAlbum(null, enrAlbum.getId(), null, ListOrder.DEFAULT);
+        SubsetOf<Photo> lstP = photoDAO.loadFromAlbum(null, enrAlbum, null, ListOrder.DEFAULT);
 
         boolean correct = true;
         for (Photo enrPhoto : lstP.subset) {

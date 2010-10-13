@@ -120,7 +120,7 @@
       <li>
         <a>
           <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
-          <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
+          <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/>&amp;wantTagChildren=true</xsl:attribute>
           <xsl:attribute name="title"><xsl:value-of select="@name"/> : <xsl:value-of select="@nb"/></xsl:attribute>
           <xsl:value-of select="@name" />
         </a>

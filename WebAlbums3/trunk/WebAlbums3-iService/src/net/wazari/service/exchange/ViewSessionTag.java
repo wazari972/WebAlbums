@@ -13,4 +13,6 @@ public interface ViewSessionTag extends ViewSessionPhoto, ViewSessionAlbum {
 
     Integer[] getTagAsked();
 
+    boolean getWantTagChildren();
+
 }

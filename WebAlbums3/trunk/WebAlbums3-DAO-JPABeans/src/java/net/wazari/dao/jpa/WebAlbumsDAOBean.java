@@ -22,8 +22,6 @@ import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.metamodel.JPAAlbum_;
 import net.wazari.dao.jpa.entity.metamodel.JPAPhoto_;
-import net.wazari.dao.jpa.entity.metamodel.JPATheme_;
-import net.wazari.dao.jpa.entity.metamodel.JPAUtilisateur_;
 
 /**
  *
@@ -33,11 +31,14 @@ import net.wazari.dao.jpa.entity.metamodel.JPAUtilisateur_;
 public class WebAlbumsDAOBean {
     private static final Logger log = LoggerFactory.getLogger(WebAlbumsDAOBean.class.getName());
     
-    public static final String PERSISTENCE_UNIT_DERBY = "WebAlbums-Derby" ;
-    public static final String PERSISTENCE_UNIT_MySQL = "WebAlbums-MySQL" ;
-    public static final String PERSISTENCE_UNIT_MySQL_Test = "WebAlbums-MySQL-Test" ;
-    public static final String PERSISTENCE_UNIT_MySQL_Test2 = "WebAlbums-MySQL-Test2" ;
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL ;
+    public static final String PERSISTENCE_UNIT_Derby = "WebAlbums-Derby" ;
+
+    public static final String PERSISTENCE_UNIT_MySQL_Prod = "WebAlbums-MySQL" ;
+    public static final String PERSISTENCE_UNIT_MySQL_Simu = "WebAlbums-MySQL-Test" ;
+    public static final String PERSISTENCE_UNIT_MySQL_Test = "WebAlbums-MySQL-Test2" ;
+
+    public static final String PERSISTENCE_UNIT_Prod = PERSISTENCE_UNIT_MySQL_Prod ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Prod ;
 
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
@@ -58,7 +59,7 @@ public class WebAlbumsDAOBean {
             Root<JPAPhoto> photo = cq.from(JPAPhoto.class);
             where = cb.and(
                         //a.id = p.album
-                        cb.equal(albm.<Integer>get("id"), photo.<Integer>get("id")),
+                        cb.equal(albm.get(JPAAlbum_.id), photo.<Integer>get("id")),
                         //and
                         cb.or(
                             cb.and(

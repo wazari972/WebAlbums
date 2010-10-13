@@ -2,7 +2,6 @@ package net.wazari.service.engine;
 
 import java.io.File;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,7 +238,7 @@ public class PhotoBean implements PhotoLocal {
         album.add(StringUtil.xmlDate(enrAlbum.getDate(), null));
         album.add(new XmlBuilder("details").add("description", enrAlbum.getDescription()).add("photoID", enrAlbum.getPicture()));
 
-        PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, albumId);
+        PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, albumDAO.find(albumId));
         if (Special.FULLSCREEN == special) {
             sysTools.fullscreenMultiple(vSession, rq, "Albums", enrAlbum.getId(), page);
         }

@@ -340,6 +340,11 @@ public class ViewSessionImpl implements
     }
 
     @Override
+    public boolean getWantTagChildren() {
+        return getString("wantTagChildren") != null;
+    }
+
+    @Override
     public ImgMode getImgMode() {
         return getEnum("mode", ImgMode.class);
     }

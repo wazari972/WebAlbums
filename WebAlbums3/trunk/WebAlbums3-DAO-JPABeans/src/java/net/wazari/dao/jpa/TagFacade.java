@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -156,6 +158,18 @@ public class TagFacade implements TagFacadeLocal {
         }
         return rq ;
     }
+
+    @Override
+    public Set<Tag> getChildren(Tag enrParent) {
+        if (enrParent == null) throw new NullPointerException() ;
+        Set<Tag> children = new HashSet<Tag>() ;
+        for (Tag enrChild : enrParent.getSonList()) {
+            children.add(enrChild) ;
+            children.addAll(enrChild.getSonList());
+        }
+        return children ;
+    }
+
 
     @Override
     public Tag find(Integer id) {
