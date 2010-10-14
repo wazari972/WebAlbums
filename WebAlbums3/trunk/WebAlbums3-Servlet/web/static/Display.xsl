@@ -26,13 +26,14 @@
         <link href="static/styles.css"     rel="stylesheet" type="text/css" media="screen" />
         <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
         <style type="text/css">          body {
-             <xsl:if test="count(/root/affichage/background) = 0">background: #62993B url(static/images/back_all.jpg?notempty) fixed no-repeat;</xsl:if>
+             <xsl:if test="count(/root/affichage/background) = 0">background:   #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if>
              <xsl:if test="count(/root/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>
           }
         </style>s
-        <script src="static/scripts/tools.js" type="text/javascript" />
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>
+
+        <script src="static/scripts/tools.js" type="text/javascript" />
 
         <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
         <script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
@@ -44,9 +45,13 @@
         </script>
         
         <xsl:if test="count(/root/photos) != 0 or count(/root/tags) != 0 ">
+            <script type="text/javascript" src="static/scripts/Photos.js"></script>
             <xsl:if test="/root/photos/photo/exif or /root/tags/photo/exif">
                 <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
             </xsl:if>
+        </xsl:if>
+        <xsl:if test="count(/root/tags) != 0">
+            <script type="text/javascript" src="static/scripts/Tags.js"></script>
         </xsl:if>
 	<xsl:if test="count(/root/config) != 0">
             <script type="text/javascript" src="static/scripts/Config.js"/>

@@ -1,0 +1,3 @@
+$("#selectAllBt").click(function () {
+    selectAll() ;
+}) ;

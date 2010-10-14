@@ -51,8 +51,7 @@
 	  <input type='hidden' name='action' value='MASSEDIT' />	  
 	  <table>
 	    <tr><td colspan='2'>
-		<input type='button' id="selectAllBt" value="Toutes"
-		onClick="javacript:selectAll()"/>
+		<input type='button' id="selectAllBt" value="Toutes"/>
 	    </td></tr>
 	    <tr>
 	      <td><input type='radio' name='turn' value='RIGHT'/></td>

@@ -32,76 +32,34 @@ function loadCloud() {
 }
 
 function callURL(url) {
-    xhr_object_XSL = getNewHTTPObject();
-
-    // Get the XSLT from the server.
-    xhr_object_XSL.open("GET", url, false);
-    xhr_object_XSL.send(null);
+    $.get(url);
 }
 
-function getNewHTTPObject() {
-    var xmlhttp;
-    /** Special IE only code ... */
-    /*@cc_on
-          @if (@_jscript_version >= 5)
-              try {
-                  xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-              } catch (e) {
-                  try {
-                      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-                  } catch (E) {
-                      xmlhttp = false;
-                  }
-             }
-          @else
-             xmlhttp = false;
-        @end @*/
-
-    /** Every other browser on the planet */
-    if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
-        try {
-            xmlhttp = new XMLHttpRequest();
-        } catch (e) {
-            xmlhttp = false;
-        }
-    }
-    return xmlhttp;
-
-}
 
 var xsl_doc = null ;
 function prepareXSL() {
-    // Get the XSLT from the server.
-    var xhr_object_XSL = getNewHTTPObject();
-    xhr_object_XSL.open("GET", "static/Empty.xsl", false);
-    xhr_object_XSL.send(null);
-    xsl_doc = xhr_object_XSL.responseXML;
+    $.ajax({
+      url:"static/Empty.xsl",
+      success:function(html){xsl_doc = html;},
+      async:false
+     });
+
 }
 prepareXSL() ;
 
-function loadExernals(btId, address, divId) {
-    var xhr_object_XML = getNewHTTPObject();
+function loadExernals(btId, url, divId) {
 
     var bt = document.getElementById(btId) ;
     if (bt != null) bt.style.visibility = "hidden";
 
-
-    // Get the XML from the server.
-    xhr_object_XML.open("GET", address, true);
-
-    xhr_object_XML.onreadystatechange = function() {
-        if (xhr_object_XML.readyState != 4) {
-            return;
-        }
-        loadExernalsBottomEnd(xhr_object_XML, divId) ;
-    };
-
-    xhr_object_XML.send(null);
+    $.get(url, function(data){
+        loadExernalsBottomEnd(data, divId) ;
+    }) ;
 }
 
 
-function loadExernalsBottomEnd(xhr_object_XML, divId) {
-    var xml_doc = xhr_object_XML.responseXML;
+function loadExernalsBottomEnd(data, divId) {
+    var xml_doc = data;
 
     var div = document.getElementById (divId);
     if (div == null) return ;
@@ -112,8 +70,8 @@ function loadExernalsBottomEnd(xhr_object_XML, divId) {
     // Firefox/Mozilla/Opera or IE XSLT support.
     if (typeof XSLTProcessor != "undefined") {
         var xsl_proc = new XSLTProcessor ();
-
         xsl_proc.importStylesheet (xsl_doc);
+
         var node = xsl_proc.transformToFragment (xml_doc, document);
         div.appendChild (node);
     } else if (typeof xml_doc.transformNode != "undefined") {
@@ -144,5 +102,9 @@ function addLoadEvent(func) {
 function updateBackground(id) {
     document.getElementById("body").style.backgroundImage = "url(Images?id="+id+"&mode=SHRINK&width=1280)"
 }
+
+$(".fullscreen").click(function () {
+    callURL($(this).attr('rel').trim()) ;
+}) ;
 
 addLoadEvent(loadCloud())

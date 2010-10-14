@@ -33,10 +33,11 @@
 	  Affichage par tags
 	</h1>
 	<h2>
-	  <a href="#"> 
+	  <a href='#'
+             class="fullscreen">
 	    <xsl:attribute name="title">"<xsl:for-each select="tags/*">&#160;<xsl:value-of select="." /></xsl:for-each>" en plein-écran</xsl:attribute>
-	    <xsl:attribute name="onClick">
-	      javacript:callURL('Tags?<xsl:for-each select="tags/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="../page/current"/>&amp;special=FULLSCREEN') ;
+	    <xsl:attribute name="rel">
+	      Tags?<xsl:for-each select="tags/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="../page/current"/>&amp;special=FULLSCREEN
 	    </xsl:attribute>
 	      <img src="static/images/out.png" height="25px"/>
 	  </a>

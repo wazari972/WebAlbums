@@ -52,10 +52,11 @@
 	    </a>
             <xsl:if test="count(/root/affichage/remote) = 0">
                 &#160;
-                <a href="#">
+                <a class='fullscreen'
+                   href="#">
                   <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
-                  <xsl:attribute name="onClick">
-                    javacript:callURL('Photos?album=<xsl:value-of select="id" />&amp;page=<xsl:value-of select="../page/current" />&amp;special=FULLSCREEN') ;
+                  <xsl:attribute name="rel">
+                     Photos?album=<xsl:value-of select="id" />&amp;page=<xsl:value-of select="../page/current" />&amp;special=FULLSCREEN
                   </xsl:attribute>
                   <img src="static/images/out.png" height="30px"/>
                 </a>
