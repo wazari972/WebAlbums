@@ -10,8 +10,8 @@ import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionMaint.MaintAction;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.MaintLocal;
+import net.wazari.service.exchange.xml.XmlMaint;
 
 @Stateless
 public class MaintBean implements MaintLocal {
@@ -21,10 +21,10 @@ public class MaintBean implements MaintLocal {
     }
     @EJB MaintFacadeLocal maintDAO ;
 
-    public XmlBuilder treatMAINT(ViewSessionMaint vSession) {
+    public XmlMaint treatMAINT(ViewSessionMaint vSession) {
         MaintAction action = vSession.getMaintAction();
 
-        XmlBuilder output = new XmlBuilder("maint");
+        XmlMaint output = new XmlMaint();
         if (MaintAction.EXPORT_XML == action) {
             maintDAO.treatExportXML(getPath(vSession.getConfiguration()));
         } else if (MaintAction.IMPORT_XML == action) {
@@ -38,16 +38,9 @@ public class MaintBean implements MaintLocal {
             maintDAO.treatUpdate();
         } else {
             for (MaintAction act : Arrays.asList(MaintAction.values())) {
-                output.add("action", act);
+                output.actions.add(act.toString());
             }
         }
-        return output.validate();
-    }
-    
-    public static void treatUpdate(HttpServletRequest request, XmlBuilder output) {
-        if (true) {
-            return;
-        }
-
+        return output ;
     }
 }

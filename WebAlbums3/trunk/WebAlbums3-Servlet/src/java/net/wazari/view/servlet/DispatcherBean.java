@@ -6,6 +6,7 @@ package net.wazari.view.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
@@ -14,6 +15,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -25,10 +28,11 @@ import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.entity.Theme;
+import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
+import net.wazari.view.servlet.exchange.xml.XmlWebAlbums;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -104,37 +108,29 @@ public class DispatcherBean {
                 
         response.setContentType("text/xml");
 
-        XmlBuilder output = new XmlBuilder("root");
-
-        String xslFile = null;
+        XmlWebAlbums output = new XmlWebAlbums() ;
 
         boolean isWritten = false;
-        boolean isComplete = false;
         try {
-            xslFile = "static/Display.xsl";
+            output.xslFile = "static/Display.xsl";
             if (page == Page.USER) {
-                XmlBuilder resp = userServlet.treatLogin((ViewSessionLogin) vSession,request, response) ;
-                if (resp == null) return ;
-                output.add(resp) ;
+                output.login = userServlet.treatLogin((ViewSessionLogin) vSession,request, response) ;
+                if (output.login == null) return ;
             } else if (page == Page.VOID) {
-                output.add(indexServlet.treatVOID(vSession));
+                output.woid = indexServlet.treatVOID(vSession);
             } else if (page == Page.MAINT) {
-                isComplete = true;
-                xslFile = "static/Empty.xsl";
-                output.add(maintServlet.treatMaint((ViewSessionMaint) vSession));
+                output.isComplete = true;
+                output.xslFile = "static/Empty.xsl";
+                output.maint = maintServlet.treatMaint((ViewSessionMaint) vSession);
             } else {
                 log.info( "============= Login: {} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
                 if (special != null) {
                     log.info( "Special XSL-style ({})", special);
-                    if ("RSS".equals(special)) {
-                        xslFile = "static/Rss.xsl";
-                    } else {
-                        xslFile = "static/Empty.xsl";
-                    }
+                    output.xslFile = "static/Empty.xsl";
                 }
-                log.debug( "XSL-style{}", xslFile);
-                //try to logon and set the theme
+                log.debug( "XSL-style{}", output.xslFile);
+                //try to logon and set the thlaiestloleme
                 if (vSession.getThemeId() != null) {
                     log.info("Try to logon");
                     boolean ret = userService.logon((ViewSessionLogin) vSession, request);
@@ -145,93 +141,96 @@ public class DispatcherBean {
                     actualPage = Page.VOID ;
                     if (special == null) {
                         log.debug("Not logged in, not a special page, display VOID page");
-                        output.add(indexServlet.treatVOID(vSession));
+                        output.woid = indexServlet.treatVOID(vSession);
 
                     } else {
-                        isComplete = true;
-                        output = new XmlBuilder("nothing");
+                        output.isComplete = true;
                         log.debug("Not logged in, special request, nothing to display ...");
                     }
                 } else {
                     if (page == Page.CHOIX) {
                         if (special == null) {
                             log.debug("CHOIX page");
-                            output.add(choixServlet.displayCHX(vSession));
+                            output.choix = choixServlet.displayCHX(vSession);
                         } else {
                             log.debug("CHOIX special page");
-                            output = choixServlet.displayChxScript(vSession);
+                            output.blob = choixServlet.displayChxScript(vSession).toString();
                             response.setContentType("text/javascript;charset=UTF-8");
-                            isComplete = true;
+                            output.isComplete = true;
                         }
                     } else if (page == Page.ALBUM) {
                         log.debug("ALBUM page");
-                        output.add(albumServlet.treatALBM((ViewSessionAlbum) vSession));
+                        output.album = albumServlet.treatALBM((ViewSessionAlbum) vSession);
                     } else if (page == Page.PHOTO) {
                         log.debug("PHOTO page");
-                        output.add(photoServlet.treatPHOTO((ViewSessionPhoto) vSession));
+                        output.photo = photoServlet.treatPHOTO((ViewSessionPhoto) vSession);
                     } else if (page == Page.CONFIG) {
                         log.debug("CONFIG page");
-                        output.add(configServlet.treatCONFIG((ViewSessionConfig) vSession));
+                        output.config = configServlet.treatCONFIG((ViewSessionConfig) vSession);
                     } else if (page == Page.TAGS) {
                         log.debug("TAGS page");
-                        output.add(tagServlet.treatTAGS((ViewSessionTag) vSession));
+                        output.tag = tagServlet.treatTAGS((ViewSessionTag) vSession);
                     } else if (page == Page.IMAGE) {
                         log.debug("IMAGE page");
-                        XmlBuilder ret = imageServlet.treatIMG((ViewSessionImages) vSession);
+                        XmlImage ret = imageServlet.treatIMG((ViewSessionImages) vSession);
                         if (ret == null) {
                             isWritten = true;
                         } else {
-                            output.add(ret);
+                            output.image = ret;
                         }
                         log.debug( "IMAGE written? {}", isWritten);
                     } else {
                         log.debug( "VOID page? ({})", page);
-                        output.add(indexServlet.treatVOID(vSession));
+                        output.woid = indexServlet.treatVOID(vSession);
                         actualPage = Page.VOID ;
                     }
                 }
             }
-            output.validate();
         } catch (WebAlbumsServiceException e) {
             log.warn( "WebAlbumsServiceException", e) ;
-            output.cancel();
         } 
-        log.debug( "============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, isComplete});
+        log.debug( "============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, output.isComplete});
         Theme currentTheme = vSession.getTheme() ;
         stopWatch.stop("View.dispatch."+actualPage+(vSession.getSpecial() != null ? "."+vSession.getSpecial() :"")+(currentTheme != null ? "."+currentTheme.getNom() : "NoTheme")) ;
         String strTime = DurationFormatUtils.formatDuration(stopWatch.getElapsedTime(), "m'min' s's' S'ms'", false) ;
         if (!isWritten) {
             preventCaching(request, response);
 
-            if (!isComplete) {
+            if (!output.isComplete) {
                 try {
-                    output.add(webPageService.xmlLogin((ViewSessionLogin) vSession));
+                    output.loginInfo = webPageService.xmlLogin((ViewSessionLogin) vSession).toString();
                 } catch (Exception e) {
                     log.warn( "An exception occured during xmlLogin:", e);
                 }
                 try {
-                    output.add(webPageService.xmlAffichage(vSession));
+                    output.affichage = webPageService.xmlAffichage(vSession).toString();
                 } catch (Exception e) {
                     log.warn( "An exception occured during xmlAffichage:", e);
                 }
-                output.add("time", strTime);
-
+                output.time = strTime;
             }
-            doWrite(response, output, xslFile, isComplete, vSession);
+            doWrite(response, output);
         }
-
 
         log.warn( "============= <{}/>: {} =============", new Object[]{page, strTime});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    private static void doWrite(HttpServletResponse response, XmlBuilder output, String xslFile, boolean isComplete, ViewSession vSession) {
+    private static void doWrite(HttpServletResponse response, XmlWebAlbums output){
         try {
             PrintWriter sortie = response.getWriter();
+            //Create JAXB Context
+            JAXBContext jc = JAXBContext.newInstance(XmlWebAlbums.class);
 
-            if (!isComplete) {
-                output.addHeader("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
-                output.addHeader("<!DOCTYPE xsl:stylesheet  [" +
+            if (!output.isComplete) {
+                //Create marshaller
+                Marshaller marshaller = jc.createMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+
+
+                sortie.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+                sortie.println("<!DOCTYPE xsl:stylesheet  [" +
                         "<!ENTITY auml   \"&#228;\" >" +
                         "<!ENTITY ouml   \"&#246;\" >" +
                         "<!ENTITY uuml   \"&#252;\" >" +
@@ -264,13 +263,16 @@ public class DispatcherBean {
                         "<!ENTITY raquo  \"&#187;\" >" +
                         "]>");
                 
-                output.addHeader("<?xml-stylesheet type=\"text/xsl\" href=\"" + xslFile + "\"?>");
+                sortie.println("<?xml-stylesheet type=\"text/xsl\" href=\"" + output.xslFile + "\"?>");
+                marshaller.marshal(output, sortie);
+            } else {
+                sortie.println(output.toString());
             }
-            sortie.println(output.toString());
-
             sortie.flush();
             sortie.close();
         } catch (IOException e) {
+            log.error( "IOException: ", e);
+        } catch (JAXBException e) {
             log.error( "IOException: ", e);
         }
     }

@@ -13,7 +13,8 @@ import javax.ejb.Stateless;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.exchange.xml.XmlTheme;
+import net.wazari.service.exchange.xml.XmlThemes;
 
 /**
  *
@@ -29,8 +30,8 @@ public class ThemeBean implements ThemeLocal {
     private WebPageLocal webService ;
 
     @Override
-    public XmlBuilder getThemeList(ViewSession vSession) {
-        XmlBuilder output = new XmlBuilder("index");
+    public XmlThemes getThemeList(ViewSession vSession) {
+        XmlThemes output = new XmlThemes();
         //afficher la liste des themes
 
         List<Theme> lst = themeDAO.findAll();
@@ -39,7 +40,7 @@ public class ThemeBean implements ThemeLocal {
             lst = themeDAO.findAll();
         }
         for (Theme enrTheme : lst) {
-            output.add(new XmlBuilder("theme", enrTheme.getNom()).addAttribut("id", enrTheme.getId()));
+            output.themes.add(new XmlTheme(enrTheme));
         }
 
         return output;

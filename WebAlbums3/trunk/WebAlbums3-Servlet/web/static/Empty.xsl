@@ -5,7 +5,7 @@
   <!ENTITY % xhtml-special SYSTEM
      "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
   <!ENTITY % xhtml-symbol SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">
+     "http://www.w3.org/TR/xhtml1/DTD/xhtmlroot-symbol.ent">
   %xhtml-lat1;
   %xhtml-special;
   %xhtml-symbol;
@@ -13,34 +13,34 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:template match="/">
-    <xsl:apply-templates select="/root/maint" />
+    <xsl:apply-templates select="/webAlbums/maint" />
 
-    <xsl:apply-templates select="/root/tags/cloud" />
-    <xsl:apply-templates select="/root/tags/persons" />
-    <xsl:apply-templates select="/root/tags/places" />
-    <xsl:if test="not(/root/tags/cloud 
-                   or /root/tags/persons
-                   or /root/tags/places)">
-      <xsl:apply-templates select="/root/tags" />
+    <xsl:apply-templates select="/webAlbums/tags/cloud" />
+    <xsl:apply-templates select="/webAlbums/tags/persons" />
+    <xsl:apply-templates select="/webAlbums/tags/places" />
+    <xsl:if test="not(/webAlbums/tags/cloud
+                   or /webAlbums/tags/persons
+                   or /webAlbums/tags/places)">
+      <xsl:apply-templates select="/webAlbums/tags" />
     </xsl:if>
 
 
-    <xsl:apply-templates select="/root/albums" />
+    <xsl:apply-templates select="/webAlbums/albums" />
 
-    <xsl:apply-templates select="/root/photos/random" />
-    <xsl:if test="not(/root/photos/random)">
-        <xsl:apply-templates select="/root/photos" />
+    <xsl:apply-templates select="/webAlbums/photos/random" />
+    <xsl:if test="not(/webAlbums/photos/random)">
+        <xsl:apply-templates select="/webAlbums/photos" />
     </xsl:if>
   </xsl:template>
 
   <xsl:include href="PhotosAlbums.xsl" />
-  <xsl:template match="/root/photos/random">
+  <xsl:template match="/webAlbums/photos/random">
     <center>
       <xsl:apply-templates select="details"/>
     </center>
   </xsl:template>
 
-  <xsl:template match="root/albums/select">
+  <xsl:template match="webAlbums/albums/select">
     <p>
         <label for="fromDate">Albums datés entre le </label>
         <span id="fromDate" style="font-weight:bold;" />
@@ -96,7 +96,7 @@
     </div>
   </xsl:template>
 
-  <xsl:template match="/root/tags/cloud">
+  <xsl:template match="/webAlbums/tags/cloud">
       <script type="text/javascript" src="static/scripts/treemenu/simpletreemenu.js">
             /***********************************************
             * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -176,7 +176,7 @@
     </td>
   </xsl:template>
 
-<xsl:template match="/root/albums/years">
+<xsl:template match="/webAlbums/albums/years">
    <xsl:apply-templates select="year" />
  </xsl:template>
 
@@ -189,7 +189,7 @@
      </div>
  </xsl:template>
 
- <xsl:template match="/root/albums/top5">
+ <xsl:template match="/webAlbums/albums/top5">
    <table>
      <tr>
        <xsl:apply-templates select="album" />
@@ -232,7 +232,7 @@
     </td>
   </xsl:template>
 
-  <xsl:template match="/root/maint">
+  <xsl:template match="/webAlbums/maint">
     <html>
       <body>
 	<xsl:apply-templates select="action"/>
@@ -257,7 +257,7 @@
     <br/>
   </xsl:template>
 
-  <xsl:template match="/root/photos|/root/tags">
+  <xsl:template match="/webAlbums/photos|/webAlbums/tags">
     <html style="margin: 0;padding: 0;height: 100%">
       <body style="margin: 0;padding: 0;height: 100%">
 	<script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
@@ -271,13 +271,13 @@
 	      <td>
 		<a title="Retour à la normal">
 		  <xsl:attribute name="href">
-		    <xsl:if test="/root/photos">
+		    <xsl:if test="/webAlbums/photos">
 		      Photos?
-albmCount=<xsl:value-of select="/root/photos/album/count" />
-&amp;album=<xsl:value-of select="/root/photos/album/id" />
+albmCount=<xsl:value-of select="/webAlbums/photos/album/count" />
+&amp;album=<xsl:value-of select="/webAlbums/photos/album/id" />
 &amp;page=<xsl:value-of select="page/current"/>
 		    </xsl:if>
-		    <xsl:if test="/root/tags">
+		    <xsl:if test="/webAlbums/tags">
 		      Tags?
 <xsl:for-each select="title/tags/*">
 &amp;tagAsked=<xsl:value-of select="@id"/>
@@ -337,14 +337,14 @@ albmCount=<xsl:value-of select="/root/photos/album/count" />
     <td>
       <a>
 	<xsl:attribute name="href">
-	  <xsl:if test="/root/photos">
+	  <xsl:if test="/webAlbums/photos">
 	    Photos?
 &amp;albmCount=<xsl:value-of select="../url/albmCount" />
 &amp;album=<xsl:value-of select="../url/album" />
 &amp;page=<xsl:value-of select="." />
 &amp;special=VISIONNEUSE
 	  </xsl:if>
-	  <xsl:if test="/root/tags">
+	  <xsl:if test="/webAlbums/tags">
 	    Tags?
 &amp;tagAsked=<xsl:value-of select="../url/tagAsked"/>
 &amp;page=<xsl:value-of select="."/>

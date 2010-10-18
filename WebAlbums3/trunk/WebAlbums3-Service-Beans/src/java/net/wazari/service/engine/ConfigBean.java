@@ -12,7 +12,6 @@ import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.util.system.FilesFinder;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.ThemeFacadeLocal;
 
 import net.wazari.dao.entity.*;
@@ -20,6 +19,14 @@ import net.wazari.dao.entity.*;
 import net.wazari.service.ConfigLocal;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.xml.config.XmlConfigDelTag;
+import net.wazari.service.exchange.xml.config.XmlConfigDelTheme;
+import net.wazari.service.exchange.xml.config.XmlConfigImport;
+import net.wazari.service.exchange.xml.config.XmlConfigLinkTag;
+import net.wazari.service.exchange.xml.config.XmlConfigModGeo;
+import net.wazari.service.exchange.xml.config.XmlConfigModTag;
+import net.wazari.service.exchange.xml.config.XmlConfigModVis;
+import net.wazari.service.exchange.xml.config.XmlConfigNewTag;
 
 @Stateless
 public class ConfigBean implements ConfigLocal {
@@ -39,111 +46,109 @@ public class ConfigBean implements ConfigLocal {
     private FilesFinder filesFinder;
 
     @Override
-    public XmlBuilder treatIMPORT(ViewSessionConfig vSession)
+    public XmlConfigImport treatIMPORT(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("import");
+        XmlConfigImport output = new XmlConfigImport();
         String theme = vSession.getImportTheme();
 
-        output.add("message", "Begining ...");
-        boolean correct = filesFinder.importAuthor(vSession, theme, output, vSession.getConfiguration());
+        boolean correct = filesFinder.importAuthor(vSession, theme, vSession.getConfiguration());
 
         if (correct) {
-            output.add("message", "Well done !");
+            output.message = "Well done !" ;
         } else {
-            output.addException("An error occured ...");
+            output.exception = "An error occured ..." ;
         }
 
-        return output.validate();
+        return output ;
     }
 
     @Override
-    public XmlBuilder treatMODTAG(ViewSessionConfig vSession)
+    public XmlConfigModTag treatMODTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("modTag");
+        XmlConfigModTag output = new XmlConfigModTag ();
 
         String nouveau = vSession.getNouveau();
         Integer tag = vSession.getTag();
 
         if (tag == null || tag == -1) {
-            output.addException("Pas de tag selectionné ...");
-            return output.validate();
+            output.exception = "Pas de tag selectionné ..." ;
+            return output;
         }
 
         Tag enrTag = tagDAO.find(tag);
         if (tag == null) {
-            output.addException("Le Tag #" + tag + " n'est pas dans la base ...");
-            return output.validate();
+            output.exception = "Le Tag #" + tag + " n'est pas dans la base ...";
+            return output;
         }
 
-        output.add("oldName", enrTag.getNom());
+        output.oldName = enrTag.getNom();
 
         enrTag.setNom(nouveau);
         tagDAO.edit(enrTag);
-        output.add("newName", nouveau);
+        output.newName = nouveau ;
 
-        return output.validate();
+        return output ;
     }
 
     @Override
-    public XmlBuilder treatMODGEO(ViewSessionConfig vSession)
+    public XmlConfigModGeo treatMODGEO(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("modGeo");
+        XmlConfigModGeo output = new XmlConfigModGeo();
 
         String lng = vSession.getLng();
         String lat = vSession.getLat();
         Integer tag = vSession.getTag();
 
         if (tag == null || tag == -1) {
-            output.addException("Pas de tag selectionné ...");
-            return output.validate();
+            output.exception = "Pas de tag selectionné ..." ;
+            return output ;
         }
 
         Tag enrTag = tagDAO.find(tag);
         if (enrTag == null) {
-            output.addException("La localisation " + tag + " ne correspond à aucun tag ...");
-            return output.validate();
+            output.exception = "La localisation " + tag + " ne correspond à aucun tag ..." ;
+            return output ;
         }
-
 
         if (lng == null || lat == null) {
-            output.addException("La geoloc " + lng + "/" + lat + " n'est pas correcte...");
-
-            return output.validate();
+            output.exception = "La geoloc " + lng + "/" + lat + " n'est pas correcte..." ;
+            return output;
         }
+
         Geolocalisation enrGeo = enrTag.getGeolocalisation();
         enrGeo.setLongitude(lng);
         enrGeo.setLat(lat);
         geoDAO.edit(enrGeo);
 
-        output.add("newLngLat", lng + "/" + lat);
+        output.newLngLat = lng + "/" + lat ;
 
-        return output.validate();
+        return output ;
     }
 
     @Override
-    public XmlBuilder treatMODVIS(ViewSessionConfig vSession)
+    public XmlConfigModVis treatMODVIS(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("modVis");
+        XmlConfigModVis output = new XmlConfigModVis();
 
         if (vSession.isRootSession()) {
-            output.addException("impossible to change visibility on the root session");
-            return output.validate();
+            output.exception = "Impossible to change visibility on the root session" ;
+            return output ;
         }
 
         Integer tag = vSession.getTag();
         Boolean visible = vSession.getVisible();
 
         if (tag == null || tag == -1) {
-            output.addException("Pas de tag selectionné ...");
-            return output.validate();
+            output.exception = "Pas de tag selectionné ...";
+            return output ;
         }
         TagTheme enrTagTheme = tagThemeDAO.loadByTagTheme(tag, vSession.getTheme().getId());
 
         if (enrTagTheme == null) {
 
             if (tagDAO.find(tag) == null) {
-                output.addException("Impossible de trouver ce tag (" + tag + ") ...");
-                return output.validate();
+                output.exception = "Impossible de trouver ce tag (" + tag + ") ..." ;
+                return output;
             }
 
             enrTagTheme = tagThemeDAO.newTagTheme();
@@ -158,22 +163,22 @@ public class ConfigBean implements ConfigLocal {
             enrTagTheme.setIsVisible(false);
         }
         tagThemeDAO.edit(enrTagTheme);
-        output.add("message", "Le tag " + tag + " est maintenant : " + (visible ? "visible" : "invisible"));
+        output.message = "Le tag " + tag + " est maintenant : " + (visible ? "visible" : "invisible");
 
-        return output.validate();
+        return output ;
     }
 
     @Override
-    public XmlBuilder treatNEWTAG(ViewSessionConfig vSession)
+    public XmlConfigNewTag treatNEWTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("newTag");
+        XmlConfigNewTag output = new XmlConfigNewTag();
         String nom = vSession.getNom();
         Integer type = vSession.getType();
 
         if (type == null || 0 > type || type > 3) {
             log.warn("Invalid type: ", type);
-            output.addException("Pas de type selectionné ...");
-            return output.validate();
+            output.exception = "Pas de type selectionné ...";
+            return output ;
         }
 
      
@@ -188,18 +193,17 @@ public class ConfigBean implements ConfigLocal {
                 enrTag.setNom(nom);
                 enrTag.setTagType(type);
                 tagDAO.create(enrTag);
-                output.add("message", "TAG == " + enrTag.getId() + " ==");
+                output.message = "TAG == " + enrTag.getId() + " ==" ;
                 if (type == 3) {
                     String longit = vSession.getLng();
                     String lat = vSession.getLat();
                     msg = " (" + longit + "/" + lat + ")";
                     if (longit == null || lat == null) {
                         log.warn("Invalid geoloc: {}", msg) ;
-                        output.cancel();
-                        output.addException("La geoloc " + msg + " n'est pas correcte...");
+                        output.exception = "La geoloc " + msg + " n'est pas correcte..." ;
                         tagDAO.remove(enrTag);
 
-                        return output.validate();
+                        return output ;
                     }
 
                     Geolocalisation geo = geoDAO.newGeolocalisation();
@@ -222,36 +226,33 @@ public class ConfigBean implements ConfigLocal {
                         break;
                 }
 
-                output.add("message", "Tag '" + nom + msg + "' correctement ajouté à la liste " + liste);
+                output.message = "Tag '" + nom + msg + "' correctement ajouté à la liste " + liste ;
             } else {
                 log.warn("The tag '{}' already exists ", nom);
-                output.cancel();
-                output.addException("Le Tag " + nom + " est déjà présent dans la base ...");
-                output.addException(enrTag.getId() + " - " + enrTag.getNom());
+                output.exception = "Le Tag " + nom + " est déjà présent dans la base ..." + enrTag.getId() + " - " + enrTag.getNom();
 
-                return output.validate();
+                return output ;
             }
         } else {
-            output.cancel();
-            output.addException("Le nom du tag est vide ...");
+            output.exception = "Le nom du tag est vide ..." ;
 
-            return output.validate();
+            return output ;
         }
 
-        return output.validate();
+        return output ;
     }
 
     @Override
-    public XmlBuilder treatLINKTAG(ViewSessionConfig vSession) {
-        XmlBuilder output = new XmlBuilder("linkTag");
+    public XmlConfigLinkTag treatLINKTAG(ViewSessionConfig vSession) {
+        XmlConfigLinkTag output = new XmlConfigLinkTag();
 
         Integer parentId = vSession.getParentTag();
         Integer[] sonIds = vSession.getSonTags();
 
         if (parentId == null || sonIds == null)
         {
-            output.addException("Pas de tag selectionné ...");
-            return output.validate();
+            output.exception = "Pas de tag selectionné ..." ;
+            return output ;
         }
 
         Tag enrParentTag = tagDAO.find(parentId);
@@ -264,8 +265,8 @@ public class ConfigBean implements ConfigLocal {
                 enrSonTag.setParent(enrParentTag);
             }
         }
-        output.add("message", "Tags correctement affiliés") ;
-        return output.validate();
+        output.message = "Tags correctement affiliés" ;
+        return output ;
     }
 
     private static boolean isParentalityAllowed(Tag enrParent, Tag enrSon) {
@@ -276,9 +277,9 @@ public class ConfigBean implements ConfigLocal {
 
 
     @Override
-    public XmlBuilder treatDELTAG(ViewSessionConfig vSession)
+    public XmlConfigDelTag treatDELTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("delTag");
+        XmlConfigDelTag output = new XmlConfigDelTag();
 
         int tagID = vSession.getTag();
 
@@ -291,7 +292,7 @@ public class ConfigBean implements ConfigLocal {
                 tagPhotoDAO.remove(enrTagPhoto);
                 i++;
             }
-            output.add("message", "Suppression de " + i + " Tags Photo");
+            output.message = "Suppression de " + i + " Tags Photo" ;
 
             //liens Tag->Localisation
             i = 0;
@@ -300,7 +301,7 @@ public class ConfigBean implements ConfigLocal {
                 geoDAO.remove(enrGeo);
                 i = 1;
             }
-            output.add("message", "Suppression de " + i + " Geolocalisation");
+            output.message += "Suppression de " + i + " Geolocalisation" ;
 
             //liens Tag->Theme
             List<TagTheme> lstTT = enrTag.getTagThemeList();
@@ -310,7 +311,7 @@ public class ConfigBean implements ConfigLocal {
                 tagThemeDAO.remove(enrTagTheme);
                 i++;
             }
-            output.add("message", "Suppression de " + i + " TagThemes");
+            output.message += "Suppression de " + i + " TagThemes" ;
 
             //tag
             i = 0;
@@ -318,31 +319,30 @@ public class ConfigBean implements ConfigLocal {
                 tagDAO.remove(enrTag);
                 i++;
             }
-            output.add("message", "Suppression de " + i + " Tag");
+            output.message += "Suppression de " + i + " Tag" ;
 
-            return output.validate();
+            return output ;
         } catch (NumberFormatException e) {
-            output.addException("Aucun tag selectionné ...");
-            return output.validate();
-
+            output.exception = "Aucun tag selectionné ...";
+            return output ;
         }
     }
 
-    public XmlBuilder treatDELTHEME(ViewSessionConfig vSession) throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("delTheme");
+    public XmlConfigDelTheme treatDELTHEME(ViewSessionConfig vSession) throws WebAlbumsServiceException {
+        XmlConfigDelTheme output = new XmlConfigDelTheme() ;
         try {
             if (vSession.isRootSession()) {
-                output.add("message", "Impossible de supprimer le theme Root") ;
-                return output.validate() ;
+                output.message = "Impossible de supprimer le theme Root" ;
+                return output ;
             }
 
             themeDAO.remove(vSession.getTheme(), vSession.getConfiguration().wantsProtectDB());
-            output.add("message", "Theme correctement supprimer") ;
-            return output.validate();
+            output.message = "Theme correctement supprimer" ;
+            return output ;
         } catch (Exception e) {
             log.warn("error while removing the theme: {}", e);
-            output.add("message", "error while removing the theme: "+e.getMessage()) ;
-            return output.validate() ;
+            output.exception = "error while removing the theme: "+e.getMessage()  ;
+            return output ;
         }
     }
 

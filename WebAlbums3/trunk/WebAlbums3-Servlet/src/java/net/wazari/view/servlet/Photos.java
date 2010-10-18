@@ -1,5 +1,6 @@
 package net.wazari.view.servlet;
 
+import net.wazari.view.servlet.exchange.xml.XmlReturnTo;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
@@ -20,6 +20,8 @@ import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
+import net.wazari.view.servlet.exchange.xml.XmlPhotos;
+import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
@@ -30,23 +32,22 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 public class Photos extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+
     @EJB private DispatcherBean dispatcher ;
 
     @EJB
     private PhotoLocal photoService;
 
-    public XmlBuilder treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
+    public XmlPhotos treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Action action = vSession.getAction();
-        XmlBuilder output;
-        XmlBuilder submit = null;
+        XmlPhotos output = new XmlPhotos();
+        XmlPhotoSubmit submit = null;
         Boolean correct = true;
 
         Special special = vSession.getSpecial();
         if (special == Special.RANDOM) {
-            output = new XmlBuilder("photos");
-            XmlBuilder random = new XmlBuilder("random");
-            random.add(photoService.treatRANDOM(vSession)) ;
-            return output.add(random) ;
+            output.random = photoService.treatRANDOM(vSession) ;
+            return output ;
         }
 
         if (Action.SUBMIT == action && vSession.isSessionManager()) {
@@ -54,21 +55,20 @@ public class Photos extends HttpServlet {
         }
         
         if ((Action.EDIT == action || !correct) && vSession.isSessionManager()) {
-            output = photoService.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
+            output.edit = photoService.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
 
-            XmlBuilder return_to = new XmlBuilder("return_to");
-            return_to.add("name", "Photos");
-            return_to.add("count", vSession.getCount());
-            return_to.add("album", vSession.getAlbum());
-            return_to.add("albmCount", vSession.getAlbmCount());
-            output.add(return_to);
+            XmlReturnTo return_to = new XmlReturnTo();
+            return_to.name = "Photos" ;
+            return_to.count = vSession.getCount();
+            return_to.album = vSession.getAlbum();
+            return_to.albmCount = vSession.getAlbmCount();
+            output.return_to = return_to;
         } else {
-            output = new XmlBuilder("photos");
-            output.add(photoService.treatPhotoDISPLAY((ViewSessionPhotoDisplay) vSession,submit));
+            output.display = photoService.treatPhotoDISPLAY((ViewSessionPhotoDisplay) vSession,submit);
         }
 
 
-        return output.validate();
+        return output;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

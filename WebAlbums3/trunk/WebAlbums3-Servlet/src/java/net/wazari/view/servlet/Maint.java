@@ -15,9 +15,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.MaintLocal;
 import net.wazari.service.exchange.ViewSessionMaint;
+import net.wazari.service.exchange.xml.XmlMaint;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 /**
@@ -47,7 +47,7 @@ public class Maint extends HttpServlet {
         dispatcher.treat(this.getServletContext(), Page.MAINT, request, response);
     }
 
-    public XmlBuilder treatMaint(ViewSessionMaint vSession) {
+    public XmlMaint treatMaint(ViewSessionMaint vSession) {
         try {
             return maintService.treatMAINT(vSession) ;
         } catch (Exception e) {

@@ -5,17 +5,23 @@
 
 package net.wazari.service;
 
+import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
+import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
+import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
+import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import java.util.Collection;
-import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSessionPhoto.*;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Tag;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
+import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.photo.XmlPhotoList;
 
 /**
  *
@@ -46,17 +52,17 @@ public interface PhotoLocal {
     }
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayPhoto(PhotoRequest rq, ViewSessionPhotoDisplay vSession, XmlBuilder thisPage, XmlBuilder submit) throws WebAlbumsServiceException;
+    XmlPhotoList displayPhoto(PhotoRequest rq, ViewSessionPhotoDisplay vSession, XmlPhotoSubmit submit, XmlFrom fromPage) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlBuilder treatPhotoEDIT(ViewSessionPhotoEdit vSession, XmlBuilder submit) throws WebAlbumsServiceException;
+    XmlPhotoEdit treatPhotoEDIT(ViewSessionPhotoEdit vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException;
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException ;
+    XmlPhotoDisplay treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException ;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,Boolean correct) throws WebAlbumsServiceException ;
+    XmlPhotoSubmit treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,Boolean correct) throws WebAlbumsServiceException ;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException ;
+    XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException ;
 }

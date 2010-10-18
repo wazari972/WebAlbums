@@ -24,7 +24,7 @@
 	  <form action='#import' method='POST' id="formImport">
 	    <input type='hidden' name='action' value='IMPORT'/>
 	    <input type='text' name='importTheme' size='20' maxlenght='20'>
-	      <xsl:attribute name="value"><xsl:value-of select="/root/login/theme"/>
+	      <xsl:attribute name="value"><xsl:value-of select="/webAlbums/login/theme"/>
 	      </xsl:attribute>
 	    </input>
 	    <br/>
@@ -201,7 +201,7 @@
       </div>
     </div>
 
-    <xsl:if test="not(/root/login/root)">
+    <xsl:if test="not(/webAlbums/login/webAlbums)">
     <div class="item">
       <a name="modVis"/>
       <div class="date">

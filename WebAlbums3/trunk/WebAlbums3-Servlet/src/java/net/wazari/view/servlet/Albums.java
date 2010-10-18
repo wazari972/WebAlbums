@@ -11,7 +11,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.AlbumLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
@@ -20,7 +19,9 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import net.wazari.view.servlet.exchange.xml.XmlAlbums;
 
 @WebServlet(
     name = "Albums",
@@ -34,22 +35,25 @@ public class Albums extends HttpServlet{
     @EJB
     private AlbumLocal albumService;
 
-    public XmlBuilder treatALBM(ViewSessionAlbum vSession)
+    public XmlAlbums treatALBM(ViewSessionAlbum vSession)
             throws WebAlbumsServiceException {
 
-        XmlBuilder output = new XmlBuilder("albums");
-        
+        XmlAlbums output = new XmlAlbums() ;
+
         Special special = vSession.getSpecial();
         if (special == Special.TOP5) {
-            return output.add(albumService.treatTOP(vSession));
+            output.top = albumService.treatTOP(vSession);
+            return output ;
         } else  if (special == Special.YEARS) {
-            return output.add(albumService.treatYEARS(vSession));
+            output.years = albumService.treatYEARS(vSession);
+            return output ;
         } else  if (special == Special.SELECT) {
-            return output.add(albumService.treatSELECT(vSession));
+            output.select = albumService.treatSELECT(vSession);
+            return output ;
         }
 
         Action action = vSession.getAction();
-        XmlBuilder submit = null;
+        XmlAlbumSubmit submit = null;
         if(vSession.isSessionManager()) {
             //prepare SUBMIT message
             if (action == Action.SUBMIT) {
@@ -57,16 +61,16 @@ public class Albums extends HttpServlet{
             }
 
             if (action == Action.EDIT) {
-                output = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession, submit);
+                output.edit = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession, submit);
             }
         }
 
         if (action != Action.EDIT) {
             //afficher la liste des albums de ce theme
-            output.add(albumService.treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit));
+            output.display = albumService.treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit);
         }
 
-        return output.validate();
+        return output ;
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

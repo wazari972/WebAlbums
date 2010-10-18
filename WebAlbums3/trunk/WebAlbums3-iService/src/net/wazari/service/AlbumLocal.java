@@ -5,6 +5,12 @@
 
 package net.wazari.service;
 
+import net.wazari.service.exchange.xml.album.XmlAlbumYears;
+import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
+import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
+import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
+import net.wazari.service.exchange.xml.album.XmlAlbumTop;
+import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
@@ -13,7 +19,8 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
-import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.exchange.xml.album.XmlAlbumList;
+import net.wazari.service.exchange.xml.common.XmlFrom;
 
 /**
  *
@@ -23,23 +30,23 @@ import net.wazari.common.util.XmlBuilder;
 @DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface AlbumLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayAlbum(XmlBuilder output, ViewSessionAlbumDisplay vSession, XmlBuilder submit, XmlBuilder thisPage) throws WebAlbumsServiceException;
+    XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit, XmlFrom fromPage) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession, XmlBuilder submit) throws WebAlbumsServiceException;
+    XmlAlbumDisplay treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlBuilder treatAlbmEDIT(ViewSessionAlbumEdit vSession, XmlBuilder submit) throws WebAlbumsServiceException;
+    XmlAlbumEdit treatAlbmEDIT(ViewSessionAlbumEdit vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlBuilder treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
+    XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatTOP(ViewSessionAlbum vSession);
+    XmlAlbumTop treatTOP(ViewSessionAlbum vSession);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatYEARS(ViewSessionAlbum vSession);
+    XmlAlbumYears treatYEARS(ViewSessionAlbum vSession);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatSELECT(ViewSessionAlbum vSession);
+    XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession);
 }

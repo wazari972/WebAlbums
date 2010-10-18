@@ -16,18 +16,18 @@
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml">
       <head>
-	<xsl:apply-templates select="/root/userLogin/valid"/>
+	<xsl:apply-templates select="/webAlbums/userLogin/valid"/>
 	
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>WebAlbums 3 : <xsl:value-of select="/root/login/theme" />  (<xsl:value-of select="/root/login/user" />)</title>
+	<title>WebAlbums 3 : <xsl:value-of select="/webAlbums/login/theme" />  (<xsl:value-of select="/webAlbums/login/user" />)</title>
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
         <link href="static/styles.css"     rel="stylesheet" type="text/css" media="screen" />
         <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
         <style type="text/css">          body {
-             <xsl:if test="count(/root/affichage/background) = 0">background:   #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if>
-             <xsl:if test="count(/root/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>
+             <xsl:if test="count(/webAlbums/affichage/background) = 0">background:   #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if>
+             <xsl:if test="count(/webAlbums/affichage/background) != 0" >background: #62993B url(Images?mode=BACKGROUND) fixed no-repeat;</xsl:if>
           }
         </style>s
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.4.2.min.js"></script>
@@ -44,20 +44,20 @@
             });
         </script>
         
-        <xsl:if test="count(/root/photos) != 0 or count(/root/tags) != 0 ">
+        <xsl:if test="count(/webAlbums/photos) != 0 or count(/webAlbums/tags) != 0 ">
             <script type="text/javascript" src="static/scripts/Photos.js"></script>
-            <xsl:if test="/root/photos/photo/exif or /root/tags/photo/exif">
+            <xsl:if test="/webAlbums/photos/photo/exif or /webAlbums/tags/photo/exif">
                 <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
             </xsl:if>
         </xsl:if>
-        <xsl:if test="count(/root/tags) != 0">
+        <xsl:if test="count(/webAlbums/tags) != 0">
             <script type="text/javascript" src="static/scripts/Tags.js"></script>
         </xsl:if>
-	<xsl:if test="count(/root/config) != 0">
+	<xsl:if test="count(/webAlbums/config) != 0">
             <script type="text/javascript" src="static/scripts/Config.js"/>
         </xsl:if>
         
-        <xsl:if test="count(/root/choix) != 0">
+        <xsl:if test="count(/webAlbums/choix) != 0">
             <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
             <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" media="screen"/>
 	    <script src="Choix?special=map.js" type='text/javascript'></script>
@@ -84,27 +84,27 @@
 	      <div id="right">
 		<h3>Affichage</h3>
 		<ul>
-		  <li><a href="javascript:updateAffichage('maps')"  title=""><xsl:value-of select="/root/affichage/maps" /></a></li>
+		  <li><a href="javascript:updateAffichage('maps')"  title=""><xsl:value-of select="/webAlbums/affichage/maps" /></a></li>
 		  <li><a href="javascript:updateAffichage('details');" title=""><xsl:choose>
-			<xsl:when test="/root/affichage/details = 'false'">Sans Détails</xsl:when>
-			<xsl:when test="not(/root/affichage/details = 'false')">Avec Détails</xsl:when>
+			<xsl:when test="/webAlbums/affichage/details = 'false'">Sans Détails</xsl:when>
+			<xsl:when test="not(/webAlbums/affichage/details = 'false')">Avec Détails</xsl:when>
 		      </xsl:choose> </a></li>
 		  </ul>
 
 		<h3>Connexion</h3>
 		<ul>
-		  <li><xsl:value-of select="/root/login/user" /></li>
-                  <li><xsl:value-of select="/root/login/theme" /></li>
+		  <li><xsl:value-of select="/webAlbums/login/user" /></li>
+                  <li><xsl:value-of select="/webAlbums/login/theme" /></li>
 		  <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
 		</ul>
-                <xsl:if test="count(/root/login/admin)!=0">
+                <xsl:if test="count(/webAlbums/login/admin)!=0">
                     <h3>Administration</h3>
                     <ul>
                         <li>
                             <a href="Config" rel="shadowbox" title="Configuration (box)">Config</a>
                             <a href="Config" title="Configuration (new page)">uration</a>
                         </li>
-                        <li><a href="javascript:updateAffichage('edition');" title=""><xsl:value-of select="/root/affichage/edition" /></a></li>
+                        <li><a href="javascript:updateAffichage('edition');" title=""><xsl:value-of select="/webAlbums/affichage/edition" /></a></li>
                     </ul>
                 </xsl:if>
 		<h3>Nuage de tags <input id="cloudLoader" type="button" value="load cloud" onclick="loadCloud();"/></h3>
@@ -113,25 +113,25 @@
 		</div>
 	      </div>
 	      <div id="left">
-		<xsl:apply-templates select="/root/Exception"/>
-		<xsl:apply-templates select="/root/message"/>
+		<xsl:apply-templates select="/webAlbums/Exception"/>
+		<xsl:apply-templates select="/webAlbums/message"/>
 
-		<xsl:apply-templates select="/root/index"/>
-		<xsl:apply-templates select="/root/userLogin"/>
-		<xsl:apply-templates select="/root/choix"/>
-		<xsl:apply-templates select="/root/albums"/>
-		<xsl:apply-templates select="/root/photos"/>
-		<xsl:apply-templates select="/root/tags"/>
+		<xsl:apply-templates select="/webAlbums/index"/>
+		<xsl:apply-templates select="/webAlbums/userLogin"/>
+		<xsl:apply-templates select="/webAlbums/choix"/>
+		<xsl:apply-templates select="/webAlbums/albums"/>
+		<xsl:apply-templates select="/webAlbums/photos"/>
+		<xsl:apply-templates select="/webAlbums/tags"/>
 
-		<xsl:apply-templates select="/root/albm_edit"/>
-		<xsl:apply-templates select="/root/photo_edit"/>
-		<xsl:apply-templates select="/root/config"/>
+		<xsl:apply-templates select="/webAlbums/albm_edit"/>
+		<xsl:apply-templates select="/webAlbums/photo_edit"/>
+		<xsl:apply-templates select="/webAlbums/config"/>
 
-		<xsl:apply-templates select="/root/*/page"/>
+		<xsl:apply-templates select="/webAlbums/*/page"/>
 		<xsl:call-template name="print_return_link" />
 	      </div>
 	      <div id="footer">
-                 <p>Page générée en <xsl:value-of select="/root/time"/>s. Copyright 2009.</p>
+                 <p>Page générée en <xsl:value-of select="/webAlbums/time"/>s. Copyright 2009.</p>
                  <p>Design by <a href="http://www.metamorphozis.com/" title="Flash Templates">Flash Templates</a></p>
               </div>
 	    </div>

@@ -58,7 +58,7 @@
                 </xsl:apply-templates>
             </optgroup>
                 <xsl:if test="not($mode2 = 'NONE')">
-                    <xsl:if test="not(count(../tags[@mode = $mode2]/*) = 0)">
+                    <xsl:if test="not(../tags[@mode = $mode2]/*)">
                         <optgroup label="--- Never used ---">
                             <xsl:apply-templates select="../tags[@mode = $mode2]/*">
                                 <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
@@ -166,15 +166,15 @@
   <xsl:template match="prev|next|nexti|previ|first|last">
     <A>
       <xsl:attribute name="HREF">
-	<xsl:if test="/root/photos">
+	<xsl:if test="/webAlbums/photos">
 	  Photos?albmCount=<xsl:value-of select="../url/albmCount" />
 &amp;album=<xsl:value-of select="../url/album" />
 &amp;page=<xsl:value-of select="." />
 	</xsl:if>
-	<xsl:if test="/root/albums">
+	<xsl:if test="/webAlbums/albums">
 	  Albums?page=<xsl:value-of select="."/>
 	</xsl:if>
-	<xsl:if test="/root/tags">
+	<xsl:if test="/webAlbums/tags">
 	  Tags?
 <xsl:for-each select="../url/tagAsked">
 &amp;tagAsked=<xsl:value-of select="." />
@@ -200,18 +200,18 @@
 	<CENTER>
 	  <A>
 	    <xsl:attribute name="HREF">
-	      <xsl:if test="/root/photos">
-		Albums?count=<xsl:value-of select="/root/photos/album/count" />#<xsl:value-of select="/root/photos/album/id" />
+	      <xsl:if test="/webAlbums/photos">
+		Albums?count=<xsl:value-of select="/webAlbums/photos/album/count" />#<xsl:value-of select="/webAlbums/photos/album/id" />
 	      </xsl:if>
-	      <xsl:if test="/root/albums or /root/tags or /root/config">
+	      <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">
 		Choix
 	      </xsl:if>
 	    </xsl:attribute>
 
-	    <xsl:if test="/root/photos">
+	    <xsl:if test="/webAlbums/photos">
 	      Retour aux albums
 	    </xsl:if>
-	    <xsl:if test="/root/albums or /root/tags or /root/config">
+	    <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">
 	      Retour au choix
 	    </xsl:if>
 	  </A>

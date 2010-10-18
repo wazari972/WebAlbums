@@ -13,14 +13,19 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.PhotoLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
+import net.wazari.view.servlet.exchange.xml.XmlTag;
+import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
+import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import net.wazari.view.servlet.exchange.xml.XmlReturnTo;
 
 @WebServlet(
     name = "Tags",
@@ -32,33 +37,49 @@ public class Tags extends HttpServlet {
     private static final long serialVersionUID = 1L;
     @EJB
     private TagLocal tagService;
+    @EJB
+    private PhotoLocal photoService;
 
-    public XmlBuilder treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("tags");
+    public XmlTag treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
+        XmlTag output = new XmlTag();
         Special special = vSession.getSpecial();
-        if (Special.CLOUD == special) {
-            return output.add(tagService.treatTagCloud(vSession)).validate() ;
-        }
+        if (special != null) {
+            if (Special.CLOUD == special) {
+                output.cloud = tagService.treatTagCloud(vSession) ;
+            }
 
-        if (Special.PERSONS == special || Special.PLACES == special || Special.RSS == special) {
-            return output.add(tagService.treatTagPersonsPlaces(vSession)).validate() ;
+            if (Special.PERSONS == special || Special.PLACES == special) {
+                output.personsPlaces = tagService.treatTagPersonsPlaces(vSession) ;
+            }
+            return output ;
         }
-
 
         Action action = vSession.getAction();
-        XmlBuilder submit = null;
+        XmlPhotoSubmit submit = null;
         Boolean correct = true;
 
         if (vSession.isSessionManager()) {
             if (Action.SUBMIT == action) {
-                submit = tagService.treatPhotoSUBMIT((ViewSessionPhotoSubmit)vSession, correct);
+                submit = photoService.treatPhotoSUBMIT((ViewSessionPhotoSubmit)vSession, correct);
             }
 
             if ((Action.EDIT == action || !correct)) {
-                return tagService.treatTagEDIT(vSession, submit) ;
+                Integer[] tags = vSession.getTagAsked();
+                Integer page = vSession.getPage();
+
+                output.edit = photoService.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
+                XmlReturnTo return_to = new XmlReturnTo();
+                return_to.name = "Tags" ;
+                return_to.page = page;
+                return_to.tagsAsked = tags;
+
+                output.returnTo = return_to ;
+
+                return output ;
             }
         }
-        return output.add(tagService.treatTagDISPLAY(vSession, submit)) ;
+        output.display = tagService.treatTagDISPLAY(vSession, submit) ;
+        return output ;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

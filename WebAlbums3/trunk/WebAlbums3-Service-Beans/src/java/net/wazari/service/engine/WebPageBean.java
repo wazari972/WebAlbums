@@ -1,7 +1,11 @@
 package net.wazari.service.engine;
 
+import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.common.XmlLoginInfo;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.slf4j.Logger;
@@ -28,10 +32,20 @@ import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.util.google.GooglePoint;
 import net.wazari.service.util.google.GooglePoint.Point;
 
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.service.exchange.xml.XmlAffichage;
+import net.wazari.service.exchange.xml.XmlPage;
+import net.wazari.service.exchange.xml.common.XmlDate;
+import net.wazari.service.exchange.xml.common.XmlUser;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsListTags;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhat;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
+import net.wazari.service.exchange.xml.common.XmlUserList;
+import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -98,54 +112,53 @@ public class WebPageBean implements WebPageLocal {
 
     private static final int NB_PAGES_BEF_AFT = 3 ;
     @Override
-    public XmlBuilder xmlPage(XmlBuilder from, Bornes bornes) {
+    public XmlPage xmlPage(XmlFrom from, Bornes bornes) {
         int current = bornes.getCurrentPage() ;
         int last = bornes.getLastPage() ;
-        XmlBuilder page = new XmlBuilder("page");
-        page.addComment("Page 0 .. " +current + " .." + last);
-        page.add("url", from);
+        XmlPage page = new XmlPage();
+        page.description = "Page 0 .. " +current + " .." + last ;
+        page.url = from ;
         int start = Math.max(0, current - NB_PAGES_BEF_AFT);
         int stop = Math.min(current + NB_PAGES_BEF_AFT+1, last);
         if (start >= 2) {
-            page.add("first", 0);
+            page.first = 0;
         } else if (start == 1) {
-            page.add("prev", 0);
+            page.prev = 0 ;
         }
         for (int i = start; i < stop; i++) {
             if (i == current ||current == -1 && i == 0) {
-                page.add("current", i);
+                page.current = i;
             } else if (i < current) {
-                page.add("prev", i);
+                page.prev = i;
             } else {
-                page.add("next", i);
+                page.next = i;
             }
         }
         if (stop == bornes.getLastPage() - 1) {
-            page.add("next",  last -1);
+            page.next = last - 1 ;
         } else if (stop != last) {
-            page.add("last",  last -1);
+            page.last = last - 1;
         }
 
         if (current != 0) {
-            page.add("previ", current -1 );
+            page.previ = current -1 ;
         }
 
         if (current != last -1) {
-            page.add("nexti", current +1 );
+            page.nexti = current +1 ;
         }
-        page.validate();
-
+        
         return page;
     }
 
     @Override
-    public XmlBuilder xmlLogin(ViewSessionLogin vSession) {
-        XmlBuilder login = new XmlBuilder("login");
+    public XmlLoginInfo xmlLogin(ViewSessionLogin vSession) {
+        XmlLoginInfo login = new XmlLoginInfo();
 
         Theme enrTheme = vSession.getTheme();
         Utilisateur enrUtil = vSession.getUser() ;
         Principal principal = vSession.getUserPrincipal() ;
-        login.add("theme", enrTheme == null ? "Not logged in" : enrTheme.getNom());
+        login.theme = (enrTheme == null ? "Not logged in" : enrTheme.getNom());
         String strUser  ;
         if (enrUtil == null) {
             strUser = "Not logged in" ;
@@ -158,40 +171,40 @@ public class WebPageBean implements WebPageLocal {
         if (vSession.isSessionManager()) {
             strUser += "*" ;
         }
-        login.add("user", strUser);
+        login.user = strUser;
         
         log.info( "logged as manager? {}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {
-            login.add("admin");
+            login.admin = true ;
         }
         log.info( "logged as root? {}", vSession.isRootSession());
         if (vSession.isRootSession()) {
-            login.add("root");
+            login.root = true ;
         }
 
-        return login.validate();
+        return login;
     }
 
     @Override
-    public XmlBuilder xmlAffichage(ViewSession vSession) {
-        XmlBuilder affichage = new XmlBuilder("affichage");
+    public XmlAffichage xmlAffichage(ViewSession vSession) {
+        XmlAffichage affichage = new XmlAffichage();
         if (vSession.isSessionManager()) {
             if (vSession.getEditionMode() == EditMode.EDITION) {
-                affichage.add("edit");
-                affichage.add("massedit");
+                affichage.edit = true ;
+                affichage.massedit = true;
             } else if (vSession.getEditionMode() == EditMode.NORMAL) {
-                affichage.add("edit");
+                affichage.edit = true ;
             }
-            affichage.add("edition", vSession.getEditionMode());
+            affichage.edition = vSession.getEditionMode().toString();
         }
-        affichage.add("maps", "Sans Carte");
-        affichage.add("details", vSession.getDetails());
+        affichage.maps = "Sans Carte" ;
+        affichage.details = vSession.getDetails() ;
         if (!vSession.getConfiguration().isPathURL() &&
             (vSession.isRootSession() ||
             vSession.getTheme() != null && vSession.getTheme().getPicture() != null)) {
-            affichage.add("background") ;
+            affichage.background = true  ;
         }
-        if (vSession.isRemoteAccess()) affichage.add("remote") ;
+        if (vSession.isRemoteAccess()) affichage.remote = true ;
 
         return affichage;
     }
@@ -204,7 +217,7 @@ public class WebPageBean implements WebPageLocal {
     //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
     @Override
-    public XmlBuilder displayListIBTNI(Mode mode,
+    public XmlWebAlbumsList displayListIBTNI(Mode mode,
             ViewSession vSession,
             PhotoOrAlbum entity,
             Box box,
@@ -226,12 +239,18 @@ public class WebPageBean implements WebPageLocal {
         for (TagPhoto enrTagPhoto : list) {
             tags.add(enrTagPhoto.getTag());
         }
-        return displayListLBNI(mode, vSession, tags, box, name, info).addAttribut("box", box).addAttribut("type", type).addAttribut("id", entity.getId()).addAttribut("mode", mode);
+        XmlWebAlbumsList output = displayListLBNI(mode, vSession, tags, box, name, info) ;
 
+        output.box = box ;
+        output.type = type ;
+        output.id = entity.getId() ;
+        output.mode = mode ;
+
+        return output ;
     }
 
     //display a list into STR
-    //according to the MODE
+    //according to the MOXmlBuilderDE
     //and the information found in REQUEST.
     //List is made up of BOX items
     //and is named NAME
@@ -239,7 +258,7 @@ public class WebPageBean implements WebPageLocal {
     //Mode specific information can be provide throug info (null otherwise)
     //(used by Mode.MAP for the link to the relevant address)
     @Override
-    public XmlBuilder displayListLBNI(Mode mode,
+    public XmlWebAlbumsList displayListLBNI(Mode mode,
             ViewSession vSession,
             List<Tag> ids,
             Box box,
@@ -248,7 +267,6 @@ public class WebPageBean implements WebPageLocal {
             throws WebAlbumsServiceException 
     {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
-        XmlBuilder xmlResult = null;
         List<Tag> tags = null;
 
         boolean geoOnly = mode == Mode.TAG_GEO;
@@ -285,15 +303,15 @@ public class WebPageBean implements WebPageLocal {
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);
 
             } else /* not handled mode*/ {
-                xmlResult = new XmlBuilder("list");
+                XmlWebAlbumsList output = new XmlWebAlbumsList();
 
-                xmlResult.addException("Unknown handled mode :" + mode);
-                return xmlResult.validate();
+                output.exception = "Unknown handled mode :" + mode ;
+                return output ;
             }
         } /* isManagerSession */
 
-        xmlResult = new XmlBuilder("tags");
-        xmlResult.addAttribut("mode", mode);
+        XmlWebAlbumsList output = new XmlWebAlbumsListTags();
+        output.mode = mode ;
 
         GooglePoint map = null;
         if (box == Box.MAP_SCRIPT) {
@@ -301,12 +319,9 @@ public class WebPageBean implements WebPageLocal {
         }
 
         log.info( "Mode: {}, Box: {}, list: {}", new Object[]{mode, box, ids});
-        xmlResult.addComment("Mode: " + mode);
-        xmlResult.addComment("Box:" + box);
-        xmlResult.addComment("List: " + ids);
 
         for (Tag enrTag : tags) {
-            String type = "nop";
+            XmlTag type = new XmlTag();
             Tag tagId = null;
             String nom = null;
             Point p = null;
@@ -348,17 +363,16 @@ public class WebPageBean implements WebPageLocal {
 
                 switch (enrTag.getTagType()) {
                     case 1:
-                        type = "who";
+                        type = new XmlWebAlbumsTagWho();
                         break;
                     case 2:
-                        type = "what";
+                        type = new XmlWebAlbumsTagWhat();
                         break;
                     case 3:
-                        type = "where";
+                        type = new XmlWebAlbumsTagWhere();
                         break;
                     default:
-                        type = "unknown";
-                        break;
+                        throw new RuntimeException("Unkown tag type "+enrTag.getNom()+"->"+enrTag.getTagType()) ;
                 }
             }
             //display the value [if in ids][select if in ids]
@@ -398,33 +412,31 @@ public class WebPageBean implements WebPageLocal {
                     }
                 }
                 if (written) {
-                    xmlResult.add(new XmlBuilder(type, nom).addAttribut("id", tagId.getId()).addAttribut("checked", selected));
+                    type.name = nom ;
+                    type.id = tagId.getId() ;
+                    type.checked = true ;
+                    output.tags.add(type);
                 }
             }
         } /* while loop*/
 
-        if (box == Box.MAP) {
-            xmlResult = new XmlBuilder("map");
-            xmlResult.add("name", name);
-            xmlResult.add(GooglePoint.getBody());
-        } else if (box == Box.MAP_SCRIPT) {
-            xmlResult = XmlBuilder.newText();
-            xmlResult.addText(map.getInitFunction());
+        if (box == Box.MAP_SCRIPT) {
+            output.text = map.getInitFunction();
         }
 
         stopWatch.stop() ;
-        return xmlResult.validate();
+        return output ;
     }
 
     @Override
-    public XmlBuilder displayListDroit(Utilisateur right, Integer albmRight)
+    public XmlUserList displayListDroit(Utilisateur right, Integer albmRight)
             throws WebAlbumsServiceException {
         if (right == null && albmRight == null) {
             throw new NullPointerException("Droit and Album cannot be null");
         }
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListDroit", log) ;
 
-        XmlBuilder output = new XmlBuilder("userList");
+        XmlUserList output = new XmlUserList();
         boolean hasSelected = false;
 
         List<Utilisateur> lstUsr = userDAO.findAll();
@@ -445,45 +457,38 @@ public class WebPageBean implements WebPageLocal {
                 selected = true;
             }
 
-            XmlBuilder util = new XmlBuilder("user", name);
-            util.addAttribut("id", id == null ? "null" : id);
+            XmlUser user = new XmlUser();
+            user.name = name ;
+            user.id = id ;
             if (selected) {
-                util.addAttribut("selected", true);
+                user.selected = true ;
                 hasSelected = true;
             }
-            output.add(util);
+            output.users.add(user);
         }
 
         if (!hasSelected) {
             throw new NoSuchElementException("Right problem: " + right + ", " + albmRight + " (" + lstUsr + ")");
         }
         stopWatch.stop();
-        return output.validate();
+        return output ;
     }
 
     @Override
-    public XmlBuilder displayMapInBody(ViewSession vSession,
-            String name,
-            String info)
-            throws WebAlbumsServiceException {
-        return displayListLBNI(Mode.TAG_USED, vSession, null, Box.MAP, name, info);
-    }
-
-    @Override
-    public XmlBuilder displayMapInScript(ViewSession vSession,
+    public XmlWebAlbumsList displayMapInScript(ViewSession vSession,
             String name,
             String info)
             throws WebAlbumsServiceException {
         return displayListLBNI(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT, name, info);
     }
+
     //display a list into STR
     //according to the MODE
     //and the information found in the REQUEST.
     //List made up of BOX items,
     //and is named NAME
-
     @Override
-    public XmlBuilder displayListBN(Mode mode,
+    public XmlWebAlbumsList displayListBN(Mode mode,
             ViewSession vSession,
             Box box,
             String name)
@@ -497,7 +502,7 @@ public class WebPageBean implements WebPageLocal {
     //and is named with the default name for this MODE
 
     @Override
-    public XmlBuilder displayListB(Mode mode,
+    public XmlWebAlbumsList displayListB(Mode mode,
             ViewSession vSession,
             Box box)
             throws WebAlbumsServiceException {
@@ -513,7 +518,7 @@ public class WebPageBean implements WebPageLocal {
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
 
     @Override
-    public XmlBuilder displayListIBT(Mode mode,
+    public XmlWebAlbumsList displayListIBT(Mode mode,
             ViewSession vSession,
             PhotoOrAlbum entity,
             Box box)
@@ -522,14 +527,14 @@ public class WebPageBean implements WebPageLocal {
                 null,
                 null);
     }
+    
     //display a list into STR
     //according to the MODE
     //and the information found in REQUEST.
     //List is made up of BOX items
     //and is filled with the IDs
-
     @Override
-    public XmlBuilder displayListLB(Mode mode,
+    public XmlWebAlbumsList displayListLB(Mode mode,
             ViewSession vSession,
             List<Tag> ids,
             Box box)
@@ -546,5 +551,48 @@ public class WebPageBean implements WebPageLocal {
         userDAO.newUser(2, UserLocal.USER_FAMILLE);
         userDAO.newUser(3, UserLocal.USER_AMIS);
         userDAO.newUser(4, UserLocal.USER_AUTRES);
+    }
+
+    private static final SimpleDateFormat annee = new SimpleDateFormat("yyyy");
+    private static final SimpleDateFormat mois = new SimpleDateFormat("MMMM");
+    private static final SimpleDateFormat jour = new SimpleDateFormat("dd");
+
+
+    public XmlDate xmlDate(String strNewDate, String strOldDate) {
+        XmlDate temps = new XmlDate();
+        try {
+            Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(strNewDate);
+
+            if (strOldDate == null) {
+                temps.year = annee.format(newDate);
+                temps.month = mois.format(newDate);
+                temps.day = jour.format(newDate);
+            } else {
+                Date oldDate = new SimpleDateFormat("yyyy-MM-dd").parse(strOldDate);
+
+                if (!annee.format(oldDate).equals(annee.format(newDate))) {
+                    temps.year = annee.format(newDate);
+                    temps.month = mois.format(newDate);
+                    temps.day = jour.format(newDate);
+                } else if (!mois.format(oldDate).equals(mois.format(newDate))) {
+
+                    temps.month = mois.format(newDate);
+                    temps.day = jour.format(newDate);
+
+                    // 1 jour = 86 400 secondes
+                } else if (!jour.format(oldDate).equals(jour.format(newDate))) {
+                    temps.day = jour.format(newDate);
+
+                } else {
+                    //nothing to display
+                }
+            }
+        } catch (Exception e) {
+            temps.year = "x";
+            temps.month = "xx";
+            temps.day = "xx";
+        }
+
+        return temps;
     }
 }

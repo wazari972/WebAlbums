@@ -10,7 +10,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages;
-import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.exchange.xml.XmlImage;
 
 /**
  *
@@ -21,6 +21,6 @@ import net.wazari.common.util.XmlBuilder;
 public interface ImageLocal {
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatIMG(ViewSessionImages vSession) throws WebAlbumsServiceException;
+    XmlImage treatIMG(ViewSessionImages vSession) throws WebAlbumsServiceException;
 
 }

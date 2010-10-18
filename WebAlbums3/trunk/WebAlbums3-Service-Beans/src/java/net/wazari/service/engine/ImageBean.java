@@ -22,7 +22,6 @@ import javax.ejb.Stateless;
 
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.common.util.StringUtil;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Photo;
@@ -36,6 +35,7 @@ import net.wazari.service.ImageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
+import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.util.system.SystemTools;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.perf4j.StopWatch;
@@ -53,14 +53,14 @@ public class ImageBean implements ImageLocal {
     @EJB private ThemeFacadeLocal themeDAO ;
 
     @Override
-    public XmlBuilder treatIMG(ViewSessionImages vSession)
+    public XmlImage treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
         ImgMode mode = vSession.getImgMode();
         mode = (mode == null ? ImgMode.PETIT : mode) ;
 
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
-        XmlBuilder output = new XmlBuilder("img");
+        XmlImage output = new XmlImage();
         Integer imgId = vSession.getId();
 
         String filepath = null;
@@ -96,19 +96,19 @@ public class ImageBean implements ImageLocal {
 
 
             if (imgId == null) {
-                output.addException("No photo asked ... (id=null)");
-                return output.validate();
+                output.exception = "No photo asked ... (id=null)" ;
+                return output;
             }
 
             Photo enrPhoto = photoDAO.loadIfAllowed(vSession, imgId);
             if (enrPhoto == null) {
-                output.addException("Cette photo (" + imgId + ") n'est pas accessible ou n'existe pas ...");
-                return output.validate();
+                output.exception = "Cette photo (" + imgId + ") n'est pas accessible ou n'existe pas ..." ;
+                return output ;
             }
 
             if (enrPhoto.getPath() == null) {
-                output.addException("Cette photo (" + imgId + ") a un path null ...");
-                return output.validate();
+                output.exception = "Cette photo (" + imgId + ") a un path null ..." ;
+                return output ;
             }
 
             type = (mode == ImgMode.PETIT || enrPhoto.getType() == null ? "image/png" : enrPhoto.getType());
@@ -119,8 +119,8 @@ public class ImageBean implements ImageLocal {
                     filepath = sysTools.shrink(vSession, enrPhoto, width);
                     log.warn("Shrinked filepath: {}", filepath) ;
                 } catch (NumberFormatException e) {
-                    output.addException("Impossible de parser la taille demandee");
-                    return output.validate();
+                    output.exception = "Impossible de parser la taille demandee" ;
+                    return output ;
                 }
 
                 try {
@@ -131,8 +131,8 @@ public class ImageBean implements ImageLocal {
                         log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
                     }
                 } catch (NumberFormatException e) {
-                    output.addException("Impossible de parser le taille de la bordure a ajouter");
-                    return output.validate();
+                    output.exception = "Impossible de parser le taille de la bordure a ajouter" ;
+                    return output ;
                 }
             } else if (mode == ImgMode.BACKGROUND) {
                 final int SIZE = 1280 ;
@@ -177,14 +177,11 @@ public class ImageBean implements ImageLocal {
             Boolean correct = sendFile(vSession, filepath, type, output);
             if (correct == null || correct) {
                 output = null;
-            } else {
-                output.validate();
             }
             stopWatch.stop("Service.treatIMG."+mode+".sendFile") ;
         } catch (Exception e) {
             log.warn ("{}: {} ", e.getClass().getSimpleName(), e) ;
-            output.addException("Exception", e.getMessage());
-            output.validate();
+            output.exception = e.getMessage();
         } 
         return output;
     }
@@ -192,7 +189,7 @@ public class ImageBean implements ImageLocal {
     protected static Boolean sendFile(ViewSessionImages vSession,
             String filepath,
             String type,
-            XmlBuilder output) {
+            XmlImage output) {
 
         boolean uniq = false;
         try {
@@ -226,14 +223,14 @@ public class ImageBean implements ImageLocal {
             return null;
         } catch (MalformedURLException e) {
             log.warn( "MalformedURLException: {}", e.getMessage()) ;
-            output.addException("MalformedURLException", filepath);
+            output.exception = "MalformedURLException:"+ filepath;
 
         } catch (ConnectException e) {
             log.warn( "ConnectException: {}", e.getMessage()) ;
-            output.addException("ConnectException", filepath);
+            output.exception = "ConnectException" + filepath;
         } catch (IOException e) {
             log.warn( "IOException {}({})", new Object[]{filepath, e.getMessage()});
-            output.addException("IOException", filepath + "(" + e.getMessage() + ")");
+            output.exception = "IOException: "+ filepath + "(" + e.getMessage() + ")" ;
         }
         return uniq;
     }

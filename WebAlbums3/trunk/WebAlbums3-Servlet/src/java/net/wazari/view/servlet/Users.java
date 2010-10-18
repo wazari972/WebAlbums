@@ -12,9 +12,9 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.service.exchange.xml.XmlLogin;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
@@ -27,8 +27,8 @@ public class Users extends HttpServlet {
     private static final long serialVersionUID = 1L;
     @EJB private DispatcherBean dispatcher ;
 
-    public XmlBuilder treatLogin(ViewSessionLogin vSession, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        XmlBuilder output = new XmlBuilder("userLogin");
+    public XmlLogin treatLogin(ViewSessionLogin vSession, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        XmlLogin output = new XmlLogin();
         try {
             Action action = vSession.getAction();
             log.info( "Action: {}", action);
@@ -37,29 +37,27 @@ public class Users extends HttpServlet {
                 String userName = vSession.getUserName();
                 log.info( "userName: {}", userName);
                 if (userName == null) {
-                    output.add("denied");
-                    output.add("login");
+                    output.denied = true ;
+                    output.login = true ;
                     return output;
                 }
 
                 String pass = vSession.getUserPass();
 
                 request.login(userName, pass);
-                output.add("valid");
+                output.valid = true ;
                 log.info( "authentication");
                 response.sendRedirect("Index");
                 return null ;
             } else {
-                output.add("login");
+                output.login = true ;
             }
 
         } catch (javax.servlet.ServletException e) {
-            output.add("denied");
-            output.add("login");
+            output.denied = true ;
+            output.login = true ;
 
-        } finally {
-            output.validate() ;
-        }
+        } 
         return output ;
     }
 

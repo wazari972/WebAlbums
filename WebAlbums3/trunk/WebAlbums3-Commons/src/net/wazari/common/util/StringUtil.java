@@ -147,45 +147,4 @@ public class StringUtil {
         }
         return sb.toString();
     }
-
-    public static XmlBuilder xmlDate(String strNewDate, String strOldDate) {
-        SimpleDateFormat annee = new SimpleDateFormat("yyyy");
-        SimpleDateFormat mois = new SimpleDateFormat("MMMM");
-        SimpleDateFormat jour = new SimpleDateFormat("dd");
-        XmlBuilder temps = new XmlBuilder("date");
-        try {
-            Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(strNewDate);
-
-            if (strOldDate == null) {
-                temps.add("year", annee.format(newDate));
-                temps.add("month", mois.format(newDate));
-                temps.add("day", jour.format(newDate));
-            } else {
-                Date oldDate = new SimpleDateFormat("yyyy-MM-dd").parse(strOldDate);
-
-                if (!annee.format(oldDate).equals(annee.format(newDate))) {
-                    temps.add("year", annee.format(newDate));
-                    temps.add("month", mois.format(newDate));
-                    temps.add("day", jour.format(newDate));
-                } else if (!mois.format(oldDate).equals(mois.format(newDate))) {
-
-                    temps.add("month", mois.format(newDate));
-                    temps.add("day", jour.format(newDate));
-
-                    // 1 jour = 86 400 secondes
-                } else if (!jour.format(oldDate).equals(jour.format(newDate))) {
-                    temps.add("day", jour.format(newDate));
-
-                } else {
-                    //nothing to display
-                }
-            }
-        } catch (Exception e) {
-            temps.add("year", "xx");
-            temps.add("month", "xx");
-            temps.add("day", "xx");
-        }
-
-        return temps;
-    }
 }

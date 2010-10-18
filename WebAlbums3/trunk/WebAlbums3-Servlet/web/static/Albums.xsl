@@ -25,12 +25,12 @@
       <div class="content">
 	<h1>
 	  <A>
-	    <xsl:if test="/root/albums">
+	    <xsl:if test="/webAlbums/albums">
 	      <xsl:attribute name="href">
 		Photos?albmCount=<xsl:value-of select="count" />&amp;album=<xsl:value-of select="id" />
 	      </xsl:attribute>
 	    </xsl:if> 
-	    <xsl:if test="/root/photos">
+	    <xsl:if test="/webAlbums/photos">
 	      <xsl:attribute name="href">
 		Albums?count=<xsl:value-of select="count" />#<xsl:value-of select="id" />
 	      </xsl:attribute>
@@ -38,7 +38,7 @@
 	    <xsl:value-of select="title" />
 	  </A>
 	</h1>
-	<xsl:if test="/root/photos or /root/tags">	
+	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
 	  <h2>
 	    <a>
 	      <xsl:attribute name="title"><xsl:value-of select="title" /> en visionneuse</xsl:attribute> 
@@ -50,7 +50,7 @@
 	    </xsl:attribute>
 	      <img src="static/images/slide.png" height="30px"/>
 	    </a>
-            <xsl:if test="count(/root/affichage/remote) = 0">
+            <xsl:if test="/webAlbums/affichage/remote">
                 &#160;
                 <a class='fullscreen'
                    href="#">
@@ -61,7 +61,7 @@
                   <img src="static/images/out.png" height="30px"/>
                 </a>
             </xsl:if>
-	    <xsl:if test="/root/affichage/edit">
+	    <xsl:if test="/webAlbums/affichage/edit">
 	      &#160;
 	      <a title="Edition de l'album">
 		<xsl:attribute name="href">
@@ -76,11 +76,11 @@
 	</xsl:if>
 
 	<div class="body">
-	  <xsl:if test="/root/photos">
+	  <xsl:if test="/webAlbums/photos">
            <h2><div class="description"><xsl:value-of select="details/description" /></div></h2>
 	   <xsl:apply-templates select="user" />
 	  </xsl:if> 
-	  <xsl:if test="/root/albums">
+	  <xsl:if test="/webAlbums/albums">
 	    <xsl:apply-templates select="message"/>
 	    <xsl:apply-templates select="details"/>
           </xsl:if>

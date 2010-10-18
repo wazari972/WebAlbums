@@ -6,8 +6,8 @@
 package net.wazari.service;
 
 import javax.ejb.Local;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.exchange.ViewSessionMaint;
+import net.wazari.service.exchange.xml.XmlMaint;
 
 /**
  *
@@ -15,5 +15,5 @@ import net.wazari.service.exchange.ViewSessionMaint;
  */
 @Local
 public interface MaintLocal {
-    XmlBuilder treatMAINT(ViewSessionMaint vSession);
+    XmlMaint treatMAINT(ViewSessionMaint vSession);
 }

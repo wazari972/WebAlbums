@@ -5,6 +5,8 @@
 
 package net.wazari.service;
 
+import net.wazari.service.exchange.xml.XmlAffichage;
+import net.wazari.service.exchange.xml.XmlPage;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
@@ -19,8 +21,12 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.service.exchange.xml.common.XmlDate;
+import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.common.XmlLoginInfo;
+import net.wazari.service.exchange.xml.common.XmlUserList;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 
 /**
  *
@@ -33,43 +39,43 @@ public interface WebPageLocal {
     Bornes calculBornes(Integer page, Integer eltAsked, int taille);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayListB(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListB(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayListBN(Mode mode, ViewSession vSession, Box box, String name) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListBN(Mode mode, ViewSession vSession, Box box, String name) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayListDroit(Utilisateur right, Integer albmRight) throws WebAlbumsServiceException;
+    XmlUserList displayListDroit(Utilisateur right, Integer albmRight) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayListIBT(Mode mode, ViewSession vSession, PhotoOrAlbum entity, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListIBT(Mode mode, ViewSession vSession, PhotoOrAlbum entity, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayListIBTNI(Mode mode, ViewSession vSession, PhotoOrAlbum entity, Box box, String name, String info) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListIBTNI(Mode mode, ViewSession vSession, PhotoOrAlbum entity, Box box, String name, String info) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayListLB(Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListLB(Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayListLBNI(Mode mode, ViewSession vSession, List<Tag> ids, Box box, String name, String info) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListLBNI(Mode mode, ViewSession vSession, List<Tag> ids, Box box, String name, String info) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayMapInBody(ViewSession vSession, String name, String info) throws WebAlbumsServiceException;
-
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder displayMapInScript(ViewSession vSession, String name, String info) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayMapInScript(ViewSession vSession, String name, String info) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     EditMode getNextEditionMode(ViewSession vSession);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder xmlPage(XmlBuilder from, Bornes bornes) ;
+    XmlPage xmlPage(XmlFrom from, Bornes bornes) ;
 
     @PermitAll
-    XmlBuilder xmlLogin(ViewSessionLogin vSession) ;
+    XmlLoginInfo xmlLogin(ViewSessionLogin vSession) ;
 
     @PermitAll
-    XmlBuilder xmlAffichage(ViewSession vSession) ;
+    XmlAffichage xmlAffichage(ViewSession vSession) ;
+
+    @PermitAll
+    XmlDate xmlDate(String strNewDate, String strOldDate) ;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     void populateEntities();

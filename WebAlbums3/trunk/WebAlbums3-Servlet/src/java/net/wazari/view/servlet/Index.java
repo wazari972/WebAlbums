@@ -13,9 +13,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.xml.XmlVoid;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 
@@ -37,13 +37,11 @@ public class Index extends HttpServlet {
         super.init(config);
     }
     
-    public XmlBuilder treatVOID(ViewSession vSession) {
-        XmlBuilder output = themeService.getThemeList(vSession) ;
-        //if (vSession.getConfiguration().wantAlightenDb()) {
-        //    output.add(new XmlBuilder("reload"));
-        //}
+    public XmlVoid treatVOID(ViewSession vSession) {
+        XmlVoid output = new XmlVoid() ;
+        output.themeList = themeService.getThemeList(vSession) ;
 
-        return output.validate() ;
+        return output ;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

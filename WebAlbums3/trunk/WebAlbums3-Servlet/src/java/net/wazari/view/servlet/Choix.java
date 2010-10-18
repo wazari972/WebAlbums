@@ -13,12 +13,13 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
+import net.wazari.service.exchange.xml.XmlChoix;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(name = "Choix",
@@ -32,19 +33,17 @@ public class Choix extends HttpServlet {
     @EJB
     private WebPageLocal webPageService;
 
-    public XmlBuilder displayChxScript(ViewSession vSession) throws WebAlbumsServiceException {
+    public XmlWebAlbumsList displayChxScript(ViewSession vSession) throws WebAlbumsServiceException {
         return webPageService.displayMapInScript(vSession, "mapChoix", null);
     }
 
-    public XmlBuilder displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
-        XmlBuilder choix = new XmlBuilder("choix");
+    public XmlChoix displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
+        XmlChoix choix = new XmlChoix();
 
-        choix.add(webPageService.displayListBN(Mode.TAG_USED, vSession,
-                Box.MULTIPLE, "tagAsked"));
+        choix.tags = webPageService.displayListBN(Mode.TAG_USED, vSession,
+                Box.MULTIPLE, "tagAsked");
 
-        choix.add(webPageService.displayMapInBody(vSession, "mapChoix", null));
-
-        return choix.validate();
+        return choix;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

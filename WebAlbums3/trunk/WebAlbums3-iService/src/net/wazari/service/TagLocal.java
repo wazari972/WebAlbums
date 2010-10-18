@@ -5,13 +5,16 @@
 
 package net.wazari.service;
 
+import net.wazari.service.exchange.xml.tag.XmlTagCloud;
+import net.wazari.service.exchange.xml.tag.XmlTagEdit;
+import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
+import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionTag;
-import net.wazari.common.util.XmlBuilder;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
+import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 
 /**
  *
@@ -19,20 +22,14 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
  */
 @Local
 @DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
-public interface TagLocal {
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession, Boolean correct) throws WebAlbumsServiceException;
+public interface TagLocal {    
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlTagDisplay treatTagDISPLAY(ViewSessionTag vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatTagDISPLAY(ViewSessionTag vSession, XmlBuilder submit) throws WebAlbumsServiceException;
-
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlBuilder treatTagEDIT(ViewSessionTag vSession, XmlBuilder submit) throws WebAlbumsServiceException ;
+    XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSessionTag vSession);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatTagPersonsPlaces(ViewSessionTag vSession);
-
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder treatTagCloud(ViewSessionTag vSession);
+    XmlTagCloud treatTagCloud(ViewSessionTag vSession);
 
 }

@@ -29,7 +29,7 @@
       <div class="body">
 	<a><xsl:attribute name="name"><xsl:value-of select="details/photoID" /></xsl:attribute></a>
 	<xsl:apply-templates select="message"/>
-	<xsl:if test="/root/affichage/massedit">
+	<xsl:if test="/webAlbums/affichage/massedit">
 	  <input>
 	    <xsl:attribute name="type">checkbox</xsl:attribute>
 	    <xsl:attribute name="class">massEdit</xsl:attribute>
@@ -43,7 +43,7 @@
   </xsl:template>
 
   <xsl:template match="massEdit">
-    <xsl:if test="/root/affichage/massedit">
+    <xsl:if test="/webAlbums/affichage/massedit">
       <script type='text/javascript' src="static/scripts/MassEdit.js" />
       <div class="item">
 	<div class="body">
@@ -79,15 +79,15 @@
 	      <td><input type='radio' name='turn' value='UNTAG' /></td>
 	      <td><label for="massTagList">Enlever le tag</label></td>
 	    </tr>
-	    <xsl:if test="/root/tags">
+	    <xsl:if test="/webAlbums/tags">
 	      <tr>
 		<input type="hidden" name="rmTag">
 		  <xsl:attribute name="value">
-		    <xsl:value-of select="/root/tags/title/tags/*[1]/@id"/>
+		    <xsl:value-of select="/webAlbums/tags/title/tags/*[1]/@id"/>
 		  </xsl:attribute>
 		</input>
 		<td><input type='radio' name='turn' value='movtag' /></td>
-		<td><label for="massTagList">Déplacer depuis </label><b><xsl:value-of select="/root/tags/title/tags/*[1]"/></b> vers</td>
+		<td><label for="massTagList">Déplacer depuis </label><b><xsl:value-of select="/webAlbums/tags/title/tags/*[1]"/></b> vers</td>
 	      </tr>
 	    </xsl:if>
 	    <tr><td>&#160;</td></tr>

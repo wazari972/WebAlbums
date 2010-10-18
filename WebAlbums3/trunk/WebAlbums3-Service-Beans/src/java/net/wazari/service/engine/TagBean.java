@@ -30,9 +30,13 @@ import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
-import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
+import net.wazari.service.exchange.xml.tag.XmlTag;
+import net.wazari.service.exchange.xml.tag.XmlTagCloud;
+import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
+import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
+import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -48,30 +52,9 @@ public class TagBean implements TagLocal {
     @EJB private SystemTools sysTools ;
 
     @Override
-    public XmlBuilder treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,Boolean correct) throws WebAlbumsServiceException {
-        return photoLocal.treatPhotoSUBMIT(vSession, correct) ;
-    }
-
-    @Override
-    public XmlBuilder treatTagEDIT(ViewSessionTag vSession, XmlBuilder submit) throws WebAlbumsServiceException {
-        Integer[] tags = vSession.getTagAsked();
-        Integer page = vSession.getPage();
-        
-        XmlBuilder output = photoLocal.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
-        XmlBuilder return_to = new XmlBuilder("return_to");
-        return_to.add("name", "Tags");
-        return_to.add("page", page);
-        for (int i = 0; i < tags.length; i++) {
-            return_to.add("tagAsked", tags[i]);
-        }
-        output.add(return_to);
-        return output.validate();
-    }
-
-    @Override
-    public XmlBuilder treatTagDISPLAY(ViewSessionTag vSession, XmlBuilder submit) throws WebAlbumsServiceException {
+    public XmlTagDisplay treatTagDISPLAY(ViewSessionTag vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagDISPLAY", log) ;
-        XmlBuilder output = new XmlBuilder(null) ;
+        XmlTagDisplay output = new XmlTagDisplay() ;
         Integer[] tags = vSession.getTagAsked();
         Integer page = vSession.getPage();
 
@@ -90,16 +73,17 @@ public class TagBean implements TagLocal {
                 }
             }
 
-            XmlBuilder thisPage = new XmlBuilder(null);
-            thisPage.add("name", "Tags");
+            XmlFrom thisPage = new XmlFrom();
+            thisPage.name = "Tags" ;
+            ArrayList<Integer> tagsAsked = new ArrayList<Integer>(tagSet.size()) ;
             for (Tag enrCurrentTag : tagSet) {
-                thisPage.add("tagAsked", enrCurrentTag.getId());
+                tagsAsked.add(enrCurrentTag.getId());
             }
-
-            XmlBuilder title = new XmlBuilder("title");
-            title.add(webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet),
-                    Box.NONE));
-            output.add(title);
+            thisPage.tagAsked = (Integer[]) tagsAsked.toArray() ;
+            
+            output.title = webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet),
+                    Box.NONE);
+            
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet) ;
             Special special = vSession.getSpecial();
             if (Special.FULLSCREEN == special) {
@@ -107,18 +91,18 @@ public class TagBean implements TagLocal {
                 stopWatch.stop("Service.treatTagDISPLAY.FULLSCREEN") ;
                 return null;
             } else {
-                output.add(photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay)vSession, thisPage, submit));
+                output.photoList = photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay)vSession, submit, thisPage);
             }
         }
         stopWatch.stop() ;
-        return output.validate();
+        return output ;
     }
 
     private static class PairTagXmlBuilder {
         Tag tag ;
-        XmlBuilder xml ;
+        XmlTagCloudEntry xml ;
 
-        public PairTagXmlBuilder(Tag tag, XmlBuilder xml) {
+        public PairTagXmlBuilder(Tag tag, XmlTagCloudEntry xml) {
             this.tag = tag;
             this.xml = xml;
         }
@@ -127,7 +111,7 @@ public class TagBean implements TagLocal {
             return tag;
         }
 
-        public XmlBuilder getXml() {
+        public XmlTagCloudEntry getXml() {
             return xml;
         }
 
@@ -135,9 +119,9 @@ public class TagBean implements TagLocal {
     private static final int SIZE_SCALE = 200 ;
     private static final int SIZE_MIN = 100 ;
     @Override
-    public XmlBuilder treatTagCloud(ViewSessionTag vSession){
+    public XmlTagCloud treatTagCloud(ViewSessionTag vSession){
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagCloud", log) ;
-        XmlBuilder cloud = new XmlBuilder("cloud");
+        XmlTagCloud output = new XmlTagCloud();
 
         long max = 0;
         Map<Tag,Long> map = tagDAO.queryIDNameCount(vSession);
@@ -158,8 +142,10 @@ public class TagBean implements TagLocal {
                 log.info("Switch to parent Tag: {}", enrCurrentTag) ;
                 continue ;
             } 
-
-            enrSonStack.push(new PairTagXmlBuilder(enrCurrentTag, cloud)) ;
+            XmlTagCloudEntry parent = new XmlTagCloudEntry();
+            output.parentTag = parent ;
+            
+            enrSonStack.push(new PairTagXmlBuilder(enrCurrentTag, parent)) ;
             while (!enrSonStack.isEmpty()) {
                 log.info("The stack has {} elements", enrSonStack.size());
                 PairTagXmlBuilder pair = enrSonStack.pop() ;
@@ -175,17 +161,17 @@ public class TagBean implements TagLocal {
                 }
                 log.info("Tag '{}' has {} pictures", pair.tag.getNom(), nbElts) ;
                 int size = (int) (SIZE_MIN + ((double) nbElts / max) * SIZE_SCALE);
-                XmlBuilder xmlParent = new XmlBuilder("tag")
-                    .addAttribut("size", size)
-                    .addAttribut("nb", nbElts)
-                    .addAttribut("id", pair.tag.getId()) 
-                    .addAttribut("name", pair.tag.getNom()) ;
-                pair.xml.add(xmlParent);
+                XmlTagCloudEntry xmlParent = new XmlTagCloudEntry() ;
+                xmlParent.size = size ;
+                xmlParent.nb = nbElts ;
+                xmlParent.id = pair.tag.getId() ;
+                xmlParent.name = pair.tag.getNom() ;
+                pair.xml.sonList.add(xmlParent);
 
                 log.info("Tag {} has {} children",pair.tag.getNom(),pair.tag.getSonList().size()) ;
                 if (!pair.tag.getSonList().isEmpty()) {
-                    XmlBuilder xmlSon = new XmlBuilder("children") ;
-                    xmlParent.add(xmlSon) ;
+                    XmlTagCloudEntry xmlSon = new XmlTagCloudEntry() ;
+                    xmlParent.sonList.add(xmlSon) ;
                     for (Tag enrSon : pair.tag.getSonList()) {
                         log.info("Push {} in the stack", enrSon.getNom()) ;
                         enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon)) ;
@@ -195,15 +181,15 @@ public class TagBean implements TagLocal {
             enrCurrentTag = null ;
         }
         stopWatch.stop() ;
-        return cloud.validate();
+        return output ;
     }
 
     @Override
-    public XmlBuilder treatTagPersonsPlaces(ViewSessionTag vSession) {
+    public XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSessionTag vSession) {
         Special special = vSession.getSpecial();
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagPersonsPlaces."+special, log) ;
 
-        XmlBuilder xmlSpec = new XmlBuilder(special.toString().toLowerCase());
+        XmlTagPersonsPlaces output = new XmlTagPersonsPlaces();
 
         int type;
         if (Special.PERSONS == special) {
@@ -213,11 +199,11 @@ public class TagBean implements TagLocal {
         }
 
         try {
-
             List<Tag> lstT = tagDAO.queryAllowedTagByType(vSession, type);
             for(Tag enrTag : lstT) {
-                XmlBuilder tag = new XmlBuilder("tag", enrTag.getNom())
-                        .addAttribut("id", enrTag.getId());
+                XmlTag tag = new XmlTag() ;
+                tag.name = enrTag.getNom() ;
+                tag.id = enrTag.getId() ;
                 List<TagTheme> lstTT = enrTag.getTagThemeList() ;
                 Random rand = new Random();
                 //pick up a RANDOM valid picture visible from this theme
@@ -226,7 +212,7 @@ public class TagBean implements TagLocal {
                     TagTheme enrTT =  lstTT.get(i);
                     if (enrTT.getPhoto() != null &&
                             (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
-                        tag.addAttribut("picture", enrTT.getPhoto());
+                        tag.picture = enrTT.getPhoto() ;
                         break;
                     } else {
                         lstTT.remove(i);
@@ -235,20 +221,18 @@ public class TagBean implements TagLocal {
                 if (Special.RSS == special) {
                     Geolocalisation enrGeo = enrTag.getGeolocalisation();
                     if (enrGeo != null) {
-                        tag.add("lat", enrGeo.getLat());
-                        tag.add("long", enrGeo.getLongitude());
+                        tag.lat = enrGeo.getLat();
+                        tag.longit = enrGeo.getLongitude();
                     }
                 }
-                xmlSpec.add(tag);
+                output.tags.add(tag) ;
             }
-            xmlSpec.validate();
         } catch (Exception e) {
-            log.warn(e.getClass().toString(), "{}:", new Object[]{e.getClass().getSimpleName(), e}) ;
+            log.warn(e.getClass().toString(), "{}: {}", new Object[]{e.getClass().getSimpleName(), e}) ;
 
-            xmlSpec.cancel();
-            xmlSpec.addException(e);
+            output.exception = e.getMessage() ;
         }
         stopWatch.stop() ;
-        return xmlSpec.validate();
+        return output ;
     }
 }

@@ -9,7 +9,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.exchange.xml.XmlThemes;
 
 /**
  *
@@ -19,5 +19,5 @@ import net.wazari.common.util.XmlBuilder;
 @DeclareRoles({UserLocal.VIEWER_ROLE})
 public interface ThemeLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlBuilder getThemeList(ViewSession vSession) ;
+    XmlThemes getThemeList(ViewSession vSession) ;
 }

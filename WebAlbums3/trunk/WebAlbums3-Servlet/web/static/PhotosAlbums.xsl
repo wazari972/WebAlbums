@@ -13,16 +13,16 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="details">
     <a>
-      <xsl:if test="/root/photos or /root/tags">
+      <xsl:if test="/webAlbums/photos or /webAlbums/tags">
 	<xsl:attribute name="rel">
 	  shadowbox[page];player=img
 	</xsl:attribute>
       </xsl:if>
       <xsl:attribute name="HREF">	
-	<xsl:if test="/root/photos or /root/tags">
+	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
 	  Images?id=<xsl:value-of select="photoID" />&amp;mode=GRAND
 	</xsl:if> 
-	<xsl:if test="/root/albums">
+	<xsl:if test="/webAlbums/albums">
 	  Photos?albmCount=<xsl:value-of select="../count" />&amp;album=<xsl:value-of select="../id" />
 	</xsl:if> 
       </xsl:attribute>
@@ -79,14 +79,14 @@
       </xsl:apply-templates>
       <div class="description"><xsl:value-of select="description" /></div>
       <xsl:apply-templates select="user" />
-      <xsl:if test="not(/root/albums)">
+      <xsl:if test="not(/webAlbums/albums)">
 	<a title="Photo réduite">
 	  <xsl:attribute name="href">Images?id=<xsl:value-of select="photoID" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
 	  <img src="static/images/reduire.gif" width="25px"/>
 	</a>
       </xsl:if>
-      <xsl:if test="not(/root/albums)">
-        <xsl:if test="count(/root/affichage/remote) = 0">
+      <xsl:if test="not(/webAlbums/albums)">
+        <xsl:if test="/webAlbums/affichage/remote">
             <a href='#'
                title="Photo en plein-ecran"
                class="fullscreen">
@@ -97,33 +97,33 @@
             </a>
         </xsl:if>
       </xsl:if>
-      <xsl:if test="/root/tags or /root/photos/random">
+      <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
 	<a title="Liens vers l'album">
 	  <xsl:attribute name="href">Photos?album=<xsl:value-of select="albumID" /></xsl:attribute>
 	  <img src="static/images/dossier.gif" width="25px"/>
 	</a>
       </xsl:if>
-      <xsl:if test="/root/affichage/edit">
+      <xsl:if test="/webAlbums/affichage/edit">
 	<a title="Edition">
 	  <xsl:attribute name="href">
-	    <xsl:if test="/root/photos">
+	    <xsl:if test="/webAlbums/photos">
 	      Photos?action=EDIT
 &amp;id=<xsl:value-of select="photoID" />
 &amp;count=<xsl:value-of select="../count"	/>
-&amp;albmCount=<xsl:value-of select="/root/photos/album/count" />
-&amp;album=<xsl:value-of select="/root/photos/album/id"	/>
+&amp;albmCount=<xsl:value-of select="/webAlbums/photos/album/count" />
+&amp;album=<xsl:value-of select="/webAlbums/photos/album/id"	/>
 	      </xsl:if>
-	      <xsl:if test="/root/tags">
+	      <xsl:if test="/webAlbums/tags">
 		Tags?action=EDIT
 &amp;id=<xsl:value-of select="photoID" />
-		<xsl:for-each select="/root/tags/title/tags/*">
+		<xsl:for-each select="/webAlbums/tags/title/tags/*">
 &amp;tagAsked=<xsl:value-of select="@id" />
 		</xsl:for-each>
-		<xsl:if test="/root/*/page/current">
-&amp;page=<xsl:value-of select="/root/*/page/current" />
+		<xsl:if test="/webAlbums/*/page/current">
+&amp;page=<xsl:value-of select="/webAlbums/*/page/current" />
 		</xsl:if>
 	      </xsl:if>
-              <xsl:if test="/root/albums">
+              <xsl:if test="/webAlbums/albums">
                   Albums?action=EDIT
 &amp;id=<xsl:value-of select="../id" />
 &amp;count=<xsl:value-of select="../count"/>
@@ -152,16 +152,16 @@
   </xsl:template>
   
   <xsl:template match="user">
-    <xsl:if test="/root/albums">
+    <xsl:if test="/webAlbums/albums">
       <div class="allowed"><xsl:value-of select="."/><xsl:apply-templates select="../userInside"/></div>
     </xsl:if>
-    <xsl:if test="/root/photos and not(@album)">
+    <xsl:if test="/webAlbums/photos and not(@album)">
       <div class="allowed"><xsl:value-of select="."/></div>
     </xsl:if>
-    <xsl:if test="/root/tags and @album">
+    <xsl:if test="/webAlbums/tags and @album">
       <div class="allowed">[<xsl:value-of select="."/>]</div>
     </xsl:if>
-    <xsl:if test="/root/tags and not(@album)">
+    <xsl:if test="/webAlbums/tags and not(@album)">
      <div class="allowed"><xsl:value-of select="."/></div>
     </xsl:if>
   </xsl:template>

@@ -11,7 +11,7 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="/root/tags">
+  <xsl:template match="/webAlbums/tags">
     <form method="post">
       <xsl:attribute name="action">
 	<xsl:call-template name="get_validate_addr" />

@@ -23,7 +23,8 @@ import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.exception.WebAlbumsDaoException;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.common.util.XmlBuilder;
+import net.wazari.service.exchange.xml.photo.XmlPhotoExif;
+import net.wazari.service.exchange.xml.photo.XmlPhotoExif.XmlPhotoExifEntry;
 import net.wazari.util.system.SystemTools;
 
 /**
@@ -134,8 +135,8 @@ public class PhotoUtil {
 
     }
 
-    public XmlBuilder getXmlExif(Photo p) {
-        XmlBuilder output = new XmlBuilder("exif");
+    public XmlPhotoExif getXmlExif(Photo p) {
+        XmlPhotoExif output = new XmlPhotoExif();
 
         String[] exifs = new String[]{
             p.getModel(), p.getDate(), p.getIso(), p.getExposure(),
@@ -146,11 +147,9 @@ public class PhotoUtil {
                 continue;
             }
             String[] values = exifs[i].split(" - ");
-            XmlBuilder data = new XmlBuilder("data", values[1]);
-            data.addAttribut("name", values[0]);
-            output.add(data);
+            output.entries.add(new XmlPhotoExifEntry(values[0], values[1])) ;
         }
-        return output.validate();
+        return output ;
     }
 
     public boolean rotate(ViewSession vSession, Photo p, String degrees)

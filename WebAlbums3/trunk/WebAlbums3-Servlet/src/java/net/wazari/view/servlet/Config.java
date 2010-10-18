@@ -12,15 +12,14 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.ConfigLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionConfig;
+import net.wazari.service.exchange.xml.XmlConfig;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
@@ -40,79 +39,69 @@ public class Config extends HttpServlet {
     @EJB
     private WebPageLocal webPageService ;
 
-    public XmlBuilder treatCONFIG(ViewSessionConfig vSession)
+    public XmlConfig treatCONFIG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
 
-        Special special = vSession.getSpecial();
-        if (special != null) {
-            return new XmlBuilder("updated");
-        }
-        return displayCONFIG(vSession);
-    }
-
-    private XmlBuilder displayCONFIG(ViewSessionConfig vSession)
-            throws WebAlbumsServiceException {
-        XmlBuilder output = new XmlBuilder("config");
+        XmlConfig output = new XmlConfig();
 
         Action action = vSession.getAction();
         if (vSession.isSessionManager()) {
 
-            output.add("map");
             if (action == Action.IMPORT) {
-                output.add(configService.treatIMPORT(vSession));
+                output.irnport = configService.treatIMPORT(vSession);
             }
 
             //ajout d'un nouveau tag
             if (Action.NEWTAG == action) {
-                output.add(configService.treatNEWTAG(vSession));
+                output.newtag = configService.treatNEWTAG(vSession);
             }
 
             //Renommage d'un tag tag
             if (Action.MODTAG == action) {
-                output.add(configService.treatMODTAG(vSession));
+                output.modtag = configService.treatMODTAG(vSession);
             }
 
             //Changement de visibilité d'un tag
             if (Action.MODVIS == action) {
-                output.add(configService.treatMODVIS(vSession));
+                output.modvis = configService.treatMODVIS(vSession);
             }
 
             //modification d'une geolocalisation
             if (Action.MODGEO == action) {
-                output.add(configService.treatMODGEO(vSession));
+                output.modgeo = configService.treatMODGEO(vSession);
             }
 
             //liens de parenté
             if (Action.LINKTAG == action) {
-                output.add(configService.treatLINKTAG(vSession));
+                output.linktag = configService.treatLINKTAG(vSession);
             }
 
             //suppression d'un tag
             if (Action.DELTAG == action) {
-                output.add(configService.treatDELTAG(vSession));
+                output.deltag = configService.treatDELTAG(vSession);
             }
 
             //suppression d'un tag
             if (Action.DELTHEME == action) {
-                output.add(configService.treatDELTHEME(vSession));
+                output.deltheme = configService.treatDELTHEME(vSession);
             }
 
             if (System.getProperty(SHUTDOWN_PORT_PPT) != null) {
-                output.add("shutdown", System.getProperty(SHUTDOWN_PORT_PPT)) ;
+                output.shutdown = System.getProperty(SHUTDOWN_PORT_PPT) ;
             }
             
-            output.add(webPageService.displayListLB(Mode.TAG_USED, vSession, null,
-                    Box.MULTIPLE));
-            output.add(webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
-                    Box.MULTIPLE));
-            output.add(webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
-                    Box.MULTIPLE));
+            output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
+                    Box.MULTIPLE);
+            output.tag_geo = webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
+                    Box.MULTIPLE);
+            output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
+                    Box.MULTIPLE);
 
         } else {
-            output.addException("Vous n'avez pas crée ce theme ...");
+            output.exception = "Vous n'avez pas crée ce theme ..." ;
         }
 
-        return output.validate();
+        return output ;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
