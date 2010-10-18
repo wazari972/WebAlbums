@@ -5,10 +5,14 @@
 
 package net.wazari.service.exchange.xml.common;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author kevin
  */
+
+@XmlRootElement
 public class XmlDate {
     public String year;
     public String month;

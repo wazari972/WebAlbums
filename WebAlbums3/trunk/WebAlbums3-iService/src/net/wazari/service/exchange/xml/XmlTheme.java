@@ -5,16 +5,18 @@
 
 package net.wazari.service.exchange.xml;
 
-import net.wazari.dao.entity.Theme;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlTheme {
 
-    public XmlTheme(Theme enrTheme) {
-        
-    }
+    public String name ;
+    @XmlAttribute
+    public Integer id ;
 
 }

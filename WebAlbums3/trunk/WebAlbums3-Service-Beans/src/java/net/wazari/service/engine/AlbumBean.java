@@ -172,7 +172,7 @@ public class AlbumBean implements AlbumLocal {
 
             count++;
 
-            output.albums.add(album);
+            output.album.add(album);
         }
 
         output.page = webPageService.xmlPage(fromPage, bornes);

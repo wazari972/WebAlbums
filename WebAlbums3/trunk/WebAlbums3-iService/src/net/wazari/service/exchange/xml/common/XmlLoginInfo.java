@@ -5,13 +5,19 @@
 
 package net.wazari.service.exchange.xml.common;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlLoginInfo {
     public String theme;
+    @XmlAttribute
     public Boolean root;
+    @XmlAttribute
     public Boolean admin;
     public String user;
 

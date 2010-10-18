@@ -5,10 +5,13 @@
 
 package net.wazari.service.exchange.xml.common;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlInfoException {
     public String exception;
     public String message;

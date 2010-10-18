@@ -5,14 +5,14 @@
 
 package net.wazari.service.exchange.xml;
 
-import java.util.LinkedList;
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlThemes {
-    public final List<XmlTheme> themes = new LinkedList<XmlTheme>();
+    public XmlThemeList themeList;
 
 }

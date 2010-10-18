@@ -5,12 +5,17 @@
 
 package net.wazari.service.exchange.xml;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlChoix {
-    public XmlWebAlbumsList tags ;
+
+    @XmlElement(name = "tagList")
+    public XmlWebAlbumsList tag_used ;
 }

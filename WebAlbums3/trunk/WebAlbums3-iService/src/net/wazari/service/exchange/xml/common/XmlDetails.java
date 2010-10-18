@@ -6,11 +6,14 @@
 package net.wazari.service.exchange.xml.common;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlDetails {
     public Integer photoId;
     public String miniWidth;
@@ -20,6 +23,7 @@ public class XmlDetails {
     public String description;
     public Integer albumId;
     public String user;
+    @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
 
 }

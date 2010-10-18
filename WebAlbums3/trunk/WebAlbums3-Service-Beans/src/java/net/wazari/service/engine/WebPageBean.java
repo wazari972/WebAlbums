@@ -40,7 +40,6 @@ import net.wazari.service.exchange.xml.XmlPage;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.common.XmlUser;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsListTags;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhat;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
@@ -269,6 +268,7 @@ public class WebPageBean implements WebPageLocal {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
         List<Tag> tags = null;
 
+        XmlWebAlbumsList output = new XmlWebAlbumsList();
         boolean geoOnly = mode == Mode.TAG_GEO;
         //affichage de la liste des tags où il y aura des photos
         if (!vSession.isSessionManager()) {
@@ -303,14 +303,11 @@ public class WebPageBean implements WebPageLocal {
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);
 
             } else /* not handled mode*/ {
-                XmlWebAlbumsList output = new XmlWebAlbumsList();
-
                 output.exception = "Unknown handled mode :" + mode ;
                 return output ;
             }
         } /* isManagerSession */
 
-        XmlWebAlbumsList output = new XmlWebAlbumsListTags();
         output.mode = mode ;
 
         GooglePoint map = null;
@@ -321,7 +318,7 @@ public class WebPageBean implements WebPageLocal {
         log.info( "Mode: {}, Box: {}, list: {}", new Object[]{mode, box, ids});
 
         for (Tag enrTag : tags) {
-            XmlTag type = new XmlTag();
+            XmlTag tag = new XmlTag();
             Tag tagId = null;
             String nom = null;
             Point p = null;
@@ -362,17 +359,10 @@ public class WebPageBean implements WebPageLocal {
                 nom = enrTag.getNom();
 
                 switch (enrTag.getTagType()) {
-                    case 1:
-                        type = new XmlWebAlbumsTagWho();
-                        break;
-                    case 2:
-                        type = new XmlWebAlbumsTagWhat();
-                        break;
-                    case 3:
-                        type = new XmlWebAlbumsTagWhere();
-                        break;
-                    default:
-                        throw new RuntimeException("Unkown tag type "+enrTag.getNom()+"->"+enrTag.getTagType()) ;
+                    case 1: output.who.add((XmlWebAlbumsTagWho)(tag = new XmlWebAlbumsTagWho())); break;
+                    case 2: output.what.add((XmlWebAlbumsTagWhat)(tag = new XmlWebAlbumsTagWhat())); break;
+                    case 3: output.where.add((XmlWebAlbumsTagWhere)(tag = new XmlWebAlbumsTagWhere())); break ;
+                    default: throw new RuntimeException("Unkown tag type "+enrTag.getNom()+"->"+enrTag.getTagType()) ;
                 }
             }
             //display the value [if in ids][select if in ids]
@@ -412,10 +402,10 @@ public class WebPageBean implements WebPageLocal {
                     }
                 }
                 if (written) {
-                    type.name = nom ;
-                    type.id = tagId.getId() ;
-                    type.checked = true ;
-                    output.tags.add(type);
+                    tag.name = nom ;
+                    tag.id = tagId.getId() ;
+                    tag.checked = true ;
+
                 }
             }
         } /* while loop*/

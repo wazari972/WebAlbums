@@ -6,7 +6,9 @@
 package net.wazari.service.exchange.xml.photo;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.XmlPage;
 import net.wazari.service.exchange.xml.common.XmlInfoException;
 
@@ -14,13 +16,18 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlPhotoList extends XmlInfoException {
-    public final List<XmlPhoto> photos ;
+    public final List<XmlPhoto> photo ;
     public XmlPhotoSubmit submit;
     public XmlPhotoMassEdit massEdit;
     public XmlPage page;
+
+    public XmlPhotoList() {
+        photo = new LinkedList<XmlPhoto>() ;
+    }
     public XmlPhotoList(int size) {
-        photos = new ArrayList<XmlPhoto>(size) ;
+        photo = new ArrayList<XmlPhoto>(size) ;
     }
 
 }

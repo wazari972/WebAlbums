@@ -5,12 +5,15 @@
 
 package net.wazari.service.exchange.xml;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlLogin {
-    public boolean denied;
-    public boolean login;
-    public boolean valid;
+    public Boolean denied;
+    public Boolean login;
+    public Boolean valid;
 }

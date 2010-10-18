@@ -5,6 +5,7 @@
 
 package net.wazari.service.exchange.xml.config;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlInfoException;
 
 
@@ -12,6 +13,7 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlConfigLinkTag extends XmlInfoException {
 
 }

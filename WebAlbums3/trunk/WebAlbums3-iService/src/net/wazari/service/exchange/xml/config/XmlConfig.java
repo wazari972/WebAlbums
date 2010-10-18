@@ -3,8 +3,11 @@
  * and open the template in the editor.
  */
 
-package net.wazari.service.exchange.xml;
+package net.wazari.service.exchange.xml.config;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.common.XmlInfoException;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.config.XmlConfigDelTag;
 import net.wazari.service.exchange.xml.config.XmlConfigDelTheme;
@@ -19,7 +22,8 @@ import net.wazari.service.exchange.xml.config.XmlConfigNewTag;
  *
  * @author kevin
  */
-public class XmlConfig {
+@XmlRootElement
+public class XmlConfig extends XmlInfoException {
     public XmlConfigImport irnport;
     public XmlConfigNewTag newtag;
     public XmlConfigModTag modtag;
@@ -29,9 +33,12 @@ public class XmlConfig {
     public XmlConfigDelTag deltag;
     public XmlConfigDelTheme deltheme;
     public String shutdown;
-    public String exception;
+
+    @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
+    @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_geo;
+    @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_never;
 
 }

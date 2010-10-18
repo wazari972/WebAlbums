@@ -5,12 +5,14 @@
 
 package net.wazari.service.exchange.xml.photo;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlPhotoRandom {
     public XmlDetails details;
 

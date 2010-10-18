@@ -7,12 +7,13 @@ package net.wazari.service.exchange.xml.album;
 
 import java.util.LinkedList;
 import java.util.List;
-import net.wazari.service.exchange.xml.album.XmlAlbum;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlAlbumYear {
     public int year ;
 

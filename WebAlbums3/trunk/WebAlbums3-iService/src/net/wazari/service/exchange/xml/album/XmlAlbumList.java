@@ -6,17 +6,23 @@
 package net.wazari.service.exchange.xml.album;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.XmlPage;
 
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlAlbumList {
-    public XmlAlbumList(int length) {
-        albums = new ArrayList<XmlAlbum>(length) ;
+    public XmlAlbumList() {
+        album = new LinkedList<XmlAlbum>() ;
     }
-    public final List<XmlAlbum> albums ;
+    public XmlAlbumList(int length) {
+        album = new ArrayList<XmlAlbum>(length) ;
+    }
+    public final List<XmlAlbum> album ;
     public XmlPage page;
 }

@@ -431,7 +431,7 @@ public class PhotoBean implements PhotoLocal {
             if (vSession.wantsDetails()) {
                 photo.exifs = photoUtil.getXmlExif(enrPhoto) ;
             }
-            output.photos.add(photo);
+            output.photo.add(photo);
             current = false;
             count++;
         }
