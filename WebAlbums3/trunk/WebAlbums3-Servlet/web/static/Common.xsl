@@ -11,7 +11,7 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="tags">
+  <xsl:template match="tagList">
     <xsl:param name="name">tagAsked</xsl:param>
     <xsl:param name="style">none</xsl:param>
     <xsl:param name="size">7</xsl:param>
@@ -20,7 +20,6 @@
     <xsl:param name="box">MULTIPLE</xsl:param>
     <xsl:param name="onChange"></xsl:param>
     <xsl:param name="id"></xsl:param>
-
     <xsl:if test="not(@box) or @box = $box">
     <xsl:if test="not(@mode) or @mode = $mode">
       <xsl:if test="who|what|where">
@@ -146,15 +145,15 @@
       <div class="content">
         <center>
           <div class="pagination">
-              <xsl:apply-templates select="previ"/>
-              <xsl:apply-templates select="first"/>
-              <xsl:if test="first"><span>...</span></xsl:if>
+              <xsl:apply-templates select="@previ"/>
+              <xsl:apply-templates select="@first"/>
+              <xsl:if test="@first"><span>...</span></xsl:if>
               <xsl:apply-templates select="prev"/>
-              <span class="current"><xsl:value-of select="current" /> </span>
+              <span class="current"><xsl:value-of select="@current" /> </span>
               <xsl:apply-templates select="next"/>
-              <xsl:if test="last">... </xsl:if>
-              <xsl:apply-templates select="last"/>
-              <xsl:apply-templates select="nexti"/>
+              <xsl:if test="@last">... </xsl:if>
+              <xsl:apply-templates select="@last"/>
+              <xsl:apply-templates select="@nexti"/>
             </div>
         </center>
       </div>
@@ -163,7 +162,7 @@
     <br/>
   </xsl:template>
 
-  <xsl:template match="prev|next|nexti|previ|first|last">
+  <xsl:template match="prev|next|@nexti|@previ|@first|@last">
     <A>
       <xsl:attribute name="HREF">
 	<xsl:if test="/webAlbums/photos">

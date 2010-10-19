@@ -122,21 +122,21 @@ public class WebPageBean implements WebPageLocal {
         if (start >= 2) {
             page.first = 0;
         } else if (start == 1) {
-            page.prev = 0 ;
+            page.prev.add(0) ;
         }
         for (int i = start; i < stop; i++) {
             if (i == current ||current == -1 && i == 0) {
                 page.current = i;
             } else if (i < current) {
-                page.prev = i;
+                page.prev.add(i);
             } else {
-                page.next = i;
+                page.next.add(i);
             }
         }
         if (stop == bornes.getLastPage() - 1) {
-            page.next = last - 1 ;
+            page.next.add(last - 1) ;
         } else if (stop != last) {
-            page.last = last - 1;
+            page.last = last - 1 ;
         }
 
         if (current != 0) {
@@ -359,9 +359,9 @@ public class WebPageBean implements WebPageLocal {
                 nom = enrTag.getNom();
 
                 switch (enrTag.getTagType()) {
-                    case 1: output.who.add((XmlWebAlbumsTagWho)(tag = new XmlWebAlbumsTagWho())); break;
-                    case 2: output.what.add((XmlWebAlbumsTagWhat)(tag = new XmlWebAlbumsTagWhat())); break;
-                    case 3: output.where.add((XmlWebAlbumsTagWhere)(tag = new XmlWebAlbumsTagWhere())); break ;
+                    case 1: tag = new XmlWebAlbumsTagWho(); break ;
+                    case 2: tag = new XmlWebAlbumsTagWhat(); break;
+                    case 3: tag = new XmlWebAlbumsTagWhere(); break ;
                     default: throw new RuntimeException("Unkown tag type "+enrTag.getNom()+"->"+enrTag.getTagType()) ;
                 }
             }
@@ -390,12 +390,12 @@ public class WebPageBean implements WebPageLocal {
                 }
             } else if (box == Box.MAP) {
             } else {
-                String selected = "";
+                boolean selected = false;
                 boolean written = true;
                 if (ids != null) {
                     if (box == Box.MULTIPLE) {
                         if (ids.contains(tagId)) {
-                            selected = "checked";
+                            selected = true;
                         }
                     } else if (!ids.contains(tagId)) {
                         written = false;
@@ -404,15 +404,16 @@ public class WebPageBean implements WebPageLocal {
                 if (written) {
                     tag.name = nom ;
                     tag.id = tagId.getId() ;
-                    tag.checked = true ;
-
+                    tag.checked = selected ;
+                    output.addTag(tag) ;
                 }
             }
         } /* while loop*/
 
         if (box == Box.MAP_SCRIPT) {
-            output.text = map.getInitFunction();
+            output.blob = map.getInitFunction();
         }
+
 
         stopWatch.stop() ;
         return output ;

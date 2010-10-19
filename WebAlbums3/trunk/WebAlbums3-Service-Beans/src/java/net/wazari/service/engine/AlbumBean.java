@@ -195,7 +195,7 @@ public class AlbumBean implements AlbumLocal {
             if (enrAlbum.getPicture() != null) {
                 album.picture = enrAlbum.getPicture();
             }
-            top5.albums.add(album);
+            top5.album.add(album);
             i++ ;
         }
         stopWatch.stop("Service.treatTOP") ;
@@ -224,7 +224,7 @@ public class AlbumBean implements AlbumLocal {
             if (enrAlbum.getPicture() != null) {
                 album.picture = enrAlbum.getPicture();
             }
-            select.albums.add(album);
+            select.album.add(album);
             i++ ;
         }
 
@@ -264,9 +264,9 @@ public class AlbumBean implements AlbumLocal {
                 album.count = i;
                 album.name = enrAlbum.getNom();
                 album.picture = enrAlbum.getPicture();
-                year.albums.add(album) ;
+                year.album.add(album) ;
             }
-            years.years.add(year);
+            years.year.add(year);
         }
 
         stopWatch.stop("Service.treatYEARS") ;

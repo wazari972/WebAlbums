@@ -11,7 +11,7 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="userLogin">
+  <xsl:template match="login">
     <div class="item">
       <div class="date">
 	<span>*</span>
@@ -28,8 +28,8 @@
 
 	  <xsl:if test="not(valid)">
 	    <form method="POST">
-	      Nom d'utilisateur : <input type="input" name="userName" /><br/>
-	      Mot de passe : <input type="password" name="userPass" /><br/>
+	      <label for="userName"> Nom d'utilisateur :</label><input id="userName" type="input" name="userName" /><br/>
+	      <label for="userPass"> Mot de passe :</label> <input id="userPass" type="password" name="userPass" /><br/>
 	      <input type='hidden' name='action' value='LOGIN'/>	
 	      <input type="submit" value="Valider" />
 	    </form>

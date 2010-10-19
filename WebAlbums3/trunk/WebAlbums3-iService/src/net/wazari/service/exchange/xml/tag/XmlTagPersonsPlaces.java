@@ -14,5 +14,5 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
  * @author kevin
  */
 public class XmlTagPersonsPlaces extends XmlInfoException {
-    public final List<XmlTag> tags = new LinkedList<XmlTag>() ;
+    public final List<XmlTag> tagList = new LinkedList<XmlTag>() ;
 }

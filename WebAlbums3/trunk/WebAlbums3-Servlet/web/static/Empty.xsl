@@ -16,21 +16,14 @@
     <xsl:apply-templates select="/webAlbums/maint" />
 
     <xsl:apply-templates select="/webAlbums/tags/cloud" />
-    <xsl:apply-templates select="/webAlbums/tags/persons" />
-    <xsl:apply-templates select="/webAlbums/tags/places" />
-    <xsl:if test="not(/webAlbums/tags/cloud
-                   or /webAlbums/tags/persons
-                   or /webAlbums/tags/places)">
-      <xsl:apply-templates select="/webAlbums/tags" />
-    </xsl:if>
+    <xsl:apply-templates select="/webAlbums/tags/personsPlaces" />
+    <xsl:apply-templates select="/webAlbums/tags/display" />
 
-
-    <xsl:apply-templates select="/webAlbums/albums" />
+    <xsl:apply-templates select="/webAlbums/albums/top" />
+    <xsl:apply-templates select="/webAlbums/albums/years" />
 
     <xsl:apply-templates select="/webAlbums/photos/random" />
-    <xsl:if test="not(/webAlbums/photos/random)">
-        <xsl:apply-templates select="/webAlbums/photos" />
-    </xsl:if>
+    <xsl:apply-templates select="/webAlbums/photos/display" />
   </xsl:template>
 
   <xsl:include href="PhotosAlbums.xsl" />
@@ -106,10 +99,14 @@
             ***********************************************/
       </script>
       <link rel="stylesheet" type="text/css" href="static/scripts/treemenu/simpletree.css" />
-      <a href="javascript:ddtreemenu.flatten('cloudTree', 'expand')">Expand All</a>
-    | <a href="javascript:ddtreemenu.flatten('cloudTree', 'contract')">Contact All</a>
-      <ul id="cloudTree" class="treeview">
-        <xsl:apply-templates select="tag"/>
+      <h3>Nuage de tags </h3>
+      <ul>
+          <li><a href="javascript:ddtreemenu.flatten('cloudTree', 'expand')">Expand All</a>
+          | <a href="javascript:ddtreemenu.flatten('cloudTree', 'contract')">Contact All</a></li>
+
+          <ul id="cloudTree" class="treeview">
+            <xsl:apply-templates select="tag"/>
+          </ul>
       </ul>
       <script type="text/javascript">
         ddtreemenu.createTree("cloudTree", false)
@@ -140,14 +137,14 @@
       </ul>
   </xsl:template>
   
-  <xsl:template match="persons|places">
+  <xsl:template match="personsPlaces">
     <table>
       <tr>
-	<xsl:apply-templates select="tag" />
+	<xsl:apply-templates select="tagList" />
       </tr>
     </table>
   </xsl:template>
-  <xsl:template match="persons/tag|places/tag">
+  <xsl:template match="personsPlaces/tagList">
     <td>
       <table>
 	<tr>
@@ -189,7 +186,7 @@
      </div>
  </xsl:template>
 
- <xsl:template match="/webAlbums/albums/top5">
+ <xsl:template match="/webAlbums/albums/top">
    <table>
      <tr>
        <xsl:apply-templates select="album" />
@@ -203,13 +200,13 @@
 	<tr>
 	  <td>
 	    <center>
-	      <xsl:if test="photo">
+	      <xsl:if test="@picture">
 		<a target="_top">
 		  <xsl:attribute name="href">
-		    Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="id"/>
+		    Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
 		  </xsl:attribute>
 		  <img width="100px">
-		    <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="photo"/></xsl:attribute>
+		    <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
 		  </img>
 		</a>
 	      </xsl:if>
@@ -221,9 +218,9 @@
 	    <center>
 	      <a target="_top">
 		<xsl:attribute name="href">
-		  Photos?albumCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="id"/>
+		  Photos?albumCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
 		</xsl:attribute>
-		<xsl:value-of select="nom"/>
+		<xsl:value-of select="name"/>
 	      </a>
 	    </center>
 	  </td>
@@ -257,7 +254,7 @@
     <br/>
   </xsl:template>
 
-  <xsl:template match="/webAlbums/photos|/webAlbums/tags">
+  <xsl:template match="display">
     <html style="margin: 0;padding: 0;height: 100%">
       <body style="margin: 0;padding: 0;height: 100%">
 	<script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
@@ -265,24 +262,41 @@
 	<div style="overflow:auto;">
 	  <table>
 	    <tr>
-	      <xsl:apply-templates select="page/prev"/>
-	      <xsl:apply-templates select="photo"/>
-	      <xsl:apply-templates select="page/next"/>
+              <xsl:apply-templates select="@previ"/>
+              <xsl:apply-templates select="@first"/>
+              <xsl:if test="@first"><span>...</span></xsl:if>
+              <xsl:apply-templates select="prev"/>
+              <span class="current"><xsl:value-of select="@current" /> </span>
+              <xsl:apply-templates select="next"/>
+              <xsl:if test="@last">... </xsl:if>
+              <xsl:apply-templates select="@last"/>
+              <xsl:apply-templates select="@nexti"/>
+
+	      <xsl:apply-templates select="photoList/page/@previ"/>
+	      <xsl:apply-templates select="photoList/page/@first"/>
+              <xsl:if test="photoList/page/@first"><td>...</td></xsl:if>
+	      <xsl:apply-templates select="photoList/page/prev"/>
+	      <xsl:apply-templates select="photoList/photo"/>
+	      <xsl:apply-templates select="photoList/page/next"/>
+              <xsl:if test="photoList/page/@last"><td>...</td></xsl:if>
+              <xsl:apply-templates select="photoList/page/@last"/>
+	      <xsl:apply-templates select="photoList/page/@nexti"/>
+
 	      <td>
 		<a title="Retour à la normal">
 		  <xsl:attribute name="href">
 		    <xsl:if test="/webAlbums/photos">
 		      Photos?
-albmCount=<xsl:value-of select="/webAlbums/photos/album/count" />
-&amp;album=<xsl:value-of select="/webAlbums/photos/album/id" />
-&amp;page=<xsl:value-of select="page/current"/>
+albmCount=<xsl:value-of select="album/@count" />
+&amp;album=<xsl:value-of select="album/@id" />
+&amp;page=<xsl:value-of select="photoList/page/@current"/>
 		    </xsl:if>
 		    <xsl:if test="/webAlbums/tags">
 		      Tags?
-<xsl:for-each select="title/tags/*">
+<xsl:for-each select="title/tagList/*">
 &amp;tagAsked=<xsl:value-of select="@id"/>
 </xsl:for-each>
-&amp;page=<xsl:value-of select="page/current"/>
+&amp;page=<xsl:value-of select="photoList/page/@current"/>
 		    </xsl:if>
 		  </xsl:attribute>
 		  &#8629;
@@ -294,35 +308,36 @@ albmCount=<xsl:value-of select="/webAlbums/photos/album/count" />
 	<div style="">
 	  <img  id="largeImg" style="width:100%">
 	    <xsl:attribute name="SRC">
-	      Images?id=<xsl:value-of select="photo[1]/details/photoID"/>&amp;mode=GRAND
+	      Images?id=<xsl:value-of select="photoList/photo[1]/details/photoId"/>&amp;mode=GRAND
 	    </xsl:attribute>
 	  </img>
 	</div>
       </body>
     </html>
   </xsl:template>
+  
   <xsl:include href="Common.xsl"/>
   <xsl:template match="photo">
     <td>
       <a href="#">
 	<xsl:attribute name="onClick">
-	  javascript:updateFullImage('<xsl:value-of select="details/photoID"/>')
+	  javascript:updateFullImage('<xsl:value-of select="details/photoId"/>')
 	</xsl:attribute>
 	<img height="200px">
 	  <xsl:attribute name="SRC">
-	    Images?id=<xsl:value-of select="details/photoID"/>&amp;mode=PETIT
+	    Images?id=<xsl:value-of select="details/photoId"/>&amp;mode=PETIT
 	  </xsl:attribute>
 	  <xsl:attribute name="onmouseout">
 	    UnTip()
 	  </xsl:attribute>
 	  <xsl:attribute name="onmouseover">
-	    TagToTip('tip<xsl:value-of select="details/photoID" />')
+	    TagToTip('tip<xsl:value-of select="details/photoId" />')
 	  </xsl:attribute>
 	</img>
       </a>
       <span style="display:none">
-	<xsl:attribute name="id">tip<xsl:value-of select="details/photoID" /></xsl:attribute>
-	<xsl:apply-templates select="details/tags">
+	<xsl:attribute name="id">tip<xsl:value-of select="details/photoId" /></xsl:attribute>
+	<xsl:apply-templates select="details/tagList">
 	  <xsl:with-param name="style">none</xsl:with-param>
 	  <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	  <xsl:with-param name="box">NONE</xsl:with-param>
@@ -333,7 +348,7 @@ albmCount=<xsl:value-of select="/webAlbums/photos/album/count" />
     </td>
   </xsl:template>
 
-  <xsl:template match="prev|next">
+  <xsl:template match="prev|next|@first|@last|@nexti|@previ">
     <td>
       <a>
 	<xsl:attribute name="href">
@@ -350,8 +365,15 @@ albmCount=<xsl:value-of select="/webAlbums/photos/album/count" />
 &amp;page=<xsl:value-of select="."/>
 &amp;special=VISIONNEUSE
 	  </xsl:if>
-	</xsl:attribute>
-	<xsl:value-of select="." />
+          </xsl:attribute><xsl:if test="name(.) = 'nexti'">
+              »
+          </xsl:if>
+          <xsl:if test="name(.) = 'previ'">
+              «
+          </xsl:if>
+          <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')">
+              <xsl:value-of select="." />
+          </xsl:if>
       </a>
     </td>
   </xsl:template>

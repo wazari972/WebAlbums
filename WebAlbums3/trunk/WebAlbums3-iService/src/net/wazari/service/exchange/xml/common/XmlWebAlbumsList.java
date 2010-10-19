@@ -23,14 +23,28 @@ public class XmlWebAlbumsList extends XmlInfoException {
     @XmlAttribute
     public Mode mode;
 
-    @XmlTransient
-    public String text;
+    public String blob;
+
     @XmlAttribute
     public Box box;
     @XmlAttribute
     public Integer id;
     @XmlAttribute
     public String type ;
+
+    public void addTag(XmlTag newTag) {
+        if (newTag == null) return ;
+
+        if (newTag instanceof XmlWebAlbumsTagWho) {
+            who.add((XmlWebAlbumsTagWho) newTag);
+        } else if (newTag instanceof XmlWebAlbumsTagWhat) {
+            what.add((XmlWebAlbumsTagWhat) newTag);
+        } else if (newTag instanceof XmlWebAlbumsTagWhere) {
+            where.add((XmlWebAlbumsTagWhere) newTag);
+        } else {
+            tag.add(newTag);
+        }
+    }
 
     public static class XmlWebAlbumsTagWhere extends XmlTag {
         public String getNature() {return "where" ;}

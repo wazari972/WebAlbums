@@ -5,6 +5,8 @@
 
 package net.wazari.service.exchange.xml;
 
+import java.util.LinkedList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlFrom;
@@ -19,12 +21,12 @@ public class XmlPage {
     public XmlFrom url;
     @XmlAttribute
     public Integer first;
-    @XmlAttribute
-    public Integer prev;
+
+    public List<Integer> prev = new LinkedList<Integer>();
     @XmlAttribute
     public Integer current;
-    @XmlAttribute
-    public Integer next;
+
+    public List<Integer> next = new LinkedList<Integer>();
     @XmlAttribute
     public Integer last;
     @XmlAttribute

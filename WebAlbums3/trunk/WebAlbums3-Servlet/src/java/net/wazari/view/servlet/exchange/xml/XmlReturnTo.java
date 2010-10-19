@@ -5,10 +5,13 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlReturnTo {
     public String name;
     public Integer count;

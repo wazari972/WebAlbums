@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.xml.XmlVoid;
+import net.wazari.service.exchange.xml.XmlThemes;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 
@@ -37,8 +37,8 @@ public class Index extends HttpServlet {
         super.init(config);
     }
     
-    public XmlVoid treatVOID(ViewSession vSession) {
-        XmlVoid output = new XmlVoid() ;
+    public XmlThemes treatVOID(ViewSession vSession) {
+        XmlThemes output = new XmlThemes() ;
         output.themeList = themeService.getThemeList(vSession) ;
 
         return output ;

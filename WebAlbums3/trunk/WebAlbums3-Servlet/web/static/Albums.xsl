@@ -12,13 +12,13 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="albums">
-    <xsl:apply-templates select="album"/>
+    <xsl:apply-templates select="display/albumList/album"/>
   </xsl:template>
 
   <xsl:template match="album">
     <div class="item">
       <div class="date">
-	<A><xsl:attribute name="name"><xsl:value-of select="id" /></xsl:attribute></A>
+	<A><xsl:attribute name="name"><xsl:value-of select="@id" /></xsl:attribute></A>
 	<div><xsl:value-of select="date/month" /></div>
 	<span><xsl:value-of select="date/day" /></span>
       </div>
@@ -27,12 +27,12 @@
 	  <A>
 	    <xsl:if test="/webAlbums/albums">
 	      <xsl:attribute name="href">
-		Photos?albmCount=<xsl:value-of select="count" />&amp;album=<xsl:value-of select="id" />
+		Photos?albmCount=<xsl:value-of select="@count" />&amp;album=<xsl:value-of select="@id" />
 	      </xsl:attribute>
 	    </xsl:if> 
 	    <xsl:if test="/webAlbums/photos">
 	      <xsl:attribute name="href">
-		Albums?count=<xsl:value-of select="count" />#<xsl:value-of select="id" />
+		Albums?count=<xsl:value-of select="@count" />#<xsl:value-of select="@id" />
 	      </xsl:attribute>
 	    </xsl:if> 
 	    <xsl:value-of select="title" />
@@ -43,14 +43,14 @@
 	    <a>
 	      <xsl:attribute name="title"><xsl:value-of select="title" /> en visionneuse</xsl:attribute> 
 	      <xsl:attribute name="href">
-		Photos?albmCount=<xsl:value-of select="count" />
-&amp;album=<xsl:value-of select="id" />
-&amp;page=<xsl:value-of select="../page/current" />
+		Photos?albmCount=<xsl:value-of select="@count" />
+&amp;album=<xsl:value-of select="@id" />
+&amp;page=<xsl:value-of select="../photoList/page/@current" />
 &amp;special=VISIONNEUSE
 	    </xsl:attribute>
-	      <img src="static/images/slide.png" height="30px"/>
+	    <img src="static/images/slide.png" height="30px"/>
 	    </a>
-            <xsl:if test="/webAlbums/affichage/remote">
+            <xsl:if test="not(/webAlbums/affichage/@remote)">
                 &#160;
                 <a class='fullscreen'
                    href="#">
@@ -61,13 +61,13 @@
                   <img src="static/images/out.png" height="30px"/>
                 </a>
             </xsl:if>
-	    <xsl:if test="/webAlbums/affichage/edit">
+	    <xsl:if test="/webAlbums/affichage/@edit">
 	      &#160;
 	      <a title="Edition de l'album">
 		<xsl:attribute name="href">
 		  Albums?action=EDIT
-&amp;id=<xsl:value-of select="id" />
-&amp;count=<xsl:value-of select="count"/>
+&amp;id=<xsl:value-of select="@id" />
+&amp;count=<xsl:value-of select="@count"/>
 		</xsl:attribute>
 		<img src="static/images/edit.png" height="30px"/>
 	      </a>

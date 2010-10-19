@@ -5,6 +5,7 @@
 
 package net.wazari.service.exchange.xml.common;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -17,6 +18,6 @@ public class XmlFrom {
     public String name;
     public Integer album;
     public Integer albmCount;
-    public Integer[] tagAsked;
+    public List<Integer> tagAsked;
 
 }

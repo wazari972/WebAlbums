@@ -8,12 +8,14 @@ package net.wazari.view.servlet.exchange.xml;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlChoix;
-import net.wazari.service.exchange.xml.XmlConfig;
+import net.wazari.service.exchange.xml.config.XmlConfig;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.service.exchange.xml.XmlLogin;
 import net.wazari.service.exchange.xml.XmlMaint;
-import net.wazari.service.exchange.xml.XmlVoid;
+import net.wazari.service.exchange.xml.XmlThemes;
+import net.wazari.service.exchange.xml.common.XmlLoginInfo;
 
 /**
  *
@@ -24,49 +26,24 @@ public class XmlWebAlbums {
     @XmlTransient
     public boolean isComplete ;
     @XmlTransient
+    public boolean isBlob ;
+    @XmlTransient
+    public String blob;
+    @XmlTransient
     public String xslFile;
 
     /***/
-    
-    @XmlElement
     public XmlLogin login;
-
-    @XmlElement
-    public XmlVoid woid;
-
-    @XmlElement
+    public XmlThemes themes;
     public XmlMaint maint;
-
-    @XmlElement
     public XmlChoix choix;
-
-    @XmlTransient
-    public String blob;
-
-    @XmlElement
-    public XmlAlbums album;
-
-    @XmlElement
-    public XmlPhotos photo;
-
-    @XmlElement
+    public XmlAlbums albums;
+    public XmlPhotos photos;
     public XmlConfig config;
-
-    @XmlElement
-    public XmlTag tag;
-
-    @XmlElement
+    public XmlTags tags;
     public XmlImage image;
-
     /***/
-
-    @XmlElement
-    public String affichage;
-
-    @XmlElement
-    public String loginInfo;
-
-    @XmlElement
+    public XmlAffichage affichage;
+    public XmlLoginInfo loginInfo;
     public String time ;
-
 }

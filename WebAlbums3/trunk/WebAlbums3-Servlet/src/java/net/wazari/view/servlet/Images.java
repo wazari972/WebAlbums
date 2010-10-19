@@ -12,10 +12,10 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.common.util.XmlBuilder;
 import net.wazari.service.ImageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages;
+import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(
@@ -30,7 +30,7 @@ public class Images extends HttpServlet {
     @EJB
     private ImageLocal imageService;
 
-    public XmlBuilder treatIMG(ViewSessionImages vSession)
+    public XmlImage treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
         return imageService.treatIMG(vSession);
     }

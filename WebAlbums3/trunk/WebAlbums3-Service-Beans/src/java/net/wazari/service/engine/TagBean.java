@@ -37,6 +37,7 @@ import net.wazari.service.exchange.xml.tag.XmlTagCloud;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
 import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
+import net.wazari.service.exchange.xml.tag.XmlTagTitle;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -75,13 +76,14 @@ public class TagBean implements TagLocal {
 
             XmlFrom thisPage = new XmlFrom();
             thisPage.name = "Tags" ;
-            ArrayList<Integer> tagsAsked = new ArrayList<Integer>(tagSet.size()) ;
+            List<Integer> tagsAsked = new ArrayList<Integer>(tagSet.size()) ;
             for (Tag enrCurrentTag : tagSet) {
                 tagsAsked.add(enrCurrentTag.getId());
             }
-            thisPage.tagAsked = (Integer[]) tagsAsked.toArray() ;
+            thisPage.tagAsked = tagsAsked ;
             
-            output.title = webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet),
+            output.title = new XmlTagTitle() ;
+            output.title.tagList = webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet),
                     Box.NONE);
             
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet) ;
@@ -225,7 +227,7 @@ public class TagBean implements TagLocal {
                         tag.longit = enrGeo.getLongitude();
                     }
                 }
-                output.tags.add(tag) ;
+                output.tagList.add(tag) ;
             }
         } catch (Exception e) {
             log.warn(e.getClass().toString(), "{}: {}", new Object[]{e.getClass().getSimpleName(), e}) ;

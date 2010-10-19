@@ -11,16 +11,9 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="/webAlbums/tags">
-    <form method="post">
-      <xsl:attribute name="action">
-	<xsl:call-template name="get_validate_addr" />
-      </xsl:attribute> 
-
-      <xsl:apply-templates select="Exception"/>
-      <xsl:apply-templates select="message"/>
-      <xsl:apply-templates select="title" />
-    </form>
+  <xsl:template match="tags">
+      <xsl:apply-templates select="display/title"/>
+      <xsl:apply-templates select="display/photoList"/>
   </xsl:template>
 
   <xsl:template match="title">
@@ -29,37 +22,32 @@
 	<span>*</span>
       </div>
       <div class="content">
-	<h1>
-	  Affichage par tags
-	</h1>
+	<h1>Affichage par tags</h1>
 	<h2>
 	  <a href='#'
              class="fullscreen">
-	    <xsl:attribute name="title">"<xsl:for-each select="tags/*">&#160;<xsl:value-of select="." /></xsl:for-each>" en plein-écran</xsl:attribute>
+	    <xsl:attribute name="title">"<xsl:for-each select="tagList/*">&#160;<xsl:value-of select="name" /></xsl:for-each>" en plein-écran</xsl:attribute>
 	    <xsl:attribute name="rel">
-	      Tags?<xsl:for-each select="tags/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="../page/current"/>&amp;special=FULLSCREEN
+	      Tags?<xsl:for-each select="tagList/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="../photoList/page/@current"/>&amp;special=FULLSCREEN
 	    </xsl:attribute>
-	      <img src="static/images/out.png" height="25px"/>
+	      <img src="static/images/out.png" height="30px"/>
 	  </a>
 	  &#160;
 	  <a>
-	    <xsl:attribute name="title">"<xsl:for-each select="tags/*">&#160;<xsl:value-of select="." /></xsl:for-each>" en visionneuse</xsl:attribute>
+	    <xsl:attribute name="title">"<xsl:for-each select="tagList/*">&#160;<xsl:value-of select="name" /></xsl:for-each>" en visionneuse</xsl:attribute>
 	    <xsl:attribute name="href">Tags?
-<xsl:for-each select="tags/*">
+<xsl:for-each select="tagList/*">
 &amp;tagAsked=<xsl:value-of select="@id" />
 </xsl:for-each>
-&amp;page=<xsl:value-of select="../page/current"/>
+&amp;page=<xsl:value-of select="../photoList/page/@current"/>
 &amp;special=VISIONNEUSE</xsl:attribute>
-	    <img src="static/images/slide.png" height="25px"/>
+	    <img src="static/images/slide.png" height="30px"/>
 	  </a>
 	  <center>
-	    <xsl:apply-templates select="tags"/>
+	    <xsl:apply-templates select="tagList"/>
 	  </center>
 	</h2>
       </div>
-      <xsl:apply-templates select="../photo" />
-      <xsl:apply-templates select="../massEdit" />
-      
     </div>
   </xsl:template>
   

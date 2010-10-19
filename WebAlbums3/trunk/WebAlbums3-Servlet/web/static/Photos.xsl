@@ -12,31 +12,35 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="photos">
+    <xsl:apply-templates select="display/album"/>
+    <xsl:apply-templates select="display/photoList"/>
+  </xsl:template>
+  
+  <xsl:template match="photoList">
     <form method="post">
       <xsl:attribute name="action">
 	<xsl:call-template name="get_validate_addr"/>
-      </xsl:attribute> 
-      <xsl:apply-templates select="suppr_msg"/>
-      <xsl:apply-templates select="Exception"/>
+      </xsl:attribute>
+
+      <xsl:apply-templates select="exception"/>
       <xsl:apply-templates select="message"/>
-      <xsl:apply-templates select="album"/>
       <xsl:apply-templates select="photo"/>
       <xsl:apply-templates select="massEdit"/>
+
+      <xsl:apply-templates select="page"/>
     </form>
   </xsl:template>
+
   <xsl:template match="photo">
     <div class="item">
       <div class="body">
 	<a><xsl:attribute name="name"><xsl:value-of select="details/photoID" /></xsl:attribute></a>
 	<xsl:apply-templates select="message"/>
 	<xsl:if test="/webAlbums/affichage/massedit">
-	  <input>
-	    <xsl:attribute name="type">checkbox</xsl:attribute>
-	    <xsl:attribute name="class">massEdit</xsl:attribute>
+	  <input type="checkbox" class="massEdit" value="modif">
 	    <xsl:attribute name="name">chk<xsl:value-of select="details/photoID" /></xsl:attribute>
-	    <xsl:attribute name="value">modif</xsl:attribute>
 	  </input>
-      </xsl:if> 
+        </xsl:if>
 	<xsl:apply-templates select="details"/>
       </div>
     </div>
@@ -98,8 +102,5 @@
 	</div>
       </div>
     </xsl:if>
-  </xsl:template>
-  <xsl:template match="suppr_msg">
-    <xsl:apply-templates select="message|Exception"/>
   </xsl:template>
 </xsl:stylesheet>

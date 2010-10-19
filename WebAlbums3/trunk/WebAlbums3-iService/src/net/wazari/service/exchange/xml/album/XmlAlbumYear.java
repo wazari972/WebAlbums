@@ -18,7 +18,7 @@ public class XmlAlbumYear {
     public int year ;
 
     public XmlAlbumYear() {
-        albums = new LinkedList<XmlAlbum>() ;
+        album = new LinkedList<XmlAlbum>() ;
     }
-    public final List<XmlAlbum> albums ;
+    public final List<XmlAlbum> album ;
 }

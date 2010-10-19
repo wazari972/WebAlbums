@@ -11,7 +11,7 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="index">
+  <xsl:template match="themes">
     <div class="item">
       <div class="date">
 	<span>*</span>
@@ -20,16 +20,16 @@
 	<h1>Selection du Thème</h1>
 	<div class="body">
 	  <center>
-	  <xsl:apply-templates select="theme"/>
+	  <xsl:apply-templates select="themeList/theme"/>
 	  </center>
 	</div>
       </div>
     </div>
   </xsl:template>
-  <xsl:template match="index/theme">
+  <xsl:template match="themes/themeList/theme">
     <A>
       <xsl:attribute name="HREF">Choix?themeId=<xsl:value-of select="@id"/></xsl:attribute>
-      <xsl:value-of select="."/>
+      <xsl:value-of select="name"/>
     </A><BR/><BR/>
   </xsl:template>
 </xsl:stylesheet>

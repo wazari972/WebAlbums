@@ -19,7 +19,7 @@ public class XmlAlbum {
     @XmlAttribute
     public Integer id;
     @XmlAttribute
-    public int count;
+    public Integer count;
     public String title;
     public XmlAlbumSubmit submit;
     public XmlDetails details;
@@ -28,7 +28,7 @@ public class XmlAlbum {
     public Integer picture;
     public XmlDate date;
     @XmlAttribute
-    public long time;
+    public Long time;
     public String droit;
     public String albmDate;
 

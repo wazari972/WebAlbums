@@ -221,16 +221,20 @@ public class PhotoBean implements PhotoLocal {
         XmlPhotoDisplay output = new XmlPhotoDisplay();
         //afficher les photos
         //afficher la liste des albums de cet theme
-        Integer albumId = vSession.getAlbum();
         Integer page = vSession.getPage();
         Integer albmCount = vSession.getAlbmCount();
         Special special = vSession.getSpecial();
         page = (page == null ? 0 : page);
 
+        Integer albumId = vSession.getAlbum();
+        if (albumId == null) {
+            output.exception = "No album asked ... (id=null)" ;
+            return output ;
+        }
+
+
         Album enrAlbum = null;
-
         enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
-
         if (enrAlbum == null) {
             output.exception = "L'album (" + albumId + ") n'existe pas "
                     + "ou n'est pas accessible..." ;

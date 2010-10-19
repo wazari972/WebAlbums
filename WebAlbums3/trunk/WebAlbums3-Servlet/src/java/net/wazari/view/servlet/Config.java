@@ -19,7 +19,7 @@ import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionConfig;
-import net.wazari.service.exchange.xml.XmlConfig;
+import net.wazari.service.exchange.xml.config.XmlConfig;
 import net.wazari.view.servlet.DispatcherBean.Page;
 
 @WebServlet(

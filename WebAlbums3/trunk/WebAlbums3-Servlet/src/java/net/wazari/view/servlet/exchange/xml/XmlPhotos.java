@@ -5,6 +5,7 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
@@ -13,6 +14,7 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
  *
  * @author kevin
  */
+@XmlRootElement
 public class XmlPhotos {
     public XmlPhotoRandom random;
     public XmlPhotoEdit edit;

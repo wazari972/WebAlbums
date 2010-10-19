@@ -21,7 +21,7 @@ import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
-import net.wazari.view.servlet.exchange.xml.XmlTag;
+import net.wazari.view.servlet.exchange.xml.XmlTags;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -40,8 +40,8 @@ public class Tags extends HttpServlet {
     @EJB
     private PhotoLocal photoService;
 
-    public XmlTag treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
-        XmlTag output = new XmlTag();
+    public XmlTags treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
+        XmlTags output = new XmlTags();
         Special special = vSession.getSpecial();
         if (special != null) {
             if (Special.CLOUD == special) {

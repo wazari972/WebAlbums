@@ -5,7 +5,6 @@
 
 package net.wazari.service.exchange.xml.tag;
 
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.photo.XmlPhotoList;
 
 /**
@@ -14,6 +13,6 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoList;
  */
 public class XmlTagDisplay {
     public XmlPhotoList photoList;
-    public XmlWebAlbumsList title;
+    public XmlTagTitle title ;
 
 }

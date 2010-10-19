@@ -5,6 +5,7 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud;
 import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
@@ -14,7 +15,8 @@ import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
  *
  * @author kevin
  */
-public class XmlTag {
+@XmlRootElement
+public class XmlTags {
     public XmlTagCloud cloud;
     public XmlTagPersonsPlaces personsPlaces;
     public XmlPhotoEdit edit;

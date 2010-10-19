@@ -40,7 +40,7 @@ public class Choix extends HttpServlet {
     public XmlChoix displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlChoix choix = new XmlChoix();
 
-        choix.tags = webPageService.displayListBN(Mode.TAG_USED, vSession,
+        choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession,
                 Box.MULTIPLE, "tagAsked");
 
         return choix;

@@ -20,10 +20,10 @@
       </xsl:if>
       <xsl:attribute name="HREF">	
 	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
-	  Images?id=<xsl:value-of select="photoID" />&amp;mode=GRAND
+	  Images?id=<xsl:value-of select="photoId" />&amp;mode=GRAND
 	</xsl:if> 
 	<xsl:if test="/webAlbums/albums">
-	  Photos?albmCount=<xsl:value-of select="../count" />&amp;album=<xsl:value-of select="../id" />
+	  Photos?albmCount=<xsl:value-of select="../@count" />&amp;album=<xsl:value-of select="../@id" />
 	</xsl:if> 
       </xsl:attribute>
       <img class="photo">
@@ -52,27 +52,27 @@
 	    UnTip()
 	  </xsl:attribute>
 	  <xsl:attribute name="onmouseover">
-	    TagToTip('tip<xsl:value-of select="photoID" />')
+	    TagToTip('tip<xsl:value-of select="photoId" />')
 	  </xsl:attribute>
 	</xsl:if>
 	<xsl:attribute name="src">
-	  <xsl:if test="normalize-space(photoID) = ''">
+	  <xsl:if test="normalize-space(photoId) = ''">
 	    static/images/rien.jpg
 	  </xsl:if>
-	  <xsl:if test="normalize-space(photoID) != ''">
-	    Images?id=<xsl:value-of select="photoID" />&amp;mode=PETIT
+	  <xsl:if test="normalize-space(photoId) != ''">
+	    Images?id=<xsl:value-of select="photoId" />&amp;mode=PETIT
 	  </xsl:if>
 	</xsl:attribute>
       </img>
     </a>
     <xsl:if test="../exif">
       <span style="display: none;">
-	<xsl:attribute name="id">tip<xsl:value-of select="photoID" /></xsl:attribute>
+	<xsl:attribute name="id">tip<xsl:value-of select="photoId" /></xsl:attribute>
 	<xsl:apply-templates select="../exif" />
       </span>
     </xsl:if>
     <div class="details">
-      <xsl:apply-templates select="tags">
+      <xsl:apply-templates select="tagList">
 	<xsl:with-param name="style">none</xsl:with-param>
 	<xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	<xsl:with-param name="box">NONE</xsl:with-param>
@@ -81,8 +81,8 @@
       <xsl:apply-templates select="user" />
       <xsl:if test="not(/webAlbums/albums)">
 	<a title="Photo réduite">
-	  <xsl:attribute name="href">Images?id=<xsl:value-of select="photoID" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
-	  <img src="static/images/reduire.gif" width="25px"/>
+	  <xsl:attribute name="href">Images?id=<xsl:value-of select="photoId" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
+	  <img src="static/images/reduire.gif" width="30px"/>
 	</a>
       </xsl:if>
       <xsl:if test="not(/webAlbums/albums)">
@@ -91,31 +91,31 @@
                title="Photo en plein-ecran"
                class="fullscreen">
                 <xsl:attribute name="rel">
-                    Images?id=<xsl:value-of select="photoID" />&amp;mode=FULLSCREEN
+                    Images?id=<xsl:value-of select="photoId" />&amp;mode=FULLSCREEN
                 </xsl:attribute>
-                <img src="static/images/out.png" width="25px"/>
+                <img src="static/images/out.png" width="30px"/>
             </a>
         </xsl:if>
       </xsl:if>
       <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
 	<a title="Liens vers l'album">
-	  <xsl:attribute name="href">Photos?album=<xsl:value-of select="albumID" /></xsl:attribute>
-	  <img src="static/images/dossier.gif" width="25px"/>
+	  <xsl:attribute name="href">Photos?album=<xsl:value-of select="albumId" /></xsl:attribute>
+	  <img src="static/images/dossier.gif" width="30px"/>
 	</a>
       </xsl:if>
-      <xsl:if test="/webAlbums/affichage/edit">
+      <xsl:if test="/webAlbums/affichage/@edit">
 	<a title="Edition">
 	  <xsl:attribute name="href">
 	    <xsl:if test="/webAlbums/photos">
 	      Photos?action=EDIT
-&amp;id=<xsl:value-of select="photoID" />
-&amp;count=<xsl:value-of select="../count"	/>
-&amp;albmCount=<xsl:value-of select="/webAlbums/photos/album/count" />
-&amp;album=<xsl:value-of select="/webAlbums/photos/album/id"	/>
+&amp;id=<xsl:value-of select="photoId" />
+&amp;count=<xsl:value-of select="../@count"	/>
+&amp;albmCount=<xsl:value-of select="../../album/count" />
+&amp;album=<xsl:value-of select="../../album/id"	/>
 	      </xsl:if>
 	      <xsl:if test="/webAlbums/tags">
 		Tags?action=EDIT
-&amp;id=<xsl:value-of select="photoID" />
+&amp;id=<xsl:value-of select="photoId" />
 		<xsl:for-each select="/webAlbums/tags/title/tags/*">
 &amp;tagAsked=<xsl:value-of select="@id" />
 		</xsl:for-each>
@@ -125,11 +125,11 @@
 	      </xsl:if>
               <xsl:if test="/webAlbums/albums">
                   Albums?action=EDIT
-&amp;id=<xsl:value-of select="../id" />
-&amp;count=<xsl:value-of select="../count"/>
+&amp;id=<xsl:value-of select="../@id" />
+&amp;count=<xsl:value-of select="../@count"/>
               </xsl:if>
 	  </xsl:attribute>
-	  <img src="static/images/edit.png" height="25px"/>
+	  <img src="static/images/edit.png" height="30px"/>
 	</a>
       </xsl:if>
     </div>
