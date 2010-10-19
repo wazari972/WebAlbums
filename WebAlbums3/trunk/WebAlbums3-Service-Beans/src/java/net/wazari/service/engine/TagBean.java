@@ -132,7 +132,7 @@ public class TagBean implements TagLocal {
         Tag enrCurrentTag = null ;
         Stack<PairTagXmlBuilder> enrSonStack = new Stack<PairTagXmlBuilder>() ;
         while (!map.isEmpty()) {
-            //if we've got not --parent-- Tag to treat
+            //if we've got no --parent-- Tag to treat
             if (enrCurrentTag == null) {
                 //take the first of the map
                 enrCurrentTag = map.keySet().iterator().next() ;
@@ -144,10 +144,9 @@ public class TagBean implements TagLocal {
                 log.info("Switch to parent Tag: {}", enrCurrentTag) ;
                 continue ;
             } 
-            XmlTagCloudEntry parent = new XmlTagCloudEntry();
-            output.parentTag = parent ;
-            
-            enrSonStack.push(new PairTagXmlBuilder(enrCurrentTag, parent)) ;
+            XmlTagCloudEntry currentXml = new XmlTagCloudEntry();
+            output.parentList.add(currentXml) ;
+            enrSonStack.push(new PairTagXmlBuilder(enrCurrentTag, currentXml)) ;
             while (!enrSonStack.isEmpty()) {
                 log.info("The stack has {} elements", enrSonStack.size());
                 PairTagXmlBuilder pair = enrSonStack.pop() ;
@@ -163,19 +162,18 @@ public class TagBean implements TagLocal {
                 }
                 log.info("Tag '{}' has {} pictures", pair.tag.getNom(), nbElts) ;
                 int size = (int) (SIZE_MIN + ((double) nbElts / max) * SIZE_SCALE);
-                XmlTagCloudEntry xmlParent = new XmlTagCloudEntry() ;
-                xmlParent.size = size ;
-                xmlParent.nb = nbElts ;
-                xmlParent.id = pair.tag.getId() ;
-                xmlParent.name = pair.tag.getNom() ;
-                pair.xml.sonList.add(xmlParent);
+                
+                pair.xml.size = size ;
+                pair.xml.nb = nbElts ;
+                pair.xml.id = pair.tag.getId() ;
+                pair.xml.name = pair.tag.getNom() ;
 
                 log.info("Tag {} has {} children",pair.tag.getNom(),pair.tag.getSonList().size()) ;
                 if (!pair.tag.getSonList().isEmpty()) {
-                    XmlTagCloudEntry xmlSon = new XmlTagCloudEntry() ;
-                    xmlParent.sonList.add(xmlSon) ;
                     for (Tag enrSon : pair.tag.getSonList()) {
                         log.info("Push {} in the stack", enrSon.getNom()) ;
+                        XmlTagCloudEntry xmlSon = new XmlTagCloudEntry() ;
+                        pair.xml.tag.add(xmlSon);
                         enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon)) ;
                     }
                 }

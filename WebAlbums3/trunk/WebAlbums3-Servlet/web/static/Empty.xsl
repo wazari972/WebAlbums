@@ -21,6 +21,7 @@
 
     <xsl:apply-templates select="/webAlbums/albums/top" />
     <xsl:apply-templates select="/webAlbums/albums/years" />
+    <xsl:apply-templates select="/webAlbums/albums/select" />
 
     <xsl:apply-templates select="/webAlbums/photos/random" />
     <xsl:apply-templates select="/webAlbums/photos/display" />
@@ -46,12 +47,12 @@
     <p><label for="albmName"> et ayant pour nom </label> <input type="text" id="albmName"/></p>
     <script>
      $("#slider-range").slider(sliderOption);
-     $("#fromDate").text(printDate(<xsl:value-of select="album[last()]/time"/>));
-     $("#toDate").text(printDate(<xsl:value-of select="album/time"/>));
-     $("#slider-range").slider( "option", "max", <xsl:value-of select="album/time"/>+$( "#slider-range" ).slider( "option", "step" ));
-     $("#slider-range").slider( "option", "min", <xsl:value-of select="album[last()]/time"/>);
+     $("#fromDate").text(printDate(<xsl:value-of select="album[last()]/@time"/>));
+     $("#toDate").text(printDate(<xsl:value-of select="album/@time"/>));
+     $("#slider-range").slider( "option", "max", <xsl:value-of select="album/@time"/>+$( "#slider-range" ).slider( "option", "step" ));
+     $("#slider-range").slider( "option", "min", <xsl:value-of select="album[last()]/@time"/>);
 
-     $("#slider-range").slider( "option", "values", [<xsl:value-of select="album[last()]/time"/>, <xsl:value-of select="album/time"/>]);
+     $("#slider-range").slider( "option", "values", [<xsl:value-of select="album[last()]/@time"/>, <xsl:value-of select="album/@time"/>]);
      $("#albmName").keyup(
         function(){
            trimAlbums($("#slider-range").slider( "option", "range", "min" ),
@@ -61,25 +62,27 @@
         }
      );
 
+
+
     </script>
     <div style="overflow: auto; height: 400px">
         <ul>
         <xsl:for-each select="album">
             <xsl:sort select="count(ancestor::*)" order="descending"/>
             <li class="selectAlbum">
-                <xsl:attribute name="rel"><xsl:value-of select="time"/></xsl:attribute>
-                <label><xsl:value-of select="date"/></label> &#160;
+                <xsl:attribute name="rel"><xsl:value-of select="@time"/></xsl:attribute>
+                <label><xsl:value-of select="albmDate"/></label> &#160;
                 <a>
                     <xsl:attribute name="onmouseout">UnTip()</xsl:attribute>
-                    <xsl:attribute name="onmouseover">TagToTip('tip<xsl:value-of select="id" />')</xsl:attribute>
-                    <xsl:attribute name="href">Photos?album=<xsl:value-of select="id"/>&amp;albmCount=<xsl:value-of select="count"/></xsl:attribute>
-                    <xsl:value-of select="nom"/>
+                    <xsl:attribute name="onmouseover">TagToTip('tip<xsl:value-of select="@id" />')</xsl:attribute>
+                    <xsl:attribute name="href">Photos?album=<xsl:value-of select="@id"/>&amp;albmCount=<xsl:value-of select="count"/></xsl:attribute>
+                    <xsl:value-of select="name"/>
                 </a>
                 <span style="display: none;">
-                    <xsl:attribute name="id">tip<xsl:value-of select="id" /></xsl:attribute>
+                    <xsl:attribute name="id">tip<xsl:value-of select="@id" /></xsl:attribute>
                     <img>
                         <xsl:attribute name="src">
-                        Images?id=<xsl:value-of select="photo" />&amp;mode=PETIT
+                        Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT
                         </xsl:attribute>
                     </img>
               </span>
@@ -119,7 +122,7 @@
           <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
           <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/>&amp;wantTagChildren=true</xsl:attribute>
           <xsl:attribute name="title"><xsl:value-of select="@name"/> : <xsl:value-of select="@nb"/></xsl:attribute>
-          <xsl:value-of select="@name" />
+          <xsl:value-of select="name" />
         </a>
         <a>
           <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
@@ -127,16 +130,14 @@
           <xsl:attribute name="title">Image aléatoire</xsl:attribute>
           &#9830;
         </a>
-        <xsl:apply-templates select="children"/>
+        <xsl:if test="children/tag">
+	    <ul rel="open">
+              <xsl:apply-templates select="children/tag"/>
+            </ul>
+        </xsl:if>
     </li>
   </xsl:template>
-
-   <xsl:template match="children">
-      <ul rel="open">
-        <xsl:apply-templates select="tag"/>
-      </ul>
-  </xsl:template>
-  
+ 
   <xsl:template match="personsPlaces">
     <table>
       <tr>

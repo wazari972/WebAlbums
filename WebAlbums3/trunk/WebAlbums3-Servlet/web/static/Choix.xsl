@@ -58,7 +58,7 @@
 	  <div class="body">
               <div id="tags" style="display:none">
                 <center>
-                  <xsl:apply-templates select="tags">
+                  <xsl:apply-templates select="tagList">
                     <xsl:with-param name="mode">TAG_USED</xsl:with-param>
                     <xsl:with-param name="style">multiple</xsl:with-param>
                   </xsl:apply-templates>

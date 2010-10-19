@@ -92,7 +92,7 @@
     <xsl:if test="$style = 'list' or $style = 'multiple'">
       <OPTION>
 	<xsl:attribute name="VALUE"><xsl:value-of select="@id"/></xsl:attribute>
-	<xsl:if test="@checked">
+	<xsl:if test="@checked = 'true'">
 	  <xsl:attribute name="SELECTED">selected</xsl:attribute>	  
 	</xsl:if>
 

@@ -8,13 +8,17 @@ package net.wazari.service.exchange.xml.tag;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  *
  * @author kevin
  */
 public class XmlTagCloud {
-    public XmlTagCloudEntry parentTag;
+    @XmlElement(name = "tag")
+    public List<XmlTagCloudEntry> parentList = new LinkedList<XmlTagCloudEntry>() ;
+
     public static class XmlTagCloudEntry {
         @XmlAttribute
         public int size;
@@ -23,6 +27,7 @@ public class XmlTagCloud {
         @XmlAttribute
         public Integer id;
         public String name;
-        public List<XmlTagCloudEntry> sonList = new LinkedList<XmlTagCloudEntry>() ;
+        @XmlElementWrapper(name = "children")
+        public List<XmlTagCloudEntry> tag = new LinkedList<XmlTagCloudEntry>() ;
     }
 }
