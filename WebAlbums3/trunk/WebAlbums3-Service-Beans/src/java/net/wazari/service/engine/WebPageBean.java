@@ -455,7 +455,7 @@ public class WebPageBean implements WebPageLocal {
                 user.selected = true ;
                 hasSelected = true;
             }
-            output.users.add(user);
+            output.user.add(user);
         }
 
         if (!hasSelected) {

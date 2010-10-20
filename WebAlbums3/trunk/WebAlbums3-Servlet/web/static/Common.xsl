@@ -58,8 +58,9 @@
             </optgroup>
                 <xsl:if test="not($mode2 = 'NONE')">
                     <xsl:if test="not(../tags[@mode = $mode2]/*)">
-                        <optgroup label="--- Never used ---">
-                            <xsl:apply-templates select="../tags[@mode = $mode2]/*">
+                        <optgroup>
+                            <xsl:attribute name="label">--- <xsl:value-of select="$mode2" /> ---</xsl:attribute>
+                            <xsl:apply-templates select="../tagList[@mode = $mode2]/*">
                                 <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
                             </xsl:apply-templates>
                         </optgroup>
@@ -111,7 +112,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="Exception">
+  <xsl:template match="exception">
     <b><xsl:value-of select="."/></b><BR/>
   </xsl:template>
   <xsl:template match="message">
@@ -121,19 +122,19 @@
   <xsl:template name="get_validate_addr">
     <xsl:param name="to_add"></xsl:param>
     
-    <xsl:if test="return_to/name = 'Photos'">
-      <xsl:value-of select="return_to/name"/>?<xsl:value-of select="$to_add" />
-&amp;id=<xsl:value-of select="id" />
-&amp;count=<xsl:value-of select="return_to/count" />
-&amp;album=<xsl:value-of select="return_to/album" />
-&amp;albmCount=<xsl:value-of select="return_to/albmCount" />
-#<xsl:value-of select="id" />
+    <xsl:if test="../return_to/name = 'Photos'">
+      <xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
+&amp;id=<xsl:value-of select="@id" />
+&amp;count=<xsl:value-of select="../return_to/count" />
+&amp;album=<xsl:value-of select="../return_to/album" />
+&amp;albmCount=<xsl:value-of select="../return_to/albmCount" />
+#<xsl:value-of select="@id" />
    </xsl:if>
    <xsl:if test="return_to/name = 'Tags'">
-     <xsl:value-of select="return_to/name"/>?<xsl:value-of select="$to_add" />
-&amp;id=<xsl:value-of select="id" />
-&amp;page=<xsl:value-of select="return_to/page" />
-<xsl:for-each select="return_to/tagAsked">
+     <xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
+&amp;id=<xsl:value-of select="@id" />
+&amp;page=<xsl:value-of select="../return_to/page" />
+<xsl:for-each select="../return_to/tagAsked">
 &amp;tagAsked=<xsl:value-of select="." />
 </xsl:for-each>
 #<xsl:value-of select="id" />
@@ -199,19 +200,19 @@
 	<CENTER>
 	  <A>
 	    <xsl:attribute name="HREF">
-	      <xsl:if test="/webAlbums/photos">
-		Albums?count=<xsl:value-of select="/webAlbums/photos/album/count" />#<xsl:value-of select="/webAlbums/photos/album/id" />
+	      <xsl:if test="/webAlbums/photos/display">
+		Albums?count=<xsl:value-of select="/webAlbums/photos/display/album/@count" />#<xsl:value-of select="/webAlbums/photos/display/album/@id" />
 	      </xsl:if>
 	      <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">
 		Choix
 	      </xsl:if>
 	    </xsl:attribute>
 
-	    <xsl:if test="/webAlbums/photos">
-	      Retour aux albums
+	    <xsl:if test="/webAlbums/photos/display">
+	      Retour aux Albums
 	    </xsl:if>
 	    <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">
-	      Retour au choix
+	      Retour au Choix
 	    </xsl:if>
 	  </A>
 	</CENTER>
@@ -223,8 +224,8 @@
    <table>    
      <xsl:for-each select="./*">
        <tr>
-	 <th><xsl:value-of select="@name"/></th>
-	 <td><xsl:value-of select="."/></td>
+	 <th><xsl:value-of select="name"/></th>
+	 <td><xsl:value-of select="value"/></td>
        </tr>
      </xsl:for-each>
    </table>

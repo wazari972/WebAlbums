@@ -11,7 +11,7 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="photo_edit">
+  <xsl:template match="photos/edit">
     <div class="item">
       <div class="date">
 	<span>*</span>
@@ -21,7 +21,7 @@
 	<div class="body">
 	  <center>
 	    <img>
-	      <xsl:attribute name="SRC">Images?id=<xsl:value-of select="id" />&amp;mode=PETIT</xsl:attribute>
+	      <xsl:attribute name="SRC">Images?id=<xsl:value-of select="@id" />&amp;mode=PETIT</xsl:attribute>
 	    </img>
 	  </center>
 	</div>
@@ -38,17 +38,17 @@
 	      <xsl:value-of select="description" />
 	    </textarea>
 	    <br/>
-	    <xsl:apply-templates select="tags">
+	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	    </xsl:apply-templates>
-	    <xsl:apply-templates select="tags">
+	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_NUSED</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
 	    </xsl:apply-templates>
-	    <xsl:apply-templates select="tags">
+	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_NEVER</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
@@ -60,7 +60,7 @@
 	    <br/>
 	    <label for="represent"></label>Representer l'album ? <input type='checkbox' id="represent" name='represent' value='y' /><br/>
 	    <label for="tagPhoto">Representer le tag ?</label> 
-	    <xsl:apply-templates select="tags">
+	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	      <xsl:with-param name="box">LIST</xsl:with-param>
 	      <xsl:with-param name="style">list</xsl:with-param>
@@ -74,7 +74,7 @@
 	      updateBackground(<xsl:value-of select="id" />) ;
 	    </xsl:attribute>
             </input><br />
-	    <label>Droits de visibilité : </label><xsl:apply-templates select="userList"/>
+	    <label>Droits de visibilité : </label><xsl:apply-templates select="rights"/>
 	    <br/>
 	    <br/>
 
@@ -82,12 +82,14 @@
 	  </form>
 	  <br/>
 	  <br/>
-	  <A>
-	    <xsl:attribute name="HREF">
-	      <xsl:call-template name="get_validate_addr" />
-	    </xsl:attribute>
-	    Retour aux <xsl:value-of select="return_to/name" />
-	  </A>
+          <center>
+              <A>
+                <xsl:attribute name="HREF">
+                  <xsl:call-template name="get_validate_addr" />
+                </xsl:attribute>
+                Retour aux <xsl:value-of select="../return_to/name" />
+              </A>
+          </center>
 	</div>
       </div>
     </div>

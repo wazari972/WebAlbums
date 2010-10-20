@@ -14,9 +14,7 @@
   <xsl:template match="details">
     <a>
       <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-	<xsl:attribute name="rel">
-	  shadowbox[page];player=img
-	</xsl:attribute>
+	<xsl:attribute name="rel">shadowbox[page];player=img</xsl:attribute>
       </xsl:if>
       <xsl:attribute name="HREF">	
 	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
@@ -48,12 +46,8 @@
 	</xsl:if>
 
 	<xsl:if test="../exif">
-	  <xsl:attribute name="onmouseout">
-	    UnTip()
-	  </xsl:attribute>
-	  <xsl:attribute name="onmouseover">
-	    TagToTip('tip<xsl:value-of select="photoId" />')
-	  </xsl:attribute>
+	  <xsl:attribute name="onmouseout">UnTip()</xsl:attribute>
+	  <xsl:attribute name="onmouseover">TagToTip('tip<xsl:value-of select="photoId" />')</xsl:attribute>
 	</xsl:if>
 	<xsl:attribute name="src">
 	  <xsl:if test="normalize-space(photoId) = ''">
@@ -110,8 +104,8 @@
 	      Photos?action=EDIT
 &amp;id=<xsl:value-of select="photoId" />
 &amp;count=<xsl:value-of select="../@count"	/>
-&amp;albmCount=<xsl:value-of select="../../album/count" />
-&amp;album=<xsl:value-of select="../../album/id"	/>
+&amp;albmCount=<xsl:value-of select="../../../album/@count" />
+&amp;album=<xsl:value-of select="../../../album/@id"	/>
 	      </xsl:if>
 	      <xsl:if test="/webAlbums/tags">
 		Tags?action=EDIT
@@ -135,13 +129,13 @@
     </div>
   </xsl:template>
   
-  <xsl:template match="userList">
+  <xsl:template match="rights">
     <SELECT name="user">
       <xsl:apply-templates select="user"/>
     </SELECT>
   </xsl:template>
   
-  <xsl:template match="userList/user">
+  <xsl:template match="rights/user">
     <OPTION>
       <xsl:attribute name="value"><xsl:value-of select="@id" /></xsl:attribute>
       <xsl:if test="@selected">

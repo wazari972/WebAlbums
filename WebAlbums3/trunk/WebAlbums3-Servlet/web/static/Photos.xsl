@@ -12,10 +12,16 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="photos">
-    <xsl:apply-templates select="display/album"/>
-    <xsl:apply-templates select="display/photoList"/>
+    <xsl:apply-templates select="display"/>
+    <xsl:apply-templates select="edit"/>
   </xsl:template>
-  
+
+  <xsl:template match="display">
+    <xsl:apply-templates select="album"/>
+    <xsl:apply-templates select="photoList"/>
+  </xsl:template>
+
+
   <xsl:template match="photoList">
     <form method="post">
       <xsl:attribute name="action">
@@ -34,11 +40,11 @@
   <xsl:template match="photo">
     <div class="item">
       <div class="body">
-	<a><xsl:attribute name="name"><xsl:value-of select="details/photoID" /></xsl:attribute></a>
+	<a><xsl:attribute name="name"><xsl:value-of select="details/photoId" /></xsl:attribute></a>
 	<xsl:apply-templates select="message"/>
 	<xsl:if test="/webAlbums/affichage/massedit">
 	  <input type="checkbox" class="massEdit" value="modif">
-	    <xsl:attribute name="name">chk<xsl:value-of select="details/photoID" /></xsl:attribute>
+	    <xsl:attribute name="name">chk<xsl:value-of select="details/photoId" /></xsl:attribute>
 	  </input>
         </xsl:if>
 	<xsl:apply-templates select="details"/>
@@ -47,7 +53,7 @@
   </xsl:template>
 
   <xsl:template match="massEdit">
-    <xsl:if test="/webAlbums/affichage/massedit">
+      <xsl:if test="/webAlbums/affichage/@massedit">
       <script type='text/javascript' src="static/scripts/MassEdit.js" />
       <div class="item">
 	<div class="body">
@@ -70,7 +76,7 @@
 	      <td><input type='radio' name='turn' value='TAG' /></td>
 	      <td><label for="massTagList">Tagger avec</label></td>
 	      <td rowspan='3'>
-		<xsl:apply-templates select="tags">
+		<xsl:apply-templates select="tagList">
 		  <xsl:with-param name="style">list</xsl:with-param>
 		  <xsl:with-param name="name">addTag</xsl:with-param>
 		  <xsl:with-param name="id">massTagList</xsl:with-param>

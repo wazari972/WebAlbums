@@ -22,7 +22,7 @@ public class XmlPhotoEdit extends XmlInfoException {
     @XmlAttribute
     public Integer id;
     public String description;
-    public XmlUserList userInside;
+    public XmlUserList rights;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used_lst;
     @XmlElement(name = "tagList")

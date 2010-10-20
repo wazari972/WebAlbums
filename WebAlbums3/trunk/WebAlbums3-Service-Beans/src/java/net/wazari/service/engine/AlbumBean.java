@@ -102,7 +102,7 @@ public class AlbumBean implements AlbumLocal {
                 Box.MULTIPLE);
         output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
                 Box.MULTIPLE);
-        output.droits = webPageService.displayListDroit(enrAlbum.getDroit(), null);
+        output.rights = webPageService.displayListDroit(enrAlbum.getDroit(), null);
 
         return output;
     }

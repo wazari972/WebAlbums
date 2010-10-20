@@ -6,6 +6,7 @@
 package net.wazari.service.exchange.xml.album;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlUserList;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
@@ -27,9 +28,12 @@ public class XmlAlbumEdit {
     public Integer id;
     public String description;
     public String date;
+    @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
+    @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_nused;
+    @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_never;
-    public XmlUserList droits;
+    public XmlUserList rights;
 
 }

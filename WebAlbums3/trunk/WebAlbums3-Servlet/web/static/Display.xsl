@@ -45,7 +45,7 @@
         
         <xsl:if test="/webAlbums/photos or /webAlbums/tags">
             <script type="text/javascript" src="static/scripts/Photos.js"></script>
-            <xsl:if test="/webAlbums/photos/photo/exif or /webAlbums/tags/photo/exif">
+            <xsl:if test="/webAlbums/photos/display/photoList/photo/exif or /webAlbums/tags/display/photoList/photo/exif">
                 <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
             </xsl:if>
         </xsl:if>
@@ -118,9 +118,6 @@
 		<xsl:apply-templates select="/webAlbums/albums"/>
 		<xsl:apply-templates select="/webAlbums/photos"/>
 		<xsl:apply-templates select="/webAlbums/tags"/>
-
-		<xsl:apply-templates select="/webAlbums/albm_edit"/>
-		<xsl:apply-templates select="/webAlbums/photo_edit"/>
 		<xsl:apply-templates select="/webAlbums/config"/>
 
 		<xsl:apply-templates select="/webAlbums/*/page"/>

@@ -147,7 +147,7 @@ public class PhotoUtil {
                 continue;
             }
             String[] values = exifs[i].split(" - ");
-            output.entries.add(new XmlPhotoExifEntry(values[0], values[1])) ;
+            output.entry.add(new XmlPhotoExifEntry(values[0], values[1])) ;
         }
         return output ;
     }

@@ -300,7 +300,7 @@ public class PhotoBean implements PhotoLocal {
                 Box.LIST,
                 null, null);
         Utilisateur enrUtil = userDAO.find(enrPhoto.getDroit());
-        output.userInside = webPageService.displayListDroit(enrUtil, enrAlbum.getDroit().getId());
+        output.rights = webPageService.displayListDroit(enrUtil, enrAlbum.getDroit().getId());
 
         return output ;
     }
@@ -433,7 +433,7 @@ public class PhotoBean implements PhotoLocal {
             photo.details = details ;
             photo.count = count ;
             if (vSession.wantsDetails()) {
-                photo.exifs = photoUtil.getXmlExif(enrPhoto) ;
+                photo.exif = photoUtil.getXmlExif(enrPhoto) ;
             }
             output.photo.add(photo);
             current = false;

@@ -11,7 +11,7 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="albm_edit">
+  <xsl:template match="albums/edit">
     <div class="item">
       <div class="date">
 	<span>*</span>
@@ -21,7 +21,7 @@
 	<div class="body">
 	  <center>
 	    <img>
-	      <xsl:attribute name="SRC">Images?id=<xsl:value-of select="picture" />&amp;mode=PETIT</xsl:attribute>
+	      <xsl:attribute name="SRC">Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT</xsl:attribute>
 	    </img>
 	  </center>
 	</div>
@@ -30,9 +30,9 @@
 	<div class="body">
 	  <form method='POST'>
 	    <xsl:attribute name="ACTION">Albums?
-&amp;count=<xsl:value-of select="count" />
-&amp;id=<xsl:value-of select="id" />
-#<xsl:value-of select="id" />
+&amp;count=<xsl:value-of select="@count" />
+&amp;id=<xsl:value-of select="@id" />
+#<xsl:value-of select="@id" />
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="nom">Nom:</label>
@@ -50,17 +50,17 @@
 	      <xsl:value-of select="description" />
 	    </textarea>
 	    <br/>
-	    <xsl:apply-templates select="tags">
+	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">tags</xsl:with-param>
 	    </xsl:apply-templates>
-	    <xsl:apply-templates select="tags">
+	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_NUSED</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">tags</xsl:with-param>
 	    </xsl:apply-templates>
-	    <xsl:apply-templates select="tags">
+	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_NEVER</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">tags</xsl:with-param>
@@ -71,18 +71,20 @@
             <label for="sure">"Oui je veux supprimer cet album" (définitif!)</label>
 	    <input id="sure" type='text' autocomplete='off' name='suppr' size='31' maxlength='31'/>
 	    <br/>
-	    Droits de visibilité : <xsl:apply-templates select="userList"/>
+	    Droits de visibilité : <xsl:apply-templates select="rights"/>
 	    <br/>
 	    <input type='submit' value='Valider'/>
 	  </form>
 	  <br/>
 	  <br/>
-	  <a>
-	    <xsl:attribute name="HREF">
-	      Albums?count=<xsl:value-of select="count"/>#<xsl:value-of select="id" />
-	    </xsl:attribute>
-	    Retour aux albums
-	  </a>
+          <center>
+              <a>
+                <xsl:attribute name="HREF">
+                  Albums?count=<xsl:value-of select="@count"/>#<xsl:value-of select="@id" />
+                </xsl:attribute>
+                Retour aux albums
+              </a>
+          </center>
 	</div>
       </div>
     </div>
