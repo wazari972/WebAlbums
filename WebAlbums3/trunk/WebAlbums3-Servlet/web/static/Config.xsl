@@ -24,7 +24,7 @@
 	  <form action='#import' method='POST' id="formImport">
 	    <input type='hidden' name='action' value='IMPORT'/>
 	    <input type='text' name='importTheme' size='20' maxlenght='20'>
-	      <xsl:attribute name="value"><xsl:value-of select="/webAlbums/login/theme"/>
+	      <xsl:attribute name="value"><xsl:value-of select="/webAlbums/loginInfo/theme"/>
 	      </xsl:attribute>
 	    </input>
 	    <br/>
@@ -106,12 +106,11 @@
 	  <form action='#modGeo' method='POST'>
 	    <input type='hidden' name='action' value='MODGEO'/>
 
-            <xsl:apply-templates select="tags">
+            <xsl:apply-templates select="tagList">
               <xsl:with-param name="style">list</xsl:with-param>
               <xsl:with-param name="mode">TAG_GEO</xsl:with-param>
               <xsl:with-param name="name">tag</xsl:with-param>
               <xsl:with-param name="id">lstModGeo</xsl:with-param>
-              <xsl:with-param name="onChange">javacript:checkValidity("valModGeo","lstModGeo")</xsl:with-param>
             </xsl:apply-templates>
 		
             <input id="lngID_2" name='lng' type='hidden'/>
@@ -137,12 +136,11 @@
 	      <tr>
 		<td align='left'><label for="lstModTag">Ancien : </label></td>
 		<td>
-		  <xsl:apply-templates select="tags">
+		  <xsl:apply-templates select="tagList">
 		    <xsl:with-param name="style">list</xsl:with-param>
 		    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 		    <xsl:with-param name="name">tag</xsl:with-param>
 		    <xsl:with-param name="id">lstModTag</xsl:with-param>
-		    <xsl:with-param name="onChange">javacript:checkValidity("valModTag","lstModTag")</xsl:with-param>
 		  </xsl:apply-templates>
 		</td>
 	      </tr>
@@ -173,7 +171,7 @@
 	      <tr>
 		<td align='left'><label for="lstParentTag">Parent : </label></td>
 		<td>
-		  <xsl:apply-templates select="tags">
+		  <xsl:apply-templates select="tagList">
 		    <xsl:with-param name="style">list</xsl:with-param>
 		    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 		    <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
@@ -185,7 +183,7 @@
 	      <tr>
       		<td align='left'><label for="lstSonTag">Fils : </label></td>
 		<td>
-                  <xsl:apply-templates select="tags">
+                  <xsl:apply-templates select="tagList">
 		    <xsl:with-param name="style">multiple</xsl:with-param>
 		    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
                     <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
@@ -195,13 +193,13 @@
                 </td>
 	      </tr>
 	    </table>
-	    <input type='submit' value='Valider' id="valLinkTag"/>
+	    <input type='submit' value='Valider' id="valLinkTag" disabled="true"/>
 	  </form>
 	</div>
       </div>
     </div>
 
-    <xsl:if test="not(/webAlbums/login/webAlbums)">
+    <xsl:if test="not(/webAlbums/loginInfo/root)">
     <div class="item">
       <a name="modVis"/>
       <div class="date">
@@ -217,7 +215,7 @@
 	      <tr>
 		<td align='left'><label for="lstModVis">Tag : </label></td>	
 		<td>
-		  <xsl:apply-templates select="tags">
+		  <xsl:apply-templates select="tagList">
 		    <xsl:with-param name="style">list</xsl:with-param>
 		    <xsl:with-param name="mode">TAG_GEO</xsl:with-param>
 		    <xsl:with-param name="name">tag</xsl:with-param>
@@ -252,16 +250,15 @@
 	  <form action='#delTag' method='POST'>
 	    <input type='hidden' name='action' value='DELTAG'/>
 	    <label for="lstDelTag">Tag : </label>
-	    <xsl:apply-templates select="tags">
+	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="style">list</xsl:with-param>
 	      <xsl:with-param name="mode">TAG_NEVER</xsl:with-param>
 	      <xsl:with-param name="name">tag</xsl:with-param>
 	      <xsl:with-param name="id">lstDelTag</xsl:with-param>
-	      <xsl:with-param name="onChange">javacript:checkValidity("valDelTag","lstDelTag")</xsl:with-param>
-	    </xsl:apply-templates>
+            </xsl:apply-templates>
 	    <br/>
 	    <label for="sure">Yes ? </label><input type='text' id="sure" name='sure' size='3' maxlength='3'/><br/>
-	    <input type='submit' value='Valider' id="valDelTag" />
+	    <input type='submit' value='Valider' id="valDelTag" disabled="true"/>
 	  </form>
 	</div>
       </div>

@@ -98,8 +98,28 @@ function checkValidity(listId, validateBtId) {
 }
 
 
+$("#lstModGeo").change(function () {
+    checkValidity("lstModGeo", "valModGeo")
+}) ;
+
 $("#lstNewTag").change(function () {
     checkValidity("lstNewTag", "valNewTag")
+}) ;
+
+$("#lstModTag").change(function () {
+    checkValidity("lstModTag", "valModTag")
+}) ;
+
+$("#lstParentTag").change(function () {
+    checkValidity("lstParentTag", "valLinkTag")
+}) ;
+
+$("#lstModVis").change(function () {
+    checkValidity("lstModVis", "valModVis")
+}) ;
+
+$("#lstDelTag").change(function () {
+    checkValidity("lstDelTag", "valDelTag")
 }) ;
 
 $("#importBt").click(function () {
