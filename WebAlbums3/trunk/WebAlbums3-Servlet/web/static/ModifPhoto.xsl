@@ -11,7 +11,7 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="photos/edit">
+  <xsl:template match="photos/edit | tags/edit">
     <div class="item">
       <div class="date">
 	<span>*</span>

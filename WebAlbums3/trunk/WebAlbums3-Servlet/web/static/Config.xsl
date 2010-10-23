@@ -20,7 +20,7 @@
       <div class="content">
 	<h1>Imports d'albums</h1>
 	<div class="body">
-	  <xsl:apply-templates select="import"/>
+	  <xsl:apply-templates select="irnport"/>
 	  <form action='#import' method='POST' id="formImport">
 	    <input type='hidden' name='action' value='IMPORT'/>
 	    <input type='text' name='importTheme' size='20' maxlenght='20'>
@@ -43,7 +43,7 @@
 	<h1>Ajout d'un tag</h1>
 	<div class="body">
 	  <form action='#newTag' method='POST' name='newTag' >
-	    <xsl:apply-templates select="newTag">
+	    <xsl:apply-templates select="newtag">
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	    </xsl:apply-templates>
 	    <input type='hidden' name='action' value='NEWTAG'/>
@@ -102,7 +102,7 @@
       <div class="content">
 	<h1>Modification d'une localisation</h1>
 	<div class="body">
-	  <xsl:apply-templates select="modGeo"/>
+	  <xsl:apply-templates select="modgeo"/>
 	  <form action='#modGeo' method='POST'>
 	    <input type='hidden' name='action' value='MODGEO'/>
 
@@ -130,7 +130,7 @@
 	<h1>Renommage d'un tag</h1>
 	<div class="body">
 	  <form action='#modTag' method='POST' >
-	    <xsl:apply-templates select="modTag"/>
+	    <xsl:apply-templates select="modtag"/>
 	    <input type='hidden' name='action' value='MODTAG'/>
 	    <table>
 	      <tr>
@@ -165,7 +165,7 @@
 	<h1>Parenté des tags</h1>
 	<div class="body">
 	  <form action='#linkTag' method='POST' >
-	    <xsl:apply-templates select="modTag"/>
+	    <xsl:apply-templates select="linktag"/>
 	    <input type='hidden' name='action' value='LINKTAG'/>
 	    <table>
 	      <tr>
@@ -208,7 +208,7 @@
       <div class="content">
 	<h1>Changement de visibilité d'un tag</h1>
 	<div class="body">
-	  <xsl:apply-templates select="modVis"/>
+	  <xsl:apply-templates select="modvis"/>
 	  <form action='#modVis' method='POST'>
 	    <input type='hidden' name='action' value='MODVIS'/>
 	    <table>
@@ -246,7 +246,7 @@
 	<a name="delTag"/>
 	<h1>Suppression d'un tag</h1>
 	<div class="body">
-	  <xsl:apply-templates select="delTag"/>
+	  <xsl:apply-templates select="deltag"/>
 	  <form action='#delTag' method='POST'>
 	    <input type='hidden' name='action' value='DELTAG'/>
 	    <label for="lstDelTag">Tag : </label>
@@ -273,7 +273,7 @@
 	<a name="delTheme"/>
 	<h1>/!\Suppression du theme/!\</h1>
 	<div class="body">
-            <xsl:apply-templates select="delTheme"/>
+            <xsl:apply-templates select="deltheme"/>
             <center>
               <form action='#delTheme' method='POST' id="formDelTheme">
                 <input type='hidden' name='action' value='DELTHEME'/>
@@ -287,8 +287,8 @@
     <xsl:apply-templates select="shutdown" />
   </xsl:template>
 
-  <xsl:template match="import|newTag|modTag|delTag|modGeo|modVis">
-    <xsl:apply-templates select="Exception|message" />
+  <xsl:template match="import|newtag|modtag|deltag|modGeo|modvis">
+    <xsl:apply-templates select="exception|message" />
 
     <xsl:apply-templates select="newName" />
     <xsl:apply-templates select="alreadyName" />

@@ -118,7 +118,7 @@ public class ViewSessionImpl implements
 
     @Override
     public Integer getUserAllowed() {
-        return getInteger("userAllowed");
+        return getInteger("user");
     }
 
     @Override

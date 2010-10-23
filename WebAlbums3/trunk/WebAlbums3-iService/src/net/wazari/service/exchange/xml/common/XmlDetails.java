@@ -19,7 +19,6 @@ public class XmlDetails {
     public String miniWidth;
     public String miniHeight;
     public List<XmlUtilisateur> userInside;
-    public String droit;
     public String description;
     public Integer albumId;
     public String user;

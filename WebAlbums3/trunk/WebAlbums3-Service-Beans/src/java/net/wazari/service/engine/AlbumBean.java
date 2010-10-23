@@ -161,7 +161,7 @@ public class AlbumBean implements AlbumLocal {
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager()) {
                 if (inEditionMode != EditMode.VISITE) {
-                    details.droit = enrAlbum.getDroit().getNom();
+                    details.user = enrAlbum.getDroit().getNom();
                     details.userInside = new LinkedList<XmlUtilisateur>() ;
                     for (Utilisateur user : userDAO.loadUserInside(enrAlbum.getId())) {
                         details.userInside.add(new XmlUtilisateur(user)) ;

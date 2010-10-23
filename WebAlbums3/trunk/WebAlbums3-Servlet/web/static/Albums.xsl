@@ -12,8 +12,16 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="albums">
-    <xsl:apply-templates select="display/albumList/album"/>
+    <xsl:apply-templates select="display"/>
     <xsl:apply-templates select="edit"/>
+  </xsl:template>
+
+  <xsl:template match="albums/display">
+    <xsl:apply-templates select="exception"/>
+    <xsl:apply-templates select="message"/>
+    <xsl:apply-templates select="albumList/album"/>
+
+    <xsl:apply-templates select="albumList/page"/>
   </xsl:template>
 
   <xsl:template match="album">

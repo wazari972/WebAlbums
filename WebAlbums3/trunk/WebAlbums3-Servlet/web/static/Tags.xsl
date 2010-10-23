@@ -12,8 +12,13 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="tags">
-      <xsl:apply-templates select="display/title"/>
-      <xsl:apply-templates select="display/photoList"/>
+    <xsl:apply-templates select="edit"/>
+    <xsl:apply-templates select="display"/>
+  </xsl:template>
+
+  <xsl:template match="tags/display">
+    <xsl:apply-templates select="title"/>
+    <xsl:apply-templates select="photoList"/>
   </xsl:template>
 
   <xsl:template match="title">
