@@ -65,7 +65,7 @@
                    href="#">
                   <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
                   <xsl:attribute name="rel">
-                     Photos?album=<xsl:value-of select="id" />&amp;page=<xsl:value-of select="../page/current" />&amp;special=FULLSCREEN
+                     Photos?album=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../photoList/page/@current" />&amp;special=FULLSCREEN
                   </xsl:attribute>
                   <img src="static/images/out.png" height="30px"/>
                 </a>

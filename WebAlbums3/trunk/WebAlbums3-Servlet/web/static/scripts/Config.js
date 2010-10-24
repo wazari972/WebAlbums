@@ -133,5 +133,5 @@ $("#delThemeBt").click(function () {
 $("#btKill").click(function () {
     alert("Bye-bye");
     $(this).val("Dead!").attr('disabled', 'disabled');
-    alert($(this).attr('rel')) ;
+    callURL("http://"+window.location.hostname+$(this).attr('rel')) ;
 }) ;

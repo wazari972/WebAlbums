@@ -104,6 +104,7 @@
 		<xsl:apply-templates select="/webAlbums/*/page"/>
 		<xsl:call-template name="print_return_link" />
 
+                <script type="text/javascript" src="static/scripts/Common.js"></script>
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
                     <script type="text/javascript" src="static/scripts/Photos.js"></script>
                     <xsl:if test="/webAlbums/photos/display/photoList/photo/exif or /webAlbums/tags/display/photoList/photo/exif">

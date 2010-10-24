@@ -316,7 +316,7 @@
             <center>
               <input id="btKill" type="button" value="Shutdown">
                   <xsl:attribute name="rel">
-                  http://"+window.location.hostname+":<xsl:value-of select="."/>
+                  <xsl:value-of select="."/>
                   </xsl:attribute>
                   GO
               </input>

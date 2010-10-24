@@ -1,5 +1,6 @@
 package net.wazari.view.servlet;
 
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,6 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.view.servlet.exchange.xml.XmlTags;
-import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlReturnTo;
@@ -43,14 +43,13 @@ public class Tags extends HttpServlet {
     public XmlTags treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
         XmlTags output = new XmlTags();
         Special special = vSession.getSpecial();
-        if (special != null) {
-            if (Special.CLOUD == special) {
-                output.cloud = tagService.treatTagCloud(vSession) ;
-            }
+        if (Special.CLOUD == special) {
+            output.cloud = tagService.treatTagCloud(vSession) ;
+            return output ;
+        }
 
-            if (Special.PERSONS == special || Special.PLACES == special) {
-                output.personsPlaces = tagService.treatTagPersonsPlaces(vSession) ;
-            }
+        if (Special.PERSONS == special || Special.PLACES == special) {
+            output.personsPlaces = tagService.treatTagPersonsPlaces(vSession) ;
             return output ;
         }
 
@@ -71,9 +70,7 @@ public class Tags extends HttpServlet {
                 XmlReturnTo returnTo = new XmlReturnTo();
                 returnTo.name = "Tags" ;
                 returnTo.page = page;
-                for (Integer tagAsked : tags) {
-                    returnTo.tagsAsked.add(tagAsked);
-                }
+                returnTo.tagsAsked.addAll(Arrays.asList(tags));
 
                 output.return_to = returnTo ;
 

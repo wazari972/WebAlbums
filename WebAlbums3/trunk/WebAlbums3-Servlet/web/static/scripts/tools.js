@@ -32,6 +32,7 @@ function loadCloud() {
 }
 
 function callURL(url) {
+    alert("get "+url)
     $.get(url);
 }
 
@@ -102,9 +103,5 @@ function addLoadEvent(func) {
 function updateBackground(id) {
     document.getElementById("body").style.backgroundImage = "url(Images?id="+id+"&mode=SHRINK&width=1280)"
 }
-
-$(".fullscreen").click(function () {
-    callURL($(this).attr('rel').trim()) ;
-}) ;
 
 addLoadEvent(loadCloud())

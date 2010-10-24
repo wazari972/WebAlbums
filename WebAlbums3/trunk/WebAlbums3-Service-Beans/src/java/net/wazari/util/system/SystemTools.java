@@ -2,8 +2,6 @@ package net.wazari.util.system;
 
 import net.wazari.common.plugins.Importer.Capability;
 import net.wazari.service.exchange.ViewSessionImages;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,7 +24,6 @@ import net.wazari.common.plugins.ProcessCallbackImpl;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.service.PluginManagerLocal;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 
 @Singleton
 public class SystemTools {
@@ -94,7 +91,7 @@ public class SystemTools {
 
         if (id != null) {
             //build temp/user/theme/type/idID
-            File unique = new File(dir, "id" + id);
+            File unique = new File(dir, "id" + id.toString());
             if (!unique.isDirectory() && !unique.mkdir()) {
                 try {
                     unique = File.createTempFile("uid.", ".tags", dir);
