@@ -27,9 +27,14 @@
     </div>
   </xsl:template>
   <xsl:template match="themes/themeList/theme">
-    <A>
-      <xsl:attribute name="HREF">Choix?themeId=<xsl:value-of select="@id"/></xsl:attribute>
+      <form method="POST" action="Choix">
+        <input type='hidden' name='themeId' value='SUBMIT'>
+            <xsl:attribute name="value"><xsl:value-of select="@id"/></xsl:attribute>
+        </input>
+    <button>
+      <xsl:attribute name="id">themeId<xsl:value-of select="@id"/></xsl:attribute>
       <xsl:value-of select="name"/>
-    </A><BR/><BR/>
+    </button>
+    </form><br/><br/>
   </xsl:template>
 </xsl:stylesheet>

@@ -68,12 +68,14 @@ public class Tags extends HttpServlet {
                 Integer page = vSession.getPage();
 
                 output.edit = photoService.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
-                XmlReturnTo return_to = new XmlReturnTo();
-                return_to.name = "Tags" ;
-                return_to.page = page;
-                return_to.tagsAsked = tags;
+                XmlReturnTo returnTo = new XmlReturnTo();
+                returnTo.name = "Tags" ;
+                returnTo.page = page;
+                for (Integer tagAsked : tags) {
+                    returnTo.tagsAsked.add(tagAsked);
+                }
 
-                output.returnTo = return_to ;
+                output.return_to = returnTo ;
 
                 return output ;
             }

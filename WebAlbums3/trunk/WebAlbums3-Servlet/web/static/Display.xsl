@@ -42,25 +42,6 @@
                 modal:     true
             });
         </script>
-        
-        <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-            <script type="text/javascript" src="static/scripts/Photos.js"></script>
-            <xsl:if test="/webAlbums/photos/display/photoList/photo/exif or /webAlbums/tags/display/photoList/photo/exif">
-                <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
-            </xsl:if>
-        </xsl:if>
-        <xsl:if test="/webAlbums/tags">
-            <script type="text/javascript" src="static/scripts/Tags.js"></script>
-        </xsl:if>
-	<xsl:if test="/webAlbums/config">
-            <script type="text/javascript" src="static/scripts/Config.js"/>
-        </xsl:if>
-        <xsl:if test="/webAlbums/choix">
-            <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
-            <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" media="screen"/>
-	    <script src="Choix?special=map.js" type='text/javascript'></script>
-            <script src="static/scripts/Choix.js" type='text/javascript'></script>
-        </xsl:if>
       </head>
       <body>
 	<div id="header"> 
@@ -93,7 +74,7 @@
 		<ul>
 		  <li><xsl:value-of select="/webAlbums/loginInfo/user" /></li>
                   <li><xsl:value-of select="/webAlbums/loginInfo/theme" /></li>
-		  <li><a href="Index?logout=TRUE" title="logout">Log out</a></li>
+		  <li><a href="Index?logout=TRUE" title="logout" rel="singlepage[no]">Log out</a></li>
 		</ul>
 
                 <xsl:if test="/webAlbums/loginInfo/@admin">
@@ -122,6 +103,25 @@
 
 		<xsl:apply-templates select="/webAlbums/*/page"/>
 		<xsl:call-template name="print_return_link" />
+
+                <xsl:if test="/webAlbums/photos or /webAlbums/tags">
+                    <script type="text/javascript" src="static/scripts/Photos.js"></script>
+                    <xsl:if test="/webAlbums/photos/display/photoList/photo/exif or /webAlbums/tags/display/photoList/photo/exif">
+                        <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
+                    </xsl:if>
+                </xsl:if>
+                <xsl:if test="/webAlbums/tags">
+                    <script type="text/javascript" src="static/scripts/Tags.js"></script>
+                </xsl:if>
+                <xsl:if test="/webAlbums/config">
+                    <script type="text/javascript" src="static/scripts/Config.js"/>
+                </xsl:if>
+                <xsl:if test="/webAlbums/choix">
+                    <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
+                    <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" media="screen"/>
+                    <script src="Choix?special=map.js" type='text/javascript'></script>
+                    <script src="static/scripts/Choix.js" type='text/javascript'></script>
+                </xsl:if>
 	      </div>
 	      <div id="footer">
                  <p>Page générée en <xsl:value-of select="/webAlbums/time"/>s. Copyright 2009.</p>
@@ -130,6 +130,7 @@
 	    </div>
 	  </div>
 	</div>
+        <script type="text/javascript" src="static/scripts/SinglePageInterface.js" />
       </body>
     </html>
   </xsl:template>

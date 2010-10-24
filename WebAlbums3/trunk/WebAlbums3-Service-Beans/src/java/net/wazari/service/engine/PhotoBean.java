@@ -88,6 +88,10 @@ public class PhotoBean implements PhotoLocal {
         XmlPhotoSubmit output = new XmlPhotoSubmit();
         Integer photoID = vSession.getId();
 
+        if (photoID == null) {
+            output.exception = "Pas de photo demandé ... (id=null)" ;
+            return output ;
+        }
         Photo enrPhoto = photoDAO.loadIfAllowed(vSession, photoID);
 
         if (enrPhoto == null) {

@@ -49,7 +49,7 @@
 	</h1>
 	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
 	  <h2>
-	    <a>
+	    <a rel="singlepage[no]">
 	      <xsl:attribute name="title"><xsl:value-of select="title" /> en visionneuse</xsl:attribute> 
 	      <xsl:attribute name="href">
 		Photos?albmCount=<xsl:value-of select="@count" />

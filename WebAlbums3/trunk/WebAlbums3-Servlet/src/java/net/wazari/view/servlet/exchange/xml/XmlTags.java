@@ -21,6 +21,6 @@ public class XmlTags {
     public XmlTagPersonsPlaces personsPlaces;
     public XmlPhotoEdit edit;
     public XmlTagDisplay display;
-    public XmlReturnTo returnTo;
+    public XmlReturnTo return_to;
 
 }

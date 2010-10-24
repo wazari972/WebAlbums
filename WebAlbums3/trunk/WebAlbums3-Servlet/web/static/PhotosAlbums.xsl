@@ -110,11 +110,11 @@
 	      <xsl:if test="/webAlbums/tags">
 		Tags?action=EDIT
 &amp;id=<xsl:value-of select="photoId" />
-		<xsl:for-each select="/webAlbums/tags/title/tags/*">
+		<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">
 &amp;tagAsked=<xsl:value-of select="@id" />
 		</xsl:for-each>
-		<xsl:if test="/webAlbums/*/page/current">
-&amp;page=<xsl:value-of select="/webAlbums/*/page/current" />
+		<xsl:if test="/webAlbums/*/page/@current">
+&amp;page=<xsl:value-of select="/webAlbums/*/page/@current" />
 		</xsl:if>
 	      </xsl:if>
               <xsl:if test="/webAlbums/albums">

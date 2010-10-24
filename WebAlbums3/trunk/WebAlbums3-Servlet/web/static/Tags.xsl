@@ -38,7 +38,7 @@
 	      <img src="static/images/out.png" height="30px"/>
 	  </a>
 	  &#160;
-	  <a>
+	  <a rel="singlepage[no]">
 	    <xsl:attribute name="title">"<xsl:for-each select="tagList/*">&#160;<xsl:value-of select="name" /></xsl:for-each>" en visionneuse</xsl:attribute>
 	    <xsl:attribute name="href">Tags?
 <xsl:for-each select="tagList/*">

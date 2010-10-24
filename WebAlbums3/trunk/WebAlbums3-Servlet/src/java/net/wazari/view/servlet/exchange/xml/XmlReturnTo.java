@@ -5,6 +5,8 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
+import java.util.LinkedList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -19,6 +21,6 @@ public class XmlReturnTo {
     public Integer albmCount;
     
     public Integer page;
-    public Integer[] tagsAsked;
+    public final List<Integer> tagsAsked = new LinkedList<Integer>();
 
 }

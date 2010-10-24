@@ -36,16 +36,16 @@ function callURL(url) {
 }
 
 
-var xsl_doc = null ;
-function prepareXSL() {
+var emptyXsl = null ;
+function prepareEmptyXSL() {
     $.ajax({
       url:"static/Empty.xsl",
-      success:function(html){xsl_doc = html;},
+      success:function(html){emptyXsl = html;},
       async:false
      });
 
 }
-prepareXSL() ;
+prepareEmptyXSL() ;
 
 function loadExernals(btId, url, divId) {
 
@@ -70,12 +70,12 @@ function loadExernalsBottomEnd(data, divId) {
     // Firefox/Mozilla/Opera or IE XSLT support.
     if (typeof XSLTProcessor != "undefined") {
         var xsl_proc = new XSLTProcessor ();
-        xsl_proc.importStylesheet (xsl_doc);
+        xsl_proc.importStylesheet (emptyXsl);
 
         var node = xsl_proc.transformToFragment (xml_doc, document);
         div.appendChild (node);
     } else if (typeof xml_doc.transformNode != "undefined") {
-        div.innerHTML = xml_doc.transformNode (xsl_doc);
+        div.innerHTML = xml_doc.transformNode (emptyXsl);
     } else {
         div.innerHTML = xhr_object_XML.responseText ;
     }
