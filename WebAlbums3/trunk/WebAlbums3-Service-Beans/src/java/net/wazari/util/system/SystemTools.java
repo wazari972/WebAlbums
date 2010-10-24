@@ -62,7 +62,7 @@ public class SystemTools {
         return wrap;
     }
 
-    private File buildTempDir(ViewSession vSession, String type, Integer id) {
+    private File buildTempDir(ViewSession vSession, Integer id, String ... dirs) {
         File root = vSession.getTempDir();
         if (!root.isDirectory() && !root.mkdir()) {
             return null;
@@ -82,15 +82,17 @@ public class SystemTools {
         }
         dir.deleteOnExit();
 
-        //build temp/user/theme/TYPE
-        dir = new File(dir, type);
-        if (!dir.isDirectory() && !dir.mkdir()) {
-            return null;
+        //build temp/user/theme/DIRS...
+        for (String dirName : dirs) {
+            dir = new File(dir, dirName);
+            if (!dir.isDirectory() && !dir.mkdir()) {
+                return null;
+            }
+            dir.deleteOnExit();
         }
-        dir.deleteOnExit();
 
         if (id != null) {
-            //build temp/user/theme/type/idID
+            //build temp/user/theme/dirs/idID
             File unique = new File(dir, "id" + id.toString());
             if (!unique.isDirectory() && !unique.mkdir()) {
                 try {
@@ -111,7 +113,7 @@ public class SystemTools {
         return dir;
     }
 
-    public boolean fullscreenMultiple(ViewSession vSession, PhotoRequest rq, String type, Integer id, Integer page) {
+    public boolean fullscreenMultiple(ViewSession vSession, PhotoRequest rq, Integer id, Integer page, String ... dirs) {
         if (vSession.isRemoteAccess()) return false ;
 
         int pageAsked = (page == null ? 0 : page);
@@ -136,7 +138,7 @@ public class SystemTools {
         log.warn( "Fullscreen multiple: page asked:{}", pageAsked);
         for (Photo enrPhoto : lstPhoto.subset) {
             if (first) {
-                dir = buildTempDir(vSession, type, id);
+                dir = buildTempDir(vSession, id, dirs);
                 if (dir == null) {
                     return false;
                 }
@@ -158,7 +160,7 @@ public class SystemTools {
     }
 
     public String shrink(ViewSession vSession, Photo enrPhoto, int width) {
-        File dir = buildTempDir(vSession, "shrinked", null);
+        File dir = buildTempDir(vSession, null, "shrinked");
         if (dir == null) {
             return null;
         }
@@ -196,7 +198,7 @@ public class SystemTools {
     public boolean fullscreenImage(ViewSession vSession, Photo enrPhoto) {
         if (vSession.isRemoteAccess()) return false ;
         
-        File dir = buildTempDir(vSession, "fullscreen", null);
+        File dir = buildTempDir(vSession, null, "fullscreen");
         if (dir == null) {
             return false;
         }

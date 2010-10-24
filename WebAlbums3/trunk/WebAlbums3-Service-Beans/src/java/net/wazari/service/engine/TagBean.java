@@ -77,8 +77,10 @@ public class TagBean implements TagLocal {
             XmlFrom thisPage = new XmlFrom();
             thisPage.name = "Tags" ;
             List<Integer> tagsAsked = new ArrayList<Integer>(tagSet.size()) ;
+            StringBuilder tagsId = new StringBuilder(tagSet.size()*4) ;
             for (Tag enrCurrentTag : tagSet) {
                 tagsAsked.add(enrCurrentTag.getId());
+                tagsId.append(enrCurrentTag.getId()).append("-") ;
             }
             thisPage.tagAsked = tagsAsked ;
             
@@ -89,7 +91,7 @@ public class TagBean implements TagLocal {
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet) ;
             Special special = vSession.getSpecial();
             if (Special.FULLSCREEN == special) {
-                sysTools.fullscreenMultiple(vSession, rq, "Tags", null, page);
+                sysTools.fullscreenMultiple(vSession, rq, null, page, "Tags",tagsId.toString());
                 stopWatch.stop("Service.treatTagDISPLAY.FULLSCREEN") ;
                 return null;
             } else {
