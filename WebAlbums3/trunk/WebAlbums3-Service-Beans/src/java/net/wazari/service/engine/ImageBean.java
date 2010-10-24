@@ -10,6 +10,7 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -193,17 +194,30 @@ public class ImageBean implements ImageLocal {
 
         boolean uniq = false;
         try {
-            InputStream in = null;
+            
 
             String safeFilepath = filepath ;
-            log.warn(safeFilepath) ;
             safeFilepath = StringEscapeUtils.unescapeHtml(safeFilepath);
-            log.warn(safeFilepath) ;
-            safeFilepath = StringUtil.escapeURL(filepath);
-            log.warn(safeFilepath) ;
-            URLConnection conn = new URL(safeFilepath).openConnection();
-            in = conn.getInputStream();
-
+            
+            URLConnection conn = null ;
+            InputStream in = null;
+            IOException ex = null ;
+            for (Normalizer.Form form : Normalizer.Form.values()) {
+                String normalForm = null ;
+                try {
+                    normalForm = Normalizer.normalize(safeFilepath, form) ;
+                    normalForm = StringUtil.escapeURL(normalForm);
+                    conn = new URL(normalForm).openConnection();
+                    in = conn.getInputStream();
+                    log.info("Path normalized with {}", form);
+                    break ;
+                } catch(IOException e) {
+                    log.warn("Normalisation {} failed: {}", form, normalForm) ;
+                    ex = e ;
+                    in = null ;
+                }
+            }
+            if(in == null) throw ex ;
             int bufferSize = (int) Math.min(conn.getContentLength(), 4 * 1024);
             byte[] buffer = new byte[bufferSize];
             int nbRead;
@@ -222,14 +236,14 @@ public class ImageBean implements ImageLocal {
 
             return null;
         } catch (MalformedURLException e) {
-            log.warn( "MalformedURLException: {}", e.getMessage()) ;
+            log.warn( "MalformedURLException: {}", e) ;
             output.exception = "MalformedURLException:"+ filepath;
 
         } catch (ConnectException e) {
-            log.warn( "ConnectException: {}", e.getMessage()) ;
+            log.warn( "ConnectException: {}", e) ;
             output.exception = "ConnectException" + filepath;
         } catch (IOException e) {
-            log.warn( "IOException {}({})", new Object[]{filepath, e.getMessage()});
+            log.warn( "IOException {}({})", new Object[]{filepath, e});
             output.exception = "IOException: "+ filepath + "(" + e.getMessage() + ")" ;
         }
         return uniq;
