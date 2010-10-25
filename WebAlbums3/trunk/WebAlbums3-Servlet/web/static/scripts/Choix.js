@@ -23,12 +23,12 @@ function loadRandPict() {
 }
 
 function showTags() {
-    $("#tagShower").hide() ;
-    $("#tags").show() ;
+    $("#tagShower").fadeOut() ;
+    $("#tags").fadeIn() ;
 }
 
 function preloadGoogleMap() {
-    $("#googleMapLoader").hide() ;
+    $("#googleMapLoader").fadeOut() ;
     $("#mapChoix").width(400).height(400) ;
     loadMaps();
 }

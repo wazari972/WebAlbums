@@ -2,9 +2,16 @@
 
 function loadMaps() {
     var script = document.createElement("script");
-    script.setAttribute("src", "http://maps.google.com/maps/api/js?sensor=false&callback=loadGoogleMap");
+    script.setAttribute("src", "http://maps.google.com/maps/api/js?sensor=false&callback=loadGoogleMapWrapper");
     script.setAttribute("type", "text/javascript");
     document.documentElement.firstChild.appendChild(script);
+}
+
+function loadGoogleMapWrapper() {
+    loadGoogleMap() ;
+    if (enableSinglePage != undefined) {
+        setTimeout("enableSinglePage() ;", 3000);
+    }
 }
 
 
@@ -65,7 +72,7 @@ function loadExernalsBottomEnd(data, divId) {
     var div = document.getElementById (divId);
     if (div == null) return ;
 
-    div.style.display = "" ;
+    $(div).hide() ;
     div.innerHTML = "";
     // Use object detection to find out if we have
     // Firefox/Mozilla/Opera or IE XSLT support.
@@ -81,6 +88,7 @@ function loadExernalsBottomEnd(data, divId) {
         div.innerHTML = xhr_object_XML.responseText ;
     }
 
+    $(div).fadeIn() ;
     if (enableSinglePage != undefined) enableSinglePage() ;
 }
 

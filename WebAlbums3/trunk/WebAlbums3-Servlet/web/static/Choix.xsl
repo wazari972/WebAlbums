@@ -61,7 +61,8 @@
                   <xsl:apply-templates select="tagList">
                     <xsl:with-param name="mode">TAG_USED</xsl:with-param>
                     <xsl:with-param name="style">multiple</xsl:with-param>
-                  </xsl:apply-templates>
+                  </xsl:apply-templates><br/>
+                  <input type="submit" value="Go"/>
                 </center>
               </div>
 	  </div>

@@ -89,6 +89,9 @@
                 </xsl:if>
 		<div id="cloud" />
 	      </div>
+              <div id="loader" style="display: none">
+                <center><img src="static/images/ajax-loader.gif" /></center>
+              </div>
 	      <div id="left">
 		<xsl:apply-templates select="/webAlbums/Exception"/>
 		<xsl:apply-templates select="/webAlbums/message"/>

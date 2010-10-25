@@ -37,39 +37,6 @@ function getCurrentSinglePage() {
     } else return undefined ;
 }
 
-function loadSinglePage(url) {
-    var oldURL = getCurrentPage() ;
-    
-    if (singlePageCached(oldURL)) {
-        var left = document.getElementById ("left") ;
-        var cache = document.getElementById(oldURL) ;
-        if (cache == undefined) {
-            //create the cache
-            cache = document.createElement("div") ;
-            cache.id = oldURL ;
-            left.parentNode.insertBefore(cache, left) ;
-        }   
-        //cache.innerHTML = document.getElementById ("left").innerHTML ;
-
-        //save the cache
-        left.style.display = "none" ;
-        left.id = cache.id ;
-        
-        //recreate a "left" block
-        cache.id = "left" ;
-        cache.innerHTML = "" ;
-        cache.style.display = '' ;
-    }
-
-    $.ajax({
-        url:url,
-        success:function(data){
-            loadSinglePageBottomEnd(url, data) ;
-        },
-        async:true
-    });
-}
-
 function Node_getElementById(node, id) {
     for (var i= 0; i<node.childNodes.length; i++) {
         var child= node.childNodes[i];
@@ -91,18 +58,59 @@ function loadSinglePageCache(url) {
     } else {
         var left = document.getElementById ("left");
         left.parentNode.removeChild(left) ;
-        cache.style.display = "block" ;
+        $(cache).show() ;
         cache.id = "left" ;
     }
+}
+
+function loadSinglePage(url) {
+    var oldURL = getCurrentPage() ;
+
+    var left  ;
+    if (singlePageCached(oldURL)) {
+        left = document.getElementById ("left") ;
+        var cache = document.getElementById(oldURL) ;
+        if (cache == undefined) {
+            //create the cache
+            cache = document.createElement("div") ;
+            cache.id = oldURL ;
+            left.parentNode.insertBefore(cache, left) ;
+        }   
+        //cache.innerHTML = document.getElementById ("left").innerHTML ;
+
+        //save the cache
+        $(left).hide() ;
+        left.id = cache.id ;
+        
+        //recreate a "left" block
+        cache.id = "left" ;
+        cache.innerHTML = "" ;
+    }
+    left = document.getElementById ("left")
+    $(left).hide() ;
+    left.id = "left-loading" ;
+    
+    var loader = document.getElementById ("loader") ;
+    loader.id = "left" ;
+    $(loader).fadeIn() ;
+    $.ajax({
+        url:url,
+        success:function(data){
+            loadSinglePageBottomEnd(url, data) ;
+        },
+        async:true
+    });
 }
 
 function loadSinglePageBottomEnd(url, data) {
     var xml_doc = data;
 
-    var left = document.getElementById ("left");
-    if (left == null) return ;
+    var left = document.getElementById ("left-loading");
+    if (left == null) {
+        left = document.getElementById ("left");
+        if (left == null) return ;
+    }
 
-    left.style.display = "" ;
     left.innerHTML = "";
 
     // Use object detection to find out if we have
@@ -116,12 +124,14 @@ function loadSinglePageBottomEnd(url, data) {
         var parent = left.parentNode ;
         parent.insertBefore(page, left) ;
         parent.removeChild(left) ;
-    } else if (typeof xml_doc.transformNode != "undefined") {
-        left.innerHTML = xml_doc.transformNode (displayXsl);
     } else {
-        left.innerHTML = xhr_object_XML.responseText ;
+        alert("underfined XSLT processor") ;
     }
-
+    var loader = document.getElementById ("left") ;
+    loader.id = "loader" ;
+    $(loader).hide() ;
+    left.id = "left";
+    $(left).fadeIn() ;
     enableSinglePage() ;
 }
 
