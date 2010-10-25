@@ -99,11 +99,11 @@ function loadSinglePageCache(url) {
 function loadSinglePageBottomEnd(url, data) {
     var xml_doc = data;
 
-    var div = document.getElementById ("left");
-    if (div == null) return ;
+    var left = document.getElementById ("left");
+    if (left == null) return ;
 
-    div.style.display = "" ;
-    div.innerHTML = "";
+    left.style.display = "" ;
+    left.innerHTML = "";
 
     // Use object detection to find out if we have
     // Firefox/Mozilla/Opera or IE XSLT support.
@@ -113,11 +113,13 @@ function loadSinglePageBottomEnd(url, data) {
 
         var node = xsl_proc.transformToFragment (xml_doc, document);
         var page = Node_getElementById(node, "left") ;
-        div.appendChild (page);
+        var parent = left.parentNode ;
+        parent.insertBefore(page, left) ;
+        parent.removeChild(left) ;
     } else if (typeof xml_doc.transformNode != "undefined") {
-        div.innerHTML = xml_doc.transformNode (displayXsl);
+        left.innerHTML = xml_doc.transformNode (displayXsl);
     } else {
-        div.innerHTML = xhr_object_XML.responseText ;
+        left.innerHTML = xhr_object_XML.responseText ;
     }
 
     enableSinglePage() ;

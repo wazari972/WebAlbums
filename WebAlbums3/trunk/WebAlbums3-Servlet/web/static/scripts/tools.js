@@ -80,6 +80,8 @@ function loadExernalsBottomEnd(data, divId) {
     } else {
         div.innerHTML = xhr_object_XML.responseText ;
     }
+
+    if (enableSinglePage != undefined) enableSinglePage() ;
 }
 
 function updateFullImage(id) {
