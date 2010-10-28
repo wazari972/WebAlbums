@@ -3,6 +3,8 @@ var singlePage_cache ={
 } ;
 var ANCHOR_PREFIX = "#pg=" ;
 
+var inPlaceSinglePage = null;
+
 var displayXsl = null ;
 function prepareDisplayXSL() {
     $.ajax({
@@ -86,6 +88,11 @@ function loadSinglePage(url) {
         cache.id = "left" ;
         cache.innerHTML = "" ;
     }
+    $(window).scrollTop(0) ;
+    if (url == inPlaceSinglePage) {
+        return ;
+    }
+    inPlaceSinglePage = url;
     left = document.getElementById ("left")
     $(left).hide() ;
     left.id = "left-loading" ;
@@ -135,6 +142,12 @@ function loadSinglePageBottomEnd(url, data) {
     enableSinglePage() ;
 }
 
+function checkSinglePageAnchor() {
+    var currentSinglePage = getCurrentSinglePage() ;
+    if (currentSinglePage != inPlaceSinglePage) {
+        loadSinglePage(currentSinglePage) ;
+    }
+}
 function loadBookmarkedSinglePage() {
     var currentSinglePage = getCurrentSinglePage() ;
     if (currentSinglePage != undefined) {
@@ -167,3 +180,8 @@ function enableSinglePage() {
 
 enableSinglePage() ;
 loadBookmarkedSinglePage() ;
+
+
+$().ready(function(){
+   setInterval("checkAnchor()", 300);
+});

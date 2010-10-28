@@ -4,22 +4,20 @@
  */
 package net.wazari.dao.jpa;
 
-import java.lang.management.ManagementFactory;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.text.Normalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import net.wazari.dao.MaintFacadeLocal;
+import net.wazari.dao.PhotoFacadeLocal;
+import net.wazari.dao.entity.Photo;
 import org.hibernate.ejb.EntityManagerImpl;
-import org.hibernate.jmx.StatisticsService;
 import org.hibernate.stat.Statistics;
 
 /**
@@ -30,11 +28,12 @@ import org.hibernate.stat.Statistics;
 public class MaintDAOBean implements MaintFacadeLocal {
 
     private static final Logger log = LoggerFactory.getLogger(MaintDAOBean.class.getName());
-
     @PersistenceContext(unitName = WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
     @EJB
     ImportExporter xml;
+    @EJB
+    private PhotoFacadeLocal photoDAO;
 
     @Override
     public void treatImportXML(boolean protect, final String path) {
@@ -69,29 +68,53 @@ public class MaintDAOBean implements MaintFacadeLocal {
     @Override
     public void treatUpdate() {
         try {
-            log.info("registering Hibernate statistics MBean");
+            int count = 0 ;
+            for (Photo enrPhoto : photoDAO.findAll()) {
+                String theme = enrPhoto.getAlbum().getTheme().getNom() ;
+                try {
+                    //log.info("Path check {}", enrPhoto.getId());
+                    String path = "file:///other/Web/data/miniatures/"+theme+"/"+enrPhoto.getPath()+".png" ;
+                    new URL(path).openConnection().getInputStream().close() ;
 
-            ObjectName hibernateMBeanName = new ObjectName("Hibernate:type=statistics,application=WebAlbums");
+                } catch (Exception e) {
+                    log.info("Exception {}", e.getMessage());
+                    count++ ;
+                    for (Normalizer.Form form : Normalizer.Form.values()) {
+                        String normalForm = null;
+                        try {
+                            normalForm = Normalizer.normalize(enrPhoto.getPath(), form);
+                            //normalForm = StringUtil.escapeURL(normalForm);
+                            new URL("file:///other/Web/data/miniatures/"+theme+"/"+normalForm+".png").openConnection().getInputStream();
+                            //log.info("Path normalized with {}", form);
+                            
+                            File to = new File("/other/Web/data/miniatures/"+theme+"/"+enrPhoto.getPath().substring(0, enrPhoto.getPath().lastIndexOf("/"))) ;
+                            File from = new File("/other/Web/data/miniatures/"+theme+"/"+normalForm.substring(0, normalForm.lastIndexOf("/"))) ;
+                            log.info("from: {}", from);
+                            log.info("to  : {}", to);
+                            if (from.isDirectory()) {
+                                to.mkdir();
 
-            StatisticsService mBean = new StatisticsService();
-            mBean.setStatisticsEnabled(true);
-            mBean.setSessionFactory(((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory());
-            try {
-                ManagementFactory.getPlatformMBeanServer().unregisterMBean(hibernateMBeanName);
-                log.warn("HibernateJMX was correctly undeployed");
-            } catch (InstanceNotFoundException ex) {
-                log.warn("HibernateJMX was not deployed");
+                                for(File content : from.listFiles()) {
+                                    String name = Normalizer.normalize(content.getName(), form);
+                                    File target = new File(to, name) ;
+
+                                    boolean cpy = content.renameTo(target);
+                                    log.info("Copy: {} {}", cpy, content);
+                                }
+                                boolean del = from.delete();
+                                log.info("delete {}", del);
+                            }
+                            break ;
+                            //boolean ok = from.renameTo(to) ;
+                            //log.info("renameTo: {} - {}", ok, normalForm);
+                        } catch (IOException ex) {
+                            log.warn("Normalisation {} failed: {}", form, normalForm);
+                        }
+                    }
+                }
             }
-            ManagementFactory.getPlatformMBeanServer().registerMBean(mBean, hibernateMBeanName);
-        } catch (InstanceAlreadyExistsException ex) {
-            log.error("InstanceAlreadyExistsException", ex);
-        } catch (MBeanRegistrationException ex) {
-            log.error("MBeanRegistrationException", ex);
-        } catch (NotCompliantMBeanException ex) {
-            log.error("NotCompliantMBeanException", ex);
-        } catch (MalformedObjectNameException ex) {
-            log.error("MalformedObjectNameException", ex);
-        } catch (NullPointerException ex) {
+            log.error("normalized: {}", count);
+        } catch (Exception ex) {
             log.error("NullPointerException", ex);
         }
     }
@@ -110,5 +133,4 @@ public class MaintDAOBean implements MaintFacadeLocal {
             //log.log(Level.INFO, "\tgetExecutionRowCount {}", qStats.getExecutionRowCount());
         }
     }
-    
 }
