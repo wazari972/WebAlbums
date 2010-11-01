@@ -254,3 +254,27 @@ body {
 .item .details .allowed {
     padding-top:5px;
 }
+
+.exif_tooltip {
+	display: none;        /* required */
+	position: absolute;   /* required */
+	padding: 10px;
+	border: 2px solid black;
+	background-color: #58ACFA;
+}
+
+.cloud_tooltip {
+	display: none;        /* required */
+	position: absolute;   /* required */
+	padding: 10px;
+	border: 2px solid black;
+	background-color: #58ACFA;
+}
+
+.album_tooltip {
+	display: none;        /* required */
+	position: absolute;   /* required */
+	padding: 10px;
+	border: 2px solid black;
+	background-color: #58ACFA;
+}

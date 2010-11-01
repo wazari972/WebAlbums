@@ -93,24 +93,22 @@
             <li class="selectAlbum">
                 <xsl:attribute name="rel"><xsl:value-of select="@time"/></xsl:attribute>
                 <label><xsl:value-of select="albmDate"/></label> &#160;
-                <a>
-                    <xsl:attribute name="onmouseout">UnTip()</xsl:attribute>
-                    <xsl:attribute name="onmouseover">TagToTip('tip<xsl:value-of select="@id" />')</xsl:attribute>
+                <a class="albumTT">
+                    <xsl:attribute name="id">album-target-<xsl:value-of select="@id"/></xsl:attribute>
                     <xsl:attribute name="href">Photos?album=<xsl:value-of select="@id"/>&amp;albmCount=<xsl:value-of select="count"/></xsl:attribute>
                     <xsl:value-of select="name"/>
                 </a>
-                <span style="display: none;">
-                    <xsl:attribute name="id">tip<xsl:value-of select="@id" /></xsl:attribute>
-                    <img>
-                        <xsl:attribute name="src">
-                        Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT
-                        </xsl:attribute>
-                    </img>
-              </span>
+                <span class="album_tooltip">
+                    <xsl:attribute name="id">album-content-<xsl:value-of select="@id"/></xsl:attribute>
+                    <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
+                </span>
             </li>
         </xsl:for-each>
         </ul>
     </div>
+    <script language="javascript">
+        $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
+    </script>
   </xsl:template>
 
   <xsl:template match="tags/about">
@@ -161,18 +159,17 @@
 
   <xsl:template match="cloud/tag|children/tag">
       <li>
-        <a>
+        <a class="cloud-tag">
+          <xsl:attribute name="id">cloud-target-<xsl:value-of select="@id"/></xsl:attribute>
           <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
           <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/>&amp;wantTagChildren=true</xsl:attribute>
-          <xsl:attribute name="title"><xsl:value-of select="@name"/> : <xsl:value-of select="@nb"/></xsl:attribute>
+          <xsl:attribute name="nbElements"><xsl:value-of select="@name"/> : <xsl:value-of select="@nb"/></xsl:attribute>
           <xsl:value-of select="name" />
         </a>
-        <a>
-          <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
-          <xsl:attribute name="href">Images?id=<xsl:value-of select="@id"/>&amp;mode=RANDOM_TAG</xsl:attribute>
-          <xsl:attribute name="title">Image aléatoire</xsl:attribute>
-          &#9830;
-        </a>
+        <span class="cloud_tooltip">
+            <xsl:attribute name="id">cloud-content-<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
+        </span>
         <xsl:if test="children/tag">
 	    <ul rel="open">
               <xsl:apply-templates select="children/tag"/>

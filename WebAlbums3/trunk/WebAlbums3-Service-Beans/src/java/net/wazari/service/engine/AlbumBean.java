@@ -340,7 +340,7 @@ public class AlbumBean implements AlbumLocal {
     @Override
     public XmlAlbumAbout treatABOUT(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
         Integer albumId = vSession.getId() ;
-
+        if (albumId == null) return null;
         Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
         if (enrAlbum == null) return null;
 

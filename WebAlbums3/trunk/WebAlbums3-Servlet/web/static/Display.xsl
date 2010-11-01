@@ -33,6 +33,8 @@
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>
         <script src="static/scripts/tools.js" type="text/javascript" />
+        
+        <script type="text/javascript" src="static/scripts/ezpz/jquery.ezpz_tooltip.min.js"></script>
 
         <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
         <script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
@@ -110,9 +112,6 @@
                 <script type="text/javascript" src="static/scripts/Common.js"></script>
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
                     <script type="text/javascript" src="static/scripts/Photos.js"></script>
-                    <xsl:if test="/webAlbums/photos/display/photoList/photo/exif or /webAlbums/tags/display/photoList/photo/exif">
-                        <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
-                    </xsl:if>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags">
                     <script type="text/javascript" src="static/scripts/Tags.js"></script>
@@ -121,7 +120,6 @@
                     <script type="text/javascript" src="static/scripts/Config.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/choix">
-                    <script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
                     <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" media="screen"/>
                     <script src="Choix?special=map.js" type='text/javascript'></script>
                     <script src="static/scripts/Choix.js" type='text/javascript'></script>

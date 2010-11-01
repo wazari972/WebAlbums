@@ -35,11 +35,10 @@ function updateAffichage(option) {
 }
 
 function loadCloud() {
-    loadExernals('cloudLoader', 'Tags?special=CLOUD', 'cloud') ;
+    loadExernals('cloudLoader', 'Tags?special=CLOUD', 'cloud', prepareCloudTooltips) ;
 }
 
 function callURL(url) {
-    alert("get "+url)
     $.get(url);
 }
 
@@ -55,18 +54,25 @@ function prepareEmptyXSL() {
 }
 prepareEmptyXSL() ;
 
-function loadExernals(btId, url, divId) {
 
+function loadExernals(btId, url, divId, callback, async) {
+    if (async == undefined) {
+        async = true ;
+    }
     var bt = document.getElementById(btId) ;
     if (bt != null) bt.style.visibility = "hidden";
 
-    $.get(url, function(data){
-        loadExernalsBottomEnd(data, divId) ;
-    }) ;
+    $.ajax({
+        url:url,
+        success:function(data){
+            loadExernalsBottomEnd(data, divId, callback) ;
+        },
+        async:async
+    });
 }
 
 
-function loadExernalsBottomEnd(data, divId) {
+function loadExernalsBottomEnd(data, divId, callback) {
     var xml_doc = data;
 
     var div = document.getElementById (divId);
@@ -90,6 +96,7 @@ function loadExernalsBottomEnd(data, divId) {
 
     $(div).fadeIn() ;
     if (enableSinglePage != undefined) enableSinglePage() ;
+    if (callback != undefined) callback() ;
 }
 
 function updateFullImage(id) {
@@ -112,6 +119,23 @@ function addLoadEvent(func) {
 }
 function updateBackground(id) {
     document.getElementById("body").style.backgroundImage = "url(Images?id="+id+"&mode=SHRINK&width=1280)"
+}
+function prepareTagsTooltipsDiv(content) {
+    prepareTooltipsDiv(content, "Tags") ;
+}
+function prepareAlbumsTooltipsDiv(content) {
+    prepareTooltipsDiv(content, "Albums") ;
+}
+
+function prepareTooltipsDiv(content, what) {
+    targetEl = document.getElementById(content.attr('id')) ;
+    if (targetEl.innerHTML == "" || targetEl.innerHTML == null) {
+        loadExernals(null, what+"?special=ABOUT&id="+content.attr('rel'), content.attr('id'), null, false) ;
+    }
+}
+
+function prepareCloudTooltips() {
+    $(".cloud-tag").ezpz_tooltip({stayOnContent: true,beforeShow: prepareTagsTooltipsDiv});
 }
 
 addLoadEvent(loadCloud())
