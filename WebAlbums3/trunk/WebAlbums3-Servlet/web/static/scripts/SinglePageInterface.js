@@ -4,6 +4,7 @@ var singlePage_cache ={
 var ANCHOR_PREFIX = "#pg=" ;
 
 var inPlaceSinglePage = null;
+var inPlaceSinglePage_lock = null;
 
 var displayXsl = null ;
 function prepareDisplayXSL() {
@@ -66,6 +67,7 @@ function loadSinglePageCache(url) {
 }
 
 function loadSinglePage(url) {
+    inPlaceSinglePage_lock = 1 ;
     var oldURL = getCurrentPage() ;
 
     var left  ;
@@ -92,24 +94,32 @@ function loadSinglePage(url) {
     if (url == inPlaceSinglePage) {
         return ;
     }
-    inPlaceSinglePage = url;
+    inPlaceSinglePage = url ;
+    if (url != undefined) {
+        inPlaceSinglePage = jQuery.trim(inPlaceSinglePage) ;
+    }
+    alert(">"+url+"/"+inPlaceSinglePage+"<")
     left = document.getElementById ("left")
     $(left).hide() ;
     left.id = "left-loading" ;
     
     var loader = document.getElementById ("loader") ;
-    loader.id = "left" ;
-    $(loader).fadeIn() ;
+    if (loader != null) {
+        loader.id = "left" ;
+        $(loader).fadeIn() ;
+    } else {
+        //alert("No loader to show") ;
+    }
     $.ajax({
         url:url,
         success:function(data){
-            loadSinglePageBottomEnd(url, data) ;
+            loadSinglePageBottomEnd(data) ;
         },
         async:true
     });
 }
 
-function loadSinglePageBottomEnd(url, data) {
+function loadSinglePageBottomEnd(data) {
     var xml_doc = data;
 
     var left = document.getElementById ("left-loading");
@@ -135,16 +145,24 @@ function loadSinglePageBottomEnd(url, data) {
         alert("underfined XSLT processor") ;
     }
     var loader = document.getElementById ("left") ;
-    loader.id = "loader" ;
-    $(loader).hide() ;
+    if (loader != null) {
+        loader.id = "loader" ;
+        $(loader).hide() ;
+    } else {
+        //alert("No loader to hide")
+    }
+
     left.id = "left";
     $(left).fadeIn() ;
     enableSinglePage() ;
+    inPlaceSinglePage_lock = null ;
 }
 
 function checkSinglePageAnchor() {
     var currentSinglePage = getCurrentSinglePage() ;
+    if (inPlaceSinglePage_lock != null) return ;
     if (currentSinglePage != inPlaceSinglePage) {
+        //alert("previous/next page detected "+inPlaceSinglePage+" -> "+ currentSinglePage)
         loadSinglePage(currentSinglePage) ;
     }
 }
@@ -165,14 +183,14 @@ function enableSinglePage() {
         if ($(this).attr("rel").indexOf("singlepage[no]") == 0) return ;
     
         $(this).click(function() {
-            var url = $(this).attr("href") ;
+            var url = jQuery.trim($(this).attr("href")) ;
             if (singlePageCached(url)) {
                 loadSinglePageCache(url) ;
             } else {
                 loadSinglePage(url) ;
             }
 
-            document.location.href = jQuery.trim(ANCHOR_PREFIX+url);
+            document.location.href = ANCHOR_PREFIX+url;
             return false ;
         }) ;
     });
@@ -183,5 +201,5 @@ loadBookmarkedSinglePage() ;
 
 
 $().ready(function(){
-   setInterval("checkAnchor()", 300);
+   setInterval("checkSinglePageAnchor()", 300);
 });
