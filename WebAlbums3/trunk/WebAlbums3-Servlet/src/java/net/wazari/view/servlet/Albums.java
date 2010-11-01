@@ -50,6 +50,9 @@ public class Albums extends HttpServlet{
         } else  if (special == Special.SELECT) {
             output.select = albumService.treatSELECT(vSession);
             return output ;
+        } else if (special == Special.ABOUT) {
+            output.about = albumService.treatABOUT(vSession);
+            return output ;
         }
 
         Action action = vSession.getAction();

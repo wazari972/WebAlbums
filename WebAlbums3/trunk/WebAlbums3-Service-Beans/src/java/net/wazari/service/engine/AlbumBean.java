@@ -35,6 +35,7 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.dao.entity.Utilisateur;
+import net.wazari.service.exchange.xml.album.XmlAlbumAbout;
 import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
 import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
 import net.wazari.service.exchange.xml.album.XmlAlbumList;
@@ -324,7 +325,6 @@ public class AlbumBean implements AlbumLocal {
         return output ;
     }
 
-
     @Override
     public XmlAlbumDisplay treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession,
             XmlAlbumSubmit submit) throws WebAlbumsServiceException {
@@ -335,5 +335,38 @@ public class AlbumBean implements AlbumLocal {
 
         output.albumList = displayAlbum(vSession, submit, thisPage) ;
         return output ;
+    }
+
+    @Override
+    public XmlAlbumAbout treatABOUT(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
+        Integer albumId = vSession.getId() ;
+
+        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
+        if (enrAlbum == null) return null;
+
+        XmlAlbumAbout about = new XmlAlbumAbout() ;
+        about.album = new XmlAlbum() ;
+        about.album.id = enrAlbum.getId() ;
+        about.album.title = enrAlbum.getNom() ;
+        about.album.date = webPageService.xmlDate(enrAlbum.getDate(), null);
+        about.album.details = new XmlDetails() ;
+        Integer iPhoto = enrAlbum.getPicture();
+        if (iPhoto != null) {
+            Photo enrPhoto = photoDAO.find(iPhoto) ;
+            if (enrPhoto != null) {
+                about.album.details.photoId = enrPhoto.getId() ;
+                about.album.details.miniWidth = enrPhoto.getWidth();
+                about.album.details.miniHeight = enrPhoto.getHeight();
+            } else {
+                log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrAlbum.getId()});
+            }
+        }
+
+        about.album.details.description = enrAlbum.getDescription();
+
+        //tags de l'album
+        about.album.details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE) ;
+
+        return about ;
     }
 }

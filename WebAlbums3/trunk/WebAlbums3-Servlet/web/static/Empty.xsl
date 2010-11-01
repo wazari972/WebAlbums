@@ -18,23 +18,47 @@
     <xsl:apply-templates select="/webAlbums/tags/cloud" />
     <xsl:apply-templates select="/webAlbums/tags/personsPlaces" />
     <xsl:apply-templates select="/webAlbums/tags/display" />
+    <xsl:apply-templates select="/webAlbums/tags/about" />
 
     <xsl:apply-templates select="/webAlbums/albums/top" />
     <xsl:apply-templates select="/webAlbums/albums/years" />
     <xsl:apply-templates select="/webAlbums/albums/select" />
+    <xsl:apply-templates select="/webAlbums/albums/about" />
 
     <xsl:apply-templates select="/webAlbums/photos/random" />
     <xsl:apply-templates select="/webAlbums/photos/display" />
+    <xsl:apply-templates select="/webAlbums/photos/about" />
+
   </xsl:template>
 
   <xsl:include href="PhotosAlbums.xsl" />
-  <xsl:template match="/webAlbums/photos/random">
+  <xsl:template match="photos/random">
+    <center>
+      <xsl:apply-templates select="details"/>
+    </center>
+  </xsl:template>
+  
+  <xsl:template match="photos/about">
     <center>
       <xsl:apply-templates select="details"/>
     </center>
   </xsl:template>
 
-  <xsl:template match="webAlbums/albums/select">
+  <xsl:template match="albums/about">
+      <xsl:apply-templates select="album"/>
+  </xsl:template>
+
+  <xsl:template match="about/album">
+    <h3>
+        <a>
+            <xsl:attribute name="href">Photos?album=<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:value-of select="title"/>
+        </a>
+    </h3>
+    <xsl:apply-templates select="details"/>
+  </xsl:template>
+  
+  <xsl:template match="albums/select">
     <p>
         <label for="fromDate">Albums datés entre le </label>
         <span id="fromDate" style="font-weight:bold;" />
@@ -61,9 +85,6 @@
 
         }
      );
-
-
-
     </script>
     <div style="overflow: auto; height: 400px">
         <ul>
@@ -89,6 +110,28 @@
             </li>
         </xsl:for-each>
         </ul>
+    </div>
+  </xsl:template>
+
+  <xsl:template match="tags/about">
+    <xsl:apply-templates select="tag"/>
+  </xsl:template>
+
+    <xsl:template match="about/tag">
+      <h3>
+        <a>
+            <xsl:attribute name="href">Tags?tagsAsked=<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:value-of select="name"/>
+        </a>
+    </h3>
+    <img>
+      <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
+    </img>
+    <div>
+    <a>
+        <xsl:attribute name="href">Images?mode=RANDOM_TAG&amp;id=<xsl:value-of select="@id"/></xsl:attribute>
+        <img src="static/images/random.png" width="30px"/>
+    </a>
     </div>
   </xsl:template>
 
@@ -145,6 +188,7 @@
       </tr>
     </table>
   </xsl:template>
+
   <xsl:template match="personsPlaces/tagList">
     <td>
       <table>
@@ -195,7 +239,7 @@
    </table>
  </xsl:template>
 
- <xsl:template match="album">
+ <xsl:template match="top/album">
    <td>
       <table>
 	<tr>

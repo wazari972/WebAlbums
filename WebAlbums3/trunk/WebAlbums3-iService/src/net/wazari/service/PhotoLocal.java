@@ -5,6 +5,7 @@
 
 package net.wazari.service;
 
+import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
@@ -21,6 +22,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
 import net.wazari.service.exchange.xml.photo.XmlPhotoList;
 
 /**
@@ -65,4 +67,7 @@ public interface PhotoLocal {
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException ;
+
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlPhotoAbout treatAbout(ViewSessionPhoto vSession) throws WebAlbumsServiceException ;
 }

@@ -98,7 +98,6 @@ function loadSinglePage(url) {
     if (url != undefined) {
         inPlaceSinglePage = jQuery.trim(inPlaceSinglePage) ;
     }
-    alert(">"+url+"/"+inPlaceSinglePage+"<")
     left = document.getElementById ("left")
     $(left).hide() ;
     left.id = "left-loading" ;

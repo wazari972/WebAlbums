@@ -48,6 +48,9 @@ public class Photos extends HttpServlet {
         if (special == Special.RANDOM) {
             output.random = photoService.treatRANDOM(vSession) ;
             return output ;
+        }else if (special == Special.ABOUT) {
+            output.about = photoService.treatAbout(vSession) ;
+            return output ;
         }
 
         if (Action.SUBMIT == action && vSession.isSessionManager()) {

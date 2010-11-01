@@ -5,7 +5,7 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.album.XmlAlbumAbout;
 import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
 import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
 import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
@@ -22,5 +22,6 @@ public class XmlAlbums {
     public XmlAlbumSelect select;
     public XmlAlbumEdit edit;
     public XmlAlbumDisplay display;
+    public XmlAlbumAbout about;
 
 }

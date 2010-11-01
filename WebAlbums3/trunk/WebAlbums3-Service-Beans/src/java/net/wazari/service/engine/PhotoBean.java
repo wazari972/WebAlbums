@@ -1,5 +1,6 @@
 package net.wazari.service.engine;
 
+import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import java.io.File;
 import java.util.NoSuchElementException;
@@ -44,6 +45,7 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoList;
@@ -481,7 +483,14 @@ public class PhotoBean implements PhotoLocal {
     public XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException {
 
         Photo enrPhoto = photoDAO.loadRandom(vSession);
+        if (enrPhoto == null) return null ;
         XmlPhotoRandom output = new XmlPhotoRandom() ;
+        
+        output.details = transformToDetails(vSession, enrPhoto) ;
+        return output ;
+    }
+
+    private XmlDetails transformToDetails(ViewSession vSession, Photo enrPhoto) throws WebAlbumsServiceException {
         XmlDetails details = new XmlDetails();
         details.photoId = enrPhoto.getId();
         details.description = enrPhoto.getDescription();
@@ -490,7 +499,17 @@ public class PhotoBean implements PhotoLocal {
         //tags de cette photo
         details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto, Box.NONE) ;
         details.albumId = enrPhoto.getAlbum().getId();
-        output.details = details ;
+
+        return details ;
+    }
+
+    public XmlPhotoAbout treatAbout(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
+        Photo enrPhoto = photoDAO.loadIfAllowed(vSession, vSession.getId());
+        if(enrPhoto == null) return null ;
+
+        XmlPhotoAbout output = new XmlPhotoAbout() ;
+        output.details = transformToDetails(vSession, enrPhoto) ;
+        
         return output ;
     }
 
