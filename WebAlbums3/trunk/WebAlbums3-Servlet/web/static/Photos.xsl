@@ -44,11 +44,6 @@
 	<xsl:apply-templates select="message"/>
         <xsl:value-of select="submit/message" />
         <xsl:value-of select="submit/exception" />
-	<xsl:if test="/webAlbums/affichage/@massedit">
-	  <input type="checkbox" class="massEdit" value="modif">
-	    <xsl:attribute name="name">chk<xsl:value-of select="details/photoId" /></xsl:attribute>
-	  </input>
-        </xsl:if>
 	<xsl:apply-templates select="details"/>
       </div>
     </div>

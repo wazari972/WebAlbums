@@ -23,7 +23,8 @@
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
-        <link href="static/styles.css"     rel="stylesheet" type="text/css" media="screen" />
+        <link href="static/design.css"     rel="stylesheet" type="text/css" media="screen" />
+        <link href="static/style.css"     rel="stylesheet" type="text/css" media="screen" />
         <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
         <style type="text/css">          body {
              <xsl:if test="not(/webAlbums/affichage/@background)">background: #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if>

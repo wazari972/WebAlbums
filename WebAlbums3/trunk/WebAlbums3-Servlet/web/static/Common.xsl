@@ -143,20 +143,18 @@
 
   <xsl:template match="page">
     <div class="item">
-      <div class="content">
-        <center>
-          <div class="pagination">
-              <xsl:apply-templates select="@previ"/>
-              <xsl:apply-templates select="@first"/>
-              <xsl:if test="@first"><span>...</span></xsl:if>
-              <xsl:apply-templates select="prev"/>
-              <span class="current"><xsl:value-of select="@current" /> </span>
-              <xsl:apply-templates select="next"/>
-              <xsl:if test="@last">... </xsl:if>
-              <xsl:apply-templates select="@last"/>
-              <xsl:apply-templates select="@nexti"/>
-            </div>
-        </center>
+      <div class="body">
+        <div class="pagination">
+          <xsl:apply-templates select="@previ"/>
+          <xsl:apply-templates select="@first"/>
+          <xsl:if test="@first"><span>...</span></xsl:if>
+          <xsl:apply-templates select="prev"/>
+          <span class="current"><xsl:value-of select="@current" /> </span>
+          <xsl:apply-templates select="next"/>
+          <xsl:if test="@last">... </xsl:if>
+          <xsl:apply-templates select="@last"/>
+          <xsl:apply-templates select="@nexti"/>
+        </div>
       </div>
     </div>
     <br/>
@@ -164,8 +162,8 @@
   </xsl:template>
 
   <xsl:template match="prev|next|@nexti|@previ|@first|@last">
-    <A>
-      <xsl:attribute name="HREF">
+    <a>
+      <xsl:attribute name="href">
 	<xsl:if test="/webAlbums/photos">
 	  Photos?albmCount=<xsl:value-of select="../url/albmCount" />
 &amp;album=<xsl:value-of select="../url/album" />
@@ -191,15 +189,15 @@
       <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')">
           <xsl:value-of select="." />
       </xsl:if>
-    </A>
+    </a>
   </xsl:template>
 
  <xsl:template name="print_return_link">
     <div class="item">
       <div class="content">   
-	<CENTER>
-	  <A>
-	    <xsl:attribute name="HREF">
+	<div class="return">
+	  <a>
+	    <xsl:attribute name="href">
 	      <xsl:if test="/webAlbums/photos/display">
 		Albums?count=<xsl:value-of select="/webAlbums/photos/display/album/@count" />#<xsl:value-of select="/webAlbums/photos/display/album/@id" />
 	      </xsl:if>
@@ -214,8 +212,8 @@
 	    <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">
 	      Retour au Choix
 	    </xsl:if>
-	  </A>
-	</CENTER>
+	  </a>
+	</div>
       </div>
     </div>
  </xsl:template>

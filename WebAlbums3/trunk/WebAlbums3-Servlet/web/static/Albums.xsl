@@ -33,7 +33,7 @@
       </div>
       <div class="content">
 	<h1>
-	  <A>
+	  <a>
 	    <xsl:if test="/webAlbums/albums">
 	      <xsl:attribute name="href">
 		Photos?albmCount=<xsl:value-of select="@count" />&amp;album=<xsl:value-of select="@id" />
@@ -45,42 +45,48 @@
 	      </xsl:attribute>
 	    </xsl:if> 
 	    <xsl:value-of select="title" />
-	  </A>
+	  </a>
 	</h1>
 	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
 	  <h2>
-	    <a rel="singlepage[no]">
-	      <xsl:attribute name="title"><xsl:value-of select="title" /> en visionneuse</xsl:attribute> 
-	      <xsl:attribute name="href">
-		Photos?albmCount=<xsl:value-of select="@count" />
-&amp;album=<xsl:value-of select="@id" />
-&amp;page=<xsl:value-of select="../photoList/page/@current" />
-&amp;special=VISIONNEUSE
-	    </xsl:attribute>
-	    <img src="static/images/slide.png" height="30px"/>
-	    </a>
-            <xsl:if test="not(/webAlbums/affichage/@remote)">
-                &#160;
-                <a class='fullscreen'
-                   href="#">
-                  <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
-                  <xsl:attribute name="rel">
-                     Photos?album=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../photoList/page/@current" />&amp;special=FULLSCREEN
-                  </xsl:attribute>
-                  <img src="static/images/out.png" height="30px"/>
-                </a>
-            </xsl:if>
-	    <xsl:if test="/webAlbums/affichage/@edit">
-	      &#160;
-	      <a title="Edition de l'album">
-		<xsl:attribute name="href">
-		  Albums?action=EDIT
-&amp;id=<xsl:value-of select="@id" />
-&amp;count=<xsl:value-of select="@count"/>
-		</xsl:attribute>
-		<img src="static/images/edit.png" height="30px"/>
-	      </a>
-	    </xsl:if>
+            <div class="title_opt">
+                <div class="album_opt">
+                    <a rel="singlepage[no]">
+                      <xsl:attribute name="title"><xsl:value-of select="title" /> en visionneuse</xsl:attribute>
+                      <xsl:attribute name="href">
+                        Photos?albmCount=<xsl:value-of select="@count" />
+        &amp;album=<xsl:value-of select="@id" />
+        &amp;page=<xsl:value-of select="../photoList/page/@current" />
+        &amp;special=VISIONNEUSE
+                    </xsl:attribute>
+                    <img src="static/images/slide.png" height="30px"/>
+                    </a>
+                    <xsl:if test="not(/webAlbums/affichage/@remote)">
+                        &#160;
+                        <a class='fullscreen'
+                           href="#">
+                          <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
+                          <xsl:attribute name="rel">
+                             Photos?album=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../photoList/page/@current" />&amp;special=FULLSCREEN
+                          </xsl:attribute>
+                          <img src="static/images/out.png" height="30px"/>
+                        </a>
+                    </xsl:if>
+                    <xsl:if test="/webAlbums/affichage/@edit">
+                        <div class="edit_opt">
+                          &#160;
+                          <a class="edit" title="Edition de l'album">
+                            <xsl:attribute name="href">
+                                Albums?action=EDIT
+        &amp;id=<xsl:value-of select="@id" />
+        &amp;count=<xsl:value-of select="@count"/>
+                            </xsl:attribute>
+                            Edit
+                          </a>
+                       </div>
+                    </xsl:if>
+                </div>
+            </div>
 	  </h2>
 	</xsl:if>
 

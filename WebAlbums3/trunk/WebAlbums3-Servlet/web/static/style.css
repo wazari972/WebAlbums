@@ -1,0 +1,82 @@
+/** **** **/
+
+/* Kevin  */
+/* Pouget */
+
+/** **** **/
+
+.exif_tooltip {
+    display: none;        /* required */
+    position: absolute;   /* required */
+    padding: 10px;
+    border: 2px solid black;
+    background-color: #58ACFA;
+}
+
+.cloud_tooltip {
+    display: none;        /* required */
+    position: absolute;   /* required */
+    padding: 10px;
+    border: 2px solid black;
+    background-color: #58ACFA;
+}
+
+.album_tooltip {
+    display: none;        /* required */
+    position: absolute;   /* required */
+    padding: 10px;
+    border: 2px solid black;
+    background-color: #58ACFA;
+}
+
+
+.details {
+    position: relative;
+    background-color: #ffff00;
+    border: 2px solid black;
+    width: 100%;
+    height: 250px;
+    overflow:hidden;
+}
+
+.details .pict {
+    float: left;
+    width: 250px;
+    height: 250px;
+}
+.details .pict img{
+    width: 100%;
+}
+
+.details .info {
+    margin-left:260px;
+    background-color: #A8ACFA;
+}
+
+.details .info .visibility {
+    float: right;
+}
+
+.details .info .tags {
+}
+
+.details .info .option {
+}
+
+.details .info .options .edit {
+    float: left;
+}
+
+.details .info .options .edit a .edit {
+    display:block;
+    background: url(images/edit.png);
+    text-indent:-9999px;
+    height: 48px;
+    width: 48px;
+}
+
+.details .info .options .title {
+}
+
+.details .info .options .album {
+}
