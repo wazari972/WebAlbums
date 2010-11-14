@@ -17,6 +17,7 @@ Feel free to use and modify but please provide credits.
 #############################################################
 */
 
+
 *
 {
     margin: 0px;
@@ -166,7 +167,7 @@ body {
 }
 
 #left {
-    width: 550px;
+    width: 573px;
     padding-left: 20px;
     padding-top: 30px;
 }
@@ -194,7 +195,6 @@ body {
 
 /* item */
 .item {clear: left;}
-
 .item .date {
     background: url(images/bgdate.gif) no-repeat;
     color: #FDD;
@@ -205,10 +205,9 @@ body {
 }
 .item .date div {padding-top: 4px;}
 .item .date span {font: normal 1.3em serif;}
-
 .item .content {
     float: left;
-    
+    width: 450px;
 }
 .item h1 {
     background: #567300;
@@ -217,7 +216,12 @@ body {
     padding-left: 16px;
 }
 
-.item .body {
-    padding: 5px 5px;
+.item a.edit {
+    background: url(images/edit.png) no-repeat;
+    height: 48px;
+    width: 48px;
+    float: left;
+    margin-left: -36px;
 }
 
+.item .body {padding: 12px 18px;}
