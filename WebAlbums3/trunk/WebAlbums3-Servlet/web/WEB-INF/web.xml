@@ -20,6 +20,7 @@
             <url-pattern>/Photos</url-pattern>
             <url-pattern>/Tags</url-pattern>
             <url-pattern>/Images</url-pattern>
+            <url-pattern>/Maint</url-pattern>
             <http-method>GET</http-method>
             <http-method>POST</http-method>
             <http-method>HEAD</http-method>

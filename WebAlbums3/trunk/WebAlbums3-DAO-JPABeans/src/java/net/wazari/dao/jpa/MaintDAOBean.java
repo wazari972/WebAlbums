@@ -77,7 +77,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
 
         cq.where(cb.equal(albm.get(JPAAlbum_.theme).get(JPATheme_.id), 5)) ;
     }
-
+    
     @Override
     public void treatDumpStats() {
         Statistics stats = ((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory().getStatistics();

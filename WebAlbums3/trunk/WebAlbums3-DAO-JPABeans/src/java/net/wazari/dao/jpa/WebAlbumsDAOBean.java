@@ -36,6 +36,7 @@ public class WebAlbumsDAOBean {
     public static final String PERSISTENCE_UNIT_MySQL_Prod = "WebAlbums-MySQL" ;
     public static final String PERSISTENCE_UNIT_MySQL_Simu = "WebAlbums-MySQL-Test" ;
     public static final String PERSISTENCE_UNIT_MySQL_Test = "WebAlbums-MySQL-Test2" ;
+    public static final String PERSISTENCE_UNIT_MySQL_StandAlone = "WebAlbums-MySQL-StandAlone" ;
 
     public static final String PERSISTENCE_UNIT_Prod = PERSISTENCE_UNIT_MySQL_Prod ;
     public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Prod ;

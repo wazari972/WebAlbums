@@ -11,6 +11,7 @@ package net.wazari.service.exchange;
  */
 public interface ViewSessionMaint extends ViewSession {
     enum MaintAction {
+        BENCHMARK,
         EXPORT_XML, IMPORT_XML,
         UPDATE
     ,   UPDATE_DAO, PRINT_STATS, TRUNCATE_DB}

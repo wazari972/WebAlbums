@@ -44,11 +44,13 @@ public class Maint extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        log.info("dispatch") ;
         dispatcher.treat(this.getServletContext(), Page.MAINT, request, response);
     }
 
     public XmlMaint treatMaint(ViewSessionMaint vSession) {
         try {
+            log.info("treat maint") ;
             return maintService.treatMAINT(vSession) ;
         } catch (Exception e) {
             log.warn( "An exception occured in treatMaint:{}", e.getMessage());
@@ -67,6 +69,7 @@ public class Maint extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        log.info("do get") ;
         processRequest(request, response);
     } 
 
@@ -80,6 +83,7 @@ public class Maint extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        log.info("do post") ;
         processRequest(request, response);
     }
 

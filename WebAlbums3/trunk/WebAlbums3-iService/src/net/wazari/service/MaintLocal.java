@@ -6,6 +6,7 @@
 package net.wazari.service;
 
 import javax.ejb.Local;
+import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.xml.XmlMaint;
 
@@ -15,5 +16,5 @@ import net.wazari.service.exchange.xml.XmlMaint;
  */
 @Local
 public interface MaintLocal {
-    XmlMaint treatMAINT(ViewSessionMaint vSession);
+    XmlMaint treatMAINT(ViewSessionMaint vSession) throws WebAlbumsServiceException ;
 }
