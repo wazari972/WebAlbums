@@ -12,7 +12,7 @@
     <security-constraint>
         <display-name>Authenticate users</display-name>
         <web-resource-collection>
-            <web-resource-name>WebAlbums3-Servlets</web-resource-name>
+            <web-resource-name>WebAlbums3</web-resource-name>
             <description/>
             <url-pattern>/Index</url-pattern>
             <url-pattern>/Choix</url-pattern>

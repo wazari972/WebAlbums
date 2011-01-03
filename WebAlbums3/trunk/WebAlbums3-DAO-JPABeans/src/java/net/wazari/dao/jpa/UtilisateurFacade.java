@@ -70,7 +70,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
             .append(" FROM JPAPhoto p, JPAUtilisateur u ")
             .append(" WHERE u.id = p.droit ")
             .append(" AND p.album.id = :albumId ")
-            .append(" AND p.droit != null AND p.droit != 0");
+            .append(" AND p.droit is not null AND p.droit != 0");
         return em.createQuery(rq.toString())
             .setParameter("albumId", albumId)
             .setHint("org.hibernate.cacheable", true)

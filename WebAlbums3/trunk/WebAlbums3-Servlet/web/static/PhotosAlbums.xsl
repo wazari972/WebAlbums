@@ -12,6 +12,12 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="details">
+          <xsl:if test="../exif">
+      <span class="exif_tooltip">
+        <xsl:attribute name="id">exif-content-<xsl:value-of select="photoId" /></xsl:attribute>
+        <xsl:apply-templates select="../exif" />
+      </span>
+    </xsl:if>
       <div class="details">
         <div class="pict">
             <a>
@@ -26,7 +32,7 @@
                   Photos?albmCount=<xsl:value-of select="../@count" />&amp;album=<xsl:value-of select="../@id" />
                 </xsl:if>
               </xsl:attribute>
-              <img>
+              <img class="photo">
                 <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId" /></xsl:attribute>
                 <xsl:attribute name="alt">
                   <xsl:value-of select="title" />
@@ -49,17 +55,10 @@
             <xsl:if test="/webAlbums/affichage/@massedit">
                 <div class="edit">
                     <input type="checkbox" class="massEdit" value="modif">
-                        <xsl:attribute name="name">chk<xsl:value-of select="details/photoId" /></xsl:attribute>
+                        <xsl:attribute name="name">chk<xsl:value-of select="photoId" /></xsl:attribute>
                     </input>
                 </div>
             </xsl:if>
-                        <xsl:if test="../exif">
-              <span class="exif_tooltip">
-                <xsl:attribute name="id">exif-content-<xsl:value-of select="photoId" /></xsl:attribute>
-                <xsl:apply-templates select="../exif" />
-              </span>
-            </xsl:if>
-
             <xsl:apply-templates select="tagList">
               <xsl:with-param name="style">none</xsl:with-param>
               <xsl:with-param name="mode">TAG_USED</xsl:with-param>
@@ -101,26 +100,26 @@
                         <a title="Edition">
                           <xsl:attribute name="href">
                             <xsl:if test="/webAlbums/photos">
-                              Photos?action=EDIT
-    &amp;id=<xsl:value-of select="photoId" />
-    &amp;count=<xsl:value-of select="../@count"	/>
-    &amp;albmCount=<xsl:value-of select="../../../album/@count" />
-    &amp;album=<xsl:value-of select="../../../album/@id"	/>
+Photos?action=EDIT
+&amp;id=<xsl:value-of select="photoId" />
+&amp;count=<xsl:value-of select="../@count"	/>
+&amp;albmCount=<xsl:value-of select="../../../album/@count" />
+&amp;album=<xsl:value-of select="../../../album/@id"	/>
                               </xsl:if>
                               <xsl:if test="/webAlbums/tags">
-                                Tags?action=EDIT
-    &amp;id=<xsl:value-of select="photoId" />
+Tags?action=EDIT
+&amp;id=<xsl:value-of select="photoId" />
                                 <xsl:for-each select="/webAlbums/tags/display/title/tagList/*">
-    &amp;tagAsked=<xsl:value-of select="@id" />
+&amp;tagAsked=<xsl:value-of select="@id" />
                                 </xsl:for-each>
                                 <xsl:if test="/webAlbums/*/page/@current">
-    &amp;page=<xsl:value-of select="/webAlbums/*/page/@current" />
+&amp;page=<xsl:value-of select="/webAlbums/*/page/@current" />
                                 </xsl:if>
                               </xsl:if>
                               <xsl:if test="/webAlbums/albums">
-                                  Albums?action=EDIT
-    &amp;id=<xsl:value-of select="../@id" />
-    &amp;count=<xsl:value-of select="../@count"/>
+Albums?action=EDIT
+&amp;id=<xsl:value-of select="../@id" />
+&amp;count=<xsl:value-of select="../@count"/>
                               </xsl:if>
                           </xsl:attribute>
                           <img src="static/images/edit.png" height="30px"/>

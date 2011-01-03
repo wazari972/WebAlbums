@@ -10,6 +10,7 @@ div .pagination {
     margin-left: auto;
     margin-right: auto;
     width: 500px;
+    text-align: center;
 }
 
 div .pagination a {
@@ -31,7 +32,7 @@ div .pagination a:hover, div.meneame a:active {
 div .pagination span.current {
     margin-right:3px;
     padding:2px 6px;
-
+    border: 1px solid #dedfde;
     font-weight: bold;
     color: #ff0084;
 }

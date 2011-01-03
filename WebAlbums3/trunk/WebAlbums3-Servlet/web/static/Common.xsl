@@ -123,7 +123,7 @@
     <xsl:param name="to_add"></xsl:param>
     
     <xsl:if test="../return_to/name = 'Photos'">
-      <xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
+<xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
 &amp;id=<xsl:value-of select="@id" />
 &amp;count=<xsl:value-of select="../return_to/count" />
 &amp;album=<xsl:value-of select="../return_to/album" />
@@ -131,7 +131,7 @@
 #<xsl:value-of select="@id" />
    </xsl:if>
    <xsl:if test="../return_to/name = 'Tags'">
-     <xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
+<xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
 &amp;id=<xsl:value-of select="@id" />
 &amp;page=<xsl:value-of select="../return_to/page" />
 <xsl:for-each select="../return_to/tagsAsked">
@@ -149,7 +149,7 @@
           <xsl:apply-templates select="@first"/>
           <xsl:if test="@first"><span>...</span></xsl:if>
           <xsl:apply-templates select="prev"/>
-          <span class="current"><xsl:value-of select="@current" /> </span>
+          <xsl:if test="@first or @last or prev or next"><span class="current"><xsl:value-of select="@current" /> </span></xsl:if>
           <xsl:apply-templates select="next"/>
           <xsl:if test="@last">... </xsl:if>
           <xsl:apply-templates select="@last"/>
@@ -165,15 +165,13 @@
     <a>
       <xsl:attribute name="href">
 	<xsl:if test="/webAlbums/photos">
-	  Photos?albmCount=<xsl:value-of select="../url/albmCount" />
+Photos?albmCount=<xsl:value-of select="../url/albmCount" />
 &amp;album=<xsl:value-of select="../url/album" />
 &amp;page=<xsl:value-of select="." />
 	</xsl:if>
-	<xsl:if test="/webAlbums/albums">
-	  Albums?page=<xsl:value-of select="."/>
-	</xsl:if>
+	<xsl:if test="/webAlbums/albums">Albums?page=<xsl:value-of select="."/></xsl:if>
 	<xsl:if test="/webAlbums/tags">
-	  Tags?
+Tags?
 <xsl:for-each select="../url/tagAsked">
 &amp;tagAsked=<xsl:value-of select="." />
 </xsl:for-each>

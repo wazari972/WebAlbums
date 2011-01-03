@@ -143,7 +143,7 @@ public class WebPageBean implements WebPageLocal {
             page.previ = current -1 ;
         }
 
-        if (current != last -1) {
+        if (last != 0 && current != last -1) {
             page.nexti = current +1 ;
         }
         

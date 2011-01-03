@@ -158,7 +158,7 @@ public class FilesFinder {
             Album enrAlbum;
 
             if (dirName != null && dirName.length() > 11) {
-                String nom = StringUtil.escapeHTML(dirName.substring(11));
+                String nom = dirName.substring(11);
                 log.info("## NOM  : " + nom);
                 try {
                     strDate = album.getName().substring(0, 10);

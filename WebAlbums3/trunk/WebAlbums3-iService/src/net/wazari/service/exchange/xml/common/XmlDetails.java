@@ -18,7 +18,7 @@ public class XmlDetails {
     public Integer photoId;
     public String miniWidth;
     public String miniHeight;
-    public List<XmlUtilisateur> userInside;
+    public List<String> userInside;
     public String description;
     public Integer albumId;
     public String user;

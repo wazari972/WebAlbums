@@ -23,7 +23,7 @@
 
 
   <xsl:template match="photoList">
-    <form method="post">
+    <form method="post" id="massEditForm">
       <xsl:attribute name="action">
 	<xsl:call-template name="get_validate_addr"/>
       </xsl:attribute>

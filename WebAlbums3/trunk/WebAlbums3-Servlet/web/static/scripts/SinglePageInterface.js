@@ -90,7 +90,7 @@ function loadSinglePage(url) {
         cache.id = "left" ;
         cache.innerHTML = "" ;
     }
-    $(window).scrollTop(0) ;
+    
     if (url == inPlaceSinglePage) {
         return ;
     }
@@ -155,6 +155,7 @@ function loadSinglePageBottomEnd(data) {
     $(left).fadeIn() ;
     enableSinglePage() ;
     inPlaceSinglePage_lock = null ;
+    $(window).scrollTop(0) ;
 }
 
 function checkSinglePageAnchor() {
@@ -171,16 +172,36 @@ function loadBookmarkedSinglePage() {
         loadSinglePage(currentSinglePage) ;
     }
 }
+
 function enableSinglePage() {
     $('a').each(function(index) {
+        
         if ($(this).attr("SinglePaged")) return ;
         $(this).attr("SinglePaged", true) ;
 
         if ($(this).attr("href") == undefined) return ;
         if ($(this).attr("href").indexOf("javascript") == 0) return ;
-        if ($(this).attr("rel").indexOf("shadowbox") == 0) return ;
-        if ($(this).attr("rel").indexOf("singlepage[no]") == 0) return ;
-    
+        if ($(this).attr("href").indexOf("#") == 0) return ;
+        if ($(this).attr("rel") != undefined &&
+            $(this).attr("rel").indexOf("shadowbox") == 0) return ;
+
+
+        parents = $(this).parent("div") ;
+        for (var i = -1; i < parents.length; i++) {
+
+            if (i == -1) {
+                parent = $(this) ;
+            } else {
+                parent = parents.get(i) ;
+            }
+
+            if (parent.attr != undefined &&
+                parent.attr("rel") != undefined &&
+                parent.attr("rel").indexOf("singlepage[no]") == 0) {
+                return ;
+            }
+        }
+        
         $(this).click(function() {
             var url = jQuery.trim($(this).attr("href")) ;
             if (singlePageCached(url)) {
@@ -188,7 +209,6 @@ function enableSinglePage() {
             } else {
                 loadSinglePage(url) ;
             }
-
             document.location.href = ANCHOR_PREFIX+url;
             return false ;
         }) ;

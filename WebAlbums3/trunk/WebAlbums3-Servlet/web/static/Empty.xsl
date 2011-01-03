@@ -70,6 +70,7 @@
     <br/>
     <p><label for="albmName"> et ayant pour nom </label> <input type="text" id="albmName"/></p>
     <script>
+     $("#slider-range").attr("rel", "singlepage[no]");
      $("#slider-range").slider(sliderOption);
      $("#fromDate").text(printDate(<xsl:value-of select="album[last()]/@time"/>));
      $("#toDate").text(printDate(<xsl:value-of select="album/@time"/>));
@@ -328,13 +329,13 @@
 		<a title="Retour à la normal">
 		  <xsl:attribute name="href">
 		    <xsl:if test="/webAlbums/photos">
-		      Photos?
+Photos?
 albmCount=<xsl:value-of select="album/@count" />
 &amp;album=<xsl:value-of select="album/@id" />
 &amp;page=<xsl:value-of select="photoList/page/@current"/>
 		    </xsl:if>
 		    <xsl:if test="/webAlbums/tags">
-		      Tags?
+Tags?
 <xsl:for-each select="title/tagList/*">
 &amp;tagAsked=<xsl:value-of select="@id"/>
 </xsl:for-each>
@@ -395,14 +396,14 @@ albmCount=<xsl:value-of select="album/@count" />
       <a>
 	<xsl:attribute name="href">
 	  <xsl:if test="/webAlbums/photos">
-	    Photos?
+Photos?
 &amp;albmCount=<xsl:value-of select="../url/albmCount" />
 &amp;album=<xsl:value-of select="../url/album" />
 &amp;page=<xsl:value-of select="." />
 &amp;special=VISIONNEUSE
 	  </xsl:if>
 	  <xsl:if test="/webAlbums/tags">
-	    Tags?
+Tags?
 &amp;tagAsked=<xsl:value-of select="../url/tagAsked"/>
 &amp;page=<xsl:value-of select="."/>
 &amp;special=VISIONNEUSE

@@ -159,6 +159,7 @@ public class TagBean implements TagLocal {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagCloud", log);
         XmlTagCloud output = new XmlTagCloud();
 
+        //what's the max number of pict per tag ?
         long max = 0;
         Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession);
         for (long current : map.values()) {
@@ -170,7 +171,7 @@ public class TagBean implements TagLocal {
         Tag enrCurrentTag = null;
         Stack<PairTagXmlBuilder> enrSonStack = new Stack<PairTagXmlBuilder>();
         while (!map.isEmpty()) {
-            //if we've got no --parent-- Tag to treat
+            //if we've got no --parent-- tag to treat
             if (enrCurrentTag == null) {
                 //take the first of the map
                 enrCurrentTag = map.keySet().iterator().next();
@@ -192,6 +193,10 @@ public class TagBean implements TagLocal {
                 Long nbElts = map.get(pair.tag);
                 if (nbElts == null) {
                     nbElts = 0L;
+                    if (pair.tag.getSonList().isEmpty()) {
+                        log.info("Get rid of entry {}", pair.tag.getNom());
+                        continue ;
+                    }
                 } else {
                     Object removed = map.remove(pair.tag);
                     log.info("Removing entry {}:{} ", pair.tag.getNom(), removed);

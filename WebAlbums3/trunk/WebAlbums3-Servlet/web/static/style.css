@@ -11,6 +11,7 @@
     padding: 10px;
     border: 2px solid black;
     background-color: #58ACFA;
+    z-index:52;
 }
 
 .cloud_tooltip {
@@ -19,6 +20,7 @@
     padding: 10px;
     border: 2px solid black;
     background-color: #58ACFA;
+    z-index:52;
 }
 
 .album_tooltip {
@@ -27,6 +29,7 @@
     padding: 10px;
     border: 2px solid black;
     background-color: #58ACFA;
+    z-index:52;
 }
 
 
