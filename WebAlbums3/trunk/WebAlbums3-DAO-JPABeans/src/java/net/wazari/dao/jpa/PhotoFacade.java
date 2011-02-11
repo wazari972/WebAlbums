@@ -29,7 +29,7 @@ import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAPhoto;
-import net.wazari.dao.jpa.entity.metamodel.JPAPhoto_;
+import net.wazari.dao.jpa.entity.JPAPhoto_;
 
 /**
  *

@@ -16,8 +16,8 @@ import javax.persistence.criteria.Root;
 import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.jpa.entity.JPAAlbum;
-import net.wazari.dao.jpa.entity.metamodel.JPAAlbum_;
-import net.wazari.dao.jpa.entity.metamodel.JPATheme_;
+import net.wazari.dao.jpa.entity.JPAAlbum_;
+import net.wazari.dao.jpa.entity.JPATheme_;
 import org.hibernate.ejb.EntityManagerImpl;
 import org.hibernate.stat.Statistics;
 

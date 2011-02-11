@@ -15,8 +15,8 @@ import javax.persistence.criteria.Root;
 import junit.framework.Assert;
 import net.wazari.dao.jpa.WebAlbumsDAOBean;
 import net.wazari.dao.jpa.entity.JPAAlbum;
-import net.wazari.dao.jpa.entity.metamodel.JPAAlbum_;
-import net.wazari.dao.jpa.entity.metamodel.JPATheme_;
+import net.wazari.dao.jpa.entity.JPAAlbum_;
+import net.wazari.dao.jpa.entity.JPATheme_;
 import org.junit.Before;
 import org.junit.Test;
 

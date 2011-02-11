@@ -20,8 +20,8 @@ import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAPhoto;
-import net.wazari.dao.jpa.entity.metamodel.JPAAlbum_;
-import net.wazari.dao.jpa.entity.metamodel.JPAPhoto_;
+import net.wazari.dao.jpa.entity.JPAAlbum_;
+import net.wazari.dao.jpa.entity.JPAPhoto_;
 
 /**
  *
