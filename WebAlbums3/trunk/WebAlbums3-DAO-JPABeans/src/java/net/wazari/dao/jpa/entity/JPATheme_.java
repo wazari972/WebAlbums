@@ -1,4 +1,4 @@
-package net.wazari.dao.jpa.entity.metamodel;
+package net.wazari.dao.jpa.entity;
 
 import net.wazari.dao.jpa.entity.*;
 import javax.persistence.metamodel.ListAttribute;
