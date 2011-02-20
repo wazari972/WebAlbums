@@ -60,7 +60,8 @@ function loadSinglePageCache(url) {
         loadSinglePage(url, false) ;
     } else {
         var left = document.getElementById ("left");
-        left.parentNode.removeChild(left) ;
+        if (left != null)
+            left.parentNode.removeChild(left) ;
         $(cache).show() ;
         cache.id = "left" ;
     }
@@ -98,11 +99,12 @@ function loadSinglePage(url) {
     if (url != undefined) {
         inPlaceSinglePage = jQuery.trim(inPlaceSinglePage) ;
     }
-    left = document.getElementById ("left")
-    $(left).hide() ;
-    left.id = "left-loading" ;
+    //left = document.getElementById ("left")
+    //$(left).hide() ;
+    //left.id = "left-loading" ;
     
-    var loader = document.getElementById ("loader") ;
+    var loader = null ;
+    //loader = document.getElementById ("loader") ;
     if (loader != null) {
         loader.id = "left" ;
         $(loader).fadeIn() ;

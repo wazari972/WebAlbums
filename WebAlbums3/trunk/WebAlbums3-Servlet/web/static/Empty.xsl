@@ -222,11 +222,31 @@
 
  <xsl:template match="year">
      <div style="overflow: auto;">
-        <b><xsl:value-of select="@year"/></b>
+        <b><xsl:value-of select="year"/></b>
         <table>
+            <tr>
             <xsl:apply-templates select="album" />
+            </tr>
         </table>
      </div>
+ </xsl:template>
+
+<xsl:template match="year/album">
+    <td>
+        <a>
+            <xsl:attribute name="href">
+                Photos?id=<xsl:value-of select="@id"/>&amp;count=<xsl:value-of select="@count"/>
+             </xsl:attribute>
+            <img width="100px">
+                <xsl:attribute name="src">
+                    Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/>
+                </xsl:attribute>
+                <xsl:attribute name="title">
+                <xsl:value-of select="name"/>
+                </xsl:attribute>
+            </img>
+        </a>
+    </td>
  </xsl:template>
 
  <xsl:template match="/webAlbums/albums/top">
