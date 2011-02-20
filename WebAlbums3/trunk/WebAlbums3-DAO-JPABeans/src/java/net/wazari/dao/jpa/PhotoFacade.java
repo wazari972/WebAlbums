@@ -197,7 +197,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
         String rq = "SELECT o FROM JPAPhoto o";
         return (List<Photo>) em.createQuery(rq)
                 .setHint("org.hibernate.cacheable", true)
-                .setHint("org.hibernate.readOnly", true)
+                .setHint("org.hibernate.readOnly", false)
                 .getResultList();
     }
 

@@ -44,7 +44,6 @@ import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbumTop;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
 import net.wazari.service.exchange.xml.common.XmlFrom;
-import net.wazari.service.exchange.xml.common.XmlUtilisateur;
 import net.wazari.util.system.FilesFinder;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;

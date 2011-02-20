@@ -4,20 +4,17 @@
  */
 package net.wazari.dao.jpa;
 
+import java.io.File;
+import java.text.Normalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.dao.jpa.entity.JPAAlbum;
-import net.wazari.dao.jpa.entity.JPAAlbum_;
-import net.wazari.dao.jpa.entity.JPATheme_;
+import net.wazari.dao.entity.Photo;
 import org.hibernate.ejb.EntityManagerImpl;
 import org.hibernate.stat.Statistics;
 
@@ -65,18 +62,30 @@ public class MaintDAOBean implements MaintFacadeLocal {
         treatTruncateDB(protect);
         treatImportXML(protect, path);
     }
-
+    public static String sansAccents(String source) {
+            return Normalizer.normalize(source, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
+    }
     @Override
     public void treatUpdate() {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        int count = 0 ;
+        int countsans = 0 ;
+        for (Photo enrPhoto : photoDAO.findAll()) {
+            String pathSansAccent = sansAccents(enrPhoto.getPath()) ;
+            if (pathSansAccent.equals(enrPhoto.getPath())) {
+                countsans++ ;
+                continue ;
+            }
 
-        CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
-        Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
-
-        log.warn("_+_"+JPAAlbum_.id+"_+_") ;
-
-        cq.where(cb.equal(albm.get(JPAAlbum_.theme).get(JPATheme_.id), 5)) ;
+            log.info("change from {} to {}", enrPhoto.getPath(), pathSansAccent) ;
+            enrPhoto.setPath(pathSansAccent) ;
+            photoDAO.edit(enrPhoto) ;
+            count++ ;
+        }
+        log.info("count: {}", count);
+        log.info("countsans: {}", countsans);
+        em.flush();
     }
+
     
     @Override
     public void treatDumpStats() {
