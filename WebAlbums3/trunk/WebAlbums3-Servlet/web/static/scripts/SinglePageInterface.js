@@ -55,6 +55,7 @@ function Node_getElementById(node, id) {
 }
 
 function loadSinglePage(url) {
+    
     if (url == undefined) {
         url = getCurrentPage() ;
         var pos = url.indexOf('?') ;
@@ -73,34 +74,38 @@ function loadSinglePage(url) {
     
     var left = document.getElementById ("left") ;
     if (left == null) {
-        alert("No left block avaiblable, please reload the page")
+        alert("No left block available, please reload the page")
         return ;
     }
     //save the left block if necessary
     if (singlePageCached(oldURL)) {
-        var cache = document.getElementById(oldURL) ;
-        //create the new cache block if necessary
-        if (cache == undefined) {
-            cache = document.createElement("div") ;
-            cache.id = oldURL ;
-            left.parentNode.insertBefore(cache, left) ;
+        var cacheTmp = document.getElementById("cacheTmp") ;
+        if (cacheTmp == undefined) {
+            cacheTmp = document.createElement("div") ;
+            cacheTmp.id = "cacheTmp" ;
+            left.parentNode.insertBefore(cacheTmp, left) ;
         }
-        
-        $(cache).hide() ;
-        cache.innerHTML = left.innerHTML ;
+        //duplicate left into cacheTmp
+        cacheTmp.innerHTML = left.innerHTML ;
+        cacheTmp.id = "left" ;
+        //save the old left as old url cache
+        left.id = oldURL ;
     }
     document.location.href = ANCHOR_PREFIX+url;
+    inPlaceSinglePage = $.trim(url) ;
+    
     if (singlePageCached(url)) {
         var cache = document.getElementById(url) ;
         if (cache != undefined) {
-            $("#left").fadeOut() ;
+            $(left).hide() ;
+            left.id = "dromadaire" ;
             cache.id = 'left' ;
-            $(cache).fadeIn() ;
+            $(cache).show() ;
+            $("#dromadaire").remove() ;
+            
             return ;
         }
     }
-    inPlaceSinglePage = $.trim(url) ;
-    alert("ajax call to "+url) ;
     $("body").css("cursor", "progress");
     $.ajax({
         url:url,
@@ -202,5 +207,5 @@ loadBookmarkedSinglePage() ;
 
 
 $().ready(function(){
-   setInterval("checkSinglePageAnchor()", 3000);
+   setInterval("checkSinglePageAnchor()", 30000);
 });
