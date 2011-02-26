@@ -54,66 +54,58 @@ function Node_getElementById(node, id) {
     return null;
 }
 
-function loadSinglePageCache(url) {
-    var cache = document.getElementById(url)  ;
-    if (cache == undefined) {
-        loadSinglePage(url, false) ;
-    } else {
-        var left = document.getElementById ("left");
-        if (left != null)
-            left.parentNode.removeChild(left) ;
-        $(cache).show() ;
-        cache.id = "left" ;
-    }
-}
-
 function loadSinglePage(url) {
-    inPlaceSinglePage_lock = 1 ;
-    var oldURL = getCurrentPage() ;
+    if (url == undefined) {
+        url = getCurrentPage() ;
+        var pos = url.indexOf('?') ;
+        if (pos != -1) {
+            url = url.substring(0, pos) ;
+        }
 
-    var left  ;
-    if (singlePageCached(oldURL)) {
-        left = document.getElementById ("left") ;
-        var cache = document.getElementById(oldURL) ;
-        if (cache == undefined) {
-            //create the cache
-            cache = document.createElement("div") ;
-            cache.id = oldURL ;
-            left.parentNode.insertBefore(cache, left) ;
-        }   
-        //cache.innerHTML = document.getElementById ("left").innerHTML ;
-
-        //save the cache
-        $(left).hide() ;
-        left.id = cache.id ;
-        
-        //recreate a "left" block
-        cache.id = "left" ;
-        cache.innerHTML = "" ;
     }
-    
+    inPlaceSinglePage_lock = 1 ;
+
     if (url == inPlaceSinglePage) {
         return ;
     }
-    inPlaceSinglePage = url ;
-    if (url != undefined) {
-        inPlaceSinglePage = jQuery.trim(inPlaceSinglePage) ;
-    }
-    //left = document.getElementById ("left")
-    //$(left).hide() ;
-    //left.id = "left-loading" ;
+
+    var oldURL = getCurrentPage() ;
     
-    var loader = null ;
-    //loader = document.getElementById ("loader") ;
-    if (loader != null) {
-        loader.id = "left" ;
-        $(loader).fadeIn() ;
-    } else {
-        //alert("No loader to show") ;
+    var left = document.getElementById ("left") ;
+    if (left == null) {
+        alert("No left block avaiblable, please reload the page")
+        return ;
     }
+    //save the left block if necessary
+    if (singlePageCached(oldURL)) {
+        var cache = document.getElementById(oldURL) ;
+        //create the new cache block if necessary
+        if (cache == undefined) {
+            cache = document.createElement("div") ;
+            cache.id = oldURL ;
+            left.parentNode.insertBefore(cache, left) ;
+        }
+        
+        $(cache).hide() ;
+        cache.innerHTML = left.innerHTML ;
+    }
+    document.location.href = ANCHOR_PREFIX+url;
+    if (singlePageCached(url)) {
+        var cache = document.getElementById(url) ;
+        if (cache != undefined) {
+            $("#left").fadeOut() ;
+            cache.id = 'left' ;
+            $(cache).fadeIn() ;
+            return ;
+        }
+    }
+    inPlaceSinglePage = $.trim(url) ;
+    alert("ajax call to "+url) ;
+    $("body").css("cursor", "progress");
     $.ajax({
         url:url,
         success:function(data){
+            $("body").css("cursor", "auto");
             loadSinglePageBottomEnd(data) ;
         },
         async:true
@@ -123,37 +115,28 @@ function loadSinglePage(url) {
 function loadSinglePageBottomEnd(data) {
     var xml_doc = data;
 
-    var left = document.getElementById ("left-loading");
+    var left = document.getElementById ("left");
     if (left == null) {
-        left = document.getElementById ("left");
-        if (left == null) return ;
+        alert("could not locate the left div ...")
+        return ;
     }
-
-    left.innerHTML = "";
-
+    
     // Use object detection to find out if we have
     // Firefox/Mozilla/Opera or IE XSLT support.
     if (typeof XSLTProcessor != "undefined") {
         var xsl_proc = new XSLTProcessor ();
         xsl_proc.importStylesheet (displayXsl);
 
-        var node = xsl_proc.transformToFragment (xml_doc, document);
-        var page = Node_getElementById(node, "left") ;
+        var newPage = xsl_proc.transformToFragment (xml_doc, document);
+        var newLeft = Node_getElementById(newPage, "left") ;
         var parent = left.parentNode ;
-        parent.insertBefore(page, left) ;
+        parent.insertBefore(newLeft, left) ;
         parent.removeChild(left) ;
+        left = newLeft ;
     } else {
         alert("underfined XSLT processor") ;
     }
-    var loader = document.getElementById ("left") ;
-    if (loader != null) {
-        loader.id = "loader" ;
-        $(loader).hide() ;
-    } else {
-        //alert("No loader to hide")
-    }
-
-    left.id = "left";
+    
     $(left).fadeIn() ;
     enableSinglePage() ;
     inPlaceSinglePage_lock = null ;
@@ -161,10 +144,12 @@ function loadSinglePageBottomEnd(data) {
 }
 
 function checkSinglePageAnchor() {
-    var currentSinglePage = getCurrentSinglePage() ;
     if (inPlaceSinglePage_lock != null) return ;
+    
+    var currentSinglePage = getCurrentSinglePage() ;
+    //alert("test prev/next")
     if (currentSinglePage != inPlaceSinglePage) {
-        //alert("previous/next page detected "+inPlaceSinglePage+" -> "+ currentSinglePage)
+        alert("previous/next page detected "+inPlaceSinglePage+" -> "+ currentSinglePage)
         loadSinglePage(currentSinglePage) ;
     }
 }
@@ -206,12 +191,7 @@ function enableSinglePage() {
         
         $(this).click(function() {
             var url = jQuery.trim($(this).attr("href")) ;
-            if (singlePageCached(url)) {
-                loadSinglePageCache(url) ;
-            } else {
-                loadSinglePage(url) ;
-            }
-            document.location.href = ANCHOR_PREFIX+url;
+            loadSinglePage(url) ;
             return false ;
         }) ;
     });
@@ -222,5 +202,5 @@ loadBookmarkedSinglePage() ;
 
 
 $().ready(function(){
-   setInterval("checkSinglePageAnchor()", 300);
+   setInterval("checkSinglePageAnchor()", 3000);
 });

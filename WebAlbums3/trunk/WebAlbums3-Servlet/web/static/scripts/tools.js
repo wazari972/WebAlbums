@@ -95,7 +95,10 @@ function loadExernalsBottomEnd(data, divId, callback) {
     }
 
     $(div).fadeIn() ;
-    if (enableSinglePage != undefined) enableSinglePage() ;
+    if (typeof enableSinglePage == 'function')
+        enableSinglePage() ;
+    else
+        alert("no single page")
     if (callback != undefined) callback() ;
 }
 

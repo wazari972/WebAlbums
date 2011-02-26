@@ -106,3 +106,5 @@ $("#selectLoader").click(function () {
 $("#googleMapLoader").click(function () {
     preloadGoogleMap();
 }) ;
+
+alert("choix Prepared") ;

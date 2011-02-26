@@ -31,10 +31,12 @@
              <xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(Images?mode=BACKGROUND)     fixed no-repeat;</xsl:if>
           }
         </style>
+        
+      </head>
+      <body>
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>
-        <script src="static/scripts/tools.js" type="text/javascript" />
-        
+
         <script type="text/javascript" src="static/scripts/ezpz/jquery.ezpz_tooltip.min.js"></script>
 
         <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
@@ -45,8 +47,6 @@
                 modal:     true
             });
         </script>
-      </head>
-      <body>
 	<div id="header"> 
 	  <div id="logo">
 	    <h1>WebAlbums 3</h1>
@@ -109,10 +109,9 @@
 
 		<xsl:apply-templates select="/webAlbums/*/page"/>
 		<xsl:call-template name="print_return_link" />
-
-                <script type="text/javascript" src="static/scripts/Common.js"></script>
+                
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-                    <script type="text/javascript" src="static/scripts/Photos.js"></script>
+                <script type="text/javascript" src="static/scripts/Photos.js"></script>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags">
                     <script type="text/javascript" src="static/scripts/Tags.js"></script>
@@ -134,6 +133,8 @@
 	  </div>
 	</div>
         <script type="text/javascript" src="static/scripts/SinglePageInterface.js" />
+        <script type="text/javascript" src="static/scripts/tools.js"/>
+        <script type="text/javascript" src="static/scripts/Common.js"></script>
       </body>
     </html>
   </xsl:template>
