@@ -106,7 +106,7 @@ function loadSinglePage(url) {
             return ;
         }
     }
-    $("body").css("cursor", "progress");
+    $("body").css("cursor", "wait");
     $.ajax({
         url:url,
         success:function(data){
