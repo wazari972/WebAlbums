@@ -18,8 +18,19 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import net.wazari.dao.entity.Tag;
+import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.JPAPhoto;
+import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATag;
+import net.wazari.dao.jpa.entity.JPATagPhoto;
+import net.wazari.dao.jpa.entity.JPATagPhoto_;
+import net.wazari.dao.jpa.entity.JPATag_;
+import net.wazari.dao.jpa.entity.JPATheme;
 
 /**
  *
@@ -52,22 +63,35 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public Map<Tag, Long> queryIDNameCount(ServiceSession session) {
-        StringBuilder rq = new StringBuilder(80);
-        rq.append("SELECT t, count( tp.photo ) AS count ")
-          .append(" FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
-          .append(" WHERE t.id = tp.tag ")
-          .append(" AND tp.photo = p.id ")
-          .append(" AND p.album = a.id ")
-          .append(" AND " )
-          .append(webDAO.restrictToPhotosAllowed(session, "p") )
-          .append(" AND ")
-          .append(webDAO.restrictToThemeAllowed(session, "a"))
-          .append(" GROUP BY t.id ")
-          .append(" ORDER BY t.nom ");
-        List<Object[]> lst = em.createQuery(rq.toString())
-                .setHint("org.hibernate.cacheable", true)
-                .setHint("org.hibernate.readOnly", true)
-                .getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+        //FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a
+        Root<JPATag> fromTag = cq.from(JPATag.class);
+        Root<JPATagPhoto> fromTagPhoto = cq.from(JPATagPhoto.class);
+        Root<JPAPhoto> fromPhoto = cq.from(JPAPhoto.class);
+        Root<JPAAlbum> fromAlbum = cq.from(JPAAlbum.class);
+        cq.where(cb.and(
+                cb.equal(fromPhoto.get(JPAPhoto_.id), fromTagPhoto.get(JPATagPhoto_.photo)),
+                cb.equal(fromTagPhoto.get(JPATagPhoto_.tag), fromTag.get(JPATag_.id)),
+                webDAO.getRestrictionToPhotosAllowed(session, fromPhoto, cq.subquery(JPAPhoto.class))),
+                webDAO.getRestrictionToCurrentTheme(session, fromAlbum)) ;
+        //WHERE t.id = tp.tag
+        // AND tp.photo = p.id
+        // AND p.album = a.id
+        // AND
+        //webDAO.restrictToPhotosAllowed(session, "p")
+        // AND
+        //webDAO.restrictToThemeAllowed(session, "a")
+        // GROUP BY t.id
+        cq.groupBy(fromTag.get(JPATag_.id));
+        // ORDER BY t.nom
+        
+        //SELECT t, count( tp.photo ) AS count
+        TypedQuery<Object[]> tq = em.createQuery(
+                cq.multiselect(
+                    fromTag,
+                    cb.count(fromTagPhoto)));
+        List<Object[]> lst = tq.getResultList() ;
         Map<Tag, Long> ret = new LinkedHashMap <Tag, Long>();
         for (Object[] current : lst) {
             ret.put((JPATag) current[0], (Long) current[1]);
@@ -89,9 +113,9 @@ public class TagFacade implements TagFacadeLocal {
               .append("AND tp.photo = p.id ")
               .append("AND p.album = a.id ")
               .append("AND ")
-              .append(webDAO.restrictToPhotosAllowed(session, "p"))
+              .append(webDAO.DEPRECATEDrestrictToPhotosAllowed(session, "p"))
               .append(" AND ")
-              .append(webDAO.restrictToThemeAllowed(session, "a"));
+              .append(webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a"));
         }
         rq.append(" ORDER BY t.nom ") ;
         return em.createQuery(rq.toString()).setParameter("type", type)
@@ -121,9 +145,9 @@ public class TagFacade implements TagFacadeLocal {
               .append("FROM JPATag ta, JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
               .append("WHERE  ta.id = tp.tag AND tp.photo = p.id AND p.album = a.id ")
               .append("AND ")
-              .append(webDAO.restrictToPhotosAllowed(sSession, "p"))
+              .append(webDAO.DEPRECATEDrestrictToPhotosAllowed(sSession, "p"))
               .append("AND ")
-              .append(webDAO.restrictToThemeAllowed(sSession, "a"));
+              .append(webDAO.DEPRECATEDrestrictToThemeAllowed(sSession, "a"));
 
         if (restrictToGeo) {
             rq.append(" AND ta.tagType = '3' ") ;

@@ -13,8 +13,13 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.jpa.entity.JPATheme;
+import net.wazari.dao.jpa.entity.JPATheme_;
 
 /**
  *
@@ -38,7 +43,13 @@ public class ThemeFacade implements ThemeFacadeLocal {
     @Override
     public List<Theme> findAll() {
         try {
-            return em.createQuery("SELECT object(o) FROM JPATheme AS o").getResultList();
+            //SELECT object(o) FROM JPATheme AS o
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPATheme> cq = cb.createQuery(JPATheme.class);
+            Root<JPATheme> from = cq.from(JPATheme.class);
+            CriteriaQuery<JPATheme> select = cq.select(from);
+            TypedQuery<JPATheme> tq = em.createQuery(select);
+            return (List) tq.getResultList();
         } catch (javax.persistence.PersistenceException e) {
             log.warn("Database query failed ...");
             return new ArrayList<Theme>() ;
@@ -48,13 +59,14 @@ public class ThemeFacade implements ThemeFacadeLocal {
     @Override
     public JPATheme loadByName(String themeName) {
         try {
-            String rq = "FROM JPATheme t WHERE t.nom = :nom";
-
-          return (JPATheme) em.createQuery(rq)
-                    .setParameter("nom", themeName)
-                    .setHint("org.hibernate.cacheable", true)
-                    .setHint("org.hibernate.readOnly", true)
-                    .getSingleResult();
+            //FROM JPATheme t WHERE t.nom = :nom
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPATheme> cq = cb.createQuery(JPATheme.class);
+            Root<JPATheme> from = cq.from(JPATheme.class);
+            CriteriaQuery<JPATheme> select = cq.select(from);
+            cq.where(cb.equal(from.get(JPATheme_.nom), themeName)) ;
+            TypedQuery<JPATheme> tq = em.createQuery(select);
+            return tq.getSingleResult();
         } catch (NoResultException e) {
             return null ;
         }
@@ -63,12 +75,14 @@ public class ThemeFacade implements ThemeFacadeLocal {
     @Override
     public JPATheme find(Integer id) {
         try {
-            String rq = "FROM JPATheme t WHERE t.id = :id";
-            return (JPATheme) em.createQuery(rq)
-                    .setParameter("id", id)
-                    .setHint("org.hibernate.cacheable", true)
-                    .setHint("org.hibernate.readOnly", true)
-                    .getSingleResult() ;
+            //FROM JPATheme t WHERE t.id = :id
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPATheme> cq = cb.createQuery(JPATheme.class);
+            Root<JPATheme> from = cq.from(JPATheme.class);
+            CriteriaQuery<JPATheme> select = cq.select(from);
+            cq.where(cb.equal(from.get(JPATheme_.id), id)) ;
+            TypedQuery<JPATheme> tq = em.createQuery(select);
+            return tq.getSingleResult();
         } catch (NoResultException e) {
             return null ;
         }

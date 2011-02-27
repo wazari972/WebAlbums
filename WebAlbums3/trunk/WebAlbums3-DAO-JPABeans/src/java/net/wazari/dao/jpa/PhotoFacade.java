@@ -69,7 +69,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
             StringBuilder rq = new StringBuilder(80) ;
             rq.append("FROM JPAPhoto p ")
                 .append(" WHERE p.id = :id " )
-                .append(session == null ? "" : " AND " + webDAO.restrictToPhotosAllowed(session, "p")) ;
+                .append(session == null ? "" : " AND " + webDAO.DEPRECATEDrestrictToPhotosAllowed(session, "p")) ;
 
             return (JPAPhoto) em.createQuery(rq.toString()).setParameter("id", id)
                     .setHint("org.hibernate.cacheable", true)
@@ -89,7 +89,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
             cq.where(
                     cb.and(
                         cb.equal(photo.get("id"), id),
-                        webDAO.getRestrictionToPhotosAllowed(session, photo)
+                        webDAO.getRestrictionToPhotosAllowed(session, photo, cq.subquery(JPAPhoto.class))
                         )
                     ) ;
             return (JPAPhoto) em.createQuery(cq)
@@ -106,8 +106,8 @@ public class PhotoFacade implements PhotoFacadeLocal {
         StringBuilder rq = new StringBuilder(80);
         rq.append("FROM JPAPhoto p " )
             .append(" WHERE p.album.id = :albumId ")
-            .append(session == null ? "" : " AND " + webDAO.restrictToPhotosAllowed(session, "p"))
-            .append(WebAlbumsDAOBean.getOrder(order, "p.path"));
+            .append(session == null ? "" : " AND " + webDAO.DEPRECATEDrestrictToPhotosAllowed(session, "p"))
+            .append(WebAlbumsDAOBean.DEPRECATEDgetOrder(order, "p.path"));
 
         Query q = em.createQuery(rq.toString()).setParameter("albumId", album.getId());
         if (bornes != null && bornes.getFirstElement() != null) {
@@ -155,11 +155,11 @@ public class PhotoFacade implements PhotoFacadeLocal {
         }
         rq.append(")")
             .append(" AND " )
-            .append(webDAO.restrictToPhotosAllowed(session, "p"))
+            .append(webDAO.DEPRECATEDrestrictToPhotosAllowed(session, "p"))
             .append(" AND " )
-            .append(webDAO.restrictToThemeAllowed(session, "a"))
+            .append(webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a"))
             .append(" GROUP BY p.id " )
-            .append(WebAlbumsDAOBean.getOrder(order, "p.path"));
+            .append(WebAlbumsDAOBean.DEPRECATEDgetOrder(order, "p.path"));
         
             log.error(rq.toString()) ;
         Query q = em.createQuery(rq.toString())
@@ -208,10 +208,10 @@ public class PhotoFacade implements PhotoFacadeLocal {
             rq.append("SELECT p ")
                 .append(" FROM JPAPhoto p")
                 .append(" WHERE ")
-                .append(webDAO.restrictToPhotosAllowed(session, "p"))
+                .append(webDAO.DEPRECATEDrestrictToPhotosAllowed(session, "p"))
                 .append(" AND " )
-                .append(webDAO.restrictToThemeAllowed(session, "p.album"))
-                .append(WebAlbumsDAOBean.getOrder(ListOrder.RANDOM, ""));
+                .append(webDAO.DEPRECATEDrestrictToThemeAllowed(session, "p.album"))
+                .append(WebAlbumsDAOBean.DEPRECATEDgetOrder(ListOrder.RANDOM, ""));
             return (JPAPhoto) em.createQuery(rq.toString())
                     .setFirstResult(0)
                     .setMaxResults(1)

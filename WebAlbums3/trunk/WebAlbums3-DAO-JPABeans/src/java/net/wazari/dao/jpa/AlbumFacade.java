@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -23,6 +24,7 @@ import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.JPAAlbum_;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 
@@ -55,8 +57,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
         em.remove(em.merge(album));
     }
 
-    @Override
-    public SubsetOf<Album> queryAlbums(ServiceSession session,
+    public SubsetOf<Album> queryTxtAlbums(ServiceSession session,
             Restriction restrict, TopFirst topFirst, Bornes bornes) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         StringBuilder rq = new StringBuilder(80) ;
@@ -64,9 +65,9 @@ public class AlbumFacade implements AlbumFacadeLocal {
           .append(JPAAlbum.class.getName())
           .append(" a ")
           .append(" WHERE " )
-          .append(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.restrictToAlbumsAllowed(session, "a") : "1 = 1 " )
+          .append(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.DEPRECATEDrestrictToAlbumsAllowed(session, "a") : "1 = 1 " )
           .append(" AND " )
-          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1 ") )
+          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a") : "1 = 1 ") )
           .append(" ORDER BY a.date DESC ") ;
         Query q = em.createQuery(rq.toString()) ;
         if (topFirst == TopFirst.TOP) {
@@ -86,17 +87,18 @@ public class AlbumFacade implements AlbumFacadeLocal {
         return new SubsetOf<Album>(bornes, lstAlbums, size);
     }
 
-    public SubsetOf<Album> queryMetaAlbums(ServiceSession session,
+    @Override
+    public SubsetOf<Album> queryAlbums(ServiceSession session,
             Restriction restrict, TopFirst topFirst, Bornes bornes) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
         Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
-        cq.where(webDAO.getRestrictionToAlbumsAllowed(session, albm, restrict)) ;
-        cq.orderBy(cb.desc(albm.get("date"))) ;
+        cq.where(webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), restrict)) ;
+        cq.orderBy(cb.desc(albm.get(JPAAlbum_.date))) ;
+        TypedQuery<JPAAlbum> q = em.createQuery(cq.select(albm));
 
-        Query q = em.createQuery(cq) ;
         if (topFirst == TopFirst.TOP) {
             q.setFirstResult(0);
             q.setMaxResults(bornes.getNbElement());
@@ -107,9 +109,9 @@ public class AlbumFacade implements AlbumFacadeLocal {
         q.setHint("org.hibernate.cacheable", true) ;
         q.setHint("org.hibernate.readOnly", true) ;
 
-        List<Album> lstAlbums = q.getResultList() ;
+        List<JPAAlbum> lstAlbums = q.getResultList() ;
         stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstAlbums.size()+" albums returned") ;
-        return new SubsetOf<Album>(bornes, lstAlbums, (long) lstAlbums.size());
+        return (SubsetOf) new SubsetOf<JPAAlbum>(bornes, lstAlbums, (long) lstAlbums.size());
     }
 
     @Override
@@ -121,11 +123,11 @@ public class AlbumFacade implements AlbumFacadeLocal {
           .append(JPAAlbum.class.getName())
           .append(" a " )
           .append(" WHERE " )
-          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.restrictToAlbumsAllowed(session, "a") : "1 = 1 " ) )
+          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.DEPRECATEDrestrictToAlbumsAllowed(session, "a") : "1 = 1 " ) )
           .append(" AND " )
-          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1 ") )
+          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a") : "1 = 1 ") )
           .append(" AND a.date LIKE :date ")
-          .append(WebAlbumsDAOBean.getOrder(ListOrder.RANDOM, null));
+          .append(WebAlbumsDAOBean.DEPRECATEDgetOrder(ListOrder.RANDOM, null));
         Query q = em.createQuery(rq.toString())
                .setParameter("date", date+"%")
                .setFirstResult(0)
@@ -161,8 +163,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
                 .append(" a " )
                 .append(" WHERE ")
                 //.append(" AND ")
-                .append(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.restrictToThemeAllowed(session, "a") : "1 = 1 ")
-                .append(WebAlbumsDAOBean.getOrder(order, "a.date")) ;
+                .append(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a") : "1 = 1 ")
+                .append(WebAlbumsDAOBean.DEPRECATEDgetOrder(order, "a.date")) ;
             Query q = em.createQuery(rq.toString())
                    .setFirstResult(0)
                    .setMaxResults(1)
@@ -183,7 +185,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
             StringBuilder rq = new StringBuilder(80) ;
             rq.append("FROM JPAAlbum a ")
                 .append(" WHERE " )
-                .append(webDAO.restrictToAlbumsAllowed(session, "a"))
+                .append(webDAO.DEPRECATEDrestrictToAlbumsAllowed(session, "a"))
                 .append(" AND a.id = :id ");
 
             return (JPAAlbum) em.createQuery(rq.toString()).setParameter("id", id)
