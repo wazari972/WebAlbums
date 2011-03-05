@@ -179,8 +179,7 @@ public class WebAlbumsDAOBean {
                 .append("')")
                 .append(") ");
         }
-        return null ;
-//        return new StringBuilder(50).append(" ").append(album).append(".id IN (").append(processListID(session, rq, true) ).append(") ");
+        return new StringBuilder(50).append(" ").append(album).append(".id IN (").append(DEPRECATEDprocessListID(session, rq, true) ).append(") ");
     }
 
     @Deprecated

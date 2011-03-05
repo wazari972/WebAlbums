@@ -47,6 +47,8 @@
                 modal:     true
             });
         </script>
+        <script type="text/javascript" src="static/scripts/tools.js"/>
+        <script type="text/javascript" src="static/scripts/Common.js"></script>
 	<div id="header"> 
 	  <div id="logo">
 	    <h1>WebAlbums 3</h1>
@@ -133,8 +135,6 @@
 	  </div>
 	</div>
         <script type="text/javascript" src="static/scripts/SinglePageInterface.js" />
-        <script type="text/javascript" src="static/scripts/tools.js"/>
-        <script type="text/javascript" src="static/scripts/Common.js"></script>
       </body>
     </html>
   </xsl:template>

@@ -36,7 +36,9 @@ function getCurrentPage() {
 function getCurrentSinglePage() {
     var pos = window.location.hash.indexOf(ANCHOR_PREFIX) ;
     if (pos != -1) {
-        return window.location.hash.substring(ANCHOR_PREFIX.length) ;
+         var page = window.location.hash.substring(ANCHOR_PREFIX.length)  ;
+         page.replace(/^(\s*<br\s*\/?>)*\s*|\s*(<br\s*\/?>\s*)*$/g, '')
+        return $.trim(page) ;
     } else return undefined ;
 }
 
@@ -92,6 +94,8 @@ function loadSinglePage(url) {
         left.id = oldURL ;
     }
     document.location.href = ANCHOR_PREFIX+url;
+    url = url.replace(/\n/g, '') ;
+    url = url.replace(/\r/g, '') ;
     inPlaceSinglePage = $.trim(url) ;
     
     if (singlePageCached(url)) {
@@ -152,9 +156,9 @@ function checkSinglePageAnchor() {
     if (inPlaceSinglePage_lock != null) return ;
     
     var currentSinglePage = getCurrentSinglePage() ;
-    //alert("test prev/next")
-    if (currentSinglePage != inPlaceSinglePage) {
-        alert("previous/next page detected "+inPlaceSinglePage+" -> "+ currentSinglePage)
+    if (currentSinglePage != undefined
+        && currentSinglePage != inPlaceSinglePage)
+    {
         loadSinglePage(currentSinglePage) ;
     }
 }
@@ -207,5 +211,5 @@ loadBookmarkedSinglePage() ;
 
 
 $().ready(function(){
-   setInterval("checkSinglePageAnchor()", 30000);
+   setInterval("checkSinglePageAnchor()", 500);
 });
