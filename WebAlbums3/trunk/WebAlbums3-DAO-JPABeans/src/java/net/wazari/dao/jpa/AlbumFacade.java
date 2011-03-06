@@ -18,6 +18,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.facades.SubsetOf;
@@ -57,36 +58,6 @@ public class AlbumFacade implements AlbumFacadeLocal {
         em.remove(em.merge(album));
     }
 
-    public SubsetOf<Album> queryTxtAlbums(ServiceSession session,
-            Restriction restrict, TopFirst topFirst, Bornes bornes) {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
-        StringBuilder rq = new StringBuilder(80) ;
-        rq.append("FROM ")
-          .append(JPAAlbum.class.getName())
-          .append(" a ")
-          .append(" WHERE " )
-          .append(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.DEPRECATEDrestrictToAlbumsAllowed(session, "a") : "1 = 1 " )
-          .append(" AND " )
-          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a") : "1 = 1 ") )
-          .append(" ORDER BY a.date DESC ") ;
-        Query q = em.createQuery(rq.toString()) ;
-        if (topFirst == TopFirst.TOP) {
-            q.setFirstResult(0);
-            q.setMaxResults(bornes.getNbElement());
-        } else if (topFirst == TopFirst.FIRST) {
-            q.setFirstResult(bornes.getFirstElement());
-            q.setMaxResults(session.getAlbumSize());
-        }
-        q.setHint("org.hibernate.cacheable", true) ;
-        q.setHint("org.hibernate.readOnly", true) ;
-        Query qSize = em.createQuery("SELECT count(*) "+rq) ;
-
-        List<Album> lstAlbums = q.getResultList() ;
-        Long size = (Long) qSize.getSingleResult() ;
-        stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstAlbums.size()+" albums returned") ;
-        return new SubsetOf<Album>(bornes, lstAlbums, size);
-    }
-
     @Override
     public SubsetOf<Album> queryAlbums(ServiceSession session,
             Restriction restrict, TopFirst topFirst, Bornes bornes) {
@@ -118,18 +89,22 @@ public class AlbumFacade implements AlbumFacadeLocal {
     public SubsetOf<Album> queryRandomFromYear(ServiceSession session,
         Restriction restrict, Bornes bornes, String date) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
-        StringBuilder rq = new StringBuilder(80) ;
-        rq.append("FROM ")
-          .append(JPAAlbum.class.getName())
-          .append(" a " )
-          .append(" WHERE " )
-          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.ALLOWED_ONLY ? webDAO.DEPRECATEDrestrictToAlbumsAllowed(session, "a") : "1 = 1 " ) )
-          .append(" AND " )
-          .append( (restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a") : "1 = 1 ") )
-          .append(" AND a.date LIKE :date ")
-          .append(WebAlbumsDAOBean.DEPRECATEDgetOrder(ListOrder.RANDOM, null));
-        Query q = em.createQuery(rq.toString())
-               .setParameter("date", date+"%")
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        
+        CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+        //FROM album
+        Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
+        //where restrict to theme and albums
+        Predicate where = cb.and(
+                webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), restrict),
+                webDAO.getRestrictionToCurrentTheme(session, albm, restrict),
+                cb.like(albm.get(JPAAlbum_.date), date+"%")
+                ) ;
+        cq.where(where) ;
+        webDAO.setOrder(cq, cb, ListOrder.RANDOM, null) ;
+        
+        Query q = em.createQuery(cq.select(albm))
                .setFirstResult(0)
                .setMaxResults(bornes.getNbElement());
         q.setHint("org.hibernate.cacheable", true)
@@ -157,15 +132,15 @@ public class AlbumFacade implements AlbumFacadeLocal {
             Restriction restrict, ListOrder order) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         try {
-            StringBuilder rq = new StringBuilder(80) ;
-            rq.append("FROM ")
-                .append(JPAAlbum.class.getName())
-                .append(" a " )
-                .append(" WHERE ")
-                //.append(" AND ")
-                .append(restrict == Restriction.ALLOWED_AND_THEME || restrict == Restriction.THEME_ONLY ? webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a") : "1 = 1 ")
-                .append(WebAlbumsDAOBean.DEPRECATEDgetOrder(order, "a.date")) ;
-            Query q = em.createQuery(rq.toString())
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+            Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
+            cq.where(cb.and(
+                    webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), restrict),
+                    webDAO.getRestrictionToCurrentTheme(session, albm, restrict))) ;
+            webDAO.setOrder(cq, cb, order, albm.get(JPAAlbum_.date)) ;
+
+            Query q = em.createQuery(cq.select(albm))
                    .setFirstResult(0)
                    .setMaxResults(1)
                    .setHint("org.hibernate.cacheable", true)
@@ -182,13 +157,14 @@ public class AlbumFacade implements AlbumFacadeLocal {
     @Override
     public Album loadIfAllowed(ServiceSession session, int id) {
         try {
-            StringBuilder rq = new StringBuilder(80) ;
-            rq.append("FROM JPAAlbum a ")
-                .append(" WHERE " )
-                .append(webDAO.DEPRECATEDrestrictToAlbumsAllowed(session, "a"))
-                .append(" AND a.id = :id ");
-
-            return (JPAAlbum) em.createQuery(rq.toString()).setParameter("id", id)
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+            Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
+            cq.where(cb.and(
+                    webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
+                    webDAO.getRestrictionToCurrentTheme(session, albm, Restriction.ALLOWED_AND_THEME),
+                    cb.equal(albm.get(JPAAlbum_.id), id))) ;
+            return (JPAAlbum) em.createQuery(cq.select(albm))
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
@@ -200,13 +176,12 @@ public class AlbumFacade implements AlbumFacadeLocal {
     @Override
     public Album loadByNameDate(String name, String date) {
         try {
-            StringBuilder rq = new StringBuilder(80) ;
-            rq.append("FROM JPAAlbum a " )
-                .append(" WHERE a.date = :date ")
-                .append(" AND a.nom = :nom");
-            return (JPAAlbum) em.createQuery(rq.toString())
-                    .setParameter("date", date)
-                    .setParameter("nom", name)
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+            Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
+            cq.where(cb.and(cb.equal(albm.get(JPAAlbum_.date), date),
+                    cb.equal(albm.get(JPAAlbum_.nom), name)));
+            return (JPAAlbum) em.createQuery(cq.select(albm))
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
@@ -216,11 +191,13 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
-    public Album find(Integer albumId) {
+    public Album find(Integer id) {
         try {
-            String rq = "SELECT a FROM JPAAlbum a WHERE a.id = :id";
-        return (JPAAlbum) em.createQuery(rq)
-                .setParameter("id", albumId)
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+            Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
+            cq.where(cb.equal(albm.get(JPAAlbum_.id), id)) ;
+            return (JPAAlbum) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .getSingleResult();
         } catch (NoResultException e) {
@@ -235,8 +212,10 @@ public class AlbumFacade implements AlbumFacadeLocal {
 
     @Override
     public List<Album> findAll() {
-        String rq = "SELECT o FROM JPAAlbum o";
-        return (List<Album>) em.createQuery(rq)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+        cq.from(JPAAlbum.class) ;
+        return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();

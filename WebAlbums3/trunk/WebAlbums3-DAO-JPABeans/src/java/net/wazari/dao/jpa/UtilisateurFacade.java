@@ -14,8 +14,16 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import net.wazari.dao.entity.Utilisateur;
+import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.JPAAlbum_;
+import net.wazari.dao.jpa.entity.JPAPhoto;
+import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPAUtilisateur;
+import net.wazari.dao.jpa.entity.JPAUtilisateur_;
 
 /**
  *
@@ -41,9 +49,11 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     @Override
     public Utilisateur loadByName(String name) {
         try {
-            String rq = "FROM JPAUtilisateur u WHERE u.nom = :nom";
-            return (JPAUtilisateur) em.createQuery(rq)
-                    .setParameter("nom", name)
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
+            Root<JPAUtilisateur> u = cq.from(JPAUtilisateur.class);
+            cq.where(cb.equal(u.get(JPAUtilisateur_.nom), name)) ;
+            return (JPAUtilisateur) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
@@ -55,9 +65,14 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
 
     @Override
     public Utilisateur loadUserOutside(int albumId) {
-        String rq = "SELECT u FROM JPAUtilisateur u, JPAAlbum a WHERE u.id = a.droit AND a.id = :albumId";
-        return (JPAUtilisateur) em.createQuery(rq)
-                .setParameter("albumId", albumId)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
+        Root<JPAAlbum> a = cq.from(JPAAlbum.class);
+        Root<JPAUtilisateur> u = cq.from(JPAUtilisateur.class);
+        cq.where(cb.and(
+                cb.equal(u.get(JPAUtilisateur_.id), a.get(JPAAlbum_.droit)),
+                cb.equal(a.get(JPAAlbum_.id), albumId))) ;
+        return (JPAUtilisateur) em.createQuery(cq.select(u))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getSingleResult();
@@ -65,25 +80,29 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
 
     @Override
     public List<Utilisateur> loadUserInside(int albumId) {
-        StringBuilder rq = new StringBuilder(80);
-        rq.append("SELECT DISTINCT u ")
-            .append(" FROM JPAPhoto p, JPAUtilisateur u ")
-            .append(" WHERE u.id = p.droit ")
-            .append(" AND p.album.id = :albumId ")
-            .append(" AND p.droit is not null AND p.droit != 0");
-        return em.createQuery(rq.toString())
-            .setParameter("albumId", albumId)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
+        Root<JPAPhoto> p = cq.from(JPAPhoto.class);
+        Root<JPAUtilisateur> u = cq.from(JPAUtilisateur.class);
+        cq.where(cb.and(
+                cb.equal(u.get(JPAUtilisateur_.id), p.get(JPAPhoto_.droit)),
+                cb.equal(p.get(JPAPhoto_.album).get(JPAAlbum_.id), albumId),
+                cb.isNotNull(p.get(JPAPhoto_.droit)),
+                cb.notEqual(p.get(JPAPhoto_.droit), 0))) ;
+        return (List) em.createQuery(cq.select(u).distinct(true))
             .setHint("org.hibernate.cacheable", true)
             .setHint("org.hibernate.readOnly", true)
             .getResultList();
     }
 
     @Override
-    public JPAUtilisateur find(Integer droit) {
+    public JPAUtilisateur find(Integer id) {
         try {
-            String rq = "FROM JPAUtilisateur u WHERE u.id = :id";
-            return (JPAUtilisateur) em.createQuery(rq)
-                    .setParameter("id", droit)
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
+            Root<JPAUtilisateur> u = cq.from(JPAUtilisateur.class);
+            cq.where(cb.equal(u.get(JPAUtilisateur_.id), id)) ;
+            return (JPAUtilisateur) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
@@ -94,8 +113,10 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
 
     @Override
     public List<Utilisateur> findAll() {
-        String rq = "FROM JPAUtilisateur u";
-        return em.createQuery(rq)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
+        Root<JPAUtilisateur> u = cq.from(JPAUtilisateur.class);
+        return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList() ;

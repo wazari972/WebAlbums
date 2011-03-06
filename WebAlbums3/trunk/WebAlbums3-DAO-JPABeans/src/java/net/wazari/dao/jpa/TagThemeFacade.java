@@ -14,8 +14,14 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.jpa.entity.JPATagTheme;
+import net.wazari.dao.jpa.entity.JPATagTheme_;
+import net.wazari.dao.jpa.entity.JPATag_;
+import net.wazari.dao.jpa.entity.JPATheme_;
 
 /**
  *
@@ -53,21 +59,24 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
 
         try {
             if (themeId != ThemeFacadeLocal.THEME_ROOT_ID) {
-                StringBuilder rq = new StringBuilder(80);
-                rq.append("FROM JPATagTheme tt ")
-                .append("WHERE tt.tag.id = :tagId ")
-                .append(" AND tt.theme.id = :themeId ");
-                return (TagTheme) em.createQuery(rq.toString())
-                        .setParameter("tagId", tagId)
-                        .setParameter("themeId", themeId)
+                CriteriaBuilder cb = em.getCriteriaBuilder();
+                CriteriaQuery<JPATagTheme> cq = cb.createQuery(JPATagTheme.class) ;
+                Root<JPATagTheme> tt = cq.from(JPATagTheme.class);
+                cq.where(cb.and(
+                        cb.equal(tt.get(JPATagTheme_.tag).get(JPATag_.id), tagId),
+                        cb.equal(tt.get(JPATagTheme_.theme).get(JPATheme_.id), themeId)
+                        )) ;
+                return (TagTheme) em.createQuery(cq)
                         .setHint("org.hibernate.cacheable", true)
                         .setHint("org.hibernate.readOnly", false)
                         .getSingleResult();
             } else {
-                String rq = "FROM JPATagTheme tt  WHERE tt.tag.id = :tagId " ;
+                CriteriaBuilder cb = em.getCriteriaBuilder();
+                CriteriaQuery<JPATagTheme> cq = cb.createQuery(JPATagTheme.class) ;
+                Root<JPATagTheme> tt = cq.from(JPATagTheme.class);
+                cq.where(cb.equal(tt.get(JPATagTheme_.tag).get(JPATag_.id), tagId)) ;
 
-                List<TagTheme> lst = em.createQuery(rq)
-                        .setParameter("tagId", tagId)
+                List<JPATagTheme> lst = em.createQuery(cq)
                         .setHint("org.hibernate.cacheable", true)
                         .setHint("org.hibernate.readOnly", false)
                         .getResultList();
@@ -86,8 +95,10 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
 
     @Override
     public List<TagTheme> findAll() {
-        String rq = "SELECT o FROM JPATagTheme o";
-        return (List<TagTheme>) em.createQuery(rq)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATagTheme> cq = cb.createQuery(JPATagTheme.class) ;
+        Root<JPATagTheme> tt = cq.from(JPATagTheme.class);
+        return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();

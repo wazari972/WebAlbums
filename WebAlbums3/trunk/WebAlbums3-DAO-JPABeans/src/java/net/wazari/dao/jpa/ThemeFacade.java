@@ -46,10 +46,9 @@ public class ThemeFacade implements ThemeFacadeLocal {
             //SELECT object(o) FROM JPATheme AS o
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<JPATheme> cq = cb.createQuery(JPATheme.class);
-            Root<JPATheme> from = cq.from(JPATheme.class);
-            CriteriaQuery<JPATheme> select = cq.select(from);
-            TypedQuery<JPATheme> tq = em.createQuery(select);
-            return (List) tq.getResultList();
+            Root<JPATheme> th = cq.from(JPATheme.class);
+            return (List) em.createQuery(cq.select(th))
+                    .getResultList();
         } catch (javax.persistence.PersistenceException e) {
             log.warn("Database query failed ...");
             return new ArrayList<Theme>() ;

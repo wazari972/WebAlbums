@@ -14,11 +14,21 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
+import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.JPAAlbum_;
+import net.wazari.dao.jpa.entity.JPAPhoto;
+import net.wazari.dao.jpa.entity.JPAPhoto_;
+import net.wazari.dao.jpa.entity.JPATag;
 import net.wazari.dao.jpa.entity.JPATagPhoto;
+import net.wazari.dao.jpa.entity.JPATagPhoto_;
+import net.wazari.dao.jpa.entity.JPATag_;
 
 /**
  *
@@ -68,13 +78,15 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public List<TagPhoto> queryByAlbum(Album enrAlbum) {
-        StringBuilder rq = new StringBuilder(80);
-        rq.append("SELECT DISTINCT tp ")
-            .append("FROM JPAPhoto photo, JPATagPhoto tp ")
-            .append("WHERE photo.album = :album ")
-            .append("AND photo.id = tp.photo ");
-        return em.createQuery(rq.toString())
-                .setParameter("album", enrAlbum)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
+        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        Root<JPAPhoto> p = cq.from(JPAPhoto.class);
+        cq.where(cb.and(
+                cb.equal(p.get(JPAPhoto_.album), enrAlbum)),
+                cb.equal(p.get(JPAPhoto_.id), tp.get(JPATagPhoto_.photo))) ;
+
+        return (List) em.createQuery(cq.select(tp).distinct(true))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -82,10 +94,14 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public TagPhoto loadByTagPhoto(int tagId, int photoId) {
-        String rq = "FROM JPATagPhoto tp WHERE tp.photo.id = :photoId AND tp.tag.id = :tagId";
-        return (JPATagPhoto) em.createQuery(rq)
-                .setParameter("photoId", photoId)
-                .setParameter("tagId", tagId)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
+        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        cq.where(cb.and(
+                cb.equal(tp.get(JPATagPhoto_.photo).get(JPAPhoto_.id), photoId)),
+                cb.equal(tp.get(JPATagPhoto_.tag).get(JPATag_.id), tagId)) ;
+
+        return (JPATagPhoto) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getSingleResult();
@@ -93,20 +109,28 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public List<Tag> selectDistinctTags() {
-        String rq = "SELECT DISTINCT tp.tag FROM JPATagPhoto tp";
-        return em.createQuery(rq).getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
+        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        return (List) em.createQuery(cq.select(tp.get(JPATagPhoto_.tag))
+                .distinct(true))
+                .getResultList();
     }
 
     @Override
     public List<Tag> selectUnusedTags(ServiceSession session) {
-        StringBuilder rq = new StringBuilder(80);
-        rq.append("SELECT DISTINCT tp.tag ")
-            .append("FROM JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
-            .append("WHERE " )
-            .append(" tp.photo = p.id AND p.album = a.id " )
-            .append(" AND a.theme = :themeId ");
-        return em.createQuery(rq.toString())
-                .setParameter("themeId", session.getTheme())
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
+        Root<JPAAlbum> a = cq.from(JPAAlbum.class);
+        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        Root<JPAPhoto> p = cq.from(JPAPhoto.class);
+
+        cq.where(cb.and(
+                cb.equal(tp.get(JPATagPhoto_.photo), p.get(JPAPhoto_.id)),
+                cb.equal(p.get(JPAPhoto_.album), a.get(JPAAlbum_.id)),
+                cb.equal(a.get(JPAAlbum_.theme), session.getTheme())
+                )) ;
+        return (List) em.createQuery(cq.select(tp).distinct(true))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -119,8 +143,10 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public List<TagPhoto> findAll() {
-        String rq = "SELECT o FROM JPATagPhoto o";
-        return (List<TagPhoto>) em.createQuery(rq)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
+        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();

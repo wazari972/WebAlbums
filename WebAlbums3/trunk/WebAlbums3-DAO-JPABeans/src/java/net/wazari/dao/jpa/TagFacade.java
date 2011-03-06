@@ -21,16 +21,18 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.JPAAlbum_;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATag;
 import net.wazari.dao.jpa.entity.JPATagPhoto;
 import net.wazari.dao.jpa.entity.JPATagPhoto_;
 import net.wazari.dao.jpa.entity.JPATag_;
-import net.wazari.dao.jpa.entity.JPATheme;
 
 /**
  *
@@ -74,7 +76,7 @@ public class TagFacade implements TagFacadeLocal {
                 cb.equal(fromPhoto.get(JPAPhoto_.id), fromTagPhoto.get(JPATagPhoto_.photo)),
                 cb.equal(fromTagPhoto.get(JPATagPhoto_.tag), fromTag.get(JPATag_.id)),
                 webDAO.getRestrictionToPhotosAllowed(session, fromPhoto, cq.subquery(JPAPhoto.class))),
-                webDAO.getRestrictionToCurrentTheme(session, fromAlbum)) ;
+                webDAO.getRestrictionToCurrentTheme(session, fromAlbum, AlbumFacadeLocal.Restriction.ALLOWED_AND_THEME)) ;
         //WHERE t.id = tp.tag
         // AND tp.photo = p.id
         // AND p.album = a.id
@@ -102,23 +104,24 @@ public class TagFacade implements TagFacadeLocal {
     @Override
     public List<Tag> queryAllowedTagByType(ServiceSession session, int type) {
         StringBuilder rq = new StringBuilder(80);
-
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
+        Root<JPATag> tag = cq.from(JPATag.class) ;
         if (session.isRootSession()) {
-            rq.append("FROM JPATag t WHERE t.tagType = :type") ;
+            cq.where(cb.equal(tag.get(JPATag_.tagType), type)) ;
         } else {
-            rq.append("SELECT DISTINCT t ")
-              .append("FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
-              .append("WHERE t.tagType = :type ")
-              .append("AND t.id = tp.tag ")
-              .append("AND tp.photo = p.id ")
-              .append("AND p.album = a.id ")
-              .append("AND ")
-              .append(webDAO.DEPRECATEDrestrictToPhotosAllowed(session, "p"))
-              .append(" AND ")
-              .append(webDAO.DEPRECATEDrestrictToThemeAllowed(session, "a"));
+            Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class) ;
+            Root<JPAPhoto> p = cq.from(JPAPhoto.class) ;
+            Root<JPAAlbum> a = cq.from(JPAAlbum.class) ;
+             cq.where(cb.and(
+                cb.equal(tp.get(JPATagPhoto_.photo), p.get(JPAPhoto_.id)),
+                cb.equal(p.get(JPAPhoto_.album), a.get(JPAAlbum_.id)),
+                webDAO.getRestrictionToAlbumsAllowed(session, a, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
+                webDAO.getRestrictionToCurrentTheme(session, a, Restriction.ALLOWED_AND_THEME))) ;
         }
-        rq.append(" ORDER BY t.nom ") ;
-        return em.createQuery(rq.toString()).setParameter("type", type)
+        cq.orderBy(cb.asc(tag.get(JPATag_.nom))) ;
+        
+        return (List) em.createQuery(cq.select(tag).distinct(true))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -126,10 +129,12 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public Tag loadByName(String nom) {
-            try {
-            String rq = "FROM JPATag t WHERE t.nom = :nom ";
-
-            return (JPATag) em.createQuery(rq).setParameter("nom", nom)
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
+            Root<JPATag> tag = cq.from(JPATag.class);
+            cq.where(cb.equal(tag.get(JPATag_.id), nom)) ;
+            return (JPATag) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
@@ -140,20 +145,26 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) {
-        StringBuilder rq = new StringBuilder(80);
-        rq.append("SELECT DISTINCT ta ")
-              .append("FROM JPATag ta, JPATagPhoto tp, JPAPhoto p, JPAAlbum a ")
-              .append("WHERE  ta.id = tp.tag AND tp.photo = p.id AND p.album = a.id ")
-              .append("AND ")
-              .append(webDAO.DEPRECATEDrestrictToPhotosAllowed(sSession, "p"))
-              .append("AND ")
-              .append(webDAO.DEPRECATEDrestrictToThemeAllowed(sSession, "a"));
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        Predicate TRUE = cb.conjunction() ;
 
-        if (restrictToGeo) {
-            rq.append(" AND ta.tagType = '3' ") ;
-        }
-        rq.append(" ORDER BY ta.nom");
-        return em.createQuery(rq.toString())
+        CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
+        Root<JPATag> ta = cq.from(JPATag.class);
+        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        Root<JPAPhoto> p = cq.from(JPAPhoto.class);
+        Root<JPAAlbum> a = cq.from(JPAAlbum.class);
+        cq.where(cb.and(
+                cb.equal(ta.get(JPATag_.id), tp.get(JPATagPhoto_.tag)),
+                cb.equal(tp.get(JPATagPhoto_.photo), p.get(JPAPhoto_.id)),
+                cb.equal(p.get(JPAPhoto_.album), a.get(JPAAlbum_.id)),
+                webDAO.getRestrictionToAlbumsAllowed(sSession, a, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
+                webDAO.getRestrictionToCurrentTheme(sSession, a, Restriction.ALLOWED_AND_THEME),
+                (restrictToGeo ? cb.equal(ta.get(JPATag_.tagType), 3) : TRUE)
+                )) ;
+
+        cq.orderBy(cb.asc(ta.get(JPATag_.nom))) ;
+        
+        return (List) em.createQuery(cq.select(ta))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -161,26 +172,16 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public List<Tag> getNoSuchTags(ServiceSession sSession, List<Tag> tags) {
-        StringBuilder rq = new StringBuilder(80);
-        rq.append("SELECT DISTINCT ta ")
-              .append(" FROM JPATag ta ")
-              .append(" WHERE ta.id NOT IN (")
-              .append(getIdList(tags) )
-              .append( ") " )
-              .append(" ORDER BY ta.nom");
-        return em.createQuery(rq.toString())
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
+        Root<JPATag> tag = cq.from(JPATag.class);
+        cq.where(tag.get(JPATag_.id).in(tags).not()) ;
+        cq.orderBy(cb.asc(tag.get(JPATag_.nom))) ;
+        
+        return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
-    }
-
-    private static StringBuilder getIdList(List<Tag> lst) {
-        StringBuilder rq = new StringBuilder(30);
-        rq.append( "-1 ") ;
-        for (Tag enrTag : lst) {
-            rq.append(", ").append(enrTag.getId());
-        }
-        return rq ;
     }
 
     @Override
@@ -198,9 +199,11 @@ public class TagFacade implements TagFacadeLocal {
     @Override
     public Tag find(Integer id) {
         try {
-            String rq = "FROM JPATag t where t.id = :id";
-            return  (JPATag) em.createQuery(rq)
-                    .setParameter("id", id)
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
+            Root<JPATag> tag = cq.from(JPATag.class);
+            cq.where(cb.equal(tag.get(JPATag_.id), id)) ;
+            return  (JPATag) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
@@ -211,8 +214,10 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public List<Tag> findAll() {
-        String rq = "FROM JPATag t";
-        return em.createQuery(rq)
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
+        Root<JPATag> tag = cq.from(JPATag.class);
+        return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList() ;

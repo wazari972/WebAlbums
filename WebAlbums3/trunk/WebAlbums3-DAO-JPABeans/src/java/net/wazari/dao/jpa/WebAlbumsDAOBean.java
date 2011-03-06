@@ -4,7 +4,6 @@
  */
 package net.wazari.dao.jpa;
 
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
@@ -13,9 +12,10 @@ import net.wazari.dao.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -50,7 +50,8 @@ public class WebAlbumsDAOBean {
     private EntityManager em;
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public Predicate getRestrictionToAlbumsAllowed(ServiceSession session, Root<JPAAlbum> album, Subquery<JPAAlbum> sq, Restriction restrict) {
+    public Predicate getRestrictionToAlbumsAllowed(ServiceSession session,
+            Root<JPAAlbum> album, Subquery<JPAAlbum> sq, Restriction restrict) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         Predicate TRUE = cb.conjunction() ;
 
@@ -86,13 +87,14 @@ public class WebAlbumsDAOBean {
         }
 
         sq.where(cb.and(where,
-                       getRestrictionToCurrentTheme(session, albm)
+                       getRestrictionToCurrentTheme(session, albm, Restriction.THEME_ONLY)
                        ));
         return album.in(sq.select(albm)) ;
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public Predicate getRestrictionToPhotosAllowed(ServiceSession session, Root<JPAPhoto> photo, Subquery<JPAPhoto> sq) {
+    public Predicate getRestrictionToPhotosAllowed(ServiceSession session,
+            Root<JPAPhoto> photo, Subquery<JPAPhoto> sq) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         Predicate TRUE = cb.conjunction() ;
 
@@ -128,16 +130,20 @@ public class WebAlbumsDAOBean {
         }
         sq.where(cb.and(link,
                         where,
-                       getRestrictionToCurrentTheme(session, ralbm)
+                       getRestrictionToCurrentTheme(session, ralbm, Restriction.THEME_ONLY)
                        ));
         return photo.in(sq.select(rphoto)) ;
     }
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public Predicate getRestrictionToCurrentTheme(ServiceSession session, Root<JPAAlbum> albm) {
+    public Predicate getRestrictionToCurrentTheme(ServiceSession session, 
+            Root<JPAAlbum> albm, Restriction restrict) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        Predicate TRUE = cb.conjunction() ; ;
-
+        Predicate TRUE = cb.conjunction() ;
+        if (!(restrict == Restriction.ALLOWED_AND_THEME
+           || restrict == Restriction.THEME_ONLY))
+            return TRUE ;
+        
         if (session.isRootSession()) {
             return TRUE ;
         } else {
@@ -244,5 +250,18 @@ public class WebAlbumsDAOBean {
             default: return new StringBuilder("") ;
         }
     }
+    void setOrder(CriteriaQuery<?> cq, CriteriaBuilder cb,
+            ListOrder order, Expression<?> field) {
+        if (order == null) return ;
 
+        Order orderBy = null ;
+        switch(order) {
+            case ASC: orderBy = cb.asc(field) ; break ;
+            case DESC: orderBy = cb.desc(field) ; break ;
+            case RANDOM: orderBy = cb.asc(cb.function("RAND", Float.class)) ; break ;
+            case DEFAULT:
+            default: return ;
+        }
+        cq.orderBy(orderBy) ;
+    }
 }
