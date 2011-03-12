@@ -69,7 +69,6 @@ public class PhotoFacade implements PhotoFacadeLocal {
     @Override
     public Photo loadIfAllowed(ServiceSession session, int id) {
         try {
-            StringBuilder rq = new StringBuilder(80);
             CriteriaBuilder cb = em.getCriteriaBuilder();
             Predicate TRUE = cb.conjunction() ;
             CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
@@ -90,9 +89,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
     @Override
     public SubsetOf<Photo> loadFromAlbum(ServiceSession session, Album album, Bornes bornes, ListOrder order) {
-        StringBuilder rq = new StringBuilder(80);
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        Predicate TRUE = cb.conjunction() ;
         CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
         Root<JPAPhoto> p = cq.from(JPAPhoto.class) ;
         cq.where(cb.and(
@@ -140,8 +137,8 @@ public class PhotoFacade implements PhotoFacadeLocal {
         Root<JPAAlbum> a = cq.from(JPAAlbum.class);
         Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
         cq.where(cb.and(
-                cb.equal(a.get(JPAAlbum_.id), p.get(JPAPhoto_.album)),
-                cb.equal(tp.get(JPATagPhoto_.photo), p.get(JPAPhoto_.album)),
+                cb.equal(a, p.get(JPAPhoto_.album)),
+                cb.equal(tp.get(JPATagPhoto_.photo), p),
                 tp.get(JPATagPhoto_.tag).in(listTag)),
                 webDAO.getRestrictionToPhotosAllowed(session, p, cq.subquery(JPAPhoto.class)),
                 webDAO.getRestrictionToCurrentTheme(session, a, Restriction.THEME_ONLY)

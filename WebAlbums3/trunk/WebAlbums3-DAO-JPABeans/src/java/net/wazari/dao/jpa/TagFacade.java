@@ -26,7 +26,6 @@ import javax.persistence.criteria.Root;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.jpa.entity.JPAAlbum;
-import net.wazari.dao.jpa.entity.JPAAlbum_;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATag;
@@ -103,7 +102,6 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     public List<Tag> queryAllowedTagByType(ServiceSession session, int type) {
-        StringBuilder rq = new StringBuilder(80);
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
         Root<JPATag> tag = cq.from(JPATag.class) ;
@@ -114,8 +112,10 @@ public class TagFacade implements TagFacadeLocal {
             Root<JPAPhoto> p = cq.from(JPAPhoto.class) ;
             Root<JPAAlbum> a = cq.from(JPAAlbum.class) ;
              cq.where(cb.and(
-                cb.equal(tp.get(JPATagPhoto_.photo), p.get(JPAPhoto_.id)),
-                cb.equal(p.get(JPAPhoto_.album), a.get(JPAAlbum_.id)),
+                cb.equal(tag.get(JPATag_.tagType), type),
+                cb.equal(tag, tp.get(JPATagPhoto_.tag)),
+                cb.equal(tp.get(JPATagPhoto_.photo), p),
+                cb.equal(p.get(JPAPhoto_.album), a),
                 webDAO.getRestrictionToAlbumsAllowed(session, a, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
                 webDAO.getRestrictionToCurrentTheme(session, a, Restriction.ALLOWED_AND_THEME))) ;
         }
@@ -149,22 +149,22 @@ public class TagFacade implements TagFacadeLocal {
         Predicate TRUE = cb.conjunction() ;
 
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
-        Root<JPATag> ta = cq.from(JPATag.class);
+        Root<JPATag> t = cq.from(JPATag.class);
         Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
         Root<JPAPhoto> p = cq.from(JPAPhoto.class);
         Root<JPAAlbum> a = cq.from(JPAAlbum.class);
         cq.where(cb.and(
-                cb.equal(ta.get(JPATag_.id), tp.get(JPATagPhoto_.tag)),
-                cb.equal(tp.get(JPATagPhoto_.photo), p.get(JPAPhoto_.id)),
-                cb.equal(p.get(JPAPhoto_.album), a.get(JPAAlbum_.id)),
+                cb.equal(t, tp.get(JPATagPhoto_.tag)),
+                cb.equal(tp.get(JPATagPhoto_.photo), p),
+                cb.equal(p.get(JPAPhoto_.album), a),
                 webDAO.getRestrictionToAlbumsAllowed(sSession, a, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
                 webDAO.getRestrictionToCurrentTheme(sSession, a, Restriction.ALLOWED_AND_THEME),
-                (restrictToGeo ? cb.equal(ta.get(JPATag_.tagType), 3) : TRUE)
+                (restrictToGeo ? cb.equal(t.get(JPATag_.tagType), 3) : TRUE)
                 )) ;
 
-        cq.orderBy(cb.asc(ta.get(JPATag_.nom))) ;
+        cq.orderBy(cb.asc(t.get(JPATag_.nom))) ;
         
-        return (List) em.createQuery(cq.select(ta))
+        return (List) em.createQuery(cq.select(t).distinct(true))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -175,7 +175,7 @@ public class TagFacade implements TagFacadeLocal {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
         Root<JPATag> tag = cq.from(JPATag.class);
-        cq.where(tag.get(JPATag_.id).in(tags).not()) ;
+        cq.where(tag.in(tags).not()) ;
         cq.orderBy(cb.asc(tag.get(JPATag_.nom))) ;
         
         return (List) em.createQuery(cq)
@@ -216,7 +216,7 @@ public class TagFacade implements TagFacadeLocal {
     public List<Tag> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
-        Root<JPATag> tag = cq.from(JPATag.class);
+        cq.from(JPATag.class);
         return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)

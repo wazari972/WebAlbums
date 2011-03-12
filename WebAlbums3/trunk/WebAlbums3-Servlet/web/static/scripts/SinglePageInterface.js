@@ -92,6 +92,7 @@ function loadSinglePage(url) {
         cacheTmp.id = "left" ;
         //save the old left as old url cache
         left.id = oldURL ;
+        $(left).hide()
     }
     document.location.href = ANCHOR_PREFIX+url;
     url = url.replace(/\n/g, '') ;

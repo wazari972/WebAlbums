@@ -250,7 +250,8 @@ public class WebAlbumsDAOBean {
             default: return new StringBuilder("") ;
         }
     }
-    void setOrder(CriteriaQuery<?> cq, CriteriaBuilder cb,
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public void setOrder(CriteriaQuery<?> cq, CriteriaBuilder cb,
             ListOrder order, Expression<?> field) {
         if (order == null) return ;
 

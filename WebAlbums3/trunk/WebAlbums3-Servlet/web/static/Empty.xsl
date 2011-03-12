@@ -235,7 +235,7 @@
     <td>
         <a>
             <xsl:attribute name="href">
-                Photos?id=<xsl:value-of select="@id"/>&amp;count=<xsl:value-of select="@count"/>
+                Photos?album=<xsl:value-of select="@id"/>&amp;albmCount=<xsl:value-of select="@count"/>
              </xsl:attribute>
             <img width="100px">
                 <xsl:attribute name="src">
