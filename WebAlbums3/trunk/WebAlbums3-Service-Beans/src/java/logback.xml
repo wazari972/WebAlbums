@@ -58,8 +58,13 @@
         </filter>
     </appender>
 
+    <logger name="org.hibernate">
+         <level value="info"/>
+    </logger>
+
+
     <logger additivity="false" name="net.wazari">
-        <level value="debug"/>
+        <level value="info"/>
         <appender-ref ref="net.wazari.FileAppender"/>
         <appender-ref ref="net.wazari.errors.FileAppender"/>
         <appender-ref ref="net.wazari.ConsoleAppender"/>

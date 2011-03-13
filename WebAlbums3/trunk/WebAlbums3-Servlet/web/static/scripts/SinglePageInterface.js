@@ -13,6 +13,7 @@ function prepareDisplayXSL() {
         success:function(html){
             displayXsl = html;
         },
+
         async:false
     });
 
@@ -115,8 +116,13 @@ function loadSinglePage(url) {
     $.ajax({
         url:url,
         success:function(data){
-            $("body").css("cursor", "auto");
+            
             loadSinglePageBottomEnd(data) ;
+        },
+        complete:function() {$("body").css("cursor", "auto");},
+        statusCode: {
+                500: function() {alert('Glassfish error ...');},
+		404: function() {alert('page not found');}
         },
         async:true
     });
