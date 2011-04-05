@@ -6,8 +6,10 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +24,11 @@ import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
-import net.wazari.dao.entity.facades.SubsetOf;
-import net.wazari.service.entity.util.PhotoUtil;
 
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 
 import net.wazari.common.util.StringUtil;
-import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.util.system.ImageResizer.Element;
 
 @Stateless
@@ -49,8 +48,6 @@ public class FilesFinder {
     private PhotoFacadeLocal photoDAO;
     @EJB
     private TagPhotoFacadeLocal tagPhotoDAO;
-    @EJB
-    private PhotoUtil photoUtil;
     @EJB
     private SystemTools sysTools;
     @EJB
@@ -142,7 +139,9 @@ public class FilesFinder {
 
         return correct;
     }
-
+    private static String sansAccents(String source) {
+            return Normalizer.normalize(source, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
+    }
     private boolean importAlbum(Stack<Element> stack, File album, Theme enrTheme) {
         log.info("##");
         log.info("## Import of : " + album.getName());
@@ -156,9 +155,10 @@ public class FilesFinder {
             String strDate = null;
             String dirName = album.getName();
             Album enrAlbum;
-
+            // split album name into YYYY-MM-DD NAME
             if (dirName != null && dirName.length() > 11) {
                 String nom = dirName.substring(11);
+                nom = sansAccents(nom) ;
                 log.info("## NOM  : " + nom);
                 try {
                     strDate = album.getName().substring(0, 10);
@@ -280,7 +280,7 @@ public class FilesFinder {
             return false;
         }
 
-        String photoPath = albumPath + photo.getName();
+        String photoPath = albumPath + sansAccents(photo.getName());
 
         Photo enrPhoto = photoDAO.loadByPath(photoPath);
 
@@ -313,11 +313,10 @@ public class FilesFinder {
     }
 
     public boolean deleteAlbum(Album enrAlbum, Configuration conf) {
-
-        SubsetOf<Photo> lstP = photoDAO.loadFromAlbum(null, enrAlbum, null, ListOrder.DEFAULT);
-
         boolean correct = true;
-        for (Photo enrPhoto : lstP.subset) {
+        for (Iterator<Photo> iter = enrAlbum.getPhotoList().iterator(); iter.hasNext();) {
+            Photo enrPhoto = iter.next() ;
+             iter.remove();
             if (!deletePhoto(enrPhoto, conf)) {
                 log.warn("Problem during the deletion ...");
                 correct = false;

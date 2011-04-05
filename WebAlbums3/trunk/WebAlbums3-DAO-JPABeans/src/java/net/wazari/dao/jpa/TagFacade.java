@@ -133,7 +133,7 @@ public class TagFacade implements TagFacadeLocal {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
             Root<JPATag> tag = cq.from(JPATag.class);
-            cq.where(cb.equal(tag.get(JPATag_.id), nom)) ;
+            cq.where(cb.equal(tag.get(JPATag_.nom), nom)) ;
             return (JPATag) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", true)

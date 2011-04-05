@@ -10,13 +10,18 @@ public class TotemWrapper extends GenericImporter {
 
     private boolean supports(String type, String ext) {
         if (type != null) {
-            if (type.contains("video")) {
-                return true;
+            if (type.contains("video")
+             || type.toLowerCase().contains("mpeg"))
+            {
+                return true ;
             }
         }
         
         if (ext != null) {
             if (String.CASE_INSENSITIVE_ORDER.compare(ext, "asf") == 0) {
+                return true;
+            }
+            if (String.CASE_INSENSITIVE_ORDER.compare(ext, "3gp") == 0) {
                 return true;
             }
         }
