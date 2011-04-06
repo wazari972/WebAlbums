@@ -13,6 +13,7 @@ import net.wazari.dao.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,6 +22,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
@@ -67,27 +70,15 @@ public class TagFacade implements TagFacadeLocal {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
         //FROM JPATag t, JPATagPhoto tp, JPAPhoto p, JPAAlbum a
-        Root<JPATag> fromTag = cq.from(JPATag.class);
-        Root<JPATagPhoto> fromTagPhoto = cq.from(JPATagPhoto.class);
         Root<JPAPhoto> fromPhoto = cq.from(JPAPhoto.class);
-        Root<JPAAlbum> fromAlbum = cq.from(JPAAlbum.class);
-        cq.where(cb.and(
-                cb.equal(fromPhoto.get(JPAPhoto_.id), fromTagPhoto.get(JPATagPhoto_.photo)),
-                cb.equal(fromTagPhoto.get(JPATagPhoto_.tag), fromTag.get(JPATag_.id)),
-                webDAO.getRestrictionToPhotosAllowed(session, fromPhoto, cq.subquery(JPAPhoto.class))),
-                webDAO.getRestrictionToCurrentTheme(session, fromAlbum, AlbumFacadeLocal.Restriction.ALLOWED_AND_THEME)) ;
-        //WHERE t.id = tp.tag
-        // AND tp.photo = p.id
-        // AND p.album = a.id
-        // AND
-        //webDAO.restrictToPhotosAllowed(session, "p")
-        // AND
-        //webDAO.restrictToThemeAllowed(session, "a")
-        // GROUP BY t.id
-        cq.groupBy(fromTag.get(JPATag_.id));
-        // ORDER BY t.nom
+        Join<JPAPhoto, JPATagPhoto> fromTagPhoto = fromPhoto.join(JPAPhoto_.jPATagPhotoList) ;
+        Join<JPATagPhoto, JPATag> fromTag = fromTagPhoto.join(JPATagPhoto_.tag) ;
         
-        //SELECT t, count( tp.photo ) AS count
+        cq.where(cb.and(
+                webDAO.getRestrictionToPhotosAllowed(session, fromPhoto, cq.subquery(JPAPhoto.class))),
+                webDAO.getRestrictionToCurrentTheme(session, fromPhoto.get(JPAPhoto_.album), AlbumFacadeLocal.Restriction.ALLOWED_AND_THEME)) ;
+        cq.groupBy(fromTag.get(JPATag_.id));
+        
         TypedQuery<Object[]> tq = em.createQuery(
                 cq.multiselect(
                     fromTag,
@@ -108,16 +99,12 @@ public class TagFacade implements TagFacadeLocal {
         if (session.isRootSession()) {
             cq.where(cb.equal(tag.get(JPATag_.tagType), type)) ;
         } else {
-            Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class) ;
-            Root<JPAPhoto> p = cq.from(JPAPhoto.class) ;
-            Root<JPAAlbum> a = cq.from(JPAAlbum.class) ;
-             cq.where(cb.and(
+            ListJoin<JPATag, JPATagPhoto> tp = tag.join(JPATag_.jPATagPhotoList) ;
+            Join<JPATagPhoto, JPAPhoto> p = tp.join(JPATagPhoto_.photo) ;
+            cq.where(cb.and(
                 cb.equal(tag.get(JPATag_.tagType), type),
-                cb.equal(tag, tp.get(JPATagPhoto_.tag)),
-                cb.equal(tp.get(JPATagPhoto_.photo), p),
-                cb.equal(p.get(JPAPhoto_.album), a),
-                webDAO.getRestrictionToAlbumsAllowed(session, a, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
-                webDAO.getRestrictionToCurrentTheme(session, a, Restriction.ALLOWED_AND_THEME))) ;
+                webDAO.getRestrictionToAlbumsAllowed(session, p.get(JPAPhoto_.album), cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
+                webDAO.getRestrictionToCurrentTheme(session, p.get(JPAPhoto_.album), Restriction.ALLOWED_AND_THEME))) ;
         }
         cq.orderBy(cb.asc(tag.get(JPATag_.nom))) ;
         
@@ -144,21 +131,18 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         Predicate TRUE = cb.conjunction() ;
 
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
         Root<JPATag> t = cq.from(JPATag.class);
-        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
-        Root<JPAPhoto> p = cq.from(JPAPhoto.class);
-        Root<JPAAlbum> a = cq.from(JPAAlbum.class);
+        ListJoin<JPATag, JPATagPhoto> tp = t.join(JPATag_.jPATagPhotoList) ;
+        Join<JPATagPhoto, JPAPhoto> p = tp.join(JPATagPhoto_.photo) ;
         cq.where(cb.and(
-                cb.equal(t, tp.get(JPATagPhoto_.tag)),
-                cb.equal(tp.get(JPATagPhoto_.photo), p),
-                cb.equal(p.get(JPAPhoto_.album), a),
-                webDAO.getRestrictionToAlbumsAllowed(sSession, a, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
-                webDAO.getRestrictionToCurrentTheme(sSession, a, Restriction.ALLOWED_AND_THEME),
+                webDAO.getRestrictionToAlbumsAllowed(sSession, p.get(JPAPhoto_.album), cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
+                webDAO.getRestrictionToCurrentTheme(sSession, p.get(JPAPhoto_.album), Restriction.ALLOWED_AND_THEME),
                 (restrictToGeo ? cb.equal(t.get(JPATag_.tagType), 3) : TRUE)
                 )) ;
 

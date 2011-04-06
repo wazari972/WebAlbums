@@ -65,10 +65,11 @@ public class AlbumFacade implements AlbumFacadeLocal {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+
         Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
         cq.where(webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), restrict)) ;
         cq.orderBy(cb.desc(albm.get(JPAAlbum_.date))) ;
-        TypedQuery<JPAAlbum> q = em.createQuery(cq.select(albm));
+        TypedQuery<JPAAlbum> q = em.createQuery(cq);
 
         if (topFirst == TopFirst.TOP) {
             q.setFirstResult(0);
@@ -96,15 +97,15 @@ public class AlbumFacade implements AlbumFacadeLocal {
         //FROM album
         Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
         //where restrict to theme and albums
-        Predicate where = cb.and(
+        cq.where( cb.and(
                 webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), restrict),
                 webDAO.getRestrictionToCurrentTheme(session, albm, restrict),
                 cb.like(albm.get(JPAAlbum_.date), date+"%")
-                ) ;
-        cq.where(where) ;
+                )) ;
+        
         webDAO.setOrder(cq, cb, ListOrder.RANDOM, null) ;
         
-        Query q = em.createQuery(cq.select(albm))
+        Query q = em.createQuery(cq)
                .setFirstResult(0)
                .setMaxResults(bornes.getNbElement());
         q.setHint("org.hibernate.cacheable", true)
@@ -140,7 +141,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
                     webDAO.getRestrictionToCurrentTheme(session, albm, restrict))) ;
             webDAO.setOrder(cq, cb, order, albm.get(JPAAlbum_.date)) ;
 
-            Query q = em.createQuery(cq.select(albm))
+            Query q = em.createQuery(cq)
                    .setFirstResult(0)
                    .setMaxResults(1)
                    .setHint("org.hibernate.cacheable", true)
@@ -164,7 +165,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
                     webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
                     webDAO.getRestrictionToCurrentTheme(session, albm, Restriction.ALLOWED_AND_THEME),
                     cb.equal(albm.get(JPAAlbum_.id), id))) ;
-            return (JPAAlbum) em.createQuery(cq.select(albm))
+            return (JPAAlbum) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
@@ -181,7 +182,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
             Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
             cq.where(cb.and(cb.equal(albm.get(JPAAlbum_.date), date),
                     cb.equal(albm.get(JPAAlbum_.nom), name)));
-            return (JPAAlbum) em.createQuery(cq.select(albm))
+            return (JPAAlbum) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();

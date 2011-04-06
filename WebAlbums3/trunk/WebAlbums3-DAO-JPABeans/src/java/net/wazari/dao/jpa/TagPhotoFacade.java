@@ -81,12 +81,9 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
         Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
-        Root<JPAPhoto> p = cq.from(JPAPhoto.class);
-        cq.where(cb.and(
-                cb.equal(p.get(JPAPhoto_.album), enrAlbum)),
-                cb.equal(p.get(JPAPhoto_.id), tp.get(JPATagPhoto_.photo))) ;
+        cq.where(cb.equal(tp.get(JPATagPhoto_.photo).get(JPAPhoto_.album), enrAlbum)) ;
 
-        return (List) em.createQuery(cq.select(tp).distinct(true))
+        return (List) em.createQuery(cq.distinct(true))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
@@ -123,13 +120,10 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
         Root<JPAAlbum> a = cq.from(JPAAlbum.class);
         Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
-        Root<JPAPhoto> p = cq.from(JPAPhoto.class);
 
-        cq.where(cb.and(
-                cb.equal(tp.get(JPATagPhoto_.photo), p.get(JPAPhoto_.id)),
-                cb.equal(p.get(JPAPhoto_.album), a.get(JPAAlbum_.id)),
-                cb.equal(a.get(JPAAlbum_.theme), session.getTheme())
-                )) ;
+        cq.where(
+                cb.equal(tp.get(JPATagPhoto_.photo).get(JPAPhoto_.album).get(JPAAlbum_.theme),
+                   session.getTheme())) ;
         return (List) em.createQuery(cq.select(tp.get(JPATagPhoto_.tag)).distinct(true))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
@@ -145,7 +139,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     public List<TagPhoto> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
-        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        cq.from(JPATagPhoto.class);
         return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)

@@ -97,7 +97,7 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     public List<TagTheme> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagTheme> cq = cb.createQuery(JPATagTheme.class) ;
-        Root<JPATagTheme> tt = cq.from(JPATagTheme.class);
+        cq.from(JPATagTheme.class);
         return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)

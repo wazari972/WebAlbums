@@ -18,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
@@ -27,8 +28,6 @@ import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
-import net.wazari.dao.jpa.entity.JPAAlbum;
-import net.wazari.dao.jpa.entity.JPAAlbum_;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATagPhoto;
@@ -98,12 +97,12 @@ public class PhotoFacade implements PhotoFacadeLocal {
         webDAO.setOrder(cq, cb, order, p.get(JPAPhoto_.path)) ;
 
         Query q = em.createQuery(cq) ;
+        int size = q.getResultList().size() ;
+
         if (bornes != null && bornes.getFirstElement() != null) {
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getPhotoSize());
         }
-
-        int size = em.createQuery(cq).getResultList().size() ;
 
         List<Photo> subset = q
                     .setHint("org.hibernate.cacheable", true)
@@ -111,7 +110,8 @@ public class PhotoFacade implements PhotoFacadeLocal {
                     .getResultList() ;
         if (bornes == null || bornes.getFirstElement() == null)
             return new SubsetOf<Photo>(subset) ;
-            else return new SubsetOf<Photo>(bornes, subset, (long) size);
+        else
+            return new SubsetOf<Photo>(bornes, subset, (long) size);
 
     }
 
@@ -134,14 +134,12 @@ public class PhotoFacade implements PhotoFacadeLocal {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
         Root<JPAPhoto> p = cq.from(JPAPhoto.class);
-        Root<JPAAlbum> a = cq.from(JPAAlbum.class);
-        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        ListJoin<JPAPhoto, JPATagPhoto> tp = p.join(JPAPhoto_.jPATagPhotoList) ;
         cq.where(cb.and(
-                cb.equal(a, p.get(JPAPhoto_.album)),
                 cb.equal(tp.get(JPATagPhoto_.photo), p),
                 tp.get(JPATagPhoto_.tag).in(listTag)),
                 webDAO.getRestrictionToPhotosAllowed(session, p, cq.subquery(JPAPhoto.class)),
-                webDAO.getRestrictionToCurrentTheme(session, a, Restriction.THEME_ONLY)
+                webDAO.getRestrictionToCurrentTheme(session, p.get(JPAPhoto_.album), Restriction.THEME_ONLY)
                 );
         cq.groupBy(p.get(JPAPhoto_.id)) ;
         webDAO.setOrder(cq, cb, order, p.get(JPAPhoto_.path)) ;
@@ -193,19 +191,16 @@ public class PhotoFacade implements PhotoFacadeLocal {
     @Override
     public Photo loadRandom(ServiceSession session) {
         try {
-            StringBuilder rq = new StringBuilder(80);
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
             Root<JPAPhoto> p = cq.from(JPAPhoto.class) ;
-            Root<JPAAlbum> a = cq.from(JPAAlbum.class) ;
             cq.where(cb.and(
-                    cb.equal(p.get(JPAPhoto_.album), a.get(JPAAlbum_.id)),
                     webDAO.getRestrictionToPhotosAllowed(session, p, cq.subquery(JPAPhoto.class)),
-                    webDAO.getRestrictionToCurrentTheme(session, a, Restriction.THEME_ONLY)
+                    webDAO.getRestrictionToCurrentTheme(session, p.get(JPAPhoto_.album), Restriction.THEME_ONLY)
                     ));
             webDAO.setOrder(cq, cb, ListOrder.RANDOM, null) ;
             
-            return (JPAPhoto) em.createQuery(cq.select(p))
+            return (JPAPhoto) em.createQuery(cq)
                     .setFirstResult(0)
                     .setMaxResults(1)
                     .getSingleResult();

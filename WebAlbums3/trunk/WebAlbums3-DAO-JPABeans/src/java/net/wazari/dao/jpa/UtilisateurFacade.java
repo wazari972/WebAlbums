@@ -68,11 +68,9 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
         Root<JPAAlbum> a = cq.from(JPAAlbum.class);
-        Root<JPAUtilisateur> u = cq.from(JPAUtilisateur.class);
         cq.where(cb.and(
-                cb.equal(u.get(JPAUtilisateur_.id), a.get(JPAAlbum_.droit)),
                 cb.equal(a.get(JPAAlbum_.id), albumId))) ;
-        return (JPAUtilisateur) em.createQuery(cq.select(u))
+        return (JPAUtilisateur) em.createQuery(cq.select(a.get(JPAAlbum_.droit)))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getSingleResult();
@@ -115,7 +113,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     public List<Utilisateur> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
-        Root<JPAUtilisateur> u = cq.from(JPAUtilisateur.class);
+        cq.from(JPAUtilisateur.class);
         return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
