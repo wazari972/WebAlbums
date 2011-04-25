@@ -3,3 +3,5 @@ $(".fullscreen").click(function () {
 }) ;
 
 $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
+
+addLoadEvent(loadCloud())

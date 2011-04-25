@@ -61,7 +61,7 @@ function loadExernals(btId, url, divId, callback, async) {
     }
     var bt = document.getElementById(btId) ;
     if (bt != null) bt.style.visibility = "hidden";
-
+    
     $.ajax({
         url:url,
         success:function(data){
@@ -131,7 +131,7 @@ function prepareAlbumsTooltipsDiv(content) {
 }
 
 function prepareTooltipsDiv(content, what) {
-    targetEl = document.getElementById(content.attr('id')) ;
+    var targetEl = document.getElementById(content.attr('id')) ;
     if (targetEl.innerHTML == "" || targetEl.innerHTML == null) {
         loadExernals(null, what+"?special=ABOUT&id="+content.attr('rel'), content.attr('id'), null, false) ;
     }
@@ -140,5 +140,3 @@ function prepareTooltipsDiv(content, what) {
 function prepareCloudTooltips() {
     $(".cloud-tag").ezpz_tooltip({stayOnContent: true,beforeShow: prepareTagsTooltipsDiv});
 }
-
-addLoadEvent(loadCloud())

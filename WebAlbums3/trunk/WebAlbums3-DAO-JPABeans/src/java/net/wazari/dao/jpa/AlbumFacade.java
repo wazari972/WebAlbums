@@ -71,6 +71,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
         cq.orderBy(cb.desc(albm.get(JPAAlbum_.date))) ;
         TypedQuery<JPAAlbum> q = em.createQuery(cq);
 
+        int size = q.getResultList().size() ;
         if (topFirst == TopFirst.TOP) {
             q.setFirstResult(0);
             q.setMaxResults(bornes.getNbElement());
@@ -83,7 +84,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
 
         List<JPAAlbum> lstAlbums = q.getResultList() ;
         stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstAlbums.size()+" albums returned") ;
-        return (SubsetOf) new SubsetOf<JPAAlbum>(bornes, lstAlbums, (long) lstAlbums.size());
+        return (SubsetOf) new SubsetOf<JPAAlbum>(bornes, lstAlbums, (long) size);
     }
 
     @Override
