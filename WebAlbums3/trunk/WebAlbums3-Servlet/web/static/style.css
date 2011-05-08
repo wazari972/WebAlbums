@@ -44,9 +44,11 @@
     float: left;
     width: 250px;
     height: 250px;
+    text-align: center;
 }
 .details .pict img{
-    width: 100%;
+    max-width:250px;
+    max-height:250px;
 }
 
 .details .info {

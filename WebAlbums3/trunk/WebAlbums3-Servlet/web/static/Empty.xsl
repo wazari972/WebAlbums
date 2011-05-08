@@ -119,7 +119,7 @@
     <xsl:template match="about/tag">
       <h3>
         <a>
-            <xsl:attribute name="href">Tags?tagsAsked=<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
             <xsl:value-of select="name"/>
         </a>
     </h3>
@@ -160,14 +160,14 @@
 
   <xsl:template match="cloud/tag|children/tag">
       <li>
-        <a class="cloud-tag">
+        <a class="cloud-tag_used">
           <xsl:attribute name="id">cloud-target-<xsl:value-of select="@id"/></xsl:attribute>
           <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
           <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/>&amp;wantTagChildren=true</xsl:attribute>
           <xsl:attribute name="nbElements"><xsl:value-of select="@name"/> : <xsl:value-of select="@nb"/></xsl:attribute>
           <xsl:value-of select="name" />
         </a>
-        <span class="cloud_tooltip">
+        <span class="cloud_tooltip_not_used">
             <xsl:attribute name="id">cloud-content-<xsl:value-of select="@id"/></xsl:attribute>
             <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
         </span>
