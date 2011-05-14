@@ -6,6 +6,7 @@ package net.wazari.view.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,13 +263,14 @@ public class DispatcherBean {
                 }
                 //Create JAXB Context
                 JAXBContext jc = JAXBContext.newInstance(XmlWebAlbums.class);
-
+                
                 //Create marshaller
                 Marshaller marshaller = jc.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-
-                marshaller.marshal(output, sortie);
+                StringWriter writer = new StringWriter() ;
+                marshaller.marshal(output, writer);
+                sortie.append(writer.toString().replace("&amp;", "&"));
             } else {
                 sortie.println(output.blob);
             }
