@@ -1,5 +1,12 @@
 package net.wazari.service.engine;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlLoginInfo;
 import java.security.Principal;
@@ -69,6 +76,21 @@ public class WebPageBean implements WebPageLocal {
     static {
         log.warn( "FilesFinder.initialized {}", SystemTools.initate());
         log.warn("Loading WebAlbums3-Service-Beans");
+        
+        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+    
+        try {
+          JoranConfigurator configurator = new JoranConfigurator();
+          configurator.setContext(lc);
+          // the context was probably already configured by default configuration rules
+          lc.reset(); 
+          InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("logback.xml") ;
+          
+          configurator.doConfigure(stream);
+        } catch (JoranException je) {
+           je.printStackTrace();
+        }
+        StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
     }
 
     @Override

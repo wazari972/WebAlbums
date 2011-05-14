@@ -49,6 +49,7 @@ public class DispatcherBean {
     static {
         log.warn("WebAlbums3-Servlet is being loaded ... ");
         log.info("RootPath: {}", ConfigurationXML.getConf().getRootPath());
+        
     }
 
     public DispatcherBean() {
@@ -102,6 +103,8 @@ public class DispatcherBean {
         }
         log.info("============= <{}> =============", page);
 
+
+        
         response.setContentType("text/xml");
 
         XmlWebAlbums output = new XmlWebAlbums();

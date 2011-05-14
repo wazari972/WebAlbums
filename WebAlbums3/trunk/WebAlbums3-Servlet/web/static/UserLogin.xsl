@@ -28,8 +28,10 @@
 
 	  <xsl:if test="not(valid)">
 	    <form method="POST">
-	      <label for="userName"> Nom d'utilisateur :</label><input id="userName" type="input" name="userName" /><br/>
-	      <label for="userPass"> Mot de passe :</label> <input id="userPass" type="password" name="userPass" /><br/>
+                <table>
+                    <tr><td><label for="userName"> Nom d'utilisateur :</label></td><td><input id="userName" type="input" name="userName" /></td></tr>
+                    <tr><td><label for="userPass"> Mot de passe :</label></td><td><input id="userPass" type="password" name="userPass" /></td></tr>
+                </table>
 	      <input type='hidden' name='action' value='LOGIN'/>	
 	      <input type="submit" value="Valider" />
 	    </form>
