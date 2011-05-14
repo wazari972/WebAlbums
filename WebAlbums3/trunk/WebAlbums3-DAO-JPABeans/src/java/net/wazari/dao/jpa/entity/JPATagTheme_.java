@@ -1,6 +1,5 @@
 package net.wazari.dao.jpa.entity;
 
-import net.wazari.dao.jpa.entity.*;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
