@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="entity">
+	<class name="Geolocalisation" table="Geolocalisation">
+	  <cache usage="nonstrict-read-write"/>
+	  <composite-id>
+	    <key-property name="Tag" />
+	  </composite-id>
+
+	  <property name="Tag" type="integer" index="GeolocTag" insert="false" update="false">
+            <column name="Tag" sql-type="int"/>
+	  </property>
+	  
+ 	  <property name="Lat" type="string">
+	    <column name="Lat" sql-type="char(20)" not-null="true" />
+	  </property>
+	  
+ 	  <property name="Long" type="string">
+            <column name="Longitude" sql-type="char(20)" not-null="true" />
+	  </property>
+	</class>
+</hibernate-mapping>

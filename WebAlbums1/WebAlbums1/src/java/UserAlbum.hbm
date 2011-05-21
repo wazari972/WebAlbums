@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping>
+	<class name="entity.UserAlbum" table="UserAlbum">
+	  <cache usage="nonstrict-read-write"/>
+	  <id name="ID" type="integer">
+	    <column name="ID" sql-type="int"/>
+	    <generator class="increment"/>
+	  </id>
+	  
+	  <property name="Album" type="integer" index="UAalbum" update="false">
+	    <column name="Album" sql-type="int" not-null="true" />
+	  </property>
+	  <property name="User" type="integer" index="UAuser" update="false">
+	    <column name="User" sql-type="int" not-null="true" />
+	  </property>
+	</class>
+</hibernate-mapping>
