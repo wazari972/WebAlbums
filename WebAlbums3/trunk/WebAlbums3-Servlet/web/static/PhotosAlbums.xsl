@@ -48,7 +48,6 @@
                 </xsl:attribute>
               </img>
             </a>
-
         </div>
         <div class="info">
             <xsl:apply-templates select="user" />
@@ -96,8 +95,7 @@
                     </span>
                   </xsl:if>
                   <xsl:if test="/webAlbums/affichage/@edit">
-                      <div class="edit">
-                        <a title="Edition">
+                        <a class="edit" title="Edition">
                           <xsl:attribute name="href">
                             <xsl:if test="/webAlbums/photos">
 Photos?action=EDIT
@@ -124,8 +122,25 @@ Albums?action=EDIT
                           </xsl:attribute>
                           <img src="static/images/edit.png" height="30px"/>
                         </a>
-                    </div>
                   </xsl:if>
+              </div>
+              <div class="fastedit">
+                  <form>
+                      <p>
+                          <textarea cols="30" ><xsl:value-of select="description" /></textarea>
+                          <input value="Edit" type="button" />
+                      </p>
+                      <p>
+                          <xsl:apply-templates select="../../massEdit/tagList">
+                              <xsl:with-param name="style">list</xsl:with-param>
+                              <xsl:with-param name="name">addTag</xsl:with-param>
+                              <xsl:with-param name="id">massTagList</xsl:with-param>
+                              <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+                              <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
+                          </xsl:apply-templates>                    
+                        <input value="+" type="button" /><input value="-" type="button" />
+                    </p>
+                </form>
               </div>
           </div>
         </div>

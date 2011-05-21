@@ -75,17 +75,15 @@ Photos?album=<xsl:value-of select="@id" />
                         </a>
                     </xsl:if>
                     <xsl:if test="/webAlbums/affichage/@edit">
-                        <div class="edit_opt">
                           &#160;
-                          <a class="edit" title="Edition de l'album">
+                          <a rel="singlepage[no]" title="Edition de l'album">
                             <xsl:attribute name="href">
 Albums?action=EDIT
 &amp;id=<xsl:value-of select="@id" />
 &amp;count=<xsl:value-of select="@count"/>
                             </xsl:attribute>
-                            Edit
+                            <img src="static/images/edit.png" height="30px"/>
                           </a>
-                       </div>
                     </xsl:if>
                 </div>
             </div>

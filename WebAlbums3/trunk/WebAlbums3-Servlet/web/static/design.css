@@ -216,12 +216,4 @@ body {
     padding-left: 16px;
 }
 
-.item a.edit {
-    background: url(images/edit.png) no-repeat;
-    height: 48px;
-    width: 48px;
-    float: left;
-    margin-left: -36px;
-}
-
 .item .body {padding: 12px 18px;}
