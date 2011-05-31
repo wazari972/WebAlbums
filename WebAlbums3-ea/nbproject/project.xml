@@ -8,7 +8,7 @@
             <web-module-libraries/>
             <web-module-additional-libraries>
                 <library>
-                    <file>${reference.WebAlbums3-Servlet.dist-ear}</file>
+                    <file>${reference.WebAlbums3-DAO-JPABeans.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
                 <library>
@@ -16,11 +16,14 @@
                     <path-in-war>/</path-in-war>
                 </library>
                 <library>
-                    <file>${reference.WebAlbums3-DAO-JPABeans.dist-ear}</file>
+                    <file>${reference.WebAlbums3-Servlet.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
             </web-module-additional-libraries>
         </data>
+        <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
+            <definitions>/home/kevin/WebAlbums/WebAlbums-libs/nblibraries.properties</definitions>
+        </libraries>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>WebAlbums3-DAO-JPABeans</foreign-project>

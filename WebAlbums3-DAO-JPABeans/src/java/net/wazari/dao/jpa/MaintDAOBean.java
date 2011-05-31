@@ -4,7 +4,6 @@
  */
 package net.wazari.dao.jpa;
 
-import java.io.File;
 import java.text.Normalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

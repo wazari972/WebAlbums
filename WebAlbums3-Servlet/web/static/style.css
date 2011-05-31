@@ -37,15 +37,12 @@
     position: relative;
     width: 100%;
     overflow:hidden;
-    background-color: #F0ACFA;
-    vertical-align:middle;
     margin:auto;
 }
 
 .details .pict {
     float: left;
     text-align: center;
-    background-color: #00AFFF;
 }
 .details .pict img{
     max-width:250px;
@@ -54,10 +51,15 @@
 }
 
 .details .info {
-    background-color: #58ACFA;
+    float: right;
+    width:50%;
+}
+.details .fastedit_bt {
     float: right;
 }
-
+.details .fastedit {
+    display:none;
+}
 .details .info .visibility {
     float: right;
 }
@@ -66,6 +68,8 @@
 }
 
 .details .info .option {
+    
+    background-color:   #037931
 }
 
 .details .info .options .title {

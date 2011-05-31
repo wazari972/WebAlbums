@@ -95,6 +95,10 @@
                     </span>
                   </xsl:if>
                   <xsl:if test="/webAlbums/affichage/@edit">
+                        <div class="fastedit_bt">
+                            <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                            Edit
+                        </div>
                         <a class="edit" title="Edition">
                           <xsl:attribute name="href">
                             <xsl:if test="/webAlbums/photos">
@@ -122,25 +126,34 @@ Albums?action=EDIT
                           </xsl:attribute>
                           <img src="static/images/edit.png" height="30px"/>
                         </a>
+                        <div class="fastedit">
+                            <xsl:attribute name="id">fastedit_<xsl:value-of select="photoId" /></xsl:attribute>
+                             <p>
+                                  <textarea cols="30" >
+                                      <xsl:value-of select="description" />
+                                      <xsl:attribute name="id">fastedit_desc_<xsl:value-of select="photoId" /></xsl:attribute>
+                                  </textarea>
+                                  <input value="edit" type="button" class="fastedit_desc">
+                                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                  </input>
+                              </p>
+                              <p>
+                                  <xsl:apply-templates select="../../massEdit/tagList">
+                                      <xsl:with-param name="style">list</xsl:with-param>
+                                      <xsl:with-param name="name">addTag</xsl:with-param>
+                                      <xsl:with-param name="id">fastedit_tag_<xsl:value-of select="photoId" /></xsl:with-param>
+                                      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+                                      <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
+                                  </xsl:apply-templates>                    
+                                <input value="+" type="button" class="fastedit_addtag">
+                                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                </input>
+                                <input value="-" type="button" class="fastedit_rmtag">
+                                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                </input>
+                             </p>
+                        </div>
                   </xsl:if>
-              </div>
-              <div class="fastedit">
-                  <form>
-                      <p>
-                          <textarea cols="30" ><xsl:value-of select="description" /></textarea>
-                          <input value="Edit" type="button" />
-                      </p>
-                      <p>
-                          <xsl:apply-templates select="../../massEdit/tagList">
-                              <xsl:with-param name="style">list</xsl:with-param>
-                              <xsl:with-param name="name">addTag</xsl:with-param>
-                              <xsl:with-param name="id">massTagList</xsl:with-param>
-                              <xsl:with-param name="mode">TAG_USED</xsl:with-param>
-                              <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
-                          </xsl:apply-templates>                    
-                        <input value="+" type="button" /><input value="-" type="button" />
-                    </p>
-                </form>
               </div>
           </div>
         </div>
