@@ -19,6 +19,7 @@ import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.view.servlet.exchange.xml.XmlPhotos;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
@@ -48,8 +49,11 @@ public class Photos extends HttpServlet {
         if (special == Special.RANDOM) {
             output.random = photoService.treatRANDOM(vSession) ;
             return output ;
-        }else if (special == Special.ABOUT) {
-            output.about = photoService.treatAbout(vSession) ;
+        } else if (special == Special.ABOUT) {
+            output.about = photoService.treatABOUT(vSession) ;
+            return output ;
+        } else if (special == Special.FASTEDIT) {
+            output.fastedit = photoService.treatFASTEDIT((ViewSessionPhotoFastEdit) vSession) ;
             return output ;
         }
 

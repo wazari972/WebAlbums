@@ -38,6 +38,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
 
@@ -52,7 +53,7 @@ public class ViewSessionImpl implements
         ViewSessionConfig,
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit,
         ViewSessionTag,
-        ViewSessionImages, ViewSessionPhotoDisplayMassEdit,
+        ViewSessionImages, ViewSessionPhotoDisplayMassEdit, ViewSessionPhotoFastEdit,
         ViewSessionMaint{
 
     private static final Logger log = LoggerFactory.getLogger(ViewSessionImpl.class.getCanonicalName());
@@ -472,6 +473,11 @@ public class ViewSessionImpl implements
     @Override
     public MaintAction getMaintAction() {
         return getObject("action", MaintAction.class);
+    }
+    
+    @Override
+    public TagAction getTagAction() {
+        return getObject("tagAction", TagAction.class);
     }
 
     private void setSessionObject(String string, Object value) {

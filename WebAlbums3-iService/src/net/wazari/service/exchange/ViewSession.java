@@ -14,11 +14,10 @@ import net.wazari.dao.exchange.ServiceSession;
  */
 public interface ViewSession extends ServiceSession {
     enum Special {
-        TOP5, FULLSCREEN, CLOUD, PERSONS, PLACES, UPDATE, YEARS
-       ,SELECT, RANDOM, ABOUT}
+        TOP5, FULLSCREEN, CLOUD, PERSONS, PLACES, UPDATE, YEARS,
+        SELECT, RANDOM, ABOUT, FASTEDIT}
 
     enum Action {
-
         SUBMIT, EDIT, IMPORT, DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, MASSEDIT, LOGIN, DELTHEME, LINKTAG
     }
 

@@ -42,12 +42,15 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.View
 import net.wazari.util.system.FilesFinder;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
+import net.wazari.service.exchange.xml.photo.XmlPhotoFastEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoList;
 import net.wazari.service.exchange.xml.photo.XmlPhotoMassEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
@@ -503,7 +506,7 @@ public class PhotoBean implements PhotoLocal {
         return details ;
     }
 
-    public XmlPhotoAbout treatAbout(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
+    public XmlPhotoAbout treatABOUT(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Photo enrPhoto = photoDAO.loadIfAllowed(vSession, vSession.getId());
         if(enrPhoto == null) return null ;
 
@@ -513,4 +516,43 @@ public class PhotoBean implements PhotoLocal {
         return output ;
     }
 
+    public XmlPhotoFastEdit treatFASTEDIT(ViewSessionPhotoFastEdit vSession) {
+        XmlPhotoFastEdit output = new XmlPhotoFastEdit();
+        output.desc_status = null;
+        output.tag_status = null;
+        
+        Integer id = vSession.getId();
+        Photo enrPhoto = photoDAO.find(id);
+        if (enrPhoto == null) {
+            output.desc_msg = "No photo found for id="+id;
+            output.desc_status = XmlPhotoFastEdit.Status.ERROR;
+            output.tag_status = XmlPhotoFastEdit.Status.ERROR;
+            return output;
+        }
+        
+        String desc = vSession.getDesc();
+        if (desc != null) {
+            enrPhoto.setDescription(desc);
+            output.desc_status = XmlPhotoFastEdit.Status.OK;
+        }
+        
+        
+        Integer tagId = vSession.getTag();
+        Tag enrTag = tagDAO.find(tagId);
+        if (enrTag != null) {
+            try {
+                TagAction action = vSession.getTagAction();
+                if (action == null || action == TagAction.ADD) 
+                    photoUtil.addTags(enrPhoto, new Integer []{tagId});
+                else
+                    photoUtil.removeTag(enrPhoto, tagId);
+                output.tag_status = XmlPhotoFastEdit.Status.OK;
+            } catch (WebAlbumsServiceException ex) {
+                output.tag_msg = ex.getMessage();
+                output.tag_status = XmlPhotoFastEdit.Status.ERROR;
+            }
+        }
+        
+        return output;
+    }
 }

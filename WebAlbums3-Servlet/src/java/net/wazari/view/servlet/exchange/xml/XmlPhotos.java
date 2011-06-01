@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
+import net.wazari.service.exchange.xml.photo.XmlPhotoFastEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
 
 /**
@@ -22,4 +23,5 @@ public class XmlPhotos {
     public XmlReturnTo return_to;
     public XmlPhotoDisplay display;
     public XmlPhotoAbout about;
+    public XmlPhotoFastEdit fastedit;
 }
