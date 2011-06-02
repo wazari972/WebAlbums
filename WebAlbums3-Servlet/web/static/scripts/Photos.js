@@ -24,7 +24,7 @@ $(".fastedit_bt").click(function () {
 function reload_page_cb(data, photoid) {
     //$(data).find('fastedit').each(function(){});
     if (loadSinglePage != undefined) {
-        loadSinglePage(getCurrentPage()+"#"+photoid)
+        loadSinglePage(getCurrentPage()+"#"+photoid, true)
     } else
         alert("Please reload the page to refresh")
 }
@@ -64,3 +64,23 @@ $(".fastedit_desc").click(function () {
         }
      );
 }) ;
+
+massedit_enabled = false
+function massedit_toggle(state) {
+    if (state == true || state == false)
+        massedit_enabled = state
+    else
+        massedit_enabled = !massedit_enabled;
+    
+    $("#massedit_item").toggle(massedit_enabled);
+    $(".massedit_chk").toggle(massedit_enabled);
+
+    if (massedit_enabled)
+        $(".massedit_toggle").text("Mass edit V")
+    else
+        $(".massedit_toggle").text("Mass edit X")
+}
+//massedit_toggle(false)
+
+$(".massedit_toggle").unbind('click');
+$(".massedit_toggle").click(massedit_toggle) ;

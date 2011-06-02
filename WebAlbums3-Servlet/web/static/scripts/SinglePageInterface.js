@@ -57,7 +57,10 @@ function Node_getElementById(node, id) {
     return null;
 }
 
-function loadSinglePage(url) {
+function loadSinglePage(url, dont_scroll) {
+    if (dont_scroll == undefined)
+        dont_scroll = false
+    
     if (url == undefined) {
         url = getCurrentPage() ;
         var pos = url.indexOf('?') ;
@@ -113,13 +116,14 @@ function loadSinglePage(url) {
     }
     
     $("body").css("cursor", "wait");
+    alert("wait")
     $.ajax({
         url:url,
         success:function(data){
-            
-            loadSinglePageBottomEnd(data) ;
+            $("body").css("cursor", "auto");
+            loadSinglePageBottomEnd(data, dont_scroll) ;
         },
-        complete:function() {$("body").css("cursor", "auto");},
+        complete:function() {alert("done");$("body").css("cursor", "auto");},
         statusCode: {
                 500: function() {alert('Glassfish error ...');},
 		404: function() {alert('page not found');}
@@ -128,7 +132,7 @@ function loadSinglePage(url) {
     });
 }
 
-function loadSinglePageBottomEnd(data) {
+function loadSinglePageBottomEnd(data, dont_scroll) {
     var xml_doc = data;
     
     var left = document.getElementById ("left");
@@ -157,7 +161,9 @@ function loadSinglePageBottomEnd(data) {
     enableSinglePage() ;
     inPlaceSinglePage_lock = null ;
     url = getCurrentSinglePage();
-    if (url.lastIndexOf("#") > -1) {
+    if (dont_scroll) {
+        //nothing to do
+    } else if (url.lastIndexOf("#") > -1) {
         anchor = url.substring(url.lastIndexOf("#")+1)
         window.scrollTo(0, ($("#anchor_"+anchor).offset().top))
     } else {
@@ -195,9 +201,9 @@ function enableSinglePage() {
             $(this).attr("rel").indexOf("shadowbox") == 0) return ;
 
 
-        parents = $(this).parent("div") ;
+        var parents = $(this).parent("div") ;
         for (var i = -1; i < parents.length; i++) {
-
+            var parent
             if (i == -1) {
                 parent = $(this) ;
             } else {
