@@ -30,6 +30,7 @@ import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.dao.entity.Theme;
+import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
@@ -56,33 +57,23 @@ public class DispatcherBean {
     public DispatcherBean() {
         log.warn("WebAlbums3-Servlet DispatcherBean created !");
     }
-    @EJB
-    private Index indexServlet;
-    @EJB
-    private Users userServlet;
-    @EJB
-    private Maint maintServlet;
-    @EJB
-    private Choix choixServlet;
-    @EJB
-    private Albums albumServlet;
-    @EJB
-    private Photos photoServlet;
-    @EJB
-    private Tags tagServlet;
-    @EJB
-    private Images imageServlet;
-    @EJB
-    private Config configServlet;
-    @EJB
-    private WebPageLocal webPageService;
-    @EJB
-    private UserLocal userService;
+    @EJB private Index indexServlet;
+    @EJB private Users userServlet;
+    @EJB private Maint maintServlet;
+    @EJB private Choix choixServlet;
+    @EJB private Albums albumServlet;
+    @EJB private Photos photoServlet;
+    @EJB private Tags tagServlet;
+    @EJB private Images imageServlet;
+    @EJB private Database databaseServlet;
+    @EJB private Config configServlet;
+    @EJB private WebPageLocal webPageService;
+    @EJB private UserLocal userService;
 
     public enum Page {
 
-        PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT
-    }
+        PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT, 
+        DATABASE}
 
     public void treat(ServletContext context,
             Page page,
@@ -182,9 +173,12 @@ public class DispatcherBean {
                             output.image = ret;
                         }
                         log.debug("IMAGE written? {}", isWritten);
+                    } else if (page == Page.IMAGE) {
+                        log.debug("DATABASE page");
+                        output.database = databaseServlet.treatDATABASE((ViewSessionDatabase) vSession);
                     } else {
                         log.debug("VOID page? ({})", page);
-                        output.themes = indexServlet.treatVOID(vSession);
+                        output.themes = indexServlet.treatVOID((ViewSession) vSession);
                         actualPage = Page.VOID;
                     }
                 }

@@ -38,7 +38,7 @@ public class Config extends HttpServlet {
     private ConfigLocal configService;
     @EJB
     private WebPageLocal webPageService ;
-
+    
     public XmlConfig treatCONFIG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
 
@@ -98,7 +98,7 @@ public class Config extends HttpServlet {
                     Box.MULTIPLE);
 
         } else {
-            output.exception = "Vous n'avez pas crée ce theme ..." ;
+            output.exception = "Vous n'êtes pas manager ..." ;
         }
 
         return output ;

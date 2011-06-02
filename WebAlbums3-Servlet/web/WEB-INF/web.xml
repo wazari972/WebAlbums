@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>toto</display-name>
+    <servlet>
+        <servlet-name>System</servlet-name>
+        <servlet-class>net.wazari.view.servlet.Database</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>System</servlet-name>
+        <url-pattern>/System</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
@@ -22,6 +30,7 @@
             <url-pattern>/Tags</url-pattern>
             <url-pattern>/Images</url-pattern>
             <url-pattern>/Maint</url-pattern>
+            <url-pattern>/Database</url-pattern>
             <http-method>GET</http-method>
             <http-method>POST</http-method>
             <http-method>HEAD</http-method>

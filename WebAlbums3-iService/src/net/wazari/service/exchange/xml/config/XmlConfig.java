@@ -9,14 +9,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlInfoException;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
-import net.wazari.service.exchange.xml.config.XmlConfigDelTag;
-import net.wazari.service.exchange.xml.config.XmlConfigDelTheme;
-import net.wazari.service.exchange.xml.config.XmlConfigImport;
-import net.wazari.service.exchange.xml.config.XmlConfigLinkTag;
-import net.wazari.service.exchange.xml.config.XmlConfigModGeo;
-import net.wazari.service.exchange.xml.config.XmlConfigModTag;
-import net.wazari.service.exchange.xml.config.XmlConfigModVis;
-import net.wazari.service.exchange.xml.config.XmlConfigNewTag;
 
 /**
  *

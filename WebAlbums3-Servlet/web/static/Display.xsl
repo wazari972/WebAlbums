@@ -89,6 +89,9 @@
                             <a href="Config" rel="shadowbox" title="Configuration (box)">Config</a>
                             <a href="Config" rel="singlepage[no]" title="Configuration (new page)">uration</a>
                         </li>
+                        <li>
+                            <a href="Database" title="Database">Database</a>
+                        </li>
                         <li class="massedit_toggle">Massedit</li>
                         <li>Mode: <a href="javascript:updateAffichage('edition');" title=""><xsl:value-of select="/webAlbums/affichage/@edition" /></a></li>
                     </ul>

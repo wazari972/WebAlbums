@@ -42,6 +42,7 @@ public class XmlWebAlbums {
     public XmlConfig config;
     public XmlTags tags;
     public XmlImage image;
+    public XmlDatabase database;
     /***/
     public XmlAffichage affichage;
     public XmlLoginInfo loginInfo;

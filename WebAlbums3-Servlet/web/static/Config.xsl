@@ -270,7 +270,6 @@
 	<span>*</span>
       </div>
       <div class="content">
-	<a name="delTheme"/>
 	<h1>/!\Suppression du theme/!\</h1>
 	<div class="body">
             <xsl:apply-templates select="deltheme"/>
