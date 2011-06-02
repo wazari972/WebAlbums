@@ -1,16 +1,14 @@
 var select = true;
 function selectAll() {
-    var chks = document.getElementsByTagName("input");
-    for(var i = 0; i < chks.length; i++) {
-        if (chks[i].type == 'checkbox' && chks[i].name.match("chk")) {
-            chks[i].checked = select ;
-        }
-    }
-    var bt = document.getElementById("selectAllBt") ;
-    if (select) bt.value = "Aucune";
-    else bt.value = "Toutes";
+    $(".massedit_chkbox").each(function() {
+        $(this).attr('checked', select); 
+    });
+    var bt = $("#massedit_selectall") ;
+    if (select) bt.attr('value',"Aucune");
+    else bt.attr('value',"Toutes");
     select = !select ;
 }
+$("#massedit_selectall").click(selectAll)
 
 function validMass() {
     var selected = false ;

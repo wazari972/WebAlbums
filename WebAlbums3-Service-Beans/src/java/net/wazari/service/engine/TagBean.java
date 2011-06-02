@@ -69,6 +69,8 @@ public class TagBean implements TagLocal {
             for (int tagId : Arrays.asList(tags)) {
                 try {
                     Tag enrTag = tagDAO.find(tagId);
+                    if (enrTag == null)
+                        continue;
                     tagSet.add(enrTag);
                     if (wantChildren) {
                         tagSet.addAll(tagDAO.getChildren(enrTag));

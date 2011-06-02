@@ -61,7 +61,7 @@
 	  <input type='hidden' name='action' value='MASSEDIT' />	  
 	  <table>
 	    <tr><td colspan='2'>
-		<input type='button' id="selectAllBt" value="Toutes"/>
+		<input type='button' id="massedit_selectall" value="Toutes"/>
 	    </td></tr>
 	    <tr>
 	      <td><input id="turnRight" type='radio' name='turn' value='RIGHT'/></td>

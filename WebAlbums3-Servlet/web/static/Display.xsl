@@ -34,8 +34,8 @@
         
       </head>
       <body>
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.4.custom.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.5.1.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.13.custom.min.js"></script>
 
         <script type="text/javascript" src="static/scripts/ezpz/jquery.ezpz_tooltip.min.js"></script>
 
@@ -89,9 +89,7 @@
                             <a href="Config" rel="shadowbox" title="Configuration (box)">Config</a>
                             <a href="Config" rel="singlepage[no]" title="Configuration (new page)">uration</a>
                         </li>
-                        <xsl:if test="/webAlbums/photos">
-                            <li class="massedit_toggle">Massedit</li>
-                        </xsl:if>
+                        <li class="massedit_toggle">Massedit</li>
                         <li>Mode: <a href="javascript:updateAffichage('edition');" title=""><xsl:value-of select="/webAlbums/affichage/@edition" /></a></li>
                     </ul>
                 </xsl:if>
@@ -125,7 +123,7 @@
                     <script type="text/javascript" src="static/scripts/Config.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/choix">
-                    <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.4.custom.css" rel="stylesheet" media="screen"/>
+                    <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" media="screen"/>
                     <script src="Choix?special=map.js" type='text/javascript'></script>
                     <script src="static/scripts/Choix.js" type='text/javascript'></script>
                 </xsl:if>

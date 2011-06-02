@@ -1,5 +1,7 @@
 *.class
-*/dist/
-*/build/*
-*/private/*
+dist/**/*
+build/**/*
+**/private/?
 *.private
+private.?
+

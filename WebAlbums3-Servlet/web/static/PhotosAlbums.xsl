@@ -51,9 +51,9 @@
         </div>
         <div class="info">
             <xsl:apply-templates select="user" />
-            <xsl:if test="/webAlbums/affichage/@massedit and /webAlbums/photos">
+            <xsl:if test="/webAlbums/affichage/@massedit and not(/webAlbums/albums)">
                 <div class="massedit_chk">
-                    <input type="checkbox" class="massEdit" value="modif">
+                    <input type="checkbox" class="massedit_chkbox" value="modif">
                         <xsl:attribute name="name">chk<xsl:value-of select="photoId" /></xsl:attribute>
                     </input>
                 </div>
@@ -94,7 +94,7 @@
                     </span>
                   </xsl:if>
                   <xsl:if test="/webAlbums/affichage/@edit">
-                        <xsl:if test="/webAlbums/photos">
+                        <xsl:if test="not(/webAlbums/albums)">
                             <div class="fastedit_bt">
                                 <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                                 Edit

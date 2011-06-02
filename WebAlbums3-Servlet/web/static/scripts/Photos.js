@@ -80,7 +80,7 @@ function massedit_toggle(state) {
     else
         $(".massedit_toggle").text("Mass edit X")
 }
-//massedit_toggle(false)
+massedit_toggle(true)
 
 $(".massedit_toggle").unbind('click');
 $(".massedit_toggle").click(massedit_toggle) ;
