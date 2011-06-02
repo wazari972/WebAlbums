@@ -1,3 +1,5 @@
 *.class
 */dist/
 */build/*
+*/private/*
+*.private
