@@ -27,7 +27,7 @@
 	  </xsl:if>
 
 	  <xsl:if test="not(valid)">
-	    <form method="POST">
+	    <form method="POST" action="Users">
                 <table>
                     <tr><td><label for="userName"> Nom d'utilisateur :</label></td><td><input id="userName" type="input" name="userName" /></td></tr>
                     <tr><td><label for="userPass"> Mot de passe :</label></td><td><input id="userPass" type="password" name="userPass" /></td></tr>

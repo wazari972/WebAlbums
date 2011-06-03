@@ -4,7 +4,12 @@
  */
 package net.wazari.view.servlet;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -12,12 +17,23 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
+import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.XmlPluginInfo;
+import net.wazari.common.util.XmlUtils;
 import net.wazari.service.DatabaseLocal;
+import net.wazari.service.PluginManagerLocal;
+import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession.Action;
+import net.wazari.service.exchange.ViewSession.Box;
+import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.xml.XmlDatabase;
+import net.wazari.view.servlet.exchange.xml.XmlDatabase.XmlCreateDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +48,9 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class Database extends HttpServlet {
     @EJB private DispatcherBean dispatcher ;
-    @EJB DatabaseLocal databaseService;
-    
+    @EJB private DatabaseLocal databaseService;
+    @EJB private WebPageLocal webPageService ;
+    @EJB private PluginManagerLocal systemTools;
     public XmlDatabase treatDATABASE(ViewSessionDatabase vSession)
             throws WebAlbumsServiceException {
         XmlDatabase output = new XmlDatabase();
@@ -43,6 +60,9 @@ public class Database extends HttpServlet {
             action = Action.DEFAULT;
         
         if (vSession.isSessionManager()) {
+            output.default_ = databaseService.treatDEFAULT(vSession);
+            output.default_.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
+                                                           Box.MULTIPLE);
             switch (action) {
                 case IMPORT:
                     output.import_ = databaseService.treatIMPORT(vSession);
@@ -56,14 +76,68 @@ public class Database extends HttpServlet {
                 case CHECK:
                     output.check = databaseService.treatCHECK(vSession);
                     break;
-                default:
-                    output.default_ = databaseService.treatDEFAULT(vSession);
+                case STATS:
+                    output.stats = databaseService.treatSTATS(vSession);
+                    break;
+                case PLUGIN_RELOAD:
+                    systemTools.reloadPlugins(ConfigurationXML.getConf().getPluginsPath());
+                case PLUGIN:
+                    output.plugins = new XmlPluginInfo() ;
+                    for (Importer imp : systemTools.getPluginList()) {
+                        output.plugins.addImporter(imp);
+                    }
+                    output.plugins.setUsedSystem(systemTools.getUsedSystem()) ;
+                    for (net.wazari.common.plugins.System sys :systemTools.getNotUsedSystemList()) {
+                        output.plugins.addNotUsedSystem(sys);
+                    }
+                    break;
+                case CREATE_DIRS:
+                    output.create_dir = new XmlCreateDir(create_directories());
             }
         } else {
             output.exception = "Vous n'êtes pas manager ..." ;
         }
 
         return output ;
+    }
+    
+    private static List<String> create_directories() {
+        Configuration conf = ConfigurationXML.getConf();
+        List<String> out = new LinkedList<String>();
+        out.add("Root path:"+conf.getRootPath()) ;
+        
+        List<String> directories = Arrays.asList(
+                new String[]{
+                    conf.getBackupPath(), conf.getTempPath(), conf.getPluginsPath(),
+                    conf.getFtpPath(), conf.getImagesPath(), conf.getMiniPath()});
+        for (String dir : directories) {
+            File currentFile = new File(dir) ;
+            if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
+                log.warn( "Couldn't create {}", dir);
+                out.add("WARNING Couldn't create "+ dir) ;
+            } else {
+                out.add(dir) ;
+            }
+        }
+        File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
+        if (!(confFile.isDirectory() || confFile.mkdirs())) {
+            log.warn( "Couldn't create path to {}",
+                    conf.getConfigFilePath());
+            out.add("WARNING Couldn't create path to "+ conf.getConfigFilePath()) ;
+        } else {
+            if (!confFile.exists()) {
+                File file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                try {
+                    XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
+                    out.add("INFO Config file saved in "+ conf.getConfigFilePath()) ;
+                } catch (JAXBException ex) {
+                    out.add("WARNING couldn't save: "+ex.getMessage());
+                }
+           } else {
+                out.add("INFO Config file already exists in "+ conf.getConfigFilePath()) ;
+           }
+        }
+        return out;
     }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

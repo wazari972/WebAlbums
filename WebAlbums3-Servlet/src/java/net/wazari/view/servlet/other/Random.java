@@ -54,13 +54,13 @@ public class Random extends HttpServlet {
                 imageServlet.treatIMG((ViewSessionImages) vSession);
             } else {
                 out = response.getWriter();
-                out.write("couln't not log in ...");
+                out.write("<msg>couln't not log in ...</msg>");
             }
 
             userService.cleanUpSession((ViewSessionLogin) vSession);
             request.logout();
         } catch (Exception e) {
-            log.warn("Exception during the plugin handling", e);
+            log.warn("Exception during Random handling", e);
         } finally {
             if (out != null)
                 out.close();

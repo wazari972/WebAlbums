@@ -10,7 +10,6 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -196,37 +195,15 @@ public class ImageBean implements ImageLocal {
             String safeFilepath = filepath ;
             safeFilepath = StringEscapeUtils.unescapeHtml(safeFilepath);
             
-            URLConnection conn = null ;
-            InputStream in = null;
-            IOException ex = null ;
-            /*
-            for (Normalizer.Form form : Normalizer.Form.values()) {
-                String normalForm = null ;
-                try {
-                    normalForm = Normalizer.normalize(safeFilepath, form) ;
-                    normalForm = StringUtil.escapeURL(normalForm);
-                    conn = new URL(normalForm).openConnection();
-                    in = conn.getInputStream();
-                    log.info("Path normalized with {}", form);
-                    break ;
-                } catch(IOException e) {
-                    log.warn("Normalisation {} failed: {}", form, normalForm) ;
-                    ex = e ;
-                    in = null ;
-                }
-            }
-             */
-            conn = new URL(StringUtil.escapeURL(safeFilepath)).openConnection();
-            in = conn.getInputStream();
+            URLConnection conn = new URL(StringUtil.escapeURL(safeFilepath)).openConnection();
+            InputStream in = conn.getInputStream();
                     
-            if(in == null) throw ex ;
             int bufferSize = (int) Math.min(conn.getContentLength(), 4 * 1024);
             byte[] buffer = new byte[bufferSize];
             int nbRead;
 
-
             uniq = true;
-            vSession.setContentDispositionFilename(new File(safeFilepath).getName() + "\"");
+            vSession.setContentDispositionFilename(new File(safeFilepath).getName());
             vSession.setContentLength(conn.getContentLength());
             vSession.setContentType(type);
             OutputStream out = vSession.getOutputStream();

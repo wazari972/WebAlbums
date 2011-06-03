@@ -49,36 +49,7 @@ public class Config extends HttpServlet {
             if ("LOGOUT".equals(action)) {
                 request.logout(); 
             } else if ("CREATE_DIRS".equals(action)) {
-                Configuration conf = ConfigurationXML.getConf();
-
-                out.println("Root path:"+conf.getRootPath()+"<BR/>") ;
-                List<String> directories = Arrays.asList(
-                        new String[]{
-                            conf.getBackupPath(), conf.getTempPath(), conf.getPluginsPath(),
-                            conf.getFtpPath(), conf.getImagesPath(), conf.getMiniPath()});
-                for (String dir : directories) {
-                    File currentFile = new File(dir) ;
-                    if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
-                        log.warn( "Couldn't create {}", dir);
-                        out.println("WARNING Couldn't create "+ dir+"<BR/>") ;
-                    } else {
-                        out.println(dir+"<BR/>") ;
-                    }
-                }
-                File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
-                if (!(confFile.isDirectory() || confFile.mkdirs())) {
-                    log.warn( "Couldn't create path to {}",
-                            conf.getConfigFilePath());
-                    out.println("WARNING Couldn't create path to "+ conf.getConfigFilePath()+"<BR/>") ;
-                } else {
-                    if (!confFile.exists()) {
-                        File file = new File(ConfigurationXML.getConf().getConfigFilePath());
-                        XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
-                        out.println("INFO Config file saved in "+ conf.getConfigFilePath()+"<BR/>") ;
-                   } else {
-                        out.println("INFO Config file already exists in "+ conf.getConfigFilePath()+"<BR/>") ;
-                   }
-                }
+                
 
             } else {
                 if ("SAVE".equals(action)) {

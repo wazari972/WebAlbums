@@ -9,10 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.DatabaseFacadeLocal;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
-import net.wazari.dao.PhotoFacadeLocal;
+import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
@@ -27,6 +26,7 @@ import net.wazari.service.exchange.xml.database.XmlDatabaseDefault;
 import net.wazari.service.exchange.xml.database.XmlDatabaseExport;
 import net.wazari.service.exchange.xml.database.XmlDatabaseImport;
 import net.wazari.service.exchange.xml.database.XmlDatabaseStats;
+import net.wazari.service.exchange.xml.database.XmlDatabaseStats.XmlDatabaseStatsTheme;
 import net.wazari.service.exchange.xml.database.XmlDatabaseTrunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +42,7 @@ public class DatabaseBean implements DatabaseLocal {
     }
     private static final Logger log = LoggerFactory.getLogger(DatabaseBean.class.toString());
     @EJB ThemeFacadeLocal themeDAO;
-    @EJB AlbumFacadeLocal albumDAO;
-    @EJB PhotoFacadeLocal photoDAO;
+    @EJB TagFacadeLocal tagDAO;
     @EJB DatabaseFacadeLocal databaseDAO;
     @EJB private PhotoUtil photoUtil ;
     
@@ -130,18 +129,45 @@ public class DatabaseBean implements DatabaseLocal {
             return output;
         }
         List<Theme> themes = new LinkedList<Theme>();
-        if (vSession.isRootSession())
+        XmlDatabaseStatsTheme xmlRootTheme = null;
+        if (!vSession.isRootSession()) {
             //Hibernate exception if direct
             themes.add(themeDAO.find(enrTheme.getId()));
-        else
+        } else {
             themes.addAll(themeDAO.findAll());
-
-        int count = 0;
-        for (Theme curEnrTheme : themeDAO.findAll()) {
+            xmlRootTheme = new XmlDatabaseStatsTheme("root");
+            output.theme.add(xmlRootTheme);
+        }
+        
+        for (Theme curEnrTheme : themes) {
+            if (curEnrTheme.getId() == 1)
+                continue;
+            XmlDatabaseStatsTheme xmlTheme = new XmlDatabaseStatsTheme(curEnrTheme.getNom());
+            output.theme.add(xmlTheme);
+            
             for (Album enrAlbum : curEnrTheme.getAlbumList()) {
-                
+                int photosize = enrAlbum.getPhotoList().size();
+                xmlTheme.albums++;
+                xmlTheme.photos += photosize;
+                if (xmlRootTheme != null) {
+                    xmlRootTheme.albums++;
+                    xmlRootTheme.photos += photosize;
+                }
+            }
+            if (xmlRootTheme != null) {
+                vSession.setRootSession(Boolean.FALSE);
+                vSession.setTheme(curEnrTheme);
+            }
+            xmlTheme.tags = tagDAO.loadVisibleTags(vSession, false).size();
+            if (xmlRootTheme != null) {
+                vSession.setRootSession(Boolean.TRUE);
+                vSession.setTheme(enrTheme);
             }
         }
+        
+        if (xmlRootTheme != null) 
+            xmlRootTheme.tags = tagDAO.findAll().size();
+        
         return output;
     }
     

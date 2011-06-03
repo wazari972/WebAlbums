@@ -177,20 +177,14 @@ public class WebPageBean implements WebPageLocal {
         Theme enrTheme = vSession.getTheme();
         Utilisateur enrUtil = vSession.getUser() ;
         Principal principal = vSession.getUserPrincipal() ;
-        login.theme = (enrTheme == null ? "Not logged in" : enrTheme.getNom());
-        String strUser  ;
-        if (enrUtil == null) {
-            strUser = "Not logged in" ;
-        } else {
-            strUser = enrUtil.getNom() ;
+        login.theme = (enrTheme == null ? null : enrTheme.getNom());
+        login.themeid = (enrTheme == null ? null : enrTheme.getId());
+        if (enrUtil != null) {
+            login.role = enrUtil.getNom() ;
         }
         if (principal != null) {
-            strUser = principal.getName()+" ("+strUser+")" ;
+            login.user = principal.getName();
         }
-        if (vSession.isSessionManager()) {
-            strUser += "*" ;
-        }
-        login.user = strUser;
         
         log.info( "logged as manager? {}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {

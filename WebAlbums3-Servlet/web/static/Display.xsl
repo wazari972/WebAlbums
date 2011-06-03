@@ -19,7 +19,7 @@
 	<xsl:apply-templates select="/webAlbums/login/valid"/>
 	<link rel="shortcut icon" href="static/favicon.png" type="image/png" /> 
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>WebAlbums 3 : <xsl:value-of select="/webAlbums/loginInfo/theme" />  (<xsl:value-of select="/webAlbums/login/user" />)</title>
+	<title>WebAlbums 3 : <xsl:value-of select="/webAlbums/loginInfo/theme" /> - <xsl:value-of select="/webAlbums/loginInfo/user"/></title>
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />

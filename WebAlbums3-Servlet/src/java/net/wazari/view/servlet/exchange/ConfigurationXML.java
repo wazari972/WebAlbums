@@ -120,7 +120,7 @@ public class ConfigurationXML implements Configuration {
     }
 
     @XmlAttribute
-    private String date = new SimpleDateFormat("yyyy-mm-dd:HH-mm").format(new Date());
+    private String date = new SimpleDateFormat("yyyy-MM-dd:HH-mm").format(new Date());
     @XmlElement
     private Directories directories = new Directories();
     @XmlElement

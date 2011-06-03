@@ -14,11 +14,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class XmlLoginInfo {
+    public Integer themeid;
     public String theme;
     @XmlAttribute
     public Boolean root;
     @XmlAttribute
     public Boolean admin;
     public String user;
+    public String role;
 
 }

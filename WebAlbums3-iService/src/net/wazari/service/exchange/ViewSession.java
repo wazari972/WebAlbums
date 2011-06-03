@@ -21,7 +21,7 @@ public interface ViewSession extends ServiceSession {
         DEFAULT,
         SUBMIT, EDIT, IMPORT, 
         DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, MASSEDIT, LOGIN, DELTHEME, LINKTAG, 
-        TRUNK, EXPORT, CHECK
+        TRUNK, EXPORT, CHECK, STATS, PLUGIN, PLUGIN_RELOAD, CREATE_DIRS
     }
 
     enum EditMode {

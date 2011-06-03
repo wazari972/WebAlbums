@@ -23,8 +23,8 @@ import net.wazari.common.plugins.Importer.SanityStatus;
  */
 @XmlRootElement(name = "PluginInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PluginInfo {
-    private static final Logger log = LoggerFactory.getLogger(PluginInfo.class.getName());
+public class XmlPluginInfo {
+    private static final Logger log = LoggerFactory.getLogger(XmlPluginInfo.class.getName());
     
     @XmlElementWrapper(name="Importers") List<Plugin> WorkingImporters = new LinkedList<Plugin>() ;
     @XmlElementWrapper(name="Importers") List<Plugin> FailingImporters = new LinkedList<Plugin>() ;
