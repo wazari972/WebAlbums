@@ -163,7 +163,6 @@ public class ImageBean implements ImageLocal {
                     return null ;
                 }
             } else {
-
                 if (mode == ImgMode.FULLSCREEN) {
                      sysTools.fullscreenImage(vSession, enrPhoto);
                      stopWatch.stop(stopWatch.getTag()+".fullscreen") ;
@@ -188,20 +187,19 @@ public class ImageBean implements ImageLocal {
     }
 
     protected static Boolean sendFile(ViewSessionImages vSession,
-            String filepath,
-            String type,
-            XmlImage output) {
-
+                                      String filepath,
+                                      String type,
+                                      XmlImage output)
+    {
         boolean uniq = false;
         try {
-            
-
             String safeFilepath = filepath ;
             safeFilepath = StringEscapeUtils.unescapeHtml(safeFilepath);
             
             URLConnection conn = null ;
             InputStream in = null;
             IOException ex = null ;
+            /*
             for (Normalizer.Form form : Normalizer.Form.values()) {
                 String normalForm = null ;
                 try {
@@ -217,6 +215,10 @@ public class ImageBean implements ImageLocal {
                     in = null ;
                 }
             }
+             */
+            conn = new URL(StringUtil.escapeURL(safeFilepath)).openConnection();
+            in = conn.getInputStream();
+                    
             if(in == null) throw ex ;
             int bufferSize = (int) Math.min(conn.getContentLength(), 4 * 1024);
             byte[] buffer = new byte[bufferSize];

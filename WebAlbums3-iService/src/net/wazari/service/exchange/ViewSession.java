@@ -18,6 +18,7 @@ public interface ViewSession extends ServiceSession {
         SELECT, RANDOM, ABOUT, FASTEDIT}
 
     enum Action {
+        DEFAULT,
         SUBMIT, EDIT, IMPORT, 
         DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, MASSEDIT, LOGIN, DELTHEME, LINKTAG, 
         TRUNK, EXPORT, CHECK

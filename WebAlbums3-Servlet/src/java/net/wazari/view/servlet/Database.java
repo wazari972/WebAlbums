@@ -39,6 +39,9 @@ public class Database extends HttpServlet {
         XmlDatabase output = new XmlDatabase();
 
         Action action = vSession.getAction();
+        if (action == null)
+            action = Action.DEFAULT;
+        
         if (vSession.isSessionManager()) {
             switch (action) {
                 case IMPORT:

@@ -1,7 +1,6 @@
 package net.wazari.service.engine;
 
 import java.util.Arrays;
-import java.util.Date;
 import javax.ejb.EJB;
 
 import javax.ejb.Stateless;

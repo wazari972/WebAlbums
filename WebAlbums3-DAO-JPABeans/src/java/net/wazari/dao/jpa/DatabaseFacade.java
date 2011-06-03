@@ -24,7 +24,7 @@ public class DatabaseFacade implements DatabaseFacadeLocal {
     @Override
     public void treatImportXML(boolean protect, String path) throws DatabaseFacadeLocalException {
         if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT.equals(WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod)) {
-            throw new DatabaseFacadeLocalException();
+            throw new DatabaseFacadeLocalException("Protected");
         }
         xml.importXml(path);
     }
@@ -35,16 +35,10 @@ public class DatabaseFacade implements DatabaseFacadeLocal {
     }
     
     @Override
-    public void treatTruncateDB(boolean protect) {
+    public void treatTruncateDB(boolean protect) throws DatabaseFacadeLocalException {
         if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT.equals(WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod)) {
-            return;
+            throw new DatabaseFacadeLocalException("Protected");
         }
         xml.truncateDb();
-    }
-
-    @Override
-    public void treatCheck(String path) throws DatabaseFacadeLocalException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
+    }    
 }

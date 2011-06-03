@@ -173,7 +173,7 @@ public class DispatcherBean {
                             output.image = ret;
                         }
                         log.debug("IMAGE written? {}", isWritten);
-                    } else if (page == Page.IMAGE) {
+                    } else if (page == Page.DATABASE) {
                         log.debug("DATABASE page");
                         output.database = databaseServlet.treatDATABASE((ViewSessionDatabase) vSession);
                     } else {

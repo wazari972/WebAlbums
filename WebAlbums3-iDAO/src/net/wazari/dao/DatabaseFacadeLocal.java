@@ -4,9 +4,11 @@
  */
 package net.wazari.dao;
 
+import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
+import net.wazari.dao.exchange.ServiceSession;
 
 /**
  *
@@ -15,7 +17,12 @@ import javax.ejb.Local;
 @Local
 @DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE})
 public interface DatabaseFacadeLocal {
-    class DatabaseFacadeLocalException extends Exception {}
+    class DatabaseFacadeLocalException extends Exception {
+        public DatabaseFacadeLocalException() {}
+        public DatabaseFacadeLocalException(String msg) {
+            super(msg);
+        }
+    }
     
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatImportXML(boolean protect, String path)
@@ -28,9 +35,4 @@ public interface DatabaseFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatTruncateDB(boolean protect)
             throws DatabaseFacadeLocalException;
-    
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    void treatCheck(String path)
-            throws DatabaseFacadeLocalException;
-            
 }

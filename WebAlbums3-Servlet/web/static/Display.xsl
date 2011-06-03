@@ -90,7 +90,7 @@
                             <a href="Config" rel="singlepage[no]" title="Configuration (new page)">uration</a>
                         </li>
                         <li>
-                            <a href="Database" title="Database">Database</a>
+                            <a href="Database" rel="singlepage[no]" title="Database">Database</a>
                         </li>
                         <li class="massedit_toggle">Massedit</li>
                         <li>Mode: <a href="javascript:updateAffichage('edition');" title=""><xsl:value-of select="/webAlbums/affichage/@edition" /></a></li>
@@ -112,6 +112,7 @@
 		<xsl:apply-templates select="/webAlbums/photos"/>
 		<xsl:apply-templates select="/webAlbums/tags"/>
 		<xsl:apply-templates select="/webAlbums/config"/>
+                <xsl:apply-templates select="/webAlbums/database"/>
 
 		<xsl:apply-templates select="/webAlbums/*/page"/>
 		<xsl:call-template name="print_return_link" />
@@ -156,4 +157,5 @@
   <xsl:include href="ModifAlbum.xsl" /> 
   <xsl:include href="ModifPhoto.xsl" /> 
   <xsl:include href="Config.xsl" /> 
+  <xsl:include href="Database.xsl" /> 
  </xsl:stylesheet>

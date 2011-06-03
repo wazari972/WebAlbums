@@ -31,6 +31,7 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.service.exchange.ViewSessionConfig;
+import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
@@ -54,6 +55,7 @@ public class ViewSessionImpl implements
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit,
         ViewSessionTag,
         ViewSessionImages, ViewSessionPhotoDisplayMassEdit, ViewSessionPhotoFastEdit,
+        ViewSessionDatabase, 
         ViewSessionMaint{
 
     private static final Logger log = LoggerFactory.getLogger(ViewSessionImpl.class.getCanonicalName());

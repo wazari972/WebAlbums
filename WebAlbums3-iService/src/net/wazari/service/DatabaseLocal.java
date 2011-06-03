@@ -10,6 +10,7 @@ import net.wazari.service.exchange.xml.database.XmlDatabaseCheck;
 import net.wazari.service.exchange.xml.database.XmlDatabaseDefault;
 import net.wazari.service.exchange.xml.database.XmlDatabaseExport;
 import net.wazari.service.exchange.xml.database.XmlDatabaseImport;
+import net.wazari.service.exchange.xml.database.XmlDatabaseStats;
 import net.wazari.service.exchange.xml.database.XmlDatabaseTrunk;
 
 /**
@@ -22,4 +23,5 @@ public interface DatabaseLocal {
     XmlDatabaseTrunk treatTRUNK(ViewSession vSession);
     XmlDatabaseCheck treatCHECK(ViewSession vSession);
     XmlDatabaseDefault treatDEFAULT(ViewSessionDatabase vSession);
+    XmlDatabaseStats treatSTATS(ViewSessionDatabase vSession);
 }
