@@ -12,6 +12,12 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template match="database">
+        <p>
+          <b><xsl:value-of select="./message"/></b>
+        </p>
+        <p>
+          <b><xsl:value-of select="./exception"/></b>
+        </p>
         <div class="item">
           <a name="export"/>
           <a name="import"/>
@@ -20,18 +26,19 @@
             <span>*</span>
           </div>
           <div class="content">
+              
               <h1>Import-Export</h1>
               
-              <h2>Exportation des donnée</h2>
-              <form action="?action=EXPORT#export" method="POST"><input type="submit" value="Go!"/></form>
+              <h2>Exportation des données</h2>
+              <form action="Database?action=EXPORT#export" method="POST"><input type="submit" value="Go!"/></form>
               <xsl:apply-templates select="export"/>
               
-              <h2>Importation des donnée</h2>
-              <form action="?action=IMPORT#import" method="POST"><input type="submit" value="Go!"/></form>
+              <h2>Importation des données</h2>
+              <form action="Database?action=IMPORT#import" method="POST"><input type="submit" value="Go!"/></form>
               <xsl:apply-templates select="import"/>
               
               <h2>Vidage de la base</h2>
-              <form action="?action=TRUNK" method="POST"><input type="submit" value="Go!"/></form>
+              <form action="Database?action=TRUNK" method="POST"><input type="submit" value="Go!"/></form>
               <xsl:apply-templates select="trunk"/>
           </div>
         </div>
@@ -42,7 +49,7 @@
           </div>
           <div class="content">
               <h1>Verification des photos</h1>
-              <form action="?action=CHECK" method="POST"><input type="submit" value="Go!"/></form>
+              <form action="Database?action=CHECK" method="POST"><input type="submit" value="Go!"/></form>
               <xsl:apply-templates select="check"/>
           </div>
         </div>
@@ -53,7 +60,7 @@
           </div>
           <div class="content">
               <h1>Statistiques du thème</h1>
-              <form action="?action=STATS" method="POST"><input type="submit" value="Go!"/></form>
+              <form action="Database?action=STATS" method="POST"><input type="submit" value="Go!"/></form>
               <xsl:apply-templates select="stats"/>
           </div>
         </div>
@@ -64,9 +71,10 @@
           </div>
           <div class="content">
               <h1>Fichier de Configuration</h1>
-              <p><a rel="singlepage[no]" href="Other/Config?action=SAVE">Sauvegarder</a></p>
-              <p><a rel="singlepage[no]" href="Other/Config?action=RELOAD">Recharger</a></p>
-              <p><a rel="singlepage[no]" href="Other/Config">Afficher</a></p>
+              <p><a rel="singlepage[no]" href="Database?action=SAVE_CONFIG">Sauvegarder</a></p>
+              <p><a rel="singlepage[no]" href="Database?action=RELOAD_CONFIG">Recharger</a></p>
+              <p><a rel="singlepage[no]" href="Database?action=PRINT_CONFIG">Afficher</a></p>
+              <p><xsl:value-of select="./config"/></p>
           </div>
         </div>
         <div class="item">
@@ -76,8 +84,8 @@
           </div>
           <div class="content">
               <h1>Plugins</h1>
-              <p><a rel="singlepage[no]" href="?action=PLUGIN_RELOAD">Recharger</a></p>
-              <p><a rel="singlepage[no]" href="?action=PLUGIN">Lister</a></p>
+              <p><a rel="singlepage[no]" href="Database?action=PLUGIN_RELOAD">Recharger</a></p>
+              <p><a rel="singlepage[no]" href="Database?action=PLUGIN">Lister</a></p>
               <xsl:apply-templates select="plugins"/>
           </div>
         </div>
@@ -88,7 +96,7 @@
           </div>
           <div class="content">
               <h1>Maintenance</h1>
-              <p><a rel="singlepage[no]" href="?action=CREATE_DIRS">Créer les dossiers</a></p>
+              <p><a rel="singlepage[no]" href="Database?action=CREATE_DIRS">Créer les dossiers</a></p>
               <xsl:apply-templates select="create_dir/dirs"/>
           </div>
         </div>

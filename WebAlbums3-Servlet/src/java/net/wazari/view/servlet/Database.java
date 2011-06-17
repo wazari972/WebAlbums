@@ -5,6 +5,7 @@
 package net.wazari.view.servlet;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -63,6 +64,7 @@ public class Database extends HttpServlet {
             output.default_ = databaseService.treatDEFAULT(vSession);
             output.default_.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
                                                            Box.MULTIPLE);
+            File file;
             switch (action) {
                 case IMPORT:
                     output.import_ = databaseService.treatIMPORT(vSession);
@@ -79,9 +81,9 @@ public class Database extends HttpServlet {
                 case STATS:
                     output.stats = databaseService.treatSTATS(vSession);
                     break;
-                case PLUGIN_RELOAD:
+                case RELOAD_PLUGINS:
                     systemTools.reloadPlugins(ConfigurationXML.getConf().getPluginsPath());
-                case PLUGIN:
+                case PLUGINS:
                     output.plugins = new XmlPluginInfo() ;
                     for (Importer imp : systemTools.getPluginList()) {
                         output.plugins.addImporter(imp);
@@ -93,6 +95,36 @@ public class Database extends HttpServlet {
                     break;
                 case CREATE_DIRS:
                     output.create_dir = new XmlCreateDir(create_directories());
+                    break;
+                case SAVE_CONFIG:
+                    file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                    file.getParentFile().mkdirs();
+                    
+                    try {
+                        XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
+                        output.message = "File saved in "+ConfigurationXML.getConf().getConfigFilePath();
+                    } catch (Exception ex) {
+                        output.exception = "Couldn't save the file: "+ex.getMessage();
+                    }
+                    break;
+                case RELOAD_CONFIG:
+                    file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                    file.getParentFile().mkdirs();
+
+                    ConfigurationXML conf;
+                    try {
+                        conf = XmlUtils.reload(new FileInputStream(file), ConfigurationXML.class);
+                        ConfigurationXML.setConf(conf);
+                        output.message = "Configuration reloaded from "+ConfigurationXML.getConf().getConfigFilePath();
+                    } catch (Exception ex) {
+                        output.exception = "Couldn't reloaded the configuration file: "+ex.getMessage();
+                    }
+
+                    
+                   break;
+                case PRINT_CONFIG:
+                    output.config = (ConfigurationXML) ConfigurationXML.getConf();
+                    break;
             }
         } else {
             output.exception = "Vous n'êtes pas manager ..." ;

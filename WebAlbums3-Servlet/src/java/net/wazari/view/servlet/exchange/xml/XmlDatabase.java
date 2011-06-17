@@ -15,6 +15,7 @@ import net.wazari.service.exchange.xml.database.XmlDatabaseExport;
 import net.wazari.service.exchange.xml.database.XmlDatabaseImport;
 import net.wazari.service.exchange.xml.database.XmlDatabaseStats;
 import net.wazari.service.exchange.xml.database.XmlDatabaseTrunk;
+import net.wazari.view.servlet.exchange.ConfigurationXML;
 
 /**
  *
@@ -32,6 +33,7 @@ public class XmlDatabase extends XmlInfoException {
     public XmlDatabaseStats stats;
     public XmlPluginInfo plugins;
     public XmlCreateDir create_dir ;
+    public ConfigurationXML config;
     
     public static class XmlCreateDir {
         public List<String> dirs;
