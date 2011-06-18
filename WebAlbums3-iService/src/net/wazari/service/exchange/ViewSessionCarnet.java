@@ -10,7 +10,7 @@ package net.wazari.service.exchange;
  * @author kevin
  */
 public interface ViewSessionCarnet extends ViewSession {
-    interface ViewSessionAlbumSubmit extends ViewSessionAlbum {
+    interface ViewSessionCarnetSubmit extends ViewSessionAlbum {
         String getDesc();
 
         String getNom();
@@ -24,18 +24,17 @@ public interface ViewSessionCarnet extends ViewSession {
         Integer getUserAllowed();
     }
 
-    interface ViewSessionAlbumEdit extends ViewSessionAlbum {
+    interface ViewSessionCarnetEdit extends ViewSessionAlbum {
 
         Integer getCountAlbm();
 
     }
-    interface ViewSessionAlbumDisplay extends ViewSessionAlbum {
+    interface ViewSessionCarnetDisplay extends ViewSessionAlbum {
 
-        Integer getCountAlbm();
+        Integer getCountCarnet();
 
     }
     Integer getId();
     Integer getCount();
     Integer getPage() ;
-    
 }

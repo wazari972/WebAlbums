@@ -13,12 +13,20 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 import net.wazari.dao.entity.Carnet;
+import net.wazari.dao.entity.facades.SubsetOf;
+import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession;
+import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPACarnet;
 import net.wazari.dao.jpa.entity.JPACarnet_;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 /**
  *
@@ -79,5 +87,36 @@ public class CarnetFacade implements CarnetFacadeLocal {
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
 
+    }
+    
+    @Override
+    public SubsetOf<Carnet> queryCarnets(ServiceSession session,
+            AlbumFacadeLocal.Restriction restrict, AlbumFacadeLocal.TopFirst topFirst, Bornes bornes) {
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPACarnet> cq = cb.createQuery(JPACarnet.class) ;
+
+        Root<JPACarnet> carnet = cq.from(JPACarnet.class);
+        cq.where(webDAO.getRestrictionToCarnetsAllowed(session, carnet, 
+                                                       cq.subquery(JPACarnet.class), 
+                                                       restrict)) ;
+        cq.orderBy(cb.desc(carnet.get(JPACarnet_.date))) ;
+        TypedQuery<JPACarnet> q = em.createQuery(cq);
+
+        int size = q.getResultList().size() ;
+        if (topFirst == TopFirst.TOP) {
+            q.setFirstResult(0);
+            q.setMaxResults(bornes.getNbElement());
+        } else if (topFirst == TopFirst.FIRST) {
+            q.setFirstResult(bornes.getFirstElement());
+            q.setMaxResults(session.getAlbumSize());
+        }
+        q.setHint("org.hibernate.cacheable", true) ;
+        q.setHint("org.hibernate.readOnly", true) ;
+
+        List<JPACarnet> lstCarnets = q.getResultList() ;
+        stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstCarnets.size()+" albums returned") ;
+        return (SubsetOf) new SubsetOf<JPACarnet>(bornes, lstCarnets, (long) size);
     }
 }

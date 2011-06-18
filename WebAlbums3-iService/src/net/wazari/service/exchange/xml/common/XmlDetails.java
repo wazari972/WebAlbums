@@ -16,8 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlDetails {
     public Integer photoId;
-    public String miniWidth;
-    public String miniHeight;
     public List<String> userInside;
     public String description;
     public Integer albumId;

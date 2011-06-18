@@ -27,6 +27,7 @@ import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPAAlbum_;
+import net.wazari.dao.jpa.entity.JPACarnet;
 import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATheme_;
 import net.wazari.dao.jpa.entity.JPAUtilisateur_;
@@ -52,6 +53,14 @@ public class WebAlbumsDAOBean {
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public Predicate getRestrictionToCarnetsAllowed(ServiceSession session,
+            Path<JPACarnet> album, Subquery<JPACarnet> sq, Restriction restrict) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        Predicate TRUE = cb.conjunction() ;
+        return TRUE;
+    }
+    
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Predicate getRestrictionToAlbumsAllowed(ServiceSession session,
             Path<JPAAlbum> album, Subquery<JPAAlbum> sq, Restriction restrict) {

@@ -11,20 +11,20 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:template match="albums">
-    <xsl:apply-templates select="display"/>
-    <xsl:apply-templates select="edit"/>
+  <xsl:template match="carnets">
+      <xsl:apply-templates select="edit"/>
+      <xsl:apply-templates select="display"/>
   </xsl:template>
 
-  <xsl:template match="albums/display">
+  <xsl:template match="carnets/display">
     <xsl:apply-templates select="exception"/>
     <xsl:apply-templates select="message"/>
-    <xsl:apply-templates select="albumList/album"/>
+    <xsl:apply-templates select="carnet"/>
 
-    <xsl:apply-templates select="albumList/page"/>
+    <xsl:apply-templates select="page"/>
   </xsl:template>
 
-  <xsl:template match="album">
+  <xsl:template match="carnet">
     <div class="item">
       <div class="date">
 	<A><xsl:attribute name="name"><xsl:value-of select="@id" /></xsl:attribute></A>
@@ -34,76 +34,31 @@
       <div class="content">
 	<h1>
 	  <a>
-	    <xsl:if test="/webAlbums/albums">
-	      <xsl:attribute name="href">
-Photos?albmCount=<xsl:value-of select="@count" />&amp;album=<xsl:value-of select="@id" />
-	      </xsl:attribute>
-	    </xsl:if> 
-	    <xsl:if test="/webAlbums/photos">
-	      <xsl:attribute name="href">
-Albums?count=<xsl:value-of select="@count" />#<xsl:value-of select="@id" />
-	      </xsl:attribute>
-	    </xsl:if> 
+            <xsl:attribute name="href">
+Carnet?carnetCount=<xsl:value-of select="@count" />&amp;id=<xsl:value-of select="@id" />
+             </xsl:attribute>
 	    <xsl:value-of select="title" />
 	  </a>
-	</h1>
-	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
-	  <h2>
-            <div class="title_opt">
-                <div class="album_opt">
-                    <a rel="singlepage[no]">
-                      <xsl:attribute name="title"><xsl:value-of select="title" /> en visionneuse</xsl:attribute>
-                      <xsl:attribute name="href">
-Photos?albmCount=<xsl:value-of select="@count" />
-&amp;album=<xsl:value-of select="@id" />
-&amp;page=<xsl:value-of select="../photoList/page/@current" />
-&amp;special=VISIONNEUSE
-                    </xsl:attribute>
-                    <img src="static/images/slide.png" height="30px"/>
-                    </a>
-                    <xsl:if test="not(/webAlbums/affichage/@remote)">
-                        &#160;
-                        <a class='fullscreen'
-                           href="#">
-                          <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
-                          <xsl:attribute name="rel">
-Photos?album=<xsl:value-of select="@id" />
-&amp;page=<xsl:value-of select="../photoList/page/@current" />
-&amp;special=FULLSCREEN
-                          </xsl:attribute>
-                          <img src="static/images/out.png" height="30px"/>
-                        </a>
-                    </xsl:if>
-                    <xsl:if test="/webAlbums/affichage/@edit">
-                          &#160;
-                          <a rel="singlepage[no]" title="Edition de l'album">
-                            <xsl:attribute name="href">
-Albums?action=EDIT
+          <xsl:if test="/webAlbums/affichage/@edit">
+              &#160;
+              <a rel="singlepage[no]" title="Edition du carnet">
+                <xsl:attribute name="href">
+Carnet?action=EDIT
 &amp;id=<xsl:value-of select="@id" />
 &amp;count=<xsl:value-of select="@count"/>
-                            </xsl:attribute>
-                            <img src="static/images/edit.png" height="30px"/>
-                          </a>
-                    </xsl:if>
-                </div>
-            </div>
-	  </h2>
-	</xsl:if>
-
+                </xsl:attribute>
+                <img src="static/images/edit.png" height="30px"/>
+              </a>
+            </xsl:if>
+	</h1>
 	<div class="body">
-	  <xsl:if test="/webAlbums/photos">
-           <h2><div class="description"><xsl:value-of select="details/description" /></div></h2>
-	   <xsl:apply-templates select="user" />
-	  </xsl:if> 
-	  <xsl:if test="/webAlbums/albums">
-	    <xsl:apply-templates select="message"/>
-	    <xsl:apply-templates select="details"/>
-          </xsl:if>
+            <xsl:apply-templates select="message"/>
+            <xsl:apply-templates select="details"/>
 	</div>
       </div>
     </div>
   </xsl:template>
-
+  
   <xsl:template match="message">
     <i><xsl:value-of select="."/></i><br/>
   </xsl:template>

@@ -28,6 +28,8 @@ public interface Photo extends Serializable, EntityWithId, Metadata {
     List<TagPhoto> getTagPhotoList();
 
     String getType();
+    
+    List<Carnet> getCarnetList() ;
 
     void setAlbum(Album album);
 
@@ -42,4 +44,6 @@ public interface Photo extends Serializable, EntityWithId, Metadata {
     void setTagPhotoList(List<TagPhoto> tagPhotoList);
 
     void setType(String type);
+
+    void setCarnetList(List<Carnet> jPACarnetList) ;
 }

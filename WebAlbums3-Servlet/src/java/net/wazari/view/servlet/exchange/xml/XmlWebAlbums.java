@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlChoix;
-import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.config.XmlConfig;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.service.exchange.xml.XmlLogin;
@@ -38,6 +37,7 @@ public class XmlWebAlbums {
     public XmlMaint maint;
     public XmlChoix choix;
     public XmlAlbums albums;
+    public XmlCarnets carnets;
     public XmlPhotos photos;
     public XmlConfig config;
     public XmlTags tags;
@@ -47,5 +47,5 @@ public class XmlWebAlbums {
     public XmlAffichage affichage;
     public XmlLoginInfo loginInfo;
     public String time ;
-    public XmlCarnet carnet;
+    public XmlCarnets carnet;
 }

@@ -10,6 +10,10 @@ function loadAlbums() {
     loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
 }
 
+function loadAlbums() {
+    loadExernals('carnetsLoader', 'Carnets?special=TOP5', 'carnets') ;
+}
+
 function loadYears() {
     loadExernals(null, 'Albums?special=YEARS', 'years') ;
 }
@@ -77,6 +81,11 @@ var sliderOption = {
 
 $("#albumsLoader").click(function () {
     loadAlbums();
+}) ;
+
+
+$("#carnetsLoader").click(function () {
+    loadCarnets();
 }) ;
 
 $("#personsLoader").click(function () {

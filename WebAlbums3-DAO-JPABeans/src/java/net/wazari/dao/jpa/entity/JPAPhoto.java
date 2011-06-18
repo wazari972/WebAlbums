@@ -18,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
 import org.hibernate.annotations.GenericGenerator;
@@ -121,6 +123,11 @@ public class JPAPhoto implements Photo, Serializable {
     @Transient
     private Integer albumId ;
 
+    @ManyToMany(mappedBy="jPAPhotoList")
+    private List<Carnet> jPACarnetList;
+
+    
+    
     public JPAPhoto() {
     }
 
@@ -281,6 +288,16 @@ public class JPAPhoto implements Photo, Serializable {
     @Override
     public void setAlbum(Album album) {
         this.album = (JPAAlbum) album;
+    }
+    
+    @Override
+    public List<Carnet> getCarnetList() {
+        return jPACarnetList;
+    }
+
+    @Override
+    public void setCarnetList(List<Carnet> jPACarnetList) {
+        this.jPACarnetList = jPACarnetList;
     }
 
     @XmlAttribute

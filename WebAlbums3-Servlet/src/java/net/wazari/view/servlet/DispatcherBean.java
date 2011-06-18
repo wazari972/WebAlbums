@@ -30,6 +30,7 @@ import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.dao.entity.Theme;
+import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
@@ -171,7 +172,7 @@ public class DispatcherBean {
                             output.tags = tagServlet.treatTAGS((ViewSessionTag) vSession);
                             break;
                         case CARNET:
-                            output.carnet = carnetServlet.treatCARNETS((ViewSessionTag) vSession);
+                            output.carnet = carnetServlet.treatCARNETS((ViewSessionCarnet) vSession);
                             break;
                         case IMAGE:
                             XmlImage ret = imageServlet.treatIMG((ViewSessionImages) vSession);

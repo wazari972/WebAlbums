@@ -10,7 +10,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,10 +17,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -68,17 +68,25 @@ public class JPACarnet implements Carnet, Serializable {
 
     @XmlAttribute
     @Basic(optional = false)
-    @Column(name = "AlbumDate", nullable = false, length = 10)
+    @Column(name = "CarnetDate", nullable = false, length = 10)
     private String date;
 
+    @XmlElement
+    @Column(name = "Texte")
+    @Lob
+    private String texte;
+    
     @XmlAttribute
     @Column(name = "Picture", nullable = true)
     private Integer picture;
-
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
+    
+    @ManyToMany
+    @JoinTable(
+      name="CarnetPhoto",
+      joinColumns={@JoinColumn(name="ID", referencedColumnName="Carnet")},
+      inverseJoinColumns={@JoinColumn(name="Photo", referencedColumnName="ID")})
     private List<JPAPhoto> jPAPhotoList;
-
+    
     @XmlTransient
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -88,14 +96,6 @@ public class JPACarnet implements Carnet, Serializable {
     @JoinColumn(name = "Theme", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
-
-    @XmlTransient
-    @Transient
-    private Integer themeId = null ;
-
-    @XmlTransient
-    @Transient
-    private Integer droitId = null ;
 
     public JPACarnet() {
     }
@@ -161,16 +161,6 @@ public class JPACarnet implements Carnet, Serializable {
     }
 
     @Override
-    public List<Photo> getPhotoList() {
-        return (List) jPAPhotoList;
-    }
-
-    @Override
-    public void setPhotoList(List<Photo> jPAPhotoList) {
-        this.jPAPhotoList = (List) jPAPhotoList;
-    }
-
-    @Override
     public Utilisateur getDroit() {
         return (Utilisateur) droit;
     }
@@ -189,31 +179,23 @@ public class JPACarnet implements Carnet, Serializable {
     public void setTheme(Theme theme) {
         this.theme = (JPATheme) theme;
     }
-
-    @XmlAttribute
-    public Integer getDroitId() {
-        if (droit == null) {
-            return droitId ;
-        } else {
-            return droit.getId() ;
-        }
+    
+    @Override
+    public List<Photo> getPhotoList() {
+        return (List) jPAPhotoList;
     }
 
-    public void setDroitId(Integer droitId) {
-        this.droitId = droitId ;
+    @Override
+    public void setPhotoList(List<Photo> jPAPhotoList) {
+        this.jPAPhotoList = (List) jPAPhotoList;
     }
 
-    @XmlAttribute
-    public Integer getThemeId() {
-        if (theme == null) {
-            return themeId ;
-        } else {
-            return theme.getId() ;
-        }
+    public String getTexte() {
+        return texte;
     }
 
-    public void setThemeId(Integer themeId) {
-        this.themeId = themeId ;
+    public void setTexte(String texte) {
+        this.texte = texte;
     }
 
     @Override

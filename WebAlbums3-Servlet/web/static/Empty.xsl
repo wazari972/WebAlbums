@@ -29,6 +29,7 @@
     <xsl:apply-templates select="/webAlbums/photos/display" />
     <xsl:apply-templates select="/webAlbums/photos/about" />
 
+    <xsl:apply-templates select="/webAlbums/carnets/top" />
   </xsl:template>
 
   <xsl:include href="PhotosAlbums.xsl" />
@@ -249,15 +250,16 @@
     </td>
  </xsl:template>
 
- <xsl:template match="/webAlbums/albums/top">
+ <xsl:template match="/webAlbums/albums/top or /webAlbums/carnets/top">
    <table>
      <tr>
        <xsl:apply-templates select="album" />
+       <xsl:apply-templates select="carnet" />
      </tr>
    </table>
  </xsl:template>
 
- <xsl:template match="top/album">
+ <xsl:template match="top/album or top/carnet">
    <td>
       <table>
 	<tr>
@@ -266,8 +268,12 @@
 	      <xsl:if test="@picture">
 		<a target="_top">
 		  <xsl:attribute name="href">
-		    Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
-		  </xsl:attribute>
+                      <xsl:if test="top/album">
+                        Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
+                      </xsl:attribute>
+                      <xsl:if test="top/carnet">
+                        Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;id=<xsl:value-of select="@id"/>
+                      </xsl:attribute>
 		  <img width="100px">
 		    <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
 		  </img>
@@ -281,7 +287,12 @@
 	    <center>
 	      <a target="_top">
 		<xsl:attribute name="href">
-		  Photos?albumCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
+		  <xsl:if test="top/album">
+                        Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
+                      </xsl:attribute>
+                      <xsl:if test="top/carnet">
+                        Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;id=<xsl:value-of select="@id"/>
+                      </xsl:attribute>
 		</xsl:attribute>
 		<xsl:value-of select="name"/>
 	      </a>

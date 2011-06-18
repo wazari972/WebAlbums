@@ -421,10 +421,6 @@ public class PhotoBean implements PhotoLocal {
             details.photoId = enrPhoto.getId();
             details.description = enrPhoto.getDescription();
 
-            //TODO: improve here, EXIF tags contain text
-            details.miniWidth = Integer.toString(photoUtil.getWidth(vSession, enrPhoto, false));
-            details.miniHeight =  Integer.toString(photoUtil.getHeight(vSession, enrPhoto, false));
-
             //tags de cette photo
             details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
                     Box.NONE);
@@ -497,8 +493,6 @@ public class PhotoBean implements PhotoLocal {
         XmlDetails details = new XmlDetails();
         details.photoId = enrPhoto.getId();
         details.description = enrPhoto.getDescription();
-        details.miniWidth = Integer.toString(photoUtil.getWidth(vSession, enrPhoto, false));
-        details.miniHeight = Integer.toString(photoUtil.getHeight(vSession, enrPhoto, false));
         //tags de cette photo
         details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto, Box.NONE) ;
         details.albumId = enrPhoto.getAlbum().getId();

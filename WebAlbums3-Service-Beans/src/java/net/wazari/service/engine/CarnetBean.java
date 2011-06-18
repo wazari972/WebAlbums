@@ -11,11 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import net.wazari.dao.AlbumFacadeLocal;
+import net.wazari.dao.AlbumFacadeLocal.Restriction;
+import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 
 import net.wazari.dao.CarnetFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 
 import net.wazari.dao.entity.facades.SubsetOf;
@@ -26,15 +30,17 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.CarnetLocal;
-import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
-import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
-import net.wazari.service.exchange.xml.album.XmlAlbumList;
-import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
+import net.wazari.service.exchange.ViewSessionCarnet;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
+import net.wazari.service.exchange.xml.carnet.XmlCarnet;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetEdit;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetsDisplay;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetsTop;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.util.system.FilesFinder;
 import org.perf4j.StopWatch;
@@ -44,7 +50,6 @@ import org.perf4j.slf4j.Slf4JStopWatch;
 public class CarnetBean implements CarnetLocal {
     private static final Logger log = LoggerFactory.getLogger(CarnetBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
-    private static final int TOP = 5;
 
     @EJB
     private CarnetFacadeLocal carnetDAO;
@@ -59,11 +64,11 @@ public class CarnetBean implements CarnetLocal {
     @EJB private FilesFinder finder;
 
     @Override
-    public XmlAlbumEdit treatAlbmEDIT(ViewSessionAlbumEdit vSession,
-            XmlAlbumSubmit submit)
+    public XmlCarnetEdit treatEDIT(ViewSessionCarnetEdit vSession,
+            XmlCarnetSubmit submit)
             throws WebAlbumsServiceException {
 
-        XmlAlbumEdit output = new XmlAlbumEdit();
+        XmlCarnetEdit output = new XmlCarnetEdit();
 
         if (submit != null) {
             output.submit = submit ;
@@ -99,53 +104,48 @@ public class CarnetBean implements CarnetLocal {
         return output;
     }
 
-    @Override
-    public XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit, XmlFrom fromPage)
-            throws WebAlbumsServiceException {
+    public XmlCarnetsDisplay treatDISPLAY(ViewSessionCarnetDisplay vSession,
+            XmlCarnetSubmit submit) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
-
+        
+        XmlCarnetsDisplay output = new XmlCarnetsDisplay() ;
+        XmlFrom thisPage = new XmlFrom();
+        thisPage.name = "Carnets" ;
 
         EditMode inEditionMode = vSession.getEditionMode();
-        Integer albumId = vSession.getId();
+        Integer carnetId = vSession.getId();
         Integer page = vSession.getPage();
         Integer eltAsked = vSession.getCount();
 
         Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getConfiguration().getAlbumSize());
 
-        SubsetOf<Album> albums = null;//albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, AlbumFacadeLocal.TopFirst.FIRST, bornes);
+        SubsetOf<Carnet> carnets = carnetDAO.queryCarnets(vSession, Restriction.ALLOWED_AND_THEME, AlbumFacadeLocal.TopFirst.FIRST, bornes);
 
         int count = bornes.getFirstElement();
         String oldDate = null ;
         
-        XmlAlbumList output = new XmlAlbumList(albums.subset.size()) ;
-        for(Album enrAlbum : albums.subset) {
-            XmlAlbum album = new XmlAlbum();
+        for(Carnet enrCarnet : carnets.subset) {
+            XmlCarnet carnet = new XmlCarnet();
 
-            if (enrAlbum.getId() == albumId) {
-                album.submit = submit ;
-            }
-
-            album.date = webPageService.xmlDate(enrAlbum.getDate(), oldDate);
-            oldDate = enrAlbum.getDate() ;
-            album.id = enrAlbum.getId();
-            album.count = count;
-            album.title = enrAlbum.getNom();
+            carnet.date = webPageService.xmlDate(enrCarnet.getDate(), oldDate);
+            oldDate = enrCarnet.getDate() ;
+            carnet.id = enrCarnet.getId();
+            carnet.count = count;
+            carnet.name = enrCarnet.getNom();
 
             XmlDetails details = new XmlDetails();
 
-            Integer iPhoto = enrAlbum.getPicture();
+            Integer iPhoto = enrCarnet.getPicture();
             if (iPhoto != null) {
                 Photo enrPhoto = photoDAO.find(iPhoto) ;
                 if (enrPhoto != null) {
                     details.photoId = enrPhoto.getId() ;
-                    details.miniWidth = enrPhoto.getWidth();
-                    details.miniHeight = enrPhoto.getHeight();
                 } else {
-                    log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrAlbum.getId()});
+                    log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrCarnet.getId()});
                 }
             }
             
-            details.description = enrAlbum.getDescription();
+            details.description = enrCarnet.getDescription();
 
             //tags de l'album
             //details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE) ;
@@ -153,31 +153,30 @@ public class CarnetBean implements CarnetLocal {
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager()) {
                 if (inEditionMode != EditMode.VISITE) {
-                    details.user = enrAlbum.getDroit().getNom();
+                    details.user = enrCarnet.getDroit().getNom();
                     details.userInside = new LinkedList<String>() ;
-                    for (Utilisateur user : userDAO.loadUserInside(enrAlbum.getId())) {
+                    for (Utilisateur user : userDAO.loadUserInside(enrCarnet.getId())) {
                         details.userInside.add(user.getNom()) ;
                     }
                 }
             }
-            album.details = details ;
+            carnet.details = details ;
 
             count++;
 
-            output.album.add(album);
+            output.carnet.add(carnet);
         }
 
-        output.page = webPageService.xmlPage(fromPage, bornes);
+        output.page = webPageService.xmlPage(thisPage, bornes);
         stopWatch.stop("Service.displayAlbum") ;
         return output ;
     }
 
     @Override
-    public XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession)
+    public XmlCarnetSubmit treatSUBMIT(ViewSessionCarnetSubmit vSession)
             throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
-        XmlAlbumSubmit output = new XmlAlbumSubmit();
-        Integer albumId = vSession.getId();
+        XmlCarnetSubmit output = new XmlCarnetSubmit();
 
 
         Album enrAlbum = null;// = albumDAO.loadIfAllowed(vSession, albumId);
@@ -222,17 +221,25 @@ public class CarnetBean implements CarnetLocal {
         stopWatch.stop("Service.treatSUBMIT") ;
         return output ;
     }
-
+    
     @Override
-    public XmlAlbumDisplay treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession,
-            XmlAlbumSubmit submit) throws WebAlbumsServiceException {
+    public XmlCarnetsTop treatTOP(ViewSessionCarnet vSession) {
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
+        XmlCarnetsTop top5 = new XmlCarnetsTop();
 
-        XmlAlbumDisplay output = new XmlAlbumDisplay() ;
-        XmlFrom thisPage = new XmlFrom();
-        thisPage.name = "Albums" ;
-
-        output.albumList = displayAlbum(vSession, submit, thisPage) ;
-        return output ;
+        SubsetOf<Carnet> carnets = carnetDAO.queryCarnets(vSession, Restriction.ALLOWED_AND_THEME, TopFirst.TOP, new Bornes(AlbumBean.TOP));
+        int i = 0;
+        for (Carnet enrCarnet : carnets.subset) {
+            XmlCarnet carnet = new XmlCarnet();
+            carnet.id = enrCarnet.getId();
+            carnet.count = i;
+            carnet.name = enrCarnet.getNom();
+            carnet.picture = enrCarnet.getPicture();
+            
+            top5.carnet.add(carnet);
+            i++ ;
+        }
+        stopWatch.stop("Service.treatTOP") ;
+        return top5;
     }
-
 }

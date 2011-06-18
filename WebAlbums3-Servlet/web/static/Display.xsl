@@ -110,6 +110,7 @@
 		<xsl:apply-templates select="/webAlbums/choix"/>
 		<xsl:apply-templates select="/webAlbums/albums"/>
 		<xsl:apply-templates select="/webAlbums/photos"/>
+                <xsl:apply-templates select="/webAlbums/carnets"/>
 		<xsl:apply-templates select="/webAlbums/tags"/>
 		<xsl:apply-templates select="/webAlbums/config"/>
                 <xsl:apply-templates select="/webAlbums/database"/>
@@ -153,9 +154,11 @@
   <xsl:include href="PhotosAlbums.xsl" />
   <xsl:include href="Tags.xsl" />
   <xsl:include href="Common.xsl" />
+  <xsl:include href="Carnet.xsl" />
  
   <xsl:include href="ModifAlbum.xsl" /> 
   <xsl:include href="ModifPhoto.xsl" /> 
+  <xsl:include href="ModifCarnet.xsl" /> 
   <xsl:include href="Config.xsl" /> 
   <xsl:include href="Database.xsl" /> 
  </xsl:stylesheet>

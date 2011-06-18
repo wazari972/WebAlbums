@@ -52,7 +52,7 @@ import org.perf4j.slf4j.Slf4JStopWatch;
 public class AlbumBean implements AlbumLocal {
     private static final Logger log = LoggerFactory.getLogger(AlbumBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
-    private static final int TOP = 5;
+    public static final int TOP = 5;
 
     @EJB
     private AlbumFacadeLocal albumDAO;
@@ -146,8 +146,6 @@ public class AlbumBean implements AlbumLocal {
                 Photo enrPhoto = photoDAO.find(iPhoto) ;
                 if (enrPhoto != null) {
                     details.photoId = enrPhoto.getId() ;
-                    details.miniWidth = enrPhoto.getWidth();
-                    details.miniHeight = enrPhoto.getHeight();
                 } else {
                     log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrAlbum.getId()});
                 }
@@ -354,8 +352,6 @@ public class AlbumBean implements AlbumLocal {
             Photo enrPhoto = photoDAO.find(iPhoto) ;
             if (enrPhoto != null) {
                 about.album.details.photoId = enrPhoto.getId() ;
-                about.album.details.miniWidth = enrPhoto.getWidth();
-                about.album.details.miniHeight = enrPhoto.getHeight();
             } else {
                 log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrAlbum.getId()});
             }

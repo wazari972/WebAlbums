@@ -11,14 +11,28 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.wazari.dao.AlbumFacadeLocal.Restriction;
+import net.wazari.dao.AlbumFacadeLocal.TopFirst;
+import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
+import net.wazari.dao.entity.facades.SubsetOf;
+import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.CarnetLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
-import net.wazari.service.exchange.ViewSessionAlbum;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
-import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
-import net.wazari.service.exchange.xml.carnet.XmlCarnet;
+import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSessionCarnet;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
+import net.wazari.service.exchange.xml.album.XmlAlbum;
+import net.wazari.service.exchange.xml.album.XmlAlbumTop;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetsTop;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import net.wazari.view.servlet.exchange.xml.XmlCarnets;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 @WebServlet(
     name = "Albums",
@@ -28,34 +42,41 @@ import net.wazari.view.servlet.DispatcherBean.Page;
 public class Carnets extends HttpServlet{
     @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
-
+    
     @EJB
     private CarnetLocal carnetService;
 
-    public XmlCarnet treatCARNETS(ViewSessionAlbum vSession)
+    public XmlCarnets treatCARNETS(ViewSessionCarnet vSession)
             throws WebAlbumsServiceException {
-
-        XmlCarnet output = new XmlCarnet() ;
+        XmlCarnets output = new XmlCarnets() ;
+        
+        Special special = vSession.getSpecial();
+        if (special == Special.TOP5) {
+            output.top = carnetService.treatTOP(vSession);
+            return output ;
+        }
+        
         Action action = vSession.getAction();
-        XmlAlbumSubmit submit = null;
+        XmlCarnetSubmit submit = null;
         if(vSession.isSessionManager()) {
             //prepare SUBMIT message
             if (action == Action.SUBMIT) {
-                submit = carnetService.treatAlbmSUBMIT((ViewSessionAlbumSubmit) vSession);
+                submit = carnetService.treatSUBMIT((ViewSessionCarnetSubmit) vSession);
             }
 
             if (action == Action.EDIT) {
-                //output.edit = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession, submit);
+                output.edit = carnetService.treatEDIT((ViewSessionCarnetEdit) vSession, submit);
             }
         }
 
         if (action != Action.EDIT) {
             //afficher la liste des albums de ce theme
-            //output.display = albumService.treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit);
+            output.display = carnetService.treatDISPLAY((ViewSessionCarnetDisplay)vSession, submit);
         }
 
         return output ;
     }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.

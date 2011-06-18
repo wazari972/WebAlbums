@@ -47,5 +47,4 @@ public interface Carnet extends EntityWithId {
     void setPicture(Integer picture);
 
     void setTheme(Theme theme);
-
 }

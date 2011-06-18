@@ -5,23 +5,19 @@
 
 package net.wazari.service;
 
-import net.wazari.service.exchange.xml.album.XmlAlbumYears;
-import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
+import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
-import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
-import net.wazari.service.exchange.xml.album.XmlAlbumTop;
-import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSessionAlbum;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
-import net.wazari.service.exchange.xml.album.XmlAlbumAbout;
-import net.wazari.service.exchange.xml.album.XmlAlbumList;
-import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetEdit;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetsDisplay;
+import net.wazari.service.exchange.xml.carnet.XmlCarnetsTop;
 
 /**
  *
@@ -31,14 +27,14 @@ import net.wazari.service.exchange.xml.common.XmlFrom;
 @DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface CarnetLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit, XmlFrom fromPage) throws WebAlbumsServiceException;
+    XmlCarnetsDisplay treatDISPLAY(ViewSessionCarnetDisplay vSession, XmlCarnetSubmit submit) throws WebAlbumsServiceException;
+    
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
+    XmlCarnetEdit treatEDIT(ViewSessionCarnetEdit vSession, XmlCarnetSubmit submit) throws WebAlbumsServiceException;
+
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
+    XmlCarnetSubmit treatSUBMIT(ViewSessionCarnetSubmit vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumDisplay treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
-
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlAlbumEdit treatAlbmEDIT(ViewSessionAlbumEdit vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
-
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
+    XmlCarnetsTop treatTOP(ViewSessionCarnet vSession);
 }

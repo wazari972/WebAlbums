@@ -19,16 +19,12 @@ public class XmlCarnet {
     @XmlAttribute
     public Integer id;
     @XmlAttribute
-    public Integer count;
-    public String title;
-    public XmlDetails details;
-    public String name;
-    @XmlAttribute
     public Integer picture;
     public XmlDate date;
     @XmlAttribute
-    public Long time;
+    public Integer count;
+    public String name;
+    public XmlDetails details;
+    public String text;
     public String droit;
-    public String albmDate;
-
 }
