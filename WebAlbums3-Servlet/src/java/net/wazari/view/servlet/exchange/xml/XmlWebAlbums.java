@@ -5,11 +5,11 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlChoix;
+import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.config.XmlConfig;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.service.exchange.xml.XmlLogin;
@@ -47,4 +47,5 @@ public class XmlWebAlbums {
     public XmlAffichage affichage;
     public XmlLoginInfo loginInfo;
     public String time ;
+    public XmlCarnet carnet;
 }

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
@@ -39,10 +39,10 @@ import org.hibernate.annotations.GenericGenerator;
  * @author kevinpouget
  */
 @Entity
-@Table(name = "Album")
+@Table(name = "Carnet")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JPAAlbum implements Album, Serializable {
+public class JPACarnet implements Carnet, Serializable {
     private static final Logger log = LoggerFactory.getLogger(JPACarnet.class.getName());
 
     private static final long serialVersionUID = 1L;
@@ -97,14 +97,14 @@ public class JPAAlbum implements Album, Serializable {
     @Transient
     private Integer droitId = null ;
 
-    public JPAAlbum() {
+    public JPACarnet() {
     }
 
-    public JPAAlbum(Integer id) {
+    public JPACarnet(Integer id) {
         this.id = id;
     }
 
-    public JPAAlbum(Integer id, String nom, String date) {
+    public JPACarnet(Integer id, String nom, String date) {
         this.id = id;
         this.nom = nom;
         this.date = date;
@@ -228,7 +228,7 @@ public class JPAAlbum implements Album, Serializable {
         if (!(object instanceof JPAAlbum)) {
             return false;
         }
-        JPAAlbum other = (JPAAlbum) object;
+        JPACarnet other = (JPACarnet) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

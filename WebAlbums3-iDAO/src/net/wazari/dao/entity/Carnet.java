@@ -13,7 +13,7 @@ import net.wazari.dao.entity.facades.EntityWithId;
  *
  * @author kevinpouget
  */
-public interface Album extends EntityWithId {
+public interface Carnet extends EntityWithId {
     SimpleDateFormat DATE_STANDARD = new SimpleDateFormat("yyyy-MM-dd");
 
     String getDate();

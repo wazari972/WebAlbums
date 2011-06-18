@@ -1,0 +1,44 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package net.wazari.service;
+
+import net.wazari.service.exchange.xml.album.XmlAlbumYears;
+import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
+import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
+import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
+import net.wazari.service.exchange.xml.album.XmlAlbumTop;
+import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
+import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.xml.album.XmlAlbumAbout;
+import net.wazari.service.exchange.xml.album.XmlAlbumList;
+import net.wazari.service.exchange.xml.common.XmlFrom;
+
+/**
+ *
+ * @author kevin
+ */
+@Local
+@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
+public interface CarnetLocal {
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit, XmlFrom fromPage) throws WebAlbumsServiceException;
+
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlAlbumDisplay treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
+
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
+    XmlAlbumEdit treatAlbmEDIT(ViewSessionAlbumEdit vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
+
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
+    XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
+}

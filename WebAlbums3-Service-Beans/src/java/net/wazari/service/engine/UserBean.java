@@ -66,8 +66,8 @@ public class UserBean implements UserLocal {
             userName = USER_FAMILLE;
         } else if (request.isUserInRole(USER_AMIS)) {
             userName = USER_AMIS;
-        } else if (request.isUserInRole(USER_AUTRES)) {
-            userName = USER_AUTRES;
+        } else if (request.isUserInRole(USER_PUBLIC)) {
+            userName = USER_PUBLIC;
         }
 
         log.debug( "UserPrincipal :{}", pr.getName());

@@ -5,6 +5,7 @@
 package net.wazari.dao.jpa;
 
 import java.util.Iterator;
+import net.wazari.dao.entity.Carnet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.wazari.dao.exchange.ServiceSession;
@@ -23,7 +24,6 @@ import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAAlbum_;
-import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATag;
 import net.wazari.dao.jpa.entity.JPATagPhoto;
@@ -144,5 +144,10 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
+    }
+
+    @Override
+    public List<TagPhoto> queryByCarnet(Carnet carnet) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

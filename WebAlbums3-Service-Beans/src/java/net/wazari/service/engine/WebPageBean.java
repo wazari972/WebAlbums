@@ -25,7 +25,6 @@ import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
 
-import net.wazari.dao.entity.facades.PhotoOrAlbum;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.WebPageLocal;
 
@@ -38,6 +37,7 @@ import net.wazari.service.util.google.GooglePoint;
 import net.wazari.service.util.google.GooglePoint.Point;
 
 import net.wazari.dao.ThemeFacadeLocal;
+import net.wazari.dao.entity.facades.EntityWithId;
 import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.xml.XmlAffichage;
@@ -49,6 +49,7 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWh
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.common.XmlUserList;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.ListType;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
@@ -232,21 +233,24 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public XmlWebAlbumsList displayListIBTNI(Mode mode,
             ViewSession vSession,
-            PhotoOrAlbum entity,
+            EntityWithId entity,
             Box box,
             String name,
             String info)
             throws WebAlbumsServiceException
     {
 
-        String type = "unknown";
+        ListType type = ListType.UNKNOWN;
         List<TagPhoto> list = null;
         if (entity instanceof Photo) {
             list = ((Photo) entity).getTagPhotoList();
-            type = "PHOTO";
+            type = ListType.PHOTO;
         } else if (entity instanceof Album) {
             list = tagPhotoDAO.queryByAlbum((Album) entity);
-            type = "ALBUMS";
+            type = ListType.ALBUM;
+        } else if (entity instanceof Carnet) {
+            list = tagPhotoDAO.queryByCarnet((Carnet) entity);
+            type = ListType.CARNET;
         }
         List<Tag> tags = new ArrayList<Tag>(list.size());
         for (TagPhoto enrTagPhoto : list) {
@@ -525,7 +529,7 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public XmlWebAlbumsList displayListIBT(Mode mode,
             ViewSession vSession,
-            PhotoOrAlbum entity,
+            EntityWithId entity,
             Box box)
             throws WebAlbumsServiceException {
         return displayListIBTNI(mode, vSession, entity, box,
@@ -555,7 +559,7 @@ public class WebPageBean implements WebPageLocal {
         userDAO.newUser(1, UserLocal.USER_ADMIN);
         userDAO.newUser(2, UserLocal.USER_FAMILLE);
         userDAO.newUser(3, UserLocal.USER_AMIS);
-        userDAO.newUser(4, UserLocal.USER_AUTRES);
+        userDAO.newUser(4, UserLocal.USER_PUBLIC);
     }
 
     private static final SimpleDateFormat annee = new SimpleDateFormat("yyyy");

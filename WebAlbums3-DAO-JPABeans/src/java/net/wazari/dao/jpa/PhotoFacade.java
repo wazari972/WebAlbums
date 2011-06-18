@@ -139,7 +139,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
                 cb.equal(tp.get(JPATagPhoto_.photo), p),
                 tp.get(JPATagPhoto_.tag).in(listTag)),
                 webDAO.getRestrictionToPhotosAllowed(session, p, cq.subquery(JPAPhoto.class)),
-                webDAO.getRestrictionToCurrentTheme(session, p.get(JPAPhoto_.album), Restriction.THEME_ONLY)
+                webDAO.getRestrictionToCurrentTheme(session, p.get(JPAPhoto_.album), net.wazari.dao.AlbumFacadeLocal.Restriction.THEME_ONLY)
                 );
         cq.groupBy(p.get(JPAPhoto_.id)) ;
         webDAO.setOrder(cq, cb, order, p.get(JPAPhoto_.path)) ;

@@ -9,13 +9,12 @@ import java.io.Serializable;
 import java.util.List;
 import net.wazari.common.plugins.Importer.Metadata;
 import net.wazari.dao.entity.facades.EntityWithId;
-import net.wazari.dao.entity.facades.PhotoOrAlbum;
 
 /**
  *
  * @author kevinpouget
  */
-public interface Photo extends PhotoOrAlbum, Serializable, EntityWithId, Metadata {
+public interface Photo extends Serializable, EntityWithId, Metadata {
     Album getAlbum();
 
     String getDescription();

@@ -27,7 +27,8 @@ import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAAlbum_;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
-
+import net.wazari.dao.AlbumFacadeLocal;
+import net.wazari.dao.AlbumFacadeLocal.*;
 /**
  *
  * @author kevin
@@ -59,7 +60,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
 
     @Override
     public SubsetOf<Album> queryAlbums(ServiceSession session,
-            Restriction restrict, TopFirst topFirst, Bornes bornes) {
+            AlbumFacadeLocal.Restriction restrict, AlbumFacadeLocal.TopFirst topFirst, Bornes bornes) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
         CriteriaBuilder cb = em.getCriteriaBuilder();

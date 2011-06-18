@@ -64,6 +64,7 @@ public class DispatcherBean {
     @EJB private Albums albumServlet;
     @EJB private Photos photoServlet;
     @EJB private Tags tagServlet;
+    @EJB private Carnets carnetServlet;
     @EJB private Images imageServlet;
     @EJB private Database databaseServlet;
     @EJB private Config configServlet;
@@ -73,7 +74,7 @@ public class DispatcherBean {
     public enum Page {
 
         PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT, 
-        DATABASE}
+        DATABASE, CARNET}
 
     public void treat(ServletContext context,
             Page page,
@@ -104,18 +105,22 @@ public class DispatcherBean {
         boolean isWritten = false;
         try {
             output.xslFile = "static/Display.xsl";
-            if (page == Page.USER) {
-                output.login = userServlet.treatLogin((ViewSessionLogin) vSession, request, response);
-                if (output.login == null) {
-                    return;
-                }
-            } else if (page == Page.VOID) {
+            switch (page) {
+                case USER:
+                    output.login = userServlet.treatLogin((ViewSessionLogin) vSession, request, response);
+                    if (output.login == null) {
+                        return;
+                    }
+                break;
+            case VOID:
                 output.themes = indexServlet.treatVOID(vSession);
-            } else if (page == Page.MAINT) {
+                break;
+            case MAINT:
                 output.isComplete = true;
                 output.xslFile = "static/Empty.xsl";
                 output.maint = maintServlet.treatMaint((ViewSessionMaint) vSession);
-            } else {
+                break;
+            default: 
                 log.info("============= Login: {} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
                 if (special != null) {
@@ -141,45 +146,48 @@ public class DispatcherBean {
                         log.debug("Not logged in, special request, nothing to display ...");
                     }
                 } else {
-                    if (page == Page.CHOIX) {
-                        if (special == null) {
-                            log.debug("CHOIX page");
-                            output.choix = choixServlet.displayCHX(vSession);
-                        } else {
-                            log.debug("CHOIX special page");
-                            output.blob = choixServlet.displayChxScript(vSession).blob;
-                            response.setContentType("text/javascript;charset=UTF-8");
-                            output.isBlob = true;
-                            output.isComplete = true;
-                        }
-                    } else if (page == Page.ALBUM) {
-                        log.debug("ALBUM page");
-                        output.albums = albumServlet.treatALBM((ViewSessionAlbum) vSession);
-                    } else if (page == Page.PHOTO) {
-                        log.debug("PHOTO page");
-                        output.photos = photoServlet.treatPHOTO((ViewSessionPhoto) vSession);
-                    } else if (page == Page.CONFIG) {
-                        log.debug("CONFIG page");
-                        output.config = configServlet.treatCONFIG((ViewSessionConfig) vSession);
-                    } else if (page == Page.TAGS) {
-                        log.debug("TAGS page");
-                        output.tags = tagServlet.treatTAGS((ViewSessionTag) vSession);
-                    } else if (page == Page.IMAGE) {
-                        log.debug("IMAGE page");
-                        XmlImage ret = imageServlet.treatIMG((ViewSessionImages) vSession);
-                        if (ret == null) {
-                            isWritten = true;
-                        } else {
-                            output.image = ret;
-                        }
-                        log.debug("IMAGE written? {}", isWritten);
-                    } else if (page == Page.DATABASE) {
-                        log.debug("DATABASE page");
-                        output.database = databaseServlet.treatDATABASE((ViewSessionDatabase) vSession);
-                    } else {
-                        log.debug("VOID page? ({})", page);
-                        output.themes = indexServlet.treatVOID((ViewSession) vSession);
-                        actualPage = Page.VOID;
+                    log.debug("{} {}page", page, special != null ? special : "");
+                    switch(page) {
+                        case CHOIX:
+                            if (special == null) {
+                                output.choix = choixServlet.displayCHX(vSession);
+                            } else {
+                                output.blob = choixServlet.displayChxScript(vSession).blob;
+                                response.setContentType("text/javascript;charset=UTF-8");
+                                output.isBlob = true;
+                                output.isComplete = true;
+                            }
+                            break;
+                        case ALBUM:
+                            output.albums = albumServlet.treatALBM((ViewSessionAlbum) vSession);
+                            break;
+                        case PHOTO:
+                            output.photos = photoServlet.treatPHOTO((ViewSessionPhoto) vSession);
+                            break;
+                        case CONFIG:
+                            output.config = configServlet.treatCONFIG((ViewSessionConfig) vSession);
+                            break;
+                        case TAGS:
+                            output.tags = tagServlet.treatTAGS((ViewSessionTag) vSession);
+                            break;
+                        case CARNET:
+                            output.carnet = carnetServlet.treatCARNETS((ViewSessionTag) vSession);
+                            break;
+                        case IMAGE:
+                            XmlImage ret = imageServlet.treatIMG((ViewSessionImages) vSession);
+                            if (ret == null) {
+                                isWritten = true;
+                            } else {
+                                output.image = ret;
+                            }
+                            log.debug("IMAGE written? {}", isWritten);
+                            break;
+                        case DATABASE:
+                            output.database = databaseServlet.treatDATABASE((ViewSessionDatabase) vSession);
+                            break;
+                        default: 
+                            output.themes = indexServlet.treatVOID((ViewSession) vSession);
+                            actualPage = Page.VOID;
                     }
                 }
             }

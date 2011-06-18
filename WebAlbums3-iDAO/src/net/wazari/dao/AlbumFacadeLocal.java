@@ -22,11 +22,11 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 @DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface AlbumFacadeLocal {
 
-    enum TopFirst {
+    public enum TopFirst {
         TOP, FIRST, ALL
     }
 
-    enum Restriction {
+    public enum Restriction {
         ALLOWED_ONLY, THEME_ONLY, ALLOWED_AND_THEME
     }
     
