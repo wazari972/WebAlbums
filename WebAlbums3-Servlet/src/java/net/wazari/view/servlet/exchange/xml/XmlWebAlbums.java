@@ -47,5 +47,4 @@ public class XmlWebAlbums {
     public XmlAffichage affichage;
     public XmlLoginInfo loginInfo;
     public String time ;
-    public XmlCarnets carnet;
 }

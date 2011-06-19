@@ -23,14 +23,17 @@
 	</div>
       </div>
     </div>
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
       <div class="content">
-	<h1><a href="Albums">Tous les Albums</a>&#160;<input id="albumsLoader" type="button" value="5 derniers"/></h1>
-	<div class="body">
-	  <div id="albums" style="overflow:auto;"/>
-	</div>
+        <h1><a href="Albums">Tous les Albums</a>&#160;<input id="albumsLoader" type="button" value="5 derniers"/></h1>
+        <div class="body">
+          <div id="albums" style="overflow:auto;"/>
+        </div>
       </div>
     </div>
-
     <div class="item">
       <div class="date">
 	<span></span>

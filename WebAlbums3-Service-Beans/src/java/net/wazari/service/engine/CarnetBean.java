@@ -1,7 +1,6 @@
 package net.wazari.service.engine;
 
 
-import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -113,7 +112,6 @@ public class CarnetBean implements CarnetLocal {
         thisPage.name = "Carnets" ;
 
         EditMode inEditionMode = vSession.getEditionMode();
-        Integer carnetId = vSession.getId();
         Integer page = vSession.getPage();
         Integer eltAsked = vSession.getCount();
 

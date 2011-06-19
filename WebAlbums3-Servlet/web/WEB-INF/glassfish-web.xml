@@ -8,7 +8,7 @@
     <group-name>Admin</group-name>
     <group-name>Famille</group-name>
     <group-name>Amis</group-name>
-    <group-name>Autres</group-name>
+    <group-name>Public</group-name>
   </security-role-mapping>
   <security-role-mapping>
     <role-name>MANAGER</role-name>
@@ -27,7 +27,7 @@
     <group-name>Amis</group-name>
   </security-role-mapping>
   <security-role-mapping>
-    <role-name>Autres</role-name>
-    <group-name>Autres</group-name>
+    <role-name>Public</role-name>
+    <group-name>Public</group-name>
   </security-role-mapping>
 </glassfish-web-app>

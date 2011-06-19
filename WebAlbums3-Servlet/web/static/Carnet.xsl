@@ -12,6 +12,7 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="carnets">
+      <h1>Carnets</h1>
       <xsl:apply-templates select="edit"/>
       <xsl:apply-templates select="display"/>
   </xsl:template>

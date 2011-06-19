@@ -172,7 +172,7 @@ public class DispatcherBean {
                             output.tags = tagServlet.treatTAGS((ViewSessionTag) vSession);
                             break;
                         case CARNET:
-                            output.carnet = carnetServlet.treatCARNETS((ViewSessionCarnet) vSession);
+                            output.carnets = carnetServlet.treatCARNETS((ViewSessionCarnet) vSession);
                             break;
                         case IMAGE:
                             XmlImage ret = imageServlet.treatIMG((ViewSessionImages) vSession);

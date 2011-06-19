@@ -10,7 +10,7 @@ function loadAlbums() {
     loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
 }
 
-function loadAlbums() {
+function loadCarnets() {
     loadExernals('carnetsLoader', 'Carnets?special=TOP5', 'carnets') ;
 }
 

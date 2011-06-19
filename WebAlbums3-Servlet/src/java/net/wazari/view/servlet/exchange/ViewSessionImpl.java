@@ -30,6 +30,10 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.ViewSessionCarnet;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.ViewSessionImages;
@@ -55,6 +59,7 @@ public class ViewSessionImpl implements
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit,
         ViewSessionTag,
         ViewSessionImages, ViewSessionPhotoDisplayMassEdit, ViewSessionPhotoFastEdit,
+        ViewSessionCarnet, ViewSessionCarnetDisplay, ViewSessionCarnetEdit, ViewSessionCarnetSubmit,
         ViewSessionDatabase, 
         ViewSessionMaint{
 
@@ -480,6 +485,11 @@ public class ViewSessionImpl implements
     @Override
     public TagAction getTagAction() {
         return getObject("tagAction", TagAction.class);
+    }
+    
+    @Override
+    public Integer getCountCarnet() {
+        return getInteger("countCarnet") ;
     }
 
     private void setSessionObject(String string, Object value) {

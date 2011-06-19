@@ -124,7 +124,7 @@ public class JPAPhoto implements Photo, Serializable {
     private Integer albumId ;
 
     @ManyToMany(mappedBy="jPAPhotoList")
-    private List<Carnet> jPACarnetList;
+    private List<JPACarnet> jPACarnetList;
 
     
     
@@ -292,12 +292,12 @@ public class JPAPhoto implements Photo, Serializable {
     
     @Override
     public List<Carnet> getCarnetList() {
-        return jPACarnetList;
+        return (List) jPACarnetList;
     }
 
     @Override
     public void setCarnetList(List<Carnet> jPACarnetList) {
-        this.jPACarnetList = jPACarnetList;
+        this.jPACarnetList = (List) jPACarnetList;
     }
 
     @XmlAttribute

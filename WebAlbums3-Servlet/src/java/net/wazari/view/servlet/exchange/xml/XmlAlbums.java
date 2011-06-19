@@ -23,5 +23,5 @@ public class XmlAlbums {
     public XmlAlbumEdit edit;
     public XmlAlbumDisplay display;
     public XmlAlbumAbout about;
-
+    public XmlAlbums(){}
 }

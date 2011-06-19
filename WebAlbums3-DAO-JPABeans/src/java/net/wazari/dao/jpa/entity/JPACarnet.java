@@ -81,10 +81,14 @@ public class JPACarnet implements Carnet, Serializable {
     private Integer picture;
     
     @ManyToMany
-    @JoinTable(
-      name="CarnetPhoto",
-      joinColumns={@JoinColumn(name="ID", referencedColumnName="Carnet")},
-      inverseJoinColumns={@JoinColumn(name="Photo", referencedColumnName="ID")})
+    @JoinTable(name = "CarnetPhoto",
+        joinColumns = {
+          @JoinColumn(name="carnet", unique = true)           
+        },
+        inverseJoinColumns = {
+          @JoinColumn(name="photo")
+        }
+    )
     private List<JPAPhoto> jPAPhotoList;
     
     @XmlTransient

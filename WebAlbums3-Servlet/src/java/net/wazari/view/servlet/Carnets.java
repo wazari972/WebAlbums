@@ -11,12 +11,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.dao.AlbumFacadeLocal.Restriction;
-import net.wazari.dao.AlbumFacadeLocal.TopFirst;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.entity.facades.SubsetOf;
-import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.CarnetLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
@@ -25,18 +19,13 @@ import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
-import net.wazari.service.exchange.xml.album.XmlAlbum;
-import net.wazari.service.exchange.xml.album.XmlAlbumTop;
 import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
-import net.wazari.service.exchange.xml.carnet.XmlCarnetsTop;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlCarnets;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 
 @WebServlet(
-    name = "Albums",
-    urlPatterns = {"/Albums"}
+    name = "Carnets",
+    urlPatterns = {"/Carnets"}
 )
 @Stateless
 public class Carnets extends HttpServlet{
@@ -87,7 +76,7 @@ public class Carnets extends HttpServlet{
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        dispatcher.treat(this.getServletContext(), Page.ALBUM, request, response);
+        dispatcher.treat(this.getServletContext(), Page.CARNET, request, response);
     }
 
     /**

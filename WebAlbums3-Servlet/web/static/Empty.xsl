@@ -250,7 +250,8 @@
     </td>
  </xsl:template>
 
- <xsl:template match="/webAlbums/albums/top or /webAlbums/carnets/top">
+ <xsl:template match="/webAlbums/albums/top|/webAlbums/carnets/top">
+     <h1>carnets</h1>
    <table>
      <tr>
        <xsl:apply-templates select="album" />
@@ -259,7 +260,7 @@
    </table>
  </xsl:template>
 
- <xsl:template match="top/album or top/carnet">
+ <xsl:template match="top/album|top/carnet">
    <td>
       <table>
 	<tr>
@@ -270,10 +271,11 @@
 		  <xsl:attribute name="href">
                       <xsl:if test="top/album">
                         Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
-                      </xsl:attribute>
+                      </xsl:if>
                       <xsl:if test="top/carnet">
                         Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;id=<xsl:value-of select="@id"/>
-                      </xsl:attribute>
+                      </xsl:if>
+                  </xsl:attribute>
 		  <img width="100px">
 		    <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
 		  </img>
@@ -289,10 +291,10 @@
 		<xsl:attribute name="href">
 		  <xsl:if test="top/album">
                         Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
-                      </xsl:attribute>
+                      </xsl:if>
                       <xsl:if test="top/carnet">
                         Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;id=<xsl:value-of select="@id"/>
-                      </xsl:attribute>
+                      </xsl:if>
 		</xsl:attribute>
 		<xsl:value-of select="name"/>
 	      </a>

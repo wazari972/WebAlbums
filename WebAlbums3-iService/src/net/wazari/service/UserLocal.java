@@ -26,7 +26,7 @@ public interface UserLocal {
     String USER_ADMIN   = "Admin"   ;
     String USER_FAMILLE = "Famille" ;
     String USER_AMIS    = "Amis"    ;
-    String USER_PUBLIC  = "Public"  ;
+    String USER_PUBLIC  = "Autres"  ;
 
     @PermitAll
     boolean logon(ViewSessionLogin vSession, HttpServletRequest request) ;
