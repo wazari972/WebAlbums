@@ -76,6 +76,11 @@ public class ViewSessionImpl implements
     public String getDesc() {
         return getString("desc");
     }
+    
+    @Override
+    public String getCarnetText() {
+        return getString("carnetText");
+    }
 
     @Override
     public String getNom() {
@@ -243,6 +248,11 @@ public class ViewSessionImpl implements
         return getInteger("id");
     }
 
+    @Override
+    public Integer getCarnet() {
+        return getInteger("carnet");
+    }
+    
     @Override
     public String getNouveau() {
         return getString("nouveau");

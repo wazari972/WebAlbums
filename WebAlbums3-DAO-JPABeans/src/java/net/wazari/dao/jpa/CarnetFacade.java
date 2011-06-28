@@ -17,6 +17,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.facades.SubsetOf;
@@ -118,5 +119,23 @@ public class CarnetFacade implements CarnetFacadeLocal {
         List<JPACarnet> lstCarnets = q.getResultList() ;
         stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstCarnets.size()+" albums returned") ;
         return (SubsetOf) new SubsetOf<JPACarnet>(bornes, lstCarnets, (long) size);
+    }
+
+    @Override
+    public Carnet loadIfAllowed(ServiceSession session, Integer carnetId) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPACarnet> cq = cb.createQuery(JPACarnet.class) ;
+            Root<JPACarnet> c = cq.from(JPACarnet.class);
+            cq.where(cb.and(
+                    webDAO.getRestrictionToCarnetsAllowed(session, c, cq.subquery(JPACarnet.class), Restriction.ALLOWED_AND_THEME),
+                    cb.equal(c.get(JPACarnet_.id), carnetId))) ;
+            return (JPACarnet) em.createQuery(cq)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", false)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
     }
 }

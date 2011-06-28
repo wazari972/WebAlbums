@@ -28,6 +28,7 @@ import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPAAlbum_;
 import net.wazari.dao.jpa.entity.JPACarnet;
+import net.wazari.dao.jpa.entity.JPACarnet_;
 import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATheme_;
 import net.wazari.dao.jpa.entity.JPAUtilisateur_;
@@ -55,10 +56,17 @@ public class WebAlbumsDAOBean {
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Predicate getRestrictionToCarnetsAllowed(ServiceSession session,
-            Path<JPACarnet> album, Subquery<JPACarnet> sq, Restriction restrict) {
+            Path<JPACarnet> carnet, Subquery<JPACarnet> sq, Restriction restrict) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         Predicate TRUE = cb.conjunction() ;
-        return TRUE;
+        Root<JPACarnet> c = sq.from(JPACarnet.class);
+        Predicate where = TRUE ;
+        
+        if (!session.isSessionManager()) {
+            where = cb.greaterThanOrEqualTo(carnet.get(JPACarnet_.droit).get(JPAUtilisateur_.id), session.getUser().getId()) ;
+        }
+        sq.where(where);
+        return carnet.in(sq.select(c)) ;
     }
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)

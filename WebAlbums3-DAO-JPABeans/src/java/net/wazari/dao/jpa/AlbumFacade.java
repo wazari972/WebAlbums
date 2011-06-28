@@ -6,7 +6,6 @@ package net.wazari.dao.jpa;
 
 import java.util.List;
 import net.wazari.dao.exchange.ServiceSession;
-import net.wazari.dao.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
@@ -174,6 +173,22 @@ public class AlbumFacade implements AlbumFacadeLocal {
             return null ;
         }
     }
+    
+    @Override
+    public Album find(Integer id) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+            Root<JPAAlbum> a = cq.from(JPAAlbum.class);
+            cq.where(cb.equal(a.get(JPAAlbum_.id), id)) ;
+            return (JPAAlbum) em.createQuery(cq)
+                    .setHint("org.hibernate.cacheable", true)
+                    .setHint("org.hibernate.readOnly", true)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
+    }
 
     @Override
     public Album loadByNameDate(String name, String date) {
@@ -187,21 +202,6 @@ public class AlbumFacade implements AlbumFacadeLocal {
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
-        } catch (NoResultException e) {
-            return null ;
-        }
-    }
-
-    @Override
-    public Album find(Integer id) {
-        try {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
-            Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
-            cq.where(cb.equal(albm.get(JPAAlbum_.id), id)) ;
-            return (JPAAlbum) em.createQuery(cq)
-                .setHint("org.hibernate.cacheable", true)
-                .getSingleResult();
         } catch (NoResultException e) {
             return null ;
         }

@@ -10,13 +10,14 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.XmlPage;
+import net.wazari.service.exchange.xml.common.XmlInfoException;
 
 /**
  *
  * @author kevin
  */
 @XmlRootElement
-public class XmlCarnetsDisplay {
+public class XmlCarnetsDisplay extends XmlInfoException{
     public XmlCarnetsDisplay() {
         carnet = new LinkedList<XmlCarnet>() ;
     }

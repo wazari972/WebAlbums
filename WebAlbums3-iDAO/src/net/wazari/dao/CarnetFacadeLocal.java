@@ -44,4 +44,7 @@ public interface CarnetFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     SubsetOf<Carnet> queryCarnets(ServiceSession vSession, Restriction restriction, TopFirst topFirst, Bornes bornes);
+
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    Carnet loadIfAllowed(ServiceSession session, Integer carnetId);
 }

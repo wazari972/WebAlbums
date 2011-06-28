@@ -12,9 +12,9 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="carnets">
-      <h1>Carnets</h1>
       <xsl:apply-templates select="edit"/>
       <xsl:apply-templates select="display"/>
+      <a href="Carnets?action=EDIT" rel="singlepage[no]">Nouveau carnet</a>
   </xsl:template>
 
   <xsl:template match="carnets/display">
@@ -36,25 +36,15 @@
 	<h1>
 	  <a>
             <xsl:attribute name="href">
-Carnet?carnetCount=<xsl:value-of select="@count" />&amp;id=<xsl:value-of select="@id" />
+Carnets?carnetCount=<xsl:value-of select="@count" />&amp;carnet=<xsl:value-of select="@id" />
              </xsl:attribute>
-	    <xsl:value-of select="title" />
+	    <xsl:value-of select="name" />
 	  </a>
-          <xsl:if test="/webAlbums/affichage/@edit">
-              &#160;
-              <a rel="singlepage[no]" title="Edition du carnet">
-                <xsl:attribute name="href">
-Carnet?action=EDIT
-&amp;id=<xsl:value-of select="@id" />
-&amp;count=<xsl:value-of select="@count"/>
-                </xsl:attribute>
-                <img src="static/images/edit.png" height="30px"/>
-              </a>
-            </xsl:if>
 	</h1>
 	<div class="body">
             <xsl:apply-templates select="message"/>
             <xsl:apply-templates select="details"/>
+            <xsl:apply-templates select="text"/>
 	</div>
       </div>
     </div>
@@ -63,5 +53,7 @@ Carnet?action=EDIT
   <xsl:template match="message">
     <i><xsl:value-of select="."/></i><br/>
   </xsl:template>
-
+   <xsl:template match="text">
+    <i><xsl:value-of select="."/></i><br/>
+  </xsl:template>
 </xsl:stylesheet>

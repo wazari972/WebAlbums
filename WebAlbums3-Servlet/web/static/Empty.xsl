@@ -251,7 +251,6 @@
  </xsl:template>
 
  <xsl:template match="/webAlbums/albums/top|/webAlbums/carnets/top">
-     <h1>carnets</h1>
    <table>
      <tr>
        <xsl:apply-templates select="album" />
@@ -269,11 +268,11 @@
 	      <xsl:if test="@picture">
 		<a target="_top">
 		  <xsl:attribute name="href">
-                      <xsl:if test="top/album">
-                        Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
+                      <xsl:if test="/webAlbums/albums">
+Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
                       </xsl:if>
-                      <xsl:if test="top/carnet">
-                        Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;id=<xsl:value-of select="@id"/>
+                      <xsl:if test="/webAlbums/carnets">
+Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of select="@id"/>
                       </xsl:if>
                   </xsl:attribute>
 		  <img width="100px">
@@ -289,12 +288,12 @@
 	    <center>
 	      <a target="_top">
 		<xsl:attribute name="href">
-		  <xsl:if test="top/album">
+		  <xsl:if test="/webAlbums/albums">
                         Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
-                      </xsl:if>
-                      <xsl:if test="top/carnet">
+                  </xsl:if>
+                  <xsl:if test="/webAlbums/carnets">
                         Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;id=<xsl:value-of select="@id"/>
-                      </xsl:if>
+                  </xsl:if>
 		</xsl:attribute>
 		<xsl:value-of select="name"/>
 	      </a>
@@ -365,15 +364,14 @@
 Photos?
 albmCount=<xsl:value-of select="album/@count" />
 &amp;album=<xsl:value-of select="album/@id" />
-&amp;page=<xsl:value-of select="photoList/page/@current"/>
 		    </xsl:if>
 		    <xsl:if test="/webAlbums/tags">
 Tags?
 <xsl:for-each select="title/tagList/*">
 &amp;tagAsked=<xsl:value-of select="@id"/>
 </xsl:for-each>
-&amp;page=<xsl:value-of select="photoList/page/@current"/>
 		    </xsl:if>
+&amp;page=<xsl:value-of select="photoList/page/@current"/>
 		  </xsl:attribute>
 		  &#8629;
 		</a>
@@ -432,15 +430,13 @@ Tags?
 Photos?
 &amp;albmCount=<xsl:value-of select="../url/albmCount" />
 &amp;album=<xsl:value-of select="../url/album" />
-&amp;page=<xsl:value-of select="." />
-&amp;special=VISIONNEUSE
 	  </xsl:if>
 	  <xsl:if test="/webAlbums/tags">
 Tags?
 &amp;tagAsked=<xsl:value-of select="../url/tagAsked"/>
-&amp;page=<xsl:value-of select="."/>
-&amp;special=VISIONNEUSE
 	  </xsl:if>
+          &amp;page=<xsl:value-of select="."/>
+          &amp;special=VISIONNEUSE
           </xsl:attribute><xsl:if test="name(.) = 'nexti'">
               »
           </xsl:if>

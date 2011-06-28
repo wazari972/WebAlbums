@@ -132,6 +132,9 @@
                     <script src="Choix?special=map.js" type='text/javascript'></script>
                     <script src="static/scripts/Choix.js" type='text/javascript'></script>
                 </xsl:if>
+                <xsl:if test="/webAlbums/carnets">
+                    <script type="text/javascript" src="static/scripts/Carnets.js"></script>
+                </xsl:if>
 	      </div>
 	      <div id="footer">
                  <p>Page générée en <xsl:value-of select="/webAlbums/time"/>s. Copyright 2009.</p>

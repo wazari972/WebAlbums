@@ -223,7 +223,18 @@ public class JPACarnet implements Carnet, Serializable {
 
     @Override
     public String toString() {
-        return "net.wazari.dao.jpa.entity.JPAAlbum[id=" + id + "]";
+        return "net.wazari.dao.jpa.entity.JPACarnet[id=" + id + "]";
+    }
+
+    @Override
+    public String getText() {
+        return this.texte;
+        
+    }
+
+    @Override
+    public void setText(String text) {
+        this.texte = text;
     }
 
 }

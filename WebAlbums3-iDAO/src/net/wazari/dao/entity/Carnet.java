@@ -19,6 +19,8 @@ public interface Carnet extends EntityWithId {
     String getDate();
 
     String getDescription();
+    
+    String getText();
 
     Utilisateur getDroit();
 
@@ -35,6 +37,8 @@ public interface Carnet extends EntityWithId {
     void setDate(String date);
 
     void setDescription(String description);
+    
+    void setText(String text);
 
     void setDroit(Utilisateur droit);
 

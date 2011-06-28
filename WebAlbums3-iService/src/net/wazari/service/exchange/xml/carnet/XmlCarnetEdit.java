@@ -28,12 +28,6 @@ public class XmlCarnetEdit {
     public Integer id;
     public String description;
     public String date;
-    @XmlElement(name = "tagList")
-    public XmlWebAlbumsList tag_used;
-    @XmlElement(name = "tagList")
-    public XmlWebAlbumsList tag_nused;
-    @XmlElement(name = "tagList")
-    public XmlWebAlbumsList tag_never;
     public XmlUserList rights;
-
+    public String text;
 }

@@ -4,8 +4,8 @@ package net.wazari.service.engine;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
@@ -15,20 +15,14 @@ import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 
 import net.wazari.dao.CarnetFacadeLocal;
-import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
-import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.entity.Photo;
 
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.WebPageLocal;
-import net.wazari.service.entity.util.AlbumUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.EditMode;
-import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.CarnetLocal;
 import net.wazari.service.exchange.ViewSessionCarnet;
@@ -53,11 +47,7 @@ public class CarnetBean implements CarnetLocal {
     @EJB
     private CarnetFacadeLocal carnetDAO;
     @EJB
-    private AlbumUtil albumUtil;
-    @EJB
     private UtilisateurFacadeLocal userDAO;
-    @EJB
-    private PhotoFacadeLocal photoDAO;
     @EJB
     private WebPageLocal webPageService;
     @EJB private FilesFinder finder;
@@ -73,32 +63,27 @@ public class CarnetBean implements CarnetLocal {
             output.submit = submit ;
         }
 
-        Integer albumId = vSession.getId();
+        Integer carnetId = vSession.getCarnet();
         Integer page = vSession.getPage();
         Integer count = vSession.getCount();
         page = (page == null ? 0 : page);
 
-        Album enrAlbum = null;//= albumDAO.find(albumId);
+        Carnet enrCarnet = carnetDAO.find(carnetId);
 
-        if (enrAlbum == null) {
-            output.exception = "Impossible de trouver l'album (" + albumId + ")";
+        if (enrCarnet == null) {
+            output.exception = "Impossible de trouver le carnet (" + carnetId + ")";
             return output ;
         }
 
-        output.picture = enrAlbum.getPicture();
-        output.name = enrAlbum.getNom();
+        output.picture = enrCarnet.getPicture();
+        output.name = enrCarnet.getNom();
         output.count = count;
-        output.id = enrAlbum.getId();
-        output.description = enrAlbum.getDescription();
-        output.date = enrAlbum.getDate();
+        output.id = enrCarnet.getId();
+        output.description = enrCarnet.getDescription();
+        output.text = enrCarnet.getText();
+        output.date = enrCarnet.getDate();
 
-        output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
-                Box.MULTIPLE);
-        output.tag_nused = webPageService.displayListLB(Mode.TAG_NUSED, vSession, null,
-                Box.MULTIPLE);
-        output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
-                Box.MULTIPLE);
-        output.rights = webPageService.displayListDroit(enrAlbum.getDroit(), null);
+        output.rights = webPageService.displayListDroit(enrCarnet.getDroit(), null);
 
         return output;
     }
@@ -115,14 +100,29 @@ public class CarnetBean implements CarnetLocal {
         Integer page = vSession.getPage();
         Integer eltAsked = vSession.getCount();
 
-        Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getConfiguration().getAlbumSize());
-
-        SubsetOf<Carnet> carnets = carnetDAO.queryCarnets(vSession, Restriction.ALLOWED_AND_THEME, AlbumFacadeLocal.TopFirst.FIRST, bornes);
-
-        int count = bornes.getFirstElement();
-        String oldDate = null ;
+        int count = 0;
+        List<Carnet> carnets = null;
+        Integer carnetId = vSession.getCarnet();
+        if (carnetId != null) {
+            Carnet enrCarnet = carnetDAO.loadIfAllowed(vSession, carnetId);
+            if (enrCarnet != null) {
+                carnets = new ArrayList<Carnet>(1);
+                carnets.add(enrCarnet);
+            } else {
+                output.message = "Couldn't load carnet #"+carnetId;
+                carnetId = null;
+            }
+        } 
         
-        for(Carnet enrCarnet : carnets.subset) {
+        if (carnetId == null) {
+            Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getConfiguration().getAlbumSize());
+            count = bornes.getFirstElement();
+            carnets = carnetDAO.queryCarnets(vSession, Restriction.ALLOWED_AND_THEME, AlbumFacadeLocal.TopFirst.FIRST, bornes).subset;
+            output.page = webPageService.xmlPage(thisPage, bornes);
+        }
+        
+        String oldDate = null ;
+        for(Carnet enrCarnet : carnets) {
             XmlCarnet carnet = new XmlCarnet();
 
             carnet.date = webPageService.xmlDate(enrCarnet.getDate(), oldDate);
@@ -130,18 +130,13 @@ public class CarnetBean implements CarnetLocal {
             carnet.id = enrCarnet.getId();
             carnet.count = count;
             carnet.name = enrCarnet.getNom();
-
+            if (carnetId != null) {
+                carnet.text = enrCarnet.getText();
+            }
+            
             XmlDetails details = new XmlDetails();
 
-            Integer iPhoto = enrCarnet.getPicture();
-            if (iPhoto != null) {
-                Photo enrPhoto = photoDAO.find(iPhoto) ;
-                if (enrPhoto != null) {
-                    details.photoId = enrPhoto.getId() ;
-                } else {
-                    log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrCarnet.getId()});
-                }
-            }
+            details.photoId = enrCarnet.getPicture();
             
             details.description = enrCarnet.getDescription();
 
@@ -152,10 +147,6 @@ public class CarnetBean implements CarnetLocal {
             if (vSession.isSessionManager()) {
                 if (inEditionMode != EditMode.VISITE) {
                     details.user = enrCarnet.getDroit().getNom();
-                    details.userInside = new LinkedList<String>() ;
-                    for (Utilisateur user : userDAO.loadUserInside(enrCarnet.getId())) {
-                        details.userInside.add(user.getNom()) ;
-                    }
                 }
             }
             carnet.details = details ;
@@ -165,8 +156,8 @@ public class CarnetBean implements CarnetLocal {
             output.carnet.add(carnet);
         }
 
-        output.page = webPageService.xmlPage(thisPage, bornes);
-        stopWatch.stop("Service.displayAlbum") ;
+        
+        stopWatch.stop("Service.displayCarnet") ;
         return output ;
     }
 
@@ -176,16 +167,16 @@ public class CarnetBean implements CarnetLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlCarnetSubmit output = new XmlCarnetSubmit();
 
-
-        Album enrAlbum = null;// = albumDAO.loadIfAllowed(vSession, albumId);
-        if (enrAlbum == null) {
+        Integer carnetId = vSession.getId();
+        Carnet enrCarnet = carnetDAO.find(carnetId);
+        if (enrCarnet == null) {
             return null;
         }
 
         Boolean supprParam = vSession.getSuppr();
         if (supprParam) {
-            if (finder.deleteAlbum(enrAlbum, vSession.getConfiguration())) {
-                output.message = "Album correctement  supprimé !";
+            if (finder.deleteCarnet(enrCarnet, vSession.getConfiguration())) {
+                output.message = "Carnet correctement  supprimé !";
             } else {
                 output.exception = "an error occured ...";
             }
@@ -196,18 +187,20 @@ public class CarnetBean implements CarnetLocal {
         String desc = vSession.getDesc();
         String nom = vSession.getNom();
         String date = vSession.getDate();
-        Integer[] tags = vSession.getTags();
-        Boolean force = vSession.getForce();
+        String text = vSession.getCarnetText();
         if (user != null) {
-            albumUtil.updateDroit(enrAlbum, user);
+            Utilisateur enrDroit = userDAO.find(user);
+            if (enrDroit != null) {
+                enrCarnet.setDroit(enrDroit);
+            }
         }
-        albumUtil.setTagsToPhoto(enrAlbum, tags, force);
-        enrAlbum.setNom(nom);
-        enrAlbum.setDescription(desc);
+        enrCarnet.setText(text);
+        enrCarnet.setNom(nom);
+        enrCarnet.setDescription(desc);
         if (date != null) {
             try {
-                Date d = new SimpleDateFormat("yyyy-MM-dd").parse(date);
-                enrAlbum.setDate(date);
+                new SimpleDateFormat("yyyy-MM-dd").parse(date);
+                enrCarnet.setDate(date);
             } catch (ParseException ex) {
                 log.info("Date format incorrect: "+date);
             }
@@ -215,7 +208,7 @@ public class CarnetBean implements CarnetLocal {
         }
         //albumDAO.edit(enrAlbum);
 
-        output.message = "Album (" + enrAlbum.getId() + ") correctement mise à jour !";
+        output.message = "Carnet (" + enrCarnet.getId() + ") correctement mise à jour !";
         stopWatch.stop("Service.treatSUBMIT") ;
         return output ;
     }

@@ -31,6 +31,9 @@
                 <xsl:if test="/webAlbums/albums">
                   Photos?albmCount=<xsl:value-of select="../@count" />&amp;album=<xsl:value-of select="../@id" />
                 </xsl:if>
+                <xsl:if test="/webAlbums/carnets">
+                  Carnets?carnetCount=<xsl:value-of select="../@count" />&amp;carnet=<xsl:value-of select="../@id" />
+                </xsl:if>
               </xsl:attribute>
               <img class="photo">
                 <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId" /></xsl:attribute>
@@ -51,7 +54,7 @@
         </div>
         <div class="info">
             <xsl:apply-templates select="user" />
-            <xsl:if test="/webAlbums/affichage/@massedit and not(/webAlbums/albums)">
+            <xsl:if test="/webAlbums/affichage/@massedit and not(/webAlbums/albums) and not(/webAlbums/carnets)">
                 <div class="massedit_chk">
                     <input type="checkbox" class="massedit_chkbox" value="modif">
                         <xsl:attribute name="name">chk<xsl:value-of select="photoId" /></xsl:attribute>
@@ -64,13 +67,13 @@
               <xsl:with-param name="box">NONE</xsl:with-param>
             </xsl:apply-templates>
             <div class="options">
-                <xsl:if test="not(/webAlbums/albums)">
+                <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
                     <a title="Photo réduite">
                       <xsl:attribute name="href">Images?id=<xsl:value-of select="photoId" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
                       <img src="static/images/reduire.gif" width="30px"/>
                     </a>
                 </xsl:if>
-                <xsl:if test="not(/webAlbums/albums)">
+                <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
                     <xsl:if test="/webAlbums/affichage/remote">
                         <a href='#'
                            title="Photo en plein-ecran"
@@ -94,10 +97,10 @@
                     </span>
                   </xsl:if>
                   <xsl:if test="/webAlbums/affichage/@edit">
-                        <xsl:if test="not(/webAlbums/albums)">
+                        <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
                             <div class="fastedit_bt">
                                 <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                                Edit
+                                Inline edit
                             </div>
                         </xsl:if>
                         <a class="edit" title="Edition">
@@ -122,6 +125,11 @@ Tags?action=EDIT
                               <xsl:if test="/webAlbums/albums">
 Albums?action=EDIT
 &amp;id=<xsl:value-of select="../@id" />
+&amp;count=<xsl:value-of select="../@count"/>
+                              </xsl:if>
+                              <xsl:if test="/webAlbums/carnets">
+Carnets?action=EDIT
+&amp;carnet=<xsl:value-of select="../@id" />
 &amp;count=<xsl:value-of select="../@count"/>
                               </xsl:if>
                           </xsl:attribute>

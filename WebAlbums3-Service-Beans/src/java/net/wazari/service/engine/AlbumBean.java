@@ -141,15 +141,7 @@ public class AlbumBean implements AlbumLocal {
 
             XmlDetails details = new XmlDetails();
 
-            Integer iPhoto = enrAlbum.getPicture();
-            if (iPhoto != null) {
-                Photo enrPhoto = photoDAO.find(iPhoto) ;
-                if (enrPhoto != null) {
-                    details.photoId = enrPhoto.getId() ;
-                } else {
-                    log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrAlbum.getId()});
-                }
-            }
+            details.photoId = enrAlbum.getPicture();
             
             details.description = enrAlbum.getDescription();
 
@@ -279,7 +271,7 @@ public class AlbumBean implements AlbumLocal {
         Integer albumId = vSession.getId();
 
 
-        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
+        Album enrAlbum = albumDAO.find(albumId);
         if (enrAlbum == null) {
             return null;
         }

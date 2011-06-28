@@ -377,4 +377,8 @@ public class FilesFinder {
         }
         return false;
     }
+
+    public boolean deleteCarnet(Carnet enrCarnet, Configuration configuration) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 }

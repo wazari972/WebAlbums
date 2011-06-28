@@ -46,10 +46,15 @@
 	    </input>
 	    <br/>
             <label for="desc">Description:</label>
-	    <textarea id="desc" name='desc' rows='5' cols='60'>
+	    <textarea id="desc" name='desc' rows='2' cols='65'>
 	      <xsl:value-of select="description" />
 	    </textarea>
+	    <textarea id="carnetText" name='carnetText' rows='20' cols='65'>
+	      <xsl:value-of select="text" />
+	    </textarea>
 	    <br/>
+            <div id="textPreview">Preview available soon!</div>
+            <br/>
             <label for="sure">"Oui je veux supprimer ce carnet" (définitif!)</label>
 	    <input id="sure" type='text' autocomplete='off' name='suppr' size='31' maxlength='31'/>
 	    <br/>
@@ -62,7 +67,7 @@
           <center>
               <a>
                 <xsl:attribute name="HREF">
-                  Carnet?count=<xsl:value-of select="@count"/>#<xsl:value-of select="@id" />
+                  Carnets?count=<xsl:value-of select="@count"/>#<xsl:value-of select="@id" />
                 </xsl:attribute>
                 Retour aux carnets
               </a>

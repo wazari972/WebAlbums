@@ -22,16 +22,22 @@ public interface ViewSessionCarnet extends ViewSession {
 
         boolean getSuppr() ;
         Integer getUserAllowed();
+
+        String getCarnetText();
     }
 
     interface ViewSessionCarnetEdit extends ViewSessionAlbum {
 
         Integer getCountAlbm();
 
+        Integer getCarnet();
+
     }
     interface ViewSessionCarnetDisplay extends ViewSessionAlbum {
 
         Integer getCountCarnet();
+
+        Integer getCarnet();
 
     }
     Integer getId();
