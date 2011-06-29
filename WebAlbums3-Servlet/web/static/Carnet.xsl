@@ -14,12 +14,14 @@
   <xsl:template match="carnets">
       <xsl:apply-templates select="edit"/>
       <xsl:apply-templates select="display"/>
-      <a href="Carnets?action=EDIT" rel="singlepage[no]">Nouveau carnet</a>
   </xsl:template>
 
   <xsl:template match="carnets/display">
     <xsl:apply-templates select="exception"/>
     <xsl:apply-templates select="message"/>
+    <xsl:if test="count(/webAlbums/carnets/display/carnet) != 1">
+        <center><a href="Carnets?action=EDIT" rel="singlepage[no]">Nouveau carnet</a></center>
+    </xsl:if>
     <xsl:apply-templates select="carnet"/>
 
     <xsl:apply-templates select="page"/>
@@ -36,7 +38,13 @@
 	<h1>
 	  <a>
             <xsl:attribute name="href">
-Carnets?carnetCount=<xsl:value-of select="@count" />&amp;carnet=<xsl:value-of select="@id" />
+Carnets?carnetCount=<xsl:value-of select="@count" />&amp;
+<xsl:if test="count(/webAlbums/carnets/display/carnet) != 1">
+carnet=<xsl:value-of select="@id" />
+</xsl:if>
+<xsl:if test="count(/webAlbums/carnets/display/carnet) = 1">
+#<xsl:value-of select="@id" />
+</xsl:if>
              </xsl:attribute>
 	    <xsl:value-of select="name" />
 	  </a>

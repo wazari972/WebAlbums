@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
@@ -90,6 +91,17 @@ public class JPACarnet implements Carnet, Serializable {
         }
     )
     private List<JPAPhoto> jPAPhotoList;
+    
+    @ManyToMany
+    @JoinTable(name = "CarnetAlbum",
+        joinColumns = {
+          @JoinColumn(name="carnet", unique = true)           
+        },
+        inverseJoinColumns = {
+          @JoinColumn(name="album")
+        }
+    )
+    private List<JPAPhoto> jPAAlbumList;
     
     @XmlTransient
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)
@@ -182,6 +194,16 @@ public class JPACarnet implements Carnet, Serializable {
     @Override
     public void setTheme(Theme theme) {
         this.theme = (JPATheme) theme;
+    }
+    
+    @Override
+    public List<Album> getAlbumList() {
+        return (List) jPAAlbumList;
+    }
+
+    @Override
+    public void setAlbumList(List<Album> jPAAlbumList) {
+        this.jPAAlbumList = (List) jPAAlbumList;
     }
     
     @Override

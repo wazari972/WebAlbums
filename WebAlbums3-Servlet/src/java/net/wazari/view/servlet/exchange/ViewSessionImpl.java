@@ -401,6 +401,21 @@ public class ViewSessionImpl implements
     public Integer[] getSonTags() {
         return getIntArray("sonTag") ;
     }
+    
+    @Override
+    public Integer[] getCarnetPhoto() {
+        return getIntArray("carnetPhoto") ;
+    }
+    
+    @Override
+    public Integer[] getCarnetAlbum() {
+        return getIntArray("carnetAlbum") ;
+    }
+    
+    @Override
+    public Integer getCarnetRepr() {
+        return getInteger("carnetRepr") ;
+    }
 
     @Override
     public Integer getBorderWidth() {

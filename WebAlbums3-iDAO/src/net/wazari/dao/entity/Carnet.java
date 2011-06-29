@@ -29,6 +29,8 @@ public interface Carnet extends EntityWithId {
     String getNom();
 
     List<Photo> getPhotoList();
+    
+    List<Album> getAlbumList();
 
     Integer getPicture();
 
@@ -51,4 +53,6 @@ public interface Carnet extends EntityWithId {
     void setPicture(Integer picture);
 
     void setTheme(Theme theme);
+
+    void setAlbumList(List<Album> enrAlbums);
 }

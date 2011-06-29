@@ -18,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
@@ -89,6 +91,9 @@ public class JPAAlbum implements Album, Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
 
+    @ManyToMany(mappedBy="jPAAlbumList")
+    private List<JPACarnet> jPACarnetList;
+    
     @XmlTransient
     @Transient
     private Integer themeId = null ;
@@ -214,6 +219,16 @@ public class JPAAlbum implements Album, Serializable {
 
     public void setThemeId(Integer themeId) {
         this.themeId = themeId ;
+    }
+    
+    @Override
+    public List<Carnet> getCarnetList() {
+        return (List) jPACarnetList;
+    }
+
+    @Override
+    public void setCarnetList(List<Carnet> jPACarnetList) {
+        this.jPACarnetList = (List) jPACarnetList;
     }
 
     @Override

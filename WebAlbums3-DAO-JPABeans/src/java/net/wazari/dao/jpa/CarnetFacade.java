@@ -23,7 +23,6 @@ import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession;
-import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPACarnet;
 import net.wazari.dao.jpa.entity.JPACarnet_;
 import org.perf4j.StopWatch;

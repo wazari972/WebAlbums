@@ -17,7 +17,12 @@
 	<span>*</span>
       </div>
       <div class="content">
-	<h1>Modification d'un carnet</h1>
+          <xsl:if test="not(/webAlbums/carnets/edit/@id)">
+              <h1>Création d'un carnet</h1>
+          </xsl:if>
+          <xsl:if test="/webAlbums/carnets/edit/@id">
+              <h1>Modification d'un carnet</h1>
+          </xsl:if>
 	<div class="body">
 	  <center>
 	    <img>
@@ -60,16 +65,19 @@
 	    <br/>
 	    Droits de visibilité : <xsl:apply-templates select="rights"/>
 	    <br/>
+            Represent: <input type='text' name='carnetRepr' />
+            <br/>
+            Photos: <input type='text' name='carnetPhoto' />
 	    <input type='submit' value='Valider'/>
 	  </form>
 	  <br/>
 	  <br/>
           <center>
               <a>
-                <xsl:attribute name="HREF">
-                  Carnets?count=<xsl:value-of select="@count"/>#<xsl:value-of select="@id" />
+                <xsl:attribute name="href">
+                  Carnets?count=<xsl:value-of select="@count"/>&amp;carnet=<xsl:value-of select="@id" />
                 </xsl:attribute>
-                Retour aux carnets
+                Retour au carnet
               </a>
           </center>
 	</div>

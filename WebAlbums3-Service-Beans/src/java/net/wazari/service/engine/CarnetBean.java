@@ -15,8 +15,11 @@ import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 
 import net.wazari.dao.CarnetFacadeLocal;
+import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
+import net.wazari.dao.entity.Photo;
 
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
@@ -25,6 +28,8 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.CarnetLocal;
+import net.wazari.service.exchange.ViewSession.Box;
+import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
@@ -49,6 +54,10 @@ public class CarnetBean implements CarnetLocal {
     @EJB
     private UtilisateurFacadeLocal userDAO;
     @EJB
+    private PhotoFacadeLocal photoDAO;
+    @EJB
+    private AlbumFacadeLocal albumDAO;
+    @EJB
     private WebPageLocal webPageService;
     @EJB private FilesFinder finder;
 
@@ -70,11 +79,12 @@ public class CarnetBean implements CarnetLocal {
 
         Carnet enrCarnet = carnetDAO.find(carnetId);
 
+        
         if (enrCarnet == null) {
-            output.exception = "Impossible de trouver le carnet (" + carnetId + ")";
+            output.rights = webPageService.displayListDroit(null, null);
             return output ;
         }
-
+        output.rights = webPageService.displayListDroit(enrCarnet.getDroit(), null);
         output.picture = enrCarnet.getPicture();
         output.name = enrCarnet.getNom();
         output.count = count;
@@ -82,8 +92,6 @@ public class CarnetBean implements CarnetLocal {
         output.description = enrCarnet.getDescription();
         output.text = enrCarnet.getText();
         output.date = enrCarnet.getDate();
-
-        output.rights = webPageService.displayListDroit(enrCarnet.getDroit(), null);
 
         return output;
     }
@@ -112,7 +120,7 @@ public class CarnetBean implements CarnetLocal {
                 output.message = "Couldn't load carnet #"+carnetId;
                 carnetId = null;
             }
-        } 
+        }
         
         if (carnetId == null) {
             Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getConfiguration().getAlbumSize());
@@ -133,6 +141,9 @@ public class CarnetBean implements CarnetLocal {
             if (carnetId != null) {
                 carnet.text = enrCarnet.getText();
             }
+            carnet.photo = new ArrayList<Integer>(enrCarnet.getPhotoList().size());
+            for (Photo p : enrCarnet.getPhotoList())
+                carnet.photo.add(p.getId());
             
             XmlDetails details = new XmlDetails();
 
@@ -140,8 +151,8 @@ public class CarnetBean implements CarnetLocal {
             
             details.description = enrCarnet.getDescription();
 
-            //tags de l'album
-            //details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE) ;
+            //tags du carnet
+            details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrCarnet, Box.NONE) ;
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager()) {
@@ -166,12 +177,17 @@ public class CarnetBean implements CarnetLocal {
             throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlCarnetSubmit output = new XmlCarnetSubmit();
-
+        Carnet enrCarnet;
+        
         Integer carnetId = vSession.getId();
-        Carnet enrCarnet = carnetDAO.find(carnetId);
-        if (enrCarnet == null) {
-            return null;
+        if (carnetId == null) {
+            enrCarnet = carnetDAO.newCarnet();
+            enrCarnet.setTheme(vSession.getTheme());
+        } else {
+            enrCarnet = carnetDAO.find(carnetId);
         }
+        if (enrCarnet == null)
+            return null;
 
         Boolean supprParam = vSession.getSuppr();
         if (supprParam) {
@@ -182,12 +198,15 @@ public class CarnetBean implements CarnetLocal {
             }
             return output;
         }
-
+        Integer repr = vSession.getCarnetRepr();
         Integer user = vSession.getUserAllowed();
         String desc = vSession.getDesc();
         String nom = vSession.getNom();
         String date = vSession.getDate();
         String text = vSession.getCarnetText();
+        Integer[] photos = vSession.getCarnetPhoto();
+        Integer[] albums = vSession.getCarnetAlbum();
+        
         if (user != null) {
             Utilisateur enrDroit = userDAO.find(user);
             if (enrDroit != null) {
@@ -204,9 +223,38 @@ public class CarnetBean implements CarnetLocal {
             } catch (ParseException ex) {
                 log.info("Date format incorrect: "+date);
             }
-
         }
-        //albumDAO.edit(enrAlbum);
+        List<Photo> enrPhotos = new ArrayList<Photo>(photos.length);
+        for (Integer photo : photos) {
+            try {
+                enrPhotos.add(photoDAO.find(photo));
+            } catch (Exception e) {}
+        }
+        
+        if (repr != null) {
+            try {
+                Photo enrRepr = photoDAO.find(repr);
+                enrCarnet.setPicture(enrRepr.getId());
+                enrPhotos.add(enrRepr);
+            } catch (Exception e) {}
+        }
+        
+        if (!enrPhotos.isEmpty())
+            enrCarnet.setPhotoList(enrPhotos);
+        
+        List<Album> enrAlbums = new ArrayList<Album>(albums.length);
+        for (Integer album : albums) {
+            try {
+                enrAlbums.add(albumDAO.find(album));
+            } catch (Exception e) {}
+        }
+        if (!enrAlbums.isEmpty())
+            enrCarnet.setAlbumList(enrAlbums);
+        
+        if (carnetId == null)
+            carnetDAO.create(enrCarnet);
+       
+        carnetDAO.edit(enrCarnet);
 
         output.message = "Carnet (" + enrCarnet.getId() + ") correctement mise à jour !";
         stopWatch.stop("Service.treatSUBMIT") ;

@@ -147,7 +147,15 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
-    public List<TagPhoto> queryByCarnet(Carnet carnet) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<TagPhoto> queryByCarnet(Carnet enrCarnet) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
+        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
+        cq.where(cb.equal(tp.get(JPATagPhoto_.photo).get(JPAPhoto_.jPATagPhotoList), enrCarnet)) ;
+
+        return (List) em.createQuery(cq.distinct(true))
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
+                .getResultList();
     }
 }

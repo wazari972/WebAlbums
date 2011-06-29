@@ -5,10 +5,12 @@
 
 package net.wazari.service.exchange.xml.carnet;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.common.XmlDetails;
+import net.wazari.service.exchange.xml.photo.XmlPhoto;
 
 /**
  *
@@ -27,4 +29,5 @@ public class XmlCarnet {
     public XmlDetails details;
     public String text;
     public String droit;
+    public List<Integer> photo;
 }

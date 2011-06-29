@@ -24,6 +24,12 @@ public interface ViewSessionCarnet extends ViewSession {
         Integer getUserAllowed();
 
         String getCarnetText();
+
+        Integer[] getCarnetPhoto();
+
+        Integer getCarnetRepr();
+
+        Integer[] getCarnetAlbum();
     }
 
     interface ViewSessionCarnetEdit extends ViewSessionAlbum {

@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -440,13 +439,10 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public XmlUserList displayListDroit(Utilisateur right, Integer albmRight)
             throws WebAlbumsServiceException {
-        if (right == null && albmRight == null) {
-            throw new NullPointerException("Droit and Album cannot be null");
-        }
+
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListDroit", log) ;
 
         XmlUserList output = new XmlUserList();
-        boolean hasSelected = false;
 
         List<Utilisateur> lstUsr = userDAO.findAll();
         for (Utilisateur enrUser : lstUsr) {
@@ -471,13 +467,8 @@ public class WebPageBean implements WebPageLocal {
             user.id = id ;
             if (selected) {
                 user.selected = true ;
-                hasSelected = true;
             }
             output.user.add(user);
-        }
-
-        if (!hasSelected) {
-            throw new NoSuchElementException("Right problem: " + right + ", " + albmRight + " (" + lstUsr + ")");
         }
         stopWatch.stop();
         return output ;

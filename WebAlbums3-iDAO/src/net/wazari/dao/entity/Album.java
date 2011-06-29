@@ -31,6 +31,8 @@ public interface Album extends EntityWithId {
     Integer getPicture();
 
     Theme getTheme();
+    
+    List<Carnet> getCarnetList() ;
 
     void setDate(String date);
 
@@ -47,5 +49,7 @@ public interface Album extends EntityWithId {
     void setPicture(Integer picture);
 
     void setTheme(Theme theme);
+    
+    void setCarnetList(List<Carnet> jPACarnetList) ;
 
 }
