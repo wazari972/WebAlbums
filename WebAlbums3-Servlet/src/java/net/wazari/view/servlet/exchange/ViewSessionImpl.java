@@ -226,6 +226,11 @@ public class ViewSessionImpl implements
         }
         return ret;
     }
+    
+    @Override
+    public boolean isAdminSession() {
+        return this.getUser() != null && this.getUser().getId() == 1 ;
+    }
 
     @Override
     public void setSessionManager(Boolean sessionManager) {

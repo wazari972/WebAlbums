@@ -78,15 +78,14 @@ function loadExernalsBottomEnd(data, divId, callback) {
     var div = document.getElementById (divId);
     if (div == null) return ;
 
-    $(div).hide() ;
-    div.innerHTML = "";
     // Use object detection to find out if we have
     // Firefox/Mozilla/Opera or IE XSLT support.
     if (typeof XSLTProcessor != "undefined") {
         var xsl_proc = new XSLTProcessor ();
         xsl_proc.importStylesheet (emptyXsl);
-
+    
         var node = xsl_proc.transformToFragment (xml_doc, document);
+        div.innerHTML = "";
         div.appendChild (node);
     } else if (typeof xml_doc.transformNode != "undefined") {
         div.innerHTML = xml_doc.transformNode (emptyXsl);

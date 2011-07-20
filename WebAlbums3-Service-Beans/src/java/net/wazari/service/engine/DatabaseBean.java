@@ -5,8 +5,10 @@
 package net.wazari.service.engine;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.DatabaseFacadeLocal;
@@ -15,6 +17,7 @@ import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.DatabaseLocal;
 import net.wazari.service.entity.util.PhotoUtil;
@@ -28,6 +31,7 @@ import net.wazari.service.exchange.xml.database.XmlDatabaseImport;
 import net.wazari.service.exchange.xml.database.XmlDatabaseStats;
 import net.wazari.service.exchange.xml.database.XmlDatabaseStats.XmlDatabaseStatsTheme;
 import net.wazari.service.exchange.xml.database.XmlDatabaseTrunk;
+import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,9 +140,7 @@ public class DatabaseBean implements DatabaseLocal {
         } else {
             themes.addAll(themeDAO.findAll());
             xmlRootTheme = new XmlDatabaseStatsTheme("root");
-            output.theme.add(xmlRootTheme);
         }
-        
         for (Theme curEnrTheme : themes) {
             if (curEnrTheme.getId() == 1)
                 continue;
@@ -163,11 +165,26 @@ public class DatabaseBean implements DatabaseLocal {
                 vSession.setRootSession(Boolean.TRUE);
                 vSession.setTheme(enrTheme);
             }
+            if (xmlRootTheme == null || xmlRootTheme.tag == null) {
+                Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession);
+                List<XmlTagCloudEntry> lst = new ArrayList<XmlTagCloudEntry>(map.size());
+                for (Tag enrTag : map.keySet()) {
+                    XmlTagCloudEntry xmlCloudEntry = new XmlTagCloudEntry();
+                    xmlCloudEntry.name = enrTag.getNom();
+                    xmlCloudEntry.nb = map.get(enrTag);
+                    lst.add(xmlCloudEntry);
+                }
+                if (xmlRootTheme == null)
+                    xmlTheme.tag = lst;
+                else
+                    xmlRootTheme.tag = lst;
+            }
         }
         
-        if (xmlRootTheme != null) 
+        if (xmlRootTheme != null)  {
             xmlRootTheme.tags = tagDAO.findAll().size();
-        
+            output.theme.add(xmlRootTheme);
+        }
         return output;
     }
     

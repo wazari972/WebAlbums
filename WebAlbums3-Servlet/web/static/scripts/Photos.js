@@ -15,10 +15,14 @@ $("#selectAllBt").click(function () {
     selectAll() ;
 }) ;
 
-$(".fastedit_bt").click(function () {
+$(".fastedit_tag_bt").click(function () {
+    id = $(this).attr('rel');
+    $("#fastedit_tag_"+id).toggle("fast")
+}) ;
+$(".fastedit_desc_bt").click(function () {
     id = $(this).attr('rel');
     $("#desc_"+id).toggle("fast")
-    $("#fastedit_"+id).toggle("fast")
+    $("#fastedit_desc_"+id).toggle("fast")
 }) ;
 
 function reload_page_cb(data, photoid) {

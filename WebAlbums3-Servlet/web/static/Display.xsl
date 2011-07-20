@@ -35,7 +35,7 @@
       </head>
       <body>
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.5.1.min.js"></script>
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.13.custom.min.js"></script>
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.14.custom.min.js"></script>
 
         <script type="text/javascript" src="static/scripts/ezpz/jquery.ezpz_tooltip.min.js"></script>
 

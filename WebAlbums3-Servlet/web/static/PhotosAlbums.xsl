@@ -51,7 +51,7 @@
         </div>
         <div class="info">
             <xsl:apply-templates select="user" />
-            <xsl:if test="/webAlbums/affichage/@massedit and not(/webAlbums/albums)">
+            <xsl:if test="/webAlbums/affichage/@massedit and not(/webAlbums/albums or /webAlbums/photos/random)">
                 <div class="massedit_chk">
                     <input type="checkbox" class="massedit_chkbox" value="modif">
                         <xsl:attribute name="name">chk<xsl:value-of select="photoId" /></xsl:attribute>
@@ -94,10 +94,14 @@
                     </span>
                   </xsl:if>
                   <xsl:if test="/webAlbums/affichage/@edit">
-                        <xsl:if test="not(/webAlbums/albums)">
-                            <div class="fastedit_bt">
+                        <xsl:if test="not(/webAlbums/albums or /webAlbums/photos/random)">
+                            <div class="fastedit_tag_bt">
                                 <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                                Edit
+                                Tags
+                            </div>
+                            <div class="fastedit_desc_bt">
+                                <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                Descr.
                             </div>
                         </xsl:if>
                         <a class="edit" title="Edition">
@@ -130,9 +134,9 @@ Albums?action=EDIT
                         <div class="description">
                             <xsl:attribute name="id">desc_<xsl:value-of select="photoId" /></xsl:attribute>
                             <xsl:value-of select="description" />
-                            </div>
+                        </div>
                         <div class="fastedit">
-                            <xsl:attribute name="id">fastedit_<xsl:value-of select="photoId" /></xsl:attribute>
+                            <xsl:attribute name="id">fastedit_desc_<xsl:value-of select="photoId" /></xsl:attribute>
                              <p>
                                   <textarea cols="30" >
                                       <xsl:attribute name="id">fastedit_desc_<xsl:value-of select="photoId" /></xsl:attribute>
@@ -142,6 +146,9 @@ Albums?action=EDIT
                                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                                   </input>
                               </p>
+                       </div>
+                       <div class="fastedit">
+                            <xsl:attribute name="id">fastedit_tag_<xsl:value-of select="photoId" /></xsl:attribute>
                               <p>
                                     <xsl:apply-templates select="../../massEdit/tagList">
                                         <xsl:with-param name="style">list</xsl:with-param>
