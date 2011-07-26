@@ -54,7 +54,7 @@
             <pattern># %-12(%d{HH:mm} [%relative]) %-4level %-25logger{5} * %msg %ex%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
+            <level>debug</level>
         </filter>
     </appender>
 

@@ -520,9 +520,9 @@ public class ViewSessionImpl implements
         } catch (ClassCastException e) {
             log.info( "Can''t cast value {} into class {}", new Object[]{val, type});
         } catch (NullPointerException e) {
-            log.info( "NullPointerException with {} for class {}", new Object[]{val, type});
+            log.info( "NullPointerException with {} for class {} ({})", new Object[]{val, type, name});
         } catch (NumberFormatException e) {
-            log.info( "NumberFormatException with {} for class {}", new Object[]{val, type});
+            log.info( "NumberFormatException with  '{}' for class {} ({})", new Object[]{val, type, name});
         } catch (IllegalArgumentException e) {
             log.info( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
         }

@@ -17,12 +17,12 @@ $("#selectAllBt").click(function () {
 
 $(".fastedit_tag_bt").click(function () {
     id = $(this).attr('rel');
-    $("#fastedit_tag_"+id).toggle("fast")
+    $("#fastedit_div_tag_"+id).toggle("fast")
 }) ;
 $(".fastedit_desc_bt").click(function () {
     id = $(this).attr('rel');
     $("#desc_"+id).toggle("fast")
-    $("#fastedit_desc_"+id).toggle("fast")
+    $("#fastedit_div_desc_"+id).toggle("fast")
 }) ;
 
 function reload_page_cb(data, photoid) {
@@ -35,7 +35,7 @@ function reload_page_cb(data, photoid) {
 
 function add_rm_tag(photoid, tagact) {
     tagid = $("#fastedit_tag_"+id).val()
-    if (tagid == -1) {
+    if (!(tagid > 0)) {
         alert("No tag selected ...")
         return
     }

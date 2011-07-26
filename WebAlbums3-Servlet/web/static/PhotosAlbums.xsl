@@ -136,7 +136,7 @@ Albums?action=EDIT
                             <xsl:value-of select="description" />
                         </div>
                         <div class="fastedit">
-                            <xsl:attribute name="id">fastedit_desc_<xsl:value-of select="photoId" /></xsl:attribute>
+                            <xsl:attribute name="id">fastedit_div_desc_<xsl:value-of select="photoId" /></xsl:attribute>
                              <p>
                                   <textarea cols="30" >
                                       <xsl:attribute name="id">fastedit_desc_<xsl:value-of select="photoId" /></xsl:attribute>
@@ -148,7 +148,7 @@ Albums?action=EDIT
                               </p>
                        </div>
                        <div class="fastedit">
-                            <xsl:attribute name="id">fastedit_tag_<xsl:value-of select="photoId" /></xsl:attribute>
+                            <xsl:attribute name="id">fastedit_div_tag_<xsl:value-of select="photoId" /></xsl:attribute>
                               <p>
                                     <xsl:apply-templates select="../../massEdit/tagList">
                                         <xsl:with-param name="style">list</xsl:with-param>
