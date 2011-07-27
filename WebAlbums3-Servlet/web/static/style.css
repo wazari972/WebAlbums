@@ -1,0 +1,91 @@
+/** **** **/
+
+/* Kevin  */
+/* Pouget */
+
+/** **** **/
+
+.exif_tooltip {
+    display: none;        /* required */
+    position: absolute;   /* required */
+    padding: 10px;
+    border: 2px solid black;
+    background-color: #58ACFA;
+    z-index:52;
+}
+
+.cloud_tooltip {
+    display: none;        /* required */
+    position: absolute;   /* required */
+    padding: 10px;
+    border: 2px solid black;
+    background-color: #58ACFA;
+    z-index:52;
+}
+
+.album_tooltip {
+    display: none;        /* required */
+    position: absolute;   /* required */
+    padding: 10px;
+    border: 2px solid black;
+    background-color: #58ACFA;
+    z-index:52;
+}
+
+
+.details {
+    position: relative;
+    width: 100%;
+    overflow:hidden;
+    margin:auto;
+}
+
+.details .pict {
+    float: left;
+    text-align: center;
+    width:50%;
+}
+.details .pict img{
+    max-width:95%;
+    max-height:200px;
+    vertical-align:middle;
+}
+
+.details .info {
+    float: right;
+    width:50%;
+}
+.details .fastedit_tag_bt {
+    float: right;
+}
+.details .fastedit_desc_bt {
+    float: right;
+}
+.details .fastedit {
+    display:none;
+}
+.details .info .visibility {
+    float: right;
+}
+
+.details .info .tags {
+}
+
+.details .info .option {
+    
+    background-color:   #037931
+}
+
+.details .info .options .title {
+}
+
+.details .info .options .album {
+}
+
+.massedit_chk {
+    /*display:none;*/
+}
+
+#massedit_item {
+    /*display:none;*/
+}

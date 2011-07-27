@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config port="8089">
+    <sunResourcesXML>conf/sun-resources.xml</sunResourcesXML>
+    <webAlbumsEAR>bin/WebAlbums3-ea.ear</webAlbumsEAR>
+    <glassfishDIR>./glassfish</glassfishDIR>
+    <users>
+        <user name="Kevin" password="" groups="Admin:Manager"/>
+        <user name="Marine" password="" groups="Admin"/>
+        <user name="Joelle" password="" groups="Famille"/>
+        <user name="Nasham" password="" groups="Amis"/>
+        <user name="Machin" password="" groups="Autres"/>
+    </users>
+</config>

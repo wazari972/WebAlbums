@@ -1,0 +1,9 @@
+*.class
+**/dist/*
+**/build/*
+**/private/*
+*.private
+private.?
+private.properties
+private.xml
+
