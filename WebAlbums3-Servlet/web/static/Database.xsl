@@ -169,10 +169,30 @@
     <xsl:template match="stats/theme">
         <div class="stat_theme">
             <h3><xsl:value-of select="name"/></h3>
-            <p>Albums: <xsl:value-of select="albums"/></p>
-            <p>Photos: <xsl:value-of select="photos"/></p>
-            <p>Tags: <xsl:value-of select="tags"/></p>
-            <br/>
+            <ul>
+            <li><xsl:value-of select="albums"/> albums</li>
+            <li><xsl:value-of select="photos"/> photos</li>
+            <li><xsl:value-of select="tags"/> tags</li>
+            </ul>
+            <xsl:if test="tagCloud">
+                <h3>Tags:</h3>
+                <ul>
+                <xsl:for-each select="tagCloud/tag">
+                    <xsl:sort select="@nb" data-type="number" order="descending"/>
+                    <li><xsl:value-of select="@nb" /> &#8594; <xsl:value-of select="name" /></li>
+                </xsl:for-each>
+                </ul>
+            </xsl:if>
         </div>
-    </xsl:template>   
+    </xsl:template>  
+    <xsl:template match="theme/tagCloud">
+        <div class="stat_theme">
+            <h3><xsl:value-of select="name"/></h3>
+            <ul>
+            <li><xsl:value-of select="albums"/> albums</li>
+            <li><xsl:value-of select="photos"/> photos</li>
+            <li><xsl:value-of select="tags"/> tags</li>
+            </ul>
+        </div>
+    </xsl:template>  
 </xsl:stylesheet>

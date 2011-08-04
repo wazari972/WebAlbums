@@ -149,13 +149,11 @@ public class AlbumBean implements AlbumLocal {
             details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE) ;
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
-            if (vSession.isSessionManager()) {
-                if (inEditionMode != EditMode.VISITE) {
-                    details.user = enrAlbum.getDroit().getNom();
-                    details.userInside = new LinkedList<String>() ;
-                    for (Utilisateur user : userDAO.loadUserInside(enrAlbum.getId())) {
-                        details.userInside.add(user.getNom()) ;
-                    }
+            if (vSession.isSessionManager() && inEditionMode != EditMode.VISITE) {
+                details.user = enrAlbum.getDroit().getNom();
+                details.userInside = new LinkedList<String>() ;
+                for (Utilisateur user : userDAO.loadUserInside(enrAlbum.getId())) {
+                    details.userInside.add(user.getNom()) ;
                 }
             }
             album.details = details ;

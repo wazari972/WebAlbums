@@ -22,6 +22,8 @@ public interface ServiceSession {
 
     Utilisateur getUser();
 
+    boolean isAdminSession();
+    
     boolean isRootSession();
 
     boolean isSessionManager();

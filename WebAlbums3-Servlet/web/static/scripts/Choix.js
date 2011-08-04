@@ -53,11 +53,12 @@ function printDate(strDate) {
 
 function trimAlbums(min, max, name) {
     $('.selectAlbum').each(function(index) {
+        
         if (parseInt($(this).attr('rel'))  < min ) {
            $(this).hide() ;
         } else if (parseInt($(this).attr('rel'))  > max) {
             $(this).hide() ;
-        } else if ($(this).text().indexOf(name) == -1) {
+        } else if ($(this).text().toUpperCase().indexOf(name.toUpperCase()) == -1) {
             $(this).hide() ;
         } else {
             $(this).show() ;

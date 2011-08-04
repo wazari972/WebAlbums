@@ -55,7 +55,10 @@
     float: right;
     width:50%;
 }
-.details .fastedit_bt {
+.details .fastedit_tag_bt {
+    float: right;
+}
+.details .fastedit_desc_bt {
     float: right;
 }
 .details .fastedit {

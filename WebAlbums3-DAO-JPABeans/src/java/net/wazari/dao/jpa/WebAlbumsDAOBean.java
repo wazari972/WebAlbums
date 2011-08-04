@@ -83,30 +83,29 @@ public class WebAlbumsDAOBean {
             //FROM JPAAlbum a, JPAPhoto p
             ListJoin<JPAAlbum, JPAPhoto> photo = albm.join(JPAAlbum_.jPAPhotoList) ;
             where = cb.and(
-                //and
-                cb.or(
-                    cb.and(
                         cb.or(
-                            //p.droit is null
-                            cb.isNull(photo.get(JPAPhoto_.droit)),
-                            //or
-                            //p.droit = 0
-                            cb.equal(photo.get(JPAPhoto_.droit), 0)
-                            ),
+                            cb.and(
+                                cb.or(
+                                    //p.droit is null
+                                    cb.isNull(photo.get(JPAPhoto_.droit)),
+                                    //or
+                                    //p.droit = 0
+                                    cb.equal(photo.get(JPAPhoto_.droit), 0)
+                                ),
+                                //and
+                                //a.droit >= session.getUser().getId()
+                                cb.greaterThanOrEqualTo(albm.get(JPAAlbum_.droit).get(JPAUtilisateur_.id), 
+                                                        session.getUser().getId())
+                            )
+                        ),
                         //and
-                        //a.droit >= session.getUser().getId()
-                        cb.greaterThanOrEqualTo(albm.get(JPAAlbum_.droit).get(JPAUtilisateur_.id), session.getUser().getId())
-                        )
-                    ),
-                    //and
-                    //p.droit >=  session.getUser().getId()
-                    cb.greaterThanOrEqualTo(photo.get(JPAPhoto_.droit), session.getUser().getId())
-                ) ;
+                        //p.droit >=  session.getUser().getId()
+                        cb.greaterThanOrEqualTo(photo.get(JPAPhoto_.droit), session.getUser().getId())
+                        ) ;
         }
-
-        sq.where(cb.and(where,
-                       getRestrictionToCurrentTheme(session, albm, Restriction.THEME_ONLY)
-                       ));
+        if (restrict == Restriction.ALLOWED_AND_THEME)
+            where = cb.and(where, getRestrictionToCurrentTheme(session, album, restrict)) ;
+        sq.where(where);
         return album.in(sq.select(albm)) ;
     }
 
@@ -123,27 +122,25 @@ public class WebAlbumsDAOBean {
         Predicate where = TRUE ;
         if (!session.isSessionManager()) {
             where = 
-                cb.and(
-                    cb.or(
-                        cb.and(
-                            cb.or(
-                                //p.droit is null
-                                cb.isNull(p.get(JPAPhoto_.droit)),
-                                //p.droit = 0
-                                cb.equal(p.get(JPAPhoto_.droit), 0)
-                                ),
-                            //a.droit >= session.getUser().getId()
-                            cb.greaterThanOrEqualTo(a.get(JPAAlbum_.droit).get(JPAUtilisateur_.id), session.getUser().getId())
-                            )
+                cb.or(
+                    cb.and(
+                        cb.or(
+                            //p.droit is null
+                            cb.isNull(p.get(JPAPhoto_.droit)),
+                            //or
+                            //p.droit = 0
+                            cb.equal(p.get(JPAPhoto_.droit), 0)
                         ),
-                //p.droit >=  session.getUser().getId()
-                cb.greaterThanOrEqualTo(p.get(JPAPhoto_.droit), session.getUser().getId())
-                    
+                        //and
+                        //a.droit >= session.getUser().getId()
+                        cb.greaterThanOrEqualTo(a.get(JPAAlbum_.droit).get(JPAUtilisateur_.id), session.getUser().getId())
+                    ),
+                    //or
+                    //p.droit >=  session.getUser().getId()
+                    cb.greaterThanOrEqualTo(p.get(JPAPhoto_.droit), session.getUser().getId())     
             ) ;
         }
-        sq.where(cb.and(where,
-                       getRestrictionToCurrentTheme(session, a, Restriction.THEME_ONLY)
-                       ));
+        sq.where(where);
         return photo.in(sq.select(p)) ;
     }
 

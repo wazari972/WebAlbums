@@ -185,11 +185,11 @@ public class WebPageBean implements WebPageLocal {
         if (principal != null) {
             login.user = principal.getName();
         }
-        
         log.info( "logged as manager? {}", vSession.isSessionManager());
         if (vSession.isSessionManager()) {
             login.admin = true ;
         }
+        log.info( "logged as admin? {}", vSession.isAdminSession());
         log.info( "logged as root? {}", vSession.isRootSession());
         if (vSession.isRootSession()) {
             login.root = true ;
@@ -595,4 +595,5 @@ public class WebPageBean implements WebPageLocal {
 
         return temps;
     }
+    
 }

@@ -163,7 +163,6 @@ public class AlbumFacade implements AlbumFacadeLocal {
             Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
             cq.where(cb.and(
                     webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
-                    webDAO.getRestrictionToCurrentTheme(session, albm, Restriction.ALLOWED_AND_THEME),
                     cb.equal(albm.get(JPAAlbum_.id), id))) ;
             return (JPAAlbum) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)

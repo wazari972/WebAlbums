@@ -71,6 +71,7 @@
     <br/>
     <p><label for="albmName"> et ayant pour nom </label> <input type="text" id="albmName"/></p>
     <script>
+        
      $("#slider-range").attr("rel", "singlepage[no]");
      $("#slider-range").slider(sliderOption);
      $("#fromDate").text(printDate(<xsl:value-of select="album[last()]/@time"/>));
