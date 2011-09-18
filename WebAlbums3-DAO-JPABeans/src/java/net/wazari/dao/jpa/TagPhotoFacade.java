@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import net.wazari.dao.entity.Carnet;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAAlbum_;
+import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATag;
 import net.wazari.dao.jpa.entity.JPATagPhoto;
@@ -147,13 +149,19 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
+    /* Returns all the TagPhoto associated with this Carnet.  */
     public List<TagPhoto> queryByCarnet(Carnet enrCarnet) {
+        if (enrCarnet.getPhotoList().isEmpty())
+            return new ArrayList<TagPhoto>(0);
+        
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
         Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
-        cq.where(cb.equal(tp.get(JPATagPhoto_.photo).get(JPAPhoto_.jPATagPhotoList), enrCarnet)) ;
+        Root<JPAPhoto> p = cq.from(JPAPhoto.class);
+        cq.where(cb.equal(p, tp.get(JPATagPhoto_.photo)),
+                p.in(enrCarnet.getPhotoList())) ;
 
-        return (List) em.createQuery(cq.distinct(true))
+        return (List) em.createQuery(cq.select(tp).distinct(true))
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();

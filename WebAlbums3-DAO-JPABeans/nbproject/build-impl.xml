@@ -489,38 +489,26 @@ exists or setup the property manually. For example like this:
         <basename file="${reference.WebAlbums3-iDAO.jar}" property="manifest.reference.WebAlbums3-iDAO.jar"/>
         <basename file="${reference.WebAlbums3-Commons.jar}" property="manifest.reference.WebAlbums3-Commons.jar"/>
         <basename file="${file.reference.CP-Perf-perf4j-0.9.13.jar}" property="manifest.file.reference.CP-Perf-perf4j-0.9.13.jar"/>
-        <basename file="${file.reference.CP-DB-hibernate3.jar}" property="manifest.file.reference.CP-DB-hibernate3.jar"/>
-        <basename file="${file.reference.antlr-2.7.6.jar-1}" property="manifest.file.reference.antlr-2.7.6.jar-1"/>
-        <basename file="${file.reference.commons-collections-3.1.jar-1}" property="manifest.file.reference.commons-collections-3.1.jar-1"/>
-        <basename file="${file.reference.dom4j-1.6.1.jar-1}" property="manifest.file.reference.dom4j-1.6.1.jar-1"/>
-        <basename file="${file.reference.javassist-3.12.0.GA.jar}" property="manifest.file.reference.javassist-3.12.0.GA.jar"/>
-        <basename file="${file.reference.jta-1.1.jar-1}" property="manifest.file.reference.jta-1.1.jar-1"/>
-        <basename file="${file.reference.slf4j-api-1.6.1.jar}" property="manifest.file.reference.slf4j-api-1.6.1.jar"/>
+        <basename file="${file.reference.WebAlbums-libs-hibernate4}" property="manifest.file.reference.WebAlbums-libs-hibernate4"/>
+        <basename file="${file.reference.hibernate-core-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-core-4.0.0.CR3.jar"/>
+        <basename file="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 "/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.reference.WebAlbums3-iDAO.jar}"/>
             <attribute name="jar-2-Extension-Name" value="${manifest.reference.WebAlbums3-Commons.jar}"/>
             <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.CP-Perf-perf4j-0.9.13.jar}"/>
-            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.CP-DB-hibernate3.jar}"/>
-            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.antlr-2.7.6.jar-1}"/>
-            <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.commons-collections-3.1.jar-1}"/>
-            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.dom4j-1.6.1.jar-1}"/>
-            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.javassist-3.12.0.GA.jar}"/>
-            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.jta-1.1.jar-1}"/>
-            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.slf4j-api-1.6.1.jar}"/>
+            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.WebAlbums-libs-hibernate4}"/>
+            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.hibernate-core-4.0.0.CR3.jar}"/>
+            <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.CP-DB-hibernate3.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.antlr-2.7.6.jar-1}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.commons-collections-3.1.jar-1}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.dom4j-1.6.1.jar-1}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.javassist-3.12.0.GA.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.jta-1.1.jar-1}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.slf4j-api-1.6.1.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.WebAlbums-libs-hibernate4}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

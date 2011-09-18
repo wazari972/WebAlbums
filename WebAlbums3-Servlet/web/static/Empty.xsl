@@ -293,7 +293,7 @@ Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of
                         Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
                   </xsl:if>
                   <xsl:if test="/webAlbums/carnets">
-                        Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;id=<xsl:value-of select="@id"/>
+                        Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of select="@id"/>
                   </xsl:if>
 		</xsl:attribute>
 		<xsl:value-of select="name"/>
