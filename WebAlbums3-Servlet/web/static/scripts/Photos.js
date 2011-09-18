@@ -15,6 +15,7 @@ $("#selectAllBt").click(function () {
     selectAll() ;
 }) ;
 
+//buttons to toggle TAG and DESC fast edit
 $(".fastedit_tag_bt").click(function () {
     id = $(this).attr('rel');
     $("#fastedit_div_tag_"+id).toggle("fast")

@@ -159,7 +159,8 @@ public class TagFacade implements TagFacadeLocal {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
         Root<JPATag> tag = cq.from(JPATag.class);
-        cq.where(tag.in(tags).not()) ;
+        if (!tags.isEmpty())
+            cq.where(tag.in(tags).not()) ;
         cq.orderBy(cb.asc(tag.get(JPATag_.nom))) ;
         
         return (List) em.createQuery(cq)
