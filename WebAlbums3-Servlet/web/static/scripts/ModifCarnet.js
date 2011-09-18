@@ -14,11 +14,19 @@ function convertLink(url, title, link_text) {
 }
 
 (function () {
+    var help = function () { alert("Do you need help?"); }
+
     var converter = Markdown.getSanitizingConverter();
 
     converter.hooks.chain("plainLinkText", function (url) {
         return "This is a link to " + url.replace(/^https?:\/\//, "");
     });
+
     converter.hooks.chain("convertImage", convertImage);
+
     converter.hooks.chain("convertLink", convertLink);
+
+    var editor = new Markdown.Editor(converter, "", { handler: help });
+    editor.run();
 })();
+

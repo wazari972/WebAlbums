@@ -31,7 +31,12 @@
              <xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(Images?mode=BACKGROUND)     fixed no-repeat;</xsl:if>
           }
         </style>
-        
+        <xsl:if test="/webAlbums/carnets">
+            <link rel="stylesheet" type="text/css" href="static/scripts/pagedown/demo.css" />
+            <script type="text/javascript" src="static/scripts/pagedown/Markdown.Converter.js"></script>
+            <script type="text/javascript" src="static/scripts/pagedown/Markdown.Sanitizer.js"></script>
+            <script type="text/javascript" src="static/scripts/pagedown/Markdown.Editor.js"></script>
+        </xsl:if>
       </head>
       <body>
         <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.5.1.min.js"></script>

@@ -36,7 +36,7 @@
 	  <form method='post'>
 	    <xsl:attribute name="action">Carnets?
 &amp;count=<xsl:value-of select="@count" />
-&amp;id=<xsl:value-of select="@id" />
+&amp;carnet=<xsl:value-of select="@id" />
 #<xsl:value-of select="@id" />
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
@@ -49,26 +49,29 @@
 	    <input id="date" type='text' size='10' name='date' maxlength='10'>
 	      <xsl:attribute name="VALUE"><xsl:value-of select="date" /></xsl:attribute>
 	    </input>
+            Photo pour représentation: <input type='text' name='carnetRepr' maxlength="4" size="5"/>
+            <br/>
+            Photos: <input type='text' name='carnetPhoto' />
 	    <br/>
+	    Droits de visibilité : <xsl:apply-templates select="rights"/>
+            <br/>
             <label for="desc">Description:</label>
 	    <textarea id="desc" name='desc' rows='2' cols='65'>
 	      <xsl:value-of select="description" />
 	    </textarea>
-	    <textarea id="carnetText" name='carnetText' rows='20' cols='65'>
-	      <xsl:value-of select="text" />
-	    </textarea>
-	    <br/>
-            <div id="textPreview">Preview available soon!</div>
+            <div class="wmd-panel">
+                <div id="wmd-button-bar"></div>
+                <textarea class="wmd-input" id="wmd-input" name="carnetText">
+                    <xsl:value-of select="text" />
+                </textarea>
+            </div>
+            <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
+                    <br/>
+	    <input type='submit' value='Valider'/>
+            <br/>
             <br/>
             <label for="sure">"Oui je veux supprimer ce carnet" (définitif!)</label>
 	    <input id="sure" type='text' autocomplete='off' name='suppr' size='31' maxlength='31'/>
-	    <br/>
-	    Droits de visibilité : <xsl:apply-templates select="rights"/>
-	    <br/>
-            Represent: <input type='text' name='carnetRepr' />
-            <br/>
-            Photos: <input type='text' name='carnetPhoto' />
-	    <input type='submit' value='Valider'/>
 	  </form>
 	  <br/>
 	  <br/>
@@ -83,5 +86,6 @@
 	</div>
       </div>
     </div>
+    <script type="text/javascript" src="static/scripts/ModifCarnet.js"></script>
   </xsl:template>
 </xsl:stylesheet>

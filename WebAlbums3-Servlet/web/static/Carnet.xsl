@@ -14,6 +14,7 @@
   <xsl:template match="carnets">
       <xsl:apply-templates select="edit"/>
       <xsl:apply-templates select="display"/>
+      <script type="text/javascript" src="static/scripts/ModifCarnet.js"></script>
   </xsl:template>
 
   <xsl:template match="carnets/display">
@@ -52,6 +53,7 @@ carnet=<xsl:value-of select="@id" />
 	<div class="body">
             <xsl:apply-templates select="message"/>
             <xsl:apply-templates select="details"/>
+            <br/>
             <xsl:apply-templates select="text"/>
 	</div>
       </div>
@@ -62,6 +64,16 @@ carnet=<xsl:value-of select="@id" />
     <i><xsl:value-of select="."/></i><br/>
   </xsl:template>
    <xsl:template match="text">
-    <i><xsl:value-of select="."/></i><br/>
+       <div class="wmd-panel" style="display:None">
+            <textarea class="wmd-input" id="wmd-input">
+                <xsl:value-of select="."/>
+            </textarea>
+        </div>
+        <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
+        
+        <br /> 
+        <script type="text/javascript">
+            
+        </script>
   </xsl:template>
 </xsl:stylesheet>

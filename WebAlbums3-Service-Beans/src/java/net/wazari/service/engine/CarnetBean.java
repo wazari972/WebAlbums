@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.validation.ConstraintViolationException;
+import net.wazari.common.util.StringUtil;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
@@ -67,18 +69,18 @@ public class CarnetBean implements CarnetLocal {
             throws WebAlbumsServiceException {
 
         XmlCarnetEdit output = new XmlCarnetEdit();
-
-        if (submit != null) {
-            output.submit = submit ;
-        }
-
         Integer carnetId = vSession.getCarnet();
         Integer page = vSession.getPage();
         Integer count = vSession.getCount();
         page = (page == null ? 0 : page);
-
-        Carnet enrCarnet = carnetDAO.find(carnetId);
-
+        
+        if (submit != null) {
+            output.submit = submit ;
+        }
+        
+        /*Reuse the Carnet from SUBMIT if any, otherwise lookup this one.  */
+        Carnet enrCarnet = (submit != null && submit.carnet != null) ?
+                submit.carnet : carnetDAO.find(carnetId);
         
         if (enrCarnet == null) {
             output.rights = webPageService.displayListDroit(null, null);
@@ -139,7 +141,7 @@ public class CarnetBean implements CarnetLocal {
             carnet.count = count;
             carnet.name = enrCarnet.getNom();
             if (carnetId != null) {
-                carnet.text = enrCarnet.getText();
+                carnet.text = StringUtil.escapeXML(enrCarnet.getText());
             }
             carnet.photo = new ArrayList<Integer>(enrCarnet.getPhotoList().size());
             for (Photo p : enrCarnet.getPhotoList())
@@ -179,16 +181,18 @@ public class CarnetBean implements CarnetLocal {
         XmlCarnetSubmit output = new XmlCarnetSubmit();
         Carnet enrCarnet;
         
-        Integer carnetId = vSession.getId();
+        Integer carnetId = vSession.getCarnet();
         if (carnetId == null) {
             enrCarnet = carnetDAO.newCarnet();
             enrCarnet.setTheme(vSession.getTheme());
         } else {
             enrCarnet = carnetDAO.find(carnetId);
         }
-        if (enrCarnet == null)
-            return null;
-
+        if (enrCarnet == null) {
+            output.exception = "Couldn't find the carnet #"+carnetId;
+            return output;
+        }
+        output.carnet = enrCarnet;
         Boolean supprParam = vSession.getSuppr();
         if (supprParam) {
             if (finder.deleteCarnet(enrCarnet, vSession.getConfiguration())) {
@@ -222,6 +226,7 @@ public class CarnetBean implements CarnetLocal {
                 enrCarnet.setDate(date);
             } catch (ParseException ex) {
                 log.info("Date format incorrect: "+date);
+                output.valid = false;
             }
         }
         List<Photo> enrPhotos = new ArrayList<Photo>(photos.length);
@@ -251,14 +256,19 @@ public class CarnetBean implements CarnetLocal {
         if (!enrAlbums.isEmpty())
             enrCarnet.setAlbumList(enrAlbums);
         
-        if (carnetId == null)
-            carnetDAO.create(enrCarnet);
-       
-        carnetDAO.edit(enrCarnet);
+        try {
+            if (carnetId == null)
+                carnetDAO.create(enrCarnet);
 
-        output.message = "Carnet (" + enrCarnet.getId() + ") correctement mise à jour !";
+            carnetDAO.edit(enrCarnet);
+            output.message = "Carnet (" + enrCarnet.getId() + ") correctement mise à jour !";
+        } catch (ConstraintViolationException e) {
+            output.exception = "La mise a jour de (" + enrCarnet.getId() + ") a échouée ... "+e.getMessage();
+            output.valid = false;
+        }
         stopWatch.stop("Service.treatSUBMIT") ;
         return output ;
+        
     }
     
     @Override

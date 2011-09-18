@@ -60,12 +60,16 @@ public class WebAlbumsDAOBean {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         Predicate TRUE = cb.conjunction() ;
         Root<JPACarnet> c = sq.from(JPACarnet.class);
-        Predicate where = TRUE ;
+        Predicate whereTheme = TRUE ;
+        Predicate whereAllowed = TRUE ;
         
         if (!session.isSessionManager()) {
-            where = cb.greaterThanOrEqualTo(carnet.get(JPACarnet_.droit).get(JPAUtilisateur_.id), session.getUser().getId()) ;
+            whereAllowed = cb.greaterThanOrEqualTo(carnet.get(JPACarnet_.droit).get(JPAUtilisateur_.id), session.getUser().getId()) ;
         }
-        sq.where(where);
+        if (restrict != Restriction.ALLOWED_ONLY) {
+            whereTheme = cb.equal(carnet.get(JPACarnet_.theme), session.getTheme()) ;
+        }
+        sq.where(cb.and(whereAllowed,whereTheme));
         return carnet.in(sq.select(c)) ;
     }
     

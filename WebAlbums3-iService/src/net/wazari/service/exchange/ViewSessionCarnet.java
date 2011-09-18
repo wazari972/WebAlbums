@@ -11,6 +11,8 @@ package net.wazari.service.exchange;
  */
 public interface ViewSessionCarnet extends ViewSession {
     interface ViewSessionCarnetSubmit extends ViewSessionAlbum {
+        Integer getCarnet();
+        
         String getDesc();
 
         String getNom();
