@@ -1,10 +1,9 @@
-function convertImage(url, alt_text, title) {
+function convertImage(id, url, alt_text, title) {
     return "<br/><center><a href=\"Images?id="+url+"&amp;mode=GRAND\" title=\"" + alt_text + "\">"
          + "<img src=\"Images?id=" + url + "&amp;mode=PETIT\" alt=\"" + alt_text + "\""
          + "></a></center><br/>";
 }
-
-function convertLink(url, title, link_text) {
+function convertLink(id, url, title, link_text) {
     var result = "<a href=\"Photos?album=" + url + "\"";
     if (title != "")
         result += " title=\"" + title + "\"";
@@ -15,10 +14,11 @@ function convertLink(url, title, link_text) {
 
 (function () {
     var converter = Markdown.getSanitizingConverter();
-
     converter.hooks.chain("plainLinkText", function (url) {
         return "This is a link to " + url.replace(/^https?:\/\//, "");
     });
     converter.hooks.chain("convertImage", convertImage);
     converter.hooks.chain("convertLink", convertLink);
+    var editor = new Markdown.Editor(converter);
+    editor.run();
 })();

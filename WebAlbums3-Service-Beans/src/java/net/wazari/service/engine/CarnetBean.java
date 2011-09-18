@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
@@ -208,8 +209,8 @@ public class CarnetBean implements CarnetLocal {
         String nom = vSession.getNom();
         String date = vSession.getDate();
         String text = vSession.getCarnetText();
-        Integer[] photos = vSession.getCarnetPhoto();
-        Integer[] albums = vSession.getCarnetAlbum();
+        Set<Integer> photos = vSession.getCarnetPhoto();
+        Set<Integer> albums = vSession.getCarnetAlbum();
         
         if (user != null) {
             Utilisateur enrDroit = userDAO.find(user);
@@ -229,25 +230,26 @@ public class CarnetBean implements CarnetLocal {
                 output.valid = false;
             }
         }
-        List<Photo> enrPhotos = new ArrayList<Photo>(photos.length);
+        
+        if (repr != null) {
+            try {
+                Photo enrRepr = photoDAO.find(repr);
+                enrCarnet.setPicture(enrRepr.getId());
+                photos.add(repr);
+            } catch (Exception e) {}
+        }
+        
+        List<Photo> enrPhotos = new ArrayList<Photo>(photos.size());
         for (Integer photo : photos) {
             try {
                 enrPhotos.add(photoDAO.find(photo));
             } catch (Exception e) {}
         }
         
-        if (repr != null) {
-            try {
-                Photo enrRepr = photoDAO.find(repr);
-                enrCarnet.setPicture(enrRepr.getId());
-                enrPhotos.add(enrRepr);
-            } catch (Exception e) {}
-        }
-        
         if (!enrPhotos.isEmpty())
             enrCarnet.setPhotoList(enrPhotos);
         
-        List<Album> enrAlbums = new ArrayList<Album>(albums.length);
+        List<Album> enrAlbums = new ArrayList<Album>(albums.size());
         for (Integer album : albums) {
             try {
                 enrAlbums.add(albumDAO.find(album));
@@ -267,8 +269,7 @@ public class CarnetBean implements CarnetLocal {
             output.valid = false;
         }
         stopWatch.stop("Service.treatSUBMIT") ;
-        return output ;
-        
+        return output ;   
     }
     
     @Override

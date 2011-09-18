@@ -5,6 +5,8 @@
 
 package net.wazari.service.exchange;
 
+import java.util.Set;
+
 /**
  *
  * @author kevin
@@ -27,11 +29,11 @@ public interface ViewSessionCarnet extends ViewSession {
 
         String getCarnetText();
 
-        Integer[] getCarnetPhoto();
+        Set<Integer> getCarnetPhoto();
 
         Integer getCarnetRepr();
 
-        Integer[] getCarnetAlbum();
+        Set<Integer> getCarnetAlbum();
     }
 
     interface ViewSessionCarnetEdit extends ViewSessionAlbum {

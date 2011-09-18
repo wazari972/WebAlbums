@@ -108,7 +108,7 @@ else
         pluginHooks.addNoop("postConversion"); // called with the final cooked HTML code. The result of this plugin hook is the actual output of makeHtml
         pluginHooks.addNoop("convertImage"); 
         pluginHooks.addNoop("convertLink"); 
-
+        pluginHooks.addNoop("beginConvert"); 
         //
         // Private state of the converter instance:
         //
@@ -123,7 +123,7 @@ else
         var g_list_level;
 
         this.makeHtml = function (text) {
-
+            pluginHooks.beginConvert()
             //
             // Main function. The order in which other subs are called here is
             // essential. Link and image substitutions need to happen before
@@ -593,7 +593,7 @@ else
                 title = escapeCharacters(title, "*_");
             }
             
-            return pluginHooks.convertLink(url, title, link_text)
+            return pluginHooks.convertLink(link_id, url, title, link_text)
         }
 
         function _DoImages(text) {
@@ -685,7 +685,7 @@ else
             alt_text = alt_text.replace(/"/g, "&quot;");
             url = escapeCharacters(url, "*_");
             
-            var result = pluginHooks.convertImage(url, alt_text, title)
+            var result = pluginHooks.convertImage(link_id, url, alt_text, title)
 
             return result;
         }

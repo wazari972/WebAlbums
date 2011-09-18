@@ -12,9 +12,14 @@
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="carnets">
+        <xsl:if test="/webAlbums/carnets">
+            <link rel="stylesheet" type="text/css" href="static/scripts/pagedown/demo.css" />
+            <script type="text/javascript" src="static/scripts/pagedown/Markdown.Converter.js"></script>
+            <script type="text/javascript" src="static/scripts/pagedown/Markdown.Sanitizer.js"></script>
+            <script type="text/javascript" src="static/scripts/pagedown/Markdown.Editor.js"></script>
+        </xsl:if>
       <xsl:apply-templates select="edit"/>
       <xsl:apply-templates select="display"/>
-      <script type="text/javascript" src="static/scripts/ModifCarnet.js"></script>
   </xsl:template>
 
   <xsl:template match="carnets/display">
@@ -24,8 +29,8 @@
         <center><a href="Carnets?action=EDIT" rel="singlepage[no]">Nouveau carnet</a></center>
     </xsl:if>
     <xsl:apply-templates select="carnet"/>
-
     <xsl:apply-templates select="page"/>
+    <script type="text/javascript" src="static/scripts/Carnet.js"></script>
   </xsl:template>
 
   <xsl:template match="carnet">
@@ -64,16 +69,14 @@ carnet=<xsl:value-of select="@id" />
     <i><xsl:value-of select="."/></i><br/>
   </xsl:template>
    <xsl:template match="text">
+       <br/>
+       <hr/>
+       <br/>
        <div class="wmd-panel" style="display:None">
             <textarea class="wmd-input" id="wmd-input">
                 <xsl:value-of select="."/>
             </textarea>
         </div>
         <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
-        
-        <br /> 
-        <script type="text/javascript">
-            
-        </script>
   </xsl:template>
 </xsl:stylesheet>

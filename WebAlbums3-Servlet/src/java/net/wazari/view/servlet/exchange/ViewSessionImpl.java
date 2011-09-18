@@ -10,6 +10,9 @@ import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
@@ -407,14 +410,30 @@ public class ViewSessionImpl implements
         return getIntArray("sonTag") ;
     }
     
-    @Override
-    public Integer[] getCarnetPhoto() {
-        return getIntArray("carnetPhoto") ;
+    private Set<Integer> splitInt(String in)  {
+        if (in == null || in.length() == 1)
+            return new HashSet<Integer>();
+        
+        Set<Integer> out = new HashSet<Integer>();
+        for (String str : in.split("-")) {
+            try {
+                out.add(Integer.parseInt(str));
+            } catch (NumberFormatException e) {
+                log.warn("Invalide number during split int:"+str);
+            }
+                
+        }
+        return out ;
     }
     
     @Override
-    public Integer[] getCarnetAlbum() {
-        return getIntArray("carnetAlbum") ;
+    public Set<Integer> getCarnetPhoto() {
+        return splitInt(getString("carnetPhoto")) ;
+    }
+    
+    @Override
+    public Set<Integer> getCarnetAlbum() {
+        return splitInt(getString("carnetAlbum")) ;
     }
     
     @Override

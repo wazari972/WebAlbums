@@ -25,7 +25,7 @@
           </xsl:if>
 	<div class="body">
 	  <center>
-	    <img>
+	    <img id="carnetReprImg">
 	      <xsl:attribute name="src">Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT</xsl:attribute>
 	    </img>
 	  </center>
@@ -46,12 +46,15 @@
 	    </input>
 	    <br/>
             <label for="date">Date:</label> 
-	    <input id="date" type='text' size='10' name='date' maxlength='10'>
+	    <input type='text' size='10' name='date' id="carnetDate" maxlength='10'>
 	      <xsl:attribute name="VALUE"><xsl:value-of select="date" /></xsl:attribute>
 	    </input>
-            Photo pour représentation: <input type='text' name='carnetRepr' maxlength="4" size="5"/>
-            <br/>
-            Photos: <input type='text' name='carnetPhoto' />
+            Photo pour représentation: 
+            <input type='text' name='carnetRepr' id="carnetRepr" maxlength="4" size="5">
+                <xsl:attribute name="VALUE"><xsl:value-of select="@picture" /></xsl:attribute>
+            </input>
+            <input type='hidden' name='carnetPhoto' id='carnetPhoto' value = ''/>
+            <input type='hidden' name='carnetAlbum' id='carnetAlbum' value = ''/>
 	    <br/>
 	    Droits de visibilité : <xsl:apply-templates select="rights"/>
             <br/>
