@@ -86,8 +86,12 @@ Albums?action=EDIT
                           </a>
                     </xsl:if>
                 </div>
+                <div class="carnets_title">
+                    <xsl:apply-templates select="carnet" />
+                </div>
             </div>
 	  </h2>
+          <hr/>
 	</xsl:if>
 
 	<div class="body">
@@ -108,4 +112,18 @@ Albums?action=EDIT
     <i><xsl:value-of select="."/></i><br/>
   </xsl:template>
 
+  <xsl:template match="album/carnet">
+    <p> 
+    <small>
+        <a>
+            <xsl:attribute name="href">Carnets?carnet=<xsl:value-of select="@id" /></xsl:attribute>
+            <img class="mini-carnet">
+                <xsl:attribute name="src">Images?id=<xsl:value-of select="@picture" /></xsl:attribute>
+            </img>
+            <xsl:value-of select="name" />
+        </a>
+        </small>
+    </p>
+    <br/>
+  </xsl:template>
 </xsl:stylesheet>

@@ -5,6 +5,7 @@ import net.wazari.service.exchange.xml.common.XmlDetails;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -210,7 +211,6 @@ public class CarnetBean implements CarnetLocal {
         String date = vSession.getDate();
         String text = vSession.getCarnetText();
         Set<Integer> photos = vSession.getCarnetPhoto();
-        Set<Integer> albums = vSession.getCarnetAlbum();
         
         if (user != null) {
             Utilisateur enrDroit = userDAO.find(user);
@@ -240,23 +240,20 @@ public class CarnetBean implements CarnetLocal {
         }
         
         List<Photo> enrPhotos = new ArrayList<Photo>(photos.size());
+        Set<Album> enrAlbums = new HashSet<Album>();
         for (Integer photo : photos) {
             try {
-                enrPhotos.add(photoDAO.find(photo));
+                Photo enrPhoto = photoDAO.find(photo);
+                enrPhotos.add(enrPhoto);
+                enrAlbums.add(enrPhoto.getAlbum());
             } catch (Exception e) {}
         }
         
         if (!enrPhotos.isEmpty())
             enrCarnet.setPhotoList(enrPhotos);
         
-        List<Album> enrAlbums = new ArrayList<Album>(albums.size());
-        for (Integer album : albums) {
-            try {
-                enrAlbums.add(albumDAO.find(album));
-            } catch (Exception e) {}
-        }
         if (!enrAlbums.isEmpty())
-            enrCarnet.setAlbumList(enrAlbums);
+            enrCarnet.setAlbumList(new ArrayList(enrAlbums));
         
         try {
             if (carnetId == null)

@@ -6,6 +6,7 @@ import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import org.slf4j.Logger;
@@ -13,12 +14,14 @@ import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import net.wazari.common.util.StringUtil;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 
 import net.wazari.dao.entity.facades.SubsetOf;
@@ -43,6 +46,7 @@ import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
 import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbumTop;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
+import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.util.system.FilesFinder;
 import org.perf4j.StopWatch;
@@ -143,6 +147,18 @@ public class AlbumBean implements AlbumLocal {
 
             details.photoId = enrAlbum.getPicture();
             
+            for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
+                if (album.carnet == null)
+                    album.carnet = new ArrayList(enrAlbum.getCarnetList().size()) ;
+                
+                XmlCarnet carnet = new XmlCarnet();
+                carnet.date = webPageService.xmlDate(enrCarnet.getDate(), null);
+                carnet.id = enrCarnet.getId();
+                carnet.name = enrCarnet.getNom();
+                carnet.picture = enrCarnet.getPicture();
+                
+                album.carnet.add(carnet);
+            }
             details.description = enrAlbum.getDescription();
 
             //tags de l'album

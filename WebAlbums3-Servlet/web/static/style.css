@@ -5,6 +5,17 @@
 
 /** **** **/
 
+.carnets_opt img {
+    max-width:25px;
+    max-height:25px;
+    vertical-align:middle;
+}
+
+.carnets_title img {
+    max-width:100px;
+    max-height:100px;
+    vertical-align:middle;
+}
 .exif_tooltip {
     display: none;        /* required */
     position: absolute;   /* required */

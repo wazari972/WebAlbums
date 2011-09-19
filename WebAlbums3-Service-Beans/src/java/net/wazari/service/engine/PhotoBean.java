@@ -3,6 +3,7 @@ package net.wazari.service.engine;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import net.wazari.common.util.StringUtil;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
@@ -18,6 +20,7 @@ import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Tag;
@@ -45,6 +48,7 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
+import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
@@ -258,6 +262,18 @@ public class PhotoBean implements PhotoLocal {
         album.droit = enrAlbum.getDroit().getNom();
         album.date = webPageService.xmlDate(enrAlbum.getDate(), null);
         
+        for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
+            if (album.carnet == null)
+                album.carnet = new ArrayList(enrAlbum.getCarnetList().size()) ;
+
+            XmlCarnet carnet = new XmlCarnet();
+            carnet.date = webPageService.xmlDate(enrCarnet.getDate(), null);
+            carnet.id = enrCarnet.getId();
+            carnet.name = enrCarnet.getNom();
+            carnet.picture = enrCarnet.getPicture();
+
+            album.carnet.add(carnet);
+        }
         XmlDetails details = new XmlDetails() ;
         details.description = enrAlbum.getDescription() ;
         details.photoId = enrAlbum.getPicture() ;

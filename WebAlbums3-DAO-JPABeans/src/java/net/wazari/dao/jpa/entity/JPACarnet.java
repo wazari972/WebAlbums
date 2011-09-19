@@ -101,7 +101,7 @@ public class JPACarnet implements Carnet, Serializable {
           @JoinColumn(name="album")
         }
     )
-    private List<JPAPhoto> jPAAlbumList;
+    private List<JPAAlbum> jPAAlbumList;
     
     @XmlTransient
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)

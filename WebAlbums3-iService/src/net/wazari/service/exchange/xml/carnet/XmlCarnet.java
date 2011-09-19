@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.common.XmlDetails;
-import net.wazari.service.exchange.xml.photo.XmlPhoto;
-
 /**
  *
  * @author kevin

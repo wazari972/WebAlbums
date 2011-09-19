@@ -114,7 +114,8 @@ public class ViewSessionImpl implements
     public boolean getSuppr() {
         String suppr = getString("suppr") ;
         return "Oui je veux supprimer cette photo".equals(suppr) ||
-                "Oui je veux supprimer cet album".equals(suppr);
+               "Oui je veux supprimer cet album".equals(suppr)  ||
+               "Oui je veux supprimer ce carnet".equals(suppr);
     }
 
     @Override

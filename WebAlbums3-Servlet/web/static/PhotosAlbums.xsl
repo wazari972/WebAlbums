@@ -155,7 +155,7 @@ Carnets?action=EDIT
                                   </input>
                               </p>
                        </div>
-                       <div class="fastedit">
+                        <div class="fastedit">
                             <xsl:attribute name="id">fastedit_div_tag_<xsl:value-of select="photoId" /></xsl:attribute>
                               <p>
                                     <xsl:apply-templates select="../../massEdit/tagList">
@@ -172,6 +172,12 @@ Carnets?action=EDIT
                                     </input>
                              </p>
                         </div>
+                        <if test="../carnet">
+                            <div class="carnets_opt">
+                                <xsl:apply-templates select="../carnet"/>
+                            </div>
+                        </if>
+                        
                   </xsl:if>
               </div>
           </div>
@@ -179,19 +185,19 @@ Carnets?action=EDIT
   </xsl:template>
   
   <xsl:template match="rights">
-    <SELECT name="user">
+    <select name="user">
       <xsl:apply-templates select="user"/>
-    </SELECT>
+    </select>
   </xsl:template>
   
   <xsl:template match="rights/user">
-    <OPTION>
+    <option>
       <xsl:attribute name="value"><xsl:value-of select="@id" /></xsl:attribute>
       <xsl:if test="@selected">
 	<xsl:attribute name="selected">true</xsl:attribute>
       </xsl:if>
       <xsl:value-of select="." />
-    </OPTION>
+    </option>
   </xsl:template>
   
   <xsl:template match="user">

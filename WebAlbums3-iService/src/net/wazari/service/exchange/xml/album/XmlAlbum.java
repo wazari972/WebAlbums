@@ -5,8 +5,10 @@
 
 package net.wazari.service.exchange.xml.album;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 
@@ -31,5 +33,6 @@ public class XmlAlbum {
     public Long time;
     public String droit;
     public String albmDate;
-
+    
+    public List<XmlCarnet> carnet;
 }
