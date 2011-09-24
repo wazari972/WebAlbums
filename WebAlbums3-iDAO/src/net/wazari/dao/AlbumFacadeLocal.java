@@ -27,7 +27,7 @@ public interface AlbumFacadeLocal {
     }
 
     public enum Restriction {
-        ALLOWED_ONLY, THEME_ONLY, ALLOWED_AND_THEME
+        THEME_ONLY, NONE
     }
     
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
