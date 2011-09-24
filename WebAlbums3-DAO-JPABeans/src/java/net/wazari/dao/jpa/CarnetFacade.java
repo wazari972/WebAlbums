@@ -98,9 +98,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
         CriteriaQuery<JPACarnet> cq = cb.createQuery(JPACarnet.class) ;
 
         Root<JPACarnet> carnet = cq.from(JPACarnet.class);
-        cq.where(webDAO.getRestrictionToCarnetsAllowed(session, carnet, 
-                                                       cq.subquery(JPACarnet.class), 
-                                                       restrict)) ;
+        cq.where(webDAO.getRestrictionToCurrentTheme(session, carnet.get(JPACarnet_.theme), restrict)) ;
         cq.orderBy(cb.desc(carnet.get(JPACarnet_.date))) ;
         TypedQuery<JPACarnet> q = em.createQuery(cq);
 
@@ -126,9 +124,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<JPACarnet> cq = cb.createQuery(JPACarnet.class) ;
             Root<JPACarnet> c = cq.from(JPACarnet.class);
-            cq.where(cb.and(
-                    webDAO.getRestrictionToCarnetsAllowed(session, c, cq.subquery(JPACarnet.class), Restriction.ALLOWED_AND_THEME),
-                    cb.equal(c.get(JPACarnet_.id), carnetId))) ;
+            cq.where(cb.equal(c.get(JPACarnet_.id), carnetId)) ;
             return (JPACarnet) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", false)

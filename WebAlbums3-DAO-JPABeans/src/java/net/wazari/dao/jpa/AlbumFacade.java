@@ -66,7 +66,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
         CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
 
         Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
-        cq.where(webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), restrict)) ;
+        cq.where(webDAO.getRestrictionToCurrentTheme(session, 
+                albm.get(JPAAlbum_.theme), restrict)) ;
         cq.orderBy(cb.desc(albm.get(JPAAlbum_.date))) ;
         TypedQuery<JPAAlbum> q = em.createQuery(cq);
 
@@ -98,8 +99,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
         Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
         //where restrict to theme and albums
         cq.where( cb.and(
-                webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), restrict),
-                webDAO.getRestrictionToCurrentTheme(session, albm, restrict),
+                webDAO.getRestrictionToCurrentTheme(session, 
+                        albm.get(JPAAlbum_.theme), restrict),
                 cb.like(albm.get(JPAAlbum_.date), date+"%")
                 )) ;
         
@@ -137,8 +138,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
             CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
             Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
             cq.where(cb.and(
-                    webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), restrict),
-                    webDAO.getRestrictionToCurrentTheme(session, albm, restrict))) ;
+                    webDAO.getRestrictionToCurrentTheme(session, 
+                    albm.get(JPAAlbum_.theme), restrict))) ;
             webDAO.setOrder(cq, cb, order, albm.get(JPAAlbum_.date)) ;
 
             Query q = em.createQuery(cq)
@@ -162,7 +163,8 @@ public class AlbumFacade implements AlbumFacadeLocal {
             CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
             Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
             cq.where(cb.and(
-                    webDAO.getRestrictionToAlbumsAllowed(session, albm, cq.subquery(JPAAlbum.class), Restriction.ALLOWED_AND_THEME),
+                    webDAO.getRestrictionToCurrentTheme(session, 
+                            albm.get(JPAAlbum_.theme)),
                     cb.equal(albm.get(JPAAlbum_.id), id))) ;
             return (JPAAlbum) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)

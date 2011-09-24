@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import net.wazari.common.util.StringUtil;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
@@ -112,7 +111,8 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
-    public XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit, XmlFrom fromPage)
+    public XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, 
+                                        XmlAlbumSubmit submit, XmlFrom fromPage)
             throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
@@ -124,7 +124,8 @@ public class AlbumBean implements AlbumLocal {
 
         Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getConfiguration().getAlbumSize());
 
-        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, AlbumFacadeLocal.TopFirst.FIRST, bornes);
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
+               Restriction.THEME_ONLY, AlbumFacadeLocal.TopFirst.FIRST, bornes);
 
         int count = bornes.getFirstElement();
         String oldDate = null ;
@@ -189,7 +190,8 @@ public class AlbumBean implements AlbumLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumTop top5 = new XmlAlbumTop();
 
-        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, TopFirst.TOP, new Bornes(TOP));
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
+                         Restriction.THEME_ONLY, TopFirst.TOP, new Bornes(TOP));
         int i = 0;
         for (Album enrAlbum : albums.subset) {
             XmlAlbum album = new XmlAlbum();
@@ -211,7 +213,8 @@ public class AlbumBean implements AlbumLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumSelect select = new XmlAlbumSelect();
 
-        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, Restriction.ALLOWED_AND_THEME, TopFirst.ALL, null) ;
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
+                                    Restriction.THEME_ONLY, TopFirst.ALL, null);
         int i = 0 ;
         for (Album enrAlbum : albums.subset) {
             XmlAlbum album = new XmlAlbum();
@@ -242,8 +245,8 @@ public class AlbumBean implements AlbumLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumYears years = new XmlAlbumYears();
 
-        Album enrFirstAlbum = albumDAO.loadFirstAlbum(vSession, Restriction.ALLOWED_AND_THEME);
-        Album enrLastAlbum = albumDAO.loadLastAlbum(vSession, Restriction.ALLOWED_AND_THEME);
+        Album enrFirstAlbum = albumDAO.loadFirstAlbum(vSession, Restriction.THEME_ONLY);
+        Album enrLastAlbum = albumDAO.loadLastAlbum(vSession, Restriction.THEME_ONLY);
 
         if (enrFirstAlbum == null || enrLastAlbum == null) return years ;
         int firstYear = 2011 ;
@@ -261,7 +264,7 @@ public class AlbumBean implements AlbumLocal {
             XmlAlbumYear year = new XmlAlbumYear() ;
             year.year = currentYear;
             int i = 0;
-            SubsetOf<Album> albums = albumDAO.queryRandomFromYear(vSession, Restriction.ALLOWED_AND_THEME, new Bornes(TOP), currentYear.toString()) ;
+            SubsetOf<Album> albums = albumDAO.queryRandomFromYear(vSession, Restriction.THEME_ONLY, new Bornes(TOP), currentYear.toString()) ;
             for (Album enrAlbum : albums.subset) {
                 XmlAlbum album = new XmlAlbum();
                 album.id = enrAlbum.getId();

@@ -127,9 +127,11 @@ public class CarnetBean implements CarnetLocal {
         }
         
         if (carnetId == null) {
-            Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getConfiguration().getAlbumSize());
+            Bornes bornes = webPageService.calculBornes(page, eltAsked, 
+                                    vSession.getConfiguration().getAlbumSize());
             count = bornes.getFirstElement();
-            carnets = carnetDAO.queryCarnets(vSession, Restriction.ALLOWED_AND_THEME, AlbumFacadeLocal.TopFirst.FIRST, bornes).subset;
+            carnets = carnetDAO.queryCarnets(vSession, Restriction.THEME_ONLY, 
+                                AlbumFacadeLocal.TopFirst.FIRST, bornes).subset;
             output.page = webPageService.xmlPage(thisPage, bornes);
         }
         
@@ -274,7 +276,8 @@ public class CarnetBean implements CarnetLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlCarnetsTop top5 = new XmlCarnetsTop();
 
-        SubsetOf<Carnet> carnets = carnetDAO.queryCarnets(vSession, Restriction.ALLOWED_AND_THEME, TopFirst.TOP, new Bornes(AlbumBean.TOP));
+        SubsetOf<Carnet> carnets = carnetDAO.queryCarnets(vSession, 
+               Restriction.THEME_ONLY, TopFirst.TOP, new Bornes(AlbumBean.TOP));
         int i = 0;
         for (Carnet enrCarnet : carnets.subset) {
             XmlCarnet carnet = new XmlCarnet();
