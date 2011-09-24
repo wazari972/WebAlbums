@@ -16,6 +16,12 @@
     max-height:100px;
     vertical-align:middle;
 }
+
+.index_img {
+    max-width:200px;
+    max-height:200px;
+    vertical-align:middle;
+}
 .exif_tooltip {
     display: none;        /* required */
     position: absolute;   /* required */
@@ -66,12 +72,10 @@
     float: right;
     width:50%;
 }
-.details .fastedit_tag_bt {
+.details .fastedit_bt {
     float: right;
 }
-.details .fastedit_desc_bt {
-    float: right;
-}
+
 .details .fastedit {
     display:none;
 }

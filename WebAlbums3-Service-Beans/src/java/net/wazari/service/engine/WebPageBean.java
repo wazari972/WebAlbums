@@ -214,7 +214,7 @@ public class WebPageBean implements WebPageLocal {
         affichage.details = vSession.getDetails() ;
         if (!vSession.getConfiguration().isPathURL() &&
             (vSession.isRootSession() ||
-            vSession.getTheme() != null && vSession.getTheme().getPicture() != null)) {
+            vSession.getTheme() != null && vSession.getTheme().getBackground() != null)) {
             affichage.background = true  ;
         }
         if (vSession.isRemoteAccess()) affichage.remote = true ;

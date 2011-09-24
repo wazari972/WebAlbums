@@ -11,7 +11,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -271,6 +270,11 @@ public class ViewSessionImpl implements
     public Integer getTag() {
         return getInteger("tag");
     }
+    
+    @Override
+    public Integer getStars() {
+        return getInteger("stars");
+    }
 
     @Override
     public String getLng() {
@@ -310,6 +314,11 @@ public class ViewSessionImpl implements
     @Override
     public boolean getThemeBackground() {
         return "y".equals(getString("themeBackground"));
+    }
+    
+    @Override
+    public boolean getThemePicture() {
+        return "y".equals(getString("themePicture"));
     }
 
     @Override

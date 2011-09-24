@@ -16,11 +16,16 @@ $("#selectAllBt").click(function () {
 }) ;
 
 //buttons to toggle TAG and DESC fast edit
-$(".fastedit_tag_bt").click(function () {
+$("#fastedit_stars_bt").click(function () {
+    id = $(this).attr('rel');
+    $("#stars_"+id).toggle("fast")
+    $("#fastedit_div_stars_"+id).toggle("fast")
+}) ;
+$("#fastedit_tag_bt").click(function () {
     id = $(this).attr('rel');
     $("#fastedit_div_tag_"+id).toggle("fast")
 }) ;
-$(".fastedit_desc_bt").click(function () {
+$("#fastedit_desc_bt").click(function () {
     id = $(this).attr('rel');
     $("#desc_"+id).toggle("fast")
     $("#fastedit_div_desc_"+id).toggle("fast")
@@ -64,6 +69,24 @@ $(".fastedit_desc").click(function () {
     
     $.post("Photos?special=FASTEDIT", 
         {id : photoid, desc:photodesc},
+        function(data) {
+            reload_page_cb(data, photoid);
+        }
+     );
+}) ;
+$(".fastedit_stars").click(function () {
+    photoid = $(this).attr('rel');
+    stars = $("#fastedit_stars_"+photoid).val()
+    
+    n = parseInt(stars)
+    if (n < 0 || n > 5) {
+        alert("Le nombre d'étoiles doit être compris entre 0 et 5 ("+n+")")
+        return
+    }
+        
+    
+    $.post("Photos?special=FASTEDIT", 
+        {id : photoid, stars:stars},
         function(data) {
             reload_page_cb(data, photoid);
         }

@@ -12,7 +12,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-import net.wazari.common.util.StringUtil;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
@@ -172,8 +171,8 @@ public class PhotoBean implements PhotoLocal {
         if (themeBackground) {
             Theme enrTheme = enrPhoto.getAlbum().getTheme();
             log.warn("Assign theme background {}",enrPhoto) ;
-            themeDAO.setPicture(enrTheme, enrPhoto.getId());
-            vSession.getTheme().setPicture(enrPhoto.getId());
+            themeDAO.setBackground(enrTheme, enrPhoto.getId());
+            vSession.getTheme().setBackground(enrPhoto.getId());
             File backgroundDir = new File(vSession.getConfiguration()
                     .getTempPath()+vSession.getTheme().getNom()) ;
             log.info("Delete and create background dir: {}", backgroundDir) ;
@@ -184,6 +183,14 @@ public class PhotoBean implements PhotoLocal {
                     }
                 }
             }
+        }
+        //utiliser cette photo comme representante de l'album ?
+        Boolean themePicture = vSession.getThemePicture();
+        if (themePicture) {
+            Theme enrTheme = enrPhoto.getAlbum().getTheme();
+            log.warn("Assign theme picture {}",enrPhoto) ;
+            themeDAO.setPicture(enrTheme, enrPhoto.getId());
+            vSession.getTheme().setPicture(enrPhoto.getId());
         }
 
         //utiliser cette photo pour representer le tag de ce theme
@@ -311,6 +318,7 @@ public class PhotoBean implements PhotoLocal {
         Album enrAlbum = enrPhoto.getAlbum();
 
         output.id = enrPhoto.getId() ;
+        output.album = enrPhoto.getAlbum().getId() ;
         output.description = enrPhoto.getDescription();
         output.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
                 Box.MULTIPLE);
@@ -436,11 +444,11 @@ public class PhotoBean implements PhotoLocal {
             XmlDetails details = new XmlDetails();
             details.photoId = enrPhoto.getId();
             details.description = enrPhoto.getDescription();
-
             //tags de cette photo
             details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
                     Box.NONE);
             details.albumId = enrPhoto.getAlbum().getId();
+            details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager()
                     && inEditionMode != EditMode.VISITE) {
@@ -512,7 +520,7 @@ public class PhotoBean implements PhotoLocal {
         //tags de cette photo
         details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto, Box.NONE) ;
         details.albumId = enrPhoto.getAlbum().getId();
-
+        details.stars = enrPhoto.getStars();
         return details ;
     }
 
@@ -561,6 +569,12 @@ public class PhotoBean implements PhotoLocal {
                 output.tag_msg = ex.getMessage();
                 output.tag_status = XmlPhotoFastEdit.Status.ERROR;
             }
+        }
+        
+        Integer stars = vSession.getStars();
+        if (stars != null) {
+            enrPhoto.setStars(stars);
+            output.stars_status = XmlPhotoFastEdit.Status.OK;
         }
         
         return output;

@@ -98,11 +98,15 @@
                   </xsl:if>
                   <xsl:if test="/webAlbums/affichage/@edit">
                         <xsl:if test="not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                            <div class="fastedit_tag_bt">
+                            <div class="fastedit_bt" id="fastedit_stars_bt">
+                                <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                Stars
+                            </div>
+                            <div class="fastedit_bt" id="fastedit_tag_bt">
                                 <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                                 Tags
                             </div>
-                            <div class="fastedit_desc_bt">
+                            <div class="fastedit_bt" id="fastedit_desc_bt">
                                 <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                                 Descr.
                             </div>
@@ -139,10 +143,18 @@ Carnets?action=EDIT
                           </xsl:attribute>
                           <img src="static/images/edit.png" height="30px"/>
                         </a>
-                        <div class="description">
-                            <xsl:attribute name="id">desc_<xsl:value-of select="photoId" /></xsl:attribute>
-                            <xsl:value-of select="description" />
-                        </div>
+                        <div class="fastedit">
+                            <xsl:attribute name="id">fastedit_div_stars_<xsl:value-of select="photoId" /></xsl:attribute>
+                             <p>
+                                  <input name="stars" type='text' size='3' maxlength='1'>
+                                      <xsl:attribute name="id">fastedit_stars_<xsl:value-of select="photoId" /></xsl:attribute>
+                                      <xsl:attribute name="value"><xsl:value-of select="@stars" /></xsl:attribute>
+                                  </input>/5
+                                  <input value="edit" type="button" class="fastedit_stars">
+                                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                  </input>
+                              </p>
+                       </div>
                         <div class="fastedit">
                             <xsl:attribute name="id">fastedit_div_desc_<xsl:value-of select="photoId" /></xsl:attribute>
                              <p>
@@ -172,13 +184,22 @@ Carnets?action=EDIT
                                     </input>
                              </p>
                         </div>
-                        <if test="../carnet">
-                            <div class="carnets_opt">
-                                <xsl:apply-templates select="../carnet"/>
-                            </div>
-                        </if>
-                        
-                  </xsl:if>
+                    </xsl:if>
+                    <xsl:if test="not(/webAlbums/albums)">
+                        <div class="stars">
+                            <xsl:attribute name="id">stars_<xsl:value-of select="photoId" /></xsl:attribute>
+                            <xsl:value-of select="@stars" />/5
+                        </div>
+                    </xsl:if>
+                    <div class="description">
+                        <xsl:attribute name="id">desc_<xsl:value-of select="photoId" /></xsl:attribute>
+                        <xsl:value-of select="description" />
+                    </div>
+                <if test="../carnet">
+                    <div class="carnets_opt">
+                        <xsl:apply-templates select="../carnet"/>
+                    </div>
+                </if>
               </div>
           </div>
         </div>

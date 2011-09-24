@@ -69,13 +69,9 @@ public class PhotoFacade implements PhotoFacadeLocal {
     public Photo loadIfAllowed(ServiceSession session, int id) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            Predicate TRUE = cb.conjunction() ;
             CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
             Root<JPAPhoto> p = cq.from(JPAPhoto.class) ;
-            cq.where(cb.and(
-                    cb.equal(p.get(JPAPhoto_.id), id)),
-                    session == null ?
-                        TRUE : webDAO.getRestrictionToCurrentTheme(session, p.get(JPAPhoto_.album).get(JPAAlbum_.theme))) ;
+            cq.where(cb.equal(p.get(JPAPhoto_.id), id));
 
             JPAPhoto photo = (JPAPhoto) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)

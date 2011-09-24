@@ -42,4 +42,7 @@ public interface ThemeFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void setPicture(Theme enrTheme, Integer pict);
+
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    void setBackground(Theme enrTheme, Integer pict);
 }

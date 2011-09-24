@@ -31,10 +31,27 @@
         <input type='hidden' name='themeId' value='SUBMIT'>
             <xsl:attribute name="value"><xsl:value-of select="@id"/></xsl:attribute>
         </input>
-    <button>
-      <xsl:attribute name="id">themeId<xsl:value-of select="@id"/></xsl:attribute>
-      <xsl:value-of select="name"/>
-    </button>
+        <a rel="singlepage[no]">
+            <xsl:attribute name="href">
+                Choix?themeId=<xsl:value-of select="@id"/>
+            </xsl:attribute>
+            
+            <img class="index_img">
+            <xsl:attribute name="alt">
+              <xsl:value-of select="name"/>
+            </xsl:attribute>
+
+            <xsl:attribute name="src">
+              <xsl:if test="normalize-space(@picture) = ''">
+                static/images/rien.jpg
+              </xsl:if>
+              <xsl:if test="normalize-space(@picture) != ''">
+                Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT
+              </xsl:if>
+            </xsl:attribute>
+          </img>
+          <xsl:value-of select="name"/>
+      </a>
     </form><br/><br/>
   </xsl:template>
 </xsl:stylesheet>

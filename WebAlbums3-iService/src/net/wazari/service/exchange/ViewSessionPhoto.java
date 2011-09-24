@@ -11,6 +11,7 @@ package net.wazari.service.exchange;
 public interface ViewSessionPhoto extends ViewSession {
 
     interface ViewSessionPhotoFastEdit extends ViewSessionPhoto {
+
         enum TagAction {ADD, RM}
         
         String getDesc();
@@ -18,6 +19,8 @@ public interface ViewSessionPhoto extends ViewSession {
         Integer getTag();
         
         TagAction getTagAction();
+        
+        Integer getStars();
     }
     interface ViewSessionPhotoSubmit extends ViewSessionPhoto {
 
@@ -34,6 +37,8 @@ public interface ViewSessionPhoto extends ViewSession {
         Integer[] getTags();
 
         boolean getThemeBackground();
+
+        boolean getThemePicture();
     }
     interface ViewSessionPhotoEdit extends ViewSessionPhoto {
 

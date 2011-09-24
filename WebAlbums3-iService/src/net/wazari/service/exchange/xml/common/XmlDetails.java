@@ -6,6 +6,7 @@
 package net.wazari.service.exchange.xml.common;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -22,5 +23,6 @@ public class XmlDetails {
     public String user;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
-
+    @XmlAttribute
+    public Integer stars;
 }

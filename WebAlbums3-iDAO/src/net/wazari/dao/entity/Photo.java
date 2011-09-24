@@ -30,6 +30,8 @@ public interface Photo extends Serializable, EntityWithId, Metadata {
     String getType();
     
     List<Carnet> getCarnetList() ;
+    
+    Integer getStars();
 
     void setAlbum(Album album);
 
@@ -46,4 +48,6 @@ public interface Photo extends Serializable, EntityWithId, Metadata {
     void setType(String type);
 
     void setCarnetList(List<Carnet> jPACarnetList) ;
+    
+    void setStars(Integer stars);
 }

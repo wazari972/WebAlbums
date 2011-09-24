@@ -121,6 +121,15 @@ public class DispatcherBean {
                 output.xslFile = "static/Empty.xsl";
                 output.maint = maintServlet.treatMaint((ViewSessionMaint) vSession);
                 break;
+            case IMAGE:
+                XmlImage img = imageServlet.treatIMG((ViewSessionImages) vSession);
+                if (img == null) {
+                    isWritten = true;
+                } else {
+                    output.image = img;
+                }
+                log.debug("IMAGE written? {}", isWritten);
+                break;
             default: 
                 log.info("============= Login: {} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
@@ -173,15 +182,6 @@ public class DispatcherBean {
                             break;
                         case CARNET:
                             output.carnets = carnetServlet.treatCARNETS((ViewSessionCarnet) vSession);
-                            break;
-                        case IMAGE:
-                            XmlImage ret = imageServlet.treatIMG((ViewSessionImages) vSession);
-                            if (ret == null) {
-                                isWritten = true;
-                            } else {
-                                output.image = ret;
-                            }
-                            log.debug("IMAGE written? {}", isWritten);
                             break;
                         case DATABASE:
                             output.database = databaseServlet.treatDATABASE((ViewSessionDatabase) vSession);

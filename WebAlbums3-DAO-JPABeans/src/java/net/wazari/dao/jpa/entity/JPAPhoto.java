@@ -71,6 +71,10 @@ public class JPAPhoto implements Photo, Serializable {
     private String description;
 
     @XmlElement
+    @Column(name = "Stars", length = 2, nullable = false)
+    private Integer stars = 3;
+    
+    @XmlElement
     @Column(name = "Model", length = 100)
     private String model;
 
@@ -78,6 +82,7 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "DateMeta", length = 50)
     private String date;
 
+    
     @XmlElement
     @Column(name = "Iso", length = 50)
     private String iso;
@@ -148,6 +153,16 @@ public class JPAPhoto implements Photo, Serializable {
     @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    @Override
+    public Integer getStars() {
+        return stars;
+    }
+
+    @Override
+    public void setStars(Integer stars) {
+        this.stars = stars;
     }
 
     @Override

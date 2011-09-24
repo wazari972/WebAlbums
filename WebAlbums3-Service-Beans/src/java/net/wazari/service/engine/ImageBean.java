@@ -90,7 +90,7 @@ public class ImageBean implements ImageLocal {
                  
                 }
                 if (enrThemeForBackground != null) {
-                    imgId = enrThemeForBackground.getPicture() ;
+                    imgId = enrThemeForBackground.getBackground() ;
                 }
             }
 

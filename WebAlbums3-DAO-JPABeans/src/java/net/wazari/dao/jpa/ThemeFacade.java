@@ -102,11 +102,20 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
+    public void setBackground(Theme enrTheme, Integer pict) {
+        if (enrTheme != null) {
+            enrTheme.setBackground(pict);
+            em.merge(enrTheme) ;
+            log.info("Assign Photo[{}] to Theme.Background[{}]", pict, enrTheme.getNom());
+        }
+    }
+    
+    @Override
     public void setPicture(Theme enrTheme, Integer pict) {
         if (enrTheme != null) {
             enrTheme.setPicture(pict);
             em.merge(enrTheme) ;
-            log.info("Assign Photo[{}] to Theme[{}]", pict, enrTheme.getNom());
+            log.info("Assign Photo[{}] to Theme.Picture[{}]", pict, enrTheme.getNom());
         }
     }
 }
