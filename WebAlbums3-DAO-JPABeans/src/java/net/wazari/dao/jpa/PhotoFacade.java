@@ -77,10 +77,12 @@ public class PhotoFacade implements PhotoFacadeLocal {
                     session == null ?
                         TRUE : webDAO.getRestrictionToCurrentTheme(session, p.get(JPAPhoto_.album).get(JPAAlbum_.theme))) ;
 
-            return (JPAPhoto) em.createQuery(cq)
+            JPAPhoto photo = (JPAPhoto) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
+            
+            return webDAO.filter(photo, session);
         } catch (NoResultException e) {
             return null;
         }
@@ -107,14 +109,15 @@ public class PhotoFacade implements PhotoFacadeLocal {
             q.setMaxResults(session.getPhotoSize());
         }
 
-        List<Photo> subset = q
+        List<JPAPhoto> subset = q
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", true)
                     .getResultList() ;
+        subset = webDAO.filterPhotosAllowed(subset, session);
         if (bornes == null || bornes.getFirstElement() == null)
-            return new SubsetOf<Photo>(subset) ;
+            return new SubsetOf(subset) ;
         else
-            return new SubsetOf<Photo>(bornes, subset, (long) size);
+            return new SubsetOf(bornes, subset, (long) size);
 
     }
 
@@ -158,8 +161,8 @@ public class PhotoFacade implements PhotoFacadeLocal {
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getPhotoSize());
         }
-        
-        return new SubsetOf<Photo>(bornes, q.getResultList(), (long) size);
+        List<JPAPhoto> photoList = webDAO.filterPhotosAllowed(q.getResultList(), session);
+        return new SubsetOf(bornes, photoList, (long) size);
     }
 
     @Override
@@ -203,10 +206,11 @@ public class PhotoFacade implements PhotoFacadeLocal {
                                   p.get(JPAPhoto_.album).get(JPAAlbum_.theme)));
             webDAO.setOrder(cq, cb, ListOrder.RANDOM, null) ;
             
-            return (JPAPhoto) em.createQuery(cq)
+            JPAPhoto photo = (JPAPhoto) em.createQuery(cq)
                     .setFirstResult(0)
                     .setMaxResults(1)
                     .getSingleResult();
+            return webDAO.filter(photo, session);
         } catch (NoResultException e) {
             return null ;
         }

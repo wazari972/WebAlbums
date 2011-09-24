@@ -4,6 +4,8 @@
  */
 package net.wazari.dao.jpa;
 
+import java.util.Iterator;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
@@ -19,7 +21,11 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
+import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
+import net.wazari.dao.jpa.entity.JPAAlbum;
+import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPATheme;
 import net.wazari.dao.jpa.entity.JPATheme_;
 
@@ -54,7 +60,7 @@ public class WebAlbumsDAOBean {
             Path<JPATheme> theme, Restriction restrict) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         Predicate TRUE = cb.conjunction() ;
-        if (restrict != Restriction.NONE)
+        if (restrict == Restriction.NONE)
             return TRUE ;
         
         if (session.isRootSession()) {
@@ -81,5 +87,54 @@ public class WebAlbumsDAOBean {
             default: return ;
         }
         cq.orderBy(orderBy) ;
+    }
+    
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public List<JPAAlbum> filterAlbumsAllowed(List<JPAAlbum> albums, ServiceSession session) {
+        Iterator<JPAAlbum> itA = albums.iterator();
+        while (itA.hasNext()) { 
+            if (filter(itA.next(), session) == null)
+                itA.remove();
+        }
+        return albums;
+    }
+    
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public List<JPAPhoto> filterPhotosAllowed(List<JPAPhoto> photos, ServiceSession session) {
+        Iterator<JPAPhoto> itP = photos.iterator();
+        while (itP.hasNext()) { 
+            if (filter(itP.next(), session) == null)
+                itP.remove();
+        }
+        return photos;
+    }
+    
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public JPAPhoto filter(JPAPhoto photo, ServiceSession session) {
+        if (mustFilter(session, photo.getDroit())) {
+            return null;
+        } else {
+            return photo;
+        }
+    }
+    
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public Album filter(JPAAlbum album, ServiceSession session) {
+        if (mustFilter(session, album.getDroit())) {
+            return null;
+        } else {
+            return album;
+        }
+    }
+    
+    private boolean mustFilter(ServiceSession session, Utilisateur user) {
+        return session != null && !session.isAdminSession() && session.getUser() != null &&
+                user != null && user.getId() < session.getUser().getId();
+    }
+    
+    private boolean mustFilter(ServiceSession session, Integer userId) {
+        return session != null && !session.isAdminSession() && session.getUser() != null
+            && userId != null &&
+            userId < session.getUser().getId();
     }
 }

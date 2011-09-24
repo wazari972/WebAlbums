@@ -83,6 +83,9 @@ public class AlbumFacade implements AlbumFacadeLocal {
         q.setHint("org.hibernate.readOnly", true) ;
 
         List<JPAAlbum> lstAlbums = q.getResultList() ;
+        
+        lstAlbums = webDAO.filterAlbumsAllowed(lstAlbums, session) ;
+        
         stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstAlbums.size()+" albums returned") ;
         return (SubsetOf) new SubsetOf<JPAAlbum>(bornes, lstAlbums, (long) size);
     }
@@ -113,9 +116,12 @@ public class AlbumFacade implements AlbumFacadeLocal {
          .setHint("org.hibernate.readOnly", true) ;
         Long size = (long) bornes.getNbElement() ;
 
-        List<Album> lstAlbums = q.getResultList() ;
+        List<JPAAlbum> lstAlbums = q.getResultList() ;
+        
+        lstAlbums = webDAO.filterAlbumsAllowed(lstAlbums, session) ;
+        
         stopWatch.stop("DAO.queryRandomFromYear."+session.getTheme().getNom(), ""+lstAlbums.size()+" albums returned") ;
-        return new SubsetOf<Album>(bornes,lstAlbums, size);
+        return (SubsetOf) new SubsetOf<JPAAlbum>(bornes,lstAlbums, size);
     }
 
     @Override
@@ -148,7 +154,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
                    .setHint("org.hibernate.cacheable", true)
                    .setHint("org.hibernate.readOnly", true) ;
 
-            return (Album) q.getSingleResult();
+            return webDAO.filter((JPAAlbum) q.getSingleResult(), session);
         } catch (NoResultException e) {
             return null ;
         } finally {
@@ -166,10 +172,11 @@ public class AlbumFacade implements AlbumFacadeLocal {
                     webDAO.getRestrictionToCurrentTheme(session, 
                             albm.get(JPAAlbum_.theme)),
                     cb.equal(albm.get(JPAAlbum_.id), id))) ;
-            return (JPAAlbum) em.createQuery(cq)
+            JPAAlbum a = (JPAAlbum) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
+            return webDAO.filter(a, session);
         } catch (NoResultException e) {
             return null ;
         }
@@ -184,7 +191,6 @@ public class AlbumFacade implements AlbumFacadeLocal {
             cq.where(cb.equal(a.get(JPAAlbum_.id), id)) ;
             return (JPAAlbum) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
-                    .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null ;
