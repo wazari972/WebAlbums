@@ -5,11 +5,13 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import java.io.InputStream;
+import java.text.ParseException;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlLoginInfo;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
@@ -419,6 +421,9 @@ public class WebPageBean implements WebPageLocal {
                     }
                 }
                 if (written) {
+                    if (tag instanceof XmlWebAlbumsTagWho && enrTag.getPerson() != null) {
+                        ((XmlWebAlbumsTagWho) tag).birthdate = enrTag.getPerson().getBirthdate();
+                    }
                     tag.name = nom ;
                     tag.id = tagId.getId() ;
                     tag.checked = selected ;
@@ -508,6 +513,44 @@ public class WebPageBean implements WebPageLocal {
             throws WebAlbumsServiceException {
         return displayListLBNI(mode, vSession, null, box,
                 "tags", null);
+    }
+
+    @Override
+    public XmlWebAlbumsList displayListIBTD(Mode mode,
+            ViewSession vSession,
+            EntityWithId entity,
+            Box box, String date)
+            throws WebAlbumsServiceException {
+        XmlWebAlbumsList lst = 
+                      displayListIBTNI(mode, vSession, entity, box, null, null);
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+        Date ref;
+        try {
+            ref = parser.parse(date);
+        } catch (ParseException ex) {
+            log.warn("Invalid date provided: {}", date);
+            return lst;
+        }
+        
+        Calendar dob = Calendar.getInstance();
+        Calendar day = Calendar.getInstance();  
+        day.setTime(ref);
+        int age ;
+        for (XmlWebAlbumsTagWho person: lst.who) {
+            if (person.birthdate != null) {
+                try {
+                    Date birth = parser.parse(person.birthdate);
+                    dob.setTime(birth);
+                    age = day.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
+                    if (day.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))  
+                        age--;
+                    person.birthdate = Integer.toString(age);
+                } catch (ParseException ex) {
+                    log.warn("Invalid birth date for tag {}: {}", person.name, person.birthdate);
+                }
+            }
+        }
+        return lst;
     }
     //display a list into STR
     //according to the MODE

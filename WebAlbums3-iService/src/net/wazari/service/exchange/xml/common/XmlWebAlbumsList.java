@@ -48,12 +48,17 @@ public class XmlWebAlbumsList extends XmlInfoException {
     }
 
     public static class XmlWebAlbumsTagWhere extends XmlTag {
+        @XmlAttribute
+        public String lat;
+        @XmlAttribute
+        public String longit;
         public String getNature() {return "where" ;}
     }
     public static class XmlWebAlbumsTagWhat extends XmlTag {
         public String getNature() {return "what" ;}
     }
     public static class XmlWebAlbumsTagWho extends XmlTag {
+        public String birthdate;
         public String getNature() {return "who" ;}
     }
 

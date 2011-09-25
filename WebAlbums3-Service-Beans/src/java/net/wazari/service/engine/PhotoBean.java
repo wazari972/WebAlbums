@@ -445,8 +445,9 @@ public class PhotoBean implements PhotoLocal {
             details.photoId = enrPhoto.getId();
             details.description = enrPhoto.getDescription();
             //tags de cette photo
-            details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
-                    Box.NONE);
+            details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
+                    Box.NONE, enrPhoto.getAlbum().getDate());
+            
             details.albumId = enrPhoto.getAlbum().getId();
             details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
@@ -518,7 +519,8 @@ public class PhotoBean implements PhotoLocal {
         details.photoId = enrPhoto.getId();
         details.description = enrPhoto.getDescription();
         //tags de cette photo
-        details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto, Box.NONE) ;
+        details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, 
+                             enrPhoto, Box.NONE, enrPhoto.getAlbum().getDate());
         details.albumId = enrPhoto.getAlbum().getId();
         details.stars = enrPhoto.getStars();
         return details ;

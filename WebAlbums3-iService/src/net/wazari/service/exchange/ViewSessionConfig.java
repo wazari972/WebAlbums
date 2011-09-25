@@ -30,4 +30,6 @@ public interface ViewSessionConfig extends ViewSession{
     Integer getParentTag();
 
     Integer[] getSonTags();
+
+    String getBirthdate();
 }

@@ -17,6 +17,8 @@ public interface Tag extends Serializable, EntityWithId {
 
     Geolocalisation getGeolocalisation();
 
+    Person getPerson();
+    
     Integer getId();
 
     String getNom();
@@ -28,6 +30,8 @@ public interface Tag extends Serializable, EntityWithId {
     int getTagType();
 
     void setGeolocalisation(Geolocalisation geolocalisation);
+    
+    void setPerson(Person person);
 
     void setId(Integer id);
 

@@ -75,6 +75,11 @@ public class ViewSessionImpl implements
     }
 
     @Override
+    public String getBirthdate() {
+        return getString("birthdate");
+    }
+    
+    @Override
     public String getDesc() {
         return getString("desc");
     }

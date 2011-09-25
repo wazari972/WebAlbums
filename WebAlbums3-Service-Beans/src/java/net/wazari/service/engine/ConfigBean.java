@@ -1,5 +1,7 @@
 package net.wazari.service.engine;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import net.wazari.dao.GeolocalisationFacadeLocal;
+import net.wazari.dao.PersonFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
@@ -24,6 +27,7 @@ import net.wazari.service.exchange.xml.config.XmlConfigDelTheme;
 import net.wazari.service.exchange.xml.config.XmlConfigImport;
 import net.wazari.service.exchange.xml.config.XmlConfigLinkTag;
 import net.wazari.service.exchange.xml.config.XmlConfigModGeo;
+import net.wazari.service.exchange.xml.config.XmlConfigModPers;
 import net.wazari.service.exchange.xml.config.XmlConfigModTag;
 import net.wazari.service.exchange.xml.config.XmlConfigModVis;
 import net.wazari.service.exchange.xml.config.XmlConfigNewTag;
@@ -36,6 +40,8 @@ public class ConfigBean implements ConfigLocal {
     private TagFacadeLocal tagDAO;
     @EJB
     private GeolocalisationFacadeLocal geoDAO;
+    @EJB
+    private PersonFacadeLocal personDAO;
     @EJB
     private TagThemeFacadeLocal tagThemeDAO;
     @EJB
@@ -121,6 +127,51 @@ public class ConfigBean implements ConfigLocal {
         geoDAO.edit(enrGeo);
 
         output.newLngLat = lng + "/" + lat ;
+
+        return output ;
+    }
+    
+    @Override
+    public XmlConfigModPers treatMODPERS(ViewSessionConfig vSession)
+            throws WebAlbumsServiceException {
+        XmlConfigModPers output = new XmlConfigModPers();
+
+        String birthdate = vSession.getBirthdate();
+        Integer tag = vSession.getTag();
+
+        if (tag == null || tag == -1) {
+            output.exception = "Pas de tag selectionné ..." ;
+            return output ;
+        }
+
+        Tag enrTag = tagDAO.find(tag);
+        if (enrTag == null) {
+            output.exception = "L'id " + tag + " ne correspond à aucun tag ..." ;
+            return output ;
+        }
+        
+        if (enrTag.getTagType() != 1) {
+            output.exception = "Le " + tag + " ne correspond à une personne ..." ;
+            return output ;
+        }
+        
+        try {
+            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+            parser.parse(birthdate);
+        } catch (ParseException e) {
+            output.exception = "La date " + birthdate + " n'est pas correcte..." ;
+            return output;
+        }
+
+
+        Person enrPerson = enrTag.getPerson();
+        if (enrPerson == null) {
+            enrPerson = personDAO.newPerson(enrTag);
+        }
+        output.oldBirthdate = enrPerson.getBirthdate() ;
+        enrPerson.setBirthdate(birthdate);
+        personDAO.edit(enrPerson);
+        output.newBirthdate = birthdate ;
 
         return output ;
     }

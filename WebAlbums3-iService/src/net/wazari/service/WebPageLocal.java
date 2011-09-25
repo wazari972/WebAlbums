@@ -48,6 +48,9 @@ public interface WebPageLocal {
     XmlUserList displayListDroit(Utilisateur right, Integer albmRight) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlWebAlbumsList displayListIBTD(Mode mode, ViewSession vSession, EntityWithId entity, Box box, String date) throws WebAlbumsServiceException;
+    
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlWebAlbumsList displayListIBT(Mode mode, ViewSession vSession, EntityWithId entity, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)

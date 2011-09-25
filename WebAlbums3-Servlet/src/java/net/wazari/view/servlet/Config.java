@@ -75,6 +75,16 @@ public class Config extends HttpServlet {
             if (Action.LINKTAG == action) {
                 output.linktag = configService.treatLINKTAG(vSession);
             }
+            
+            //details about a person
+            if (Action.MODPERS == action) {
+                output.modpers = configService.treatMODPERS(vSession);
+            }
+            
+            //liens de parenté
+            if (Action.LINKTAG == action) {
+                output.linktag = configService.treatLINKTAG(vSession);
+            }
 
             //suppression d'un tag
             if (Action.DELTAG == action) {
@@ -91,8 +101,6 @@ public class Config extends HttpServlet {
             }
             
             output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
-                    Box.MULTIPLE);
-            output.tag_geo = webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
                     Box.MULTIPLE);
             output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
                     Box.MULTIPLE);

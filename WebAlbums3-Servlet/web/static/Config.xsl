@@ -108,9 +108,10 @@
 
             <xsl:apply-templates select="tagList">
               <xsl:with-param name="style">list</xsl:with-param>
-              <xsl:with-param name="mode">TAG_GEO</xsl:with-param>
+              <xsl:with-param name="mode">TAG_USED</xsl:with-param>
               <xsl:with-param name="name">tag</xsl:with-param>
               <xsl:with-param name="id">lstModGeo</xsl:with-param>
+              <xsl:with-param name="type">where</xsl:with-param>
             </xsl:apply-templates>
 		
             <input id="lngID_2" name='lng' type='hidden'/>
@@ -120,7 +121,33 @@
 	</div>
       </div>
     </div>
+    <div class="item">
+      <a name="modPers"/>
+      <div class="date">
+	<span>*</span>
+      </div>
+      <div class="content">
+	<h1>Modification d'une personne</h1>
+	<div class="body">
+	  <xsl:apply-templates select="modpers"/>
+	  <form action='#modPers' method='POST'>
+	    <input type='hidden' name='action' value='MODPERS'/>
 
+            <xsl:apply-templates select="tagList">
+              <xsl:with-param name="style">list</xsl:with-param>
+              <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+              <xsl:with-param name="name">tag</xsl:with-param>
+              <xsl:with-param name="id">lstModPerson</xsl:with-param>
+              <xsl:with-param name="type">who</xsl:with-param>
+            </xsl:apply-templates>
+            <br/>
+            Date de naissance: <input id="birthdate" name='birthdate' type='text' size='15' maxlength='10'/>
+	    <br/>
+            <input id="valModPerson" type='submit' value='Valider'/>
+	  </form>
+	</div>
+      </div>
+    </div>
     <div class="item">
       <a name="modTag"/>
       <div class="date">
@@ -146,8 +173,7 @@
 	      </tr>
 	      <tr>
       		<td align='left'><label for="nouveau">Nouveau : </label></td>
-		<td><input id="nouveau" name='nouveau' type='text' size='20'
-			   maxlength='20'/></td>	
+		<td><input id="nouveau" name='nouveau' type='text' size='20' /></td>	
 	      </tr>
 	    </table>
 	    <input type='submit' value='Valider' disabled="true" id="valModTag"/>
@@ -303,6 +329,9 @@
     Nouvelle géolocalisation: <b> <xsl:value-of select="."/></b>
   </xsl:template>
 
+  <xsl:template match="modpers">
+    Date de naissance correctement mis à jour <b>(<xsl:value-of select="oldBirthdate"/> --> <xsl:value-of select="newBirthdate"/>)</b>
+  </xsl:template>
   <xsl:template match="shutdown">
     <div class="item">
       <div class="date">

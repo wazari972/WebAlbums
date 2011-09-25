@@ -163,7 +163,8 @@ public class AlbumBean implements AlbumLocal {
             details.description = enrAlbum.getDescription();
 
             //tags de l'album
-            details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE) ;
+            details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, 
+                              vSession, enrAlbum, Box.NONE, enrAlbum.getDate());
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager() && inEditionMode != EditMode.VISITE) {

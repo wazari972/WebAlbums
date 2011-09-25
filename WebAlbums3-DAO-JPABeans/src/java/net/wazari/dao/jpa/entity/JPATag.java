@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Geolocalisation;
+import net.wazari.dao.entity.Person;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.entity.TagTheme;
@@ -82,6 +83,10 @@ public class JPATag implements Tag, Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jPATag", fetch = FetchType.LAZY)
     private JPAGeolocalisation jPAGeolocalisation;
 
+    @XmlElement
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "jPATag", fetch = FetchType.LAZY)
+    private JPAPerson jPAPerson;
+        
     @XmlTransient
     @JoinColumn(name = "Parent", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
@@ -163,6 +168,16 @@ public class JPATag implements Tag, Serializable {
     @Override
     public void setGeolocalisation(Geolocalisation jPAGeolocalisation) {
         this.jPAGeolocalisation = (JPAGeolocalisation) jPAGeolocalisation;
+    }
+    
+    @Override
+    public JPAPerson getPerson() {
+        return jPAPerson;
+    }
+
+    @Override
+    public void setPerson(Person jPAPerson) {
+        this.jPAPerson = (JPAPerson) jPAPerson;
     }
 
     @Override

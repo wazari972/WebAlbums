@@ -17,14 +17,16 @@
     <xsl:param name="size">7</xsl:param>
     <xsl:param name="mode">TAG_USED</xsl:param>
     <xsl:param name="mode2">NONE</xsl:param>
+    <xsl:param name="type">all</xsl:param>
     <xsl:param name="box">MULTIPLE</xsl:param>
     <xsl:param name="onChange"></xsl:param>
     <xsl:param name="id"></xsl:param>
+    
     <xsl:if test="not(@box) or @box = $box">
     <xsl:if test="not(@mode) or @mode = $mode">
-      <xsl:if test="who|what|where">
+      <xsl:if test="who|what|where">            
 	<xsl:if test="$style = 'list' or $style = 'multiple'">
-	  <SELECT>
+	  <select>
 	    <xsl:if test="$style = 'multiple'">
 	      <xsl:attribute name="multiple">yes</xsl:attribute>
 	      <xsl:attribute name="size"><xsl:value-of select="$size" /></xsl:attribute>
@@ -44,16 +46,19 @@
 	    <optgroup label="Who">
                 <xsl:apply-templates select="who">
                   <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                  <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
                 </xsl:apply-templates>
             </optgroup>
             <optgroup label="What">
                 <xsl:apply-templates select="what">
                   <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                  <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
                 </xsl:apply-templates>
             </optgroup>
             <optgroup label="Where">
                 <xsl:apply-templates select="where">
                   <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                  <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
                 </xsl:apply-templates>
             </optgroup>
                 <xsl:if test="not($mode2 = 'NONE')">
@@ -62,23 +67,26 @@
                             <xsl:attribute name="label">--- <xsl:value-of select="$mode2" /> ---</xsl:attribute>
                             <xsl:apply-templates select="../tagList[@mode = $mode2]/*">
                                 <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
                             </xsl:apply-templates>
                         </optgroup>
                     </xsl:if>
                 </xsl:if>
-	  </SELECT>
+	  </select>
 	</xsl:if>
-	
 	<xsl:if test="not($style = 'list' or $style = 'multiple')">
 	  <div class="tags">
 	    <xsl:apply-templates select="who">
-	      <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
 	    </xsl:apply-templates>
 	    <xsl:apply-templates select="what">
-	      <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
 	    </xsl:apply-templates>
 	    <xsl:apply-templates select="where">
-	      <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
 	    </xsl:apply-templates>
 	  </div>
 	</xsl:if>     
@@ -88,27 +96,32 @@
   </xsl:template>
     
   <xsl:template match="where|what|who">
+    <xsl:param name="type">all</xsl:param>
     <xsl:param name="style">none</xsl:param>
+    <xsl:if test="$type = 'all' or $type = name(.)">
+        <xsl:if test="$style = 'list' or $style = 'multiple'">
+          <option>
+            <xsl:attribute name="VALUE"><xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:if test="@checked = 'true'">
+              <xsl:attribute name="selected">selected</xsl:attribute>	  
+            </xsl:if>
 
-    <xsl:if test="$style = 'list' or $style = 'multiple'">
-      <OPTION>
-	<xsl:attribute name="VALUE"><xsl:value-of select="@id"/></xsl:attribute>
-	<xsl:if test="@checked = 'true'">
-	  <xsl:attribute name="SELECTED">selected</xsl:attribute>	  
-	</xsl:if>
+            [<xsl:value-of select="name(.)"/>] <xsl:value-of select="name"/>
+          </option>    
+        </xsl:if>      
 
-	[<xsl:value-of select="name(.)"/>] <xsl:value-of select="."/>
-      </OPTION>    
-    </xsl:if>      
-    
-    <xsl:if test="not($style = 'list' or $style = 'multiple')">
-      <A>
-	<xsl:attribute name="HREF">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
-	<xsl:value-of select="."/>
-      </A>
-      <xsl:if test="position() != last()">, </xsl:if>
-      <xsl:if test="position() = last() and name(.) = 'who' and (count(../what)!=0 or count(../where) != 0)">, </xsl:if>
-      <xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">,  </xsl:if>      
+        <xsl:if test="not($style = 'list' or $style = 'multiple')">
+          <a>
+            <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:if test="birthdate">
+                <xsl:attribute name="title"><xsl:value-of select="birthdate"/> ans</xsl:attribute>
+            </xsl:if>
+            <xsl:value-of select="name"/>
+          </a>
+          <xsl:if test="position() != last()">, </xsl:if>
+          <xsl:if test="position() = last() and name(.) = 'who' and (count(../what)!= 0 or count(../where) != 0)">, </xsl:if>
+          <xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">,  </xsl:if>      
+        </xsl:if>
     </xsl:if>
   </xsl:template>
 
