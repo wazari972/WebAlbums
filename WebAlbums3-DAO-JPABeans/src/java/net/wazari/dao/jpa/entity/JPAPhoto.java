@@ -128,6 +128,7 @@ public class JPAPhoto implements Photo, Serializable {
     @Transient
     private Integer albumId ;
 
+    @XmlTransient
     @ManyToMany(mappedBy="jPAPhotoList")
     private List<JPACarnet> jPACarnetList;
 
