@@ -34,7 +34,7 @@ public class Choix extends HttpServlet {
     private WebPageLocal webPageService;
 
     public XmlWebAlbumsList displayChxScript(ViewSession vSession) throws WebAlbumsServiceException {
-        return webPageService.displayMapInScript(vSession, "mapChoix", null);
+        return webPageService.displayMapInScript(vSession);
     }
 
     public XmlChoix displayCHX(ViewSession vSession) throws WebAlbumsServiceException {

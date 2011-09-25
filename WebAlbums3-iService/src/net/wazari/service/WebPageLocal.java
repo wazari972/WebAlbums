@@ -54,16 +54,16 @@ public interface WebPageLocal {
     XmlWebAlbumsList displayListIBT(Mode mode, ViewSession vSession, EntityWithId entity, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListIBTNI(Mode mode, ViewSession vSession, EntityWithId entity, Box box, String name, String info) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListIBTN(Mode mode, ViewSession vSession, EntityWithId entity, Box box, String name) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlWebAlbumsList displayListLB(Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListLBNI(Mode mode, ViewSession vSession, List<Tag> ids, Box box, String name, String info) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListLBN(Mode mode, ViewSession vSession, List<Tag> ids, Box box, String name) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayMapInScript(ViewSession vSession, String name, String info) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayMapInScript(ViewSession vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     EditMode getNextEditionMode(ViewSession vSession);

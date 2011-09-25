@@ -33,17 +33,69 @@ function showTags() {
 
 function preloadGoogleMap() {
     $("#googleMapLoader").fadeOut() ;
-    $("#mapChoix").width(400).height(400) ;
+    $("#mapChoix") ;
     loadMaps();
 }
 
-//addLoadEvent(loadYears) ;
-//addLoadEvent(loadAlbums) ;
-//addLoadEvent(loadPersons) ;
-//addLoadEvent(loadPlaces) ;
-//addLoadEvent(prloadGoogleMap) ;
-//addLoadEvent(loadSelect) ;
-//addLoadEvent(loadRandPict) ;
+function pointToContent(point) {
+    return "<div class='gmap_content'>"
+          +"  <h1><a href='Tags?tagsAsked="+point.id+"'>"+point.name+"</a></h1>\n"
+          +"  <img src='Images?mode=PETIT&id="+point.picture+"' />\n"
+          +"</div>"
+}
+
+function pointToMarker(point, imageBounds, mymap, markers) {
+    var latlng = new google.maps.LatLng(point.lat, point.lng);
+    imageBounds.extend(latlng) ;
+    
+    var IW = new google.maps.InfoWindow({
+       content:pointToContent(point),
+       maxWidth: 250,
+       map: mymap
+    });
+
+    var M = new google.maps.Marker({position: latlng, title: "Toto"});
+    
+    google.maps.event.addListener(M, 'click', function() {
+      IW.open(mymap, M);
+    });
+    
+    markers.push(M);
+}
+
+$.getScript("static/scripts/google-maps-utility-library-v3/markerclusterer.js")
+
+function putMarkersOnMapSimple (map, markers) {
+      $.each(markers, function(key, marker) {
+        marker.setMap(map)
+      })
+}
+
+function putMarkersOnMapGrouped (map, markers) {
+      new MarkerClusterer(map, markers)
+}
+
+putMarkersOnMap = putMarkersOnMapGrouped
+
+function loadGoogleMap() {
+    var imageBounds = new google.maps.LatLngBounds();
+    var markers = []
+    var map = new google.maps.Map(document.getElementById('mapChoix'), {
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    $.getJSON("Choix?special=map.json",
+        function(data) {
+              $.each(data, function(key, val) {
+                pointToMarker(val, imageBounds, map, markers)
+              })
+              
+              map.setCenter(imageBounds.getCenter())
+              map.fitBounds(imageBounds)
+
+              putMarkersOnMap(map, markers);
+        }
+    );
+}
 
 function printDate(strDate) {
     var dDate = new Date(parseInt(strDate)) ;

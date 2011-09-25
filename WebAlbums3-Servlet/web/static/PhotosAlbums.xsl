@@ -98,15 +98,15 @@
                   </xsl:if>
                   <xsl:if test="/webAlbums/affichage/@edit">
                         <xsl:if test="not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                            <div class="fastedit_bt" id="fastedit_stars_bt">
+                            <div class="fastedit_bt fastedit_stars_bt" id="">
                                 <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                                 Stars
                             </div>
-                            <div class="fastedit_bt" id="fastedit_tag_bt">
+                            <div class="fastedit_bt fastedit_tag_bt">
                                 <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                                 Tags
                             </div>
-                            <div class="fastedit_bt" id="fastedit_desc_bt">
+                            <div class="fastedit_bt fastedit_desc_bt">
                                 <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                                 Descr.
                             </div>

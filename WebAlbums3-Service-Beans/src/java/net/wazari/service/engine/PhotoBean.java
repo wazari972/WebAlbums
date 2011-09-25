@@ -329,9 +329,8 @@ public class PhotoBean implements PhotoLocal {
         output.tag_never = webPageService.displayListIBT(Mode.TAG_NEVER, vSession, enrPhoto,
                 Box.MULTIPLE);
 
-        output.tag_used_lst = webPageService.displayListIBTNI(Mode.TAG_USED, vSession, enrPhoto,
-                Box.LIST,
-                null, null);
+        output.tag_used_lst = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
+                Box.LIST);
         Utilisateur enrUtil = userDAO.find(enrPhoto.getDroit());
         output.rights = webPageService.displayListDroit(enrUtil, enrAlbum.getDroit().getId());
 

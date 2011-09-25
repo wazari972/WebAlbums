@@ -232,12 +232,11 @@ public class WebPageBean implements WebPageLocal {
     //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
     @Override
-    public XmlWebAlbumsList displayListIBTNI(Mode mode,
+    public XmlWebAlbumsList displayListIBTN(Mode mode,
             ViewSession vSession,
             EntityWithId entity,
             Box box,
-            String name,
-            String info)
+            String name)
             throws WebAlbumsServiceException
     {
 
@@ -257,7 +256,7 @@ public class WebPageBean implements WebPageLocal {
         for (TagPhoto enrTagPhoto : list) {
             tags.add(enrTagPhoto.getTag());
         }
-        XmlWebAlbumsList output = displayListLBNI(mode, vSession, tags, box, name, info) ;
+        XmlWebAlbumsList output = displayListLBN(mode, vSession, tags, box, name) ;
 
         output.box = box ;
         output.type = type ;
@@ -276,12 +275,11 @@ public class WebPageBean implements WebPageLocal {
     //Mode specific information can be provide throug info (null otherwise)
     //(used by Mode.MAP for the link to the relevant address)
     @Override
-    public XmlWebAlbumsList displayListLBNI(Mode mode,
+    public XmlWebAlbumsList displayListLBN(Mode mode,
             ViewSession vSession,
             List<Tag> ids,
             Box box,
-            String name,
-            String info)
+            String name)
             throws WebAlbumsServiceException 
     {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
@@ -331,7 +329,7 @@ public class WebPageBean implements WebPageLocal {
 
         GooglePoint map = null;
         if (box == Box.MAP_SCRIPT) {
-            map = new GooglePoint(name);
+            map = new GooglePoint();
         }
 
         log.info( "Mode: {}, Box: {}, list: {}", new Object[]{mode, box, ids});
@@ -341,7 +339,7 @@ public class WebPageBean implements WebPageLocal {
             Tag tagId = null;
             String nom = null;
             Point p = null;
-            Integer photo = null;
+            Integer photoId = null;
 
             //first, prepare the information (type, id, nom)
             if (box == Box.MAP_SCRIPT) {
@@ -360,16 +358,15 @@ public class WebPageBean implements WebPageLocal {
                     Geolocalisation enrGeo = enrTag.getGeolocalisation();
                     if (enrGeo != null) {
                         tagId = enrTag;
-
-                        p = new Point(enrGeo.getLat(),
-                                enrGeo.getLongitude(),
-                                enrTag.getNom());
-                        nom = enrTag.getNom();
-
                         //Get the photo to display, if any
                         if (enrTagTh != null) {
-                            photo = enrTagTh.getPhoto();
+                            photoId = enrTagTh.getPhoto();
                         }
+                        p = new Point(enrTag.getNom(), enrTag.getId(),
+                                enrGeo.getLat(),
+                                enrGeo.getLongitude(),
+                                photoId);
+                        nom = enrTag.getNom();
                     }
                 }
             } else if (box == Box.MAP) {
@@ -387,24 +384,6 @@ public class WebPageBean implements WebPageLocal {
             //display the value [if in ids][select if in ids]
             if (box == Box.MAP_SCRIPT) {
                 if (nom != null && (ids == null || ids.contains(tagId))) {
-                    String msg;
-                    
-                    if (photo != null) {
-                        msg = String.format("<div style='height: 160px; width: 210px'> "
-                                + "<img height='150px' height='200px' alt='%s' title='%s' "
-                                + "src='Images?id=%d&amp;mode=PETIT' /></div>",
-                                p.name,
-                                p.name,
-                                photo);
-                    } else {
-                        msg = p.name ;
-                    }
-                    
-                    msg = String.format("<a title='%s' href='Tags?tagAsked=%s'>%s</a>",
-                         p.name, tagId.getId(), msg);
-
-
-                    p.setMsg(msg);
                     map.addPoint(p);
                 }
             } else if (box == Box.MAP) {
@@ -433,9 +412,8 @@ public class WebPageBean implements WebPageLocal {
         } /* while loop*/
 
         if (box == Box.MAP_SCRIPT) {
-            output.blob = map.getInitFunction();
+            output.blob = map.getJSon();
         }
-
 
         stopWatch.stop() ;
         return output ;
@@ -480,11 +458,9 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
-    public XmlWebAlbumsList displayMapInScript(ViewSession vSession,
-            String name,
-            String info)
+    public XmlWebAlbumsList displayMapInScript(ViewSession vSession)
             throws WebAlbumsServiceException {
-        return displayListLBNI(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT, name, info);
+        return displayListLBN(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT, null);
     }
 
     //display a list into STR
@@ -498,7 +474,7 @@ public class WebPageBean implements WebPageLocal {
             Box box,
             String name)
             throws WebAlbumsServiceException {
-        return displayListLBNI(mode, vSession, null, box, name, null);
+        return displayListLBN(mode, vSession, null, box, name);
     }
     //display a list into STR
     //according to the MODE
@@ -511,8 +487,7 @@ public class WebPageBean implements WebPageLocal {
             ViewSession vSession,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListLBNI(mode, vSession, null, box,
-                "tags", null);
+        return displayListLBN(mode, vSession, null, box, "tags");
     }
 
     @Override
@@ -521,8 +496,7 @@ public class WebPageBean implements WebPageLocal {
             EntityWithId entity,
             Box box, String date)
             throws WebAlbumsServiceException {
-        XmlWebAlbumsList lst = 
-                      displayListIBTNI(mode, vSession, entity, box, null, null);
+        XmlWebAlbumsList lst = displayListIBTN(mode, vSession, entity, box, null);
         SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
         Date ref;
         try {
@@ -566,9 +540,7 @@ public class WebPageBean implements WebPageLocal {
             EntityWithId entity,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListIBTNI(mode, vSession, entity, box,
-                null,
-                null);
+        return displayListIBTN(mode, vSession, entity, box, null);
     }
     
     //display a list into STR
@@ -582,8 +554,7 @@ public class WebPageBean implements WebPageLocal {
             List<Tag> ids,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListLBNI(mode, vSession, ids, box,
-                "tags", null);
+        return displayListLBN(mode, vSession, ids, box, "tags");
     }
 
     @Override

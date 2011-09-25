@@ -124,7 +124,6 @@
 	<div class="body">
 	  <center>
 	    <div id="mapChoix">
-             <!--<img src="static/images/loading.gif"/>-->
 	    </div>
 	  </center>
 	</div>
