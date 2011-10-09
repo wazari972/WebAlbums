@@ -72,11 +72,8 @@ carnet=<xsl:value-of select="@id" />
        <br/>
        <hr/>
        <br/>
-       <div class="wmd-panel" style="display:None">
-            <textarea class="wmd-input" id="wmd-input">
-                <xsl:value-of select="."/>
-            </textarea>
+        <div id="carnet_text">
+            <xsl:value-of select="."/>
         </div>
-        <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
   </xsl:template>
 </xsl:stylesheet>

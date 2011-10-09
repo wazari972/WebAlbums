@@ -19,6 +19,7 @@ function convertLink(id, url, title, link_text) {
     });
     converter.hooks.chain("convertImage", convertImage);
     converter.hooks.chain("convertLink", convertLink);
-    var editor = new Markdown.Editor(converter);
-    editor.run();
+
+    converted = converter.makeHtml($("#carnet_text").val())
+    $("#carnet_text").val(converted)
 })();
