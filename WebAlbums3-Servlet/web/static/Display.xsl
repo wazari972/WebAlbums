@@ -72,8 +72,15 @@
 			<xsl:when test="/webAlbums/affichage/@details = 'false'">Sans Détails</xsl:when>
 			<xsl:when test="not(/webAlbums/affichage/@details = 'false')">Avec Détails</xsl:when>
 		      </xsl:choose> </a></li>
-		  </ul>
-
+                  </ul>
+                  
+              <h3>Qualité: </h3>
+              <ul>
+              <li><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/> (all)</li>
+              <li>Only ? <input type="checkbox"/></li>
+              </ul>
+		  
+                  
 		<h3>Connexion</h3>
 		<ul>
 		  <li><xsl:value-of select="/webAlbums/loginInfo/user" /></li>

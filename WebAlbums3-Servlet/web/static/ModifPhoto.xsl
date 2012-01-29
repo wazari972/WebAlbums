@@ -72,7 +72,7 @@
             <label for="bg">Theme background ? </label><input id="bg" type='checkbox' name='themeBackground' value='y' />
             <input type="button" value="Try it!">
                 <xsl:attribute name="ONCLICK">
-                  updateBackground(<xsl:value-of select="id" />) ;
+                  updateBackground(<xsl:value-of select="@id" />) ;
                 </xsl:attribute>
             </input><br />
 	    <label>Droits de visibilité : </label><xsl:apply-templates select="rights"/>

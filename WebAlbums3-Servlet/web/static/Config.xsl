@@ -87,7 +87,7 @@
 		</td>	
 	      </tr>
 	    </table>
-	    <input type='submit' value='Valider' id="valNewTag" disabled="true"/>
+	    <input type='submit' value='Valider' id="valNewTag"/>
 	  </form>
 
 	</div>
@@ -116,7 +116,7 @@
 		
             <input id="lngID_2" name='lng' type='hidden'/>
             <input id="latID_2" name='lat' type='hidden'/>
-	    <input id="valModGeo" type='submit' value='Valider' disabled="true"/>
+	    <input id="valModGeo" type='submit' value='Valider'/>
 	  </form>
 	</div>
       </div>
@@ -176,7 +176,7 @@
 		<td><input id="nouveau" name='nouveau' type='text' size='20' /></td>	
 	      </tr>
 	    </table>
-	    <input type='submit' value='Valider' disabled="true" id="valModTag"/>
+	    <input type='submit' value='Valider' id="valModTag"/>
 	  </form>
 	</div>
       </div>
@@ -219,7 +219,7 @@
                 </td>
 	      </tr>
 	    </table>
-	    <input type='submit' value='Valider' id="valLinkTag" disabled="true"/>
+	    <input type='submit' value='Valider' id="valLinkTag"/>
 	  </form>
 	</div>
       </div>
@@ -255,7 +255,7 @@
 		<td><input id="visible" name='visible' value='y' type='checkbox'/></td>
 	      </tr>
 	    </table>
-	    <input type='submit' value='Valider' id="valModVis" disabled="true"/>
+	    <input type='submit' value='Valider' id="valModVis"/>
 	  </form>
 	  <br/><br/>
 	</div>
@@ -284,7 +284,7 @@
             </xsl:apply-templates>
 	    <br/>
 	    <label for="sure">Yes ? </label><input type='text' id="sure" name='sure' size='3' maxlength='3'/><br/>
-	    <input type='submit' value='Valider' id="valDelTag" disabled="true"/>
+	    <input type='submit' value='Valider' id="valDelTag" />
 	  </form>
 	</div>
       </div>

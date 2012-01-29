@@ -39,7 +39,7 @@ function preloadGoogleMap() {
 
 function pointToContent(point) {
     return "<div class='gmap_content'>"
-          +"  <h1><a href='Tags?tagsAsked="+point.id+"'>"+point.name+"</a></h1>\n"
+          +"  <h1><a href='Tags?tagAsked="+point.id+"'>"+point.name+"</a></h1>\n"
           +"  <img src='Images?mode=PETIT&id="+point.picture+"' />\n"
           +"</div>"
 }
@@ -74,8 +74,8 @@ function putMarkersOnMapSimple (map, markers) {
 function putMarkersOnMapGrouped (map, markers) {
       new MarkerClusterer(map, markers)
 }
-
-putMarkersOnMap = putMarkersOnMapGrouped
+putMarkersOnMap = putMarkersOnMapSimple
+//putMarkersOnMap = putMarkersOnMapGrouped
 
 function loadGoogleMap() {
     var imageBounds = new google.maps.LatLngBounds();

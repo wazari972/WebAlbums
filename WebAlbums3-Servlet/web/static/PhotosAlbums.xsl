@@ -11,6 +11,24 @@
   %xhtml-symbol;
   ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:template name="for-stars-loop">
+        <xsl:param name="count" select="1"/>
+        <xsl:param name="stars" select="3"/>
+        
+        <xsl:if test="$count > 0">
+            <xsl:call-template name="for-stars-loop">
+                <xsl:with-param name="count" select="$count - 1"/>
+                <xsl:with-param name="stars" select="$stars"/>
+            </xsl:call-template>
+            <xsl:if test="$count > $stars">
+                <img src="static/images/star.off.png"/>
+            </xsl:if>
+            <xsl:if test="not($count > $stars)">
+                <img src="static/images/star.on.png"/>
+            </xsl:if>
+        </xsl:if>
+    </xsl:template>
+    
   <xsl:template match="details">
           <xsl:if test="../exif">
       <span class="exif_tooltip">
@@ -61,11 +79,20 @@
                     </input>
                 </div>
             </xsl:if>
-            <xsl:apply-templates select="tagList">
-              <xsl:with-param name="style">none</xsl:with-param>
-              <xsl:with-param name="mode">TAG_USED</xsl:with-param>
-              <xsl:with-param name="box">NONE</xsl:with-param>
-            </xsl:apply-templates>
+            <xsl:if test="not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
+                <div class="fastedit_bt fastedit_desc_bt">
+                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                    Descr.
+                </div>
+                <div class="fastedit_bt fastedit_tag_bt">
+                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                    Tags.
+                </div>
+                <div class="fastedit_bt fastedit_stars_bt" id="">
+                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                    Stars.
+                </div>
+            </xsl:if>
             <div class="options">
                 <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
                     <a title="Photo réduite">
@@ -97,20 +124,6 @@
                     </span>
                   </xsl:if>
                   <xsl:if test="/webAlbums/affichage/@edit">
-                        <xsl:if test="not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                            <div class="fastedit_bt fastedit_stars_bt" id="">
-                                <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                                Stars
-                            </div>
-                            <div class="fastedit_bt fastedit_tag_bt">
-                                <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                                Tags
-                            </div>
-                            <div class="fastedit_bt fastedit_desc_bt">
-                                <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                                Descr.
-                            </div>
-                        </xsl:if>
                         <a class="edit" title="Edition">
                           <xsl:attribute name="href">
                             <xsl:if test="/webAlbums/photos">
@@ -143,19 +156,55 @@ Carnets?action=EDIT
                           </xsl:attribute>
                           <img src="static/images/edit.png" height="30px"/>
                         </a>
+                    </xsl:if>
+                    <xsl:if test="not(/webAlbums/albums)">
+                        <div class="stars">
+                            <xsl:attribute name="id">stars_<xsl:value-of select="photoId" /></xsl:attribute>
+                            <xsl:call-template name="for-stars-loop">
+                              <xsl:with-param name="count" select="5"/>
+                              <xsl:with-param name="stars" select="@stars"/>
+                            </xsl:call-template>
+                        </div>
                         <div class="fastedit">
                             <xsl:attribute name="id">fastedit_div_stars_<xsl:value-of select="photoId" /></xsl:attribute>
+                            <xsl:attribute name="rel"><xsl:value-of select="@stars" /></xsl:attribute>
                              <p>
-                                  <input name="stars" type='text' size='3' maxlength='1'>
-                                      <xsl:attribute name="id">fastedit_stars_<xsl:value-of select="photoId" /></xsl:attribute>
-                                      <xsl:attribute name="value"><xsl:value-of select="@stars" /></xsl:attribute>
-                                  </input>/5
-                                  <input value="edit" type="button" class="fastedit_stars">
-                                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                  <input name="stars" type='button' value="-" class="fastedit_stars_dec">
+                                      <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                  </input>
+                                  <input name="stars" type='button' value="+" class="fastedit_stars_inc">
+                                      <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                                   </input>
                               </p>
                        </div>
-                        <div class="fastedit">
+                    </xsl:if>
+                    <xsl:apply-templates select="tagList">
+                      <xsl:with-param name="style">none</xsl:with-param>
+                      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+                      <xsl:with-param name="box">NONE</xsl:with-param>
+                    </xsl:apply-templates>
+                    <div class="fastedit">
+                          <xsl:attribute name="id">fastedit_div_tag_<xsl:value-of select="photoId" /></xsl:attribute>
+                          <p>
+                                <xsl:apply-templates select="../../massEdit/tagList">
+                                    <xsl:with-param name="style">list</xsl:with-param>
+                                    <xsl:with-param name="id">fastedit_tag_<xsl:value-of select="photoId" /></xsl:with-param>
+                                    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+                                    <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
+                                </xsl:apply-templates><br/>           
+                                <input value="+" type="button" class="fastedit_addtag">
+                                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                </input>
+                                <input value="-" type="button" class="fastedit_rmtag">
+                                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
+                                </input>
+                         </p>
+                    </div>
+                    <div class="description">
+                        <xsl:attribute name="id">desc_<xsl:value-of select="photoId" /></xsl:attribute>
+                        <xsl:value-of select="description" />
+                    </div>
+                    <div class="fastedit">
                             <xsl:attribute name="id">fastedit_div_desc_<xsl:value-of select="photoId" /></xsl:attribute>
                              <p>
                                   <textarea cols="30" >
@@ -167,34 +216,6 @@ Carnets?action=EDIT
                                   </input>
                               </p>
                        </div>
-                        <div class="fastedit">
-                            <xsl:attribute name="id">fastedit_div_tag_<xsl:value-of select="photoId" /></xsl:attribute>
-                              <p>
-                                    <xsl:apply-templates select="../../massEdit/tagList">
-                                        <xsl:with-param name="style">list</xsl:with-param>
-                                        <xsl:with-param name="id">fastedit_tag_<xsl:value-of select="photoId" /></xsl:with-param>
-                                        <xsl:with-param name="mode">TAG_USED</xsl:with-param>
-                                        <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
-                                    </xsl:apply-templates>                    
-                                    <input value="+" type="button" class="fastedit_addtag">
-                                        <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                                    </input>
-                                    <input value="-" type="button" class="fastedit_rmtag">
-                                        <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                                    </input>
-                             </p>
-                        </div>
-                    </xsl:if>
-                    <xsl:if test="not(/webAlbums/albums)">
-                        <div class="stars">
-                            <xsl:attribute name="id">stars_<xsl:value-of select="photoId" /></xsl:attribute>
-                            <xsl:value-of select="@stars" />/5
-                        </div>
-                    </xsl:if>
-                    <div class="description">
-                        <xsl:attribute name="id">desc_<xsl:value-of select="photoId" /></xsl:attribute>
-                        <xsl:value-of select="description" />
-                    </div>
                 <if test="../carnet">
                     <div class="carnets_opt">
                         <xsl:apply-templates select="../carnet"/>
