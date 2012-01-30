@@ -13,19 +13,29 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template name="for-stars-loop">
         <xsl:param name="count" select="1"/>
-        <xsl:param name="stars" select="3"/>
+        <xsl:param name="stars"/>
+        <xsl:param name="photoId"/>
         
         <xsl:if test="$count > 0">
             <xsl:call-template name="for-stars-loop">
                 <xsl:with-param name="count" select="$count - 1"/>
                 <xsl:with-param name="stars" select="$stars"/>
+                <xsl:with-param name="photoId" select="$photoId"/>
             </xsl:call-template>
-            <xsl:if test="$count > $stars">
-                <img src="static/images/star.off.png"/>
-            </xsl:if>
-            <xsl:if test="not($count > $stars)">
-                <img src="static/images/star.on.png"/>
-            </xsl:if>
+            <img>
+                <xsl:if test="/webAlbums/affichage/@edit">
+                    <xsl:attribute name="class">fastedit_stars</xsl:attribute>
+                    <xsl:attribute name="rel">
+                        <xsl:value-of select="photoId" />/<xsl:value-of select="$count" />
+                    </xsl:attribute>
+                </xsl:if>
+                <xsl:if test="$count > $stars">
+                    <xsl:attribute name="src">static/images/star.off.png</xsl:attribute>
+                </xsl:if>
+                <xsl:if test="not($count > $stars)">
+                    <xsl:attribute name="src">static/images/star.on.png</xsl:attribute>
+                </xsl:if>
+            </img>
         </xsl:if>
     </xsl:template>
     
@@ -73,22 +83,22 @@
         <div class="info">
             <xsl:apply-templates select="user" />
             <xsl:if test="/webAlbums/affichage/@massedit and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                <div class="massedit_chk">
-                    <input type="checkbox" class="massedit_chkbox" value="modif">
+                <div class="massedit_chk edit">
+                    <input type="checkbox" class="massedit_chkbox edit" value="modif">
                         <xsl:attribute name="name">chk<xsl:value-of select="photoId" /></xsl:attribute>
                     </input>
                 </div>
             </xsl:if>
             <xsl:if test="not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                <div class="fastedit_bt fastedit_desc_bt">
+                <div class="fastedit_bt fastedit_desc_bt edit">
                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                     Descr.
                 </div>
-                <div class="fastedit_bt fastedit_tag_bt">
+                <div class="fastedit_bt fastedit_tag_bt edit">
                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                     Tags.
                 </div>
-                <div class="fastedit_bt fastedit_stars_bt" id="">
+                <div class="fastedit_bt fastedit_stars_bt edit" id="">
                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                     Stars.
                 </div>
@@ -163,6 +173,7 @@ Carnets?action=EDIT
                             <xsl:call-template name="for-stars-loop">
                               <xsl:with-param name="count" select="5"/>
                               <xsl:with-param name="stars" select="@stars"/>
+                              <xsl:value-of name="stars" select="photoId" />
                             </xsl:call-template>
                         </div>
                         <div class="fastedit">

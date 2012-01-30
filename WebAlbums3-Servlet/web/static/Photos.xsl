@@ -55,7 +55,7 @@
   <xsl:template match="massEdit">
       <xsl:if test="/webAlbums/affichage/@massedit">
       <script type='text/javascript' src="static/scripts/MassEdit.js" />
-      <div class="item" id="massedit_item">
+      <div class="item massedit edit" id="massedit_item">
 	<div class="body">
 	  <xsl:apply-templates select="message"/>
 	  <input type='hidden' name='action' value='MASSEDIT' />	  

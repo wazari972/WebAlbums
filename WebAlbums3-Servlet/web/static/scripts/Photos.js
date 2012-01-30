@@ -29,6 +29,13 @@ $(".fastedit_desc_bt").click(function () {
     $("#desc_"+id).toggle("fast")
     $("#fastedit_div_desc_"+id).toggle("fast")
 }) ;
+$(".fastedit_stars").click(function () {
+    photoid = $(this).attr('rel').split('/')[0];
+    stars = $(this).attr('rel').split('/')[1];
+    
+    set_stars(photoid, parseInt(stars))
+    
+}) ;
 
 function reload_page_cb(data, photoid) {
     //$(data).find('fastedit').each(function(){});
@@ -78,13 +85,19 @@ function inc_dec_stars(photoid, inc_dec) {
     
     n = parseInt(stars)
     n += inc_dec
-    if (n < 0 || n > 5) {
+    
+    set_stars(photoid, n)
+    
+}
+
+function set_stars(photoid, stars) {
+    if (stars < 0 || stars > 5) {
         alert("Le nombre d'étoiles doit être compris entre 0 et 5 ("+n+")")
         return
     }    
     
     $.post("Photos?special=FASTEDIT", 
-        {id : photoid, stars:n},
+        {id : photoid, stars:stars},
         function(data) {
             reload_page_cb(data, photoid);
         }
