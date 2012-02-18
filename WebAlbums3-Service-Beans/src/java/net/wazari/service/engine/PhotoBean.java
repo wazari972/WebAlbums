@@ -50,6 +50,7 @@ import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
@@ -452,18 +453,23 @@ public class PhotoBean implements PhotoLocal {
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager()
                     && inEditionMode != EditMode.VISITE) {
+                String name;
+                boolean outside;
                 Utilisateur enrUser = userDAO.find(enrPhoto.getDroit());
                 if (enrUser != null) {
-                    details.user = enrUser.getNom();
+                    name = enrUser.getNom();
+                    outside = false;
                 } else {
-                    details.user = "o."+userDAO.loadUserOutside(enrPhoto.getAlbum().getId()).getNom() +".o";
+                    name = userDAO.loadUserOutside(enrPhoto.getAlbum().getId()).getNom();
+                    outside = true;
                 }
+                details.user = new XmlPhotoAlbumUser(name, outside);
             }
             photo.details = details ;
             photo.count = count ;
-            if (vSession.wantsDetails()) {
-                photo.exif = photoUtil.getXmlExif(enrPhoto) ;
-            }
+            
+            photo.exif = photoUtil.getXmlExif(enrPhoto) ;
+            
             output.photo.add(photo);
             current = false;
             count++;

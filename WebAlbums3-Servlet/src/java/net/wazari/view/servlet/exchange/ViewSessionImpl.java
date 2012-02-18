@@ -352,15 +352,6 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public boolean wantsDetails() {
-        Boolean val = getSessionObject("details", Boolean.class);
-        if (val == null) {
-            val = false;
-        }
-        return val;
-    }
-
-    @Override
     public Mode getMode() {
         return getEnum("mode", Mode.class);
     }

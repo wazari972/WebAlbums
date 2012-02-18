@@ -1,5 +1,3 @@
-
-
 function loadMaps() {
     var script = document.createElement("script");
     script.setAttribute("src", "http://maps.google.com/maps/api/js?sensor=false&callback=loadGoogleMapWrapper");
@@ -14,45 +12,9 @@ function loadGoogleMapWrapper() {
     }
 }
 
-
-function pleaseConfirm(form) {
-    if (confirm("Really ?")) {
-        document.getElementById(form).submit() ;
-    }
-}
-
-function updateAffichage(option) {
-    if (option == 'edition') {
-        callURL('Other/Display?action=NEXT_EDITION');
-    } else if (option == 'maps') {
-        alert("not implemented");
-    } else if (option == 'details') {
-        callURL('Other/Display?action=SWAP_DETAILS');
-    } else {
-        alert("Unknown option...");
-    }
-    window.location.reload();
-}
-
-function loadCloud() {
-    loadExernals('cloudLoader', 'Tags?special=CLOUD', 'cloud', prepareCloudTooltips) ;
-}
-
 function callURL(url) {
     $.get(url);
 }
-
-
-var emptyXsl = null ;
-function prepareEmptyXSL() {
-    $.ajax({
-      url:"static/Empty.xsl",
-      success:function(html){emptyXsl = html;},
-      async:false
-     });
-
-}
-prepareEmptyXSL() ;
 
 
 function loadExernals(btId, url, divId, callback, async) {
@@ -72,12 +34,25 @@ function loadExernals(btId, url, divId, callback, async) {
 }
 
 
+var emptyXsl = null ;
+function prepareEmptyXSL() {
+    $.ajax({
+      url:"static/Empty.xsl",
+      success:function(html){emptyXsl = html;},
+      async:false
+     });
+
+}
+
 function loadExernalsBottomEnd(data, divId, callback) {
     var xml_doc = data;
 
     var div = document.getElementById (divId);
-    if (div == null) return ;
-
+    if (div == null) {
+        alert("div "+divId+" not found.")
+        return
+    }
+    
     // Use object detection to find out if we have
     // Firefox/Mozilla/Opera or IE XSLT support.
     if (typeof XSLTProcessor != "undefined") {
@@ -92,53 +67,32 @@ function loadExernalsBottomEnd(data, divId, callback) {
     } else {
         div.innerHTML = xhr_object_XML.responseText ;
     }
-
+    
     $(div).fadeIn() ;
     if (typeof enableSinglePage == 'function')
         enableSinglePage() ;
     else
         alert("no single page")
+    
     if (callback != undefined) callback() ;
 }
 
-function updateFullImage(id) {
-    var img = document.getElementById("largeImg");
-    img.src = "Images?id="+id+"&mode=GRAND" ;
-}
-
-function addLoadEvent(func) {
-    var oldonload = window.onload;
-    if (typeof window.onload != 'function') {
-        window.onload = func;
-    } else {
-        window.onload = function() {
-            if (oldonload) {
-                oldonload();
-            }
-            func();
-        }
-    }
-}
 function updateBackground(id) {
-    alert(id)
     if (document.body){
         document.body.style.backgroundImage = "url(Images?id="+id+"&mode=SHRINK&width=1280)"
     }
 }
-function prepareTagsTooltipsDiv(content) {
-    prepareTooltipsDiv(content, "Tags") ;
-}
-function prepareAlbumsTooltipsDiv(content) {
-    prepareTooltipsDiv(content, "Albums") ;
+
+
+callbacks = []
+function add_callback (hook, func) {
+    var original = callbacks[hook];
+    if (!original)
+        original = function(){}
+    
+    callbacks[hook] = function (x) { return func(original(x)); }
 }
 
-function prepareTooltipsDiv(content, what) {
-    var targetEl = document.getElementById(content.attr('id')) ;
-    if (targetEl.innerHTML == "" || targetEl.innerHTML == null) {
-        loadExernals(null, what+"?special=ABOUT&id="+content.attr('rel'), content.attr('id'), null, false) ;
-    }
-}
-
-function prepareCloudTooltips() {
-    $(".cloud-tag").ezpz_tooltip({stayOnContent: true,beforeShow: prepareTagsTooltipsDiv});
-}
+$(function() {
+    prepareEmptyXSL() ;
+})

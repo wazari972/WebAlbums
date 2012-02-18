@@ -137,6 +137,16 @@
   </xsl:template>
 
   <xsl:template match="/webAlbums/tags/cloud">
+      <link rel="stylesheet" type="text/css" href="static/scripts/treemenu/simpletree.css" />
+      <h3>Nuage de tags </h3>
+      <ul>
+          <li><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></li>
+          <li><hl/></li>
+          <ul id="cloudTree" class="treeview">
+            <xsl:apply-templates select="tag"/>
+          </ul>
+      </ul>
+      <script type="text/javascript" src="static/scripts/Empty.js"/>
       <script type="text/javascript" src="static/scripts/treemenu/simpletreemenu.js">
             /***********************************************
             * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -144,19 +154,6 @@
             * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
             * (http://www.dynamicdrive.com/dynamicindex1/navigate1.htm)
             ***********************************************/
-      </script>
-      <link rel="stylesheet" type="text/css" href="static/scripts/treemenu/simpletree.css" />
-      <h3>Nuage de tags </h3>
-      <ul>
-          <li><a href="javascript:ddtreemenu.flatten('cloudTree', 'expand')">Expand All</a>
-          | <a href="javascript:ddtreemenu.flatten('cloudTree', 'contract')">Contact All</a></li>
-
-          <ul id="cloudTree" class="treeview">
-            <xsl:apply-templates select="tag"/>
-          </ul>
-      </ul>
-      <script type="text/javascript">
-        ddtreemenu.createTree("cloudTree", false)
       </script>
   </xsl:template>
 
@@ -333,8 +330,10 @@ Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of
   <xsl:template match="display">
     <html style="margin: 0;padding: 0;height: 100%">
       <body style="margin: 0;padding: 0;height: 100%">
+        <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
 	<script type="text/javascript" src="static/scripts/tools.js"/>	  
+        <script type="text/javascript" src="static/scripts/Empty.js"/>
 	<div style="overflow:auto;">
 	  <table>
 	    <tr>
@@ -394,14 +393,10 @@ Tags?
   <xsl:include href="Common.xsl"/>
   <xsl:template match="photo">
     <td>
-      <a href="#">
-	<xsl:attribute name="onClick">
-	  javascript:updateFullImage('<xsl:value-of select="details/photoId"/>')
-	</xsl:attribute>
+      <a href="#" class="visio_img">
+	<xsl:attribute name="rel"><xsl:value-of select="details/photoId"/></xsl:attribute>
 	<img height="200px">
-	  <xsl:attribute name="SRC">
-	    Images?id=<xsl:value-of select="details/photoId"/>&amp;mode=PETIT
-	  </xsl:attribute>
+	  <xsl:attribute name="src">Images?id=<xsl:value-of select="details/photoId"/>&amp;mode=PETIT</xsl:attribute>
 	  <xsl:attribute name="onmouseout">
 	    UnTip()
 	  </xsl:attribute>

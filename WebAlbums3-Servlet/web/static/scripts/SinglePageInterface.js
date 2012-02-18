@@ -1,6 +1,4 @@
-var singlePage_cache ={
-    "Choix": ""
-} ;
+var singlePage_cache = {"Choix": ""} ;
 var ANCHOR_PREFIX = "#pg=" ;
 
 var inPlaceSinglePage = null;
@@ -18,7 +16,6 @@ function prepareDisplayXSL() {
     });
 
 }
-prepareDisplayXSL() ;
 
 function singlePageCached(url) {
     var cache = singlePage_cache[url] != undefined ;
@@ -131,16 +128,6 @@ function loadSinglePage(url, dont_scroll) {
     });
 }
 
-function add_singlePageCallback(fct) {
-    old_cp = singlePageCallback 
-    singlePageCallback = function(){
-        old_cp()
-        fct()
-    }
-}
-
-singlePageCallback = function(){}
-
 function loadSinglePageBottomEnd(data, dont_scroll) {
     var xml_doc = data;
     
@@ -178,7 +165,9 @@ function loadSinglePageBottomEnd(data, dont_scroll) {
     } else {
         $(window).scrollTop(0) ;
     }
-    singlePageCallback()
+    
+    if (callbacks["SinglePage"] != undefined)
+        callbacks["SinglePage"]()
 }
 
 function checkSinglePageAnchor() {
@@ -234,11 +223,14 @@ function enableSinglePage() {
         }) ;
     });
 }
+function init_singlepage() {
+    prepareDisplayXSL() ;
+    enableSinglePage() ;
+    loadBookmarkedSinglePage() ;
+}
 
-enableSinglePage() ;
-loadBookmarkedSinglePage() ;
 
-
-$().ready(function(){
-   setInterval("checkSinglePageAnchor()", 500);
+$(function(){
+    init_singlepage()
+    setInterval(checkSinglePageAnchor, 500);
 });

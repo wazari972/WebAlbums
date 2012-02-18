@@ -8,7 +8,6 @@ function selectAll() {
     else bt.attr('value',"Toutes");
     select = !select ;
 }
-$("#massedit_selectall").click(selectAll)
 
 function validMass() {
     var selected = false ;
@@ -45,3 +44,12 @@ function validMass() {
     }
     document.forms[0].submit()
 }
+
+function init_mass() {
+    $("#valid_mass").click(validMass)
+    $("#massedit_selectall").click(selectAll)
+}
+
+$(function() {
+    init_mass()
+})

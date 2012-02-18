@@ -1,7 +1,3 @@
-
-addLoadEvent(loadMaps());
-
-
 var geocoder;
 var map;
 var markersArray = [];
@@ -79,7 +75,6 @@ function codeAddress(address) {
 function user_submit() {
     codeAddress(document.getElementById('newTag').value) ;
 }
-$("#btGoto").bind("click", user_submit) ;
 
 function updateLocation(lat, lng) {
     $("#latID").val(lat) ;
@@ -97,47 +92,61 @@ function checkValidity(listId, validateBtId) {
     }
 }
 
+function pleaseConfirm(form) {
+    if (confirm("Really ?")) {
+        document.getElementById(form).submit() ;
+    }
+}
 
-$("#lstModGeo").change(function () {
+function init_buttons() {
+    $("#lstModGeo").change(function () {
+        checkValidity("lstModGeo", "valModGeo")
+    }) ;
     checkValidity("lstModGeo", "valModGeo")
-}) ;
-checkValidity("lstModGeo", "valModGeo")
 
-$("#lstNewTag").change(function () {
+    $("#lstNewTag").change(function () {
+        checkValidity("lstNewTag", "valNewTag")
+    }) ;
     checkValidity("lstNewTag", "valNewTag")
-}) ;
-checkValidity("lstNewTag", "valNewTag")
 
-$("#lstModTag").change(function () {
+    $("#lstModTag").change(function () {
+        checkValidity("lstModTag", "valModTag")
+    }) ;
     checkValidity("lstModTag", "valModTag")
-}) ;
-checkValidity("lstModTag", "valModTag")
 
-$("#lstParentTag").change(function () {
+    $("#lstParentTag").change(function () {
+        checkValidity("lstParentTag", "valLinkTag")
+    }) ;
     checkValidity("lstParentTag", "valLinkTag")
-}) ;
-checkValidity("lstParentTag", "valLinkTag")
 
-$("#lstModVis").change(function () {
+    $("#lstModVis").change(function () {
+        checkValidity("lstModVis", "valModVis")
+    }) ;
     checkValidity("lstModVis", "valModVis")
-}) ;
-checkValidity("lstModVis", "valModVis")
 
-$("#lstDelTag").change(function () {
+    $("#lstDelTag").change(function () {
+        checkValidity("lstDelTag", "valDelTag")
+    }) ;
     checkValidity("lstDelTag", "valDelTag")
-}) ;
-checkValidity("lstDelTag", "valDelTag")
 
-$("#importBt").click(function () {
-    pleaseConfirm("formImport")
-}) ;
+    $("#importBt").click(function () {
+        pleaseConfirm("formImport")
+    }) ;
 
-$("#delThemeBt").click(function () {
-    pleaseConfirm("formDelTheme")
-}) ;
+    $("#delThemeBt").click(function () {
+        pleaseConfirm("formDelTheme")
+    }) ;
 
-$("#btKill").click(function () {
-    alert("Bye-bye");
-    $(this).val("Dead!").attr('disabled', 'disabled');
-    callURL("http://"+window.location.hostname+$(this).attr('rel')) ;
-}) ;
+    $("#btKill").click(function () {
+        alert("Bye-bye");
+        $(this).val("Dead!").attr('disabled', 'disabled');
+        callURL("http://"+window.location.hostname+$(this).attr('rel')) ;
+    }) ;
+    
+    $("#btGoto").bind("click", user_submit) ;
+}
+
+$(function() {
+    loadMaps()
+    init_buttons()
+})

@@ -44,10 +44,10 @@
         <script type="text/javascript">
             Shadowbox.init({
                 handleUnsupported:  "remove",
-                modal:     true
+                modal:     true,
+                skipSetup: true
             });
         </script>
-        <script type="text/javascript" src="static/scripts/tools.js"/>
         
 	<div id="header"> 
 	  <div id="logo">
@@ -68,11 +68,7 @@
 	      <div id="right">
 		<h3>Affichage</h3>
 		<ul>
-		  <li><a href="javascript:updateAffichage('maps')"  title=""><xsl:value-of select="/webAlbums/affichage/maps" /></a></li>
-		  <li><a href="javascript:updateAffichage('details');" title=""><xsl:choose>
-			<xsl:when test="/webAlbums/affichage/@details = 'false'">Sans Détails</xsl:when>
-			<xsl:when test="not(/webAlbums/affichage/@details = 'false')">Avec Détails</xsl:when>
-		      </xsl:choose> </a></li>
+		  <li>Exif: <a id="mode_details" title="">not set</a></li>
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                         <li>Mode: <a id="mode_edition" title="">not set</a></li>
                     </xsl:if>
@@ -80,8 +76,8 @@
                   
                   <h3>Qualité: </h3>
                   <ul>
-                  <li><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/><img src="static/images/star.off.png"/> (all)</li>
-                  <li>Only ? <input type="checkbox"/></li>
+                  <li><span id="qos_stars"/></li>
+                  <li>Only ? <input id="qos_stars_only" value="1" type="checkbox"/></li>
                   </ul>
 		  
                   
@@ -102,8 +98,6 @@
                         <li>
                             <a href="Database" rel="singlepage[no]" title="Database">Database</a>
                         </li>
-                        <li>Mode: <a id="mode_edition" title="">not set</a></li>
-                        <li>Massedit <a id="mode_massedit" title="">not set</a></li>
                     </ul>
                 </xsl:if>
 		<div id="cloud" />
@@ -128,6 +122,7 @@
 		<xsl:apply-templates select="/webAlbums/*/page"/>
 		<xsl:call-template name="print_return_link" />
                 
+                <script type="text/javascript" src="static/scripts/tools.js"/>
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
                 <script type="text/javascript" src="static/scripts/Photos.js"></script>
                 </xsl:if>

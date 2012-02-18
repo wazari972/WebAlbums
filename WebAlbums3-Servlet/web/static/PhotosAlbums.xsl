@@ -40,7 +40,7 @@
     </xsl:template>
     
   <xsl:template match="details">
-          <xsl:if test="../exif">
+    <xsl:if test="../exif">
       <span class="exif_tooltip">
         <xsl:attribute name="id">exif-content-<xsl:value-of select="photoId" /></xsl:attribute>
         <xsl:apply-templates select="../exif" />
@@ -64,7 +64,8 @@
                 </xsl:if>
               </xsl:attribute>
               <img class="photo">
-                <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId" /></xsl:attribute>
+                  <!-- CHANGE HERE-->
+                <xsl:attribute name="id">xif-target-<xsl:value-of select="photoId" /></xsl:attribute>
                 <xsl:attribute name="alt">
                   <xsl:value-of select="title" />
                 </xsl:attribute>
@@ -259,7 +260,9 @@ Carnets?action=EDIT
           <xsl:value-of select="."/><xsl:apply-templates select="../userInside"/>
         </xsl:if>
         <xsl:if test="/webAlbums/photos and not(@album)">
+          <xsl:if test="@outside = 'true'">[</xsl:if>
           <xsl:value-of select="."/>
+          <xsl:if test="@outside  = 'true'">]</xsl:if>
         </xsl:if>
         <xsl:if test="/webAlbums/tags and @album">
           [<xsl:value-of select="."/>]

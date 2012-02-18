@@ -14,13 +14,14 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author kevin
  */
+
 @XmlRootElement
 public class XmlDetails {
     public Integer photoId;
     public List<String> userInside;
     public String description;
     public Integer albumId;
-    public String user;
+    public XmlPhotoAlbumUser user;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
     @XmlAttribute

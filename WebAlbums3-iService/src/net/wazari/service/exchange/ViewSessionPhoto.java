@@ -63,8 +63,6 @@ public interface ViewSessionPhoto extends ViewSession {
 
         ViewSessionPhotoDisplayMassEdit getMassEdit();
 
-        boolean wantsDetails();
-
         Integer getPage();
     }
 

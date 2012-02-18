@@ -500,11 +500,11 @@ exists or setup the property manually. For example like this:
         <basename file="${reference.WebAlbums3-Commons.jar}" property="manifest.reference.WebAlbums3-Commons.jar"/>
         <basename file="${reference.WebAlbums3-Plugins.jar}" property="manifest.reference.WebAlbums3-Plugins.jar"/>
         <basename file="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" property="manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar"/>
-        <basename file="${file.reference.CP-DB-dbunit-2.4.5.jar}" property="manifest.file.reference.CP-DB-dbunit-2.4.5.jar"/>
         <basename file="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" property="manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar"/>
         <basename file="${file.reference.CP-Perf-perf4j-0.9.13.jar}" property="manifest.file.reference.CP-Perf-perf4j-0.9.13.jar"/>
         <basename file="${file.reference.RT-Log-logback-core-0.9.24.jar}" property="manifest.file.reference.RT-Log-logback-core-0.9.24.jar"/>
         <basename file="${file.reference.RT-Log-logback-classic-0.9.24.jar}" property="manifest.file.reference.RT-Log-logback-classic-0.9.24.jar"/>
+        <basename file="${file.reference.CP-DB-dbunit-2.4.5.jar}" property="manifest.file.reference.CP-DB-dbunit-2.4.5.jar"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
             <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.file.reference.CP-Apache-commos-lang.2.5.jar}"/>
@@ -513,11 +513,11 @@ exists or setup the property manually. For example like this:
             <attribute name="jar-4-Extension-Name" value="${manifest.reference.WebAlbums3-Commons.jar}"/>
             <attribute name="jar-5-Extension-Name" value="${manifest.reference.WebAlbums3-Plugins.jar}"/>
             <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar}"/>
-            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.CP-DB-dbunit-2.4.5.jar}"/>
-            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}"/>
-            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.CP-Perf-perf4j-0.9.13.jar}"/>
-            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.RT-Log-logback-core-0.9.24.jar}"/>
-            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.RT-Log-logback-classic-0.9.24.jar}"/>
+            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}"/>
+            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.CP-Perf-perf4j-0.9.13.jar}"/>
+            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.RT-Log-logback-core-0.9.24.jar}"/>
+            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.RT-Log-logback-classic-0.9.24.jar}"/>
+            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.CP-DB-dbunit-2.4.5.jar}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
@@ -527,11 +527,11 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Plugins.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.RT-Log-logback-core-0.9.24.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.RT-Log-logback-classic-0.9.24.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

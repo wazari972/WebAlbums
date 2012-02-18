@@ -44,6 +44,7 @@ import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
 import net.wazari.service.exchange.xml.carnet.XmlCarnetsDisplay;
 import net.wazari.service.exchange.xml.carnet.XmlCarnetsTop;
 import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.util.system.FilesFinder;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -163,7 +164,7 @@ public class CarnetBean implements CarnetLocal {
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager()) {
                 if (inEditionMode != EditMode.VISITE) {
-                    details.user = enrCarnet.getDroit().getNom();
+                    details.user = new XmlPhotoAlbumUser(enrCarnet.getDroit().getNom(), null);
                 }
             }
             carnet.details = details ;

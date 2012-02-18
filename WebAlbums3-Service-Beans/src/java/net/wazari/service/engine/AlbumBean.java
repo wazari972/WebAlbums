@@ -47,6 +47,7 @@ import net.wazari.service.exchange.xml.album.XmlAlbumTop;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.util.system.FilesFinder;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -168,7 +169,7 @@ public class AlbumBean implements AlbumLocal {
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager() && inEditionMode != EditMode.VISITE) {
-                details.user = enrAlbum.getDroit().getNom();
+                details.user = new XmlPhotoAlbumUser(enrAlbum.getDroit().getNom(), null);
                 details.userInside = new LinkedList<String>() ;
                 for (Utilisateur user : userDAO.loadUserInside(enrAlbum.getId())) {
                     details.userInside.add(user.getNom()) ;

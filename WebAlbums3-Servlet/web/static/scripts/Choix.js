@@ -1,42 +1,3 @@
-function loadPersons() {
-    loadExernals('personsLoader', 'Tags?special=PERSONS', 'persons') ;
-}
-
-function loadPlaces() {
-    loadExernals('placesLoader', 'Tags?special=PLACES', 'places') ;
-}
-
-function loadAlbums() {
-    loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
-}
-
-function loadCarnets() {
-    loadExernals('carnetsLoader', 'Carnets?special=TOP5', 'carnets') ;
-}
-
-function loadYears() {
-    loadExernals(null, 'Albums?special=YEARS', 'years') ;
-}
-
-function loadSelect() {
-    loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
-}
-
-function loadRandPict() {
-    loadExernals(null, 'Photos?special=RANDOM', 'randPict') ;
-}
-
-function showTags() {
-    $("#tagShower").fadeOut() ;
-    $("#tags").fadeIn() ;
-}
-
-function preloadGoogleMap() {
-    $("#googleMapLoader").fadeOut() ;
-    $("#mapChoix") ;
-    loadMaps();
-}
-
 function pointToContent(point) {
     return "<div class='gmap_content'>"
           +"  <h1><a href='Tags?tagAsked="+point.id+"'>"+point.name+"</a></h1>\n"
@@ -63,8 +24,6 @@ function pointToMarker(point, imageBounds, mymap, markers) {
     markers.push(M);
 }
 
-$.getScript("static/scripts/google-maps-utility-library-v3/markerclusterer.js")
-
 function putMarkersOnMapSimple (map, markers) {
       $.each(markers, function(key, marker) {
         marker.setMap(map)
@@ -74,8 +33,12 @@ function putMarkersOnMapSimple (map, markers) {
 function putMarkersOnMapGrouped (map, markers) {
       new MarkerClusterer(map, markers)
 }
-putMarkersOnMap = putMarkersOnMapSimple
-//putMarkersOnMap = putMarkersOnMapGrouped
+
+function init_maps() {
+    $.getScript("static/scripts/google-maps-utility-library-v3/markerclusterer.js")
+    putMarkersOnMap = putMarkersOnMapSimple
+    //putMarkersOnMap = putMarkersOnMapGrouped
+}
 
 function loadGoogleMap() {
     var imageBounds = new google.maps.LatLngBounds();
@@ -119,52 +82,64 @@ function trimAlbums(min, max, name) {
 
 }
 
-var NOW = new Date().getTime() ;
-var sliderOption = {
-  range: true,
-  min: 0,
-  max: NOW,
-  step: 100000000,
-  slide: function(event, ui) {
-      $("#fromDate").text(printDate(ui.values[0]));
-      $("#toDate").text(printDate(ui.values[1]));
-      trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
-  }
-} ;
+function init_side() {
+    var NOW = new Date().getTime() ;
+    var sliderOption = {
+      range: true,
+      min: 0,
+      max: NOW,
+      step: 100000000,
+      slide: function(event, ui) {
+          $("#fromDate").text(printDate(ui.values[0]));
+          $("#toDate").text(printDate(ui.values[1]));
+          trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
+      }
+    } ;
+}
 
-$("#albumsLoader").click(function () {
-    loadAlbums();
-}) ;
+function init_loader() {
+    $("#albumsLoader").click(function () {
+        loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
+    }) ;
 
 
-$("#carnetsLoader").click(function () {
-    loadCarnets();
-}) ;
+    $("#carnetsLoader").click(function () {
+        loadExernals('carnetsLoader', 'Carnets?special=TOP5', 'carnets') ;
+    }) ;
 
-$("#personsLoader").click(function () {
-    loadPersons();
-}) ;
+    $("#personsLoader").click(function () {
+        loadExernals('personsLoader', 'Tags?special=PERSONS', 'persons') ;
+    }) ;
 
-$("#placesLoader").click(function () {
-    loadPlaces();
-}) ;
+    $("#placesLoader").click(function () {
+        loadExernals('placesLoader', 'Tags?special=PLACES', 'places') ;
+    }) ;
 
-$("#tagShower").click(function () {
-    showTags();
-}) ;
+    $("#tagShower").click(function () {
+        $("#tagShower").fadeOut() ;
+        $("#tags").fadeIn() ;
+    }) ;
 
-$("#randPictLoader").click(function () {
-    loadRandPict();
-}) ;
+    $("#randPictLoader").click(function () {
+        loadExernals(null, 'Photos?special=RANDOM', 'randPict') ;
+    }) ;
 
-$("#yearsLoader").click(function () {
-    loadYears();
-}) ;
+    $("#yearsLoader").click(function () {
+        loadExernals(null, 'Albums?special=YEARS', 'years') ;
+    }) ;
 
-$("#selectLoader").click(function () {
-    loadSelect();
-}) ;
+    $("#selectLoader").click(function () {
+        loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
+    }) ;
 
-$("#googleMapLoader").click(function () {
-    preloadGoogleMap();
-}) ;
+    $("#googleMapLoader").click(function () {
+        $("#googleMapLoader").fadeOut() ;
+        $("#mapChoix") ;
+        loadMaps();
+    }) ;
+}
+
+$(function() {
+    init_maps()
+    init_loader()
+})

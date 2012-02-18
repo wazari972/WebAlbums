@@ -38,7 +38,8 @@
   </xsl:template>
 
   <xsl:template match="photo">
-    <div class="item">
+    <div class="item photo_item">
+      <xsl:attribute name="rel"><xsl:value-of select="details/@stars" /></xsl:attribute>
       <div class="body">
 	<a>
             <xsl:attribute name="id">anchor_<xsl:value-of select="details/photoId" /></xsl:attribute>
@@ -102,10 +103,9 @@
 	    </xsl:if>
 	    <tr><td>&#160;</td></tr>
 	    <tr>
-	      <td colspan='3'><center><input type='button' onClick='javascript:validMass()' value='Valider' /></center></td>
+	      <td colspan='3'><center><input type='button' id="valid_mass" value='Valider' /></center></td>
 	    </tr>
 	  </table>
-          <div class="massedit_toggle">Massedit</div>
 	</div>
       </div>
     </xsl:if>

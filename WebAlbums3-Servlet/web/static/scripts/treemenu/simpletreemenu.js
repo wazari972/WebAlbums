@@ -133,3 +133,8 @@ ddtreemenu.dotask=function(target, functionref, tasktype){ //assign a function t
     else if (target.attachEvent)
         target.attachEvent(tasktype, functionref)
 }
+
+/*****************************/
+
+if (callbacks["treemenu"] != undefined)
+    callbacks["treemenu"]()

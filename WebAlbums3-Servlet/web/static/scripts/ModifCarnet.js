@@ -1,11 +1,13 @@
-$("#carnetDate").change(function () {
-    //check validity of $(this).val()
-}) ;
+function init_buttons() {
+    $("#carnetDate").change(function () {
+        //check validity of $(this).val()
+    }) ;
 
 
-$("#carnetRepr").change(function () {
-    $("#carnetReprImg").attr("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");
-}) ;
+    $("#carnetRepr").change(function () {
+        $("#carnetReprImg").attr("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");
+    }) ;
+}
 
 function beginConvert() {
     $("#carnetPhoto").val("")
@@ -33,7 +35,7 @@ function convertLink(id, url, title, link_text) {
     return result
 }
 
-(function () {
+function init_markdown_edit() {
     var help = function () { alert("Do you need help?"); }
 
     var converter = Markdown.getSanitizingConverter();
@@ -50,5 +52,10 @@ function convertLink(id, url, title, link_text) {
     
     var editor = new Markdown.Editor(converter, "", { handler: help });
     editor.run();
-})();
+}
+
+$(function() {
+    init_buttons()
+    init_markdown_edit()
+})
 
