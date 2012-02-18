@@ -39,7 +39,8 @@ public class ProcessCallbackImpl implements ProcessCallback {
     }
 
     public void exec(String[] cmd) {
-        execPS(cmd);
+        //execPS(cmd);
+        execWaitFor(cmd);
     }
 
     public int execWaitFor(String[] cmd) {

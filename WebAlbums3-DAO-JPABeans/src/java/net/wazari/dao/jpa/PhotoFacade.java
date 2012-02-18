@@ -91,10 +91,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
         Root<JPAPhoto> p = cq.from(JPAPhoto.class) ;
-        cq.where(cb.and(
-                cb.equal(p.get(JPAPhoto_.album), album)),
-                webDAO.getRestrictionToCurrentTheme(session, 
-                                  p.get(JPAPhoto_.album).get(JPAAlbum_.theme)));
+        cq.where(cb.equal(p.get(JPAPhoto_.album), album));
         webDAO.setOrder(cq, cb, order, p.get(JPAPhoto_.path)) ;
 
         Query q = em.createQuery(cq) ;

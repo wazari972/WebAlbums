@@ -123,7 +123,7 @@ public class SystemTools {
         }
         Importer util = getWrapper("image", null, Importer.Capability.FULLSCREEN_MULTIPLE);
         if (util == null) {
-            log.warn("No Importer plugin available ...");
+            log.warn("No plugin available for capability FULLSCREEN_MULTIPLE ... ");
             return false;
         }
         SubsetOf<Photo> lstPhoto;

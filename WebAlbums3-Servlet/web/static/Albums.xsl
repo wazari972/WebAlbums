@@ -63,16 +63,16 @@ Photos?albmCount=<xsl:value-of select="@count" />
                     </a>
                     <xsl:if test="not(/webAlbums/affichage/@remote)">
                         &#160;
-                        <a class='fullscreen'
-                           href="#">
+                        <img src="static/images/out.png" height="30px"
+                          class='fullscreen'>
                           <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
                           <xsl:attribute name="rel">
 Photos?album=<xsl:value-of select="@id" />
 &amp;page=<xsl:value-of select="../photoList/page/@current" />
 &amp;special=FULLSCREEN
                           </xsl:attribute>
-                          <img src="static/images/out.png" height="30px"/>
-                        </a>
+                          
+                        </img>
                     </xsl:if>
                     <xsl:if test="/webAlbums/affichage/@edit">
                           &#160;

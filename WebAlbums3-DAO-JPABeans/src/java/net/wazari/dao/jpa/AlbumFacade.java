@@ -168,10 +168,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
             Root<JPAAlbum> albm = cq.from(JPAAlbum.class);
-            cq.where(cb.and(
-                    webDAO.getRestrictionToCurrentTheme(session, 
-                            albm.get(JPAAlbum_.theme)),
-                    cb.equal(albm.get(JPAAlbum_.id), id))) ;
+            cq.where(cb.equal(albm.get(JPAAlbum_.id), id)) ;
             JPAAlbum a = (JPAAlbum) em.createQuery(cq)
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", false)

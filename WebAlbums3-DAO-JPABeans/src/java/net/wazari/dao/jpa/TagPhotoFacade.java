@@ -151,7 +151,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     @Override
     /* Returns all the TagPhoto associated with this Carnet.  */
     public List<TagPhoto> queryByCarnet(Carnet enrCarnet) {
-        if (enrCarnet.getPhotoList().isEmpty())
+        if (enrCarnet.getPhotoList() == null 
+                || enrCarnet.getPhotoList().isEmpty())
             return new ArrayList<TagPhoto>(0);
         
         CriteriaBuilder cb = em.getCriteriaBuilder();

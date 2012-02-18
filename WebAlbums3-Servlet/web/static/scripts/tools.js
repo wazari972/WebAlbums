@@ -83,8 +83,11 @@ function updateBackground(id) {
     }
 }
 
-
-callbacks = []
+try {
+    nothing = callbacks
+} catch(e) {
+    callbacks = []
+}
 function add_callback (hook, func) {
     var original = callbacks[hook];
     if (!original)

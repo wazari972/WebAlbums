@@ -533,6 +533,9 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.WebAlbums3-Commons}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
+        <ant antfile="${project.WebAlbums3-Plugins}/nbbuild.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
         <ant antfile="${project.WebAlbums3-iDAO}/nbbuild.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
@@ -542,6 +545,9 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="init" if="dist.ear.dir" name="deps-ear-jar" unless="no.deps">
         <ant antfile="${project.WebAlbums3-Commons}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.WebAlbums3-Plugins}/nbbuild.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.WebAlbums3-iDAO}/nbbuild.xml" inheritall="false" target="jar">
@@ -700,6 +706,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.WebAlbums3-Plugins.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -710,6 +717,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.WebAlbums3-Plugins.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>
@@ -1075,6 +1083,7 @@ exists or setup the property manually. For example like this:
             -->
     <target depends="init" name="deps-clean" unless="no.deps">
         <ant antfile="${project.WebAlbums3-Commons}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.WebAlbums3-Plugins}/nbbuild.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.WebAlbums3-iDAO}/nbbuild.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.WebAlbums3-iService}/build.xml" inheritall="false" target="clean"/>
     </target>

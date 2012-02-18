@@ -20,11 +20,15 @@ function loadCloud() {
     loadExernals('cloudLoader', 'Tags?special=CLOUD', 'cloud', prepareCloudTooltips) ;
 }
 
-function init_common() {
+function init_fullscreen() {
     $(".fullscreen").click(function () {
         callURL($(this).attr('rel').trim()) ;
     }) ;
+}
 
+function init_common() {
+    init_fullscreen()
+    add_callback("SinglePage", init_fullscreen)
     $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
 
     loadCloud()
@@ -164,7 +168,6 @@ function toogle_details() {
 function refresh_details() {
     details = get_details()
     set_details(details)
-    //look for <!-- CHANGE HERE--> in PhotoAlbums
     if (details == 1) {
         $(".exif_tooltip").each(function(){
             //SHOW
@@ -172,7 +175,7 @@ function refresh_details() {
         $("#mode_details").text("AVEC")
     } else {
         $(".exif_tooltip").each(function(){
-            //HIDE
+            //alert($(this).remove())
         })
         $("#mode_details").text("SANS")
     }

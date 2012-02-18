@@ -35,6 +35,10 @@
                     <file>${file.reference.CP-Perf-perf4j-0.9.13.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
+                <library dirs="200">
+                    <file>${reference.WebAlbums3-Plugins.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
             <source-roots>
@@ -49,6 +53,14 @@
                 <foreign-project>WebAlbums3-Commons</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>WebAlbums3-Plugins</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>nbbuild.xml</script>
                 <target>jar</target>
                 <clean-target>clean</clean-target>
                 <id>jar</id>

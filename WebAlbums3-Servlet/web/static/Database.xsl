@@ -84,8 +84,8 @@
           </div>
           <div class="content">
               <h1>Plugins</h1>
-              <p><a rel="singlepage[no]" href="Database?action=PLUGIN_RELOAD">Recharger</a></p>
-              <p><a rel="singlepage[no]" href="Database?action=PLUGIN">Lister</a></p>
+              <p><a rel="singlepage[no]" href="Database?action=RELOAD_PLUGINS">Recharger</a></p>
+              <p><a rel="singlepage[no]" href="Database?action=PLUGINS">Lister</a></p>
               <xsl:apply-templates select="plugins"/>
           </div>
         </div>

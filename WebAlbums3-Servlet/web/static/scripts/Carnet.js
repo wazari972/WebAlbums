@@ -19,9 +19,10 @@ function init_markdown() {
     });
     converter.hooks.chain("convertImage", convertImage);
     converter.hooks.chain("convertLink", convertLink);
-
-    converted = converter.makeHtml($("#carnet_text").val())
-    $("#carnet_text").val(converted)
+    converted = converter.makeHtml($("#carnet_text").text())
+    
+    //TODO: rewrite with JQuery
+    document.getElementById("carnet_text").innerHTML = converted
 }
 
 $(function() {

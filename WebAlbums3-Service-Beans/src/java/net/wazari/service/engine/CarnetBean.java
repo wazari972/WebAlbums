@@ -148,10 +148,11 @@ public class CarnetBean implements CarnetLocal {
             if (carnetId != null) {
                 carnet.text = StringUtil.escapeXML(enrCarnet.getText());
             }
-            carnet.photo = new ArrayList<Integer>(enrCarnet.getPhotoList().size());
-            for (Photo p : enrCarnet.getPhotoList())
-                carnet.photo.add(p.getId());
-            
+            if (enrCarnet.getPhotoList() != null) {
+                carnet.photo = new ArrayList<Integer>(enrCarnet.getPhotoList().size());
+                for (Photo p : enrCarnet.getPhotoList())
+                    carnet.photo.add(p.getId());
+            }
             XmlDetails details = new XmlDetails();
 
             details.photoId = enrCarnet.getPicture();

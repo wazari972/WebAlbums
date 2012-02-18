@@ -5,6 +5,10 @@
 
 /** **** **/
 
+.wmd-preview {
+    height:500px;
+    overflow:scroll;
+}
 
  #mapChoix {
     height: 400px;

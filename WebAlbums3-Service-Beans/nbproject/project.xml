@@ -9,7 +9,6 @@
             <included-library dirs="200">reference.WebAlbums3-iService.jar</included-library>
             <included-library dirs="200">reference.WebAlbums3-iDAO.jar</included-library>
             <included-library dirs="200">reference.WebAlbums3-Commons.jar</included-library>
-            <included-library dirs="200">reference.WebAlbums3-Plugins.jar</included-library>
             <included-library dirs="200">file.reference.CP-Log-slf4j-api-1.6.0.jar</included-library>
             <included-library dirs="200">file.reference.CP-EXIF-metadata-extractor-2.3.1.jar</included-library>
             <included-library dirs="200">file.reference.CP-Perf-perf4j-0.9.13.jar</included-library>
@@ -26,14 +25,6 @@
                 <foreign-project>WebAlbums3-Commons</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>nbbuild.xml</script>
-                <target>jar</target>
-                <clean-target>clean</clean-target>
-                <id>jar</id>
-            </reference>
-            <reference>
-                <foreign-project>WebAlbums3-Plugins</foreign-project>
-                <artifact-type>jar</artifact-type>
-                <script>build.xml</script>
                 <target>jar</target>
                 <clean-target>clean</clean-target>
                 <id>jar</id>

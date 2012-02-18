@@ -64,8 +64,7 @@
                 </xsl:if>
               </xsl:attribute>
               <img class="photo">
-                  <!-- CHANGE HERE-->
-                <xsl:attribute name="id">xif-target-<xsl:value-of select="photoId" /></xsl:attribute>
+                <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId" /></xsl:attribute>
                 <xsl:attribute name="alt">
                   <xsl:value-of select="title" />
                 </xsl:attribute>
@@ -113,14 +112,13 @@
                 </xsl:if>
                 <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
                     <xsl:if test="/webAlbums/affichage/remote">
-                        <a href='#'
-                           title="Photo en plein-ecran"
-                           class="fullscreen">
+                        <img alt="Photo en plein-ecran"
+                           class="fullscreen"
+                           src="static/images/out.png" width="30px">
                             <xsl:attribute name="rel">
                                 Images?id=<xsl:value-of select="photoId" />&amp;mode=FULLSCREEN
                             </xsl:attribute>
-                            <img src="static/images/out.png" width="30px"/>
-                        </a>
+                        </img>
                     </xsl:if>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
