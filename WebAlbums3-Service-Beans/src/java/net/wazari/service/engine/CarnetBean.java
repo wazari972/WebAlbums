@@ -185,6 +185,8 @@ public class CarnetBean implements CarnetLocal {
             throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlCarnetSubmit output = new XmlCarnetSubmit();
+        output.valid = false;
+        
         Carnet enrCarnet;
         
         Integer carnetId = vSession.getCarnet();
@@ -232,7 +234,8 @@ public class CarnetBean implements CarnetLocal {
             enrCarnet.setDate(date);
         } catch (Exception ex) {
             log.info("Date incorrect: "+date);
-            output.exception = "Date incorrect: "+date;
+            output.exception = "Date incorrect: '"+date+"', "
+                    + "format attendu: yyyy-MM-dd";
             return output;
         }
         
@@ -241,21 +244,32 @@ public class CarnetBean implements CarnetLocal {
                 Photo enrRepr = photoDAO.find(repr);
                 enrCarnet.setPicture(enrRepr.getId());
                 photos.add(repr);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                log.info("Couldn't find the representative picture: "+repr);
+                output.exception = "Couldn't find the representative picture: "
+                                   +repr;
+                return output;
+            }
         }
         
-        List<Photo> enrPhotos = new ArrayList<Photo>(photos.size());
+        Set<Photo> enrPhotos = new HashSet<Photo>();
         Set<Album> enrAlbums = new HashSet<Album>();
-        for (Integer photo : photos) {
+        for (Integer photoId : photos) {
             try {
-                Photo enrPhoto = photoDAO.find(photo);
+                Photo enrPhoto = photoDAO.find(photoId);
+                
+                enrAlbums.add(enrPhoto.getAlbum()); //NullPointerException
                 enrPhotos.add(enrPhoto);
-                enrAlbums.add(enrPhoto.getAlbum());
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                log.info("Couldn't find one of the pictures: "+photoId);
+                output.exception = "Couldn't find one of the pictures: "
+                                   + photoId;
+                return output;
+            }
         }
         
         if (!enrPhotos.isEmpty())
-            enrCarnet.setPhotoList(enrPhotos);
+            enrCarnet.setPhotoList(new ArrayList(enrPhotos));
         
         if (!enrAlbums.isEmpty())
             enrCarnet.setAlbumList(new ArrayList(enrAlbums));
@@ -266,10 +280,11 @@ public class CarnetBean implements CarnetLocal {
 
             carnetDAO.edit(enrCarnet);
             output.message = "Carnet (" + enrCarnet.getId() + ") correctement mise à jour !";
-        } catch (ConstraintViolationException e) {
+        } catch (Exception e) {
             output.exception = "La mise a jour de (" + enrCarnet.getId() + ") a échouée ... "+e.getMessage();
-            output.valid = false;
+            return output ;
         }
+        output.valid = true;
         stopWatch.stop("Service.treatSUBMIT") ;
         return output ;   
     }

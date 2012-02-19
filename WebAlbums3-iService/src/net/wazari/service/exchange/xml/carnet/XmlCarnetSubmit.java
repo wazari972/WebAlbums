@@ -16,6 +16,7 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
  */
 @XmlRootElement
 public class XmlCarnetSubmit extends XmlInfoException {
+    @XmlTransient
     public boolean valid = true ;
     @XmlTransient
     public Carnet carnet = null;

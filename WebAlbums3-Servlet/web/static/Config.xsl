@@ -244,7 +244,7 @@
 	<span>*</span>
       </div>
       <div class="content">
-	<h1>Changement de visibilité d'un tag</h1>
+	<h1>Chgt de visibilité d'un tag</h1>
 	<div class="body">
 	  <xsl:apply-templates select="modvis"/>
 	  <form action='#modVis' method='POST'>

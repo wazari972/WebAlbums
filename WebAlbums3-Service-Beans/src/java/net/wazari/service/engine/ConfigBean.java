@@ -293,7 +293,7 @@ public class ConfigBean implements ConfigLocal {
         if (enrParentTag != null 
                 && isParentalityAllowed(enrParentTag, enrTag)) {
             enrTag.setParent(enrParentTag);
-            output.message += " avec "+enrParentTag.getNom()+"comme parent." ;
+            output.message += " avec '"+enrParentTag.getNom()+"' comme parent." ;
         }
 
                 

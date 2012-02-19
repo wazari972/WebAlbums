@@ -24,6 +24,8 @@
               <h1>Modification d'un carnet</h1>
           </xsl:if>
 	<div class="body">
+          <xsl:apply-templates select="submit/exception"/>
+          <xsl:apply-templates select="submit/message"/>
 	  <center>
 	    <img id="carnetReprImg">
 	      <xsl:attribute name="src">Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT</xsl:attribute>

@@ -51,9 +51,11 @@ public class Carnets extends HttpServlet{
             //prepare SUBMIT message
             if (action == Action.SUBMIT) {
                 submit = carnetService.treatSUBMIT((ViewSessionCarnetSubmit) vSession);
+                if (submit != null && !submit.valid)
+                    action = Action.EDIT;
             }
 
-            if (action == Action.EDIT || submit != null && !submit.valid) {
+            if (action == Action.EDIT) {
                 output.edit = carnetService.treatEDIT((ViewSessionCarnetEdit) vSession, submit);
             }
         }
