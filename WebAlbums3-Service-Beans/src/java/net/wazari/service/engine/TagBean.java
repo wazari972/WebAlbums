@@ -139,18 +139,13 @@ public class TagBean implements TagLocal {
 
         Tag tag;
         XmlTagCloudEntry xml;
-
-        public PairTagXmlBuilder(Tag tag, XmlTagCloudEntry xml) {
+        List<XmlTagCloudEntry> parentList;
+        
+        public PairTagXmlBuilder(Tag tag, XmlTagCloudEntry xml, 
+                                 List<XmlTagCloudEntry> parentList) {
             this.tag = tag;
             this.xml = xml;
-        }
-
-        public Tag getTag() {
-            return tag;
-        }
-
-        public XmlTagCloudEntry getXml() {
-            return xml;
+            this.parentList = parentList;
         }
     }
     private static final int SIZE_SCALE = 200;
@@ -178,40 +173,41 @@ public class TagBean implements TagLocal {
                 //take the first of the map
                 enrCurrentTag = map.keySet().iterator().next();
             }
-            if (enrCurrentTag.getParent() != null) {
-                //switch to the parent
+            while (enrCurrentTag.getParent() != null) {
+                //switch to the oldest parent
                 enrCurrentTag = enrCurrentTag.getParent();
-                continue;
             }
             XmlTagCloudEntry currentXml = new XmlTagCloudEntry();
-            output.parentList.add(currentXml);
-            enrSonStack.push(new PairTagXmlBuilder(enrCurrentTag, currentXml));
+            enrSonStack.push(new PairTagXmlBuilder(enrCurrentTag, currentXml, 
+                                                   output.parentList));
             while (!enrSonStack.isEmpty()) {
                 PairTagXmlBuilder pair = enrSonStack.pop();
 
                 Long nbElts = map.get(pair.tag);
                 if (nbElts == null) {
+                    // the tag is not in the map, so it has 0 elements in the
+                    // current theme.
                     nbElts = 0L;
+                    // get rid of it if it has no son tags.
                     if (pair.tag.getSonList().isEmpty()) {
                         continue ;
                     }
                 } else {
-                    Object removed = map.remove(pair.tag);
+                    // it's in the map, so remove it, we'll process it right now
+                    map.remove(pair.tag);
 
                 }
-                int size = (int) (SIZE_MIN + ((double) nbElts / max) * SIZE_SCALE);
+                int size = (int)(SIZE_MIN + ((double) nbElts/max) * SIZE_SCALE);
 
+                pair.parentList.add(pair.xml);
                 pair.xml.size = size;
                 pair.xml.nb = nbElts;
                 pair.xml.id = pair.tag.getId();
                 pair.xml.name = pair.tag.getNom();
 
-                if (!pair.tag.getSonList().isEmpty()) {
-                    for (Tag enrSon : pair.tag.getSonList()) {
-                        XmlTagCloudEntry xmlSon = new XmlTagCloudEntry();
-                        pair.xml.tag.add(xmlSon);
-                        enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon));
-                    }
+                for (Tag enrSon : pair.tag.getSonList()) {
+                    XmlTagCloudEntry xmlSon = new XmlTagCloudEntry();
+                    enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon, pair.xml.tag));
                 }
             }
             enrCurrentTag = null;

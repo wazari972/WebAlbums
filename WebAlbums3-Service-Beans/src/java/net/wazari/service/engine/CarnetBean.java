@@ -204,7 +204,8 @@ public class CarnetBean implements CarnetLocal {
             if (finder.deleteCarnet(enrCarnet, vSession.getConfiguration())) {
                 output.message = "Carnet correctement  supprimé !";
             } else {
-                output.exception = "an error occured ...";
+                output.exception = 
+                        "an error occured during the carnet deletion ...";
             }
             return output;
         }
@@ -225,14 +226,14 @@ public class CarnetBean implements CarnetLocal {
         enrCarnet.setText(text);
         enrCarnet.setNom(nom);
         enrCarnet.setDescription(desc);
-        if (date != null) {
-            try {
-                new SimpleDateFormat("yyyy-MM-dd").parse(date);
-                enrCarnet.setDate(date);
-            } catch (ParseException ex) {
-                log.info("Date format incorrect: "+date);
-                output.valid = false;
-            }
+        try {
+            date.substring(0) ; //NullPointerException
+            new SimpleDateFormat("yyyy-MM-dd").parse(date); //ParseException
+            enrCarnet.setDate(date);
+        } catch (Exception ex) {
+            log.info("Date incorrect: "+date);
+            output.exception = "Date incorrect: "+date;
+            return output;
         }
         
         if (repr != null) {

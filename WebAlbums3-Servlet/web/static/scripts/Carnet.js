@@ -13,6 +13,9 @@ function convertLink(id, url, title, link_text) {
 }
 
 function init_markdown() {
+    if (document.getElementById("carnet_text") == null)
+        return
+    
     var converter = Markdown.getSanitizingConverter();
     converter.hooks.chain("plainLinkText", function (url) {
         return "This is a link to " + url.replace(/^https?:\/\//, "");

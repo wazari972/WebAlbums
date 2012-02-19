@@ -27,7 +27,7 @@
   <xsl:template match="album">
     <div class="item">
       <div class="date">
-	<A><xsl:attribute name="name"><xsl:value-of select="@id" /></xsl:attribute></A>
+	<a><xsl:attribute name="id">anchor_<xsl:value-of select="@id" /></xsl:attribute></a>
 	<div><xsl:value-of select="date/month" /></div>
 	<span><xsl:value-of select="date/day" /></span>
       </div>

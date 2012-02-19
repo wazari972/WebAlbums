@@ -72,15 +72,14 @@
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                         <li>Mode: <a id="mode_edition" title="">not set</a></li>
                     </xsl:if>
-                  </ul>
-                  
-                  <h3>Qualité: </h3>
+                    <li>&#160;</li>
+                  <li><h>Qualité: </h>
                   <ul>
                   <li><span id="qos_stars"/></li>
                   <li>Only ? <input id="qos_stars_only" value="1" type="checkbox"/></li>
-                  </ul>
+                  </ul> </li>
+                </ul>
 		  
-                  
 		<h3>Connexion</h3>
 		<ul>
 		  <li><xsl:value-of select="/webAlbums/loginInfo/user" /></li>

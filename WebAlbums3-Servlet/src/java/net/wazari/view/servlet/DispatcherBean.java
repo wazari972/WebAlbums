@@ -239,6 +239,7 @@ public class DispatcherBean {
                             + "<!ENTITY Uuml   \"&#220;\" >"
                             + "<!ENTITY euml   \"&#235;\" >"
                             + "<!ENTITY ocirc  \"&#244;\" >"
+                            + "<!ENTITY icirc  \"&#238;\" >"
                             + "<!ENTITY nbsp   \"&#160;\" >"
                             + "<!ENTITY Agrave \"&#192;\" >"
                             + "<!ENTITY Egrave \"&#200;\" >"

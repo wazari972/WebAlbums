@@ -161,7 +161,7 @@ function loadSinglePageBottomEnd(data, dont_scroll) {
         //nothing to do
     } else if (url.lastIndexOf("#") > -1) {
         anchor = url.substring(url.lastIndexOf("#")+1)
-        if ($("#anchor_"+anchor))
+        if ($("#anchor_"+anchor) && $("#anchor_"+anchor).offset())
             window.scrollTo(0, ($("#anchor_"+anchor).offset().top))
     } else {
         $(window).scrollTop(0) ;

@@ -42,16 +42,19 @@
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="nom">Nom:</label>
 	    <input id="nom" type='text' size='40' maxlength='60' name='nom'>
-	      <xsl:attribute name="VALUE"><xsl:value-of select="name" /></xsl:attribute>
+	      <xsl:attribute name="value"><xsl:value-of select="name" /></xsl:attribute>
 	    </input>
 	    <br/>
             <label for="date">Date:</label> 
 	    <input type='text' size='10' name='date' id="carnetDate" maxlength='10'>
-	      <xsl:attribute name="VALUE"><xsl:value-of select="date" /></xsl:attribute>
+	      <xsl:attribute name="value">
+                  <xsl:if test="date"><xsl:value-of select="date" /></xsl:if>
+                  <xsl:if test="not(date)">yyyy-MM-dd</xsl:if>
+              </xsl:attribute>
 	    </input>
             Photo pour représentation: 
             <input type='text' name='carnetRepr' id="carnetRepr" maxlength="4" size="5">
-                <xsl:attribute name="VALUE"><xsl:value-of select="@picture" /></xsl:attribute>
+                <xsl:attribute name="value"><xsl:value-of select="@picture" /></xsl:attribute>
             </input>
             <input type='hidden' name='carnetPhoto' id='carnetPhoto' value = ''/>
             <input type='hidden' name='carnetAlbum' id='carnetAlbum' value = ''/>
