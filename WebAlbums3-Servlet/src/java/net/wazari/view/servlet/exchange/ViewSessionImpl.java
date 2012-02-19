@@ -136,7 +136,12 @@ public class ViewSessionImpl implements
     public Integer getCountAlbm() {
         return getInteger("countAlbm");
     }
-
+    
+    @Override
+    public Integer getNbPerYear() {
+        return getInteger("nbPerYear");
+    }
+    
     @Override
     public Integer getUserAllowed() {
         return getInteger("user");

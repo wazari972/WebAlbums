@@ -38,4 +38,5 @@ public interface ViewSessionAlbum extends ViewSession {
     Integer getCount();
     Integer getPage() ;
     
+    Integer getNbPerYear();
 }

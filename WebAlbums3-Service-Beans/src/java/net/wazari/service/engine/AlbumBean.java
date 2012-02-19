@@ -261,12 +261,15 @@ public class AlbumBean implements AlbumLocal {
             log.warn("ParseException", ex);
         }
         
-
+        Integer nbPerYear = vSession.getNbPerYear();
+        if (nbPerYear == null)
+            nbPerYear = TOP;
         for (Integer currentYear = lastYear; currentYear >= firstYear; currentYear--) {
             XmlAlbumYear year = new XmlAlbumYear() ;
             year.year = currentYear;
             int i = 0;
-            SubsetOf<Album> albums = albumDAO.queryRandomFromYear(vSession, Restriction.THEME_ONLY, new Bornes(TOP), currentYear.toString()) ;
+            SubsetOf<Album> albums = albumDAO.queryRandomFromYear(vSession, Restriction.THEME_ONLY, 
+                    new Bornes(nbPerYear), currentYear.toString()) ;
             for (Album enrAlbum : albums.subset) {
                 XmlAlbum album = new XmlAlbum();
                 album.id = enrAlbum.getId();
