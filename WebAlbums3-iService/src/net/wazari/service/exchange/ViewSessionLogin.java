@@ -14,26 +14,25 @@ import net.wazari.dao.entity.Utilisateur;
  * @author kevinpouget
  */
 public interface ViewSessionLogin extends ViewSession {
+    void setTheme(Theme enrTheme);
 
-        void setTheme(Theme enrTheme);
+    void setSessionManager(Boolean sessionManager);
 
-        void setDetails(Boolean newValue);
+    void setRootSession(Boolean asThemeManager);
 
-        void setSessionManager(Boolean sessionManager);
+    void setUser(Utilisateur enrUser);
 
-        void setRootSession(Boolean asThemeManager);
+    boolean isAuthenticated();
 
-        void setUser(Utilisateur enrUser);
+    Principal getUserPrincipal();
 
-        boolean isAuthenticated();
+    void login(String user, String passwd);
 
-        Principal getUserPrincipal();
+    void setEditionMode(EditMode editMode);
 
-        void login(String user, String passwd);
+    String getUserName();
 
-        void setEditionMode(EditMode editMode);
+    String getUserPass();
 
-        String getUserName();
-
-        String getUserPass();
-    }
+    Boolean dontRedirect();
+}

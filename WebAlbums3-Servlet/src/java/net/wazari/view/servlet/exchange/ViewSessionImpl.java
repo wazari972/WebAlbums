@@ -161,7 +161,11 @@ public class ViewSessionImpl implements
     public String getUserName() {
         return getString("userName") ;
     }
-
+    
+    @Override
+    public Boolean dontRedirect() {
+        return getBoolean("dontRedirect") ;
+    }
     /** ** **/
     @Override
     public Integer getThemeId() {
@@ -179,19 +183,6 @@ public class ViewSessionImpl implements
     }
 
     /** ** **/
-    @Override
-    public boolean getDetails() {
-        Boolean ret = getSessionObject("details", Boolean.class);
-        if (ret == null) {
-            ret = false;
-        }
-        return ret;
-    }
-
-    @Override
-    public void setDetails(Boolean newValue) {
-        setSessionObject("details", newValue);
-    }
 
     @Override
     public File getTempDir() {

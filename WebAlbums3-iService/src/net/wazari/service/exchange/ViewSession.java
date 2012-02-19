@@ -51,8 +51,6 @@ public interface ViewSession extends ServiceSession {
 
     File getTempDir();
 
-    boolean getDetails();
-
     Configuration getConfiguration();
     
     Integer getThemeId();

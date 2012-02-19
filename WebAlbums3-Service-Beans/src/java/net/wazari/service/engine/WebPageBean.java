@@ -203,17 +203,7 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public XmlAffichage xmlAffichage(ViewSession vSession) {
         XmlAffichage affichage = new XmlAffichage();
-        if (vSession.isSessionManager()) {
-            if (vSession.getEditionMode() == EditMode.EDITION) {
-                affichage.edit = true ;
-                affichage.massedit = true;
-            } else if (vSession.getEditionMode() == EditMode.NORMAL) {
-                affichage.edit = true ;
-            }
-            affichage.edition = vSession.getEditionMode().toString();
-        }
-        affichage.maps = "Sans Carte" ;
-        affichage.details = vSession.getDetails() ;
+
         if (!vSession.getConfiguration().isPathURL() &&
             (vSession.isRootSession() ||
             vSession.getTheme() != null && vSession.getTheme().getBackground() != null)) {

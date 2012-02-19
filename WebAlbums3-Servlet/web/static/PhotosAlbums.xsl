@@ -81,15 +81,16 @@
             </a>
         </div>
         <div class="info">
-            <xsl:apply-templates select="user" />
-            <xsl:if test="/webAlbums/affichage/@massedit and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                <div class="massedit_chk edit">
+            <span>
+            <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
+                <span class="massedit_chk edit">
                     <input type="checkbox" class="massedit_chkbox edit" value="modif">
                         <xsl:attribute name="name">chk<xsl:value-of select="photoId" /></xsl:attribute>
-                    </input><span>&#160;<xsl:value-of select="photoId" /></span>
-                </div>
+                    </input>
+                </span>
             </xsl:if>
-            <xsl:if test="not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
+            &#160;<xsl:value-of select="photoId" /></span>
+            <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
                 <div class="fastedit_bt fastedit_desc_bt edit">
                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                     Descr.
@@ -103,6 +104,7 @@
                     Stars.
                 </div>
             </xsl:if>
+            <xsl:apply-templates select="user" />
             <div class="options">
                 <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
                     <a title="Photo réduite">
@@ -268,6 +270,7 @@ Carnets?action=EDIT
         <xsl:if test="/webAlbums/tags and not(@album)">
          <xsl:value-of select="."/>
         </xsl:if>
+        ||&#160;
     </div>
   </xsl:template>
 

@@ -30,11 +30,11 @@
 
       <xsl:apply-templates select="exception"/>
       <xsl:apply-templates select="message"/>
+      
       <xsl:apply-templates select="page"/>
       <xsl:apply-templates select="photo"/>
-      <xsl:apply-templates select="massEdit"/>
-
       <xsl:apply-templates select="page"/>
+      <xsl:apply-templates select="massEdit"/>
     </form>
   </xsl:template>
 
@@ -55,7 +55,6 @@
   </xsl:template>
 
   <xsl:template match="massEdit">
-      <xsl:if test="/webAlbums/affichage/@massedit">
       <script type='text/javascript' src="static/scripts/MassEdit.js" />
       <div class="item massedit edit" id="massedit_item">
 	<div class="body">
@@ -109,6 +108,5 @@
 	  </table>
 	</div>
       </div>
-    </xsl:if>
   </xsl:template>
 </xsl:stylesheet>

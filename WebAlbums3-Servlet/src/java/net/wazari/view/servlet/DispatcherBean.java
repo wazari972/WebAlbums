@@ -26,7 +26,6 @@ import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.ViewSessionImages;
-import net.wazari.service.exchange.ViewSessionMaint;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.dao.entity.Theme;
@@ -60,7 +59,6 @@ public class DispatcherBean {
     }
     @EJB private Index indexServlet;
     @EJB private Users userServlet;
-    @EJB private Maint maintServlet;
     @EJB private Choix choixServlet;
     @EJB private Albums albumServlet;
     @EJB private Photos photoServlet;
@@ -74,7 +72,7 @@ public class DispatcherBean {
 
     public enum Page {
 
-        PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, MAINT, 
+        PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, 
         DATABASE, CARNET}
 
     public void treat(ServletContext context,
@@ -84,6 +82,10 @@ public class DispatcherBean {
             throws IOException, ServletException {
         Page actualPage = page;
         StopWatch stopWatch = new Slf4JStopWatch(log);
+        log.error("RequestURI="+request.getRequestURI());
+        log.error("RequestURL="+request.getRequestURL());
+        log.error("QueryString="+request.getQueryString());
+        
         request.setCharacterEncoding("UTF-8");
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
@@ -91,8 +93,8 @@ public class DispatcherBean {
             request.logout();
             userService.cleanUpSession((ViewSessionLogin) vSession);
         }
-        if (page != Page.USER && page != Page.MAINT) {
-            log.info("Authenticated the session");
+        if (page != Page.USER) {
+            log.info("Authenticate the session");
             request.authenticate(response);
         }
         log.info("============= <{}> =============", page);
@@ -115,11 +117,6 @@ public class DispatcherBean {
                 break;
             case VOID:
                 output.themes = indexServlet.treatVOID(vSession);
-                break;
-            case MAINT:
-                output.isComplete = true;
-                output.xslFile = "static/Empty.xsl";
-                output.maint = maintServlet.treatMaint((ViewSessionMaint) vSession);
                 break;
             case IMAGE:
                 XmlImage img = imageServlet.treatIMG((ViewSessionImages) vSession);

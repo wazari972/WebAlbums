@@ -31,32 +31,35 @@ public class Users extends HttpServlet {
         XmlLogin output = new XmlLogin();
         try {
             Action action = vSession.getAction();
-            log.info( "Action: {}", action);
+            log.info("Action: {}", action);
             if (Action.LOGIN == action) {
 
                 String userName = vSession.getUserName();
-                log.info( "userName: {}", userName);
+                
                 if (userName == null) {
-                    output.denied = true ;
+                    log.info("userName empty, force login page");
                     output.login = true ;
                     return output;
                 }
 
                 String pass = vSession.getUserPass();
-
+                log.info("try to login: {}", userName);
                 request.login(userName, pass);
                 output.valid = true ;
-                log.info( "authentication");
-                response.sendRedirect("Index");
+                Boolean dontRedirect = vSession.dontRedirect();
+                log.info("authentication valid {}",dontRedirect);
+                if (dontRedirect == null || !dontRedirect)
+                    response.sendRedirect("Index");
+                
                 return null ;
             } else {
                 output.login = true ;
             }
 
         } catch (javax.servlet.ServletException e) {
+            log.info("authentication failed : {}", e.getMessage());
             output.denied = true ;
             output.login = true ;
-
         } 
         return output ;
     }

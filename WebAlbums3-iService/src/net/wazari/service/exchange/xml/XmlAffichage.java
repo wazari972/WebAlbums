@@ -16,15 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlAffichage {
     @XmlAttribute
-    public Boolean edit;
-    @XmlAttribute
-    public Boolean massedit;
-    @XmlAttribute
-    public String edition;
-    public String maps;
-    @XmlAttribute
-    public Boolean details;
-    @XmlAttribute
     public Boolean background;
     @XmlAttribute
     public Boolean remote;

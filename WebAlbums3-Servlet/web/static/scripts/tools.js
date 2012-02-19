@@ -13,7 +13,8 @@ function loadGoogleMapWrapper() {
 }
 
 function callURL(url) {
-    $.get(url);
+    alert(url)
+    return $.get(url);
 }
 
 
