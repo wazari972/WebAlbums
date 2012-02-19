@@ -231,64 +231,72 @@ public class ConfigBean implements ConfigLocal {
             output.exception = "Pas de type selectionné ...";
             return output ;
         }
-
      
-        if (nom != null && !nom.isEmpty()) {
-            String msg = "";
-            String liste = "";
-
-            Tag enrTag = tagDAO.loadByName(nom);
-            if (enrTag == null) {
-                enrTag = tagDAO.newTag();
-
-                enrTag.setNom(nom);
-                enrTag.setTagType(type);
-                tagDAO.create(enrTag);
-                output.message = "TAG == " + enrTag.getId() + " ==" ;
-                if (type == 3) {
-                    String longit = vSession.getLng();
-                    String lat = vSession.getLat();
-                    msg = " (" + longit + "/" + lat + ")";
-                    if (longit == null || lat == null) {
-                        log.warn("Invalid geoloc: {}", msg) ;
-                        output.exception = "La geoloc " + msg + " n'est pas correcte..." ;
-                        tagDAO.remove(enrTag);
-
-                        return output ;
-                    }
-
-                    Geolocalisation geo = geoDAO.newGeolocalisation();
-                    geo.setTag(enrTag.getId());
-                    geo.setLongitude(longit);
-                    geo.setLat(lat);
-                    geo.setTag1(enrTag);
-                    geoDAO.create(geo);
-                }
-
-                switch (type) {
-                    case 1:
-                        liste = "Who";
-                        break;
-                    case 2:
-                        liste = "What";
-                        break;
-                    case 3:
-                        liste = "Where";
-                        break;
-                }
-
-                output.message = "Tag '" + nom + msg + "' correctement ajouté à la liste " + liste ;
-            } else {
-                log.warn("The tag '{}' already exists ", nom);
-                output.exception = "Le Tag " + nom + " est déjà présent dans la base ..." + enrTag.getId() + " - " + enrTag.getNom();
-
-                return output ;
-            }
-        } else {
+        if (nom == null || nom.isEmpty()) {
             output.exception = "Le nom du tag est vide ..." ;
 
             return output ;
         }
+        String msg = "";
+        String liste = "";
+
+        Tag enrTag = tagDAO.loadByName(nom);
+        if (enrTag != null) {
+            log.warn("The tag '{}' already exists ", nom);
+            output.exception = "Le Tag " + nom + " est déjà présent dans la base ..." + enrTag.getId() + " - " + enrTag.getNom();
+
+            return output ;
+        }
+        
+        enrTag = tagDAO.newTag();
+
+        enrTag.setNom(nom);
+        enrTag.setTagType(type);
+        tagDAO.create(enrTag);
+        output.message = "TAG == " + enrTag.getId() + " ==" ;
+        if (type == 3) {
+            String longit = vSession.getLng();
+            String lat = vSession.getLat();
+            msg = " (" + longit + "/" + lat + ")";
+            if (longit == null || lat == null) {
+                log.warn("Invalid geoloc: {}", msg) ;
+                output.exception = "La geoloc " + msg + " n'est pas correcte..." ;
+                tagDAO.remove(enrTag);
+
+                return output ;
+            }
+
+            Geolocalisation geo = geoDAO.newGeolocalisation();
+            geo.setTag(enrTag.getId());
+            geo.setLongitude(longit);
+            geo.setLat(lat);
+            geo.setTag1(enrTag);
+            geoDAO.create(geo);
+        }
+
+        switch (type) {
+            case 1:
+                liste = "Who";
+                break;
+            case 2:
+                liste = "What";
+                break;
+            case 3:
+                liste = "Where";
+                break;
+        }
+        output.message = "Tag '" + nom + msg + "' correctement ajouté "
+                + "à la liste " + liste ;
+        
+        Integer parentId = vSession.getParentTag();
+        Tag enrParentTag = tagDAO.find(parentId);
+        if (enrParentTag != null 
+                && isParentalityAllowed(enrParentTag, enrTag)) {
+            enrTag.setParent(enrParentTag);
+            output.message += " avec "+enrParentTag.getNom()+"comme parent." ;
+        }
+
+                
 
         return output ;
     }

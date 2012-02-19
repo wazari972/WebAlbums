@@ -86,7 +86,7 @@
                 <div class="massedit_chk edit">
                     <input type="checkbox" class="massedit_chkbox edit" value="modif">
                         <xsl:attribute name="name">chk<xsl:value-of select="photoId" /></xsl:attribute>
-                    </input><span><xsl:value-of select="photoId" /></span>
+                    </input><span>&#160;<xsl:value-of select="photoId" /></span>
                 </div>
             </xsl:if>
             <xsl:if test="not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">

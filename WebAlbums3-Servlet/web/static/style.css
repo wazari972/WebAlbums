@@ -10,6 +10,14 @@
     overflow:scroll;
 }
 
+.carnet_text code {
+    background-color: #580CF0;
+}
+
+.carnet_text blockquote {
+    background-color: #58ACFA;
+}
+
  #mapChoix {
     height: 400px;
     width: 400px;

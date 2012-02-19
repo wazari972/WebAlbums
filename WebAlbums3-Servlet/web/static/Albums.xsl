@@ -19,8 +19,8 @@
   <xsl:template match="albums/display">
     <xsl:apply-templates select="exception"/>
     <xsl:apply-templates select="message"/>
+    <xsl:apply-templates select="albumList/page"/>
     <xsl:apply-templates select="albumList/album"/>
-
     <xsl:apply-templates select="albumList/page"/>
   </xsl:template>
 
@@ -93,17 +93,18 @@ Albums?action=EDIT
 	  </h2>
           <hr/>
 	</xsl:if>
-
-	<div class="body">
-	  <xsl:if test="/webAlbums/photos">
-           <h2><div class="description"><xsl:value-of select="details/description" /></div></h2>
-	   <xsl:apply-templates select="user" />
-	  </xsl:if> 
-	  <xsl:if test="/webAlbums/albums">
-	    <xsl:apply-templates select="message"/>
-	    <xsl:apply-templates select="details"/>
-          </xsl:if>
-	</div>
+        <xsl:if test="not(/webAlbums/photos or /webAlbums/tags)">
+            <div class="body">
+              <xsl:if test="/webAlbums/photos">
+               <h2><div class="description"><xsl:value-of select="details/description" /></div></h2>
+               <xsl:apply-templates select="user" />
+              </xsl:if> 
+              <xsl:if test="/webAlbums/albums">
+                <xsl:apply-templates select="message"/>
+                <xsl:apply-templates select="details"/>
+              </xsl:if>
+            </div>
+        </xsl:if>
       </div>
     </div>
   </xsl:template>

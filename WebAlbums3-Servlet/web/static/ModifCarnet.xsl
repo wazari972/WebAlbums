@@ -71,7 +71,7 @@
                     <xsl:value-of select="text" />
                 </textarea>
             </div>
-            <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
+            <div id="wmd-preview" class="wmd-panel wmd-preview carnet_text"></div>
                     <br/>
 	    <input type='submit' value='Valider'/>
             <br/>

@@ -125,7 +125,7 @@ body {
     padding: 10px;
     width: 204px;
     padding-right: 5px;
-    padding-top: 30px;
+    padding-top: 15px;
 }
 
 #right H3 {
@@ -169,7 +169,7 @@ body {
 #left {
     width: 573px;
     padding-left: 20px;
-    padding-top: 30px;
+    padding-top: 15px;
 }
 
 #footer {
@@ -207,7 +207,7 @@ body {
 .item .date span {font: normal 1.3em serif;}
 .item .content {
     float: left;
-    width: 450px;
+    width: 500px;
 }
 .item h1 {
     background: #567300;

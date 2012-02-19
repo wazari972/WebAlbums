@@ -170,8 +170,6 @@
         </div>
       </div>
     </div>
-    <br/>
-    <br/>
   </xsl:template>
 
   <xsl:template match="prev|next|@nexti|@previ|@first|@last">

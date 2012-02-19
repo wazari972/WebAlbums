@@ -97,7 +97,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Aléatoire par Annees <input id="yearsLoader" type="button" value="+"/></h1>
+	<h1>Aléatoire par Années <input id="yearsLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <div id="years" style="overflow:auto"/>
 	</div>

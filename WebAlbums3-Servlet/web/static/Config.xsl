@@ -58,6 +58,18 @@
                 </td>
 	      </tr>
 	      <tr>
+		<td><label for="lstNewParentTag">Parent :</label></td> 
+		<td>
+                  <xsl:apply-templates select="tagList">
+		    <xsl:with-param name="style">list</xsl:with-param>
+		    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+		    <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
+                    <xsl:with-param name="name">parentTag</xsl:with-param>
+		    <xsl:with-param name="id">lstNewParentTag</xsl:with-param>
+		  </xsl:apply-templates>
+		</td>
+	      </tr>
+	      <tr>
 		<td><label for="lstNewTag">Type :</label></td> 
 		<td>
 		  <select name='type' id="lstNewTag">
@@ -283,7 +295,6 @@
 	      <xsl:with-param name="id">lstDelTag</xsl:with-param>
             </xsl:apply-templates>
 	    <br/>
-	    <label for="sure">Yes ? </label><input type='text' id="sure" name='sure' size='3' maxlength='3'/><br/>
 	    <input type='submit' value='Valider' id="valDelTag" />
 	  </form>
 	</div>

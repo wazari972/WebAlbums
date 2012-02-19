@@ -72,7 +72,7 @@ carnet=<xsl:value-of select="@id" />
        <br/>
        <hr/>
        <br/>
-        <div id="carnet_text">
+        <div id="carnet_text" class="carnet_text">
             <xsl:value-of select="."/>
         </div>
   </xsl:template>

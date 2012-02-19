@@ -30,6 +30,7 @@
 
       <xsl:apply-templates select="exception"/>
       <xsl:apply-templates select="message"/>
+      <xsl:apply-templates select="page"/>
       <xsl:apply-templates select="photo"/>
       <xsl:apply-templates select="massEdit"/>
 
