@@ -78,6 +78,17 @@
                   <li><span id="qos_stars"/></li>
                   <li>Only ? <input id="qos_stars_only" value="1" type="checkbox"/></li>
                   </ul> </li>
+                  <li>Photos/Albums par page:
+                    <ul>
+                      <li>
+                        <select>
+                          <option value="10">10</option>
+                          <option value="20">20</option>
+                          <option value="30">30</option>
+                        </select>
+                      </li>
+                    </ul>
+                  </li>
                 </ul>
 		  
 		<h3>Connexion</h3>

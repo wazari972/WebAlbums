@@ -93,16 +93,14 @@
             <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
                 <div class="fastedit_bt fastedit_desc_bt edit">
                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                    Descr.
+                     Descr
                 </div>
+                <div class="fastedit_bt">&#160;||&#160;</div>
                 <div class="fastedit_bt fastedit_tag_bt edit">
                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                    Tags.
+                    Tags
                 </div>
-                <div class="fastedit_bt fastedit_stars_bt edit" id="">
-                    <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
-                    Stars.
-                </div>
+                <div>&#160;</div>
             </xsl:if>
             <xsl:apply-templates select="user" />
             <div class="options">
@@ -134,7 +132,7 @@
                         <xsl:attribute name="rel"><xsl:value-of select="albumId"/></xsl:attribute>
                     </span>
                   </xsl:if>
-                  <xsl:if test="/webAlbums/affichage/@edit">
+                  <xsl:if test="/webAlbums/loginInfo/@admin">
                         <a class="edit" title="Edition" rel="singlepage[no]">
                           <xsl:attribute name="href">
                             <xsl:if test="/webAlbums/photos">
@@ -270,7 +268,6 @@ Carnets?action=EDIT
         <xsl:if test="/webAlbums/tags and not(@album)">
          <xsl:value-of select="."/>
         </xsl:if>
-        ||&#160;
     </div>
   </xsl:template>
 

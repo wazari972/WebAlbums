@@ -125,7 +125,7 @@
             <xsl:value-of select="name"/>
         </a>
     </h3>
-    <img>
+    <img class="choix_img">
       <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
     </img>
     <div>
@@ -180,7 +180,7 @@
  
   <xsl:template match="personsPlaces">
     <table>
-      <tr>
+      <tr valign="top">
 	<xsl:apply-templates select="tagList" />
       </tr>
     </table>
@@ -194,7 +194,7 @@
 	    <xsl:if test="@picture">
 	      <a target="_top">
 		<xsl:attribute name="HREF">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
-		<img width="100px">
+		<img class="choix_img">
 		  <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
 		</img>
 	      </a>
@@ -236,7 +236,7 @@
             <xsl:attribute name="href">
                 Photos?album=<xsl:value-of select="@id"/>&amp;albmCount=<xsl:value-of select="@count"/>
              </xsl:attribute>
-            <img width="100px">
+            <img class="choix_img">
                 <xsl:attribute name="src">
                     Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/>
                 </xsl:attribute>
@@ -273,7 +273,7 @@ Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of sel
 Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of select="@id"/>
                       </xsl:if>
                   </xsl:attribute>
-		  <img width="100px">
+		  <img class="choix_img">
 		    <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
 		  </img>
 		</a>

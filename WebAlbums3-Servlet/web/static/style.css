@@ -34,8 +34,8 @@
 
 }
 .gmap_content img {
-    max-width:200px;
-    max-height:200px;
+    max-width:100px;
+    max-height:100px;
     vertical-align:middle;
 }
 
@@ -51,9 +51,19 @@
     vertical-align:middle;
 }
 
+.choix_img {
+    max-height:150px;
+}
+
+#randPict {
+    height: 200px;
+    overflow:auto;
+    display: none; 
+}
+
 .index_img {
-    max-width:200px;
-    max-height:200px;
+    /*max-width:200px;
+    max-height:200px;*/
     vertical-align:middle;
 }
 .exif_tooltip {

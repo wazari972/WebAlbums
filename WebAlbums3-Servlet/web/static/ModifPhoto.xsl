@@ -69,6 +69,7 @@
 	    </xsl:apply-templates>
 	    <br/>
             <label for="bg">Theme picture ? </label><input id="bg" type='checkbox' name='themePicture' value='y' />
+            <br/>
             <label for="bg">Theme background ? </label><input id="bg" type='checkbox' name='themeBackground' value='y' />
             <input type="button" value="Try it!">
                 <xsl:attribute name="ONCLICK">

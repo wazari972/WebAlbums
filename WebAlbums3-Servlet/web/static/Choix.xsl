@@ -85,9 +85,12 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Photo Aléatoire <input id="randPictLoader" type="button" value="+"/></h1>
+	<h1>Photo Aléatoire <input id="randPictLoader" type="button" value="+"/>
+            &#160;
+            <a href="Photos?special=RANDOM" target="_blank" rel="singlepage[no]">^</a>
+        </h1>
 	<div class="body">
-	  <div id="randPict" style="overflow:auto"/>
+	  <div id="randPict"/>
 	</div>
       </div>
     </div>
@@ -97,7 +100,10 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Aléatoire par Années <input id="yearsLoader" type="button" value="+"/></h1>
+	<h1>Aléatoire par Années <input id="yearsLoader" type="button" value="+"/>
+        &#160;
+            <a href="Albums?special=YEARS" target="_blank" rel="singlepage[no]">^</a>
+        </h1>
 	<div class="body">
 	  <div id="years" style="overflow:auto"/>
 	</div>
