@@ -99,7 +99,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
         if (bornes != null && bornes.getFirstElement() != null) {
             q.setFirstResult(bornes.getFirstElement());
-            q.setMaxResults(session.getPhotoSize());
+            q.setMaxResults(session.getPhotoAlbumSize());
         }
 
         List<JPAPhoto> subset = q
@@ -152,7 +152,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
         int size = q.getResultList().size() ;
         if (bornes != null && bornes.getFirstElement() != null) {
             q.setFirstResult(bornes.getFirstElement());
-            q.setMaxResults(session.getPhotoSize());
+            q.setMaxResults(session.getPhotoAlbumSize());
         }
         List<JPAPhoto> photoList = webDAO.filterPhotosAllowed(q.getResultList(), session);
         return new SubsetOf(bornes, photoList, (long) size);

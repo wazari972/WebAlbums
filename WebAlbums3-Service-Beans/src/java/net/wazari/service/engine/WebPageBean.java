@@ -210,7 +210,9 @@ public class WebPageBean implements WebPageLocal {
             affichage.background = true  ;
         }
         if (vSession.isRemoteAccess()) affichage.remote = true ;
-
+        
+        affichage.photoAlbumSize = vSession.getPhotoAlbumSize();
+        
         return affichage;
     }
 

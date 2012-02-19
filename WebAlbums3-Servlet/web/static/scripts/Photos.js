@@ -17,7 +17,6 @@ function init_massedit() {
 
 
 function reload_page_cb(data, photoid) {
-    //$(data).find('fastedit').each(function(){});
     if (loadSinglePage != undefined) {
         loadSinglePage(getCurrentPage()+"#"+photoid, true)
     } else

@@ -77,7 +77,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
             q.setMaxResults(bornes.getNbElement());
         } else if (topFirst == TopFirst.FIRST) {
             q.setFirstResult(bornes.getFirstElement());
-            q.setMaxResults(session.getAlbumSize());
+            q.setMaxResults(session.getPhotoAlbumSize());
         }
         q.setHint("org.hibernate.cacheable", true) ;
         q.setHint("org.hibernate.readOnly", true) ;

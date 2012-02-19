@@ -19,5 +19,7 @@ public class XmlAffichage {
     public Boolean background;
     @XmlAttribute
     public Boolean remote;
+    @XmlAttribute
+    public Integer photoAlbumSize;
 
 }

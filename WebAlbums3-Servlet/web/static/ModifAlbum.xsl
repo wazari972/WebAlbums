@@ -21,7 +21,7 @@
 	<div class="body">
 	  <center>
 	    <img>
-	      <xsl:attribute name="SRC">Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT</xsl:attribute>
+	      <xsl:attribute name="src">Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT</xsl:attribute>
 	    </img>
 	  </center>
 	</div>

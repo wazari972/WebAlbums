@@ -129,7 +129,7 @@ public class CarnetBean implements CarnetLocal {
         
         if (carnetId == null) {
             Bornes bornes = webPageService.calculBornes(page, eltAsked, 
-                                    vSession.getConfiguration().getAlbumSize());
+                                    vSession.getPhotoAlbumSize());
             count = bornes.getFirstElement();
             carnets = carnetDAO.queryCarnets(vSession, Restriction.THEME_ONLY, 
                                 AlbumFacadeLocal.TopFirst.FIRST, bornes).subset;

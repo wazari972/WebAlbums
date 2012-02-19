@@ -81,10 +81,18 @@
                   <li>Photos/Albums par page:
                     <ul>
                       <li>
-                        <select>
-                          <option value="10">10</option>
-                          <option value="20">20</option>
-                          <option value="30">30</option>
+                        <select id="nbPhotoAlbum">
+                            <option>
+                                <xsl:attribute name="src"><xsl:value-of select="/webAlbums/affichage/@photoAlbumSize" /></xsl:attribute>
+                                <xsl:value-of select="/webAlbums/affichage/@photoAlbumSize" />
+                            </option>
+                            <optgroup label="---">
+                              <option value="10">10</option>
+                              <option value="15">15</option>
+                              <option value="20">20</option>
+                              <option>25</option>
+                              <option value="30">30</option>
+                            </optgroup>
                         </select>
                       </li>
                     </ul>

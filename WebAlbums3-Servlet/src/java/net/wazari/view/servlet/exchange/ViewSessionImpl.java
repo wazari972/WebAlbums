@@ -69,6 +69,8 @@ public class ViewSessionImpl implements
     private HttpServletRequest request;
     private HttpServletResponse response;
     
+    private Integer DEFAULT_PHOTOALBUM_SIZE = 15;
+    
     public ViewSessionImpl(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
         this.request = request;
         this.response = response;
@@ -470,16 +472,6 @@ public class ViewSessionImpl implements
         return getObject(value, type);
     }
 
-    @Override
-    public int getAlbumSize() {
-        return getConfiguration().getAlbumSize();
-    }
-
-    @Override
-    public int getPhotoSize() {
-        return getConfiguration().getPhotoSize();
-    }
-
     private Integer[] getIntArray(String key) {
         return castToIntArray(getParamArray(key));
     }
@@ -543,6 +535,23 @@ public class ViewSessionImpl implements
         return getInteger("countCarnet") ;
     }
 
+    @Override
+    public int getPhotoAlbumSize() {
+        Integer size = getInteger("photoAlbumSize");
+        
+        if (size == null)
+            size = getSessionObject("photoAlbumSize", Integer.class);
+        if (size == null)
+            size = DEFAULT_PHOTOALBUM_SIZE;
+        
+        return size;
+    }
+    
+    @Override
+    public void setPhotoAlbumSize(int size) {
+        setSessionObject("photoAlbumSize", size);
+    }
+    
     private void setSessionObject(String string, Object value) {
         setSessionObject(string, value, request.getSession());
     }

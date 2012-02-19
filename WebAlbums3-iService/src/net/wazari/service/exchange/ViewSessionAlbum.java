@@ -39,4 +39,5 @@ public interface ViewSessionAlbum extends ViewSession {
     Integer getPage() ;
     
     Integer getNbPerYear();
+    void setPhotoAlbumSize(int size);
 }

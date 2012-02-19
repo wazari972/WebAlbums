@@ -253,7 +253,6 @@ public class PhotoBean implements PhotoLocal {
             return output ;
         }
 
-
         Album enrAlbum = null;
         enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
         if (enrAlbum == null) {
@@ -351,12 +350,15 @@ public class PhotoBean implements PhotoLocal {
         Integer page = vSession.getPage();
         Integer photoID = vSession.getId();
         Integer scount = vSession.getCount();
-        Bornes bornes = webPageService.calculBornes(page, scount, vSession.getPhotoSize());
+        Bornes bornes = webPageService.calculBornes(page, scount, 
+                vSession.getPhotoAlbumSize());
         SubsetOf<Photo> lstP;
         if (rq.type == TypeRequest.PHOTO) {
-            lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, ListOrder.ASC);
+            lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, 
+                                          ListOrder.ASC);
         } else {
-            lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, ListOrder.ASC);
+            lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
+                                       ListOrder.ASC);
         }
 
         String degrees = "0";

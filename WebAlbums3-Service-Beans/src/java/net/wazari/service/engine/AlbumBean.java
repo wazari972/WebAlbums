@@ -123,7 +123,7 @@ public class AlbumBean implements AlbumLocal {
         Integer page = vSession.getPage();
         Integer eltAsked = vSession.getCount();
 
-        Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getConfiguration().getAlbumSize());
+        Bornes bornes = webPageService.calculBornes(page, eltAsked, vSession.getPhotoAlbumSize());
 
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
                Restriction.THEME_ONLY, AlbumFacadeLocal.TopFirst.FIRST, bornes);

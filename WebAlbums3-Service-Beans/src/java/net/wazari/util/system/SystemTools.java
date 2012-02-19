@@ -144,7 +144,7 @@ public class SystemTools {
                 }
             }
 
-            int currentPage = i / vSession.getPhotoSize();
+            int currentPage = i / vSession.getPhotoAlbumSize();
             log.info( "Fullscreen multiple: current page:{}", currentPage);
             File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
             plugins.getUsedSystem().link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto.toString());

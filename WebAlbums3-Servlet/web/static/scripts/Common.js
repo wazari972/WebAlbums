@@ -20,6 +20,20 @@ function loadCloud() {
     loadExernals('cloudLoader', 'Tags?special=CLOUD', 'cloud', prepareCloudTooltips) ;
 }
 
+function init_photoalbum_size() {
+    $("#nbPhotoAlbum").change(function(){
+        $.post("Albums?special=PHOTOALBUM_SIZE", 
+            {photoAlbumSize : $(this).val()},
+            function(data) {
+                    if (loadSinglePage != undefined) {
+                        loadSinglePage(getCurrentPage(), true, true)
+                    } else
+                        alert("Please reload the page to refresh")
+            }
+         );
+    })
+}
+
 function init_fullscreen() {
     $(".fullscreen").click(function () {
         callURL($(this).attr('rel').trim()) ;
@@ -27,6 +41,7 @@ function init_fullscreen() {
 }
 
 function init_common() {
+    init_photoalbum_size()
     init_fullscreen()
     add_callback("SinglePage", init_fullscreen)
     $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});

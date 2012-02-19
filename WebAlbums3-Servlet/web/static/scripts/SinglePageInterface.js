@@ -54,9 +54,12 @@ function Node_getElementById(node, id) {
     return null;
 }
 
-function loadSinglePage(url, dont_scroll) {
+function loadSinglePage(url, dont_scroll, force) {
     if (dont_scroll == undefined)
         dont_scroll = false
+    
+    if (force == undefined)
+        force = false
     
     if (url == undefined) {
         url = getCurrentPage() ;
@@ -68,7 +71,7 @@ function loadSinglePage(url, dont_scroll) {
     }
     inPlaceSinglePage_lock = 1 ;
 
-    if (url == inPlaceSinglePage) {
+    if (!force && url == inPlaceSinglePage) {
         return ;
     }
 

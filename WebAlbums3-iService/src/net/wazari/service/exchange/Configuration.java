@@ -29,10 +29,6 @@ public interface Configuration {
 
     boolean isReadOnly();
 
-    int getAlbumSize();
-
-    int getPhotoSize();
-
     String getSep();
 
     boolean wantsProtectDB() ;

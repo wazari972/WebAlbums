@@ -124,8 +124,6 @@ public class ConfigurationXML implements Configuration {
     @XmlElement
     private Directories directories = new Directories();
     @XmlElement
-    private Sizes sizes = new Sizes();
-    @XmlElement
     private Properties properties = new Properties();
 
     private ConfigurationXML(){}
@@ -133,16 +131,6 @@ public class ConfigurationXML implements Configuration {
     @Override
     public boolean isReadOnly() {
         return properties.isReadOnly || isPathURL ;
-    }
-
-    @Override
-    public int getAlbumSize() {
-        return sizes.albums;
-    }
-
-    @Override
-    public int getPhotoSize() {
-        return sizes.photos;
     }
 
     /** Paths **/
@@ -225,14 +213,6 @@ public class ConfigurationXML implements Configuration {
         private String confFile = "conf/conf.xml";
 
         private String plugins = "plugins";
-    }
-
-    private static class Sizes {
-
-        @XmlElement
-        private int albums = 15;
-        @XmlElement
-        private int photos = 15;
     }
 
     private static class Properties {
