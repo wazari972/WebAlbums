@@ -21,6 +21,7 @@ import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
+import net.wazari.dao.entity.Gpx;
 import net.wazari.dao.entity.Photo;
 
 import net.wazari.dao.entity.facades.SubsetOf;
@@ -45,6 +46,7 @@ import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
 import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbumTop;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
+import net.wazari.service.exchange.xml.album.XmlGpx;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
@@ -98,6 +100,8 @@ public class AlbumBean implements AlbumLocal {
         output.count = count;
         output.id = enrAlbum.getId();
         output.description = enrAlbum.getDescription();
+        output.description = "";
+        
         output.date = enrAlbum.getDate();
 
         output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
@@ -162,7 +166,16 @@ public class AlbumBean implements AlbumLocal {
                 album.carnet.add(carnet);
             }
             details.description = enrAlbum.getDescription();
-
+            
+            for (Gpx enrGpx : enrAlbum.getGpxList()) {
+                if (album.gpx == null)
+                    album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
+                XmlGpx gpx = new XmlGpx();
+                gpx.id = enrGpx.getId();
+                gpx.description = enrGpx.getDescription();
+                
+                album.gpx.add(gpx);
+            }
             //tags de l'album
             details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, 
                               vSession, enrAlbum, Box.NONE, enrAlbum.getDate());

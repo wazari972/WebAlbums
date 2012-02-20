@@ -67,7 +67,9 @@ public class ImageBean implements ImageLocal {
         String type = null;
         Theme enrThemeForBackground = vSession.getTheme() ;
         try {
-            if (mode == ImgMode.RANDOM_TAG) {
+            if (mode == ImgMode.GPX) {
+                
+            } else if (mode == ImgMode.RANDOM_TAG) {
                 if (tagDAO.find(imgId) != null) {
                     Collection<Tag> tagLst = Arrays.asList(new Tag[]{tagDAO.find(imgId)});
                     SubsetOf<Photo> photos = photoDAO.loadByTags(vSession, tagLst, new Bornes(1), ListOrder.RANDOM);

@@ -33,6 +33,6 @@ public class XmlAlbum {
     public Long time;
     public String droit;
     public String albmDate;
-    
+    public List<XmlGpx> gpx;
     public List<XmlCarnet> carnet;
 }

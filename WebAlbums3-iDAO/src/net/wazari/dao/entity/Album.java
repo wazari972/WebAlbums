@@ -27,6 +27,8 @@ public interface Album extends EntityWithId {
     String getNom();
 
     List<Photo> getPhotoList();
+    
+    List<Gpx> getGpxList();
 
     Integer getPicture();
 
@@ -45,6 +47,8 @@ public interface Album extends EntityWithId {
     void setNom(String nom);
 
     void setPhotoList(List<Photo> photoList);
+    
+    void setGpxList(List<Gpx> gpxList);
 
     void setPicture(Integer picture);
 

@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
+import net.wazari.dao.entity.Gpx;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
@@ -91,6 +92,10 @@ public class JPAAlbum implements Album, Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
 
+    @XmlTransient
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
+    private List<JPAGpx> jPAGpxList;
+    
     @XmlTransient
     @ManyToMany(mappedBy="jPAAlbumList")
     private List<JPACarnet> jPACarnetList;
@@ -176,6 +181,16 @@ public class JPAAlbum implements Album, Serializable {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
 
+    @Override
+    public List<Gpx> getGpxList() {
+        return (List) jPAGpxList;
+    }
+
+    @Override
+    public void setGpxList(List<Gpx> jPAGpxList) {
+        this.jPAGpxList = (List) jPAGpxList;
+    }
+    
     @Override
     public Utilisateur getDroit() {
         return (Utilisateur) droit;

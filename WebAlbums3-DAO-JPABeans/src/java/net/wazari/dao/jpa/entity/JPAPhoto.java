@@ -130,9 +130,7 @@ public class JPAPhoto implements Photo, Serializable {
 
     @XmlTransient
     @ManyToMany(mappedBy="jPAPhotoList")
-    private List<JPACarnet> jPACarnetList;
-
-    
+    private List<JPACarnet> jPACarnetList;    
     
     public JPAPhoto() {
     }
