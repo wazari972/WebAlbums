@@ -37,7 +37,7 @@ public class ImageResizer {
 
             log.info("Resizing...");
             try {
-                if (!thumbnail(current, conf)) {
+                if (current.dontThumbnail || !thumbnail(current, conf)) {
                     continue;
                 }
 
@@ -91,7 +91,7 @@ public class ImageResizer {
         }
     }
 
-    private static boolean move(Element elt, Configuration conf) throws MalformedURLException, URISyntaxException {
+    public static boolean move(Element elt, Configuration conf) throws MalformedURLException, URISyntaxException {
         String url = "file://" + conf.getImagesPath() + conf.getSep() + elt.path;
         log.info( "SOURCE = {}", url);
         URI uri = new URL(StringUtil.escapeURL(url)).toURI();
@@ -133,11 +133,13 @@ public class ImageResizer {
         public String path;
         public File image;
         public String type;
-
-        public Element(String path, File image, String type) {
+        public boolean dontThumbnail;
+        
+        public Element(String path, File image, String type, boolean dontThumbnail) {
             this.path = path;
             this.image = image;
             this.type = type;
+            this.dontThumbnail = dontThumbnail;
         }
     }
 }

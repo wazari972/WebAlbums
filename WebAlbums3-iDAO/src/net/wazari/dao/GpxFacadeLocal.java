@@ -27,4 +27,7 @@ public interface GpxFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void remove(Gpx gpx);
+    
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    Gpx loadByPath(String path);
 }

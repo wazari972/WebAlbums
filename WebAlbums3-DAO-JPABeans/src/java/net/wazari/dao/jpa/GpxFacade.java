@@ -63,4 +63,18 @@ public class GpxFacade implements GpxFacadeLocal {
         g.setAlbum(enrAlbum);
         return g;
     }
+    
+    @Override
+    public Gpx loadByPath(String path) {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAGpx> cq = cb.createQuery(JPAGpx.class) ;
+            Root<JPAGpx> p = cq.from(JPAGpx.class);
+            cq.where(cb.equal(p.get(JPAGpx_.gpxPath), path)) ;
+            return (JPAGpx) em.createQuery(cq)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null ;
+        }
+    }
 }

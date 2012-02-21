@@ -7,8 +7,6 @@ package net.wazari.common.util;
 
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;

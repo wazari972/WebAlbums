@@ -86,9 +86,6 @@ Albums?action=EDIT
                           </a>
                     </xsl:if>
                 </div>
-                <div class="carnets_title">
-                    <xsl:apply-templates select="carnet" />
-                </div>
             </div>
 	  </h2>
           <hr/>
@@ -122,6 +119,17 @@ Albums?action=EDIT
                 <xsl:attribute name="src">Images?id=<xsl:value-of select="@picture" /></xsl:attribute>
             </img>
             <xsl:value-of select="name" />
+        </a>
+        </small>
+    </p>
+    <br/>
+  </xsl:template>
+  <xsl:template match="album/gpx">
+    <p> 
+    <small>
+        <a target="_blank" rel="singlepage[no]">
+            <xsl:attribute name="href">Images?id=<xsl:value-of select="@id" />&amp;mode=GPX</xsl:attribute>
+            <xsl:value-of select="description" />
         </a>
         </small>
     </p>

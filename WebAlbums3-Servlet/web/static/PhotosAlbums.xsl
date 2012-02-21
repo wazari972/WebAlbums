@@ -226,19 +226,26 @@ Carnets?action=EDIT
                                   </input>
                               </p>
                        </div>
-                <if test="../carnet">
-                    <div class="carnets_opt">
-                        <xsl:apply-templates select="../carnet"/>
-                    </div>
-                </if>
+                       <xsl:if test="../carnet">
+                           <div class="carnets_opt">
+                               <xsl:apply-templates select="../carnet"/>
+                            </div>
+                       </xsl:if>
+                       <xsl:if test="../gpx">
+                           <div class="gpx_opt">
+                               <xsl:apply-templates select="../gpx"/>
+                            </div>
+                       </xsl:if>
               </div>
           </div>
         </div>
   </xsl:template>
   
   <xsl:template match="rights">
+    <xsl:param name="id"></xsl:param>
     <select name="user">
-      <xsl:apply-templates select="user"/>
+        <xsl:attribute name="id"><xsl:value-of select="$id" /></xsl:attribute>
+        <xsl:apply-templates select="user"/>
     </select>
   </xsl:template>
   

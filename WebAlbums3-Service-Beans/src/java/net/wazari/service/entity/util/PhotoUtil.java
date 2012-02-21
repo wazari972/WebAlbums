@@ -18,6 +18,7 @@ import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.dao.entity.Gpx;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.exception.WebAlbumsDaoException;
@@ -196,6 +197,14 @@ public class PhotoUtil {
     }
 
     /***/
+    public String getThemedPath(Gpx g) {
+        Theme enrTheme = g.getAlbum().getTheme();
+        if (enrTheme == null) {
+            return null;
+        }
+        return enrTheme.getNom() + "/" + g.getGpxPath();
+    }
+    
     public String getThemedPath(Photo p) {
         Theme enrTheme = p.getAlbum().getTheme();
         if (enrTheme == null) {
@@ -204,6 +213,11 @@ public class PhotoUtil {
         return enrTheme.getNom() + "/" + p.getPath();
     }
 
+    public String getGpxPath(ViewSession vSession, Gpx g) {
+        String sep = vSession.getConfiguration().getSep() ;
+        return vSession.getConfiguration().getImagesPath() + sep + getThemedPath(g);
+    }
+    
     public String getImagePath(ViewSession vSession, Photo p) {
         String sep = vSession.getConfiguration().getSep() ;
         return vSession.getConfiguration().getImagesPath() + sep + getThemedPath(p);

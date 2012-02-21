@@ -30,6 +30,7 @@ import net.wazari.service.exchange.ViewSession;
 
 import net.wazari.common.util.StringUtil;
 import net.wazari.dao.CarnetFacadeLocal;
+import net.wazari.dao.GpxFacadeLocal;
 import net.wazari.util.system.ImageResizer.Element;
 
 @Stateless
@@ -47,6 +48,8 @@ public class FilesFinder {
     private AlbumFacadeLocal albumDAO;
     @EJB
     private UtilisateurFacadeLocal userDAO;
+    @EJB
+    private GpxFacadeLocal gpxDAO;
     @EJB
     private PhotoFacadeLocal photoDAO;
     @EJB
@@ -278,38 +281,49 @@ public class FilesFinder {
         if (idx != -1) {
             ext = photo.getName().substring(idx + 1);
         }
-        if (!sysTools.supports(type, ext, Capability.THUMBNAIL)) {
-            log.warn("### " + photo + " n'est pas supportée ... (" + type + ")");
-            return false;
-        }
-
+        
         String photoPath = albumPath + sansAccents(photo.getName());
+        boolean dontThumbnail = false;
+        if ("gpx".equals(ext)) {
+            Gpx enrGpx = gpxDAO.loadByPath(photoPath);
+            
+            if (enrGpx == null) {
+                enrGpx = gpxDAO.newGpx(enrAlbum);
+                enrGpx.setDescription(enrAlbum.getNom());
+                enrGpx.setGpxPath(photoPath);
+                gpxDAO.create(enrGpx);
+            }
+            dontThumbnail = true;
+        } else {
+            if (!sysTools.supports(type, ext, Capability.THUMBNAIL)) {
+                log.warn("### " + photo + " n'est pas supportée ... (" + type + ")");
+                return false;
+            }
 
-        Photo enrPhoto = photoDAO.loadByPath(photoPath);
+            Photo enrPhoto = photoDAO.loadByPath(photoPath);
 
-        //si l'image (son path) n'est pas encore dans la base
-        if (enrPhoto == null) {
-            log.info("### Creation d'un nouvel enregistrement");
-            //on crée la nouvelle photo
-            enrPhoto = photoDAO.newPhoto();
-            enrPhoto.setDescription("");
-            enrPhoto.setPath(photoPath);
+            //si l'image (son path) n'est pas encore dans la base
+            if (enrPhoto == null) {
+                log.info("### Creation d'un nouvel enregistrement");
+                //on crée la nouvelle photo
+                enrPhoto = photoDAO.newPhoto();
+                enrPhoto.setDescription("");
+                enrPhoto.setPath(photoPath);
 
-            sysTools.retrieveMetadata(type, null, enrPhoto, photo.getAbsolutePath());
-            enrPhoto.setAlbum(enrAlbum);
-            enrPhoto.setType(type);
-            log.info("### Album " + enrPhoto.getAlbum());
-            photoDAO.create(enrPhoto);
-        } else /* sinon on update son nom d'album*/ {
-            log.info("### Mise à jour de l'enregistrement");
-            enrPhoto.setAlbum(enrAlbum);
+                sysTools.retrieveMetadata(type, null, enrPhoto, photo.getAbsolutePath());
+                enrPhoto.setAlbum(enrAlbum);
+                enrPhoto.setType(type);
+                log.info("### Album " + enrPhoto.getAlbum());
+                photoDAO.create(enrPhoto);
+            } else /* sinon on update son nom d'album*/ {
+                log.info("### Mise à jour de l'enregistrement");
+                enrPhoto.setAlbum(enrAlbum);
 
-            photoDAO.edit(enrPhoto);
+                photoDAO.edit(enrPhoto);
+            }
         }
-
-        ImageResizer.Element elt = new ImageResizer.Element(enrAlbum.getTheme().getNom()+SEP+photoPath, photo, type);
+        ImageResizer.Element elt = new ImageResizer.Element(enrAlbum.getTheme().getNom()+SEP+photoPath, photo, type, dontThumbnail);
         stack.push(elt);
-
         log.info("### Import of : " + photo.getName() + " : completed");
         return true;
 
