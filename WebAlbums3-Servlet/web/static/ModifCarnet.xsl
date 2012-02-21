@@ -61,12 +61,17 @@
             <input type='hidden' name='carnetPhoto' id='carnetPhoto' value = ''/>
             <input type='hidden' name='carnetAlbum' id='carnetAlbum' value = ''/>
 	    <br/>
-	    Droits de visibilité : <xsl:apply-templates select="rights"/>
+	    Droits de visibilité : 
+            <xsl:apply-templates select="rights">
+                <xsl:with-param name="id">carnetUser</xsl:with-param>    
+            </xsl:apply-templates>
             <br/>
             <label for="desc">Description:</label>
 	    <textarea id="desc" name='desc' rows='2' cols='65'>
 	      <xsl:value-of select="description" />
 	    </textarea>
+                    <br/><br/>
+            <input type='submit' value='Valider' class="carnetSubmit"/> &#160; <input type='button' value='Enregistrer' class="carnetSave"/>
             <div class="wmd-panel">
                 <div id="wmd-button-bar"></div>
                 <textarea class="wmd-input" id="wmd-input" name="carnetText">
@@ -75,7 +80,7 @@
             </div>
             <div id="wmd-preview" class="wmd-panel wmd-preview carnet_text"></div>
                     <br/>
-	    <input type='submit' value='Valider'/>
+	    <input type='button' value='Valider' class="carnetSubmit"/> &#160; <input type='button' value='Enregistrer' class="carnetSave"/>
             <br/>
             <br/>
             <label for="sure">"Oui je veux supprimer ce carnet" (définitif!)</label>

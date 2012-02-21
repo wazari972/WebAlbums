@@ -49,9 +49,16 @@ public class Carnets extends HttpServlet{
         XmlCarnetSubmit submit = null;
         if(vSession.isSessionManager()) {
             //prepare SUBMIT message
-            if (action == Action.SUBMIT) {
+            if (action == Action.SUBMIT || action == Action.SAVE) {
                 submit = carnetService.treatSUBMIT((ViewSessionCarnetSubmit) vSession);
-                if (submit != null && !submit.valid)
+                if (action != Action.SAVE) {
+                    if (!submit.valid)
+                        output.exception = submit.exception ;
+                    else
+                        output.message = "true" ;
+                    return output;
+                    
+                } else if (submit != null && !submit.valid)
                     action = Action.EDIT;
             }
 

@@ -6,19 +6,17 @@
 package net.wazari.service.exchange.xml.carnet;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.common.XmlInfoException;
 import net.wazari.service.exchange.xml.common.XmlUserList;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 
 /**
  *
  * @author kevin
  */
 @XmlRootElement
-public class XmlCarnetEdit {
+public class XmlCarnetEdit extends XmlInfoException{
     public XmlCarnetSubmit submit;
-    public String exception;
     @XmlAttribute
     public Integer picture;
     public String name;

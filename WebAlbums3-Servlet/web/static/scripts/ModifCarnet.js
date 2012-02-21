@@ -1,8 +1,47 @@
+function saveCarnet() {
+    alert("not sure how it's working")
+    saveSubmitCarnet(false)
+}
+
+function submitCarnet() {
+    alert("not sure how it's working")
+    return true
+    saveSubmitCarnet(true)
+}
+
+function saveSubmitCarnet(do_submit) {
+    id = $.queryString("carnet")
+    
+    $.post("Carnest?action=SAVE", 
+        {carnet : id,
+         nom : $("#nom").val(),
+         date : $("#carnetDate").val(),
+         carnetRepr : $("#carnetRepr").val(),
+         carnetPhoto : $("#carnetPhoto").val(),
+         carnetAlbum : $("#carnetAlbum").val(),
+         user: $("#carnetUser").val(),
+         carnetText: $("#wmd-input").text()
+        },
+        function(data) {
+            alert("verify data: "+data)
+            if (do_submit) {
+                url = "Carnets?&count=0 &carnet="+id+"#"+id
+                if (loadSinglePage != undefined) {
+                    loadSinglePage(url, false, true)
+                } else
+                    alert("Please reload the page to refresh")
+            }
+        }
+     );
+}
+
 function init_buttons() {
     $("#carnetDate").change(function () {
         //check validity of $(this).val()
     }) ;
 
+    $(".carnetSave").click(saveCarnet) ;
+    $(".carnetSubmit").click(submitCarnet) ;
 
     $("#carnetRepr").change(function () {
         $("#carnetReprImg").attr("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");

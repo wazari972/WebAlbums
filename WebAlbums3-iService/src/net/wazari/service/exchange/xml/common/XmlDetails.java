@@ -5,7 +5,6 @@
 
 package net.wazari.service.exchange.xml.common;
 
-import net.wazari.service.exchange.xml.album.XmlGpx;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
