@@ -63,32 +63,16 @@
     <p>
         <label for="fromDate">Albums datés entre le </label>
         <span id="fromDate" style="font-weight:bold;" />
+
         <label for="toDate"> et le </label>
-        <span id="toDate" style="font-weight:bold;" />
+        <span id="toDate" style="font-weight:bold;">
+            <xsl:attribute name="rel"></xsl:attribute>
+        </span>
     </p>
     <br/>
     <div id="slider-range"></div>
     <br/>
     <p><label for="albmName"> et ayant pour nom </label> <input type="text" id="albmName"/></p>
-    <script>
-        
-     $("#slider-range").attr("rel", "singlepage[no]");
-     $("#slider-range").slider(sliderOption);
-     $("#fromDate").text(printDate(<xsl:value-of select="album[last()]/@time"/>));
-     $("#toDate").text(printDate(<xsl:value-of select="album/@time"/>));
-     $("#slider-range").slider( "option", "max", <xsl:value-of select="album/@time"/>+$( "#slider-range" ).slider( "option", "step" ));
-     $("#slider-range").slider( "option", "min", <xsl:value-of select="album[last()]/@time"/>);
-
-     $("#slider-range").slider( "option", "values", [<xsl:value-of select="album[last()]/@time"/>, <xsl:value-of select="album/@time"/>]);
-     $("#albmName").keyup(
-        function(){
-           trimAlbums($("#slider-range").slider( "option", "range", "min" ),
-                      $("#slider-range").slider( "option", "range", "max" ),
-                      $(this).val());
-
-        }
-     );
-    </script>
     <div style="overflow: auto; height: 400px">
         <ul>
         <xsl:for-each select="album">
@@ -109,8 +93,14 @@
         </xsl:for-each>
         </ul>
     </div>
-    <script language="javascript">
-        $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
+    <script>
+       data = {fromDate:<xsl:value-of select="album[last()]/@time"/>,
+               toDate  :<xsl:value-of select="album/@time"/>}
+             
+       function init_slider() {
+           do_init_slider(data)
+       }
+       $(init_slider)
     </script>
   </xsl:template>
 

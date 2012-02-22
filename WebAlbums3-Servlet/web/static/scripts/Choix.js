@@ -82,21 +82,6 @@ function trimAlbums(min, max, name) {
 
 }
 
-function init_side() {
-    var NOW = new Date().getTime() ;
-    var sliderOption = {
-      range: true,
-      min: 0,
-      max: NOW,
-      step: 100000000,
-      slide: function(event, ui) {
-          $("#fromDate").text(printDate(ui.values[0]));
-          $("#toDate").text(printDate(ui.values[1]));
-          trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
-      }
-    } ;
-}
-
 function init_loader() {
     $("#albumsLoader").click(function () {
         loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
@@ -137,6 +122,43 @@ function init_loader() {
         $("#mapChoix") ;
         loadMaps();
     }) ;
+}
+
+//triggered when SELECT widget is loaded
+function do_init_slider(data) {
+    
+    var NOW = new Date().getTime() ;
+    var sliderOption = {
+      range: true,
+      min: 0,
+      max: NOW,
+      step: 100000000,
+      slide: function(event, ui) {
+          $("#fromDate").text(printDate(ui.values[0]));
+          $("#toDate").text(printDate(ui.values[1]));
+          trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
+      }
+     } ;
+     $("#slider-range").attr("rel", "singlepage[no]");
+     
+     $("#slider-range").slider(sliderOption);
+     $("#fromDate").text(printDate(data.fromDate));
+     $("#toDate").text(printDate(data.toDate));
+     
+     $("#slider-range").slider( "option", "max", data.toDate+$( "#slider-range" ).slider( "option", "step" ));
+     $("#slider-range").slider( "option", "min", data.fromDate);
+
+     $("#slider-range").slider( "option", "values", [data.fromDate, data.toDate]);
+     $("#albmName").keyup(
+        function(){
+           trimAlbums($("#slider-range").slider( "option", "range", "min" ),
+                      $("#slider-range").slider( "option", "range", "max" ),
+                      $(this).val());
+
+        }
+     );
+         
+     $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
 }
 
 $(function() {
