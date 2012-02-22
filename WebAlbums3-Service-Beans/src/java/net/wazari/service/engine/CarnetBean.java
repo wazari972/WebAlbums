@@ -196,6 +196,7 @@ public class CarnetBean implements CarnetLocal {
         } else {
             enrCarnet = carnetDAO.find(carnetId);
         }
+        
         if (enrCarnet == null) {
             output.exception = "Couldn't find the carnet #"+carnetId;
             return output;
@@ -225,6 +226,7 @@ public class CarnetBean implements CarnetLocal {
                 enrCarnet.setDroit(enrDroit);
             }
         }
+        
         enrCarnet.setText(text);
         enrCarnet.setNom(nom);
         enrCarnet.setDescription(desc);

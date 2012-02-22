@@ -43,8 +43,9 @@
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="nom">Nom:</label>
-	    <input id="nom" type='text' size='40' maxlength='60' name='nom'>
+	    <input id="carnetNom" type='text' size='40' maxlength='60' name='nom'>
 	      <xsl:attribute name="value"><xsl:value-of select="name" /></xsl:attribute>
+              <xsl:attribute name="rel"><xsl:value-of select="@id" /></xsl:attribute>
 	    </input>
 	    <br/>
             <label for="date">Date:</label> 
@@ -63,11 +64,12 @@
 	    <br/>
 	    Droits de visibilité : 
             <xsl:apply-templates select="rights">
-                <xsl:with-param name="id">carnetUser</xsl:with-param>    
+                <xsl:with-param name="id">carnetUser</xsl:with-param>
+                <xsl:with-param name="default">3</xsl:with-param>
             </xsl:apply-templates>
             <br/>
             <label for="desc">Description:</label>
-	    <textarea id="desc" name='desc' rows='2' cols='65'>
+	    <textarea id="carnetDesc" name='desc' rows='2' cols='65'>
 	      <xsl:value-of select="description" />
 	    </textarea>
                     <br/><br/>

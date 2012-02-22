@@ -243,16 +243,23 @@ Carnets?action=EDIT
   
   <xsl:template match="rights">
     <xsl:param name="id"></xsl:param>
+    <xsl:param name="default">-1</xsl:param>
     <select name="user">
         <xsl:attribute name="id"><xsl:value-of select="$id" /></xsl:attribute>
-        <xsl:apply-templates select="user"/>
+        <xsl:apply-templates select="user">
+            <xsl:with-param name="default"><xsl:value-of select="$default" /></xsl:with-param>    
+        </xsl:apply-templates>
     </select>
   </xsl:template>
   
   <xsl:template match="rights/user">
+      <xsl:param name="default"></xsl:param>
     <option>
       <xsl:attribute name="value"><xsl:value-of select="@id" /></xsl:attribute>
       <xsl:if test="@selected">
+	<xsl:attribute name="selected">true</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="not(@selected) and $default = @id">
 	<xsl:attribute name="selected">true</xsl:attribute>
       </xsl:if>
       <xsl:value-of select="." />
