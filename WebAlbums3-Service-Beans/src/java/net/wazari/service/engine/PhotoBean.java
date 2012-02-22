@@ -20,6 +20,7 @@ import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
+import net.wazari.dao.entity.Gpx;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Tag;
@@ -47,6 +48,7 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
+import net.wazari.service.exchange.xml.album.XmlGpx;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
@@ -281,6 +283,17 @@ public class PhotoBean implements PhotoLocal {
 
             album.carnet.add(carnet);
         }
+        
+        for (Gpx enrGpx : enrAlbum.getGpxList()) {
+            if (album.gpx == null)
+                album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
+            XmlGpx gpx = new XmlGpx();
+            gpx.id = enrGpx.getId();
+            gpx.description = enrGpx.getDescription();
+
+            album.gpx.add(gpx);
+        }
+        
         XmlDetails details = new XmlDetails() ;
         details.description = enrAlbum.getDescription() ;
         details.photoId = enrAlbum.getPicture() ;

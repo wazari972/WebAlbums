@@ -221,7 +221,7 @@ public class ImageBean implements ImageLocal {
             }
             out.flush();
             out.close();
-
+            
             return null;
         } catch (MalformedURLException e) {
             log.warn( "MalformedURLException: {}", e) ;

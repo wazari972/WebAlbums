@@ -35,10 +35,12 @@ public class ImageResizer {
             current = stack.pop();
             log.info(current.path);
 
-            log.info("Resizing...");
             try {
-                if (current.dontThumbnail || !thumbnail(current, conf)) {
-                    continue;
+                if (!current.dontThumbnail) {
+                    log.info("Resizing...");
+                    if (!thumbnail(current, conf)) {
+                        continue;
+                    }
                 }
 
                 log.info("Moving...");

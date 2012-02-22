@@ -87,6 +87,16 @@ Albums?action=EDIT
                     </xsl:if>
                 </div>
             </div>
+            <xsl:if test="carnet">
+               <div class="carnets_opt">
+                   <xsl:apply-templates select="carnet"/>
+                </div>
+            </xsl:if>
+            <xsl:if test="gpx">
+               <div class="gpx_opt">
+                   <xsl:apply-templates select="gpx"/>
+                </div>
+            </xsl:if>
 	  </h2>
           <hr/>
 	</xsl:if>
@@ -117,7 +127,7 @@ Albums?action=EDIT
             <xsl:attribute name="href">Carnets?carnet=<xsl:value-of select="@id" /></xsl:attribute>
             <img class="mini-carnet">
                 <xsl:attribute name="src">Images?id=<xsl:value-of select="@picture" /></xsl:attribute>
-            </img>
+            </img>&#160;
             <xsl:value-of select="name" />
         </a>
         </small>

@@ -5,12 +5,13 @@
 package net.wazari.dao.entity;
 
 import java.io.Serializable;
+import net.wazari.dao.entity.facades.EntityWithId;
 
 /**
  *
  * @author kevin
  */
-public interface Gpx extends Serializable {
+public interface Gpx extends Serializable, EntityWithId {
     Integer getId();
     
     Album getAlbum();

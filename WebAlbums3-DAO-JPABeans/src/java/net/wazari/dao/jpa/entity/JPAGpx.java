@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,7 +36,9 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "Gpx")
+@Table(name = "Gpx",
+    uniqueConstraints = {@UniqueConstraint(columnNames={"GpxPath"})}
+)
 public class JPAGpx implements Gpx, Serializable {
     private static final Logger log = LoggerFactory.getLogger(JPAGeolocalisation.class.getName());
 
@@ -52,7 +55,6 @@ public class JPAGpx implements Gpx, Serializable {
     private Integer id;
     
     @XmlAttribute
-    @Id
     @Basic(optional = false)
     @Column(name = "GpxPath", nullable = false)
     private String gpxPath;
