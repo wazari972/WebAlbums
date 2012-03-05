@@ -73,7 +73,10 @@
 	      <xsl:value-of select="description" />
 	    </textarea>
                     <br/><br/>
-            <input type='submit' value='Valider' class="carnetSubmit"/> &#160; <input type='button' value='Enregistrer' class="carnetSave"/>
+            <input type='submit' value='Valider' class="carnetSubmit"/> &#160; 
+            <input type='button' value='Enregistrer' class="carnetSave"/> &#160; 
+            <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave1"/> <label for="carnetAutoSave1"> AutoSave</label>
+                
             <div class="wmd-panel">
                 <div id="wmd-button-bar"></div>
                 <textarea class="wmd-input" id="wmd-input" name="carnetText">
@@ -82,7 +85,9 @@
             </div>
             <div id="wmd-preview" class="wmd-panel wmd-preview carnet_text"></div>
                     <br/>
-	    <input type='button' value='Valider' class="carnetSubmit"/> &#160; <input type='button' value='Enregistrer' class="carnetSave"/>
+	    <input type='button' value='Valider' class="carnetSubmit"/> &#160; 
+            <input type='button' value='Enregistrer' class="carnetSave"/> &#160; 
+            <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave2"/> <label for="carnetAutoSave2"> AutoSave</label>
             <br/>
             <br/>
             <label for="sure">"Oui je veux supprimer ce carnet" (définitif!)</label>

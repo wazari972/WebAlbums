@@ -1,7 +1,10 @@
-function saveCarnet() {    
-    //id = $.queryString("carnet")
-    id = $("#carnetNom").attr("rel")
-
+function saveCarnet(silent) {
+    alert("save")
+    if (silent == undefine)
+        silent = false
+    
+    id = getParameterByName("carnet")
+    
     $.post("Carnets?action=SAVE", 
         {carnet : id,
          nom : $("#carnetNom").val(),
@@ -13,17 +16,39 @@ function saveCarnet() {
          desc: $("#carnetDesc").val(),
          carnetText: $("#wmd-input").val()
         },
-        function(data) {
-            alert("verify data: "+data)
+        function(xml) {
+            xml = $(xml)
+            
+            setTimeout(function(){$(".carnetSave").val("Enregistrer")}, 5000);
+            if (xml.find("exception").text() != "") {
+                if (!silent)
+                    alert(">"+xml.find("exception").text()+"<")
+                $(".carnetSave").val("Error...")
+            }
+            
+            $(".carnetSave").val("Saved!")
         }
      );
 }
 
-function init_buttons() {
-    $("#carnetDate").change(function () {
-        //check validity of $(this).val()
-    }) ;
+autosave_timer = undefined
+function toggleAutoSaveCarnet() {
+    if ($(this).attr("checked") == "checked") {
+        $(".carnetAutoSave").attr("checked", "checked")
+        if (autosave_timer == undefined) {
+            autosave_timer = setInterval(saveCarnet, 5*60*1000)
+        }
+    } else {
+        $(".carnetAutoSave").removeAttr("checked")
+        if (autosave_timer != undefined) {
+            clearInterval(autosave_timer)
+        }
+    }
+}
 
+function init_buttons() {
+    $(".carnetAutoSave").click(toggleAutoSaveCarnet)
+    
     $(".carnetSave").click(saveCarnet) ;
 
     $("#carnetRepr").change(function () {
@@ -58,7 +83,7 @@ function convertLink(id, url, title, link_text) {
 }
 
 function init_markdown_edit() {
-    var help = function () { alert("Exemple:\n\
+    var help = function () {alert("Exemple:\n\
 Gros titre\n\
 ==========\n\
 Sous-titre\n\
@@ -93,7 +118,7 @@ ou du `code en ligne` ou en block:\n\
 \n\
   [1]: 1007\n\
   [2]: 25\n\
-"); }
+");}
 
     var converter = Markdown.getSanitizingConverter();
 
@@ -107,7 +132,7 @@ ou du `code en ligne` ou en block:\n\
 
     converter.hooks.chain("beginConvert", beginConvert);
     
-    var editor = new Markdown.Editor(converter, "", { handler: help });
+    var editor = new Markdown.Editor(converter, "", {handler: help});
     editor.run();
 }
 
