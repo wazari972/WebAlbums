@@ -43,20 +43,22 @@
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="nom">Nom:</label>
-	    <input id="carnetNom" type='text' size='40' maxlength='60' name='nom'>
+	    <input id="carnetNom" type='text' size='40' maxlength='60' name='nom'
+                   required="true" placeholder="Titre ...">
 	      <xsl:attribute name="value"><xsl:value-of select="name" /></xsl:attribute>
               <xsl:attribute name="rel"><xsl:value-of select="@id" /></xsl:attribute>
 	    </input>
 	    <br/>
             <label for="date">Date:</label> 
-	    <input type='text' size='10' name='date' id="carnetDate" maxlength='10'>
+	    <input type='date' placeholder="YYYY-MM-DD" name='date' id="carnetDate" 
+                required="true" >
 	      <xsl:attribute name="value">
                   <xsl:if test="date"><xsl:value-of select="date" /></xsl:if>
-                  <xsl:if test="not(date)">yyyy-MM-dd</xsl:if>
               </xsl:attribute>
 	    </input>
             Photo pour représentation: 
-            <input type='text' name='carnetRepr' id="carnetRepr" maxlength="4" size="5">
+            <input type='text' name='carnetRepr' id="carnetRepr" maxlength="4" size="5"
+                   placeholder="ID ...">
                 <xsl:attribute name="value"><xsl:value-of select="@picture" /></xsl:attribute>
             </input>
             <input type='hidden' name='carnetPhoto' id='carnetPhoto' value = ''/>
@@ -69,14 +71,14 @@
             </xsl:apply-templates>
             <br/>
             <label for="desc">Description:</label>
-	    <textarea id="carnetDesc" name='desc' rows='2' cols='65'>
+	    <textarea id="carnetDesc" name='desc' rows='2' cols='65' placeholder="Description ...">
 	      <xsl:value-of select="description" />
 	    </textarea>
-                    <br/><br/>
+            <br/><br/>
             <input type='submit' value='Valider' class="carnetSubmit"/> &#160; 
             <input type='button' value='Enregistrer' class="carnetSave"/> &#160; 
-            <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave1"/> <label for="carnetAutoSave1"> AutoSave</label>
-                
+            <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave1"/> <label for="carnetAutoSave1"> AutoSave</label>&#160; 
+            <div class="localsave_info">Saved locally at: <span class="localsave_ts">not saved</span></div>
             <div class="wmd-panel">
                 <div id="wmd-button-bar"></div>
                 <textarea class="wmd-input" id="wmd-input" name="carnetText">
@@ -87,11 +89,14 @@
                     <br/>
 	    <input type='button' value='Valider' class="carnetSubmit"/> &#160; 
             <input type='button' value='Enregistrer' class="carnetSave"/> &#160; 
-            <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave2"/> <label for="carnetAutoSave2"> AutoSave</label>
+            <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave2"/> <label for="carnetAutoSave2"> AutoSave</label>&#160; 
+            <div class="localsave_info">Saved locally at: <span class="localsave_ts">not saved</span></div>
             <br/>
             <br/>
             <label for="sure">"Oui je veux supprimer ce carnet" (définitif!)</label>
-	    <input id="sure" type='text' autocomplete='off' name='suppr' size='31' maxlength='31'/>
+	    <input id="sure" type='text' autocomplete='off' name='suppr' 
+                   size='31' maxlength='31'
+                   placeholder="Oui je veux supprimer ce carnet"/>
 	  </form>
 	  <br/>
 	  <br/>

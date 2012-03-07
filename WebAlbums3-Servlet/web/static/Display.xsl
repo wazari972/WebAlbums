@@ -14,7 +14,7 @@
   <xsl:output method="html"/>
 
   <xsl:template match="/">
-    <html xmlns="http://www.w3.org/1999/xhtml">
+    <html>
       <head>
 	<xsl:apply-templates select="/webAlbums/login/valid"/>
 	<link rel="shortcut icon" href="static/favicon.png" type="image/png" /> 

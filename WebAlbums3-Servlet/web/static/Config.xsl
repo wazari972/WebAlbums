@@ -51,7 +51,8 @@
 	      <tr>
 		<td><label for="newTag">Nom :</label></td>
 		<td>
-		  <input id="newTag" name="nom" type='text' size='20' maxlength='40'/>
+		  <input id="newTag" name="nom" type='text' size='20' maxlength='40'
+                         placeholder="Nom du tag"/>
                 </td>
                 <td align="left">
                   <input type="button" value="Go to" id="btGoto"/>
@@ -153,7 +154,7 @@
               <xsl:with-param name="type">who</xsl:with-param>
             </xsl:apply-templates>
             <br/>
-            Date de naissance: <input id="birthdate" name='birthdate' type='text' size='15' maxlength='10'/>
+            Date de naissance: <input id="birthdate" name='birthdate' type='date' placeholder="YYYY-MM-DD"/>
 	    <br/>
             <input id="valModPerson" type='submit' value='Valider'/>
 	  </form>

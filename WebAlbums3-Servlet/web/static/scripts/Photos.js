@@ -119,10 +119,7 @@ function init_fastedit() {
 }
 
 function setup_shadowbox() {
-    alert("do setup "+Shadowbox)
-    $(".photo").each(function(){alert("coucou")})
     Shadowbox.setup(".photo", {});
-    alert("done setup")
 }
 
 $(function() {

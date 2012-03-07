@@ -34,7 +34,8 @@
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="desc">Description:</label>
-	    <textarea id="desc" name='desc' rows='5' cols='60'>
+	    <textarea id="desc" name='desc' rows='5' cols='60'
+                      placeholder="Description ...">
 	      <xsl:value-of select="description" />
 	    </textarea>
 	    <br/>
@@ -55,7 +56,8 @@
 	    </xsl:apply-templates>
 	    <br/>
             <label for="sure">"Oui je veux supprimer cette photo" (définitif !)</label>
-	    <input id="sure" autocomplete='off' type='text' name='suppr' size='33' maxlength='33'/>
+	    <input id="sure" autocomplete='off' type='text' name='suppr' size='33' maxlength='33'
+                   placeholder="Oui je veux supprimer cette photo"/>
 	    <br/>
 	    <br/>
 	    <label for="represent"></label>Representer l'album ? <input type='checkbox' id="represent" name='represent' value='y' /><br/>
@@ -72,7 +74,7 @@
             <br/>
             <label for="bg">Theme background ? </label><input id="bg" type='checkbox' name='themeBackground' value='y' />
             <input type="button" value="Try it!">
-                <xsl:attribute name="ONCLICK">
+                <xsl:attribute name="onclick">
                   updateBackground(<xsl:value-of select="@id" />) ;
                 </xsl:attribute>
             </input><br />

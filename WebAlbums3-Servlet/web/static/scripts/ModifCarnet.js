@@ -1,9 +1,31 @@
+function checkAutoSaveLocal() {
+    id = $("#carnetNom").prop("rel")
+    backup = window.localStorage.getItem('carnet-text-'+id)
+    if (backup != null && backup != $("#wmd-input").val()) {
+        timestamp = new Date(parseInt(window.localStorage.getItem('carnet-timestamp-'+id)))
+        
+        if (confirm("Another version of the text is saved on the browser, reload it ?\n"+
+            "(saved on "+timestamp+")")) {
+            $("#wmd-input").val(backup)
+        }
+    }
+}
+
+function autoSaveLocal() {
+    text = $("#wmd-input").val()
+    id = $("#carnetNom").prop("rel")
+    window.localStorage.setItem('carnet-text-'+id, text);
+    ts = (new Date())
+    window.localStorage.setItem('carnet-timestamp-'+id, ts.getTime());
+    $(".localsave_ts").text(""+ts)
+}
+
 function saveCarnet(silent) {
     if (silent == undefined)
         silent = false
     
-    id = getParameterByName("carnet")
-    
+    //id = getParameterByName("carnet")
+    id = $("#carnetNom").prop("rel")
     $.post("Carnets?action=SAVE", 
         {carnet : id,
          nom : $("#carnetNom").val(),
@@ -24,7 +46,7 @@ function saveCarnet(silent) {
                     alert(">"+xml.find("exception").text()+"<")
                 $(".carnetSave").val("Error...")
             }
-            
+            autoSaveLocal()
             $(".carnetSave").val("Saved!")
         }
      );
@@ -138,5 +160,7 @@ ou du `code en ligne` ou en block:\n\
 $(function() {
     init_buttons()
     init_markdown_edit()
+    setInterval(autoSaveLocal, 10*1000)
+    checkAutoSaveLocal()
 })
 

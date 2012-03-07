@@ -36,17 +36,19 @@
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="nom">Nom:</label>
-	    <input id="nom" type='text' size='40' maxlength='60' name='nom'>
+	    <input id="nom" type='text' size='40' maxlength='60' name='nom'
+                   placeholder="Titre ..." required="true">
 	      <xsl:attribute name="VALUE"><xsl:value-of select="name" /></xsl:attribute>
 	    </input>
 	    <br/>
             <label for="date">Date:</label> 
-	    <input id="date" type='text' size='10' name='date' maxlength='10'>
+	    <input id="date" type='date' size='10' name='date' maxlength='10' 
+                   placeholder="YYYY-MM-DD" required="true">
 	      <xsl:attribute name="VALUE"><xsl:value-of select="date" /></xsl:attribute>
 	    </input>
 	    <br/>
             <label for="desc">Description:</label>
-	    <textarea id="desc" name='desc' rows='5' cols='60'>
+	    <textarea id="desc" name='desc' rows='5' cols='60' placeholder="Description ...">
 	      <xsl:value-of select="description" />
 	    </textarea>
 	    <br/>
@@ -69,7 +71,8 @@
 	    <label for="uniq">Uniquement?</label><input id="uniq" type='checkbox' name='force' value='yes' />
 	    <br/>
             <label for="sure">"Oui je veux supprimer cet album" (définitif!)</label>
-	    <input id="sure" type='text' autocomplete='off' name='suppr' size='31' maxlength='31'/>
+	    <input id="sure" type='text' autocomplete='off' name='suppr' size='31' maxlength='31'
+                   placeholder="Oui je veux supprimer cet album"/>
 	    <br/>
 	    Droits de visibilité : <xsl:apply-templates select="rights"/>
 	    <br/>

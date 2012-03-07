@@ -5,6 +5,12 @@
 
 /** **** **/
 
+.localsave_info {
+    font: 10px Arial, Helvetica, sans-serif;
+}
+.localsave_ts {
+    color: #E0E7FF;
+}
 .wmd-preview {
     height:500px;
     overflow:scroll;
