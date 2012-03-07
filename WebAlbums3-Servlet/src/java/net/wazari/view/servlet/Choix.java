@@ -18,6 +18,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
+import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.xml.XmlChoix;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -33,15 +34,22 @@ public class Choix extends HttpServlet {
     @EJB
     private WebPageLocal webPageService;
 
-    public XmlWebAlbumsList displayChxScript(ViewSession vSession) throws WebAlbumsServiceException {
-        return webPageService.displayMapInScript(vSession);
+    public XmlWebAlbumsList displayChxJSON(ViewSession vSession) throws WebAlbumsServiceException {
+        Special special = vSession.getSpecial();
+        if (special == Special.MAP)
+            return webPageService.displayMapInScript(vSession);
+        else
+            return null;
     }
 
     public XmlChoix displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlChoix choix = new XmlChoix();
-
-        choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession,
-                Box.MULTIPLE, "tagAsked");
+        Special special = vSession.getSpecial();
+        if (special == Special.JUST_THEME) {
+        } else {
+            choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession,
+                    Box.MULTIPLE, "tagAsked");
+        } 
 
         return choix;
     }

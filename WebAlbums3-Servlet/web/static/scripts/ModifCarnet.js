@@ -1,6 +1,5 @@
 function saveCarnet(silent) {
-    alert("save")
-    if (silent == undefine)
+    if (silent == undefined)
         silent = false
     
     id = getParameterByName("carnet")

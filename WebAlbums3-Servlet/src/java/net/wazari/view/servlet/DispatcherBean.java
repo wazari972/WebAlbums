@@ -32,6 +32,7 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.XmlImage;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import net.wazari.view.servlet.exchange.xml.XmlWebAlbums;
@@ -130,6 +131,8 @@ public class DispatcherBean {
             default: 
                 log.info("============= Login: {} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
+                String type    = request.getParameter("type");
+                
                 if (special != null) {
                     log.info("Special XSL-style ({})", special);
                     output.xslFile = "static/Empty.xsl";
@@ -156,13 +159,15 @@ public class DispatcherBean {
                     log.debug("{} {}page", page, special != null ? special : "");
                     switch(page) {
                         case CHOIX:
-                            if (special == null) {
-                                output.choix = choixServlet.displayCHX(vSession);
-                            } else {
-                                output.blob = choixServlet.displayChxScript(vSession).blob;
+                            if ("JSON".equals(type)) {
+                                XmlWebAlbumsList ret = choixServlet.displayChxJSON(vSession);
+                                if (ret != null)
+                                    output.blob = ret.blob;
                                 response.setContentType("text/javascript;charset=UTF-8");
                                 output.isBlob = true;
-                                output.isComplete = true;
+                                output.isComplete = true;   
+                            } else {
+                                output.choix = choixServlet.displayCHX(vSession);
                             }
                             break;
                         case ALBUM:

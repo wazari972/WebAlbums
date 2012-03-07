@@ -1,6 +1,5 @@
 function init() {
     $("#submit_login").click(function () {
-        /*
         url = "Users?action=LOGIN&dontRedirect=true&userName="+$("#userName").val()+"&userPass="+$("#userPass").val()
         $.ajax({
           url:url,
@@ -10,16 +9,24 @@ function init() {
                   alert("access denied, try again")
               
               //and refresh the page
-              alert("test")
-              if (window.location.indexOf("/Index") != -1)
+              /*
+              if (window.location.indexOf("Logout") != -1)
                   return true
-              alert("load albums")
-              loadSinglePage("Album")
+              if (window.location.indexOf("/Users") != -1)
+                  return true
+              */
+             
+             
+              saved_themeId = $.cookie("themeId")
+              if (saved_themeId != undefined) {
+                  $.get("Choix?action=JUST_THEME&themeId="+saved_themeId+"")
+              }
+              window.location = window.location
               return false
           },
           async:false
          });
-         */
+         
         return false
     }) ;
 }

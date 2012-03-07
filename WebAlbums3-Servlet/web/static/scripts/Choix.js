@@ -46,7 +46,7 @@ function loadGoogleMap() {
     var map = new google.maps.Map(document.getElementById('mapChoix'), {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-    $.getJSON("Choix?special=map.json",
+    $.getJSON("Choix?special=map&type=JSON",
         function(data) {
               $.each(data, function(key, val) {
                 pointToMarker(val, imageBounds, map, markers)
@@ -161,7 +161,16 @@ function do_init_slider(data) {
      $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
 }
 
+function save_theme() {
+    themeId = getParameterByName("themeId")
+    if (themeId == "") 
+        return
+    
+    $.cookie("themeId", themeId)
+}
+
 $(function() {
+    save_theme()
     init_maps()
     init_loader()
 })
