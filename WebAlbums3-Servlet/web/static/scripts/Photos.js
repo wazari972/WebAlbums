@@ -38,7 +38,7 @@ function add_rm_tag(photoid, tagact) {
 }
 
 function inc_dec_stars(photoid, inc_dec) {
-    stars = $("#fastedit_div_stars_"+photoid).attr('rel')
+    stars = $("#fastedit_div_stars_"+photoid).prop('rel')
     
     n = parseInt(stars)
     n += inc_dec
@@ -65,48 +65,48 @@ function init_fastedit() {
     $("#fastedit_stars_bt").toggle()
     
     $(".fastedit_stars_inc").click(function () {
-        photoid = $(this).attr('rel');
+        photoid = $(this).prop('rel');
         inc_dec_stars(photoid, 1)
     }) ;
 
     $(".fastedit_stars_dec").click(function () {
-        photoid = $(this).attr('rel');
+        photoid = $(this).prop('rel');
         inc_dec_stars(photoid, -1)
     }) ;
     //buttons to toggle TAG and DESC fast edit
     $(".fastedit_stars_bt").click(function () {
-        id = $(this).attr('rel');
+        id = $(this).prop('rel');
         $("#fastedit_div_stars_"+id).toggle("fast")
     }) ;
     $(".fastedit_tag_bt").click(function () {
-        id = $(this).attr('rel');
+        id = $(this).prop('rel');
         $("#fastedit_div_tag_"+id).toggle("fast")
     }) ;
     $(".fastedit_desc_bt").click(function () {
-        id = $(this).attr('rel');
+        id = $(this).prop('rel');
         $("#desc_"+id).toggle("fast")
         $("#fastedit_div_desc_"+id).toggle("fast")
     }) ;
     $(".fastedit_stars").click(function () {
-        photoid = $(this).attr('rel').split('/')[0];
-        stars = $(this).attr('rel').split('/')[1];
+        photoid = $(this).prop('rel').split('/')[0];
+        stars = $(this).prop('rel').split('/')[1];
 
         set_stars(photoid, parseInt(stars))
 
     }) ;
 
     $(".fastedit_addtag").click(function () {
-        photoid = $(this).attr('rel');
+        photoid = $(this).prop('rel');
         add_rm_tag(photoid, "ADD")
     }) ;
 
     $(".fastedit_rmtag").click(function () {
-        photoid = $(this).attr('rel');
+        photoid = $(this).prop('rel');
         add_rm_tag(photoid, "RM")
     }) ;
 
     $(".fastedit_desc").click(function () {
-        photoid = $(this).attr('rel');
+        photoid = $(this).prop('rel');
         photodesc = $("#fastedit_desc_"+photoid).val()
 
         $.post("Photos?special=FASTEDIT", 

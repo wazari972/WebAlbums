@@ -86,7 +86,7 @@ function updateLocation(lat, lng) {
 
 function checkValidity(listId, validateBtId) {
     if ($("#"+listId).val() == -1) {
-        $("#"+validateBtId).attr('disabled', 'disabled');
+        $("#"+validateBtId).prop('disabled', 'disabled');
     } else {
         $("#"+validateBtId).removeAttr('disabled');
     }
@@ -139,8 +139,8 @@ function init_buttons() {
 
     $("#btKill").click(function () {
         alert("Bye-bye");
-        $(this).val("Dead!").attr('disabled', 'disabled');
-        callURL("http://"+window.location.hostname+$(this).attr('rel')) ;
+        $(this).val("Dead!").prop('disabled', 'disabled');
+        callURL("http://"+window.location.hostname+$(this).prop('rel')) ;
     }) ;
     
     $("#btGoto").bind("click", user_submit) ;

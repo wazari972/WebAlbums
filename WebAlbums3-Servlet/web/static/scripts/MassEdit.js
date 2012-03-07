@@ -1,11 +1,11 @@
 var select = true;
 function selectAll() {
     $(".massedit_chkbox").each(function() {
-        $(this).attr('checked', select); 
+        $(this).prop('checked', select); 
     });
     var bt = $("#massedit_selectall") ;
-    if (select) bt.attr('value',"Aucune");
-    else bt.attr('value',"Toutes");
+    if (select) bt.prop('value',"Aucune");
+    else bt.prop('value',"Toutes");
     select = !select ;
 }
 

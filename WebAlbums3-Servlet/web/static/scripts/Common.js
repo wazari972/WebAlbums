@@ -6,9 +6,9 @@ function prepareAlbumsTooltipsDiv(content) {
 }
 
 function prepareTooltipsDiv(content, what) {
-    var targetEl = document.getElementById(content.attr('id')) ;
+    var targetEl = document.getElementById(content.prop('id')) ;
     if (targetEl.innerHTML == "" || targetEl.innerHTML == null) {
-        loadExernals(null, what+"?special=ABOUT&id="+content.attr('rel'), content.attr('id'), null, false) ;
+        loadExernals(null, what+"?special=ABOUT&id="+content.prop('rel'), content.prop('id'), null, false) ;
     }
 }
 
@@ -36,7 +36,7 @@ function init_photoalbum_size() {
 
 function init_fullscreen() {
     $(".fullscreen").click(function () {
-        callURL($(this).attr('rel').trim()) ;
+        callURL($(this).prop('rel').trim()) ;
     }) ;
 }
 
@@ -98,7 +98,7 @@ function get_qos_Stars_only() {
 
 function activate_qosStars_only() {
     $("#qos_stars_only").click(function(){
-        if ($(this).attr("checked"))
+        if ($(this).prop("checked"))
             $.cookie('QOS_STARS_ONLY', "yes")
         else
             $.cookie('QOS_STARS_ONLY', null)
@@ -106,7 +106,7 @@ function activate_qosStars_only() {
     })
     if ($.cookie('QOS_STARS_ONLY') == null)
         return
-    $("#qos_stars_only").attr("check", "check")
+    $("#qos_stars_only").prop("check", "check")
 }
 $().ready(activate_qosStars_only)
 
@@ -125,13 +125,13 @@ function refresh_qos_stars() {
     only = get_qos_Stars_only()
     for(var i=1; i<=5; i++) {
         if (i <= stars)
-            $("#qos_stars_"+i).attr("src", "static/images/star.on.png")
+            $("#qos_stars_"+i).prop("src", "static/images/star.on.png")
         else
-            $("#qos_stars_"+i).attr("src", "static/images/star.off.png")
+            $("#qos_stars_"+i).prop("src", "static/images/star.off.png")
     }
     $(".photo_item").each(function(){
-        if ((!only && parseInt($(this).attr("rel")) >= stars)
-            ||only && parseInt($(this).attr("rel")) == stars)
+        if ((!only && parseInt($(this).prop("rel")) >= stars)
+            ||only && parseInt($(this).prop("rel")) == stars)
         {
             $(this).show()
         } else {
@@ -146,7 +146,7 @@ function prepare_qos_stars() {
         $("#qos_stars").append("<img rel='"+i+"'id='qos_stars_"+i+"'src='static/images/star.off.png'/>")
 
         $("#qos_stars_"+i).click(function(){
-            set_qosStars($(this).attr("rel"))
+            set_qosStars($(this).prop("rel"))
             refresh_qos_stars()
         })
     }

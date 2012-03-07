@@ -54,8 +54,8 @@ function saveCarnet(silent) {
 
 autosave_timer = undefined
 function toggleAutoSaveCarnet() {
-    if ($(this).attr("checked") == "checked") {
-        $(".carnetAutoSave").attr("checked", "checked")
+    if ($(this).prop("checked") == "checked") {
+        $(".carnetAutoSave").prop("checked", "checked")
         if (autosave_timer == undefined) {
             autosave_timer = setInterval(saveCarnet, 5*60*1000)
         }
@@ -73,7 +73,7 @@ function init_buttons() {
     $(".carnetSave").click(saveCarnet) ;
 
     $("#carnetRepr").change(function () {
-        $("#carnetReprImg").attr("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");
+        $("#carnetReprImg").prop("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");
     }) ;
 }
 

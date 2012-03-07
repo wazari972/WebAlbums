@@ -69,9 +69,9 @@ function printDate(strDate) {
 function trimAlbums(min, max, name) {
     $('.selectAlbum').each(function(index) {
         
-        if (parseInt($(this).attr('rel'))  < min ) {
+        if (parseInt($(this).prop('rel'))  < min ) {
            $(this).hide() ;
-        } else if (parseInt($(this).attr('rel'))  > max) {
+        } else if (parseInt($(this).prop('rel'))  > max) {
             $(this).hide() ;
         } else if ($(this).text().toUpperCase().indexOf(name.toUpperCase()) == -1) {
             $(this).hide() ;
@@ -139,7 +139,7 @@ function do_init_slider(data) {
           trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
       }
      } ;
-     $("#slider-range").attr("rel", "singlepage[no]");
+     $("#slider-range").prop("rel", "singlepage[no]");
      
      $("#slider-range").slider(sliderOption);
      $("#fromDate").text(printDate(data.fromDate));

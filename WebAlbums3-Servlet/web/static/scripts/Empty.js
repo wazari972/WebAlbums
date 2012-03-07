@@ -5,7 +5,7 @@ function updateFullImage(id) {
 }
 function init_fullscreen () {
     $(".visio_img").click(function () {
-        updateFullImage($(this).attr("rel"))
+        updateFullImage($(this).prop("rel"))
     })
 }
 
