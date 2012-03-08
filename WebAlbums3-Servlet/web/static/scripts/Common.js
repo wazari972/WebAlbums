@@ -7,9 +7,9 @@ function prepareAlbumsTooltipsDiv(content) {
 }
 
 function prepareTooltipsDiv(content, what) {
-    var targetEl = document.getElementById(content.prop('id')) ;
+    var targetEl = document.getElementById(content.attr('id')) ;
     if (targetEl.innerHTML == "" || targetEl.innerHTML == null) {
-        loadExernals(null, what+"?special=ABOUT&id="+content.prop('rel'), content.prop('id'), null, false) ;
+        loadExernals(null, what+"?special=ABOUT&id="+content.attr('rel'), content.attr('id'), null, false) ;
     }
 }
 
@@ -37,7 +37,7 @@ function init_photoalbum_size() {
 
 function init_fullscreen() {
     $(".fullscreen").click(function () {
-        callURL($(this).prop('rel').trim()) ;
+        callURL($(this).attr('rel').trim()) ;
     }) ;
 }
 
@@ -63,8 +63,28 @@ function refresh_editionMode() {
         alert('unknown edition mode value: '+value)
 }
 
+function body_mouseenter() {
+    if (get_editionMode() == 'EDITION')
+        $(this).find(".edit").show()
+}
+
+function body_mouseleave() {
+    $(this).find(".edit").hide()
+}
+
+function do_init_mouse_hover() {
+    $(".details").hover(body_mouseenter, body_mouseleave)
+    $(".edit").hide()
+}
+
+function init_mouse_hover() {
+    add_callback("SinglePage", do_init_mouse_hover)
+    do_init_mouse_hover()
+}
+
+
 function set_editionMode(value) {
-    $.cookie('EDITION_MODE', value, { path: '/' });
+    $.cookie('EDITION_MODE', value, {path: '/'});
 }
 
 function get_editionMode() {
@@ -83,6 +103,7 @@ function toogle_editionMode() {
     }
     refresh_editionMode()
 }
+
 function init_edition() {
     refresh_editionMode()
 
@@ -107,11 +128,11 @@ function activate_qosStars_only() {
     })
     if ($.cookie('QOS_STARS_ONLY') == null)
         return
-    $("#qos_stars_only").prop("check", "check")
+    $("#qos_stars_only").prop("checked", true)
 }
 
 function set_qosStars(value) {
-    $.cookie('QOS_STARS', value, { path: '/' });
+    $.cookie('QOS_STARS', value, {path: '/'});
 }
 
 function get_qosStars() {
@@ -125,9 +146,9 @@ function refresh_qos_stars() {
     only = get_qos_Stars_only()
     for(var i=1; i<=5; i++) {
         if (i <= stars)
-            $("#qos_stars_"+i).prop("src", "static/images/star.on.png")
+            $("#qos_stars_"+i).attr("src", "static/images/star.on.png")
         else
-            $("#qos_stars_"+i).prop("src", "static/images/star.off.png")
+            $("#qos_stars_"+i).attr("src", "static/images/star.off.png")
     }
     $(".photo_item").each(function(){
         c_stars = parseInt($(this).attr("rel"))
@@ -147,7 +168,7 @@ function prepare_qos_stars() {
         $("#qos_stars").append("<img rel='"+i+"'id='qos_stars_"+i+"'src='static/images/star.off.png'/>")
 
         $("#qos_stars_"+i).click(function(){
-            set_qosStars($(this).prop("rel"))
+            set_qosStars($(this).attr("rel"))
             refresh_qos_stars()
         })
     }
@@ -162,7 +183,7 @@ function init_qos_starts() {
 /******************************************/
 
 function set_details(value) {
-    $.cookie('EXIF_DETAILS', value, { path: '/' });
+    $.cookie('EXIF_DETAILS', value, {path: '/'});
 }
 
 function get_details() {
@@ -207,6 +228,7 @@ function init_details() {
 $(function () {
     init_common()
     init_edition()
+    init_mouse_hover()
     activate_qosStars_only()
     init_qos_starts()
     init_details()

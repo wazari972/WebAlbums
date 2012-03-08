@@ -84,7 +84,7 @@
             <span>
             <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
                 <span class="massedit_chk edit">
-                    <input type="checkbox" class="massedit_chkbox edit" value="modif">
+                    <input type="checkbox" class="massedit_chkbox" value="modif">
                         <xsl:attribute name="name">chk<xsl:value-of select="photoId" /></xsl:attribute>
                     </input>
                 </span>
@@ -95,7 +95,7 @@
                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                      Descr
                 </div>
-                <div class="fastedit_bt">&#160;||&#160;</div>
+                <div class="fastedit_bt edit">&#160;||&#160;</div>
                 <div class="fastedit_bt fastedit_tag_bt edit">
                     <xsl:attribute name="rel"><xsl:value-of select="photoId" /></xsl:attribute>
                     Tags
@@ -175,6 +175,7 @@ Carnets?action=EDIT
                               <xsl:value-of name="stars" select="photoId" />
                             </xsl:call-template>
                         </div>
+                        <span class="edit">
                         <div class="fastedit">
                             <xsl:attribute name="id">fastedit_div_stars_<xsl:value-of select="photoId" /></xsl:attribute>
                             <xsl:attribute name="rel"><xsl:value-of select="@stars" /></xsl:attribute>
@@ -187,12 +188,14 @@ Carnets?action=EDIT
                                   </input>
                               </p>
                        </div>
+                       </span>
                     </xsl:if>
                     <xsl:apply-templates select="tagList">
                       <xsl:with-param name="style">none</xsl:with-param>
                       <xsl:with-param name="mode">TAG_USED</xsl:with-param>
                       <xsl:with-param name="box">NONE</xsl:with-param>
                     </xsl:apply-templates>
+                    <span class="edit">
                     <div class="fastedit">
                           <xsl:attribute name="id">fastedit_div_tag_<xsl:value-of select="photoId" /></xsl:attribute>
                           <p>
@@ -210,10 +213,12 @@ Carnets?action=EDIT
                                 </input>
                          </p>
                     </div>
+                    </span>
                     <div class="description">
                         <xsl:attribute name="id">desc_<xsl:value-of select="photoId" /></xsl:attribute>
                         <xsl:value-of select="description" />
                     </div>
+                    <span class="edit">
                     <div class="fastedit">
                             <xsl:attribute name="id">fastedit_div_desc_<xsl:value-of select="photoId" /></xsl:attribute>
                              <p>
@@ -226,6 +231,7 @@ Carnets?action=EDIT
                                   </input>
                               </p>
                        </div>
+                       </span>
                        <xsl:if test="../carnet">
                            <div class="carnets_opt">
                                <xsl:apply-templates select="../carnet"/>

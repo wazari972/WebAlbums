@@ -1,5 +1,5 @@
 function checkAutoSaveLocal() {
-    id = $("#carnetNom").prop("rel")
+    id = $("#carnetNom").attr("rel")
     backup = window.localStorage.getItem('carnet-text-'+id)
     if (backup != null && backup != $("#wmd-input").val()) {
         timestamp = new Date(parseInt(window.localStorage.getItem('carnet-timestamp-'+id)))
@@ -13,7 +13,7 @@ function checkAutoSaveLocal() {
 
 function autoSaveLocal() {
     text = $("#wmd-input").val()
-    id = $("#carnetNom").prop("rel")
+    id = $("#carnetNom").attr("rel")
     window.localStorage.setItem('carnet-text-'+id, text);
     ts = (new Date())
     window.localStorage.setItem('carnet-timestamp-'+id, ts.getTime());
@@ -25,7 +25,7 @@ function saveCarnet(silent) {
         silent = false
     
     //id = getParameterByName("carnet")
-    id = $("#carnetNom").prop("rel")
+    id = $("#carnetNom").attr("rel")
     $.post("Carnets?action=SAVE", 
         {carnet : id,
          nom : $("#carnetNom").val(),
@@ -54,8 +54,8 @@ function saveCarnet(silent) {
 
 autosave_timer = undefined
 function toggleAutoSaveCarnet() {
-    if ($(this).prop("checked") == "checked") {
-        $(".carnetAutoSave").prop("checked", "checked")
+    if ($(this).attr("checked") == "checked") {
+        $(".carnetAutoSave").attr("checked", "checked")
         if (autosave_timer == undefined) {
             autosave_timer = setInterval(saveCarnet, 5*60*1000)
         }
@@ -73,7 +73,7 @@ function init_buttons() {
     $(".carnetSave").click(saveCarnet) ;
 
     $("#carnetRepr").change(function () {
-        $("#carnetReprImg").prop("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");
+        $("#carnetReprImg").attr("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");
     }) ;
 }
 

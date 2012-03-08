@@ -195,14 +195,14 @@ function loadBookmarkedSinglePage() {
 function enableSinglePage() {
     $('a').each(function(index) {
         
-        if ($(this).prop("SinglePaged")) return ;
-        $(this).prop("SinglePaged", true) ;
+        if ($(this).attr("SinglePaged")) return ;
+        $(this).attr("SinglePaged", true) ;
 
-        if ($(this).prop("href") == undefined) return ;
-        if ($(this).prop("href").indexOf("javascript") == 0) return ;
-        if ($(this).prop("href").indexOf("#") == 0) return ;
-        if ($(this).prop("rel") != undefined &&
-            $(this).prop("rel").indexOf("shadowbox") == 0) return ;
+        if ($(this).attr("href") == undefined) return ;
+        if ($(this).attr("href").indexOf("javascript") == 0) return ;
+        if ($(this).attr("href").indexOf("#") == 0) return ;
+        if ($(this).attr("rel") != undefined &&
+            $(this).attr("rel").indexOf("shadowbox") == 0) return ;
 
 
         var parents = $(this).parent("div") ;
@@ -214,15 +214,15 @@ function enableSinglePage() {
                 parent = parents.get(i) ;
             }
 
-            if (parent.prop != undefined &&
-                parent.prop("rel") != undefined &&
-                parent.prop("rel").indexOf("singlepage[no]") == 0) {
+            if (parent.attr != undefined &&
+                parent.attr("rel") != undefined &&
+                parent.attr("rel").indexOf("singlepage[no]") == 0) {
                 return ;
             }
         }
         
         $(this).click(function() {
-            var url = jQuery.trim($(this).prop("href")) ;
+            var url = jQuery.trim($(this).attr("href")) ;
             loadSinglePage(url) ;
             return false ;
         }) ;

@@ -53,8 +53,13 @@ function check_massedit() {
     })
     if (checked) {
         $("#massedit_box").show()
+        $(".massedit_chk").removeClass("edit")
+        $(".massedit_chk").show()
     } else {
         $("#massedit_box").hide()
+        $(".massedit_chk").hide()
+        $(".massedit_chk").addClass("edit")
+        $(this).parent().show()
     }
     
 }
