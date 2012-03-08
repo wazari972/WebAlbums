@@ -58,7 +58,7 @@ function refresh_editionMode() {
     if (value == 'VISITE') {
         $(".edit").hide()
     } else if (value == 'EDITION') {
-        $(".edit").show()
+        //$(".edit").show()
     } else
         alert('unknown edition mode value: '+value)
 }
@@ -206,15 +206,21 @@ function refresh_details() {
     details = get_details()
     set_details(details)
     if (details == 1) {
-        $(".exif_tooltip").each(function(){
-            //SHOW
+        $(".exif_container").each(function(){
+            exif_tooltip = $(this).data("exif_tooltip")
+            if (exif_tooltip != undefined)
+                exif_tooltip.appendTo($(this))
         })
+        
         $("#mode_details").text("AVEC")
+        $(".exif").show()
     } else {
         $(".exif_tooltip").each(function(){
-            //alert($(this).remove())
+            $(this).parent().data("exif_tooltip", $(this))
+            $(this).detach()
         })
         $("#mode_details").text("SANS")
+        $(".exif").hide()
     }
 }
 

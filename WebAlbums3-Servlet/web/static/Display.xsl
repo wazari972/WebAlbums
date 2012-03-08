@@ -80,7 +80,7 @@
                   <li><span id="qos_stars"/></li>
                   <li>Only ? <input id="qos_stars_only" value="1" type="checkbox"/></li>
                   </ul> </li>
-                  <li>Photos/Albums par page:
+                  <li>Items par page:
                     <ul>
                       <li>
                         <select id="nbPhotoAlbum">

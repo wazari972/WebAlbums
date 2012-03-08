@@ -41,9 +41,11 @@
     
   <xsl:template match="details">
     <xsl:if test="../exif">
+      <span class="exif_container">
       <span class="exif_tooltip">
         <xsl:attribute name="id">exif-content-<xsl:value-of select="photoId" /></xsl:attribute>
         <xsl:apply-templates select="../exif" />
+      </span>
       </span>
     </xsl:if>
       <div class="details">
@@ -64,7 +66,6 @@
                 </xsl:if>
               </xsl:attribute>
               <img class="photo">
-                <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId" /></xsl:attribute>
                 <xsl:attribute name="alt">
                   <xsl:value-of select="title" />
                 </xsl:attribute>
@@ -109,6 +110,10 @@
                       <xsl:attribute name="href">Images?id=<xsl:value-of select="photoId" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
                       <img src="static/images/reduire.gif" width="30px"/>
                     </a>
+                    <span class="exif">
+                        <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId" /></xsl:attribute>
+                        EXIF
+                    </span>
                 </xsl:if>
                 <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
                     <xsl:if test="/webAlbums/affichage/remote">
