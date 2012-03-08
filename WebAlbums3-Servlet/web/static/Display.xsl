@@ -42,11 +42,13 @@
         <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
         <script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
         <script type="text/javascript">
-            Shadowbox.init({
-                handleUnsupported:  "remove",
-                modal:     true,
-                skipSetup: true
-            });
+            $(function() {
+                Shadowbox.init({
+                    handleUnsupported:  "remove",
+                    modal:     true,
+                    skipSetup: true
+                });
+            })
         </script>
         
 	<div id="header"> 
@@ -142,7 +144,7 @@
                 
                 <script type="text/javascript" src="static/scripts/tools.js"/>
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-                <script type="text/javascript" src="static/scripts/Photos.js"></script>
+                    <script type="text/javascript" src="static/scripts/Photos.js"></script>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags">
                     <script type="text/javascript" src="static/scripts/Tags.js"></script>
@@ -152,7 +154,6 @@
                 </xsl:if>
                 <xsl:if test="/webAlbums/choix">
                     <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" media="screen"/>
-                    <script src="Choix?special=map.js" type='text/javascript'></script>
                     <script src="static/scripts/Choix.js" type='text/javascript'></script>
                 </xsl:if>
 	      </div>

@@ -15,7 +15,6 @@ function init_massedit() {
     }) ;
 }
 
-
 function reload_page_cb(data, photoid) {
     if (loadSinglePage != undefined) {
         loadSinglePage(getCurrentPage()+"#"+photoid, true)
@@ -119,7 +118,7 @@ function init_fastedit() {
 }
 
 function setup_shadowbox() {
-    Shadowbox.setup(".photo", {});
+    //Shadowbox.setup(".photo", {});
 }
 
 $(function() {

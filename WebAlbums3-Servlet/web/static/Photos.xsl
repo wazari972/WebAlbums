@@ -60,7 +60,7 @@
 	<div class="body">
 	  <xsl:apply-templates select="message"/>
 	  <input type='hidden' name='action' value='MASSEDIT' />	  
-	  <table>
+	  <table id="massedit_box">
 	    <tr><td colspan='2'>
 		<input type='button' id="massedit_selectall" value="Toutes"/>
 	    </td></tr>

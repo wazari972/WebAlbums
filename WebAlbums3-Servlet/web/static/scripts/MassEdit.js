@@ -45,9 +45,25 @@ function validMass() {
     document.forms[0].submit()
 }
 
+function check_massedit() {
+    checked = false
+    $(".massedit_chkbox").each(function () {
+        if (!checked && $(this).prop("checked"))
+            checked = true
+    })
+    if (checked) {
+        $("#massedit_box").show()
+    } else {
+        $("#massedit_box").hide()
+    }
+    
+}
+
 function init_mass() {
     $("#valid_mass").click(validMass)
+    $("#massedit_box").hide()
     $("#massedit_selectall").click(selectAll)
+    $(".massedit_chkbox").change(check_massedit)
 }
 
 $(function() {

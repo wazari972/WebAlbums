@@ -96,8 +96,7 @@ function add_callback (hook, func) {
     callbacks[hook] = function (x) { return func(original(x)); }
 }
 
-function getParameterByName(name)
-{
+function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
     var regexS = "[\\?&]" + name + "=([^&#]*)";
     var regex = new RegExp(regexS);

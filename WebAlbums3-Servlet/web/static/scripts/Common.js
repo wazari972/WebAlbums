@@ -1,3 +1,4 @@
+
 function prepareTagsTooltipsDiv(content) {
     prepareTooltipsDiv(content, "Tags") ;
 }
@@ -108,7 +109,6 @@ function activate_qosStars_only() {
         return
     $("#qos_stars_only").prop("check", "check")
 }
-$().ready(activate_qosStars_only)
 
 function set_qosStars(value) {
     $.cookie('QOS_STARS', value, { path: '/' });
@@ -130,8 +130,9 @@ function refresh_qos_stars() {
             $("#qos_stars_"+i).prop("src", "static/images/star.off.png")
     }
     $(".photo_item").each(function(){
-        if ((!only && parseInt($(this).prop("rel")) >= stars)
-            ||only && parseInt($(this).prop("rel")) == stars)
+        c_stars = parseInt($(this).attr("rel"))
+        if ((!only && c_stars >= stars)
+            ||only && c_stars == stars)
         {
             $(this).show()
         } else {
@@ -203,10 +204,10 @@ function init_details() {
 }
 
 /**********************************************/
-
 $(function () {
     init_common()
     init_edition()
+    activate_qosStars_only()
     init_qos_starts()
     init_details()
 })

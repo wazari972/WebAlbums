@@ -5,6 +5,7 @@ var inPlaceSinglePage = null;
 var inPlaceSinglePage_lock = null;
 
 var displayXsl = null ;
+
 function prepareDisplayXSL() {
     $.ajax({
         url:"static/Display.xsl",
