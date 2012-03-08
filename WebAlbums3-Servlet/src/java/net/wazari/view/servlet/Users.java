@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 
+import java.security.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
@@ -43,6 +44,15 @@ public class Users extends HttpServlet {
                 }
 
                 String pass = vSession.getUserPass();
+                
+                Principal pr = request.getUserPrincipal();
+                if (pr != null) {
+                    log.info("already logged in: {}", pr.getName());
+                    if (pr.getName().equals(userName))
+                        return null;
+                    else
+                        request.logout();
+                }
                 log.info("try to login: {}", userName);
                 request.login(userName, pass);
                 output.valid = true ;
