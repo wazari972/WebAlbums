@@ -48,7 +48,7 @@ Albums?count=<xsl:value-of select="@count" />#<xsl:value-of select="@id" />
 	  </a>
 	</h1>
 	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
-	  <h2>
+	  <h2 class="details">
             <div class="title_opt">
                 <div class="album_opt">
                     <a rel="singlepage[no]">
@@ -74,9 +74,9 @@ Photos?album=<xsl:value-of select="@id" />
                           
                         </img>
                     </xsl:if>
-                    <xsl:if test="/webAlbums/affichage/@edit">
+                    <xsl:if test="/webAlbums/loginInfo/@admin">
                           &#160;
-                          <a rel="singlepage[no]" title="Edition de l'album">
+                          <a rel="singlepage[no]" title="Edition de l'album" class="edit">
                             <xsl:attribute name="href">
 Albums?action=EDIT
 &amp;id=<xsl:value-of select="@id" />
