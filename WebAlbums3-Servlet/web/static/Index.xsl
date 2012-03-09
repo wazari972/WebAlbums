@@ -27,16 +27,11 @@
     </div>
   </xsl:template>
   <xsl:template match="themes/themeList/theme">
-      <form method="POST" action="Choix">
+      <form method="POST" action="">
         <input type='hidden' name='themeId' value='SUBMIT'>
             <xsl:attribute name="value"><xsl:value-of select="@id"/></xsl:attribute>
         </input>
-        <a rel="singlepage[no]">
-            <xsl:attribute name="href">
-                Choix?themeId=<xsl:value-of select="@id"/>
-            </xsl:attribute>
-            
-            <img class="index_img">
+        <img class="index_img">
             <xsl:attribute name="alt">
               <xsl:value-of select="name"/>
             </xsl:attribute>
@@ -49,9 +44,12 @@
                 Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT
               </xsl:if>
             </xsl:attribute>
-          </img>
-          <xsl:value-of select="name"/>
-      </a>
+        </img>
+        <input type="submit">
+            <xsl:attribute name="value">
+              <xsl:value-of select="name"/>
+            </xsl:attribute>    
+        </input>
     </form><br/><br/>
   </xsl:template>
 </xsl:stylesheet>
