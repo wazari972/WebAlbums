@@ -49,7 +49,8 @@
           </div>
           <div class="content">
               <h1>Verification des photos</h1>
-              <form action="Database?action=CHECK" method="POST"><input type="submit" value="Go!"/></form>
+              <form action="Database?action=CHECK_DB" method="POST"><input type="submit" value="Check Database"/></form>
+              <form action="Database?action=CHECK_FS" method="POST"><input type="submit" value="Check Filesystem"/></form>
               <xsl:apply-templates select="check"/>
           </div>
         </div>

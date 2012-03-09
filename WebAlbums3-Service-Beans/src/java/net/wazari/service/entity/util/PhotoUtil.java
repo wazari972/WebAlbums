@@ -215,17 +215,17 @@ public class PhotoUtil {
 
     public String getGpxPath(ViewSession vSession, Gpx g) {
         String sep = vSession.getConfiguration().getSep() ;
-        return vSession.getConfiguration().getImagesPath() + sep + getThemedPath(g);
+        return vSession.getConfiguration().getImagesPath() + getThemedPath(g);
     }
     
     public String getImagePath(ViewSession vSession, Photo p) {
         String sep = vSession.getConfiguration().getSep() ;
-        return vSession.getConfiguration().getImagesPath() + sep + getThemedPath(p);
+        return vSession.getConfiguration().getImagesPath() + getThemedPath(p);
     }
 
     public String getMiniPath(ViewSession vSession, Photo p) {
         String sep = vSession.getConfiguration().getSep() ;
-        return  vSession.getConfiguration().getMiniPath() + sep + getThemedPath(p) + ".png";
+        return  vSession.getConfiguration().getMiniPath() + getThemedPath(p) + ".png";
     }
 
     public String getExtention(ViewSession vSession, Photo p) {

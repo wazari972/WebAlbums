@@ -5,6 +5,7 @@
 package net.wazari.service.engine;
 
 import java.io.File;
+import java.lang.String;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,8 @@ import net.wazari.service.DatabaseLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSession.Action;
+import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.database.XmlDatabaseCheck;
 import net.wazari.service.exchange.xml.database.XmlDatabaseDefault;
@@ -74,6 +77,11 @@ public class DatabaseBean implements DatabaseLocal {
 
     public XmlDatabaseCheck treatCHECK(ViewSession vSession) {
         XmlDatabaseCheck output = new XmlDatabaseCheck() ;
+        
+        Action action = vSession.getAction() ;
+        if (action == null)
+            return output;
+        
         try {
             Theme enrTheme = vSession.getTheme();
             if (enrTheme == null)
@@ -84,30 +92,74 @@ public class DatabaseBean implements DatabaseLocal {
             List<Theme> themes = new LinkedList<Theme>();
             if (vSession.isRootSession())
                 //Hibernate exception if direct
-                themes.add(themeDAO.find(enrTheme.getId()));
-            else
                 themes.addAll(themeDAO.findAll());
+            else
+                themes.add(enrTheme);
             
             int count = 0;
-            for (Theme curEnrTheme : themeDAO.findAll()) {
+            for (Theme curEnrTheme : themes) {
+                if (curEnrTheme.getId() == ThemeFacadeLocal.THEME_ROOT_ID)
+                    continue ;
+                List<String> images = null;
+                List<String> mini = null;
                 
-                for (Album enrAlbum : curEnrTheme.getAlbumList()) {
-                    log.warn("checking: {}", enrAlbum.getNom());
-                    for (Photo enrPhoto : enrAlbum.getPhotoList()) {
-
-                        for (String filepath : new String[]{photoUtil.getImagePath(vSession, enrPhoto), photoUtil.getMiniPath(vSession, enrPhoto)}) 
-                        {
-                            count++;
-                            File f = new File(filepath);
-                            if (!f.exists())
-                                output.files.add(filepath+": missing");
-                            else if (!f.canRead())
-                                output.files.add(filepath+": not readable");
+                if (action == Action.CHECK_FS) {
+                    images = new LinkedList<String>();
+                    mini = new LinkedList<String>();
+                    String sep = vSession.getConfiguration().getSep() ;
+                    List<String> current = images ;
+                    String pictpath = vSession.getConfiguration().getImagesPath() ;
+                    
+                    while (current != null) {    
+                        File themeDir = new File(pictpath + sep + curEnrTheme.getNom());
+                        for (File year : themeDir.listFiles()) {
+                            for (File albums : year.listFiles()) {
+                                for (File image : albums.listFiles()) {
+                                    if (image.getName().endsWith(".gpx"))
+                                        continue ;
+                                    current.add(image.getAbsolutePath());
+                                }
+                            }
+                        }
+                        
+                        if (current == images) {
+                            current = mini; 
+                            pictpath = vSession.getConfiguration().getMiniPath() ;
+                        } else {
+                            current = null;
                         }
                     }
                 }
+                for (Album enrAlbum : curEnrTheme.getAlbumList()) {
+                    log.warn("checking album: {}", enrAlbum.getNom());
+                    for (Photo enrPhoto : enrAlbum.getPhotoList()) {
+                        count++;
+                        List<String> current = images ;
+                        for (String filepath : new String[]{photoUtil.getImagePath(vSession, enrPhoto), photoUtil.getMiniPath(vSession, enrPhoto)}) {
+                            if (action == Action.CHECK_DB) {
+                                File f = new File(filepath);
+                                if (!f.exists())
+                                    output.files.add(filepath+": missing");
+                                else if (!f.canRead())
+                                    output.files.add(filepath+": not readable");
+                            } else if (action == Action.CHECK_FS) {
+                                
+                                boolean removed = current.remove(filepath);
+                                log.info("checking: {}", filepath);
+                                log.info("found ^: {}", removed);
+                                current = mini ;
+                            }
+                        }
+                    }
+                }
+                if (action == Action.CHECK_FS) {
+                    output.files.addAll(images);
+                    output.files.addAll(mini);
+                }
             }
-            output.message = "Check OK. "+count+" photos checked, "+output.files.size() + " missing";
+            
+            output.message = "Check OK. "+count+" photos checked, "+output.files.size() + " problems";
+            log.warn(output.message);
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
         }

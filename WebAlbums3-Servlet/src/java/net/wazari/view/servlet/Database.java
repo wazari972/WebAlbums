@@ -74,7 +74,8 @@ public class Database extends HttpServlet {
                 case TRUNK:
                     output.trunk = databaseService.treatTRUNK(vSession);
                     break;
-                case CHECK:
+                case CHECK_FS:
+                case CHECK_DB:
                     output.check = databaseService.treatCHECK(vSession);
                     break;
                 case STATS:
