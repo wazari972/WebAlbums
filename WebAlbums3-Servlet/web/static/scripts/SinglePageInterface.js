@@ -1,5 +1,5 @@
 var singlePage_cache = {"Choix": ""} ;
-var ANCHOR_PREFIX = "#pg=" ;
+//var ANCHOR_PREFIX = "#pg=" ;
 
 var inPlaceSinglePage = null;
 var inPlaceSinglePage_lock = null;
@@ -25,20 +25,19 @@ function singlePageCached(url) {
 
 
 function getCurrentPage() {
-    if (getCurrentSinglePage() != undefined) return getCurrentSinglePage() ;
-    else {
-        var url = window.location.href ;
-        return url.substring(url.lastIndexOf("/")+1) ;
-    }
+    return getCurrentSinglePage() ;
 }
 
 function getCurrentSinglePage() {
+    return ""+window.location+""
+    /*
     var pos = window.location.hash.indexOf(ANCHOR_PREFIX) ;
     if (pos != -1) {
          var page = window.location.hash.substring(ANCHOR_PREFIX.length)  ;
          page.replace(/^(\s*<br\s*\/?>)*\s*|\s*(<br\s*\/?>\s*)*$/g, '')
         return $.trim(page) ;
     } else return undefined ;
+    */
 }
 
 function Node_getElementById(node, id) {
@@ -55,7 +54,20 @@ function Node_getElementById(node, id) {
     return null;
 }
 
-function loadSinglePage(url, dont_scroll, force) {
+cached = {}
+counter = 0
+function reloadSinglePage(event) {
+    if (cached[event.state] != undefined) {
+        loadSinglePageBottomEnd(cached[event.state])
+    } else {
+        parent = $("#left").parent()
+        $("#left").html(cached["first"].html())
+        parent.append(cached["first"])
+        //loadSinglePage(""+window.location+"")
+    }
+}
+
+function loadSinglePage(url, dont_scroll, force, dont_push) {
     if (dont_scroll == undefined)
         dont_scroll = false
     
@@ -98,7 +110,7 @@ function loadSinglePage(url, dont_scroll, force) {
         left.id = oldURL ;
         $(left).hide()
     }
-    document.location.href = ANCHOR_PREFIX+url;
+    //document.location.href = ANCHOR_PREFIX+url;
     url = url.replace(/\n/g, '') ;
     url = url.replace(/\r/g, '') ;
     inPlaceSinglePage = $.trim(url) ;
@@ -121,6 +133,15 @@ function loadSinglePage(url, dont_scroll, force) {
         url:url,
         success:function(data){
             $("body").css("cursor", "auto");
+            
+            if (!dont_push) {
+                if (counter == 0) {
+                    cached["first"] = $("#left")
+                }
+                cached[counter] = data
+                history.pushState(counter, /*title*/ null, url);
+                counter += 1
+            }
             loadSinglePageBottomEnd(data, dont_scroll) ;
         },
         complete:function() {;$("body").css("cursor", "auto");},
@@ -132,7 +153,7 @@ function loadSinglePage(url, dont_scroll, force) {
     });
 }
 
-function loadSinglePageBottomEnd(data, dont_scroll) {
+function loadSinglePageBottomEnd(data, dont_scroll, dont_push) {
     var xml_doc = data;
     
     var left = document.getElementById ("left");
@@ -161,10 +182,11 @@ function loadSinglePageBottomEnd(data, dont_scroll) {
     enableSinglePage() ;
     inPlaceSinglePage_lock = null ;
     url = getCurrentSinglePage();
+    
     if (dont_scroll) {
         //nothing to do
-    } else if (url.lastIndexOf("#") > -1) {
-        anchor = url.substring(url.lastIndexOf("#")+1)
+    } else if (url.indexOf("#") > -1) {
+        anchor = url.substring(url.indexOf("#")+1)
         if ($("#anchor_"+anchor) && $("#anchor_"+anchor).offset())
             window.scrollTo(0, ($("#anchor_"+anchor).offset().top))
     } else {
@@ -173,23 +195,6 @@ function loadSinglePageBottomEnd(data, dont_scroll) {
     
     if (callbacks["SinglePage"] != undefined)
         callbacks["SinglePage"]()
-}
-
-function checkSinglePageAnchor() {
-    if (inPlaceSinglePage_lock != null) return ;
-    
-    var currentSinglePage = getCurrentSinglePage() ;
-    if (currentSinglePage != undefined
-        && currentSinglePage != inPlaceSinglePage)
-    {
-        loadSinglePage(currentSinglePage) ;
-    }
-}
-function loadBookmarkedSinglePage() {
-    var currentSinglePage = getCurrentSinglePage() ;
-    if (currentSinglePage != undefined) {
-        loadSinglePage(currentSinglePage) ;
-    }
 }
 
 function enableSinglePage() {
@@ -231,11 +236,14 @@ function enableSinglePage() {
 function init_singlepage() {
     prepareDisplayXSL() ;
     enableSinglePage() ;
-    loadBookmarkedSinglePage() ;
 }
 
 
 $(function(){
+    // Revert to a previously saved state
+    window.addEventListener('popstate', function(event) {
+      console.log('popstate fired!');
+      reloadSinglePage(event)
+    });
     init_singlepage()
-    setInterval(checkSinglePageAnchor, 500);
 });
