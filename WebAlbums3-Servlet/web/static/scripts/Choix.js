@@ -119,7 +119,7 @@ function init_loader() {
 
     $("#googleMapLoader").click(function () {
         $("#googleMapLoader").fadeOut() ;
-        $("#mapChoix") ;
+        $("#mapChoix").addClass("mapChoix") ;
         loadMaps();
     }) ;
 }

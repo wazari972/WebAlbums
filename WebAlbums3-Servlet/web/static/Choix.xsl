@@ -63,28 +63,6 @@
 	<span></span>
       </div>
       <div class="content">
-	<form action="Tags">
-	  <h1>Choix par Tags <input id="tagShower" type="button" value="+"/></h1>
-	  <div class="body">
-              <div id="tags" style="display:none">
-                <center>
-                  <xsl:apply-templates select="tagList">
-                    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
-                    <xsl:with-param name="style">multiple</xsl:with-param>
-                  </xsl:apply-templates><br/>
-                  <input type="submit" value="Go"/>
-                </center>
-              </div>
-	  </div>
-	</form>
-      </div>
-    </div>
-
-    <div class="item">
-      <div class="date">
-	<span></span>
-      </div>
-      <div class="content">
 	<h1>Photo Aléatoire <input id="randPictLoader" type="button" value="+"/>
             &#160;
             <a href="Photos?special=RANDOM" target="_blank" rel="singlepage[no]">^</a>
@@ -129,11 +107,33 @@
 	<h1>Géolocalisations <input id="googleMapLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <center>
-	    <div id="mapChoix">
-	    </div>
+	    <div id="mapChoix"/>
 	  </center>
 	</div>
       </div>
     </div>
+    
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
+      <div class="content">
+	<form action="Tags">
+	  <h1>Choix par Tags <input id="tagShower" type="button" value="+"/></h1>
+	  <div class="body">
+              <div id="tags" style="display:none">
+                <center>
+                  <xsl:apply-templates select="tagList">
+                    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+                    <xsl:with-param name="style">multiple</xsl:with-param>
+                  </xsl:apply-templates><br/>
+                  <input type="submit" value="Go"/>
+                </center>
+              </div>
+	  </div>
+	</form>
+      </div>
+    </div>
+
   </xsl:template>
 </xsl:stylesheet>

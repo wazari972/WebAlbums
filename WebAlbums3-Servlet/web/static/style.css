@@ -24,7 +24,7 @@
     background-color: #58ACFA;
 }
 
- #mapChoix {
+ .mapChoix {
     height: 400px;
     width: 400px;
   }
