@@ -30,14 +30,6 @@ function getCurrentPage() {
 
 function getCurrentSinglePage() {
     return ""+window.location+""
-    /*
-    var pos = window.location.hash.indexOf(ANCHOR_PREFIX) ;
-    if (pos != -1) {
-         var page = window.location.hash.substring(ANCHOR_PREFIX.length)  ;
-         page.replace(/^(\s*<br\s*\/?>)*\s*|\s*(<br\s*\/?>\s*)*$/g, '')
-        return $.trim(page) ;
-    } else return undefined ;
-    */
 }
 
 function Node_getElementById(node, id) {
@@ -93,45 +85,10 @@ function loadSinglePage(url, dont_scroll, force) {
         return ;
     }
 
-    var oldURL = getCurrentPage() ;
-    
-    var left = document.getElementById ("left") ;
-    if (left == null) {
-        alert("No left block available, please reload the page")
-        return ;
-    }
-    //save the left block if necessary
-    if (singlePageCached(oldURL)) {
-        var cacheTmp = document.getElementById("cacheTmp") ;
-        if (cacheTmp == undefined) {
-            cacheTmp = document.createElement("div") ;
-            cacheTmp.id = "cacheTmp" ;
-            left.parentNode.insertBefore(cacheTmp, left) ;
-        }
-        //duplicate left into cacheTmp
-        cacheTmp.innerHTML = left.innerHTML ;
-        cacheTmp.id = "left" ;
-        //save the old left as old url cache
-        left.id = oldURL ;
-        $(left).hide()
-    }
-    //document.location.href = ANCHOR_PREFIX+url;
-    url = url.replace(/\n/g, '') ;
-    url = url.replace(/\r/g, '') ;
+    var left = $("#left") ;
+
     inPlaceSinglePage = $.trim(url) ;
-    
-    if (singlePageCached(url)) {
-        var cache = document.getElementById(url) ;
-        if (cache != undefined) {
-            $(left).hide() ;
-            left.id = "dromadaire" ;
-            cache.id = 'left' ;
-            $(cache).show() ;
-            $("#dromadaire").remove() ;
-            
-            return ;
-        }
-    }
+
     
     $("body").css("cursor", "wait");
     $.ajax({
@@ -150,11 +107,7 @@ function loadSinglePage(url, dont_scroll, force) {
 }
 
 function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {    
-    var left = document.getElementById ("left");
-    if (left == null) {
-        alert("could not locate the left div ...")
-        return ;
-    }
+    var left = $("#left");
     
     if (counter == 0) {
         cached["first"] = $("#left")
@@ -167,23 +120,23 @@ function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {
         xsl_proc.importStylesheet (displayXsl);
 
         var newPage = xsl_proc.transformToFragment (xml_doc, document);
-        var newLeft = Node_getElementById(newPage, "left") ;
-        var parent = left.parentNode ;
-        parent.insertBefore(newLeft, left) ;
-        parent.removeChild(left) ;
+        var newLeft = $(Node_getElementById(newPage, "left"))
+        var parent = left.parent() ;
+        left.after(newLeft)
+        newLeft.show()
+        left.remove()
         left = newLeft ;
+        
     } else {
         alert("underfined XSLT processor") ;
     }
     
     $("#gen_time").text(($(xml_doc).find("time").text()))
     
-    $(left).fadeIn() ;
     enableSinglePage() ;
     inPlaceSinglePage_lock = null ;
-    //url = getCurrentSinglePage();
     
-    cached[counter] = $(left)
+    cached[counter] = left
     history.pushState(counter, /*title*/ null, url);
     counter += 1
     
