@@ -5,8 +5,12 @@
 
 package net.wazari.service.exchange.xml.album;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDate;
@@ -35,4 +39,5 @@ public class XmlAlbum {
     public String albmDate;
     public List<XmlGpx> gpx;
     public List<XmlCarnet> carnet;
+    public Map<String,Integer> photoCount = new HashMap<String,Integer>();
 }

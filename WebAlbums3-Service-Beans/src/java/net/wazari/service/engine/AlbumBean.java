@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
@@ -18,12 +19,15 @@ import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 import net.wazari.dao.PhotoFacadeLocal;
+import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Gpx;
 import net.wazari.dao.entity.Photo;
 
+import net.wazari.dao.entity.Tag;
+import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.AlbumLocal;
@@ -70,8 +74,11 @@ public class AlbumBean implements AlbumLocal {
     private PhotoFacadeLocal photoDAO;
     @EJB
     private WebPageLocal webPageService;
-    @EJB private FilesFinder finder;
-
+    @EJB 
+    private FilesFinder finder;
+    @EJB
+    private TagFacadeLocal tagDAO;
+    
     @Override
     public XmlAlbumEdit treatAlbmEDIT(ViewSessionAlbumEdit vSession,
             XmlAlbumSubmit submit)
@@ -190,6 +197,8 @@ public class AlbumBean implements AlbumLocal {
             }
             album.details = details ;
 
+            album.photoCount.put("album", enrAlbum.getPhotoList().size());
+            
             count++;
 
             output.album.add(album);
@@ -231,6 +240,14 @@ public class AlbumBean implements AlbumLocal {
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
                                     Restriction.THEME_ONLY, TopFirst.ALL, null);
         int i = 0 ;
+        
+        List<Tag> tagList = new LinkedList<Tag>();
+        for (int tagId : vSession.getTags()) {
+            Tag enrTag = tagDAO.find(tagId);
+            if (enrTag != null) 
+                tagList.add(enrTag);
+        }
+        
         for (Album enrAlbum : albums.subset) {
             XmlAlbum album = new XmlAlbum();
             album.id = enrAlbum.getId();
@@ -246,6 +263,23 @@ public class AlbumBean implements AlbumLocal {
             if (enrAlbum.getPicture() != null) {
                 album.picture = enrAlbum.getPicture();
             }
+            
+            if (tagList.isEmpty()) {
+                album.photoCount.put("album", enrAlbum.getPhotoList().size());
+            } else {
+                for (Tag enrTag : tagList) {
+                    album.photoCount.put("tag-"+enrTag.getId(), 0) ;
+                }
+                for (Photo enrPhoto : enrAlbum.getPhotoList()) {
+                    for (TagPhoto enrTp : enrPhoto.getTagPhotoList()) {
+                        if (tagList.contains(enrTp.getTag())) {
+                            Integer count = album.photoCount.get("tag-"+enrTp.getTag().getId()) ;
+                            album.photoCount.put("tag-"+enrTp.getTag().getId(), count + 1) ;
+                        }
+                    }
+                }
+            }
+            
             select.album.add(album);
             i++ ;
         }
@@ -360,7 +394,7 @@ public class AlbumBean implements AlbumLocal {
         output.albumList = displayAlbum(vSession, submit, thisPage) ;
         return output ;
     }
-
+    
     @Override
     public XmlAlbumAbout treatABOUT(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
         Integer albumId = vSession.getId() ;

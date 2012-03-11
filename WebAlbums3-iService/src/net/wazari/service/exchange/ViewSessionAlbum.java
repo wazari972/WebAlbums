@@ -40,4 +40,6 @@ public interface ViewSessionAlbum extends ViewSession {
     
     Integer getNbPerYear();
     void setPhotoAlbumSize(int size);
+    
+    Integer[] getTags() ;
 }
