@@ -7,21 +7,24 @@ function init() {
               //check that access is not denied 
               if($(xml).find("denied").text() == "true")
                   alert("access denied, try again")
-              
-              //and refresh the page
-              /*
-              if (window.location.indexOf("Logout") != -1)
-                  return true
-              if (window.location.indexOf("/Users") != -1)
-                  return true
-              */
-             
              
               saved_themeId = $.cookie("themeId")
               if (saved_themeId != undefined) {
                   $.get("Choix?action=JUST_THEME&themeId="+saved_themeId+"")
               }
-              window.location = window.location
+              
+                            //and refresh the page
+              url = ""+window.location+""
+              unsafe = false
+              if (url.indexOf("logout") != -1)
+                  unsafe = true
+              if (url.indexOf("/Users") != -1)
+                  unsafe = true
+              
+              if (!unsafe)
+                window.location = window.location
+              else
+                  window.location = "Index"
               return false
           },
           async:false

@@ -25,9 +25,10 @@
 	</div>
       </div>
     </div>
+    <script type="text/javascript" src="static/scripts/Index.js"></script>
   </xsl:template>
   <xsl:template match="themes/themeList/theme">
-      <form method="POST" action="">
+      <form class="themeForm" method="POST" action="Choix">
         <input type='hidden' name='themeId' value='SUBMIT'>
             <xsl:attribute name="value"><xsl:value-of select="@id"/></xsl:attribute>
         </input>
