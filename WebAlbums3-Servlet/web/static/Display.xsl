@@ -118,6 +118,9 @@
                         <li>
                             <a href="Database" rel="singlepage[no]" title="Database">Database</a>
                         </li>
+                        <li>
+                            Page générée en <br/><small id="gen_time"><xsl:value-of select="/webAlbums/time"/></small>.
+                        </li>
                     </ul>
                 </xsl:if>
 		<div id="cloud" />
@@ -158,7 +161,7 @@
                 </xsl:if>
 	      </div>
 	      <div id="footer">
-                 <p>Page générée en <xsl:value-of select="/webAlbums/time"/>s. Copyright 2009.</p>
+                 <p>Copyright 2009, 2010, 2011, 2012</p>
                  <p>Design by <a href="http://www.metamorphozis.com/" title="Metamorphozis Design">Flash Templates</a></p>
               </div>
 	    </div>

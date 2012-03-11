@@ -137,7 +137,7 @@ function loadSinglePage(url, dont_scroll, force) {
     $.ajax({
         url:url,
         success:function(data){
-            $("body").css("cursor", "auto");
+            //$("body").css("cursor", "auto");
             loadSinglePageBottomEnd(data, dont_scroll, url) ;
         },
         complete:function() {;$("body").css("cursor", "auto");},
@@ -149,9 +149,7 @@ function loadSinglePage(url, dont_scroll, force) {
     });
 }
 
-function loadSinglePageBottomEnd(data, dont_scroll, url) {
-    var xml_doc = data;
-    
+function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {    
     var left = document.getElementById ("left");
     if (left == null) {
         alert("could not locate the left div ...")
@@ -177,6 +175,8 @@ function loadSinglePageBottomEnd(data, dont_scroll, url) {
     } else {
         alert("underfined XSLT processor") ;
     }
+    
+    $("#gen_time").text(($(xml_doc).find("time").text()))
     
     $(left).fadeIn() ;
     enableSinglePage() ;

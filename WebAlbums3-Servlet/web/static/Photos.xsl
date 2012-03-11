@@ -98,7 +98,7 @@
 		  </xsl:attribute>
 		</input>
 		<td><input type='radio' name='turn' value='MVTAG' /></td>
-		<td><label for="massTagList">Déplacer depuis </label><b><xsl:value-of select="/webAlbums/tags/display/title/tagList/*[1]"/></b> vers</td>
+		<td><label for="massTagList">Déplacer depuis </label><b><xsl:value-of select="/webAlbums/tags/display/title/tagList/*[1]/name"/></b> vers</td>
 	      </tr>
 	    </xsl:if>
 	    <tr><td>&#160;</td></tr>
