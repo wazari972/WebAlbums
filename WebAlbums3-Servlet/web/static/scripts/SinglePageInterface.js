@@ -57,17 +57,22 @@ function Node_getElementById(node, id) {
 cached = {}
 counter = 0
 function reloadSinglePage(event) {
-    if (cached[event.state] != undefined) {
-        loadSinglePageBottomEnd(cached[event.state])
+    if (event.state != null)
+        data = cached[event.state]
+    else
+        data = cached["first"]
+    
+    if (data != undefined) {
+        left = $("#left")
+        left.after(data)
+        left.remove()
+        $(window).scrollTop(0) ;
     } else {
-        parent = $("#left").parent()
-        $("#left").html(cached["first"].html())
-        parent.append(cached["first"])
-        //loadSinglePage(""+window.location+"")
+        loadSinglePage(""+window.location+"")
     }
 }
 
-function loadSinglePage(url, dont_scroll, force, dont_push) {
+function loadSinglePage(url, dont_scroll, force) {
     if (dont_scroll == undefined)
         dont_scroll = false
     
@@ -133,16 +138,7 @@ function loadSinglePage(url, dont_scroll, force, dont_push) {
         url:url,
         success:function(data){
             $("body").css("cursor", "auto");
-            
-            if (!dont_push) {
-                if (counter == 0) {
-                    cached["first"] = $("#left")
-                }
-                cached[counter] = data
-                history.pushState(counter, /*title*/ null, url);
-                counter += 1
-            }
-            loadSinglePageBottomEnd(data, dont_scroll) ;
+            loadSinglePageBottomEnd(data, dont_scroll, url) ;
         },
         complete:function() {;$("body").css("cursor", "auto");},
         statusCode: {
@@ -153,13 +149,17 @@ function loadSinglePage(url, dont_scroll, force, dont_push) {
     });
 }
 
-function loadSinglePageBottomEnd(data, dont_scroll, dont_push) {
+function loadSinglePageBottomEnd(data, dont_scroll, url) {
     var xml_doc = data;
     
     var left = document.getElementById ("left");
     if (left == null) {
         alert("could not locate the left div ...")
         return ;
+    }
+    
+    if (counter == 0) {
+        cached["first"] = $("#left")
     }
     
     // Use object detection to find out if we have
@@ -181,7 +181,12 @@ function loadSinglePageBottomEnd(data, dont_scroll, dont_push) {
     $(left).fadeIn() ;
     enableSinglePage() ;
     inPlaceSinglePage_lock = null ;
-    url = getCurrentSinglePage();
+    //url = getCurrentSinglePage();
+    
+    cached[counter] = $(left)
+    history.pushState(counter, /*title*/ null, url);
+    counter += 1
+    
     
     if (dont_scroll) {
         //nothing to do
