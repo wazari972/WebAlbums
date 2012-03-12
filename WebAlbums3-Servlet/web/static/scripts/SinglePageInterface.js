@@ -162,11 +162,6 @@ function enableSinglePage() {
         $(this).attr("SinglePaged", true) ;
 
         if ($(this).attr("href") == undefined) return ;
-        if ($(this).attr("href").indexOf("javascript") == 0) return ;
-        if ($(this).attr("href").indexOf("#") == 0) return ;
-        if ($(this).attr("rel") != undefined &&
-            $(this).attr("rel").indexOf("shadowbox") == 0) return ;
-
 
         var parents = $(this).parent("div") ;
         for (var i = -1; i < parents.length; i++) {
@@ -200,7 +195,6 @@ function init_singlepage() {
 $(function(){
     // Revert to a previously saved state
     window.addEventListener('popstate', function(event) {
-      console.log('popstate fired!');
       reloadSinglePage(event)
     });
     init_singlepage()

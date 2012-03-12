@@ -127,7 +127,7 @@
   </xsl:template>
 
   <xsl:template match="/webAlbums/tags/cloud">
-      <link rel="stylesheet" type="text/css" href="static/scripts/treemenu/simpletree.css" />
+      <link rel="stylesheet" type="text/css" href="static/scripts/lib/treemenu/simpletree.css" />
       <h3>Nuage de tags </h3>
       <ul>
           <li><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></li>
@@ -137,7 +137,7 @@
           </ul>
       </ul>
       <script type="text/javascript" src="static/scripts/Empty.js"/>
-      <script type="text/javascript" src="static/scripts/treemenu/simpletreemenu.js">
+      <script type="text/javascript" src="static/scripts/lib/treemenu/simpletreemenu.js">
             /***********************************************
             * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
             * This notice MUST stay intact for legal use
@@ -320,8 +320,7 @@ Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of
   <xsl:template match="display">
     <html style="margin: 0;padding: 0;height: 100%">
       <body style="margin: 0;padding: 0;height: 100%">
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="static/scripts/wz_tooltip.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
 	<script type="text/javascript" src="static/scripts/tools.js"/>	  
         <script type="text/javascript" src="static/scripts/Empty.js"/>
 	<div style="overflow:auto;">

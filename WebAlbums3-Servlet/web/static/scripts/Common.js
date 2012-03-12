@@ -1,4 +1,3 @@
-
 function prepareTagsTooltipsDiv(content) {
     prepareTooltipsDiv(content, "Tags") ;
 }

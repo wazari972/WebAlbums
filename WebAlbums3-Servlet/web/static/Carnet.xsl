@@ -13,10 +13,10 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="carnets">
       <xsl:if test="/webAlbums/carnets">
-          <link rel="stylesheet" type="text/css" href="static/scripts/pagedown/demo.css" />
-          <script type="text/javascript" src="static/scripts/pagedown/Markdown.Converter.js"></script>
-          <script type="text/javascript" src="static/scripts/pagedown/Markdown.Sanitizer.js"></script>
-          <script type="text/javascript" src="static/scripts/pagedown/Markdown.Editor.js"></script>
+          <link rel="stylesheet" type="text/css" href="static/scripts/lib/pagedown/demo.css" />
+          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Converter.js"></script>
+          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Sanitizer.js"></script>
+          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Editor.js"></script>
       </xsl:if>
       <xsl:apply-templates select="edit"/>
       <xsl:apply-templates select="display"/>

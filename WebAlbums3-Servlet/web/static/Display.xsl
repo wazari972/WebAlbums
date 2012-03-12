@@ -33,23 +33,10 @@
         </style>
       </head>
       <body>
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-ui-1.8.16.custom.min.js"></script>
-        <script type="text/javascript" src="static/scripts/jquery/js/jquery-cookie.js"></script>
-
-        <script type="text/javascript" src="static/scripts/ezpz/jquery.ezpz_tooltip.min.js"></script>
-
-        <link rel="stylesheet" type="text/css" href="static/scripts/shadowbox/shadowbox.css" />
-        <script type="text/javascript"          src="static/scripts/shadowbox/shadowbox.js" />
-        <script type="text/javascript">
-            $(function() {
-                Shadowbox.init({
-                    handleUnsupported:  "remove",
-                    modal:     true,
-                    skipSetup: true
-                });
-            })
-        </script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.ezpz_tooltip.js"></script>
         
 	<div id="header"> 
 	  <div id="logo">
@@ -112,8 +99,7 @@
                     <h3>Administration</h3>
                     <ul>
                         <li>
-                            <a href="Config" rel="shadowbox" title="Configuration (box)">Config</a>
-                            <a href="Config" rel="singlepage[no]" title="Configuration (new page)">uration</a>
+                            <a href="Config" rel="singlepage[no]" title="Configuration">Configuration</a>
                         </li>
                         <li>
                             <a href="Database" rel="singlepage[no]" title="Database">Database</a>
@@ -156,7 +142,7 @@
                     <script type="text/javascript" src="static/scripts/Config.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/choix">
-                    <link type="text/css" href="static/scripts/jquery/css/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" media="screen"/>
+                    <link type="text/css" href="static/scripts/lib/jquery/css/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" media="screen"/>
                     <script src="static/scripts/Choix.js" type='text/javascript'></script>
                 </xsl:if>
 	      </div>

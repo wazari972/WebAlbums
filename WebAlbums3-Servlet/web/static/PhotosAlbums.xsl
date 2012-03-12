@@ -52,9 +52,9 @@
         <div class="pict">
             <a>
               <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-                <xsl:attribute name="rel">shadowbox[page];player=img</xsl:attribute>
+                <!-- placeholder for a box-related property -->
               </xsl:if>
-              <xsl:attribute name="HREF">
+              <xsl:attribute name="href">
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
                   Images?id=<xsl:value-of select="photoId" />&amp;mode=GRAND
                 </xsl:if>

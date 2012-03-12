@@ -35,7 +35,7 @@ function putMarkersOnMapGrouped (map, markers) {
 }
 
 function init_maps() {
-    $.getScript("static/scripts/google-maps-utility-library-v3/markerclusterer.js")
+    $.getScript("static/scripts/lib/google-maps-utility-library-v3/markerclusterer.js")
     putMarkersOnMap = putMarkersOnMapSimple
     //putMarkersOnMap = putMarkersOnMapGrouped
 }

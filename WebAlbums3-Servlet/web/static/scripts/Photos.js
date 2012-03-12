@@ -117,13 +117,8 @@ function init_fastedit() {
     }) ;
 }
 
-function setup_shadowbox() {
-    //Shadowbox.setup(".photo", {});
-}
-
 $(function() {
     $(".exif").ezpz_tooltip({stayOnContent: true});
     init_massedit()
     init_fastedit()
-    setup_shadowbox()
 })
