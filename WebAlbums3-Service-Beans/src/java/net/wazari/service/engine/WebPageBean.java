@@ -114,15 +114,9 @@ public class WebPageBean implements WebPageLocal {
     //go to the first page otherwise
     @Override
     public Bornes calculBornes(Integer page,
-            Integer eltAsked,
-            int taille) {
+                               int taille) {
         Bornes bornes;
-
-        if (eltAsked != null) {
-            //compute the page into which the element asked is
-            int first = (int) Math.floor(eltAsked / taille);
-            bornes = new Bornes(taille, first);
-        } else if (page != null) {
+        if (page != null) {
             bornes = new Bornes(taille, page);
         } else {
             bornes = new Bornes(taille, 0);

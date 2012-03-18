@@ -276,7 +276,7 @@ public class DispatcherBean {
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                 StringWriter writer = new StringWriter() ;
                 marshaller.marshal(output, writer);
-                sortie.append(writer.toString().replace("&amp;", "&"));
+                sortie.append(writer.toString());
             } else {
                 sortie.println(output.blob);
             }

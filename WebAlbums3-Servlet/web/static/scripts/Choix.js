@@ -116,6 +116,11 @@ function init_loader() {
     $("#selectLoader").click(function () {
         loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
     }) ;
+    
+    $("#tagGraphLoader").click(function () {
+        data = $("#tagChoix").serialize()
+        loadExernals(null, 'Albums?special=GRAPH&'+data, 'tagGraph', draw_graph, true, data) ;
+    }) ;
 
     $("#googleMapLoader").click(function () {
         $("#googleMapLoader").fadeOut() ;
@@ -167,6 +172,36 @@ function save_theme() {
         return
     
     $.cookie("themeId", themeId)
+}
+
+/****************************************************/
+
+function draw_graph() {
+    ykeys_len = my_ykeys.length
+    data_len = graphData.length
+    for (_j = 0; _j < ykeys_len; _j++) {
+        ykey = my_ykeys[_j]
+        prev = 0 ;
+        for (_i = data_len-1; _i >= 0; _i--) {
+            graphData[_i][ykey] += prev
+            prev = graphData[_i][ykey]
+        }
+    }
+    
+    my_labels = $.map(my_ykeys, function (d) {
+        if (d == "album")
+            return "Albums"
+        else
+            return d.split("__")[2]
+    })
+
+    Morris.Line({
+      element: 'graph',
+      data: graphData,
+      xkey: 'q',
+      ykeys: my_ykeys,
+      labels: my_labels
+    });
 }
 
 $(function() {

@@ -37,20 +37,14 @@ public interface ViewSessionCarnet extends ViewSession {
     }
 
     interface ViewSessionCarnetEdit extends ViewSessionAlbum {
-
-        Integer getCountAlbm();
-
+        Integer getCarnetsPage();
         Integer getCarnet();
 
     }
     interface ViewSessionCarnetDisplay extends ViewSessionAlbum {
-
-        Integer getCountCarnet();
-
         Integer getCarnet();
-
+        Integer getCarnetsPage();
     }
     Integer getId();
-    Integer getCount();
     Integer getPage() ;
 }

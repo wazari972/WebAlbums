@@ -20,6 +20,7 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbumAbout;
+import net.wazari.service.exchange.xml.album.XmlAlbumGraph;
 import net.wazari.service.exchange.xml.album.XmlAlbumList;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 
@@ -50,7 +51,10 @@ public interface AlbumLocal {
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession);
-
+    
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession);
+    
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumAbout treatABOUT(ViewSessionAlbum vSession) throws WebAlbumsServiceException ;
 }

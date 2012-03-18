@@ -22,7 +22,7 @@ public class XmlCarnet {
     public Integer picture;
     public XmlDate date;
     @XmlAttribute
-    public Integer count;
+    public Integer carnetsPage;
     public String name;
     public XmlDetails details;
     public String text;

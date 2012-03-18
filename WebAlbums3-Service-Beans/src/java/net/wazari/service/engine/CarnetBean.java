@@ -2,7 +2,6 @@ package net.wazari.service.engine;
 
 
 import net.wazari.service.exchange.xml.common.XmlDetails;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.validation.ConstraintViolationException;
 import net.wazari.common.util.StringUtil;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
@@ -74,8 +72,6 @@ public class CarnetBean implements CarnetLocal {
         XmlCarnetEdit output = new XmlCarnetEdit();
         Integer carnetId = vSession.getCarnet();
         Integer page = vSession.getPage();
-        Integer count = vSession.getCount();
-        page = (page == null ? 0 : page);
         
         if (submit != null) {
             output.submit = submit ;
@@ -92,7 +88,7 @@ public class CarnetBean implements CarnetLocal {
         output.rights = webPageService.displayListDroit(enrCarnet.getDroit(), null);
         output.picture = enrCarnet.getPicture();
         output.name = enrCarnet.getNom();
-        output.count = count;
+        output.page = page;
         output.id = enrCarnet.getId();
         output.description = enrCarnet.getDescription();
         output.text = enrCarnet.getText();
@@ -108,12 +104,13 @@ public class CarnetBean implements CarnetLocal {
         XmlCarnetsDisplay output = new XmlCarnetsDisplay() ;
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Carnets" ;
-
+        thisPage.carnetsPage = vSession.getCarnetsPage() ;
+        if (thisPage.carnetsPage == null)
+            thisPage.carnetsPage = 0;
         EditMode inEditionMode = vSession.getEditionMode();
         Integer page = vSession.getPage();
-        Integer eltAsked = vSession.getCount();
+        Integer carnetsPage = vSession.getCarnetsPage();
 
-        int count = 0;
         List<Carnet> carnets = null;
         Integer carnetId = vSession.getCarnet();
         if (carnetId != null) {
@@ -128,9 +125,8 @@ public class CarnetBean implements CarnetLocal {
         }
         
         if (carnetId == null) {
-            Bornes bornes = webPageService.calculBornes(page, eltAsked, 
+            Bornes bornes = webPageService.calculBornes(page, 
                                     vSession.getPhotoAlbumSize());
-            count = bornes.getFirstElement();
             carnets = carnetDAO.queryCarnets(vSession, Restriction.THEME_ONLY, 
                                 AlbumFacadeLocal.TopFirst.FIRST, bornes).subset;
             output.page = webPageService.xmlPage(thisPage, bornes);
@@ -143,7 +139,7 @@ public class CarnetBean implements CarnetLocal {
             carnet.date = webPageService.xmlDate(enrCarnet.getDate(), oldDate);
             oldDate = enrCarnet.getDate() ;
             carnet.id = enrCarnet.getId();
-            carnet.count = count;
+            carnet.carnetsPage = carnetsPage;
             carnet.name = enrCarnet.getNom();
             if (carnetId != null) {
                 carnet.text = StringUtil.escapeXML(enrCarnet.getText());
@@ -169,8 +165,6 @@ public class CarnetBean implements CarnetLocal {
                 }
             }
             carnet.details = details ;
-
-            count++;
 
             output.carnet.add(carnet);
         }
@@ -302,7 +296,7 @@ public class CarnetBean implements CarnetLocal {
         for (Carnet enrCarnet : carnets.subset) {
             XmlCarnet carnet = new XmlCarnet();
             carnet.id = enrCarnet.getId();
-            carnet.count = i;
+            carnet.carnetsPage = 0;
             carnet.name = enrCarnet.getNom();
             carnet.picture = enrCarnet.getPicture();
             

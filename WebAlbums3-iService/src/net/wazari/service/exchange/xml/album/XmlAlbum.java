@@ -9,9 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.common.XmlDetails;
@@ -24,8 +23,6 @@ import net.wazari.service.exchange.xml.common.XmlDetails;
 public class XmlAlbum {
     @XmlAttribute
     public Integer id;
-    @XmlAttribute
-    public Integer count;
     public String title;
     public XmlAlbumSubmit submit;
     public XmlDetails details;
@@ -39,5 +36,20 @@ public class XmlAlbum {
     public String albmDate;
     public List<XmlGpx> gpx;
     public List<XmlCarnet> carnet;
-    public Map<String,Integer> photoCount = new HashMap<String,Integer>();
+    @XmlRootElement
+    public static class Counter {
+        public Counter(int count) {
+            this.value = count;
+        }
+        public Counter() {
+            this.value = 0;
+        }
+        @XmlValue
+        public Integer value;
+        public void inc() {
+            this.value++ ;
+        }
+    }
+    
+    public Map<String, Counter> photoCount = new HashMap<String, Counter>();
 }

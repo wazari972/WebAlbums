@@ -112,7 +112,7 @@
 
         <xsl:if test="not($style = 'list' or $style = 'multiple')">
           <a>
-            <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>__<xsl:value-of select="name"/></xsl:attribute>
             <xsl:if test="birthdate">
                 <xsl:attribute name="title"><xsl:value-of select="birthdate"/> ans</xsl:attribute>
             </xsl:if>
@@ -176,11 +176,9 @@
     <a>
       <xsl:attribute name="href">
 	<xsl:if test="/webAlbums/photos">
-Photos?albmCount=<xsl:value-of select="../url/albmCount" />
-&amp;album=<xsl:value-of select="../url/album" />
-&amp;page=<xsl:value-of select="." />
+Photos__<xsl:value-of select="../url/album" />_p<xsl:value-of select="." />__pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />__<xsl:value-of select="/webAlbums/photos/display/album/title" />
 	</xsl:if>
-	<xsl:if test="/webAlbums/albums">Albums?page=<xsl:value-of select="."/></xsl:if>
+	<xsl:if test="/webAlbums/albums">Albums__p<xsl:value-of select="."/></xsl:if>
 	<xsl:if test="/webAlbums/tags">
 Tags?
 <xsl:for-each select="../url/tagAsked">
@@ -208,7 +206,7 @@ Tags?
 	  <a>
 	    <xsl:attribute name="href">
 	      <xsl:if test="/webAlbums/photos/display">
-		Albums?count=<xsl:value-of select="/webAlbums/photos/display/album/@count" />#<xsl:value-of select="/webAlbums/photos/display/album/@id" />
+		Albums__p<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />#<xsl:value-of select="/webAlbums/photos/display/album/@id" />
 	      </xsl:if>
 	      <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">
 		Choix

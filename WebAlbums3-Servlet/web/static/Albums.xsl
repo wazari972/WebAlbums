@@ -36,12 +36,12 @@
 	  <a>
 	    <xsl:if test="/webAlbums/albums">
 	      <xsl:attribute name="href">
-Photos?albmCount=<xsl:value-of select="@count" />&amp;album=<xsl:value-of select="@id" />
+Photos__<xsl:value-of select="@id" />_p0_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" />__<xsl:value-of select="title" />
 	      </xsl:attribute>
 	    </xsl:if> 
 	    <xsl:if test="/webAlbums/photos">
 	      <xsl:attribute name="href">
-Albums?count=<xsl:value-of select="@count" />#<xsl:value-of select="@id" />
+Albums__p<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />#<xsl:value-of select="@id" />
 	      </xsl:attribute>
 	    </xsl:if> 
 	    <xsl:value-of select="title" />
@@ -54,10 +54,7 @@ Albums?count=<xsl:value-of select="@count" />#<xsl:value-of select="@id" />
                     <a rel="singlepage[no]">
                       <xsl:attribute name="title"><xsl:value-of select="title" /> en visionneuse</xsl:attribute>
                       <xsl:attribute name="href">
-Photos?albmCount=<xsl:value-of select="@count" />
-&amp;album=<xsl:value-of select="@id" />
-&amp;page=<xsl:value-of select="../photoList/page/@current" />
-&amp;special=VISIONNEUSE
+Visio__<xsl:value-of select="@id" />_p0_pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />__<xsl:value-of select="title" />
                     </xsl:attribute>
                     <img src="static/images/slide.png" height="30px"/>
                     </a>
@@ -66,6 +63,7 @@ Photos?albmCount=<xsl:value-of select="@count" />
                         <img src="static/images/out.png" height="30px"
                           class='fullscreen'>
                           <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
+                          <!-- no url rewritting -->
                           <xsl:attribute name="rel">
 Photos?album=<xsl:value-of select="@id" />
 &amp;page=<xsl:value-of select="../photoList/page/@current" />
@@ -77,6 +75,7 @@ Photos?album=<xsl:value-of select="@id" />
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                           &#160;
                           <a rel="singlepage[no]" title="Edition de l'album" class="edit">
+                            <!-- no url rewritting -->
                             <xsl:attribute name="href">
 Albums?action=EDIT
 &amp;id=<xsl:value-of select="@id" />
@@ -124,9 +123,9 @@ Albums?action=EDIT
     <p> 
     <small>
         <a>
-            <xsl:attribute name="href">Carnets?carnet=<xsl:value-of select="@id" /></xsl:attribute>
+            <xsl:attribute name="href">Carnet__<xsl:value-of select="@id" />_pc0__<xsl:value-of select="name" /></xsl:attribute>
             <img class="mini-carnet">
-                <xsl:attribute name="src">Images?id=<xsl:value-of select="@picture" /></xsl:attribute>
+                <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture" />.png</xsl:attribute>
             </img>&#160;
             <xsl:value-of select="name" />
         </a>
@@ -138,7 +137,7 @@ Albums?action=EDIT
     <p> 
     <small>
         <a target="_blank" rel="singlepage[no]">
-            <xsl:attribute name="href">Images?id=<xsl:value-of select="@id" />&amp;mode=GPX</xsl:attribute>
+            <xsl:attribute name="href">GPX__<xsl:value-of select="@id" />.gpx</xsl:attribute>
             <xsl:value-of select="description" />
         </a>
         </small>

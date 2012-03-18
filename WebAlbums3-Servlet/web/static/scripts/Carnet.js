@@ -1,10 +1,12 @@
 function convertImage(id, url, alt_text, title) {
-    return "<br/><center><a href=\"Images?id="+url+"&amp;mode=GRAND\" title=\"" + alt_text + "\">"
-         + "<img src=\"Images?id=" + url + "&amp;mode=PETIT\" alt=\"" + alt_text + "\""
-         + "></a></center><br/>";
+    // __ in this function messes up the markdown generation
+    // ## will be converted later
+    return "<br/><center><a href=\"Image##"+url+"\" title=\"" + alt_text + "\">"
+         + "<img src=\"Miniature##" + url + ".png\" alt=\"" + alt_text + "\">"
+         + "</a></center><br/>";
 }
 function convertLink(id, url, title, link_text) {
-    var result = "<a href=\"Photos?album=" + url + "\"";
+    var result = "<a href=\"Photos__" + url + "_p0_pa__\"";
     if (title != "")
         result += " title=\"" + title + "\"";
     result += ">" + link_text + "</a>";
@@ -12,7 +14,7 @@ function convertLink(id, url, title, link_text) {
     return result
 }
 
-function init_markdown() {
+function init_markdown() {    
     if (document.getElementById("carnet_text") == null)
         return
     
@@ -24,10 +26,14 @@ function init_markdown() {
     converter.hooks.chain("convertLink", convertLink);
     converted = converter.makeHtml($("#carnet_text").text())
     
+    converted = converted.replace("Image\\#\\#", "Image__")
+    converted = converted.replace("Miniature##", "Miniature__")
+    
     //TODO: rewrite with JQuery
     document.getElementById("carnet_text").innerHTML = converted
 }
 
 $(function() {
     init_markdown()
+    add_callback("SinglePage", init_markdown)
 })

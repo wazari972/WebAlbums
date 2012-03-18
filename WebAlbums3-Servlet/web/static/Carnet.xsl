@@ -26,6 +26,7 @@
     <xsl:apply-templates select="exception"/>
     <xsl:apply-templates select="message"/>
     <xsl:if test="not(/webAlbums/carnets/display/carnet/text)">
+    <!-- no url rewritting -->
     <center><a class="edit" href="Carnets?action=EDIT" rel="singlepage[no]">Nouveau carnet</a></center>
     </xsl:if>
     <xsl:apply-templates select="carnet"/>
@@ -44,12 +45,11 @@
 	<h1>
 	  <a>
             <xsl:attribute name="href">
-Carnets?carnetCount=<xsl:value-of select="@count" />&amp;
 <xsl:if test="not(/webAlbums/carnets/display/carnet/text)">
-carnet=<xsl:value-of select="@id" />
+Carnet__<xsl:value-of select="@id" />_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" />__<xsl:value-of select="name" />
 </xsl:if>
 <xsl:if test="/webAlbums/carnets/display/carnet/text">
-#<xsl:value-of select="@id" />
+Carnets__p<xsl:value-of select="/webAlbums/carnets/display/carnet/@carnetsPage" />#<xsl:value-of select="@id" />
 </xsl:if>
              </xsl:attribute>
 	    <xsl:value-of select="name" />

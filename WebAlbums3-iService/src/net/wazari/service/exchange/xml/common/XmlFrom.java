@@ -17,7 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class XmlFrom {
     public String name;
     public Integer album;
-    public Integer albmCount;
+    public Integer albmPage;
+    public Integer carnetsPage;
     public List<Integer> tagAsked;
 
 }

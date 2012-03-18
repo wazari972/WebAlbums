@@ -16,9 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlReturnTo {
     public String name;
-    public Integer count;
     public Integer album;
-    public Integer albmCount;
+    public Integer albmPage;
     
     public Integer page;
     public final List<Integer> tagsAsked = new LinkedList<Integer>();

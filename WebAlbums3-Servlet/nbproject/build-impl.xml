@@ -707,6 +707,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Plugins.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.urlrewrite-3.2.0.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -718,6 +719,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.WebAlbums3-Plugins.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.urlrewrite-3.2.0.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>

@@ -65,6 +65,7 @@
       <div class="content">
 	<h1>Photo Aléatoire <input id="randPictLoader" type="button" value="+"/>
             &#160;
+            <!-- no url rewritting -->
             <a href="Photos?special=RANDOM" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">^</a>
         </h1>
 	<div class="body">
@@ -80,6 +81,7 @@
       <div class="content">
 	<h1>Aléatoire par Années <input id="yearsLoader" type="button" value="+"/>
         &#160;
+            <!-- no url rewritting -->
             <a href="Albums?special=YEARS&amp;nbPerYear=5" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">^</a>
         </h1>
 	<div class="body">
@@ -119,17 +121,18 @@
       </div>
       <div class="content">
 	<form action="Tags">
-	  <h1>Choix par Tags <input id="tagShower" type="button" value="+"/></h1>
+	  <h1>Choix par Tags <input id="tagGraphLoader" type="button" value="Graph it!"/> <input type="submit" value="Search"/></h1>
 	  <div class="body">
-              <div id="tags" style="display:none">
+              <div id="tags">
                 <center>
                   <xsl:apply-templates select="tagList">
+                      <xsl:with-param name="id">tagChoix</xsl:with-param>
                     <xsl:with-param name="mode">TAG_USED</xsl:with-param>
                     <xsl:with-param name="style">multiple</xsl:with-param>
                   </xsl:apply-templates><br/>
-                  <input type="submit" value="Go"/>
                 </center>
               </div>
+              <div id="tagGraph" />
 	  </div>
 	</form>
       </div>

@@ -21,8 +21,7 @@ function loadExernals(btId, url, divId, callback, async) {
     if (async == undefined) {
         async = true ;
     }
-    var bt = document.getElementById(btId) ;
-    if (bt != null) bt.style.visibility = "hidden";
+    $(btId).hide() ;
     
     $.ajax({
         url:url,

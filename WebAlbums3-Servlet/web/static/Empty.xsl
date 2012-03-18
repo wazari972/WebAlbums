@@ -10,7 +10,7 @@
   %xhtml-special;
   %xhtml-symbol;
   ]>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:template match="/">
     <xsl:apply-templates select="/webAlbums/maint" />
@@ -22,6 +22,7 @@
 
     <xsl:apply-templates select="/webAlbums/albums/top" />
     <xsl:apply-templates select="/webAlbums/albums/years" />
+    <xsl:apply-templates select="/webAlbums/albums/graph" />
     <xsl:apply-templates select="/webAlbums/albums/select" />
     <xsl:apply-templates select="/webAlbums/albums/about" />
 
@@ -52,11 +53,37 @@
   <xsl:template match="about/album">
     <h3>
         <a>
-            <xsl:attribute name="href">Photos?album=<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:attribute name="href">Photos__<xsl:value-of select="@id"/>_p0_pa__<xsl:value-of select="title"/></xsl:attribute>
             <xsl:value-of select="title"/>
         </a>
     </h3>
     <xsl:apply-templates select="details"/>
+  </xsl:template>
+  <xsl:key name="tags" match="entry" use="key" />
+  <xsl:template match="albums/graph">
+      <html>
+          <body>
+              :
+              <script type="text/javascript">
+                  graphData = [
+                <xsl:for-each select="album">
+                    {
+                     q: '<xsl:value-of select="albmDate"/>',
+                    <xsl:for-each select="photoCount/entry">
+                      "<xsl:value-of select="key"/>": <xsl:value-of select="value"/>,
+                    </xsl:for-each>
+                    },
+                </xsl:for-each>
+                    ]
+               my_ykeys = [
+               <xsl:for-each select="album/photoCount/entry[generate-id(.) = generate-id(key('tags', key)[1])]/key">
+                   "<xsl:value-of select="."/>",
+               </xsl:for-each>
+               ]
+              </script>
+             <div id="graph"/>
+         </body>
+     </html>
   </xsl:template>
   
   <xsl:template match="albums/select">
@@ -82,7 +109,7 @@
                 <label><xsl:value-of select="albmDate"/></label> &#160;
                 <a class="albumTT">
                     <xsl:attribute name="id">album-target-<xsl:value-of select="@id"/></xsl:attribute>
-                    <xsl:attribute name="href">Photos?album=<xsl:value-of select="@id"/>&amp;albmCount=<xsl:value-of select="count"/></xsl:attribute>
+                    <xsl:attribute name="href">Photos__<xsl:value-of select="@id"/>_p0_pa__<xsl:value-of select="name"/></xsl:attribute>
                     <xsl:value-of select="name"/>
                 </a>
                 <span class="album_tooltip">
@@ -111,12 +138,12 @@
     <xsl:template match="about/tag">
       <h3>
         <a>
-            <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>__<xsl:value-of select="name"/></xsl:attribute>
             <xsl:value-of select="name"/>
         </a>
     </h3>
     <img class="choix_img">
-      <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
+      <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture"/></xsl:attribute>
     </img>
     <div>
     <a>
@@ -152,8 +179,8 @@
         <a class="cloud-tag_used">
           <xsl:attribute name="id">cloud-target-<xsl:value-of select="@id"/></xsl:attribute>
           <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
-          <xsl:attribute name="href">Tags?tagAsked=<xsl:value-of select="@id"/>&amp;wantTagChildren=true</xsl:attribute>
-          <xsl:attribute name="nbElements"><xsl:value-of select="@name"/> : <xsl:value-of select="@nb"/></xsl:attribute>
+          <xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>x__<xsl:value-of select="name"/></xsl:attribute>
+          <xsl:attribute name="title"><xsl:value-of select="@nb"/> photos</xsl:attribute>
           <xsl:value-of select="name" />
         </a>
         <span class="cloud_tooltip_not_used">
@@ -183,9 +210,9 @@
 	  <td>
 	    <xsl:if test="@picture">
 	      <a target="_top">
-		<xsl:attribute name="HREF">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
+		<xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>__<xsl:value-of select="name"/></xsl:attribute>
 		<img class="choix_img">
-		  <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
+		  <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture"/>.png</xsl:attribute>
 		</img>
 	      </a>
 	    </xsl:if>
@@ -194,9 +221,9 @@
 	<tr>
 	  <td>
 	    <center>
-	      <a target="_top">
-		<xsl:attribute name="HREF">Tags?tagAsked=<xsl:value-of select="@id"/></xsl:attribute>
-		<xsl:value-of select="."/>
+	      <a>
+		<xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>__<xsl:value-of select="name"/></xsl:attribute>
+		<xsl:value-of select="name"/>
 	      </a>
 	    </center>
 	  </td>
@@ -224,14 +251,14 @@
     <td>
         <a>
             <xsl:attribute name="href">
-                Photos?album=<xsl:value-of select="@id"/>&amp;albmCount=<xsl:value-of select="@count"/>
+                Photos__<xsl:value-of select="@id"/>_p0_pa__<xsl:value-of select="name"/>
              </xsl:attribute>
             <img class="choix_img">
                 <xsl:attribute name="src">
-                    Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/>
+                    Miniature__<xsl:value-of select="@picture"/>.png
                 </xsl:attribute>
                 <xsl:attribute name="title">
-                <xsl:value-of select="name"/>
+                    <xsl:value-of select="name"/>
                 </xsl:attribute>
             </img>
         </a>
@@ -257,14 +284,14 @@
 		<a target="_top">
 		  <xsl:attribute name="href">
                       <xsl:if test="/webAlbums/albums">
-Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
+Photos__<xsl:value-of select="@id"/>_p0_pa0__<xsl:value-of select="name"/>
                       </xsl:if>
                       <xsl:if test="/webAlbums/carnets">
-Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of select="@id"/>
+Carnet__<xsl:value-of select="@id"/>_pc0__<xsl:value-of select="name"/>
                       </xsl:if>
                   </xsl:attribute>
 		  <img class="choix_img">
-		    <xsl:attribute name="src">Images?mode=PETIT&amp;id=<xsl:value-of select="@picture"/></xsl:attribute>
+		    <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture"/>.png</xsl:attribute>
 		  </img>
 		</a>
 	      </xsl:if>
@@ -277,10 +304,10 @@ Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of
 	      <a target="_top">
 		<xsl:attribute name="href">
 		  <xsl:if test="/webAlbums/albums">
-                        Photos?albmCount=<xsl:value-of select="position()"/>&amp;album=<xsl:value-of select="@id"/>
+                        Photos__<xsl:value-of select="@id"/>_p0_pa0__<xsl:value-of select="name"/>
                   </xsl:if>
                   <xsl:if test="/webAlbums/carnets">
-                        Carnets?carnetCount=<xsl:value-of select="position()"/>&amp;carnet=<xsl:value-of select="@id"/>
+                        Carnet__<xsl:value-of select="@id"/>_pc0__<xsl:value-of select="name"/>
                   </xsl:if>
 		</xsl:attribute>
 		<xsl:value-of select="name"/>

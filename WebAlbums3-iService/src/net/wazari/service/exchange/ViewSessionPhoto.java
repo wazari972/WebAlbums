@@ -62,8 +62,6 @@ public interface ViewSessionPhoto extends ViewSession {
         }
 
         ViewSessionPhotoDisplayMassEdit getMassEdit();
-
-        Integer getPage();
     }
 
     Integer getId();
@@ -72,9 +70,9 @@ public interface ViewSessionPhoto extends ViewSession {
 
     Mode getMode();
 
-    Integer getCount();
-
     Integer getAlbum();
 
-    Integer getAlbmCount();
+    Integer getAlbmPage();
+    
+    Integer getPage();
 }

@@ -21,7 +21,7 @@ public class XmlCarnetEdit extends XmlInfoException{
     public Integer picture;
     public String name;
     @XmlAttribute
-    public Integer count;
+    public Integer page;
     @XmlAttribute
     public Integer id;
     public String description;

@@ -17,10 +17,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class XmlDetails {
+    @XmlAttribute
     public Integer photoId;
     public List<String> userInside;
     public String description;
+    @XmlAttribute
     public Integer albumId;
+    public String albumName;
     public XmlPhotoAlbumUser user;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;

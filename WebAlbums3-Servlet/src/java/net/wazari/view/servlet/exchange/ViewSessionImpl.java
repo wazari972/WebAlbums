@@ -128,16 +128,6 @@ public class ViewSessionImpl implements
     public Integer getPage() {
         return getInteger("page");
     }
-
-    @Override
-    public Integer getCount() {
-        return getInteger("count");
-    }
-
-    @Override
-    public Integer getCountAlbm() {
-        return getInteger("countAlbm");
-    }
     
     @Override
     public Integer getNbPerYear() {
@@ -360,8 +350,8 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public Integer getAlbmCount() {
-        return getInteger("albmCount");
+    public Integer getAlbmPage() {
+        return getInteger("albmPage");
     }
 
     @Override
@@ -531,8 +521,8 @@ public class ViewSessionImpl implements
     }
     
     @Override
-    public Integer getCountCarnet() {
-        return getInteger("countCarnet") ;
+    public Integer getCarnetsPage() {
+        return getInteger("carnetsPage") ;
     }
 
     @Override

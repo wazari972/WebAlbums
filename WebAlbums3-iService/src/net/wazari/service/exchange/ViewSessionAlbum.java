@@ -24,22 +24,13 @@ public interface ViewSessionAlbum extends ViewSession {
         Integer getUserAllowed();
     }
 
-    interface ViewSessionAlbumEdit extends ViewSessionAlbum {
-
-        Integer getCountAlbm();
-
-    }
-    interface ViewSessionAlbumDisplay extends ViewSessionAlbum {
-
-        Integer getCountAlbm();
-
-    }
+    interface ViewSessionAlbumEdit extends ViewSessionAlbum {}
+    interface ViewSessionAlbumDisplay extends ViewSessionAlbum {}
     Integer getId();
-    Integer getCount();
     Integer getPage() ;
-    
+    Integer getAlbmPage();
     Integer getNbPerYear();
     void setPhotoAlbumSize(int size);
     
-    Integer[] getTags() ;
+    Integer[] getTagAsked() ;
 }

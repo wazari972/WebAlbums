@@ -245,7 +245,7 @@ public class PhotoBean implements PhotoLocal {
         //afficher les photos
         //afficher la liste des albums de cet theme
         Integer page = vSession.getPage();
-        Integer albmCount = vSession.getAlbmCount();
+        Integer albmPage = vSession.getAlbmPage();
         Special special = vSession.getSpecial();
         page = (page == null ? 0 : page);
 
@@ -266,7 +266,6 @@ public class PhotoBean implements PhotoLocal {
         output.album = album ;
 
         album.id = enrAlbum.getId();
-        album.count = albmCount;
         album.title = enrAlbum.getNom();
         album.droit = enrAlbum.getDroit().getNom();
         album.date = webPageService.xmlDate(enrAlbum.getDate(), null);
@@ -306,7 +305,7 @@ public class PhotoBean implements PhotoLocal {
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Photos";
         thisPage.album = albumId ;
-        thisPage.albmCount = albmCount ;
+        thisPage.albmPage = albmPage ;
         output.photoList = displayPhoto(rq, vSession, submit, thisPage);
 
         stopWatch.stop() ;
@@ -361,18 +360,47 @@ public class PhotoBean implements PhotoLocal {
 
         EditMode inEditionMode = vSession.getEditionMode();
         Integer page = vSession.getPage();
-        Integer photoID = vSession.getId();
-        Integer scount = vSession.getCount();
-        Bornes bornes = webPageService.calculBornes(page, scount, 
-                vSession.getPhotoAlbumSize());
-        SubsetOf<Photo> lstP;
-        if (rq.type == TypeRequest.PHOTO) {
-            lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, 
+        Integer photoId = vSession.getId();
+        
+        Bornes bornes = null;
+        SubsetOf<Photo> lstP = null;
+        boolean found = false;
+        if (page == null && photoId != null) {
+            int ipage = 0;
+            while (!found) {
+                bornes = webPageService.calculBornes(ipage, vSession.getPhotoAlbumSize());
+        
+                if (rq.type == TypeRequest.PHOTO) {
+                    lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, 
+                                                  ListOrder.ASC);
+                } else {
+                    lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
+                                               ListOrder.ASC);
+                }
+                for (Photo enrPhoto : lstP.subset) {
+                    if (enrPhoto.getId() == photoId) {
+                        found = true;
+                        break;   
+                    }
+                }
+                    
+                if (lstP.setSize == 0) {
+                    break;
+                }
+                ipage++;
+            }
+        } 
+        if (!found) {
+            bornes = webPageService.calculBornes(page, vSession.getPhotoAlbumSize());
+        
+            if (rq.type == TypeRequest.PHOTO) {
+                lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, 
                                           ListOrder.ASC);
-        } else {
-            lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
-                                       ListOrder.ASC);
-        }
+            } else {
+                lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
+                                           ListOrder.ASC);
+            }
+        }        
 
         String degrees = "0";
         Integer tag = null;
@@ -406,7 +434,6 @@ public class PhotoBean implements PhotoLocal {
         }
 
         boolean submitted = false ;
-        int count = bornes.getFirstElement();
         for (Photo enrPhoto : lstP.subset) {
             XmlPhoto photo = new XmlPhoto();
             boolean reSelectThis = false;
@@ -444,7 +471,7 @@ public class PhotoBean implements PhotoLocal {
                 }
             }
 
-            if (enrPhoto.getId().equals(photoID)) {
+            if (enrPhoto.getId().equals(photoId)) {
                 if (submit != null) {
                     photo.submit = submit ;
                     submitted = true ;
@@ -464,6 +491,7 @@ public class PhotoBean implements PhotoLocal {
                     Box.NONE, enrPhoto.getAlbum().getDate());
             
             details.albumId = enrPhoto.getAlbum().getId();
+            details.albumName = enrPhoto.getAlbum().getNom();
             details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager()
@@ -481,13 +509,11 @@ public class PhotoBean implements PhotoLocal {
                 details.user = new XmlPhotoAlbumUser(name, outside);
             }
             photo.details = details ;
-            photo.count = count ;
             
             photo.exif = photoUtil.getXmlExif(enrPhoto) ;
             
             output.photo.add(photo);
             current = false;
-            count++;
         }
 
         if (!submitted) {

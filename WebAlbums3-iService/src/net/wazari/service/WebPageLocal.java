@@ -36,7 +36,7 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 @DeclareRoles({UserLocal.VIEWER_ROLE})
 public interface WebPageLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    Bornes calculBornes(Integer page, Integer eltAsked, int taille);
+    Bornes calculBornes(Integer page, int taille);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlWebAlbumsList displayListB(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;

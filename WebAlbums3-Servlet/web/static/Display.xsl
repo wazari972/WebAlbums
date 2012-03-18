@@ -28,7 +28,7 @@
         <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
         <style type="text/css">          body {
              <xsl:if test="not(/webAlbums/affichage/@background)">background: #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if>
-             <xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(Images?mode=BACKGROUND)     fixed no-repeat;</xsl:if>
+             <xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(Background.jpg)     fixed no-repeat;</xsl:if>
           }
         </style>
       </head>
@@ -142,8 +142,11 @@
                     <script type="text/javascript" src="static/scripts/Config.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/choix">
-                    <link type="text/css" href="static/scripts/lib/jquery/css/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" media="screen"/>
+                    <link type="text/css" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" rel="stylesheet" media="screen"/>
+                    <script type="text/javascript" src="static/scripts/lib/raphael.js"/>
+                    <script type="text/javascript" src="static/scripts/lib/morris.js"/>
                     <script src="static/scripts/Choix.js" type='text/javascript'></script>
+                    
                 </xsl:if>
 	      </div>
 	      <div id="footer">
