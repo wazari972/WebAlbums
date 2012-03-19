@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -131,6 +132,15 @@ public class JPAPhoto implements Photo, Serializable {
     @XmlTransient
     @ManyToMany(mappedBy="jPAPhotoList")
     private List<JPACarnet> jPACarnetList;    
+    
+    @XmlTransient
+    @JoinColumn(name = "TagAuthor", referencedColumnName = "ID", nullable = true)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    private JPATag tagAuthor;
+
+    @XmlTransient
+    @Transient
+    private Integer tagAuthorId ;
     
     public JPAPhoto() {
     }
@@ -305,6 +315,16 @@ public class JPAPhoto implements Photo, Serializable {
     }
     
     @Override
+    public Tag getTagAuthor() {
+        return tagAuthor;
+    }
+
+    @Override
+    public void setTagAuthor(Tag tagAuthor) {
+        this.tagAuthor = (JPATag) tagAuthor;
+    }
+    
+    @Override
     public List<Carnet> getCarnetList() {
         return (List) jPACarnetList;
     }
@@ -325,6 +345,19 @@ public class JPAPhoto implements Photo, Serializable {
 
     public void setAlbumId(Integer albumId) {
         this.albumId = albumId ;
+    }
+    
+    @XmlAttribute
+    public Integer getTagAuthorId() {
+        if (tagAuthorId == null) {
+            return tagAuthorId ;
+        } else {
+            return tagAuthor.getId() ;
+        }
+    }
+
+    public void setTagAuthorIdd(Integer tagAuthorId) {
+        this.tagAuthorId = tagAuthorId ;
     }
 
     @Override

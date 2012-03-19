@@ -14,6 +14,6 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
  */
 @XmlRootElement
 public class XmlConfigModPers extends XmlInfoException {
-    public String oldBirthdate;
     public String newBirthdate;
+    public String newContact;
 }

@@ -19,5 +19,7 @@ public class XmlTag {
     public Integer picture;
     @XmlAttribute
     public Boolean checked;
+    @XmlAttribute
+    public Boolean minor;
 
 }

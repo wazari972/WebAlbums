@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Person;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.entity.TagTheme;
@@ -71,6 +72,11 @@ public class JPATag implements Tag, Serializable {
     @Column(name = "TagType", nullable = false)
     private int tagType;
 
+    @XmlAttribute
+    @Basic(optional = true)
+    @Column(name = "IsMinor", nullable = true)
+    private Boolean minor;
+    
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
@@ -97,6 +103,10 @@ public class JPATag implements Tag, Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.LAZY)
     private List<JPATag> sonList;
 
+    @XmlTransient
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tagAuthor", fetch = FetchType.LAZY)
+    private List<JPAPhoto> authorList;
+    
     public JPATag() {
     }
 
@@ -130,6 +140,16 @@ public class JPATag implements Tag, Serializable {
         this.nom = nom;
     }
 
+    @Override
+    public Boolean isMinor() {
+        return minor;
+    }
+
+    @Override
+    public void setMinor(Boolean minor) {
+        this.minor = minor;
+    }
+    
     @Override
     public int getTagType() {
         return tagType;
@@ -199,6 +219,17 @@ public class JPATag implements Tag, Serializable {
     public void setSonList(List<Tag> sonList) {
         this.sonList = (List) sonList;
     }
+    
+    @Override
+    public List<Photo> getAuthorList() {
+        return (List) authorList;
+    }
+
+    @Override
+    public void setAuthorList(List<Photo> authorList) {
+        this.authorList = (List) authorList;
+    }
+
 
     @Override
     public int hashCode() {

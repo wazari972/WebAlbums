@@ -73,7 +73,6 @@ public class ConfigBean implements ConfigLocal {
             throws WebAlbumsServiceException {
         XmlConfigModTag output = new XmlConfigModTag ();
 
-        String nouveau = vSession.getNouveau();
         Integer tag = vSession.getTag();
 
         if (tag == null || tag == -1) {
@@ -86,12 +85,26 @@ public class ConfigBean implements ConfigLocal {
             output.exception = "Le Tag #" + tag + " n'est pas dans la base ...";
             return output;
         }
-
-        output.oldName = enrTag.getNom();
-
-        enrTag.setNom(nouveau);
+        
+        String newName = vSession.getNouveau();
+        String oldName = enrTag.getNom();
+        if (newName != null && !newName.equals(oldName)) {
+            enrTag.setNom(newName);
+            output.newName = newName ;
+        }
+        
+        Boolean isMinor = vSession.getMinor();
+        Boolean oldIsMinor = enrTag.isMinor();
+        if (oldIsMinor != null && oldIsMinor != isMinor) {
+            if (!isMinor)
+                isMinor = null;
+            enrTag.setMinor(isMinor);
+            output.newMinor = isMinor != null && isMinor;
+        }
+        
+        
         tagDAO.edit(enrTag);
-        output.newName = nouveau ;
+        
 
         return output ;
     }
@@ -137,6 +150,7 @@ public class ConfigBean implements ConfigLocal {
         XmlConfigModPers output = new XmlConfigModPers();
 
         String birthdate = vSession.getBirthdate();
+        String contact = vSession.getContact();
         Integer tag = vSession.getTag();
 
         if (tag == null || tag == -1) {
@@ -168,10 +182,22 @@ public class ConfigBean implements ConfigLocal {
         if (enrPerson == null) {
             enrPerson = personDAO.newPerson(enrTag);
         }
-        output.oldBirthdate = enrPerson.getBirthdate() ;
-        enrPerson.setBirthdate(birthdate);
+        
+        String oldBirthdate = enrPerson.getBirthdate() ;
+        if (birthdate != null && !birthdate.equals(oldBirthdate)) {
+            enrPerson.setBirthdate(birthdate);
+            output.newBirthdate = birthdate ;
+        } 
+        
+        String oldContact = enrPerson.getContact();
+        if (contact != null && contact.equals(oldContact)) {
+            enrPerson.setContact(contact);
+            output.newContact = contact ;
+        } 
+        
+        
         personDAO.edit(enrPerson);
-        output.newBirthdate = birthdate ;
+        
 
         return output ;
     }

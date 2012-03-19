@@ -15,5 +15,6 @@ public abstract class JPATag_ {
     public static volatile ListAttribute<JPATag, JPATagTheme> jPATagThemeList;
     public static volatile SingularAttribute<JPATag, JPATag> parent;
     public static volatile ListAttribute<JPATag, JPATag> sonList;
+    public static volatile SingularAttribute<JPATag, Boolean> minor;
 }
 

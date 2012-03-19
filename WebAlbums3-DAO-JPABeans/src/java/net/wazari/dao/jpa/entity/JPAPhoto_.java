@@ -3,6 +3,7 @@ package net.wazari.dao.jpa.entity;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
+import net.wazari.dao.entity.Tag;
 
 @StaticMetamodel(JPAPhoto.class)
 public abstract class JPAPhoto_ {
@@ -23,5 +24,6 @@ public abstract class JPAPhoto_ {
     public static volatile ListAttribute<JPAPhoto, JPATagPhoto> jPATagPhotoList;
     public static volatile SingularAttribute<JPAPhoto, String> description;
     public static volatile SingularAttribute<JPAPhoto, String> path;
+    public static volatile SingularAttribute<JPAPhoto, Tag> tagAuthor;
 }
 

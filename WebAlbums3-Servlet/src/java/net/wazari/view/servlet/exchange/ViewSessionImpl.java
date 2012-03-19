@@ -82,6 +82,11 @@ public class ViewSessionImpl implements
     }
     
     @Override
+    public String getContact() {
+        return getString("contact");
+    }
+    
+    @Override
     public String getDesc() {
         return getString("desc");
     }
@@ -282,6 +287,11 @@ public class ViewSessionImpl implements
     @Override
     public boolean getVisible() {
         return "y".equals(getString("visible"));
+    }
+    
+    @Override
+    public boolean getMinor() {
+        return "y".equals(getString("minor"));
     }
 
     @Override

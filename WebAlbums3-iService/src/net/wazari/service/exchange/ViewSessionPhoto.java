@@ -49,7 +49,7 @@ public interface ViewSessionPhoto extends ViewSession {
 
             enum Turn {
 
-                RIGHT, LEFT, TAG, UNTAG, MVTAG, RIEN
+                RIGHT, LEFT, TAG, UNTAG, MVTAG, NOTHING, AUTHOR
             }
 
             Turn getTurn();

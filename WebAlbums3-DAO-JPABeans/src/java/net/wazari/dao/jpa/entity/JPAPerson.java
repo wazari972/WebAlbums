@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -49,6 +48,11 @@ public class JPAPerson implements Person, Serializable {
     @Basic(optional = false)
     @Column(name = "Birthdate", nullable = false, length = 10)
     private String birthdate;
+    
+    @XmlElement
+    @Basic(optional = false)
+    @Column(name = "Contact", nullable = true, length = 100)
+    private String contact;
 
     @XmlTransient
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
@@ -80,6 +84,16 @@ public class JPAPerson implements Person, Serializable {
     @Override
     public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
+    }
+    
+    @Override
+    public String getContact() {
+        return contact;
+    }
+
+    @Override
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     @Override

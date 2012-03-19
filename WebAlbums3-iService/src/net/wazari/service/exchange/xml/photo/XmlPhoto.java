@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlInfoException;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 
 /**
  *
@@ -23,4 +24,5 @@ public class XmlPhoto extends XmlInfoException {
     @XmlAttribute
     public int count;
     public XmlPhotoExif exif;
+    public XmlWebAlbumsTagWho author;
 }

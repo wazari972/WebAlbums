@@ -53,6 +53,7 @@ import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
@@ -424,6 +425,8 @@ public class PhotoBean implements PhotoLocal {
                         degrees = "90";
                     } else if (turn == Turn.TAG || turn == Turn.UNTAG || turn == Turn.MVTAG) {
                         tag = vSession.getMassEdit().getAddTag();
+                    } else if (turn == Turn.AUTHOR) {
+                        tag = vSession.getMassEdit().getAddTag();
                     }
                     massEditParam = true;
                 }
@@ -455,6 +458,9 @@ public class PhotoBean implements PhotoLocal {
                             photoUtil.removeTag(enrPhoto, rmTag);
                             photoUtil.addTags(enrPhoto, new Integer[]{tag});
                             verb = "added and tag " + rmTag + " removed";
+                        } else if (turn == Turn.AUTHOR) {
+                            enrPhoto.setTagAuthor(tagDAO.find(tag));
+                            verb = "set as author";
                         } else {
                             verb = "nothinged";
                         }
@@ -465,9 +471,7 @@ public class PhotoBean implements PhotoLocal {
                             reSelectThis = true;
                         }
                     }
-
                     countME++;
-
                 }
             }
 
@@ -509,7 +513,14 @@ public class PhotoBean implements PhotoLocal {
                 details.user = new XmlPhotoAlbumUser(name, outside);
             }
             photo.details = details ;
-            
+            if (enrPhoto.getTagAuthor() != null) {
+                Tag enrAuthor = enrPhoto.getTagAuthor();
+                photo.author = new XmlWebAlbumsTagWho();
+                photo.author.name = enrAuthor.getNom();
+                photo.author.id = enrAuthor.getId();
+                if (enrAuthor.getPerson() != null)
+                    photo.author.contact = enrAuthor.getPerson().getContact();
+            }
             photo.exif = photoUtil.getXmlExif(enrPhoto) ;
             
             output.photo.add(photo);
@@ -529,7 +540,7 @@ public class PhotoBean implements PhotoLocal {
                     Box.LIST, "newTag");
             if (massEditParam) {
                 String msg;
-                if (countME == 0 || Turn.RIEN == turn) {
+                if (countME == 0 || Turn.NOTHING == turn) {
                     msg = "Aucune modification faite ... ?";
                 } else {
                     msg = "" + countME + " photo"

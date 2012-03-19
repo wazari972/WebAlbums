@@ -14,7 +14,7 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
  */
 @XmlRootElement
 public class XmlConfigModTag extends XmlInfoException {
-    public String oldName;
     public String newName;
+    public Boolean newMinor;
 
 }

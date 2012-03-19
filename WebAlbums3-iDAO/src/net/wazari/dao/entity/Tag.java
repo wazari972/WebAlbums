@@ -42,10 +42,16 @@ public interface Tag extends Serializable, EntityWithId {
     void setTagThemeList(List<TagTheme> tagThemeList);
 
     void setTagType(int tagType);
+    
+    Boolean isMinor();
+    void setMinor(Boolean minor);
 
     Tag getParent() ;
     void setParent(Tag parent) ;
 
     List<Tag> getSonList() ;
     void setSonList(List<Tag> sonList) ;
+    
+    List<Photo> getAuthorList() ;
+    void setAuthorList(List<Photo> authorList) ;
 }

@@ -10,7 +10,8 @@ package net.wazari.service.exchange;
  * @author kevin
  */
 public interface ViewSessionConfig extends ViewSession{
-
+    boolean getMinor();
+    
     String getNouveau();
 
     Integer getTag();
@@ -32,4 +33,6 @@ public interface ViewSessionConfig extends ViewSession{
     Integer[] getSonTags();
 
     String getBirthdate();
+    
+    String getContact();
 }

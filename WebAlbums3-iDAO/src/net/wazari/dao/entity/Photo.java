@@ -15,6 +15,7 @@ import net.wazari.dao.entity.facades.EntityWithId;
  * @author kevinpouget
  */
 public interface Photo extends Serializable, EntityWithId, Metadata {
+    
     Album getAlbum();
 
     String getDescription();
@@ -32,7 +33,11 @@ public interface Photo extends Serializable, EntityWithId, Metadata {
     List<Carnet> getCarnetList() ;
     
     Integer getStars();
-
+ 
+    Tag getTagAuthor();
+    
+    void setTagAuthor(Tag tagAuthor) ;
+    
     void setAlbum(Album album);
 
     void setDescription(String description);

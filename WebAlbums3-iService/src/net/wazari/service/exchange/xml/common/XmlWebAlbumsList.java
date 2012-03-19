@@ -59,6 +59,7 @@ public class XmlWebAlbumsList extends XmlInfoException {
     }
     public static class XmlWebAlbumsTagWho extends XmlTag {
         public String birthdate;
+        public String contact;
         public String getNature() {return "who" ;}
     }
 
