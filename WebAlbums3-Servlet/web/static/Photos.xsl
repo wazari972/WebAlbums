@@ -90,6 +90,10 @@
 	      <td><input id="turnUntag" type='radio' name='turn' value='UNTAG' /></td>
 	      <td><label for="turnUntag">Enlever le tag</label></td>
 	    </tr>
+	    <tr>
+	      <td><input id="turnAuthor" type='radio' name='turn' value='AUTHOR' /></td>
+	      <td><label for="turnAuthor">Définir l'auteur</label></td>
+	    </tr>
 	    <xsl:if test="/webAlbums/tags">
 	      <tr>
 		<input type="hidden" name="rmTag">

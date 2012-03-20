@@ -156,6 +156,8 @@
             <br/>
             Date de naissance: <input id="birthdate" name='birthdate' type='date' placeholder="YYYY-MM-DD"/>
 	    <br/>
+            Contact: <input id="contact" name='contact' type='text'/>
+            <br/>
             <input id="valModPerson" type='submit' value='Valider'/>
 	  </form>
 	</div>
@@ -342,7 +344,15 @@
   </xsl:template>
 
   <xsl:template match="modpers">
-    Date de naissance correctement mis à jour <b>(<xsl:value-of select="oldBirthdate"/> --> <xsl:value-of select="newBirthdate"/>)</b>
+      <xsl:apply-templates select="exception" />
+      <xsl:apply-templates select="newBirthdate" />
+      <xsl:apply-templates select="newContact" />
+  </xsl:template>
+  <xsl:template match="modpers/newBirthdate">
+    Date de naissance correctement mis à jour <b>(<xsl:value-of select="."/>)</b>
+  </xsl:template>
+  <xsl:template match="modpers/newContact">
+    Contact correctement mis à jour <b>(<xsl:value-of select="."/>)</b>
   </xsl:template>
   <xsl:template match="shutdown">
     <div class="item">

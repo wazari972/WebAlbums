@@ -168,29 +168,30 @@ public class ConfigBean implements ConfigLocal {
             output.exception = "Le " + tag + " ne correspond à une personne ..." ;
             return output ;
         }
-        
-        try {
-            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
-            parser.parse(birthdate);
-        } catch (ParseException e) {
-            output.exception = "La date " + birthdate + " n'est pas correcte..." ;
-            return output;
-        }
-
 
         Person enrPerson = enrTag.getPerson();
         if (enrPerson == null) {
             enrPerson = personDAO.newPerson(enrTag);
+            personDAO.create(enrPerson);
         }
         
         String oldBirthdate = enrPerson.getBirthdate() ;
-        if (birthdate != null && !birthdate.equals(oldBirthdate)) {
+        if (birthdate != null && !birthdate.equals("") && !birthdate.equals(oldBirthdate)) {
+            try {
+                SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+                parser.parse(birthdate);
+            } catch (ParseException e) {
+                output.exception = "La date " + birthdate + " n'est pas correcte..." ;
+                return output;
+            }
+            
             enrPerson.setBirthdate(birthdate);
             output.newBirthdate = birthdate ;
         } 
         
         String oldContact = enrPerson.getContact();
-        if (contact != null && contact.equals(oldContact)) {
+        log.warn("----->"+contact);
+        if (contact != null && !contact.equals("") && !contact.equals(oldContact)) {
             enrPerson.setContact(contact);
             output.newContact = contact ;
         } 

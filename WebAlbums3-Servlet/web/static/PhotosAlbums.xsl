@@ -241,6 +241,17 @@ Carnets?action=EDIT
                               </p>
                        </div>
                        </span>
+                       <xsl:if test="../author">
+                           <div class="author_opt">
+                               By: <a>
+                                    <xsl:attribute name="href">Tag__<xsl:value-of select="../author/@id"/>__<xsl:value-of select="../author/name"/></xsl:attribute>
+                                    <xsl:if test="../author/contact">
+                                        <xsl:attribute name="title"><xsl:value-of select="../author/contact"/></xsl:attribute>
+                                    </xsl:if>
+                                    <xsl:value-of select="../author/name"/>
+                                  </a>
+                            </div>
+                       </xsl:if>
                        <xsl:if test="../carnet">
                            <div class="carnets_opt">
                                <xsl:apply-templates select="../carnet"/>

@@ -387,7 +387,8 @@ public class WebPageBean implements WebPageLocal {
                 }
                 if (written) {
                     if (tag instanceof XmlWebAlbumsTagWho && enrTag.getPerson() != null) {
-                        ((XmlWebAlbumsTagWho) tag).birthdate = enrTag.getPerson().getBirthdate();
+                        if (enrTag.getPerson().getBirthdate() != null && !"".equals(enrTag.getPerson().getBirthdate()))
+                            ((XmlWebAlbumsTagWho) tag).birthdate = enrTag.getPerson().getBirthdate();
                     }
                     tag.name = nom ;
                     tag.id = tagId.getId() ;

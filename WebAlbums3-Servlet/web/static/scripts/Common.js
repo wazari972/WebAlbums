@@ -57,7 +57,7 @@ function refresh_editionMode() {
     if (value == 'VISITE') {
         $(".edit").hide()
     } else if (value == 'EDITION') {
-        //$(".edit").show()
+        
     } else
         alert('unknown edition mode value: '+value)
 }
@@ -88,7 +88,7 @@ function set_editionMode(value) {
 
 function get_editionMode() {
     if ($.cookie('EDITION_MODE') == null)
-       set_editionMode('VISITE')
+       set_editionMode('EDITION')
     return $.cookie('EDITION_MODE')
 }
 

@@ -24,7 +24,7 @@
     
     <xsl:if test="not(@box) or @box = $box">
     <xsl:if test="not(@mode) or @mode = $mode">
-      <xsl:if test="who|what|where">            
+      <xsl:if test="who|what|where|author">            
 	<xsl:if test="$style = 'list' or $style = 'multiple'">
 	  <select>
 	    <xsl:if test="$style = 'multiple'">
@@ -80,6 +80,10 @@
                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
 	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
 	    </xsl:apply-templates>
+            <xsl:apply-templates select="author">
+                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+	    </xsl:apply-templates>
 	    <xsl:apply-templates select="what">
                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
 	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
@@ -95,7 +99,7 @@
     </xsl:if>
   </xsl:template>
     
-  <xsl:template match="where|what|who">
+  <xsl:template match="where|what|who|author">
     <xsl:param name="type">all</xsl:param>
     <xsl:param name="style">none</xsl:param>
     <xsl:if test="$type = 'all' or $type = name(.)">

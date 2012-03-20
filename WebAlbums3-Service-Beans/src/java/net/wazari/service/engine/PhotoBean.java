@@ -445,7 +445,7 @@ public class PhotoBean implements PhotoLocal {
                 if (chkbox) {
                     current = true;
 
-                    if (turn == Turn.TAG || turn == Turn.UNTAG || turn == Turn.MVTAG) {
+                    if (turn != null) {
                         String verb;
                         if (turn == Turn.TAG) {
                             photoUtil.addTags(enrPhoto, new Integer[]{tag});
@@ -464,7 +464,7 @@ public class PhotoBean implements PhotoLocal {
                         } else {
                             verb = "nothinged";
                         }
-                        photo.message = "Tag " + tag + " " + verb + " to photo #" + enrPhoto.getId();
+                        photo.message = "Tag " + tag + " " + verb + " from photo #" + enrPhoto.getId();
                     } else if (turn == Turn.LEFT || turn == Turn.RIGHT) {
                         if (!photoUtil.rotate(vSession, enrPhoto, degrees)) {
                             photo.exception = "Erreur dans le ConvertWrapper ...";

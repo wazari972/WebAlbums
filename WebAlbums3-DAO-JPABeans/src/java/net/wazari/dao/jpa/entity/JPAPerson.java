@@ -45,12 +45,12 @@ public class JPAPerson implements Person, Serializable {
     private Integer tag;
 
     @XmlElement
-    @Basic(optional = false)
-    @Column(name = "Birthdate", nullable = false, length = 10)
-    private String birthdate;
+    @Basic(optional = true)
+    @Column(name = "Birthdate", nullable = true, length = 10)
+    private String birthdate = null;
     
     @XmlElement
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "Contact", nullable = true, length = 100)
     private String contact;
 
