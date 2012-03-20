@@ -174,7 +174,6 @@ public class ConfigBean implements ConfigLocal {
             enrPerson = personDAO.newPerson(enrTag);
             personDAO.create(enrPerson);
         }
-        
         String oldBirthdate = enrPerson.getBirthdate() ;
         if (birthdate != null && !birthdate.equals("") && !birthdate.equals(oldBirthdate)) {
             try {
@@ -190,16 +189,13 @@ public class ConfigBean implements ConfigLocal {
         } 
         
         String oldContact = enrPerson.getContact();
-        log.warn("----->"+contact);
         if (contact != null && !contact.equals("") && !contact.equals(oldContact)) {
             enrPerson.setContact(contact);
             output.newContact = contact ;
-        } 
-        
+        }
         
         personDAO.edit(enrPerson);
         
-
         return output ;
     }
 

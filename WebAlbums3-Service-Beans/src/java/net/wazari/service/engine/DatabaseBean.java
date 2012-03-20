@@ -5,7 +5,6 @@
 package net.wazari.service.engine;
 
 import java.io.File;
-import java.lang.String;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,7 +82,7 @@ public class DatabaseBean implements DatabaseLocal {
             return output;
         
         try {
-            Theme enrTheme = vSession.getTheme();
+            Theme enrTheme = themeDAO.find(vSession.getTheme().getId());
             if (enrTheme == null)
                 throw new DatabaseFacadeLocalException("Theme not set");
             if (vSession.getConfiguration().isPathURL()) {
