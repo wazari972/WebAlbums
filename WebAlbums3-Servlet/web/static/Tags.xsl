@@ -49,7 +49,9 @@
 	    <img src="static/images/slide.png" height="30px"/>
 	  </a>
 	  <center>
-	    <xsl:apply-templates select="tagList"/>
+	    <xsl:apply-templates select="tagList">
+            <xsl:with-param name="incMinor">true</xsl:with-param>    
+            </xsl:apply-templates>
 	  </center>
 	</h2>
       </div>

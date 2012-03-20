@@ -18,13 +18,13 @@
     <xsl:param name="mode">TAG_USED</xsl:param>
     <xsl:param name="mode2">NONE</xsl:param>
     <xsl:param name="type">all</xsl:param>
+    <xsl:param name="incMinor">false</xsl:param>
     <xsl:param name="box">MULTIPLE</xsl:param>
     <xsl:param name="onChange"></xsl:param>
     <xsl:param name="id"></xsl:param>
-    
     <xsl:if test="not(@box) or @box = $box">
     <xsl:if test="not(@mode) or @mode = $mode">
-      <xsl:if test="who|what|where|author">            
+      <xsl:if test="who|what|where">            
 	<xsl:if test="$style = 'list' or $style = 'multiple'">
 	  <select>
 	    <xsl:if test="$style = 'multiple'">
@@ -47,18 +47,21 @@
                 <xsl:apply-templates select="who">
                   <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
                   <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+                  <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
                 </xsl:apply-templates>
             </optgroup>
             <optgroup label="What">
                 <xsl:apply-templates select="what">
                   <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
                   <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+                  <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
                 </xsl:apply-templates>
             </optgroup>
             <optgroup label="Where">
                 <xsl:apply-templates select="where">
                   <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
                   <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+                  <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
                 </xsl:apply-templates>
             </optgroup>
                 <xsl:if test="not($mode2 = 'NONE')">
@@ -68,6 +71,7 @@
                             <xsl:apply-templates select="../tagList[@mode = $mode2]/*">
                                 <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
                                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+                                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
                             </xsl:apply-templates>
                         </optgroup>
                     </xsl:if>
@@ -79,18 +83,22 @@
 	    <xsl:apply-templates select="who">
                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
 	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
 	    </xsl:apply-templates>
             <xsl:apply-templates select="author">
                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
 	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
 	    </xsl:apply-templates>
 	    <xsl:apply-templates select="what">
                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
 	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
 	    </xsl:apply-templates>
 	    <xsl:apply-templates select="where">
                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
 	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
 	    </xsl:apply-templates>
 	  </div>
 	</xsl:if>     
@@ -102,6 +110,9 @@
   <xsl:template match="where|what|who|author">
     <xsl:param name="type">all</xsl:param>
     <xsl:param name="style">none</xsl:param>
+    <xsl:param name="incMinor">false</xsl:param>
+    
+    <xsl:if test="(@minor and $incMinor = 'true') or not(@minor)">
     <xsl:if test="$type = 'all' or $type = name(.)">
         <xsl:if test="$style = 'list' or $style = 'multiple'">
           <option>
@@ -110,7 +121,11 @@
               <xsl:attribute name="selected">selected</xsl:attribute>	  
             </xsl:if>
 
-            [<xsl:value-of select="name(.)"/>] <xsl:value-of select="name"/>
+            [<xsl:value-of select="name(.)"/>] 
+            
+            <xsl:if test="@minor">(</xsl:if>
+            <xsl:value-of select="name"/>
+            <xsl:if test="@minor">)</xsl:if>
           </option>    
         </xsl:if>      
 
@@ -120,11 +135,14 @@
             <xsl:if test="birthdate">
                 <xsl:attribute name="title"><xsl:value-of select="birthdate"/> ans</xsl:attribute>
             </xsl:if>
+            <xsl:if test="@minor">(</xsl:if>
             <xsl:value-of select="name"/>
+            <xsl:if test="@minor">)</xsl:if>
           </a>
           <xsl:if test="position() != last()">, </xsl:if>
           <xsl:if test="position() = last() and name(.) = 'who' and (count(../what)!= 0 or count(../where) != 0)">, </xsl:if>
           <xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">,  </xsl:if>      
+        </xsl:if>
         </xsl:if>
     </xsl:if>
   </xsl:template>

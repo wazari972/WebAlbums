@@ -18,6 +18,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionConfig;
+import net.wazari.service.exchange.xml.config.XmlConfigModMinor;
 import net.wazari.service.exchange.xml.config.XmlConfigModPers;
 
 /**
@@ -53,4 +54,7 @@ public interface ConfigLocal {
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlConfigModPers treatMODPERS(ViewSessionConfig vSession) throws WebAlbumsServiceException;
+    
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
+    XmlConfigModMinor treatMODMINOR(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 }

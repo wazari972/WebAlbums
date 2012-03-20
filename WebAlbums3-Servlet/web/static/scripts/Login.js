@@ -20,9 +20,11 @@ function init() {
                   unsafe = true
               if (url.indexOf("/Users") != -1)
                   unsafe = true
-              
+              if (url.indexOf("#") != -1) {
+                  url = url.substring(0, url.indexOf("#"))
+              }
               if (!unsafe)
-                window.location = window.location
+                window.location = url
               else
                   window.location = "Index"
               return false

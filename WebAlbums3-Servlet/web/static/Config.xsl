@@ -45,6 +45,7 @@
 	  <form action='#newTag' method='POST' name='newTag' >
 	    <xsl:apply-templates select="newtag">
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
+              <xsl:with-param name="incMinor">true</xsl:with-param>
 	    </xsl:apply-templates>
 	    <input type='hidden' name='action' value='NEWTAG'/>
 	    <table>
@@ -125,6 +126,7 @@
               <xsl:with-param name="name">tag</xsl:with-param>
               <xsl:with-param name="id">lstModGeo</xsl:with-param>
               <xsl:with-param name="type">where</xsl:with-param>
+              <xsl:with-param name="incMinor">true</xsl:with-param>
             </xsl:apply-templates>
 		
             <input id="lngID_2" name='lng' type='hidden'/>
@@ -152,6 +154,7 @@
               <xsl:with-param name="name">tag</xsl:with-param>
               <xsl:with-param name="id">lstModPerson</xsl:with-param>
               <xsl:with-param name="type">who</xsl:with-param>
+              <xsl:with-param name="incMinor">true</xsl:with-param>
             </xsl:apply-templates>
             <br/>
             Date de naissance: <input id="birthdate" name='birthdate' type='date' placeholder="YYYY-MM-DD"/>
@@ -183,6 +186,7 @@
 		    <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 		    <xsl:with-param name="name">tag</xsl:with-param>
 		    <xsl:with-param name="id">lstModTag</xsl:with-param>
+                    <xsl:with-param name="incMinor">true</xsl:with-param>
 		  </xsl:apply-templates>
 		</td>
 	      </tr>
@@ -230,6 +234,7 @@
                     <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
 		    <xsl:with-param name="name">sonTag</xsl:with-param>
 		    <xsl:with-param name="id">lstSonTag</xsl:with-param>
+                    <xsl:with-param name="incMinor">true</xsl:with-param>
 		  </xsl:apply-templates>
                 </td>
 	      </tr>
@@ -277,7 +282,43 @@
       </div>
     </div>
     </xsl:if>
-   
+    
+   <div class="item">
+      <a name="modMinor"/>
+      <div class="date">
+	<span>*</span>
+      </div>
+      <div class="content">
+	<h1>Chgt Majeur/Mineur</h1>
+	<div class="body">
+	  <xsl:apply-templates select="modminor"/>
+	  <form action='#modMinor' method='POST'>
+	    <input type='hidden' name='action' value='MODMINOR'/>
+	    <table>
+	      <tr>
+		<td align='left'><label for="lstModMinor">Tag : </label></td>	
+		<td>
+		  <xsl:apply-templates select="tagList">
+		    <xsl:with-param name="style">list</xsl:with-param>
+		    <xsl:with-param name="name">tag</xsl:with-param>
+		    <xsl:with-param name="id">lstModMinor</xsl:with-param>
+		    <xsl:with-param name="onChange">javacript:checkValidity("valModMinor","lstModMinor")</xsl:with-param>
+                    <xsl:with-param name="incMinor">true</xsl:with-param>
+		  </xsl:apply-templates>
+		</td>
+	      </tr>
+	      <tr>
+		<td align='left'><label for="visible">Mineur ? </label></td>
+		<td><input id="minor" name='minor' value='y' type='checkbox'/></td>
+	      </tr>
+	    </table>
+	    <input type='submit' value='Valider' id="valModMinor"/>
+	  </form>
+	  <br/><br/>
+	</div>
+      </div>
+    </div>
+    
     <div class="item">
       <a name="delTag"/>
       <div class="date">
@@ -341,6 +382,14 @@
   </xsl:template>
   <xsl:template match="newLngLat">
     Nouvelle géolocalisation: <b> <xsl:value-of select="."/></b>
+  </xsl:template>
+
+<xsl:template match="modminor">
+      <xsl:if test="newMinor">
+          Tag minor set to "<xsl:value-of select="newMinor"/>".
+      </xsl:if>
+      <xsl:apply-templates select="newBirthdate" />
+      <xsl:apply-templates select="newContact" />
   </xsl:template>
 
   <xsl:template match="modpers">

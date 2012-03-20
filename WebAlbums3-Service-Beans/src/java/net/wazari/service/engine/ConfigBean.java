@@ -27,6 +27,7 @@ import net.wazari.service.exchange.xml.config.XmlConfigDelTheme;
 import net.wazari.service.exchange.xml.config.XmlConfigImport;
 import net.wazari.service.exchange.xml.config.XmlConfigLinkTag;
 import net.wazari.service.exchange.xml.config.XmlConfigModGeo;
+import net.wazari.service.exchange.xml.config.XmlConfigModMinor;
 import net.wazari.service.exchange.xml.config.XmlConfigModPers;
 import net.wazari.service.exchange.xml.config.XmlConfigModTag;
 import net.wazari.service.exchange.xml.config.XmlConfigModVis;
@@ -142,6 +143,34 @@ public class ConfigBean implements ConfigLocal {
         output.newLngLat = lng + "/" + lat ;
 
         return output ;
+    }
+    
+    @Override
+    public XmlConfigModMinor treatMODMINOR(ViewSessionConfig vSession)
+            throws WebAlbumsServiceException {
+        XmlConfigModMinor output = new XmlConfigModMinor();
+        
+        Integer tag = vSession.getTag();
+        Boolean minor = vSession.getMinor();
+        
+        if (tag == null || tag == -1) {
+            output.exception = "Pas de tag selectionné ..." ;
+            return output ;
+        }
+
+        Tag enrTag = tagDAO.find(tag);
+        if (enrTag == null) {
+            output.exception = "L'id " + tag + " ne correspond à aucun tag ..." ;
+            return output ;
+        }
+        
+        if (!minor)
+            minor = null;
+        
+        enrTag.setMinor(minor);
+        tagDAO.edit(enrTag);
+        output.newMinor = minor != null;
+        return output;
     }
     
     @Override

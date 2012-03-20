@@ -59,10 +59,10 @@
                   Image__<xsl:value-of select="@photoId" />
                 </xsl:if>
                 <xsl:if test="/webAlbums/albums">
-                  Photos__<xsl:value-of select="../@id" />_<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" />__<xsl:value-of select="../title" />
+                  Photos__<xsl:value-of select="../@id" />_p0_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" />__<xsl:value-of select="../title" />
                 </xsl:if>
                 <xsl:if test="/webAlbums/carnets">
-                  Carnet__<xsl:value-of select="../@id" />_<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" />__<xsl:value-of select="../name" />
+                  Carnet__<xsl:value-of select="../@id" />_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" />__<xsl:value-of select="../name" />
                 </xsl:if>
               </xsl:attribute>
               <img class="photo">
@@ -203,6 +203,7 @@ Carnets?action=EDIT
                       <xsl:with-param name="style">none</xsl:with-param>
                       <xsl:with-param name="mode">TAG_USED</xsl:with-param>
                       <xsl:with-param name="box">NONE</xsl:with-param>
+                      <xsl:with-param name="incMinor">true</xsl:with-param>
                     </xsl:apply-templates>
                     <span class="edit">
                     <div class="fastedit">
@@ -213,6 +214,7 @@ Carnets?action=EDIT
                                     <xsl:with-param name="id">fastedit_tag_<xsl:value-of select="@photoId" /></xsl:with-param>
                                     <xsl:with-param name="mode">TAG_USED</xsl:with-param>
                                     <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
+                                    <xsl:with-param name="incMinor">true</xsl:with-param>
                                 </xsl:apply-templates><br/>           
                                 <input value="+" type="button" class="fastedit_addtag">
                                     <xsl:attribute name="rel"><xsl:value-of select="@photoId" /></xsl:attribute>

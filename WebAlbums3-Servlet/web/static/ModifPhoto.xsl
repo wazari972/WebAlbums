@@ -43,16 +43,19 @@
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
+              <xsl:with-param name="incMinor">true</xsl:with-param>
 	    </xsl:apply-templates>
 	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_NUSED</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
+              <xsl:with-param name="incMinor">true</xsl:with-param>
 	    </xsl:apply-templates>
 	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_NEVER</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
+              <xsl:with-param name="incMinor">true</xsl:with-param>
 	    </xsl:apply-templates>
 	    <br/>
             <label for="sure">"Oui je veux supprimer cette photo" (définitif !)</label>
