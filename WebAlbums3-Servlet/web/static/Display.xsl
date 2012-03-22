@@ -10,9 +10,9 @@
   %xhtml-special;
   %xhtml-symbol;
   ]>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
-
+  <xsl:include href="Include.xsl" />
   <xsl:template match="/">
     <html>
       <head>
@@ -93,6 +93,9 @@
 		  <li><xsl:value-of select="/webAlbums/loginInfo/user" /></li>
                   <li><xsl:value-of select="/webAlbums/loginInfo/theme" /></li>
 		  <li><a href="Index?logout=TRUE" title="logout" rel="singlepage[no]">Log out</a></li>
+                  <xsl:if test="/webAlbums/affichage/@static"><li>Static mode</li></xsl:if>
+                  <xsl:if test="/webAlbums/affichage/@directAccess"><li>Direct Access to images</li></xsl:if>
+                  <li>Page générée en <br/><small id="gen_time"><xsl:value-of select="/webAlbums/time"/></small>.</li>
 		</ul>
 
                 <xsl:if test="/webAlbums/loginInfo/@admin">
@@ -103,9 +106,6 @@
                         </li>
                         <li>
                             <a href="Database" rel="singlepage[no]" title="Database">Database</a>
-                        </li>
-                        <li>
-                            Page générée en <br/><small id="gen_time"><xsl:value-of select="/webAlbums/time"/></small>.
                         </li>
                     </ul>
                 </xsl:if>
@@ -165,6 +165,7 @@
   <xsl:include href="Index.xsl" />
   <xsl:include href="UserLogin.xsl" />
   <xsl:include href="Choix.xsl" />
+  <xsl:include href="ChoixWidgets.xsl" />
   <xsl:include href="Albums.xsl" />
   <xsl:include href="Photos.xsl" /> 
   <xsl:include href="PhotosAlbums.xsl" />

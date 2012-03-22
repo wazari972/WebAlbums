@@ -255,7 +255,7 @@ public class TagBean implements TagLocal {
                     if (enrTT.getPhoto() != null
                             && (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
                         tag.picture = enrTT.getPhoto().getId();
-                        tag.picturePath = vSession.getTheme().getNom() + "/"+vSession.getTheme().getNom() + "/"+ enrTT.getPhoto().getPath();
+                        tag.picturePath = vSession.getTheme().getNom() + "/"+ enrTT.getPhoto().getPath();
                         break;
                     } else {
                         lstTT.remove(i);

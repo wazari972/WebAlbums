@@ -31,11 +31,11 @@ public interface Theme extends Serializable, EntityWithId {
 
     void setTagThemeList(List<TagTheme> tagThemeList);
 
-    Integer getPicture() ;
+    Photo getPicture() ;
 
-    void setPicture(Integer picture) ;
+    void setPicture(Photo picture) ;
     
-    Integer getBackground() ;
+    Photo getBackground() ;
 
-    void setBackground(Integer background) ;
+    void setBackground(Photo background) ;
 }

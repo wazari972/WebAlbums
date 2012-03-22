@@ -38,11 +38,16 @@
             </xsl:attribute>
 
             <xsl:attribute name="src">
-              <xsl:if test="normalize-space(@picture) = ''">
+              <xsl:if test="not(@picture)">
                 static/images/rien.jpg
               </xsl:if>
-              <xsl:if test="normalize-space(@picture) != ''">
-                Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT
+              <xsl:if test="@picture">
+                  <xsl:if test="/webAlbums/affichage/@directAccess">
+                      <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picturePath" />.png
+                  </xsl:if>
+                  <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                      Miniature__<xsl:value-of select="@picture" />.png
+                  </xsl:if>
               </xsl:if>
             </xsl:attribute>
         </img>

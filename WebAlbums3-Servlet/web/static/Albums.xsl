@@ -58,7 +58,7 @@ Visio__<xsl:value-of select="@id" />_p0_pa<xsl:value-of select="/webAlbums/photo
                     </xsl:attribute>
                     <img src="static/images/slide.png" height="30px"/>
                     </a>
-                    <xsl:if test="not(/webAlbums/affichage/@remote)">
+                    <xsl:if test="/webAlbums/affichage/remote or /webAblums/affichage/@static">
                         &#160;
                         <img src="static/images/out.png" height="30px"
                           class='fullscreen'>
@@ -125,7 +125,14 @@ Albums?action=EDIT
         <a>
             <xsl:attribute name="href">Carnet__<xsl:value-of select="@id" />_pc0__<xsl:value-of select="name" /></xsl:attribute>
             <img class="mini-carnet">
-                <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture" />.png</xsl:attribute>
+                <xsl:attribute name="src">
+                      <xsl:if test="/webAlbums/affichage/@directAccess">
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picturePath" />.png
+                      </xsl:if>
+                      <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                          Miniature__<xsl:value-of select="@picture" />.png
+                      </xsl:if>
+                </xsl:attribute>
             </img>&#160;
             <xsl:value-of select="name" />
         </a>

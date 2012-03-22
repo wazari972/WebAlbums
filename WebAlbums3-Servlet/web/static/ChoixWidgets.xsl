@@ -74,7 +74,14 @@
 	      <a target="_top">
 		<xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>__<xsl:value-of select="name"/></xsl:attribute>
 		<img class="choix_img">
-		  <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture"/>.png</xsl:attribute>
+		  <xsl:attribute name="src">
+                    <xsl:if test="/webAlbums/affichage/@directAccess">
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picturePath" />.png
+                    </xsl:if>
+                    <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                          Miniature__<xsl:value-of select="@picture" />.png
+                    </xsl:if>
+                  </xsl:attribute>
 		</img>
 	      </a>
 	    </xsl:if>
@@ -117,7 +124,12 @@
              </xsl:attribute>
             <img class="choix_img">
                 <xsl:attribute name="src">
-                    Miniature__<xsl:value-of select="@picture"/>.png
+                    <xsl:if test="/webAlbums/affichage/@directAccess">
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picturePath" />.png
+                    </xsl:if>
+                    <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                          Miniature__<xsl:value-of select="@picture" />.png
+                    </xsl:if>
                 </xsl:attribute>
                 <xsl:attribute name="title">
                     <xsl:value-of select="name"/>
@@ -153,7 +165,14 @@ Carnet__<xsl:value-of select="@id"/>_pc0__<xsl:value-of select="name"/>
                       </xsl:if>
                   </xsl:attribute>
 		  <img class="choix_img">
-		    <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture"/>.png</xsl:attribute>
+		    <xsl:attribute name="src">
+                        <xsl:if test="/webAlbums/affichage/@directAccess">
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picturePath" />.png
+                        </xsl:if>
+                        <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                              Miniature__<xsl:value-of select="@picture" />.png
+                        </xsl:if>
+                    </xsl:attribute>
 		  </img>
 		</a>
 	      </xsl:if>

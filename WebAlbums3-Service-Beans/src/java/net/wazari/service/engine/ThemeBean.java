@@ -45,7 +45,11 @@ public class ThemeBean implements ThemeLocal {
             XmlTheme theme = new XmlTheme() ;
             theme.id = enrTheme.getId() ;
             theme.name = enrTheme.getNom() ;
-            theme.picture = enrTheme.getPicture();
+            if (enrTheme.getPicture() != null) {
+                theme.picture = enrTheme.getPicture().getId();
+                if (vSession.directFileAccess())
+                    theme.picturePath = enrTheme.getNom() + "/" + enrTheme.getPicture().getPath();
+            }
             output.theme.add(theme);
         }
 

@@ -175,8 +175,8 @@ public class PhotoBean implements PhotoLocal {
         if (themeBackground) {
             Theme enrTheme = enrPhoto.getAlbum().getTheme();
             log.warn("Assign theme background {}",enrPhoto) ;
-            themeDAO.setBackground(enrTheme, enrPhoto.getId());
-            vSession.getTheme().setBackground(enrPhoto.getId());
+            themeDAO.setBackground(enrTheme, enrPhoto);
+            vSession.getTheme().setBackground(enrPhoto);
             File backgroundDir = new File(vSession.getConfiguration()
                     .getTempPath()+vSession.getTheme().getNom()) ;
             log.info("Delete and create background dir: {}", backgroundDir) ;
@@ -193,8 +193,8 @@ public class PhotoBean implements PhotoLocal {
         if (themePicture) {
             Theme enrTheme = enrPhoto.getAlbum().getTheme();
             log.warn("Assign theme picture {}",enrPhoto) ;
-            themeDAO.setPicture(enrTheme, enrPhoto.getId());
-            vSession.getTheme().setPicture(enrPhoto.getId());
+            themeDAO.setPicture(enrTheme, enrPhoto);
+            vSession.getTheme().setPicture(enrPhoto);
         }
 
         //utiliser cette photo pour representer le tag de ce theme
@@ -279,7 +279,11 @@ public class PhotoBean implements PhotoLocal {
             carnet.date = webPageService.xmlDate(enrCarnet.getDate(), null);
             carnet.id = enrCarnet.getId();
             carnet.name = enrCarnet.getNom();
-            carnet.picture = enrCarnet.getPicture();
+            if (enrCarnet.getPicture() != null) {
+                carnet.picture = enrCarnet.getPicture().getId();
+                if (vSession.directFileAccess()) 
+                    carnet.picturePath = vSession.getTheme().getNom()+"/"+enrCarnet.getPicture().getPath();
+            }
 
             album.carnet.add(carnet);
         }

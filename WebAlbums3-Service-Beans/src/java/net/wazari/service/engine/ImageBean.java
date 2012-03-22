@@ -97,8 +97,8 @@ public class ImageBean implements ImageLocal {
                         log.info("Using Theme[{}] for root background picture", enrThemeForBackground);
 
                     }
-                    if (enrThemeForBackground != null) {
-                        imgId = enrThemeForBackground.getBackground() ;
+                    if (enrThemeForBackground != null && enrThemeForBackground.getBackground() != null) {
+                        imgId = enrThemeForBackground.getBackground().getId() ;
                     }
                 }
 

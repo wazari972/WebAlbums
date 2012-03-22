@@ -20,6 +20,7 @@ public class XmlCarnet {
     public Integer id;
     @XmlAttribute
     public Integer picture;
+    public String picturePath;
     public XmlDate date;
     @XmlAttribute
     public Integer carnetsPage;

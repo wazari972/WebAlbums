@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.AlbumLocal;
+import net.wazari.service.CarnetLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -22,6 +23,7 @@ import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.xml.XmlChoix;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
@@ -41,6 +43,8 @@ public class Choix extends HttpServlet {
     private AlbumLocal albumService;
     @EJB
     private TagLocal tagService;
+    @EJB
+    private CarnetLocal carnetService;
     
     public XmlWebAlbumsList displayChxJSON(ViewSession vSession) throws WebAlbumsServiceException {
         Special special = vSession.getSpecial();
@@ -60,10 +64,12 @@ public class Choix extends HttpServlet {
                     Box.MULTIPLE, "tagAsked");
         }
         
-        if (vSession.getCompleteChoix()) {
+        if (vSession.getCompleteChoix() || vSession.getStatic()) {
             ViewSessionAlbum vSessionAlbum = (ViewSessionAlbum) vSession;
             ViewSessionTag vSessionTag = (ViewSessionTag) vSession;
+            ViewSessionCarnet vSessionCarnet = (ViewSessionCarnet) vSession;
             
+            choix.topCarnets = carnetService.treatTOP(vSessionCarnet);
             choix.topAlbums = albumService.treatTOP(vSessionAlbum);
             choix.years = albumService.treatYEARS(vSessionAlbum);
             choix.select = albumService.treatSELECT(vSessionAlbum);

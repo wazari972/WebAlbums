@@ -77,8 +77,9 @@ public class JPACarnet implements Carnet, Serializable {
     private String texte;
     
     @XmlAttribute
-    @Column(name = "Picture", nullable = true)
-    private Integer picture;
+    @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private JPAPhoto picture;
     
     @ManyToMany
     @JoinTable(name = "CarnetPhoto",
@@ -164,13 +165,13 @@ public class JPACarnet implements Carnet, Serializable {
     }
 
     @Override
-    public Integer getPicture() {
+    public Photo getPicture() {
         return picture;
     }
 
     @Override
-    public void setPicture(Integer picture) {
-        this.picture = picture;
+    public void setPicture(Photo picture) {
+        this.picture = (JPAPhoto) picture;
     }
 
     @Override

@@ -59,8 +59,6 @@ public class CarnetBean implements CarnetLocal {
     @EJB
     private PhotoFacadeLocal photoDAO;
     @EJB
-    private AlbumFacadeLocal albumDAO;
-    @EJB
     private WebPageLocal webPageService;
     @EJB private FilesFinder finder;
 
@@ -86,7 +84,9 @@ public class CarnetBean implements CarnetLocal {
             return output ;
         }
         output.rights = webPageService.displayListDroit(enrCarnet.getDroit(), null);
-        output.picture = enrCarnet.getPicture();
+        if (enrCarnet.getPicture() != null) {
+            output.picture = enrCarnet.getPicture().getId();
+        }
         output.name = enrCarnet.getNom();
         output.page = page;
         output.id = enrCarnet.getId();
@@ -151,10 +151,11 @@ public class CarnetBean implements CarnetLocal {
             }
             XmlDetails details = new XmlDetails();
 
-            details.photoId = enrCarnet.getPicture();
-            if (vSession.directFileAccess() && details.photoId != null) {
-                Photo enrPhoto = photoDAO.find(details.photoId);
-                details.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
+            if (enrCarnet.getPicture() != null) {
+                details.photoId = enrCarnet.getPicture().getId();
+                if (vSession.directFileAccess() && details.photoId != null) {
+                    details.path = vSession.getTheme().getNom()+"/"+enrCarnet.getPicture().getPath() ;
+                }
             }
             
             details.description = enrCarnet.getDescription();
@@ -242,7 +243,7 @@ public class CarnetBean implements CarnetLocal {
         if (repr != null) {
             try {
                 Photo enrRepr = photoDAO.find(repr);
-                enrCarnet.setPicture(enrRepr.getId());
+                enrCarnet.setPicture(enrRepr);
                 photos.add(repr);
             } catch (Exception e) {
                 log.info("Couldn't find the representative picture: "+repr);
@@ -302,8 +303,11 @@ public class CarnetBean implements CarnetLocal {
             carnet.id = enrCarnet.getId();
             carnet.carnetsPage = 0;
             carnet.name = enrCarnet.getNom();
-            carnet.picture = enrCarnet.getPicture();
-            
+            if (enrCarnet.getPicture() != null) {
+                carnet.picture = enrCarnet.getPicture().getId();
+                if (vSession.directFileAccess())
+                    carnet.picturePath = vSession.getTheme().getNom() + "/" + enrCarnet.getPicture().getPath();
+            }
             top5.carnet.add(carnet);
             i++ ;
         }

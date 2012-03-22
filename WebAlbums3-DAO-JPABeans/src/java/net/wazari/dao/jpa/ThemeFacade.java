@@ -17,6 +17,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.jpa.entity.JPATheme;
 import net.wazari.dao.jpa.entity.JPATheme_;
@@ -102,20 +103,20 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
-    public void setBackground(Theme enrTheme, Integer pict) {
+    public void setBackground(Theme enrTheme, Photo enrPhoto) {
         if (enrTheme != null) {
-            enrTheme.setBackground(pict);
+            enrTheme.setBackground(enrPhoto);
             em.merge(enrTheme) ;
-            log.info("Assign Photo[{}] to Theme.Background[{}]", pict, enrTheme.getNom());
+            log.info("Assign Photo[{}] to Theme.Background[{}]", enrPhoto, enrTheme.getNom());
         }
     }
     
     @Override
-    public void setPicture(Theme enrTheme, Integer pict) {
+    public void setPicture(Theme enrTheme, Photo enrPhoto) {
         if (enrTheme != null) {
-            enrTheme.setPicture(pict);
+            enrTheme.setPicture(enrPhoto);
             em.merge(enrTheme) ;
-            log.info("Assign Photo[{}] to Theme.Picture[{}]", pict, enrTheme.getNom());
+            log.info("Assign Photo[{}] to Theme.Picture[{}]", enrPhoto, enrTheme.getNom());
         }
     }
 }

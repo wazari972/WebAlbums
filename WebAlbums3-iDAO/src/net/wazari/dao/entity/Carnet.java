@@ -32,7 +32,7 @@ public interface Carnet extends EntityWithId {
     
     List<Album> getAlbumList();
 
-    Integer getPicture();
+    Photo getPicture();
 
     Theme getTheme();
 
@@ -50,7 +50,7 @@ public interface Carnet extends EntityWithId {
 
     void setPhotoList(List<Photo> photoList);
 
-    void setPicture(Integer picture);
+    void setPicture(Photo picture);
 
     void setTheme(Theme theme);
 

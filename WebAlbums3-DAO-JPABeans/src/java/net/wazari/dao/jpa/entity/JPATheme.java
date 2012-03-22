@@ -17,6 +17,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Theme;
 import org.hibernate.annotations.GenericGenerator;
@@ -70,12 +73,14 @@ public class JPATheme implements Theme, Serializable {
     private List<JPAAlbum> jPAAlbumList;
 
     @XmlAttribute
-    @Column(name = "Picture", nullable = true)
-    private Integer picture;
+    @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private JPAPhoto picture;
 
     @XmlAttribute
-    @Column(name = "Background", nullable = true)
-    private Integer background;
+    @JoinColumn(name = "Background", referencedColumnName = "ID", nullable = true)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private JPAPhoto background;
     
     public JPATheme() {
     }
@@ -130,23 +135,23 @@ public class JPATheme implements Theme, Serializable {
     }
 
     @Override
-    public Integer getPicture() {
+    public Photo getPicture() {
         return picture;
     }
 
     @Override
-    public void setPicture(Integer picture) {
-        this.picture = picture;
+    public void setPicture(Photo picture) {
+        this.picture = (JPAPhoto) picture;
     }
     
     @Override
-    public Integer getBackground() {
+    public Photo getBackground() {
         return background;
     }
 
     @Override
-    public void setBackground(Integer background) {
-        this.background = background;
+    public void setBackground(Photo background) {
+        this.background = (JPAPhoto) background;
     }
 
     @Override

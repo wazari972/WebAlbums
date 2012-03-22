@@ -56,7 +56,12 @@
               </xsl:if>
               <xsl:attribute name="href">
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-                  Image__<xsl:value-of select="@photoId" />
+                      <xsl:if test="/webAlbums/affichage/@directAccess">
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="path" />
+                      </xsl:if>
+                      <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                          Miniature__<xsl:value-of select="@photoId" />.png
+                      </xsl:if>
                 </xsl:if>
                 <xsl:if test="/webAlbums/albums">
                   Photos__<xsl:value-of select="../@id" />_p0_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" />__<xsl:value-of select="../title" />
@@ -69,20 +74,23 @@
                 <xsl:attribute name="alt">
                   <xsl:value-of select="title" />
                 </xsl:attribute>
-
                 <xsl:attribute name="src">
-                  <xsl:if test="normalize-space(@photoId) = ''">
+                  <xsl:if test="not(@photoId)">
                     static/images/rien.jpg
                   </xsl:if>
-                  <xsl:if test="normalize-space(@photoId) != ''">
-                    Miniature__<xsl:value-of select="@photoId" />.png
+                  <xsl:if test="@photoId">
+                      <xsl:if test="/webAlbums/affichage/@directAccess">
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="path" />.png
+                      </xsl:if>
+                      <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                          Miniature__<xsl:value-of select="@photoId" />.png
+                      </xsl:if>
                   </xsl:if>
                 </xsl:attribute>
               </img>
             </a>
         </div>
         <div class="info">
-            <span>
             <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
                 <span class="massedit_chk edit">
                     <input type="checkbox" class="massedit_chkbox" value="modif">
@@ -90,7 +98,10 @@
                     </input>
                 </span>
             </xsl:if>
-            &#160;<xsl:value-of select="@photoId" /></span>
+            &#160;
+            <xsl:if test="/webAblums/infoLogin/@admin">
+                <span class="edit"><xsl:value-of select="@photoId" /></span>
+            </xsl:if>
             <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
                 <div class="fastedit_bt fastedit_desc_bt edit">
                     <xsl:attribute name="rel"><xsl:value-of select="@photoId" /></xsl:attribute>
@@ -103,9 +114,11 @@
                 </div>
                 <div>&#160;</div>
             </xsl:if>
-            <xsl:apply-templates select="user" />
+            <xsl:if test="/webAblums/infoLogin/@admin">
+                <xsl:apply-templates select="user" />
+            </xsl:if>
             <div class="options">
-                <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
+                <xsl:if test="/webAlbums/albums or /webAlbums/carnets or /webAblums/affichage/@static">
                     <a title="Photo réduite">
                       <!-- no url rewritting -->
                       <xsl:attribute name="href">Images?id=<xsl:value-of select="@photoId" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
@@ -116,8 +129,8 @@
                         EXIF
                     </span>
                 </xsl:if>
-                <xsl:if test="not(/webAlbums/albums) and not(/webAlbums/carnets)">
-                    <xsl:if test="/webAlbums/affichage/remote">
+                <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
+                    <xsl:if test="/webAlbums/affichage/remote or /webAblums/affichage/@static">
                         <img alt="Photo en plein-ecran"
                            class="fullscreen"
                            src="static/images/out.png" width="30px">
@@ -295,7 +308,7 @@ Carnets?action=EDIT
   </xsl:template>
   
   <xsl:template match="user">
-      <div class="visibility">
+      <div class="visibility edit">
         <xsl:if test="/webAlbums/albums">
           <xsl:value-of select="."/><xsl:apply-templates select="../userInside"/>
         </xsl:if>

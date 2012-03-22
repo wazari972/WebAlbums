@@ -39,7 +39,6 @@ public class Index extends HttpServlet {
     
     public XmlThemes treatVOID(ViewSession vSession) {
         XmlThemes output = new XmlThemes() ;
-        output.themeList = themeService.getThemeList(vSession) ;
 
         boolean statik = vSession.getStatic();
         if (statik) {
@@ -49,6 +48,8 @@ public class Index extends HttpServlet {
             vSession.setDirectFileAccess(vSession.directFileAccess());
         }
 
+        output.themeList = themeService.getThemeList(vSession) ;
+        
         return output ;
     }
 

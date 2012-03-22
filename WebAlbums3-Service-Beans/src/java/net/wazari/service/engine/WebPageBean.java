@@ -182,7 +182,7 @@ public class WebPageBean implements WebPageLocal {
             login.user = principal.getName();
         }
         log.info( "logged as manager? {}", vSession.isSessionManager());
-        if (vSession.isSessionManager()) {
+        if (vSession.isSessionManager() && !vSession.getStatic()) {
             login.admin = true ;
         }
         log.info( "logged as admin? {}", vSession.isAdminSession());
@@ -206,8 +206,8 @@ public class WebPageBean implements WebPageLocal {
         if (vSession.isRemoteAccess()) affichage.remote = true ;
         
         affichage.photoAlbumSize = vSession.getPhotoAlbumSize();
-        affichage.statik = vSession.getStatic();
-        affichage.direct_access = vSession.directFileAccess();
+        affichage.statik = vSession.getStatic() ? true : null;
+        affichage.direct_access = vSession.directFileAccess() ? true : null;
         if (affichage.direct_access != null && affichage.direct_access) {
             affichage.mini_folder = vSession.getConfiguration().getMiniPath(false);
             affichage.photo_folder = vSession.getConfiguration().getImagesPath(false);

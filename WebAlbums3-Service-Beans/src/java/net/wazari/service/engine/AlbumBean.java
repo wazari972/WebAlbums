@@ -199,8 +199,8 @@ public class AlbumBean implements AlbumLocal {
                 carnet.id = enrCarnet.getId();
                 carnet.name = enrCarnet.getNom();
                 if (enrCarnet.getPicture() != null) {
-                    carnet.picture = enrCarnet.getPicture();
-                    if (vSession.directFileAccess() && album.picture != null)
+                    carnet.picture = enrCarnet.getPicture().getId();
+                    if (vSession.directFileAccess())
                         album.picturePath = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
                 }
                 album.carnet.add(carnet);

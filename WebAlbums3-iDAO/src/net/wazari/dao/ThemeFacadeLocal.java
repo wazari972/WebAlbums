@@ -10,6 +10,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 
 /**
@@ -41,8 +42,8 @@ public interface ThemeFacadeLocal {
     Theme newTheme(String string);
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    void setPicture(Theme enrTheme, Integer pict);
+    void setPicture(Theme enrTheme, Photo pict);
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    void setBackground(Theme enrTheme, Integer pict);
+    void setBackground(Theme enrTheme, Photo pict);
 }

@@ -20,5 +20,6 @@ public class XmlTheme {
     public Integer id ;
     @XmlAttribute
     public Integer picture;
+    public String picturePath;
 
 }
