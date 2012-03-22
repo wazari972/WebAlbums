@@ -7,7 +7,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(JPAAlbum.class)
 public abstract class JPAAlbum_ {
 
-    public static volatile SingularAttribute<JPAAlbum, Integer> picture;
+    public static volatile SingularAttribute<JPAAlbum, JPAPhoto> picture;
     public static volatile SingularAttribute<JPAAlbum, Integer> id;
     public static volatile ListAttribute<JPAAlbum, JPAPhoto> jPAPhotoList;
     public static volatile ListAttribute<JPAAlbum, JPAGpx> jPAGpxList;

@@ -18,7 +18,7 @@ import net.wazari.service.exchange.xml.album.XmlAlbumYears;
  * @author kevin
  */
 public class XmlAlbums {
-    public XmlAlbumTop top;
+    public XmlAlbumTop topAlbums;
     public XmlAlbumYears years;
     public XmlAlbumGraph graph;
     public XmlAlbumSelect select;

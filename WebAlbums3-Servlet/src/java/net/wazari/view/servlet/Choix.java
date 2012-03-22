@@ -45,6 +45,8 @@ public class Choix extends HttpServlet {
     public XmlChoix displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlChoix choix = new XmlChoix();
         Special special = vSession.getSpecial();
+        vSession.setDirectFileAccess(vSession.directFileAccess());
+        
         if (special == Special.JUST_THEME) {
         } else {
             choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession,

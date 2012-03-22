@@ -168,6 +168,19 @@ public class ViewSessionImpl implements
     public Boolean dontRedirect() {
         return getBoolean("dontRedirect") ;
     }
+    @Override
+    public boolean directFileAccess() {
+        Boolean ret = getSessionObject("directFileAccess", Boolean.class);
+        if (ret == null)
+            ret = false;
+        return ret ;
+    }
+    
+    @Override
+    public void setDirectFileAccess(boolean access) {
+        setSessionObject("directFileAccess", access);
+    }
+    
     /** ** **/
     @Override
     public Integer getThemeId() {

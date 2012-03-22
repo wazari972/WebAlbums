@@ -326,6 +326,7 @@ public class WebPageBean implements WebPageLocal {
             String nom = null;
             Point p = null;
             Integer photoId = null;
+            String photoPath = null;
 
             //first, prepare the information (type, id, nom)
             if (box == Box.MAP_SCRIPT) {
@@ -345,13 +346,14 @@ public class WebPageBean implements WebPageLocal {
                     if (enrGeo != null) {
                         tagId = enrTag;
                         //Get the photo to display, if any
-                        if (enrTagTh != null) {
-                            photoId = enrTagTh.getPhoto();
+                        if (enrTagTh != null && enrTagTh.getPhoto() != null) {
+                            photoId = enrTagTh.getPhoto().getId();
+                            photoPath = vSession.getTheme().getNom() + "/"+enrTagTh.getPhoto().getPath();
                         }
                         p = new Point(enrTag.getNom(), enrTag.getId(),
                                 enrGeo.getLat(),
                                 enrGeo.getLongitude(),
-                                photoId);
+                                photoId, photoPath);
                         nom = enrTag.getNom();
                     }
                 }

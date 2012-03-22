@@ -56,4 +56,8 @@ public interface ViewSession extends ServiceSession {
     Integer getThemeId();
 
     boolean isRemoteAccess();
+    
+    boolean directFileAccess();
+    
+    void setDirectFileAccess(boolean access);
 }

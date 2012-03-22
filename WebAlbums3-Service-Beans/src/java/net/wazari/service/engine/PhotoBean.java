@@ -166,7 +166,7 @@ public class PhotoBean implements PhotoLocal {
                 return output ;
             }
 
-            enrAlbum.setPicture(enrPhoto.getId());
+            enrAlbum.setPicture(enrPhoto);
             albumDAO.edit(enrAlbum);
         }
 
@@ -225,7 +225,7 @@ public class PhotoBean implements PhotoLocal {
                 log.warn("EDIT TAG");
             }
             //changer la photo representant ce tag/theme
-            enrTagTh.setPhoto(enrPhoto.getId());
+            enrTagTh.setPhoto(enrPhoto);
 
             log.info( "edit {}", enrTagTh);
             tagThemeDAO.edit(enrTagTh);
@@ -289,6 +289,8 @@ public class PhotoBean implements PhotoLocal {
                 album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
             XmlGpx gpx = new XmlGpx();
             gpx.id = enrGpx.getId();
+            if (vSession.directFileAccess())
+                gpx.path = enrGpx.getGpxPath();
             gpx.description = enrGpx.getDescription();
 
             album.gpx.add(gpx);
@@ -296,18 +298,24 @@ public class PhotoBean implements PhotoLocal {
         
         XmlDetails details = new XmlDetails() ;
         details.description = enrAlbum.getDescription() ;
-        details.photoId = enrAlbum.getPicture() ;
-
-        PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, albumDAO.find(albumId));
-        if (Special.FULLSCREEN == special) {
-            sysTools.fullscreenMultiple(vSession, rq, enrAlbum.getId(), page, "Albums");
+        
+        if (enrAlbum.getPicture() != null) {
+            details.photoId = enrAlbum.getPicture().getId() ;
+            if (vSession.directFileAccess())
+                details.path = vSession.getTheme().getNom()+"/"+enrAlbum.getPicture().getPath() ;
         }
-
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Photos";
         thisPage.album = albumId ;
         thisPage.albmPage = albmPage ;
+        
+        PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, enrAlbum);
+        if (Special.FULLSCREEN == special) {
+            sysTools.fullscreenMultiple(vSession, rq, enrAlbum.getId(), page, "Albums");
+        }
         output.photoList = displayPhoto(rq, vSession, submit, thisPage);
+
+
 
         stopWatch.stop() ;
         return output ;
@@ -489,6 +497,8 @@ public class PhotoBean implements PhotoLocal {
             }
             XmlDetails details = new XmlDetails();
             details.photoId = enrPhoto.getId();
+            if (vSession.directFileAccess())
+                details.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
             details.description = enrPhoto.getDescription();
             //tags de cette photo
             details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
@@ -574,6 +584,8 @@ public class PhotoBean implements PhotoLocal {
     private XmlDetails transformToDetails(ViewSession vSession, Photo enrPhoto) throws WebAlbumsServiceException {
         XmlDetails details = new XmlDetails();
         details.photoId = enrPhoto.getId();
+        if (vSession.directFileAccess())
+            details.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
         details.description = enrPhoto.getDescription();
         //tags de cette photo
         details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, 

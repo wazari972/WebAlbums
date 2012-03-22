@@ -152,6 +152,10 @@ public class CarnetBean implements CarnetLocal {
             XmlDetails details = new XmlDetails();
 
             details.photoId = enrCarnet.getPicture();
+            if (vSession.directFileAccess() && details.photoId != null) {
+                Photo enrPhoto = photoDAO.find(details.photoId);
+                details.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
+            }
             
             details.description = enrCarnet.getDescription();
 

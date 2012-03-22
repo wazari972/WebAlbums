@@ -102,7 +102,11 @@ public class AlbumBean implements AlbumLocal {
             return output ;
         }
 
-        output.picture = enrAlbum.getPicture();
+        if (enrAlbum.getPicture() != null) {
+            output.picture = enrAlbum.getPicture().getId();
+            if (vSession.directFileAccess())
+                output.picturePath = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
+        }
         output.name = enrAlbum.getNom();
         output.id = enrAlbum.getId();
         output.description = enrAlbum.getDescription();
@@ -180,8 +184,12 @@ public class AlbumBean implements AlbumLocal {
 
             XmlDetails details = new XmlDetails();
 
-            details.photoId = enrAlbum.getPicture();
-            
+            if (enrAlbum.getPicture() != null) {
+                details.photoId = enrAlbum.getPicture().getId();
+                if (vSession.directFileAccess()) {
+                    details.path = vSession.getTheme().getNom()+"/"+enrAlbum.getPicture().getPath() ;
+                }
+            }
             for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
                 if (album.carnet == null)
                     album.carnet = new ArrayList(enrAlbum.getCarnetList().size()) ;
@@ -190,8 +198,11 @@ public class AlbumBean implements AlbumLocal {
                 carnet.date = webPageService.xmlDate(enrCarnet.getDate(), null);
                 carnet.id = enrCarnet.getId();
                 carnet.name = enrCarnet.getNom();
-                carnet.picture = enrCarnet.getPicture();
-                
+                if (enrCarnet.getPicture() != null) {
+                    carnet.picture = enrCarnet.getPicture();
+                    if (vSession.directFileAccess() && album.picture != null)
+                        album.picturePath = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
+                }
                 album.carnet.add(carnet);
             }
             details.description = enrAlbum.getDescription();
@@ -241,7 +252,9 @@ public class AlbumBean implements AlbumLocal {
             album.id = enrAlbum.getId();
             album.name = enrAlbum.getNom();
             if (enrAlbum.getPicture() != null) {
-                album.picture = enrAlbum.getPicture();
+                album.picture = enrAlbum.getPicture().getId();
+                if (vSession.directFileAccess())
+                    album.picturePath = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
             }
             top5.album.add(album);
         }
@@ -285,7 +298,9 @@ public class AlbumBean implements AlbumLocal {
             }
 
             if (enrAlbum.getPicture() != null) {
-                album.picture = enrAlbum.getPicture();
+                album.picture = enrAlbum.getPicture().getId();
+                if (vSession.directFileAccess())
+                    album.picturePath = album.picturePath = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
             }
             
             if (tagList.isEmpty()) {
@@ -344,7 +359,11 @@ public class AlbumBean implements AlbumLocal {
                 XmlAlbum album = new XmlAlbum();
                 album.id = enrAlbum.getId();
                 album.name = enrAlbum.getNom();
-                album.picture = enrAlbum.getPicture();
+                if (enrAlbum.getPicture() != null) {
+                    album.picture = enrAlbum.getPicture().getId();
+                    if (vSession.directFileAccess())
+                        album.picturePath = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
+                }
                 year.album.add(album) ;
             }
             years.year.add(year);
@@ -430,14 +449,10 @@ public class AlbumBean implements AlbumLocal {
         about.album.title = enrAlbum.getNom() ;
         about.album.date = webPageService.xmlDate(enrAlbum.getDate(), null);
         about.album.details = new XmlDetails() ;
-        Integer iPhoto = enrAlbum.getPicture();
-        if (iPhoto != null) {
-            Photo enrPhoto = photoDAO.find(iPhoto) ;
-            if (enrPhoto != null) {
-                about.album.details.photoId = enrPhoto.getId() ;
-            } else {
-                log.warn("Invalid photo ({}) for album {}", new Object[]{iPhoto, enrAlbum.getId()});
-            }
+        if (enrAlbum.getPicture() != null) {
+            about.album.details.photoId = enrAlbum.getPicture().getId() ;
+            if (vSession.directFileAccess())
+                about.album.details.path = vSession.getTheme().getNom()+"/"+enrAlbum.getPicture().getPath() ;
         }
 
         about.album.details.description = enrAlbum.getDescription();

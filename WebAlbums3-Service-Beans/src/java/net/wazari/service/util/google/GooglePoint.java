@@ -10,16 +10,18 @@ public class GooglePoint {
       public String name ;
       public int id ;
       public Integer photoId ;
+      public String photoPath ;
       public String lat ;
       public String lng ;
     
     
-    public Point(String name, int id, String lat, String lng, Integer photoId) {
+    public Point(String name, int id, String lat, String lng, Integer photoId, String photoPath) {
         this.name = name ;
         this.id = id ;
         this.lat = lat ;
         this.lng = lng ;
         this.photoId = photoId ;
+        this.photoPath = photoPath ;
     }
   }
   
@@ -49,6 +51,7 @@ public class GooglePoint {
         str.append(" \"lat\":\"").append(p.lat).append("\",");
         str.append(" \"lng\":\"").append(p.lng).append("\",");
         str.append(" \"picture\":\"").append(p.photoId).append("\"}");
+        str.append(" \"picturePath\":\"").append(p.photoPath).append("\"}");
         i--;
         if (i != 0)
             str.append(",\n");    

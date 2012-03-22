@@ -73,11 +73,12 @@ public class JPAAlbum implements Album, Serializable {
     @Basic(optional = false)
     @Column(name = "AlbumDate", nullable = false, length = 10)
     private String date;
-
-    @XmlAttribute
-    @Column(name = "Picture", nullable = true)
-    private Integer picture;
-
+    
+    @XmlTransient
+    @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private JPAPhoto picturePhoto;
+    
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAPhoto> jPAPhotoList;
@@ -162,13 +163,13 @@ public class JPAAlbum implements Album, Serializable {
     }
 
     @Override
-    public Integer getPicture() {
-        return picture;
+    public Photo getPicture() {
+        return picturePhoto;
     }
 
     @Override
-    public void setPicture(Integer picture) {
-        this.picture = picture;
+    public void setPicture(Photo picture) {
+        this.picturePhoto = (JPAPhoto) picture;
     }
 
     @Override

@@ -30,8 +30,8 @@ public interface Album extends EntityWithId {
     
     List<Gpx> getGpxList();
 
-    Integer getPicture();
-
+    Photo getPicture();
+    
     Theme getTheme();
     
     List<Carnet> getCarnetList() ;
@@ -50,7 +50,7 @@ public interface Album extends EntityWithId {
     
     void setGpxList(List<Gpx> gpxList);
 
-    void setPicture(Integer picture);
+    void setPicture(Photo picture);
 
     void setTheme(Theme theme);
     

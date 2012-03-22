@@ -19,7 +19,8 @@ import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
 @XmlRootElement
 public class XmlTags {
     public XmlTagCloud cloud;
-    public XmlTagPersonsPlaces personsPlaces;
+    public XmlTagPersonsPlaces places;
+    public XmlTagPersonsPlaces persons;
     public XmlTagAbout about;
     
     public XmlPhotoEdit edit;

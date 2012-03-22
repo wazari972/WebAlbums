@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Theme;
@@ -51,10 +52,11 @@ public class JPATagTheme implements TagTheme, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @XmlAttribute
-    @Column(name = "Photo")
-    private Integer photo;
-
+    @XmlTransient
+    @JoinColumn(name = "Photo", referencedColumnName = "ID", nullable = true)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    private JPAPhoto photo;
+    
     @XmlAttribute
     @Column(name = "isVisible")
     private Boolean isVisible;
@@ -86,13 +88,13 @@ public class JPATagTheme implements TagTheme, Serializable {
     }
 
     @Override
-    public Integer getPhoto() {
+    public Photo getPhoto() {
         return photo;
     }
 
     @Override
-    public void setPhoto(Integer photo) {
-        this.photo = photo;
+    public void setPhoto(Photo photo) {
+        this.photo = (JPAPhoto) photo;
     }
 
     @Override

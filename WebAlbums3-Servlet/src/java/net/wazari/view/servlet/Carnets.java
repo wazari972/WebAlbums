@@ -41,7 +41,7 @@ public class Carnets extends HttpServlet{
         
         Special special = vSession.getSpecial();
         if (special == Special.TOP5) {
-            output.top = carnetService.treatTOP(vSession);
+            output.topCarnets = carnetService.treatTOP(vSession);
             return output ;
         }
         

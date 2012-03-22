@@ -125,7 +125,8 @@ public class TagBean implements TagLocal {
             TagTheme enrTT = lstTT.get(i);
             if (enrTT.getPhoto() != null
                     && (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
-                about.tag.picture = enrTT.getPhoto();
+                about.tag.picture = enrTT.getPhoto().getId();
+                about.tag.picturePath = vSession.getTheme().getNom() + "/"+ enrTT.getPhoto().getPath();
                 break;
             } else {
                 lstTT.remove(i);
@@ -244,7 +245,8 @@ public class TagBean implements TagLocal {
                     TagTheme enrTT = lstTT.get(i);
                     if (enrTT.getPhoto() != null
                             && (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
-                        tag.picture = enrTT.getPhoto();
+                        tag.picture = enrTT.getPhoto().getId();
+                        tag.picturePath = vSession.getTheme().getNom() + "/"+vSession.getTheme().getNom() + "/"+ enrTT.getPhoto().getPath();
                         break;
                     } else {
                         lstTT.remove(i);

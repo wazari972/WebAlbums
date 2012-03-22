@@ -10,6 +10,6 @@ public abstract class JPATagTheme_ {
     public static volatile SingularAttribute<JPATagTheme, Boolean> isVisible;
     public static volatile SingularAttribute<JPATagTheme, JPATag> tag;
     public static volatile SingularAttribute<JPATagTheme, JPATheme> theme;
-    public static volatile SingularAttribute<JPATagTheme, Integer> photo;
+    public static volatile SingularAttribute<JPATagTheme, JPAPhoto> photo;
 }
 

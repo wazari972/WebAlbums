@@ -42,7 +42,7 @@ public class Albums extends HttpServlet{
 
         Special special = vSession.getSpecial();
         if (special == Special.TOP5) {
-            output.top = albumService.treatTOP(vSession);
+            output.topAlbums = albumService.treatTOP(vSession);
             return output ;
         } else  if (special == Special.YEARS) {
             output.years = albumService.treatYEARS(vSession);

@@ -18,4 +18,6 @@ public class XmlGpx {
     public Integer id;
     @XmlElement
     public String description;
+    @XmlElement
+    public String path;
 }

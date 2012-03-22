@@ -47,10 +47,12 @@ public class Tags extends HttpServlet {
             output.cloud = tagService.treatTagCloud(vSession) ;
             return output ;
 
-        } else  if (Special.PERSONS == special || Special.PLACES == special) {
-            output.personsPlaces = tagService.treatTagPersonsPlaces(vSession) ;
+        } else  if (Special.PERSONS == special) {
+            output.persons = tagService.treatTagPersonsPlaces(vSession) ;
             return output ;
-        
+        } else  if (Special.PLACES == special) {
+            output.places = tagService.treatTagPersonsPlaces(vSession) ;
+            return output ;
         } else  if (Special.ABOUT == special) {
             output.about = tagService.treatABOUT(vSession) ;
             return output ;

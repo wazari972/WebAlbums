@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class XmlDetails {
     @XmlAttribute
     public Integer photoId;
+    @XmlElement
+    public String path;
     public List<String> userInside;
     public String description;
     @XmlAttribute

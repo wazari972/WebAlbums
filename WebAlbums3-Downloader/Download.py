@@ -19,6 +19,7 @@ theme = ""
 def get_a_page(url, name=""):
     global count
     count += 1
+    #url += name
     url = url.replace(" ", "%20")
     try:
         response, content = h.request(ROOT_PATH+url, 'GET', headers=headers)
@@ -27,9 +28,9 @@ def get_a_page(url, name=""):
         f.close()
         
         xml = etree.fromstring(content)
-        print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), name)
+        print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name))
         return xml
-    except:
+    except Exception as e:
         try:
             print "Request: ", repr(url)
             print "Response: ", response
@@ -49,20 +50,20 @@ def login(user, paswd):
 def get_choix(themeId, name=""):
     global theme
     theme = name
-    return get_a_page("Choix__%s__%s" % (themeId, name))
+    return get_a_page("Choix__%s__" % themeId, name)
 
 def get_an_albumSet(page=0):
     return get_a_page("Albums__p%s" % page)
 
 def get_a_photoSet(albmId, page=0, name=""):
-    return get_a_page("Photos__%s_p%s_pa__%s" % (albmId, page, name))
+    return get_a_page("Photos__%s_p%s_pa__" % (albmId, page), name)
     
 def get_a_tag_page(tagId, page=0, name=""):
-    return get_a_page("Tags?tagAsked=%s&page=%d#%s" % (tagId, page, name))
+    return get_a_page("Tags?tagAsked=%s&page=%d" % (tagId, page), "#"+name)
     #return get_a_page("Tag__%s__" % (tagId))
     
 def get_a_carnet(carnedId, name=""):
-    return get_a_page("Carnet__%s_pc__%s" % (carnedId, name))
+    return get_a_page("Carnet__%s_pc__" % carnedId, name)
 
 def get_a_carnetSet(page=0):
     return get_a_page("Carnets__p%s" % (page))

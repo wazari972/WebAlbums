@@ -29,6 +29,7 @@ public class XmlAlbum {
     public String name;
     @XmlAttribute
     public Integer picture;
+    public String picturePath;
     public XmlDate date;
     @XmlAttribute
     public Long time;

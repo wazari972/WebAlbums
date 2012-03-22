@@ -17,6 +17,6 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
 public class XmlCarnets extends XmlInfoException {
     public XmlCarnetEdit edit;
     public XmlCarnetsDisplay display;
-    public XmlCarnetsTop top;
+    public XmlCarnetsTop topCarnets;
 
 }

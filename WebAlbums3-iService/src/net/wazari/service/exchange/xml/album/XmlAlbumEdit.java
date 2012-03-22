@@ -21,6 +21,8 @@ public class XmlAlbumEdit {
     public String exception;
     @XmlAttribute
     public Integer picture;
+    @XmlAttribute
+    public String picturePath;
     public String name;
     @XmlAttribute
     public Integer count;
