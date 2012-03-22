@@ -27,8 +27,11 @@ public interface TagLocal {
     XmlTagDisplay treatTagDISPLAY(ViewSessionTag vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSessionTag vSession);
-
+    XmlTagPersonsPlaces treatTagPersons(ViewSessionTag vSession);
+    
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlTagPersonsPlaces treatTagPlaces(ViewSessionTag vSession);
+    
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlTagCloud treatTagCloud(ViewSessionTag vSession);
 

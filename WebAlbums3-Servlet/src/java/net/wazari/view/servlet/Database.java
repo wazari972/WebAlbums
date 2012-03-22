@@ -141,7 +141,7 @@ public class Database extends HttpServlet {
         List<String> directories = Arrays.asList(
                 new String[]{
                     conf.getBackupPath(), conf.getTempPath(), conf.getPluginsPath(),
-                    conf.getFtpPath(), conf.getImagesPath(), conf.getMiniPath()});
+                    conf.getFtpPath(), conf.getImagesPath(true), conf.getMiniPath(true)});
         for (String dir : directories) {
             File currentFile = new File(dir) ;
             if (!(currentFile.isDirectory() || currentFile.mkdirs())) {

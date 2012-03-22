@@ -13,12 +13,16 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
+import net.wazari.service.AlbumLocal;
+import net.wazari.service.TagLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.xml.XmlChoix;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -33,7 +37,11 @@ public class Choix extends HttpServlet {
     private DispatcherBean dispatcher;
     @EJB
     private WebPageLocal webPageService;
-
+    @EJB
+    private AlbumLocal albumService;
+    @EJB
+    private TagLocal tagService;
+    
     public XmlWebAlbumsList displayChxJSON(ViewSession vSession) throws WebAlbumsServiceException {
         Special special = vSession.getSpecial();
         if (special == Special.MAP)
@@ -45,13 +53,28 @@ public class Choix extends HttpServlet {
     public XmlChoix displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlChoix choix = new XmlChoix();
         Special special = vSession.getSpecial();
-        vSession.setDirectFileAccess(vSession.directFileAccess());
         
         if (special == Special.JUST_THEME) {
         } else {
             choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession,
                     Box.MULTIPLE, "tagAsked");
-        } 
+        }
+        
+        if (vSession.getCompleteChoix()) {
+            ViewSessionAlbum vSessionAlbum = (ViewSessionAlbum) vSession;
+            ViewSessionTag vSessionTag = (ViewSessionTag) vSession;
+            
+            choix.topAlbums = albumService.treatTOP(vSessionAlbum);
+            choix.years = albumService.treatYEARS(vSessionAlbum);
+            choix.select = albumService.treatSELECT(vSessionAlbum);
+            choix.graph = albumService.treatGRAPH(vSessionAlbum);
+            
+            choix.persons = tagService.treatTagPersons(vSessionTag) ;
+            choix.places = tagService.treatTagPlaces(vSessionTag) ;
+            choix.map = webPageService.displayMapInScript(vSession).blob;
+            
+            choix.complete = true;
+        }
 
         return choix;
     }

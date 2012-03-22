@@ -205,16 +205,8 @@ public class DispatcherBean {
             preventCaching(request, response);
 
             if (!output.isComplete) {
-                try {
-                    output.loginInfo = webPageService.xmlLogin((ViewSessionLogin) vSession);
-                } catch (Exception e) {
-                    log.warn("An exception occured during xmlLogin:", e);
-                }
-                try {
-                    output.affichage = webPageService.xmlAffichage(vSession);
-                } catch (Exception e) {
-                    log.warn("An exception occured during xmlAffichage:", e);
-                }
+                output.loginInfo = webPageService.xmlLogin((ViewSessionLogin) vSession);
+                output.affichage = webPageService.xmlAffichage(vSession);
                 output.time = strTime;
             }
             doWrite(response, output);

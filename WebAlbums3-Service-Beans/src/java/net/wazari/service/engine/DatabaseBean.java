@@ -107,7 +107,7 @@ public class DatabaseBean implements DatabaseLocal {
                     mini = new LinkedList<String>();
                     String sep = vSession.getConfiguration().getSep() ;
                     List<String> current = images ;
-                    String pictpath = vSession.getConfiguration().getImagesPath() ;
+                    String pictpath = vSession.getConfiguration().getImagesPath(true) ;
                     
                     while (current != null) {    
                         File themeDir = new File(pictpath + sep + curEnrTheme.getNom());
@@ -123,7 +123,7 @@ public class DatabaseBean implements DatabaseLocal {
                         
                         if (current == images) {
                             current = mini; 
-                            pictpath = vSession.getConfiguration().getMiniPath() ;
+                            pictpath = vSession.getConfiguration().getMiniPath(true) ;
                         } else {
                             current = null;
                         }

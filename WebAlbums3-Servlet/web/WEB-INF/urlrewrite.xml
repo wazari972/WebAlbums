@@ -11,7 +11,10 @@
         <from>^/Choix__([0-9]+)__.*$</from>
         <to>Choix?themeId=$1</to>
     </rule>
-    
+    <rule>
+        <from>^/Choix_plus_([0-9]+)__.*$</from>
+        <to>Choix?themeId=$1&amp;complete=y</to>
+    </rule>
     <!--  ALBUMS -->
     <rule>
         <from>^/Albums__p([0-9]*)$</from>
@@ -58,6 +61,10 @@
         <from>^/Tag__([0-9]+)_p(0-9]*)__.*$</from>
         <to>Tags?tagAsked=$1&amp;page=$2</to>
     </rule>
+    <rule>
+        <from>^/Tags__Cloud.*$</from>
+        <to>Tags?special=CLOUD</to>
+    </rule>
     
     <!--  CARNETS -->
     <rule>
@@ -67,6 +74,12 @@
     <rule>
         <from>^/Carnets__p([0-9]*)$</from>
         <to >Carnets?page=$1</to>
+    </rule>
+    
+    <!--  INDEX -->
+    <rule>
+        <from>^/Index\..*$</from>
+        <to>Index?&amp;static=y</to>
     </rule>
 </urlrewrite>
 

@@ -218,8 +218,17 @@ public class TagBean implements TagLocal {
     }
 
     @Override
-    public XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSessionTag vSession) {
-        Special special = vSession.getSpecial();
+    public XmlTagPersonsPlaces treatTagPersons(ViewSessionTag vSession) {
+        return treatTagPersonsPlaces(vSession, Special.PERSONS);
+    }
+    
+    @Override
+    public XmlTagPersonsPlaces treatTagPlaces(ViewSessionTag vSession) {
+        return treatTagPersonsPlaces(vSession, Special.PLACES);
+    }
+    
+    
+    private XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSessionTag vSession, Special special) {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagPersonsPlaces." + special, log);
 
         XmlTagPersonsPlaces output = new XmlTagPersonsPlaces();

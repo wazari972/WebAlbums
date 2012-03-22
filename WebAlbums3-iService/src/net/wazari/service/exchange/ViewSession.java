@@ -25,20 +25,19 @@ public interface ViewSession extends ServiceSession {
     ,   MODMINOR}
 
     enum EditMode {
-
         VISITE, NORMAL, EDITION
     }
 
     enum Box {
-
         NONE, MULTIPLE, LIST, MAP, MAP_SCRIPT
     }
 
     enum Mode {
-
         TAG_USED, TAG_NUSED, TAG_ALL, TAG_NEVER, TAG_GEO
     }
 
+    boolean getCompleteChoix();
+    
     EditMode getEditionMode();
 
     Special getSpecial();
@@ -60,4 +59,8 @@ public interface ViewSession extends ServiceSession {
     boolean directFileAccess();
     
     void setDirectFileAccess(boolean access);
+    
+    void setStatic(boolean statik);
+    
+    boolean getStatic();
 }

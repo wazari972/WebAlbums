@@ -170,15 +170,15 @@ public class ViewSessionImpl implements
     }
     @Override
     public boolean directFileAccess() {
-        Boolean ret = getSessionObject("directFileAccess", Boolean.class);
-        if (ret == null)
-            ret = false;
-        return ret ;
+        String direct = getString("directFileAccess");
+        if (direct == null)
+            direct = getSessionObject("directFileAccess", String.class);
+        return "y".equals(direct);
     }
     
     @Override
     public void setDirectFileAccess(boolean access) {
-        setSessionObject("directFileAccess", access);
+        setSessionObject("directFileAccess", access ? "y" : "n");
     }
     
     /** ** **/
@@ -296,7 +296,7 @@ public class ViewSessionImpl implements
     public String getLat() {
         return getString("lat");
     }
-
+    
     @Override
     public boolean getVisible() {
         return "y".equals(getString("visible"));
@@ -305,6 +305,11 @@ public class ViewSessionImpl implements
     @Override
     public boolean getMinor() {
         return "y".equals(getString("minor"));
+    }
+    
+    @Override
+    public boolean getCompleteChoix() {
+        return "y".equals(getString("complete"));
     }
 
     @Override
@@ -563,6 +568,17 @@ public class ViewSessionImpl implements
     @Override
     public void setPhotoAlbumSize(int size) {
         setSessionObject("photoAlbumSize", size);
+    }
+    
+    
+    @Override
+    public boolean getStatic() {
+        return "y".equals(getSessionObject("static", String.class));
+    }
+    
+    @Override
+    public void setStatic(boolean statik) {
+        setSessionObject("static", statik ? "y" : "n");
     }
     
     private void setSessionObject(String string, Object value) {

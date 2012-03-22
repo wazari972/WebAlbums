@@ -181,8 +181,8 @@ public class PhotoUtil {
         String sep = vSession.getConfiguration().getSep() ;
 
         String path = p.getPath();
-        String mini = vSession.getConfiguration().getMiniPath() + sep + themeName + sep + path;
-        String image = vSession.getConfiguration().getImagesPath() + sep + themeName + sep + path;
+        String mini = vSession.getConfiguration().getMiniPath(true) + sep + themeName + sep + path;
+        String image = vSession.getConfiguration().getImagesPath(true) + sep + themeName + sep + path;
         log.info( "Rotation de {}degres de {}", new Object[]{degrees, path});
         if (sysTools.rotate(null, null, degrees, mini + ".png", mini + ".png")) {
             if (!sysTools.rotate(null, null, degrees, image, image)) {
@@ -215,17 +215,17 @@ public class PhotoUtil {
 
     public String getGpxPath(ViewSession vSession, Gpx g) {
         String sep = vSession.getConfiguration().getSep() ;
-        return vSession.getConfiguration().getImagesPath() + getThemedPath(g);
+        return vSession.getConfiguration().getImagesPath(true) + getThemedPath(g);
     }
     
     public String getImagePath(ViewSession vSession, Photo p) {
         String sep = vSession.getConfiguration().getSep() ;
-        return vSession.getConfiguration().getImagesPath() + getThemedPath(p);
+        return vSession.getConfiguration().getImagesPath(true) + getThemedPath(p);
     }
 
     public String getMiniPath(ViewSession vSession, Photo p) {
         String sep = vSession.getConfiguration().getSep() ;
-        return  vSession.getConfiguration().getMiniPath() + getThemedPath(p) + ".png";
+        return  vSession.getConfiguration().getMiniPath(true) + getThemedPath(p) + ".png";
     }
 
     public String getExtention(ViewSession vSession, Photo p) {

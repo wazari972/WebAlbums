@@ -363,7 +363,7 @@ public class FilesFinder {
             tagPhotoDAO.deleteByPhoto(enrPhoto);
 
             //suppression des photos physiquement
-            url = "file://" + conf.getImagesPath() + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath();
+            url = "file://" + conf.getImagesPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath();
 
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
             log.info("On supprime sa photo : {}");
@@ -374,7 +374,7 @@ public class FilesFinder {
             fichier.getParentFile().delete();
 
             //miniature
-            url = "file://" + conf.getMiniPath() + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath() + ".png";
+            url = "file://" + conf.getMiniPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath() + ".png";
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
             log.info("On supprime sa miniature : {}");
             if (!fichier.delete()) {

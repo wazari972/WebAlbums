@@ -206,7 +206,12 @@ public class WebPageBean implements WebPageLocal {
         if (vSession.isRemoteAccess()) affichage.remote = true ;
         
         affichage.photoAlbumSize = vSession.getPhotoAlbumSize();
-        
+        affichage.statik = vSession.getStatic();
+        affichage.direct_access = vSession.directFileAccess();
+        if (affichage.direct_access != null && affichage.direct_access) {
+            affichage.mini_folder = vSession.getConfiguration().getMiniPath(false);
+            affichage.photo_folder = vSession.getConfiguration().getImagesPath(false);
+        }
         return affichage;
     }
 

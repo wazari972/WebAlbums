@@ -5,6 +5,7 @@
 
 package net.wazari.service.exchange.xml;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.album.XmlAlbumGraph;
@@ -32,4 +33,7 @@ public class XmlChoix {
     public XmlAlbumSelect select;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used ;
+    @XmlAttribute
+    public Boolean complete;
+    public String map;
 }

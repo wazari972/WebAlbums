@@ -41,6 +41,14 @@ public class Index extends HttpServlet {
         XmlThemes output = new XmlThemes() ;
         output.themeList = themeService.getThemeList(vSession) ;
 
+        boolean statik = vSession.getStatic();
+        if (statik) {
+            vSession.setStatic(true);
+            vSession.setDirectFileAccess(true);
+        } else {
+            vSession.setDirectFileAccess(vSession.directFileAccess());
+        }
+
         return output ;
     }
 

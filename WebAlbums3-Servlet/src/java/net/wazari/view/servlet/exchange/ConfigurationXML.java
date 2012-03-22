@@ -141,44 +141,44 @@ public class ConfigurationXML implements Configuration {
 
     }
 
-    public String getDataPath() {
-        return getRootPath() + directories.data + SEP;
+    public String getDataPath(boolean withRoot) {
+        return (withRoot ? getRootPath() : "") + directories.data + SEP;
     }
 
     @Override
     public String getBackupPath() {
-        return getDataPath() + directories.backup + SEP;
+        return getDataPath(true) + directories.backup + SEP;
     }
 
     @Override
-    public String getImagesPath() {
-        return getDataPath() + directories.images + SEP;
+    public String getImagesPath(boolean withRoot) {
+        return getDataPath(withRoot) + directories.images + SEP;
     }
 
     @Override
     public String getFtpPath() {
-        return getDataPath() + directories.ftp + SEP;
+        return getDataPath(true) + directories.ftp + SEP;
 
     }
 
     @Override
-    public String getMiniPath() {
-        return getDataPath() + directories.mini + SEP;
+    public String getMiniPath(boolean withRoot) {
+        return getDataPath(withRoot) + directories.mini + SEP;
     }
 
     @Override
     public String getTempPath() {
-        return getDataPath() + directories.temp + SEP;
+        return getDataPath(true) + directories.temp + SEP;
     }
 
     @Override
     public String getPluginsPath() {
-        return getDataPath() + directories.plugins + SEP;
+        return getDataPath(true) + directories.plugins + SEP;
     }
     
     @Override
     public String getConfigFilePath() {
-        return getDataPath() + directories.confFile;
+        return getDataPath(true) + directories.confFile;
     }
 
     @Override

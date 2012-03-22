@@ -11,11 +11,11 @@ package net.wazari.service.exchange;
 public interface Configuration {
     boolean isPathURL() ;
 
-    String getImagesPath();
+    String getImagesPath(boolean withRoot);
 
     String getFtpPath();
 
-    String getMiniPath();
+    String getMiniPath(boolean withRoot);
 
     String getRootPath();
 

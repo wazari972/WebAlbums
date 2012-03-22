@@ -89,7 +89,8 @@ public class MaintBean implements MaintLocal {
 
     private void benchmarkTagPlaces(ViewSession vSession) {
         StopWatch stopWatch = new Slf4JStopWatch("Benchmark.Tag.Places", log);
-        tagService.treatTagPersonsPlaces((ViewSessionTag) vSession);
+        tagService.treatTagPlaces((ViewSessionTag) vSession);
+        tagService.treatTagPersons((ViewSessionTag) vSession);
         stopWatch.stop();
     }
 
