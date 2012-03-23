@@ -34,26 +34,26 @@
         </input>
         <img class="index_img">
             <xsl:attribute name="alt">
-              <xsl:value-of select="name"/>
+              <xsl:value-of select="@name"/>
             </xsl:attribute>
 
             <xsl:attribute name="src">
-              <xsl:if test="not(@picture)">
+              <xsl:if test="not(picture)">
                 static/images/rien.jpg
               </xsl:if>
-              <xsl:if test="@picture">
+              <xsl:if test="picture">
                   <xsl:if test="/webAlbums/affichage/@directAccess">
-                      <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picturePath" />.png
+                      <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png
                   </xsl:if>
                   <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                      Miniature__<xsl:value-of select="@picture" />.png
+                      Miniature__<xsl:value-of select="picture/@id" />.png
                   </xsl:if>
               </xsl:if>
             </xsl:attribute>
         </img>
         <input type="submit">
             <xsl:attribute name="value">
-              <xsl:value-of select="name"/>
+              <xsl:value-of select="@name"/>
             </xsl:attribute>    
         </input>
     </form><br/><br/>

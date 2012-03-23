@@ -7,6 +7,7 @@ package net.wazari.service.exchange.xml;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 
 /**
  *
@@ -14,12 +15,9 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class XmlTheme {
-
+    @XmlAttribute
     public String name ;
     @XmlAttribute
     public Integer id ;
-    @XmlAttribute
-    public Integer picture;
-    public String picturePath;
-
+    public XmlPhotoId picture;
 }

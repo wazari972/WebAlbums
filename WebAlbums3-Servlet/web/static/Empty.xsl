@@ -102,7 +102,14 @@
         </a>
     </h3>
     <img class="choix_img">
-      <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture"/></xsl:attribute>
+        <xsl:attribute name="src">
+          <xsl:if test="/webAlbums/affichage/@directAccess">
+              <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png
+          </xsl:if>
+          <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+              Miniature__<xsl:value-of select="picture/@id" />.png
+          </xsl:if>
+      </xsl:attribute>
     </img>
     <div>
     <a>
@@ -234,8 +241,13 @@ Tags?
 	</div>
 	<div style="">
 	  <img  id="largeImg" style="width:100%">
+              <xsl:if test="/webAlbums/affichage/@directAccess">
+                  <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoList/photo[1]/details/photoId/text()" />.png
+              </xsl:if>
+              <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                  Image__<xsl:value-of select="picture/@id" />.png
+              </xsl:if>
 	    <xsl:attribute name="SRC">
-	      Images?id=<xsl:value-of select="photoList/photo[1]/details/photoId"/>&amp;mode=GRAND
 	    </xsl:attribute>
 	  </img>
 	</div>
@@ -249,7 +261,12 @@ Tags?
       <a href="#" class="visio_img">
 	<xsl:attribute name="rel"><xsl:value-of select="details/photoId"/></xsl:attribute>
 	<img height="200px">
-	  <xsl:attribute name="src">Images?id=<xsl:value-of select="details/photoId"/>&amp;mode=PETIT</xsl:attribute>
+          <xsl:if test="/webAlbums/affichage/@directAccess">
+              <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="details/photoId/text()" />.png
+          </xsl:if>
+          <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+              Miniature__<xsl:value-of select="details/photoId/@id" />.png
+          </xsl:if>
 	  <xsl:attribute name="onmouseout">
 	    UnTip()
 	  </xsl:attribute>

@@ -9,6 +9,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 
 /**
  *
@@ -17,10 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class XmlDetails {
-    @XmlAttribute
-    public Integer photoId;
-    @XmlElement
-    public String path;
+    public XmlPhotoId photoId;
     public List<String> userInside;
     public String description;
     @XmlAttribute

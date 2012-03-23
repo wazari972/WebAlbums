@@ -58,6 +58,7 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoFastEdit;
+import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.service.exchange.xml.photo.XmlPhotoList;
 import net.wazari.service.exchange.xml.photo.XmlPhotoMassEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
@@ -280,9 +281,9 @@ public class PhotoBean implements PhotoLocal {
             carnet.id = enrCarnet.getId();
             carnet.name = enrCarnet.getNom();
             if (enrCarnet.getPicture() != null) {
-                carnet.picture = enrCarnet.getPicture().getId();
+                carnet.picture = new XmlPhotoId(enrCarnet.getPicture().getId());
                 if (vSession.directFileAccess()) 
-                    carnet.picturePath = vSession.getTheme().getNom()+"/"+enrCarnet.getPicture().getPath();
+                    carnet.picture.path = vSession.getTheme().getNom()+"/"+enrCarnet.getPicture().getPath();
             }
 
             album.carnet.add(carnet);
@@ -304,9 +305,9 @@ public class PhotoBean implements PhotoLocal {
         details.description = enrAlbum.getDescription() ;
         
         if (enrAlbum.getPicture() != null) {
-            details.photoId = enrAlbum.getPicture().getId() ;
+            details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
             if (vSession.directFileAccess())
-                details.path = vSession.getTheme().getNom()+"/"+enrAlbum.getPicture().getPath() ;
+                details.photoId.path = vSession.getTheme().getNom()+"/"+enrAlbum.getPicture().getPath() ;
         }
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Photos";
@@ -500,16 +501,17 @@ public class PhotoBean implements PhotoLocal {
                 }
             }
             XmlDetails details = new XmlDetails();
-            details.photoId = enrPhoto.getId();
+            details.photoId = new XmlPhotoId(enrPhoto.getId());
             if (vSession.directFileAccess())
-                details.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
+                details.photoId.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
             details.description = enrPhoto.getDescription();
             //tags de cette photo
             details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
                     Box.NONE, enrPhoto.getAlbum().getDate());
             
             details.albumId = enrPhoto.getAlbum().getId();
-            details.albumName = enrPhoto.getAlbum().getNom();
+            if (rq.type == TypeRequest.TAG)
+                details.albumName = enrPhoto.getAlbum().getNom();
             details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager()
@@ -587,9 +589,9 @@ public class PhotoBean implements PhotoLocal {
 
     private XmlDetails transformToDetails(ViewSession vSession, Photo enrPhoto) throws WebAlbumsServiceException {
         XmlDetails details = new XmlDetails();
-        details.photoId = enrPhoto.getId();
+        details.photoId = new XmlPhotoId(enrPhoto.getId());
         if (vSession.directFileAccess())
-            details.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
+            details.photoId.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
         details.description = enrPhoto.getDescription();
         //tags de cette photo
         details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, 

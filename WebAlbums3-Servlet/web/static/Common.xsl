@@ -167,7 +167,6 @@
    </xsl:if>
    <xsl:if test="../return_to/name = 'Tags'">
 <xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
-&amp;id=<xsl:value-of select="@id" />
 &amp;page=<xsl:value-of select="../return_to/page" />
 <xsl:for-each select="../return_to/tagsAsked">
 &amp;tagAsked=<xsl:value-of select="." />

@@ -43,6 +43,7 @@ import net.wazari.service.exchange.xml.carnet.XmlCarnetsDisplay;
 import net.wazari.service.exchange.xml.carnet.XmlCarnetsTop;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
+import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.util.system.FilesFinder;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -145,16 +146,20 @@ public class CarnetBean implements CarnetLocal {
                 carnet.text = StringUtil.escapeXML(enrCarnet.getText());
             }
             if (enrCarnet.getPhotoList() != null) {
-                carnet.photo = new ArrayList<Integer>(enrCarnet.getPhotoList().size());
-                for (Photo p : enrCarnet.getPhotoList())
-                    carnet.photo.add(p.getId());
+                carnet.photo = new ArrayList<XmlPhotoId>(enrCarnet.getPhotoList().size());
+                for (Photo p : enrCarnet.getPhotoList()) {
+                    XmlPhotoId photo = new XmlPhotoId(p.getId());
+                    carnet.photo.add(photo);
+                    if (vSession.directFileAccess())
+                        photo.path = vSession.getTheme().getNom() + "/" + p.getPath();
+                }
             }
             XmlDetails details = new XmlDetails();
 
             if (enrCarnet.getPicture() != null) {
-                details.photoId = enrCarnet.getPicture().getId();
+                details.photoId = new XmlPhotoId(enrCarnet.getPicture().getId());
                 if (vSession.directFileAccess() && details.photoId != null) {
-                    details.path = vSession.getTheme().getNom()+"/"+enrCarnet.getPicture().getPath() ;
+                    details.photoId.path = vSession.getTheme().getNom()+"/"+enrCarnet.getPicture().getPath() ;
                 }
             }
             
@@ -304,9 +309,9 @@ public class CarnetBean implements CarnetLocal {
             carnet.carnetsPage = 0;
             carnet.name = enrCarnet.getNom();
             if (enrCarnet.getPicture() != null) {
-                carnet.picture = enrCarnet.getPicture().getId();
+                carnet.picture = new XmlPhotoId(enrCarnet.getPicture().getId());
                 if (vSession.directFileAccess())
-                    carnet.picturePath = vSession.getTheme().getNom() + "/" + enrCarnet.getPicture().getPath();
+                    carnet.picture.path = vSession.getTheme().getNom() + "/" + enrCarnet.getPicture().getPath();
             }
             top5.carnet.add(carnet);
             i++ ;

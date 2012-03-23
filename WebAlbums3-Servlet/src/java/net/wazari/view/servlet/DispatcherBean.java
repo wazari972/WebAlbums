@@ -32,6 +32,7 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.XmlImage;
+import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;

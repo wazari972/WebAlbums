@@ -127,10 +127,10 @@ Albums?action=EDIT
             <img class="mini-carnet">
                 <xsl:attribute name="src">
                       <xsl:if test="/webAlbums/affichage/@directAccess">
-                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picturePath" />.png
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png
                       </xsl:if>
                       <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                          Miniature__<xsl:value-of select="@picture" />.png
+                          Miniature__<xsl:value-of select="picture/@id" />.png
                       </xsl:if>
                 </xsl:attribute>
             </img>&#160;

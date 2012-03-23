@@ -16,6 +16,7 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.xml.XmlTheme;
 import net.wazari.service.exchange.xml.XmlThemeList;
+import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 
 /**
  *
@@ -46,9 +47,9 @@ public class ThemeBean implements ThemeLocal {
             theme.id = enrTheme.getId() ;
             theme.name = enrTheme.getNom() ;
             if (enrTheme.getPicture() != null) {
-                theme.picture = enrTheme.getPicture().getId();
+                theme.picture = new XmlPhotoId(enrTheme.getPicture().getId());
                 if (vSession.directFileAccess())
-                    theme.picturePath = enrTheme.getNom() + "/" + enrTheme.getPicture().getPath();
+                    theme.picture.path = enrTheme.getNom() + "/" + enrTheme.getPicture().getPath();
             }
             output.theme.add(theme);
         }

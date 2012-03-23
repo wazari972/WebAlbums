@@ -95,6 +95,24 @@ function add_callback (hook, func) {
     callbacks[hook] = function (x) { return func(original(x)); }
 }
 
+try {
+    nothing = saved
+} catch(e) {
+    saved = []
+}
+
+function save_data_page(key, value) {
+    saved[key] = value
+}
+
+function get_data_page(key, value) {
+    try {
+        return saved[key]
+    } catch(e) {
+        return undefined
+    }
+}
+
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
     var regexS = "[\\?&]" + name + "=([^&#]*)";

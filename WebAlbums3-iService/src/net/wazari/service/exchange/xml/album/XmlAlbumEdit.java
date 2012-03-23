@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlUserList;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
+import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 
 /**
  *
@@ -19,10 +20,7 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 public class XmlAlbumEdit {
     public XmlAlbumSubmit submit;
     public String exception;
-    @XmlAttribute
-    public Integer picture;
-    @XmlAttribute
-    public String picturePath;
+    public XmlPhotoId picture;
     public String name;
     @XmlAttribute
     public Integer count;

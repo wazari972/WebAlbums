@@ -14,7 +14,7 @@ function convertLink(id, url, title, link_text) {
     return result
 }
 
-function init_markdown() {    
+function init_markdown() {
     if (document.getElementById("carnet_text") == null)
         return
     
@@ -26,7 +26,7 @@ function init_markdown() {
     converter.hooks.chain("convertLink", convertLink);
     converted = converter.makeHtml($("#carnet_text").text())
     
-    converted = converted.replace("Image\\#\\#", "Image__")
+    converted = converted.replace("Image##", "Image__")
     converted = converted.replace("Miniature##", "Miniature__")
     
     //TODO: rewrite with JQuery
@@ -34,6 +34,10 @@ function init_markdown() {
 }
 
 $(function() {
+    if (get_data_page("carcnet_inited"))
+        return
+    save_data_page("carcnet_inited", true)
+    
     init_markdown()
     add_callback("SinglePage", init_markdown)
 })

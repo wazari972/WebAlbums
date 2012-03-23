@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlValue;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.common.XmlDetails;
+import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 
 /**
  *
@@ -27,9 +28,7 @@ public class XmlAlbum {
     public XmlAlbumSubmit submit;
     public XmlDetails details;
     public String name;
-    @XmlAttribute
-    public Integer picture;
-    public String picturePath;
+    public XmlPhotoId picture;
     public XmlDate date;
     @XmlAttribute
     public Long time;

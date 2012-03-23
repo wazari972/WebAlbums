@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.common.XmlDetails;
+import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 /**
  *
  * @author kevin
@@ -18,9 +19,7 @@ import net.wazari.service.exchange.xml.common.XmlDetails;
 public class XmlCarnet {
     @XmlAttribute
     public Integer id;
-    @XmlAttribute
-    public Integer picture;
-    public String picturePath;
+    public XmlPhotoId picture;
     public XmlDate date;
     @XmlAttribute
     public Integer carnetsPage;
@@ -28,5 +27,5 @@ public class XmlCarnet {
     public XmlDetails details;
     public String text;
     public String droit;
-    public List<Integer> photo;
+    public List<XmlPhotoId> photo;
 }
