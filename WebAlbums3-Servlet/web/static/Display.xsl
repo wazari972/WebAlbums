@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE xsl:stylesheet  [
+<!--!DOCTYPE xsl:stylesheet  [
   <!ENTITY % xhtml-lat1 SYSTEM
      "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
   <!ENTITY % xhtml-special SYSTEM
@@ -9,7 +9,7 @@
   %xhtml-lat1;
   %xhtml-special;
   %xhtml-symbol;
-  ]>
+  ]-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:include href="Include.xsl" />

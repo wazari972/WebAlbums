@@ -39,7 +39,7 @@ def get_a_page(url, name="", is_xml=True):
         f.close()
         if is_xml:
             xml = etree.fromstring(content)
-            print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name))
+            #print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name))
             return xml
         else:
             print "#%d %s: %s %s" % (count, theme, repr(url), repr(name))
@@ -188,6 +188,10 @@ def get_a_theme(themeId, name):
     get_all_carnets()
     get_all_tags(choix)
     
+def get_static():
+    target = TARGET_PATH+("/"+theme if theme is not None else "")
+    print "Copy static to '%s'" % target
+    os.system("cp -r '%s' '%s'" % (STATIC_PATH, target))
 def get_all_themes():
     get_static()
     index = get_a_page("index.xml")
@@ -200,14 +204,19 @@ def get_all_themes():
         theme = None
         get_a_theme(xmlTheme.get("id"),  xmlTheme.get("name"))
         
+    print_error_report()
 
-def get_static():
-    target = TARGET_PATH+("/"+theme if theme is not None else "")
-    print "Copy static to '%s'" % target
-    os.system("cp -r '%s' '%s'" % (STATIC_PATH, target))
+displayXslt = None
+def get_Display():
+    global displayXslt
+    if displayXslt is None:
+        display = get_a_page("static/Display.xsl", is_xml=False)
+        import pdb;pdb.set_trace()
+        displayXml = etree.fromstring(display)
+        displayXslt = etree.XSLT(displayXml)
         
+    
 login("kevin", "")
 
-print timeit.Timer(get_all_themes).timeit(1)
-
-print_error_report()
+get_Display()
+#print timeit.Timer(get_all_themes).timeit(1)
