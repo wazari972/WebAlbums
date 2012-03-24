@@ -399,7 +399,7 @@ public class WebPageBean implements WebPageLocal {
                     }
                     tag.name = nom ;
                     tag.id = tagId.getId() ;
-                    tag.checked = selected ;
+                    tag.checked = selected ? true : null;
                     tag.minor = tagId.isMinor();
                     output.addTag(tag) ;
                 }

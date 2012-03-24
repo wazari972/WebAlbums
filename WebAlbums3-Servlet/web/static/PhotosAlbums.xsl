@@ -118,16 +118,18 @@
                 <xsl:apply-templates select="user" />
             </xsl:if>
             <div class="options">
-                <xsl:if test="/webAlbums/albums or /webAlbums/carnets or /webAblums/affichage/@static">
+                <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets or /webAblums/affichage/@static)">
                     <a title="Photo réduite">
                       <!-- no url rewritting -->
                       <xsl:attribute name="href">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
                       <img src="static/images/reduire.gif" width="30px"/>
                     </a>
-                    <span class="exif">
-                        <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>
-                        EXIF
-                    </span>
+                    <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
+                        <span class="exif"> 
+                            <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                            EXIF
+                        </span>
+                    </xsl:if>
                 </xsl:if>
                 <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
                     <xsl:if test="/webAlbums/affichage/remote or /webAblums/affichage/@static">

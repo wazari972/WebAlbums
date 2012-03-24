@@ -55,14 +55,13 @@
   </xsl:template>
 
   <xsl:template match="massEdit">
-      <script type='text/javascript' src="static/scripts/MassEdit.js" />
       <div class="item massedit" id="massedit_item">
 	<div class="body">
 	  <xsl:apply-templates select="message"/>
 	  <input type='hidden' name='action' value='MASSEDIT' />	  
-	  <table id="massedit_box">
+	  <table class="massedit_box">
 	    <tr><td colspan='2'>
-		<input type='button' id="massedit_selectall" value="Toutes"/>
+		<input type='button' class="massedit_selectall" value="Toutes"/>
 	    </td></tr>
 	    <tr>
 	      <td><input id="turnRight" type='radio' name='turn' value='RIGHT'/></td>
@@ -108,10 +107,11 @@
 	    </xsl:if>
 	    <tr><td>&#160;</td></tr>
 	    <tr>
-	      <td colspan='3'><center><input type='button' id="valid_mass" value='Valider' /></center></td>
+	      <td colspan='3'><center><input type='button' class="massedit_valid" value='Valider' /></center></td>
 	    </tr>
 	  </table>
 	</div>
+        <script type='text/javascript' src="static/scripts/MassEdit.js" />
       </div>
   </xsl:template>
 </xsl:stylesheet>

@@ -28,7 +28,7 @@
         <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
         <style type="text/css">          body {
              <xsl:if test="not(/webAlbums/affichage/@background)">background: #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if>
-             <xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(Background.jpg)     fixed no-repeat;</xsl:if>
+             <xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(background<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>.jpg)     fixed no-repeat;</xsl:if>
           }
         </style>
       </head>

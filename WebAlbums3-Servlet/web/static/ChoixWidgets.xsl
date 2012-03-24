@@ -157,10 +157,10 @@
 	      <xsl:if test="picture">
 		<a target="_top">
 		  <xsl:attribute name="href">
-                      <xsl:if test="/webAlbums/albums">
+                      <xsl:if test="name(..) = 'topAlbums'">
 Photos__<xsl:value-of select="@id"/>_p0_pa0__<xsl:value-of select="name"/>
                       </xsl:if>
-                      <xsl:if test="/webAlbums/carnets">
+                      <xsl:if test="name(..) = 'topCarnets'">
 Carnet__<xsl:value-of select="@id"/>_pc0__<xsl:value-of select="name"/>
                       </xsl:if>
                   </xsl:attribute>
@@ -184,10 +184,10 @@ Carnet__<xsl:value-of select="@id"/>_pc0__<xsl:value-of select="name"/>
 	    <center>
 	      <a target="_top">
 		<xsl:attribute name="href">
-		  <xsl:if test="/webAlbums/albums">
+		  <xsl:if test="name(..) = 'topAlbums'">
                         Photos__<xsl:value-of select="@id"/>_p0_pa0__<xsl:value-of select="name"/>
                   </xsl:if>
-                  <xsl:if test="/webAlbums/carnets">
+                  <xsl:if test="name(..) = 'topCarnets'">
                         Carnet__<xsl:value-of select="@id"/>_pc0__<xsl:value-of select="name"/>
                   </xsl:if>
 		</xsl:attribute>

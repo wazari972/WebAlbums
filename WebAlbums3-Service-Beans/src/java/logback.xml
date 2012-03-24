@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration debug="true">
+<configuration debug="false">
     <appender name="net.wazari.errors.FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>WebAlbums.Errors.html</file>
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
@@ -29,7 +29,7 @@
         </encoder>
         <append>true</append>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>debug</level>
+            <level>warn</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <fileNamePattern>WebAlbums.%i.html</fileNamePattern>
@@ -45,7 +45,7 @@
             <pattern>%-12(%d{HH:mm} [%relative]) %-4level %-25logger{5} * %msg %ex</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
+            <level>warn</level>
         </filter>
     </appender>
 
@@ -54,7 +54,7 @@
             <pattern># %-12(%d{HH:mm} [%relative]) %-4level %-25logger{5} * %msg %ex%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>debug</level>
+            <level>warn</level>
         </filter>
     </appender>
 

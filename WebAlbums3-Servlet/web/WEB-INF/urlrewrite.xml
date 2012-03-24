@@ -23,11 +23,11 @@
     
     <!--  PHOTOS -->
     <rule>
-        <from>^/Photos__([0-9]+)_p([0-9]+)_pa([0-9]*)__.*$</from>
+        <from>^/Photos__([0-9]+)_p([0-9]*)_pa([0-9]*)__.*$</from>
         <to >Photos?album=$1&amp;page=$2&amp;albmPage=$3</to>
     </rule>
     <rule>
-        <from>^/Visio__([0-9]+)_p([0-9]+)_pa([0-9]*)__.*$</from>
+        <from>^/Visio__([0-9]+)_p([0-9]*)_pa([0-9]*)__.*$</from>
         <to >Photos?album=$1&amp;page=$2&amp;albmPage=$3&amp;special=VISIONNEUSE</to>
     </rule>
     
@@ -45,7 +45,7 @@
         <to>Images?id=$1&amp;mode=GPX</to>
     </rule>
     <rule>
-        <from>^/background.jpg$</from>
+        <from>^/background.*$</from>
         <to>Images?mode=BACKGROUND</to>
     </rule>
     <!--  TAGS -->

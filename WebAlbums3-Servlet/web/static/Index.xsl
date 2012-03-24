@@ -34,8 +34,8 @@
         </input>
         <a>
             <xsl:attribute name="href">
-                  Choix__<xsl:value-of select="@id"/>__<xsl:value-of select="@name"/>
-                </xsl:attribute>
+                <xsl:if test="/webAlbums/affichage/@static"><xsl:value-of select="@name"/>/</xsl:if>Choix__<xsl:value-of select="@id"/>__<xsl:value-of select="@name"/>
+            </xsl:attribute>
             <img class="index_img">
                 <xsl:attribute name="alt">
                   <xsl:value-of select="@name"/>
@@ -56,11 +56,13 @@
                 </xsl:attribute>
             </img>
         </a>
-        <input type="submit">
-            <xsl:attribute name="value">
-              <xsl:value-of select="@name"/>
-            </xsl:attribute>    
-        </input>
+        <xsl:if test="not(/webAlbums/affichage/@static)">
+            <input type="submit">
+                <xsl:attribute name="value">
+                  <xsl:value-of select="@name"/>
+                </xsl:attribute>    
+            </input>
+        </xsl:if>
     </form><br/><br/>
   </xsl:template>
 </xsl:stylesheet>

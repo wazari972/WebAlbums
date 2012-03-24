@@ -161,7 +161,6 @@ public class ImageBean implements ImageLocal {
                     filepath = photoUtil.getMiniPath(vSession, enrPhoto);
                 }
             }
-            log.warn("Open image {}", filepath);
 
             //redirect if the image can be accessed from HTTP
             if (vSession.getConfiguration().isPathURL()) {

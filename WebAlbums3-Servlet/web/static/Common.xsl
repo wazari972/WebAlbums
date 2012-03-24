@@ -197,7 +197,7 @@
     <a>
       <xsl:attribute name="href">
 	<xsl:if test="/webAlbums/photos">
-Photos__<xsl:value-of select="../url/album" />_p<xsl:value-of select="." />__pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />__<xsl:value-of select="/webAlbums/photos/display/album/title" />
+Photos__<xsl:value-of select="../url/album" />_p<xsl:value-of select="." />_pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />__<xsl:value-of select="/webAlbums/photos/display/album/title" />
 	</xsl:if>
 	<xsl:if test="/webAlbums/albums">Albums__p<xsl:value-of select="."/></xsl:if>
 	<xsl:if test="/webAlbums/tags">

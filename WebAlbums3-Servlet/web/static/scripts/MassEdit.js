@@ -7,6 +7,7 @@ function selectAll() {
     if (select) bt.prop('value',"Aucune");
     else bt.prop('value',"Toutes");
     select = !select ;
+    check_massedit()
 }
 
 function validMass() {
@@ -52,11 +53,11 @@ function check_massedit() {
             checked = true
     })
     if (checked) {
-        $("#massedit_box").show()
+        $(".massedit_box").show()
         $(".massedit_chk").removeClass("edit")
         $(".massedit_chk").show()
     } else {
-        $("#massedit_box").hide()
+        $(".massedit_box").hide()
         $(".massedit_chk").hide()
         $(".massedit_chk").addClass("edit")
         $(this).parent().show()
@@ -65,9 +66,9 @@ function check_massedit() {
 }
 
 function init_mass() {
-    $("#valid_mass").click(validMass)
-    $("#massedit_box").hide()
-    $("#massedit_selectall").click(selectAll)
+    $(".massedit_valid").click(validMass)
+    $(".massedit_box").hide()
+    $(".massedit_selectall").click(selectAll)
     $(".massedit_chkbox").change(check_massedit)
 }
 

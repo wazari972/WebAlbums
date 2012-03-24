@@ -32,7 +32,6 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.XmlImage;
-import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
@@ -84,11 +83,8 @@ public class DispatcherBean {
             throws IOException, ServletException {
         Page actualPage = page;
         StopWatch stopWatch = new Slf4JStopWatch(log);
-        log.error("RequestURI="+request.getRequestURI());
-        log.error("RequestURL="+request.getRequestURL());
-        log.error("QueryString="+request.getQueryString());
         
-        request.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("utf-8");
         ViewSession vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
@@ -213,7 +209,7 @@ public class DispatcherBean {
             doWrite(response, output);
         }
 
-        log.warn("============= <{}/>: {} =============", new Object[]{page, strTime});
+        log.info("============= <{}/>: {} =============", new Object[]{page, strTime});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

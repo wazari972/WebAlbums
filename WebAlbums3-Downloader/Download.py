@@ -17,30 +17,50 @@ def post_a_page(url, data):
     response, content = h.request(ROOT_PATH+url, 'POST', body=urlencode(data), headers=headers)
     return content
 
+errors = []
 count = 0
-theme = ""
-def get_a_page(url, name=""):
+theme = None
+def get_a_page(url, name="", is_xml=True):
     global count
     count += 1
     #url += name
     url = url.replace(" ", "%20")
     try:
         response, content = h.request(ROOT_PATH+url, 'GET', headers=headers)
-        f = open(TARGET_PATH +'/'+ url+name, "w")
+        folder = TARGET_PATH +'/'+ (theme+"/" if theme is not None else "")
+        try:
+            os.mkdir(folder)
+        except OSError as e:
+            if e.errno != 17:
+                raise e
+        path = folder+url+name
+        f = open(path, "w")
         f.write(content)
         f.close()
-        
-        xml = etree.fromstring(content)
-        print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name))
-        return xml
+        if is_xml:
+            xml = etree.fromstring(content)
+            print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name))
+            return xml
+        else:
+            print "#%d %s: %s %s" % (count, theme, repr(url), repr(name))
+            return content
     except Exception as e:
-        try:
-            print "Request: ", repr(url)
-            print "Response: ", response
-        except:
-            pass
+        print "Request: ", repr(url)
+        print "Status: ", response["status"]
+        print "Response: ", response
+        print e
+        print ""
+        errors.append((e, repr(url), response, content))
         return
 
+def print_error_report():
+    print "======================"
+    for (e, url, response, content) in errors:
+        print "Error %s" % e
+        print "For url: %s" % url
+        print "Response: %s" % response
+        print "------------"
+        
 def login(user, paswd):
     global headers
     data = dict(userName=user, userPass=paswd)
@@ -56,15 +76,12 @@ def get_choix(themeId, name=""):
 
 def get_an_albumSet(page=0):
     if page == 0:
-        return get_a_page("Albums" % page)
+        return get_a_page("Albums")
     else:
         return get_a_page("Albums__p%s" % page)
 
 def get_a_photoSet(albmId, page=0, name=""):
-    if page == 0:
-        return get_a_page("Photos__%s_pa__" % (albmId), name)
-    else:
-        return get_a_page("Photos__%s_p%s_pa__" % (albmId, page), name)
+    return get_a_page("Photos__%s_p%s_pa__" % (albmId, page), name)
     
 def get_a_tag_page(tagId, page=0, name=""):
     if page == 0:
@@ -100,7 +117,9 @@ def get_all_carnets():
     
 def get_all_photos_of_photoSet(albumId, name=""):
     first = get_a_photoSet(albumId, name=name)
-    
+    if first is None:
+        print "Couldn't fetch photos from %s/%s" % (repr(name), albumId)
+        return
     page = first.find("photos").find("display").find("photoList").find("page")
     if page.get("last") is not None:
         nb_pages = int(page.get("last"))
@@ -118,6 +137,9 @@ def get_albums_of_albumSet(albumSet):
     
 def get_a_tagSet(tagId, name=""):
     first = get_a_tag_page(tagId, name=name)
+    if first is None:
+        print "Couldn't fetch tag page %s/%s" % (repr(name), tagId)
+        return
     page = first.find("tags").find("display").find("photoList").find("page")
     if page.get("last") is not None:
         nb_pages = int(page.get("last"))
@@ -130,6 +152,9 @@ def get_a_tagSet(tagId, name=""):
   
 def get_all_albums():
     first = get_an_albumSet()
+    if first is None:
+        print "Couldn't fetch albums page"
+        return
     page = first.find("albums").find("display").find("albumList").find("page")
     if page.get("last") is not None:
         nb_pages = int(page.get("last"))
@@ -149,23 +174,40 @@ def get_all_tags(choix):
         #tag.find("name").text
         get_a_tagSet(tag.get("id"), tag.find("name").text)
 
+def get_background(themeId, name):
+    get_a_page("background__%s__%s.jpg" % (themeId, name), is_xml=False)
+        
 def get_a_theme(themeId, name):
     choix = get_choix(themeId, name)
+    if choix is None:
+        print "Couldn't fetch Choix for %s/%s" % (repr(name), themeId)
+        return
+    get_static()
+    get_background(themeId, name)
+    get_all_albums()
     get_all_carnets()
     get_all_tags(choix)
-    get_all_albums()
     
 def get_all_themes():
-    index = get_a_page("index.html")
-    
-    for theme in index.find("themes").find("themeList").findall("theme"):
-        get_a_theme(theme.get("id"),  theme.get("name"))
+    get_static()
+    index = get_a_page("index.xml")
+    if index is None:
+        print "Couldn't fetch the index ..."
+        return
+        
+    for xmlTheme in index.find("themes").find("themeList").findall("theme"):
+        global theme
+        theme = None
+        get_a_theme(xmlTheme.get("id"),  xmlTheme.get("name"))
         
 
-def import_static():
-    os.system("cp -rv '%s' '%s'" % (STATIC_PATH, TARGET_PATH))
+def get_static():
+    target = TARGET_PATH+("/"+theme if theme is not None else "")
+    print "Copy static to '%s'" % target
+    os.system("cp -r '%s' '%s'" % (STATIC_PATH, target))
         
 login("kevin", "")
-import_static()
-exit()
+
 print timeit.Timer(get_all_themes).timeit(1)
+
+print_error_report()
