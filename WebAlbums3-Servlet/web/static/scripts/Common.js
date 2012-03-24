@@ -17,7 +17,8 @@ function prepareCloudTooltips() {
 }
 
 function loadCloud() {
-    loadExernals('cloudLoader', 'Tags__Cloud', 'cloud', prepareCloudTooltips) ;
+    if (!staticAccess)
+        loadExernals('cloudLoader', 'Tags__Cloud', 'cloud', prepareCloudTooltips) ;
 }
 
 function init_photoalbum_size() {

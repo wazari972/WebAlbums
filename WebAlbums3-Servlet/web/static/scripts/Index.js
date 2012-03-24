@@ -6,7 +6,7 @@ function init_index() {
     if (url.lastIndexOf("/") == url.length - 1) {
         unsafe = true
     }
-    if (url.indexOf("/Index") != -1) {
+    if (url.indexOf("/Index") != -1 || url.indexOf("/index") != -1) {
         unsafe = true
     }
     

@@ -41,7 +41,7 @@
         </h1>
         <div class="body">
           <div id="albums" style="overflow:auto;">
-            <xsl:apply-templates select="/webAlbums/choix/topAlbums"/>    
+            <xsl:apply-templates select="/webAlbums/choix/topAlbums"/>
           </div>
         </div>
       </div>

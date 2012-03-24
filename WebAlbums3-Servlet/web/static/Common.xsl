@@ -201,11 +201,16 @@ Photos__<xsl:value-of select="../url/album" />_p<xsl:value-of select="." />__pa<
 	</xsl:if>
 	<xsl:if test="/webAlbums/albums">Albums__p<xsl:value-of select="."/></xsl:if>
 	<xsl:if test="/webAlbums/tags">
-Tags?
-<xsl:for-each select="../url/tagAsked">
-&amp;tagAsked=<xsl:value-of select="." />
+Tag
+<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">
+__<xsl:value-of select="@id" />
 </xsl:for-each>
-&amp;page=<xsl:value-of select="." />
+<xsl:if test=". != '0'">
+_p<xsl:value-of select="." />
+</xsl:if>
+<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">
+__<xsl:value-of select="name" />
+</xsl:for-each>
 	</xsl:if>
       </xsl:attribute>
       <xsl:if test="name(.) = 'nexti'">
@@ -230,7 +235,7 @@ Tags?
 		Albums__p<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />#<xsl:value-of select="/webAlbums/photos/display/album/@id" />
 	      </xsl:if>
 	      <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">
-		Choix
+		Choix<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>
 	      </xsl:if>
 	    </xsl:attribute>
 

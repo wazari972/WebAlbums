@@ -75,6 +75,7 @@ public class Choix extends HttpServlet {
             choix.select = albumService.treatSELECT(vSessionAlbum);
             choix.graph = albumService.treatGRAPH(vSessionAlbum);
             
+            choix.cloud = tagService.treatTagCloud(vSessionTag) ;
             choix.persons = tagService.treatTagPersons(vSessionTag) ;
             choix.places = tagService.treatTagPlaces(vSessionTag) ;
             choix.map = webPageService.displayMapInScript(vSession).blob;

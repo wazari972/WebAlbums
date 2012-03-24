@@ -199,4 +199,47 @@ Carnet__<xsl:value-of select="@id"/>_pc0__<xsl:value-of select="name"/>
       </table>
     </td>
   </xsl:template>
+  
+  
+  <xsl:template match="cloud">
+      <link rel="stylesheet" type="text/css" href="static/scripts/lib/treemenu/simpletree.css" />
+      <h3>Nuage de tags </h3>
+      <ul>
+          <li><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></li>
+          <li><hl/></li>
+          <ul id="cloudTree" class="treeview">
+            <xsl:apply-templates select="tag"/>
+          </ul>
+      </ul>
+      <script type="text/javascript" src="static/scripts/Empty.js"/>
+      <script type="text/javascript" src="static/scripts/lib/treemenu/simpletreemenu.js">
+            /***********************************************
+            * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
+            * This notice MUST stay intact for legal use
+            * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+            * (http://www.dynamicdrive.com/dynamicindex1/navigate1.htm)
+            ***********************************************/
+      </script>
+  </xsl:template>
+
+  <xsl:template match="cloud/tag|children/tag">
+      <li>
+        <a class="cloud-tag_used">
+          <xsl:attribute name="id">cloud-target-<xsl:value-of select="@id"/></xsl:attribute>
+          <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
+          <xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>x__<xsl:value-of select="name"/></xsl:attribute>
+          <xsl:attribute name="title"><xsl:value-of select="@nb"/> photos</xsl:attribute>
+          <xsl:value-of select="name" />
+        </a>
+        <span class="cloud_tooltip_not_used">
+            <xsl:attribute name="id">cloud-content-<xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
+        </span>
+        <xsl:if test="children/tag">
+	    <ul rel="open">
+              <xsl:apply-templates select="children/tag"/>
+            </ul>
+        </xsl:if>
+    </li>
+  </xsl:template>
 </xsl:stylesheet>

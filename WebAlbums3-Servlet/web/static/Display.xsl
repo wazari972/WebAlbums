@@ -41,6 +41,10 @@
                 photo_folder = "<xsl:value-of select="/webAlbums/affichage/photo_folder" />"
                 mini_folder = "<xsl:value-of select="/webAlbums/affichage/mini_folder" />"
             </xsl:if>
+            var staticAccess = false
+            <xsl:if test="/webAlbums/affichage/@static">
+                staticAccess = true
+            </xsl:if>
         </script>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"></script>
@@ -56,7 +60,14 @@
 	  <div id="menu">
 	    <ul>
 	      <li><a href="Index" title="Retour aux thèmes">Thème</a></li>
-	      <li><a href="Choix" title="Choix">Choix</a></li>
+	      <li>
+                <a title="Choix">
+                    <xsl:attribute name="href">
+                    Choix<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>
+                    </xsl:attribute>
+                    Choix
+                </a>
+              </li>
 	    </ul>	
 	  </div>
 	</div>
@@ -118,7 +129,9 @@
                         </li>
                     </ul>
                 </xsl:if>
-		<div id="cloud" />
+		<div id="cloud">
+                    <xsl:apply-templates select="/webAlbums/choix/cloud"/>
+                </div>
 	      </div>
               <div id="loader" style="display: none">
                 <center><img src="static/images/ajax-loader.gif" /></center>
@@ -165,7 +178,9 @@
 	    </div>
 	  </div>
 	</div>
-        <script type="text/javascript" src="static/scripts/SinglePageInterface.js" />
+        <xsl:if test="not(/webAlbums/affichage/@static)">
+            <script type="text/javascript" src="static/scripts/SinglePageInterface.js" />
+        </xsl:if>
         <script type="text/javascript" src="static/scripts/Common.js"></script>
       </body>
     </html>

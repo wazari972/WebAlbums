@@ -50,15 +50,20 @@
     </rule>
     <!--  TAGS -->
     <rule>
-        <from>^/Tag__([0-9]+)([x])__.*$</from>
+        <from>^/Tag__([0-9]+)x__.*$</from>
         <to>Tags?tagAsked=$1&amp;wantTagChildren=true</to>
+    </rule>
+    <rule>
+        <from>^/Tag__([0-9]+)x_p([0-9]+)__.*$</from>
+        <to>Tags?tagAsked=$1&amp;page=$2&amp;wantTagChildren=true</to>
     </rule>
     <rule>
         <from>^/Tag__([0-9]+)__.*$</from>
         <to>Tags?tagAsked=$1</to>
     </rule>
+
     <rule>
-        <from>^/Tag__([0-9]+)_p(0-9]*)__.*$</from>
+        <from>^/Tag__([0-9]+)_p([0-9]*)__.*$</from>
         <to>Tags?tagAsked=$1&amp;page=$2</to>
     </rule>
     <rule>
@@ -78,7 +83,11 @@
     
     <!--  INDEX -->
     <rule>
-        <from>^/Index\..*$</from>
+        <from>^/Index\..*</from>
+        <to>Index?&amp;static=y</to>
+    </rule>
+    <rule>
+        <from>^/index\..*$</from>
         <to>Index?&amp;static=y</to>
     </rule>
 </urlrewrite>

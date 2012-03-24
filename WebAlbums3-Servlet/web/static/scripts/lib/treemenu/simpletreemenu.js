@@ -1,8 +1,8 @@
 var persisteduls=new Object()
 var ddtreemenu=new Object()
 
-ddtreemenu.closefolder="static/scripts/treemenu/closed.png" //set image path to "closed" folder image
-ddtreemenu.openfolder="static/scripts/treemenu/open.png" //set image path to "open" folder image
+ddtreemenu.closefolder="static/scripts/lib/treemenu/closed.png" //set image path to "closed" folder image
+ddtreemenu.openfolder="static/scripts/lib/treemenu/open.png" //set image path to "open" folder image
 
 //////////No need to edit beyond here///////////////////////////
 
@@ -136,5 +136,5 @@ ddtreemenu.dotask=function(target, functionref, tasktype){ //assign a function t
 
 /*****************************/
 
-if (callbacks["treemenu"] != undefined)
+if (callbacks != undefined && callbacks["treemenu"] != undefined)
     callbacks["treemenu"]()

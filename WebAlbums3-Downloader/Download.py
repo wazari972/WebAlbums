@@ -1,9 +1,12 @@
+#!/usr/bin/env python2
+
 from httplib2 import Http
 from urllib import urlencode
 import os
 from lxml import etree
 import timeit
 
+STATIC_PATH = "/home/kevin/WebAlbums/WebAlbums3-Servlet/web/static"
 ROOT_PATH = "http://127.0.0.1:8080/WebAlbums3/"
 TARGET_PATH = "./static"
 
@@ -23,7 +26,7 @@ def get_a_page(url, name=""):
     url = url.replace(" ", "%20")
     try:
         response, content = h.request(ROOT_PATH+url, 'GET', headers=headers)
-        f = open("%s/%s" % (TARGET_PATH, repr(url)), "w")
+        f = open(TARGET_PATH +'/'+ url+name, "w")
         f.write(content)
         f.close()
         
@@ -36,7 +39,6 @@ def get_a_page(url, name=""):
             print "Response: ", response
         except:
             pass
-        import pdb;pdb.set_trace()
         return
 
 def login(user, paswd):
@@ -53,21 +55,30 @@ def get_choix(themeId, name=""):
     return get_a_page("Choix__%s__" % themeId, name)
 
 def get_an_albumSet(page=0):
-    return get_a_page("Albums__p%s" % page)
+    if page == 0:
+        return get_a_page("Albums" % page)
+    else:
+        return get_a_page("Albums__p%s" % page)
 
 def get_a_photoSet(albmId, page=0, name=""):
-    return get_a_page("Photos__%s_p%s_pa__" % (albmId, page), name)
+    if page == 0:
+        return get_a_page("Photos__%s_pa__" % (albmId), name)
+    else:
+        return get_a_page("Photos__%s_p%s_pa__" % (albmId, page), name)
     
 def get_a_tag_page(tagId, page=0, name=""):
-    return get_a_page("Tags?tagAsked=%s&page=%d" % (tagId, page), "#"+name)
-    #return get_a_page("Tag__%s__" % (tagId))
-    
+    if page == 0:
+        return get_a_page("Tag__%s__" % (tagId), name)
+    else:
+        return get_a_page("Tag__%s_p%d__" % (tagId, page), name)
 def get_a_carnet(carnedId, name=""):
     return get_a_page("Carnet__%s_pc__" % carnedId, name)
 
 def get_a_carnetSet(page=0):
-    return get_a_page("Carnets__p%s" % (page))
-
+    if page == 0:
+        return get_a_page("Carnets")
+    else:
+        return get_a_page("Carnets__p%s" % (page))
 def get_all_carnet_from_carnetSet(page=0):
     carnetSet = get_a_carnetSet(page)
     for carnet in carnetSet.find("carnets").find("display").findall("carnet"):
@@ -145,12 +156,16 @@ def get_a_theme(themeId, name):
     get_all_albums()
     
 def get_all_themes():
-    index = get_a_page("Index")
+    index = get_a_page("index.html")
     
     for theme in index.find("themes").find("themeList").findall("theme"):
-        get_a_theme(theme.get("id"),  theme.find("name").text)
+        get_a_theme(theme.get("id"),  theme.get("name"))
         
 
+def import_static():
+    os.system("cp -rv '%s' '%s'" % (STATIC_PATH, TARGET_PATH))
+        
 login("kevin", "")
-
+import_static()
+exit()
 print timeit.Timer(get_all_themes).timeit(1)

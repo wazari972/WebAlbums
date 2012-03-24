@@ -32,25 +32,30 @@
         <input type='hidden' name='themeId' value='SUBMIT'>
             <xsl:attribute name="value"><xsl:value-of select="@id"/></xsl:attribute>
         </input>
-        <img class="index_img">
-            <xsl:attribute name="alt">
-              <xsl:value-of select="@name"/>
-            </xsl:attribute>
+        <a>
+            <xsl:attribute name="href">
+                  Choix__<xsl:value-of select="@id"/>__<xsl:value-of select="@name"/>
+                </xsl:attribute>
+            <img class="index_img">
+                <xsl:attribute name="alt">
+                  <xsl:value-of select="@name"/>
+                </xsl:attribute>
 
-            <xsl:attribute name="src">
-              <xsl:if test="not(picture)">
-                static/images/rien.jpg
-              </xsl:if>
-              <xsl:if test="picture">
-                  <xsl:if test="/webAlbums/affichage/@directAccess">
-                      <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png
+                <xsl:attribute name="src">
+                  <xsl:if test="not(picture)">
+                    static/images/rien.jpg
                   </xsl:if>
-                  <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                      Miniature__<xsl:value-of select="picture/@id" />.png
+                  <xsl:if test="picture">
+                      <xsl:if test="/webAlbums/affichage/@directAccess">
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png
+                      </xsl:if>
+                      <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                          Miniature__<xsl:value-of select="picture/@id" />.png
+                      </xsl:if>
                   </xsl:if>
-              </xsl:if>
-            </xsl:attribute>
-        </img>
+                </xsl:attribute>
+            </img>
+        </a>
         <input type="submit">
             <xsl:attribute name="value">
               <xsl:value-of select="@name"/>
