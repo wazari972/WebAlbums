@@ -1,9 +1,10 @@
 function convertImage(id, url, alt_text, title) {
     // __ in this function messes up the markdown generation
     // ## will be converted later
-    return "<br/><center><a href=\"Image##"+url+"\" title=\"" + alt_text + "\">"
-         + "<img src=\"Miniature##" + url + ".png\" alt=\"" + alt_text + "\">"
-         + "</a></center><br/>";
+    
+    return '<br/><center><a href="'+url+'" title="' + alt_text + '">'
+         + '<img src="'+ url + '" alt="' + alt_text + '" />'
+         + '</a></center><br/>';
 }
 function convertLink(id, url, title, link_text) {
     var result = "<a href=\"Photos__" + url + "_p0_pa__\"";
@@ -31,6 +32,23 @@ function init_markdown() {
     
     //TODO: rewrite with JQuery
     document.getElementById("carnet_text").innerHTML = converted
+    $("#carnet_text a").each(function() {
+        href = $(this).attr("href")
+        if (href.indexOf("Photos") == -1) {
+            if (!directAccess)
+            $(this).attr("href", "Images__"+href)
+        else
+            $(this).attr("href", root_path+photo_folder+carnet_static_lookup[href])
+        }
+    })
+    
+    $("#carnet_text img").each(function() {
+        src = $(this).attr("src")
+        if (!directAccess)
+            $(this).attr("src", "Miniature__"+src+".png")
+        else
+            $(this).attr("src", root_path+mini_folder+carnet_static_lookup[src]+".png")
+    })
 }
 
 $(function() {

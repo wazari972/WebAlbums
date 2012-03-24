@@ -80,7 +80,7 @@
                   </xsl:if>
                   <xsl:if test="photoId">
                       <xsl:if test="/webAlbums/affichage/@directAccess">
-                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="photiId/text()" />.png
+                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="photoId/text()" />.png
                       </xsl:if>
                       <xsl:if test="not(/webAlbums/affichage/@directAccess)">
                           Miniature__<xsl:value-of select="photoId/@id" />.png

@@ -71,6 +71,15 @@ Carnets__p<xsl:value-of select="/webAlbums/carnets/display/carnet/@carnetsPage" 
    <xsl:template match="text">
        <br/>
        <hr/>
+       <xsl:if test="/webAlbums/affichage/@directAccess">
+        <script type="text/javascript">
+            carnet_static_lookup = {
+                <xsl:for-each select="../photo">
+                    <xsl:value-of select="@id"/>:"<xsl:value-of select="."/>",
+                </xsl:for-each>
+            }
+        </script>
+       </xsl:if>
        <br/>
         <div id="carnet_text" class="carnet_text">
             <xsl:value-of select="."/>

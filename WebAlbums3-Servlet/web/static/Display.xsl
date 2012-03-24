@@ -33,6 +33,15 @@
         </style>
       </head>
       <body>
+        <script type="text/javascript">
+            var directAccess = false
+            <xsl:if test="/webAlbums/affichage/@directAccess">
+                directAccess = true
+                root_path = "<xsl:value-of select="$RootPath" />"
+                photo_folder = "<xsl:value-of select="/webAlbums/affichage/photo_folder" />"
+                mini_folder = "<xsl:value-of select="/webAlbums/affichage/mini_folder" />"
+            </xsl:if>
+        </script>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"></script>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"></script>
