@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE xsl:stylesheet  [
-  <!ENTITY % xhtml-lat1 SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
-  <!ENTITY % xhtml-special SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
-  <!ENTITY % xhtml-symbol SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtmlroot-symbol.ent">
-  %xhtml-lat1;
-  %xhtml-special;
-  %xhtml-symbol;
-  ]>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:include href="Include.xsl" />
@@ -102,14 +91,12 @@
         </a>
     </h3>
     <img class="choix_img">
-        <xsl:attribute name="src">
-          <xsl:if test="/webAlbums/affichage/@directAccess">
-              <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png
-          </xsl:if>
-          <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-              Miniature__<xsl:value-of select="picture/@id" />.png
-          </xsl:if>
-      </xsl:attribute>
+      <xsl:if test="/webAlbums/affichage/@directAccess">
+          <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+          <xsl:attribute name="src">Miniature__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
+      </xsl:if>
     </img>
     <div>
     <a>
@@ -147,8 +134,8 @@
   <xsl:template match="display">
     <html style="margin: 0;padding: 0;height: 100%">
       <body style="margin: 0;padding: 0;height: 100%">
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
-	<script type="text/javascript" src="static/scripts/tools.js"/>	  
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"/>
+	<script type="text/javascript" src="static/scripts/tools.js"/>
         <script type="text/javascript" src="static/scripts/Empty.js"/>
 	<div style="overflow:auto;">
 	  <table>
@@ -175,20 +162,12 @@
 
 	      <td>
 		<a title="Retour à la normal">
-		  <xsl:attribute name="href">
-		    <xsl:if test="/webAlbums/photos">
-Photos?
-albmCount=<xsl:value-of select="album/@count" />
-&amp;album=<xsl:value-of select="album/@id" />
-		    </xsl:if>
-		    <xsl:if test="/webAlbums/tags">
-Tags?
-<xsl:for-each select="title/tagList/*">
-&amp;tagAsked=<xsl:value-of select="@id"/>
-</xsl:for-each>
-		    </xsl:if>
-&amp;page=<xsl:value-of select="photoList/page/@current"/>
-		  </xsl:attribute>
+                  <xsl:if test="/webAlbums/photos">
+                    <xsl:attribute name="href">Photos?albmCount=<xsl:value-of select="album/@count" />&amp;album=<xsl:value-of select="album/@id" />&amp;page=<xsl:value-of select="photoList/page/@current"/></xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="/webAlbums/tags">
+                    <xsl:attribute name="href">Tags?<xsl:for-each select="title/tagList/*">&amp;tagAsked=<xsl:value-of select="@id"/></xsl:for-each>&amp;page=<xsl:value-of select="photoList/page/@current"/></xsl:attribute>
+                   </xsl:if>
 		  &#8629;
 		</a>
 	      </td>
@@ -198,13 +177,11 @@ Tags?
 	<div style="">
 	  <img  id="largeImg" style="width:100%">
               <xsl:if test="/webAlbums/affichage/@directAccess">
-                  <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoList/photo[1]/details/photoId/text()" />.png
+                  <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoList/photo[1]/details/photoId/text()" />.png</xsl:attribute>
               </xsl:if>
               <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                  Image__<xsl:value-of select="picture/@id" />.png
+                  <xsl:attribute name="src">Image__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
               </xsl:if>
-	    <xsl:attribute name="SRC">
-	    </xsl:attribute>
 	  </img>
 	</div>
       </body>
@@ -247,19 +224,13 @@ Tags?
   <xsl:template match="prev|next|@first|@last|@nexti|@previ">
     <td>
       <a>
-	<xsl:attribute name="href">
 	  <xsl:if test="/webAlbums/photos">
-Photos?
-&amp;albmCount=<xsl:value-of select="../url/albmCount" />
-&amp;album=<xsl:value-of select="../url/album" />
-	  </xsl:if>
+              <xsl:attribute name="href">Photos?&amp;albmCount=<xsl:value-of select="../url/albmCount" />&amp;album=<xsl:value-of select="../url/album" />&amp;page=<xsl:value-of select="."/>&amp;special=VISIONNEUSE</xsl:attribute>
+          </xsl:if>
 	  <xsl:if test="/webAlbums/tags">
-Tags?
-&amp;tagAsked=<xsl:value-of select="../url/tagAsked"/>
+              <xsl:attribute name="href">Tags?&amp;tagAsked=<xsl:value-of select="../url/tagAsked"/>&amp;page=<xsl:value-of select="."/>&amp;special=VISIONNEUSE</xsl:attribute>
 	  </xsl:if>
-          &amp;page=<xsl:value-of select="."/>
-          &amp;special=VISIONNEUSE
-          </xsl:attribute><xsl:if test="name(.) = 'nexti'">
+          <xsl:if test="name(.) = 'nexti'">
               »
           </xsl:if>
           <xsl:if test="name(.) = 'previ'">

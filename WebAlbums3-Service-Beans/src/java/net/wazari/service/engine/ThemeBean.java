@@ -49,7 +49,7 @@ public class ThemeBean implements ThemeLocal {
             if (enrTheme.getPicture() != null) {
                 theme.picture = new XmlPhotoId(enrTheme.getPicture().getId());
                 if (vSession.directFileAccess())
-                    theme.picture.path = enrTheme.getNom() + "/" + enrTheme.getPicture().getPath();
+                    theme.picture.path = enrTheme.getPicture().getPath(true);
             }
             output.theme.add(theme);
         }

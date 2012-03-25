@@ -353,7 +353,7 @@ public class WebPageBean implements WebPageLocal {
                         //Get the photo to display, if any
                         if (enrTagTh != null && enrTagTh.getPhoto() != null) {
                             photoId = enrTagTh.getPhoto().getId();
-                            photoPath = vSession.getTheme().getNom() + "/"+enrTagTh.getPhoto().getPath();
+                            photoPath = enrTagTh.getPhoto().getPath(true);
                         }
                         p = new Point(enrTag.getNom(), enrTag.getId(),
                                 enrGeo.getLat(),

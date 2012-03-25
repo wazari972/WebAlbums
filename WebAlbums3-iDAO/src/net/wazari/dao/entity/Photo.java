@@ -24,7 +24,7 @@ public interface Photo extends Serializable, EntityWithId, Metadata {
 
     Integer getId();
 
-    String getPath();
+    String getPath(boolean full);
 
     List<TagPhoto> getTagPhotoList();
 

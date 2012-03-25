@@ -283,7 +283,7 @@ public class PhotoBean implements PhotoLocal {
             if (enrCarnet.getPicture() != null) {
                 carnet.picture = new XmlPhotoId(enrCarnet.getPicture().getId());
                 if (vSession.directFileAccess()) 
-                    carnet.picture.path = vSession.getTheme().getNom()+"/"+enrCarnet.getPicture().getPath();
+                    carnet.picture.path = enrCarnet.getPicture().getPath(true);
             }
 
             album.carnet.add(carnet);
@@ -307,7 +307,7 @@ public class PhotoBean implements PhotoLocal {
         if (enrAlbum.getPicture() != null) {
             details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
             if (vSession.directFileAccess())
-                details.photoId.path = vSession.getTheme().getNom()+"/"+enrAlbum.getPicture().getPath() ;
+                details.photoId.path = enrAlbum.getPicture().getPath(true) ;
         }
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Photos";
@@ -503,7 +503,7 @@ public class PhotoBean implements PhotoLocal {
             XmlDetails details = new XmlDetails();
             details.photoId = new XmlPhotoId(enrPhoto.getId());
             if (vSession.directFileAccess())
-                details.photoId.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
+                details.photoId.path = enrPhoto.getPath(true) ;
             details.description = enrPhoto.getDescription();
             //tags de cette photo
             details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
@@ -591,7 +591,7 @@ public class PhotoBean implements PhotoLocal {
         XmlDetails details = new XmlDetails();
         details.photoId = new XmlPhotoId(enrPhoto.getId());
         if (vSession.directFileAccess())
-            details.photoId.path = vSession.getTheme().getNom()+"/"+enrPhoto.getPath() ;
+            details.photoId.path = enrPhoto.getPath(true) ;
         details.description = enrPhoto.getDescription();
         //tags de cette photo
         details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, 

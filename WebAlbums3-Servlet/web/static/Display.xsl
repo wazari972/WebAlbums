@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!--!DOCTYPE xsl:stylesheet  [
-  <!ENTITY % xhtml-lat1 SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
-  <!ENTITY % xhtml-special SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
-  <!ENTITY % xhtml-symbol SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">
-  %xhtml-lat1;
-  %xhtml-special;
-  %xhtml-symbol;
-  ]-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:include href="Include.xsl" />
@@ -17,8 +6,8 @@
     <html>
       <head>
 	<xsl:apply-templates select="/webAlbums/login/valid"/>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" href="static/favicon.png" type="image/png" /> 
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>WebAlbums 3 : <xsl:value-of select="/webAlbums/loginInfo/theme" /> - <xsl:value-of select="/webAlbums/loginInfo/user"/></title>
 
 	<meta name="keywords" content="" />
@@ -46,10 +35,10 @@
                 staticAccess = true
             </xsl:if>
         </script>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"></script>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"></script>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.ezpz_tooltip.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"/>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"/>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"/>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.ezpz_tooltip.js"/>
         
 	<div id="header"> 
 	  <div id="logo">
@@ -62,9 +51,7 @@
 	      <li><a href="Index" title="Retour aux thèmes">Thème</a></li>
 	      <li>
                 <a title="Choix">
-                    <xsl:attribute name="href">
-                    Choix<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>
-                    </xsl:attribute>
+                    <xsl:attribute name="href">Choix<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if></xsl:attribute>
                     Choix
                 </a>
               </li>
@@ -155,10 +142,10 @@
                 
                 <script type="text/javascript" src="static/scripts/tools.js"/>
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-                    <script type="text/javascript" src="static/scripts/Photos.js"></script>
+                    <script type="text/javascript" src="static/scripts/Photos.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags">
-                    <script type="text/javascript" src="static/scripts/Tags.js"></script>
+                    <script type="text/javascript" src="static/scripts/Tags.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/config">
                     <script type="text/javascript" src="static/scripts/Config.js"/>
@@ -167,8 +154,7 @@
                     <link type="text/css" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" rel="stylesheet" media="screen"/>
                     <script type="text/javascript" src="static/scripts/lib/raphael.js"/>
                     <script type="text/javascript" src="static/scripts/lib/morris.js"/>
-                    <script src="static/scripts/Choix.js" type='text/javascript'></script>
-                    
+                    <script src="static/scripts/Choix.js" type='text/javascript'/>
                 </xsl:if>
 	      </div>
 	      <div id="footer">
@@ -181,7 +167,7 @@
         <xsl:if test="not(/webAlbums/affichage/@static)">
             <script type="text/javascript" src="static/scripts/SinglePageInterface.js" />
         </xsl:if>
-        <script type="text/javascript" src="static/scripts/Common.js"></script>
+        <script type="text/javascript" src="static/scripts/Common.js"/>
       </body>
     </html>
   </xsl:template>

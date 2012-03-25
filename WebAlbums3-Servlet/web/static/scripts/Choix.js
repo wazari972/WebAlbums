@@ -162,8 +162,8 @@ function do_init_slider(data) {
 
         }
      );
-         
-     $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
+     if (!staticAccess)
+        $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
 }
 
 function save_theme() {

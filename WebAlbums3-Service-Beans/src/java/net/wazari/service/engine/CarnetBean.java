@@ -151,7 +151,7 @@ public class CarnetBean implements CarnetLocal {
                     XmlPhotoId photo = new XmlPhotoId(p.getId());
                     carnet.photo.add(photo);
                     if (vSession.directFileAccess())
-                        photo.path = vSession.getTheme().getNom() + "/" + p.getPath();
+                        photo.path = p.getPath(true);
                 }
             }
             XmlDetails details = new XmlDetails();
@@ -159,7 +159,7 @@ public class CarnetBean implements CarnetLocal {
             if (enrCarnet.getPicture() != null) {
                 details.photoId = new XmlPhotoId(enrCarnet.getPicture().getId());
                 if (vSession.directFileAccess() && details.photoId != null) {
-                    details.photoId.path = vSession.getTheme().getNom()+"/"+enrCarnet.getPicture().getPath() ;
+                    details.photoId.path = enrCarnet.getPicture().getPath(true) ;
                 }
             }
             
@@ -311,7 +311,7 @@ public class CarnetBean implements CarnetLocal {
             if (enrCarnet.getPicture() != null) {
                 carnet.picture = new XmlPhotoId(enrCarnet.getPicture().getId());
                 if (vSession.directFileAccess())
-                    carnet.picture.path = vSession.getTheme().getNom() + "/" + enrCarnet.getPicture().getPath();
+                    carnet.picture.path = enrCarnet.getPicture().getPath(true);
             }
             top5.carnet.add(carnet);
             i++ ;

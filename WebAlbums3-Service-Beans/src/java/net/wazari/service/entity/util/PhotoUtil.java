@@ -160,29 +160,11 @@ public class PhotoUtil {
             return true;
         }
 
-        String themeName = null;
-        try {
-            Theme enrTh = p.getAlbum().getTheme();
-
-            if (enrTh == null) {
-                throw new WebAlbumsDaoException(WebAlbumsDaoException.JDBCException,
-                        "Erreur dans Photo.rotate(), " +
-                        "Impossible to find the photo's theme " +
-                        "(" + p.getId() + ")");
-            } else {
-                themeName = enrTh.getNom();
-            }
-        } catch (WebAlbumsDaoException e) {
-            log.warn( "WebAlbumsDaoException {}", e);
-            throw new WebAlbumsServiceException(WebAlbumsDaoException.JDBCException,
-                    "Erreur dans Photo.rotate()");
-        }
-
         String sep = vSession.getConfiguration().getSep() ;
 
-        String path = p.getPath();
-        String mini = vSession.getConfiguration().getMiniPath(true) + sep + themeName + sep + path;
-        String image = vSession.getConfiguration().getImagesPath(true) + sep + themeName + sep + path;
+        String path = p.getPath(true);
+        String mini = vSession.getConfiguration().getMiniPath(true) + sep + path;
+        String image = vSession.getConfiguration().getImagesPath(true) + sep + path;
         log.info( "Rotation de {}degres de {}", new Object[]{degrees, path});
         if (sysTools.rotate(null, null, degrees, mini + ".png", mini + ".png")) {
             if (!sysTools.rotate(null, null, degrees, image, image)) {
@@ -204,14 +186,6 @@ public class PhotoUtil {
         }
         return enrTheme.getNom() + "/" + g.getGpxPath();
     }
-    
-    public String getThemedPath(Photo p) {
-        Theme enrTheme = p.getAlbum().getTheme();
-        if (enrTheme == null) {
-            return null;
-        }
-        return enrTheme.getNom() + "/" + p.getPath();
-    }
 
     public String getGpxPath(ViewSession vSession, Gpx g) {
         String sep = vSession.getConfiguration().getSep() ;
@@ -220,12 +194,12 @@ public class PhotoUtil {
     
     public String getImagePath(ViewSession vSession, Photo p) {
         String sep = vSession.getConfiguration().getSep() ;
-        return vSession.getConfiguration().getImagesPath(true) + getThemedPath(p);
+        return vSession.getConfiguration().getImagesPath(true) + p.getPath(true);
     }
 
     public String getMiniPath(ViewSession vSession, Photo p) {
         String sep = vSession.getConfiguration().getSep() ;
-        return  vSession.getConfiguration().getMiniPath(true) + getThemedPath(p) + ".png";
+        return  vSession.getConfiguration().getMiniPath(true) +  p.getPath(true) + ".png";
     }
 
     public String getExtention(ViewSession vSession, Photo p) {

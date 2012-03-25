@@ -175,8 +175,8 @@ public class JPAPhoto implements Photo, Serializable {
     }
 
     @Override
-    public String getPath() {
-        return path;
+    public String getPath(boolean full) {
+        return (full ? this.album.getTheme().getNom() + "/" : "") + path;
     }
 
     @Override

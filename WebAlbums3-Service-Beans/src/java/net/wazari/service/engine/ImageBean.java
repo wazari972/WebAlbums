@@ -114,7 +114,7 @@ public class ImageBean implements ImageLocal {
                     return output ;
                 }
 
-                if (enrPhoto.getPath() == null) {
+                if (enrPhoto.getPath(false) == null) {
                     output.exception = "Cette photo (" + imgId + ") a un path null ..." ;
                     return output ;
                 }

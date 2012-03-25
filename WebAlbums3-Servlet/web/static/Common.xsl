@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE xsl:stylesheet  [
-  <!ENTITY % xhtml-lat1 SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
-  <!ENTITY % xhtml-special SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
-  <!ENTITY % xhtml-symbol SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">
-  %xhtml-lat1;
-  %xhtml-special;
-  %xhtml-symbol;
-  ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="tagList">
     <xsl:param name="name">tagAsked</xsl:param>
@@ -195,33 +184,24 @@
 
   <xsl:template match="prev|next|@nexti|@previ|@first|@last">
     <a>
-      <xsl:attribute name="href">
-	<xsl:if test="/webAlbums/photos">
-Photos__<xsl:value-of select="../url/album" />_p<xsl:value-of select="." />_pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />__<xsl:value-of select="/webAlbums/photos/display/album/title" />
+        <xsl:if test="/webAlbums/photos">
+          <xsl:attribute name="href">Photos__<xsl:value-of select="../url/album" />_p<xsl:value-of select="." />_pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />__<xsl:value-of select="/webAlbums/photos/display/album/title" /></xsl:attribute>
 	</xsl:if>
-	<xsl:if test="/webAlbums/albums">Albums__p<xsl:value-of select="."/></xsl:if>
+	<xsl:if test="/webAlbums/albums">
+            <xsl:attribute name="href">Albums__p<xsl:value-of select="."/></xsl:attribute>
+        </xsl:if>
 	<xsl:if test="/webAlbums/tags">
-Tag
-<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">
-__<xsl:value-of select="@id" />
-</xsl:for-each>
-<xsl:if test=". != '0'">
-_p<xsl:value-of select="." />
-</xsl:if>
-<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">
-__<xsl:value-of select="name" />
-</xsl:for-each>
-	</xsl:if>
-      </xsl:attribute>
-      <xsl:if test="name(.) = 'nexti'">
+            <xsl:attribute name="href">Tag<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">__<xsl:value-of select="@id" /></xsl:for-each><xsl:if test=". != '0'">_p<xsl:value-of select="." /></xsl:if><xsl:for-each select="/webAlbums/tags/display/title/tagList/*">__<xsl:value-of select="name" /></xsl:for-each></xsl:attribute>
+        </xsl:if>
+        <xsl:if test="name(.) = 'nexti'">
           Next »
-      </xsl:if>
-      <xsl:if test="name(.) = 'previ'">
+        </xsl:if>
+        <xsl:if test="name(.) = 'previ'">
           « Previous
-      </xsl:if>
-      <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')">
+        </xsl:if>
+        <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')">
           <xsl:value-of select="." />
-      </xsl:if>
+        </xsl:if>
     </a>
   </xsl:template>
 

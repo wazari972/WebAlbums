@@ -23,8 +23,16 @@
     
     <!--  PHOTOS -->
     <rule>
+        <from>^/Photos__([0-9]+)_p([0-9]*)__.*$</from>
+        <to >Photos?album=$1&amp;page=$2</to>
+    </rule>
+    <rule>
         <from>^/Photos__([0-9]+)_p([0-9]*)_pa([0-9]*)__.*$</from>
         <to >Photos?album=$1&amp;page=$2&amp;albmPage=$3</to>
+    </rule>
+    <rule>
+        <from>^/Visio__([0-9]+)_p([0-9]*)__.*$</from>
+        <to >Photos?album=$1&amp;page=$2&amp;special=VISIONNEUSE</to>
     </rule>
     <rule>
         <from>^/Visio__([0-9]+)_p([0-9]*)_pa([0-9]*)__.*$</from>

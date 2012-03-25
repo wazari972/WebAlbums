@@ -67,13 +67,13 @@ public class MaintDAOBean implements MaintFacadeLocal {
         int count = 0 ;
         int countsans = 0 ;
         for (Photo enrPhoto : photoDAO.findAll()) {
-            String pathSansAccent = sansAccents(enrPhoto.getPath()) ;
-            if (pathSansAccent.equals(enrPhoto.getPath())) {
+            String pathSansAccent = sansAccents(enrPhoto.getPath(false)) ;
+            if (pathSansAccent.equals(enrPhoto.getPath(false))) {
                 countsans++ ;
                 continue ;
             }
 
-            log.info("change from {} to {}", enrPhoto.getPath(), pathSansAccent) ;
+            log.info("change from {} to {}", enrPhoto.getPath(false), pathSansAccent) ;
             enrPhoto.setPath(pathSansAccent) ;
             photoDAO.edit(enrPhoto) ;
             count++ ;

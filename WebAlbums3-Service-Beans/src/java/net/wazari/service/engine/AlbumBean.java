@@ -106,7 +106,7 @@ public class AlbumBean implements AlbumLocal {
         if (enrAlbum.getPicture() != null) {
             output.picture = new XmlPhotoId(enrAlbum.getPicture().getId());
             if (vSession.directFileAccess())
-                output.picture.path = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
+                output.picture.path = enrAlbum.getPicture().getPath(true);
         }
         output.name = enrAlbum.getNom();
         output.id = enrAlbum.getId();
@@ -188,7 +188,7 @@ public class AlbumBean implements AlbumLocal {
             if (enrAlbum.getPicture() != null) {
                 details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId());
                 if (vSession.directFileAccess()) {
-                    details.photoId.path = vSession.getTheme().getNom()+"/"+enrAlbum.getPicture().getPath() ;
+                    details.photoId.path = enrAlbum.getPicture().getPath(true) ;
                 }
             }
             for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
@@ -202,7 +202,7 @@ public class AlbumBean implements AlbumLocal {
                 if (enrCarnet.getPicture() != null) {
                     carnet.picture = new XmlPhotoId(enrCarnet.getPicture().getId());
                     if (vSession.directFileAccess())
-                        carnet.picture.path = vSession.getTheme().getNom() + "/"+ enrCarnet.getPicture().getPath();
+                        carnet.picture.path = enrCarnet.getPicture().getPath(true);
                 }
                 album.carnet.add(carnet);
             }
@@ -255,7 +255,7 @@ public class AlbumBean implements AlbumLocal {
             if (enrAlbum.getPicture() != null) {
                 album.picture = new XmlPhotoId(enrAlbum.getPicture().getId());
                 if (vSession.directFileAccess())
-                    album.picture.path = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
+                    album.picture.path = enrAlbum.getPicture().getPath(true);
             }
             top5.album.add(album);
         }
@@ -301,7 +301,7 @@ public class AlbumBean implements AlbumLocal {
             if (enrAlbum.getPicture() != null) {
                 album.picture = new XmlPhotoId(enrAlbum.getPicture().getId());
                 if (vSession.directFileAccess())
-                    album.picture.path = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
+                    album.picture.path = enrAlbum.getPicture().getPath(true);
             }
             
             if (tagList.isEmpty()) {
@@ -363,7 +363,7 @@ public class AlbumBean implements AlbumLocal {
                 if (enrAlbum.getPicture() != null) {
                     album.picture = new XmlPhotoId(enrAlbum.getPicture().getId());
                     if (vSession.directFileAccess())
-                        album.picture.path = vSession.getTheme().getNom() + "/"+ enrAlbum.getPicture().getPath();
+                        album.picture.path = enrAlbum.getPicture().getPath(true);
                 }
                 year.album.add(album) ;
             }
@@ -453,7 +453,7 @@ public class AlbumBean implements AlbumLocal {
         if (enrAlbum.getPicture() != null) {
             about.album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
             if (vSession.directFileAccess())
-                about.album.details.photoId.path = vSession.getTheme().getNom()+"/"+enrAlbum.getPicture().getPath() ;
+                about.album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
         }
 
         about.album.details.description = enrAlbum.getDescription();

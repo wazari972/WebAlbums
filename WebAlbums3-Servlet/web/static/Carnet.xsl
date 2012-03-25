@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE xsl:stylesheet  [
-  <!ENTITY % xhtml-lat1 SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
-  <!ENTITY % xhtml-special SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
-  <!ENTITY % xhtml-symbol SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">
-  %xhtml-lat1;
-  %xhtml-special;
-  %xhtml-symbol;
-  ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="carnets">
       <xsl:if test="/webAlbums/carnets">
           <link rel="stylesheet" type="text/css" href="static/scripts/lib/pagedown/demo.css" />
-          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Converter.js"></script>
-          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Sanitizer.js"></script>
-          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Editor.js"></script>
+          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Converter.js"/>
+          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Sanitizer.js"/>
+          <script type="text/javascript" src="static/scripts/lib/pagedown/Markdown.Editor.js"/>
       </xsl:if>
       <xsl:apply-templates select="edit"/>
       <xsl:apply-templates select="display"/>
@@ -31,7 +20,7 @@
     </xsl:if>
     <xsl:apply-templates select="carnet"/>
     <xsl:apply-templates select="page"/>
-    <script type="text/javascript" src="static/scripts/Carnet.js"></script>
+    <script type="text/javascript" src="static/scripts/Carnet.js"/>
   </xsl:template>
 
   <xsl:template match="carnet">
@@ -44,14 +33,12 @@
       <div class="content">
 	<h1>
 	  <a>
-            <xsl:attribute name="href">
-<xsl:if test="not(/webAlbums/carnets/display/carnet/text)">
-Carnet__<xsl:value-of select="@id" />_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" />__<xsl:value-of select="name" />
-</xsl:if>
-<xsl:if test="/webAlbums/carnets/display/carnet/text">
-Carnets__p<xsl:value-of select="/webAlbums/carnets/display/carnet/@carnetsPage" />#<xsl:value-of select="@id" />
-</xsl:if>
-             </xsl:attribute>
+            <xsl:if test="not(/webAlbums/carnets/display/carnet/text)">
+                <xsl:attribute name="href">Carnet__<xsl:value-of select="@id" /><xsl:if test="not(/webAlbums/affichage/@static)">_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" /></xsl:if>__<xsl:value-of select="name" /></xsl:attribute>
+            </xsl:if>
+            <xsl:if test="/webAlbums/carnets/display/carnet/text">
+                <xsl:attribute name="href">Carnets__p<xsl:value-of select="/webAlbums/carnets/display/carnet/@carnetsPage" />#<xsl:value-of select="@id" /></xsl:attribute>
+            </xsl:if>
 	    <xsl:value-of select="name" />
 	  </a>
 	</h1>

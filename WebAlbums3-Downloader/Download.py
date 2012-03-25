@@ -5,6 +5,7 @@ from urllib import urlencode
 import os
 from lxml import etree
 import timeit
+from StringIO import StringIO
 
 STATIC_PATH = "/home/kevin/WebAlbums/WebAlbums3-Servlet/web/static"
 ROOT_PATH = "http://127.0.0.1:8080/WebAlbums3/"
@@ -20,30 +21,38 @@ def post_a_page(url, data):
 errors = []
 count = 0
 theme = None
-def get_a_page(url, name="", is_xml=True):
+def get_a_page(url, name="", save=True, parse_and_transform=True):
     global count
     count += 1
     #url += name
     url = url.replace(" ", "%20")
     try:
         response, content = h.request(ROOT_PATH+url, 'GET', headers=headers)
+        if response["status"] == 500:
+            raise "HTTP Error 500 "+url
+        if response["status"] == 404:
+            raise "HTTP Error 404 "+url
         folder = TARGET_PATH +'/'+ (theme+"/" if theme is not None else "")
         try:
             os.mkdir(folder)
         except OSError as e:
             if e.errno != 17:
                 raise e
-        path = folder+url+name
-        f = open(path, "w")
-        f.write(content)
-        f.close()
-        if is_xml:
-            xml = etree.fromstring(content)
+        print "#%d %s: %s %s" % (count, theme, repr(url), repr(name))
+        content_to_save = content
+        content_to_return =  content        
+        
+        if parse_and_transform:
+            content_to_return = etree.fromstring(content)
             #print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name))
-            return xml
-        else:
-            print "#%d %s: %s %s" % (count, theme, repr(url), repr(name))
-            return content
+            content_to_save = etree.tostring(displayXslt(content_to_return), pretty_print=True, method="html")
+
+        if save:
+            path = folder+url+name
+            with open(path, "w") as f:
+                f.write(content_to_save)
+        
+        return content_to_return
     except Exception as e:
         print "Request: ", repr(url)
         print "Status: ", response["status"]
@@ -81,7 +90,7 @@ def get_an_albumSet(page=0):
         return get_a_page("Albums__p%s" % page)
 
 def get_a_photoSet(albmId, page=0, name=""):
-    return get_a_page("Photos__%s_p%s_pa__" % (albmId, page), name)
+    return get_a_page("Photos__%s_p%s__" % (albmId, page), name)
     
 def get_a_tag_page(tagId, page=0, name=""):
     if page == 0:
@@ -89,7 +98,7 @@ def get_a_tag_page(tagId, page=0, name=""):
     else:
         return get_a_page("Tag__%s_p%d__" % (tagId, page), name)
 def get_a_carnet(carnedId, name=""):
-    return get_a_page("Carnet__%s_pc__" % carnedId, name)
+    return get_a_page("Carnet__%s__" % carnedId, name)
 
 def get_a_carnetSet(page=0):
     if page == 0:
@@ -173,12 +182,14 @@ def get_all_tags(choix):
     for tag in tagList.findall("who")+tagList.findall("what")+tagList.findall("where"):
         #tag.find("name").text
         get_a_tagSet(tag.get("id"), tag.find("name").text)
+        get_a_tagSet(tag.get("id")+"x", tag.find("name").text)
 
 def get_background(themeId, name):
-    get_a_page("background__%s__%s.jpg" % (themeId, name), is_xml=False)
+    get_a_page("background__%s__%s.jpg" % (themeId, name), parse_and_transform=False)
         
 def get_a_theme(themeId, name):
     choix = get_choix(themeId, name)
+    
     if choix is None:
         print "Couldn't fetch Choix for %s/%s" % (repr(name), themeId)
         return
@@ -192,9 +203,10 @@ def get_static():
     target = TARGET_PATH+("/"+theme if theme is not None else "")
     print "Copy static to '%s'" % target
     os.system("cp -r '%s' '%s'" % (STATIC_PATH, target))
+    
 def get_all_themes():
     get_static()
-    index = get_a_page("index.xml")
+    index = get_a_page("index.html")
     if index is None:
         print "Couldn't fetch the index ..."
         return
@@ -206,17 +218,26 @@ def get_all_themes():
         
     print_error_report()
 
+class PrefixResolver(etree.Resolver):        
+    def resolve(self, url, pubid, context):
+        stylesheet = get_a_page("static/%s" % url, parse_and_transform=False, save=False)
+        return self.resolve_string(stylesheet, context)
+    
 displayXslt = None
-def get_Display():
+def get_XSLT():
     global displayXslt
     if displayXslt is None:
-        display = get_a_page("static/Display.xsl", is_xml=False)
-        import pdb;pdb.set_trace()
-        displayXml = etree.fromstring(display)
+        print "Get stylesheets"
+        parser = etree.XMLParser()
+        parser.resolvers.add(PrefixResolver())
+        display = get_a_page("static/Display.xsl", parse_and_transform=False, save=False)
+        displayXml = etree.parse(StringIO(display), parser)
+        
         displayXslt = etree.XSLT(displayXml)
+    return displayXslt
         
     
 login("kevin", "")
+get_XSLT()
 
-get_Display()
-#print timeit.Timer(get_all_themes).timeit(1)
+print timeit.Timer(get_all_themes).timeit(1)

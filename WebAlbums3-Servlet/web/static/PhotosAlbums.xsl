@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE xsl:stylesheet  [
-  <!ENTITY % xhtml-lat1 SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
-  <!ENTITY % xhtml-special SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
-  <!ENTITY % xhtml-symbol SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">
-  %xhtml-lat1;
-  %xhtml-special;
-  %xhtml-symbol;
-  ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template name="for-stars-loop">
         <xsl:param name="count" select="1"/>
@@ -54,39 +43,35 @@
               <xsl:if test="/webAlbums/photos or /webAlbums/tags">
                 <!-- placeholder for a box-related property -->
               </xsl:if>
-              <xsl:attribute name="href">
-                <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-                      <xsl:if test="/webAlbums/affichage/@directAccess">
-                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoId/text()" />
-                      </xsl:if>
-                      <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                          Miniature__<xsl:value-of select="photoId/@id" />.png
-                      </xsl:if>
-                </xsl:if>
-                <xsl:if test="/webAlbums/albums">
-                  Photos__<xsl:value-of select="../@id" />_p0_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" />__<xsl:value-of select="../title" />
-                </xsl:if>
-                <xsl:if test="/webAlbums/carnets">
-                  Carnet__<xsl:value-of select="../@id" />_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" />__<xsl:value-of select="../name" />
-                </xsl:if>
-              </xsl:attribute>
+              
+              <xsl:if test="/webAlbums/photos or /webAlbums/tags">
+                  <xsl:if test="/webAlbums/affichage/@directAccess">
+                      <xsl:attribute name="href"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoId/text()" /></xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                      <xsl:attribute name="href">Photo__<xsl:value-of select="photoId/@id" />.png</xsl:attribute>
+                  </xsl:if>
+              </xsl:if>
+              
+              <xsl:if test="/webAlbums/albums">
+                  <xsl:attribute name="href">Photos__<xsl:value-of select="../@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" /></xsl:if>__<xsl:value-of select="../title" /></xsl:attribute>
+              </xsl:if>
+              <xsl:if test="/webAlbums/carnets">
+                  <xsl:attribute name="href">Carnet__<xsl:value-of select="../@id" /><xsl:if test="not(/webAlbums/affichage/@static)">_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" /></xsl:if>__<xsl:value-of select="../name" /></xsl:attribute>
+              </xsl:if>
               <img class="photo">
-                <xsl:attribute name="alt">
-                  <xsl:value-of select="title" />
-                </xsl:attribute>
-                <xsl:attribute name="src">
-                  <xsl:if test="not(photoId)">
-                    static/images/rien.jpg
+                <xsl:attribute name="alt"><xsl:value-of select="title" /></xsl:attribute>
+                <xsl:if test="not(photoId)">
+                    <xsl:attribute name="src">static/images/rien.jpg</xsl:attribute>
+                </xsl:if>
+                <xsl:if test="photoId">
+                  <xsl:if test="/webAlbums/affichage/@directAccess">
+                      <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="photoId/text()" />.png</xsl:attribute>
                   </xsl:if>
-                  <xsl:if test="photoId">
-                      <xsl:if test="/webAlbums/affichage/@directAccess">
-                          <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="photoId/text()" />.png
-                      </xsl:if>
-                      <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                          Miniature__<xsl:value-of select="photoId/@id" />.png
-                      </xsl:if>
+                  <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+                      <xsl:attribute name="src">Miniature__<xsl:value-of select="photoId/@id" />.png</xsl:attribute>
                   </xsl:if>
-                </xsl:attribute>
+                 </xsl:if>
               </img>
             </a>
         </div>
@@ -118,12 +103,14 @@
                 <xsl:apply-templates select="user" />
             </xsl:if>
             <div class="options">
-                <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets or /webAblums/affichage/@static)">
-                    <a title="Photo réduite">
-                      <!-- no url rewritting -->
-                      <xsl:attribute name="href">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
-                      <img src="static/images/reduire.gif" width="30px"/>
-                    </a>
+                <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
+                    <xsl:if test="not(/webAlbums/affichage/@static)">
+                        <a title="Photo réduite">
+                          <!-- no url rewritting -->
+                          <xsl:attribute name="href">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
+                          <img src="static/images/reduire.gif" width="30px"/>
+                        </a>
+                    </xsl:if>
                     <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
                         <span class="exif"> 
                             <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>
@@ -147,7 +134,7 @@
                     <a class="albumTT">
                       <xsl:attribute name="title"><xsl:value-of select="albumName"/></xsl:attribute>
                       <xsl:attribute name="id">album-target-<xsl:value-of select="@albumId"/></xsl:attribute>
-                      <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0_pa__<xsl:value-of select="albumName" /></xsl:attribute>
+                      <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
                       <img src="static/images/dossier.gif" width="30px"/>
                     </a>
                     <span class="album_tooltip">
@@ -158,35 +145,18 @@
                   <xsl:if test="/webAlbums/loginInfo/@admin">
                         <a class="edit" title="Edition" rel="singlepage[no]">
                           <!-- no url rewritting -->
-                          <xsl:attribute name="href">
-                            <xsl:if test="/webAlbums/photos">
-Photos?action=EDIT
-&amp;id=<xsl:value-of select="photoId/@id" />
-&amp;count=<xsl:value-of select="../@count"	/>
-&amp;albmCount=<xsl:value-of select="../../../album/@count" />
-&amp;album=<xsl:value-of select="../../../album/@id"	/>
-                              </xsl:if>
-                              <xsl:if test="/webAlbums/tags">
-Tags?action=EDIT
-&amp;id=<xsl:value-of select="photoId/@id" />
-                                <xsl:for-each select="/webAlbums/tags/display/title/tagList/*">
-&amp;tagAsked=<xsl:value-of select="photoId/@id" />
-                                </xsl:for-each>
-                                <xsl:if test="/webAlbums/*/page/@current">
-&amp;page=<xsl:value-of select="/webAlbums/*/page/@current" />
-                                </xsl:if>
-                              </xsl:if>
-                              <xsl:if test="/webAlbums/albums">
-Albums?action=EDIT
-&amp;id=<xsl:value-of select="../@id" />
-&amp;count=<xsl:value-of select="../@count"/>
-                              </xsl:if>
-                              <xsl:if test="/webAlbums/carnets">
-Carnets?action=EDIT
-&amp;carnet=<xsl:value-of select="../@id" />
-&amp;count=<xsl:value-of select="../@count"/>
-                              </xsl:if>
-                          </xsl:attribute>
+                          <xsl:if test="/webAlbums/photos">
+                              <xsl:attribute name="href">Photos?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" />&amp;count=<xsl:value-of select="../@count"/>&amp;albmCount=<xsl:value-of select="../../../album/@count" />&amp;album=<xsl:value-of select="../../../album/@id"	/></xsl:attribute>
+                          </xsl:if>
+                          <xsl:if test="/webAlbums/tags">
+                              <xsl:attribute name="href">Tags?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" /><xsl:for-each select="/webAlbums/tags/display/title/tagList/*">&amp;tagAsked=<xsl:value-of select="photoId/@id" /></xsl:for-each><xsl:if test="/webAlbums/*/page/@current">&amp;page=<xsl:value-of select="/webAlbums/*/page/@current" /></xsl:if></xsl:attribute>
+                          </xsl:if>
+                          <xsl:if test="/webAlbums/albums">
+                              <xsl:attribute name="href">Albums?action=EDIT&amp;id=<xsl:value-of select="../@id" />&amp;count=<xsl:value-of select="../@count"/></xsl:attribute>
+                          </xsl:if>
+                          <xsl:if test="/webAlbums/carnets">
+                              <xsl:attribute name="href">Carnets?action=EDIT&amp;carnet=<xsl:value-of select="../@id" />&amp;count=<xsl:value-of select="../@count"/></xsl:attribute>
+                          </xsl:if>
                           <img src="static/images/edit.png" height="30px"/>
                         </a>
                     </xsl:if>

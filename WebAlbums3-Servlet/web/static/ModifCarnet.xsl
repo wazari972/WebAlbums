@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE xsl:stylesheet  [
-  <!ENTITY % xhtml-lat1 SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
-  <!ENTITY % xhtml-special SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
-  <!ENTITY % xhtml-symbol SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">
-  %xhtml-lat1;
-  %xhtml-special;
-  %xhtml-symbol;
-  ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="carnets/edit">
     <div class="item">
@@ -28,7 +17,7 @@
           <xsl:apply-templates select="submit/message"/>
 	  <center>
 	    <img id="carnetReprImg">
-	      <xsl:attribute name="src">Images?id=<xsl:value-of select="@picture" />&amp;mode=PETIT</xsl:attribute>
+	      <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture" />.png</xsl:attribute>
 	    </img>
 	  </center>
 	</div>
@@ -102,15 +91,13 @@
 	  <br/>
           <center>
               <a>
-                <xsl:attribute name="href">
-                  Carnets?count=<xsl:value-of select="@count"/>&amp;carnet=<xsl:value-of select="@id" />
-                </xsl:attribute>
+                <xsl:attribute name="href">Carnets?count=<xsl:value-of select="@count"/>&amp;carnet=<xsl:value-of select="@id" /></xsl:attribute>
                 Retour au carnet
               </a>
           </center>
 	</div>
       </div>
     </div>
-    <script type="text/javascript" src="static/scripts/ModifCarnet.js"></script>
+    <script type="text/javascript" src="static/scripts/ModifCarnet.js"/>
   </xsl:template>
 </xsl:stylesheet>

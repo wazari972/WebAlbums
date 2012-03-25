@@ -1,15 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE xsl:stylesheet  [
-  <!ENTITY % xhtml-lat1 SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
-  <!ENTITY % xhtml-special SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent">
-  <!ENTITY % xhtml-symbol SYSTEM
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent">
-  %xhtml-lat1;
-  %xhtml-special;
-  %xhtml-symbol;
-  ]>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:template match="/webAlbums/choix">
     <div class="item">
@@ -23,7 +12,7 @@
             </xsl:if>
         </h1>
 	<div class="body">
-	  <div id="carnets" style="overflow:auto;">
+	  <div id="carnets" style="overflow:auto">
               <xsl:apply-templates select="/webAlbums/choix/topCarnets"/>    
           </div>
 	</div>
@@ -40,7 +29,7 @@
             </xsl:if>
         </h1>
         <div class="body">
-          <div id="albums" style="overflow:auto;">
+          <div id="albums" style="overflow:auto">
             <xsl:apply-templates select="/webAlbums/choix/topAlbums"/>
           </div>
         </div>
