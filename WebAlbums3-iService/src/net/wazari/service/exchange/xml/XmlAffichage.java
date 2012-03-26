@@ -27,5 +27,4 @@ public class XmlAffichage {
     public Boolean direct_access;
     public String mini_folder;
     public String photo_folder;
-
 }

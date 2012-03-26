@@ -261,7 +261,7 @@ public class DispatcherBean {
                 
                 //Create marshaller
                 Marshaller marshaller = jc.createMarshaller();
-                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                //marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                 StringWriter writer = new StringWriter() ;
                 marshaller.marshal(output, writer);

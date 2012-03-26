@@ -27,8 +27,6 @@
                 <xsl:attribute name="alt">
                   <xsl:value-of select="@name"/>
                 </xsl:attribute>
-
-                
                 <xsl:if test="not(picture)">
                     <xsl:attribute name="src">static/images/rien.jpg</xsl:attribute>
                 </xsl:if>
@@ -40,15 +38,12 @@
                           <xsl:attribute name="src">Miniature__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
                       </xsl:if>
                   </xsl:if>
-                
             </img>
+            <br/>
+            <xsl:value-of select="@name"/>
         </a>
         <xsl:if test="not(/webAlbums/affichage/@static)">
-            <input type="submit">
-                <xsl:attribute name="value">
-                  <xsl:value-of select="@name"/>
-                </xsl:attribute>    
-            </input>
+            <input type="submit" value="X"/>
         </xsl:if>
     </form><br/><br/>
   </xsl:template>

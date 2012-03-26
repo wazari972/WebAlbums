@@ -45,7 +45,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True):
         if parse_and_transform:
             content_to_return = etree.fromstring(content)
             #print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name))
-            content_to_save = etree.tostring(displayXslt(content_to_return), pretty_print=True, method="html")
+            content_to_save = etree.tostring(displayXslt(content_to_return), pretty_print=False, method="html")
 
         if save:
             path = folder+url+name

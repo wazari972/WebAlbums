@@ -105,19 +105,13 @@
     <xsl:if test="$type = 'all' or $type = name(.)">
         <xsl:if test="$style = 'list' or $style = 'multiple'">
           <option>
-            <xsl:attribute name="VALUE"><xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:attribute name="value"><xsl:value-of select="@id"/></xsl:attribute>
             <xsl:if test="@checked = 'true'">
               <xsl:attribute name="selected">selected</xsl:attribute>	  
             </xsl:if>
-
-            [<xsl:value-of select="name(.)"/>] 
-            
-            <xsl:if test="@minor">(</xsl:if>
-            <xsl:value-of select="name"/>
-            <xsl:if test="@minor">)</xsl:if>
+[<xsl:value-of select="name(.)"/>]<xsl:if test="@minor">(</xsl:if><xsl:value-of select="name"/><xsl:if test="@minor">)</xsl:if>
           </option>    
         </xsl:if>      
-
         <xsl:if test="not($style = 'list' or $style = 'multiple')">
           <a>
             <xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>__<xsl:value-of select="name"/></xsl:attribute>
@@ -193,15 +187,9 @@
 	<xsl:if test="/webAlbums/tags">
             <xsl:attribute name="href">Tag<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">__<xsl:value-of select="@id" /></xsl:for-each><xsl:if test=". != '0'">_p<xsl:value-of select="." /></xsl:if><xsl:for-each select="/webAlbums/tags/display/title/tagList/*">__<xsl:value-of select="name" /></xsl:for-each></xsl:attribute>
         </xsl:if>
-        <xsl:if test="name(.) = 'nexti'">
-          Next »
-        </xsl:if>
-        <xsl:if test="name(.) = 'previ'">
-          « Previous
-        </xsl:if>
-        <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')">
-          <xsl:value-of select="." />
-        </xsl:if>
+        <xsl:if test="name(.) = 'nexti'">Next »</xsl:if>
+        <xsl:if test="name(.) = 'previ'">« Previous</xsl:if>
+        <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')"><xsl:value-of select="." /></xsl:if>
     </a>
   </xsl:template>
 
@@ -218,13 +206,8 @@
 		Choix<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>
 	      </xsl:if>
 	    </xsl:attribute>
-
-	    <xsl:if test="/webAlbums/photos/display">
-	      Retour aux Albums
-	    </xsl:if>
-	    <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">
-	      Retour au Choix
-	    </xsl:if>
+	    <xsl:if test="/webAlbums/photos/display">Retour aux Albums</xsl:if>
+	    <xsl:if test="/webAlbums/albums or /webAlbums/tags or /webAlbums/config">Retour au Choix</xsl:if>
 	  </a>
 	</div>
       </div>

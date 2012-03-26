@@ -15,26 +15,10 @@
         <link href="static/design.css"     rel="stylesheet" type="text/css" media="screen" />
         <link href="static/style.css"     rel="stylesheet" type="text/css" media="screen" />
         <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
-        <style type="text/css">          body {
-             <xsl:if test="not(/webAlbums/affichage/@background)">background: #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if>
-             <xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(background<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>.jpg)     fixed no-repeat;</xsl:if>
-          }
-        </style>
+        <style type="text/css">body {<xsl:if test="not(/webAlbums/affichage/@background)">background: #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if><xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(background<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>.jpg) fixed no-repeat;</xsl:if>}</style>
       </head>
       <body>
-        <script type="text/javascript">
-            var directAccess = false
-            <xsl:if test="/webAlbums/affichage/@directAccess">
-                directAccess = true
-                root_path = "<xsl:value-of select="$RootPath" />"
-                photo_folder = "<xsl:value-of select="/webAlbums/affichage/photo_folder" />"
-                mini_folder = "<xsl:value-of select="/webAlbums/affichage/mini_folder" />"
-            </xsl:if>
-            var staticAccess = false
-            <xsl:if test="/webAlbums/affichage/@static">
-                staticAccess = true
-            </xsl:if>
-        </script>
+        <script type="text/javascript"> var directAccess = false; <xsl:if test="/webAlbums/affichage/@directAccess"> directAccess = true; root_path = "<xsl:value-of select="$RootPath" />"; photo_folder = "<xsl:value-of select="/webAlbums/affichage/photo_folder" />"; mini_folder = "<xsl:value-of select="/webAlbums/affichage/mini_folder" />"; </xsl:if> var staticAccess = false; <xsl:if test="/webAlbums/affichage/@static"> staticAccess = true ;</xsl:if></script>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"/>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"/>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"/>
@@ -50,10 +34,7 @@
 	    <ul>
 	      <li><a href="Index" title="Retour aux thèmes">Thème</a></li>
 	      <li>
-                <a title="Choix">
-                    <xsl:attribute name="href">Choix<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if></xsl:attribute>
-                    Choix
-                </a>
+                <a title="Choix"><xsl:attribute name="href">Choix<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if></xsl:attribute>Choix</a>
               </li>
 	    </ul>	
 	  </div>
@@ -74,7 +55,7 @@
                   <li><span id="qos_stars"/></li>
                   <li>Only ? <input id="qos_stars_only" value="1" type="checkbox"/></li>
                   </ul> </li>
-                  <li>Items par page:
+                  <li><span>Items par page:</span>
                     <ul>
                       <li>
                         <select id="nbPhotoAlbum">

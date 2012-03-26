@@ -23,7 +23,9 @@
       <xsl:apply-templates select="page"/>
       <xsl:apply-templates select="photo"/>
       <xsl:apply-templates select="page"/>
-      <xsl:apply-templates select="massEdit"/>
+      <xsl:if test="/webAlbums/loginInfo/@admin">
+        <xsl:apply-templates select="massEdit"/>
+      </xsl:if>
     </form>
   </xsl:template>
 
