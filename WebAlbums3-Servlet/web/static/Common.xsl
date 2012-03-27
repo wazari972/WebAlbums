@@ -179,7 +179,7 @@
   <xsl:template match="prev|next|@nexti|@previ|@first|@last">
     <a>
         <xsl:if test="/webAlbums/photos">
-          <xsl:attribute name="href">Photos__<xsl:value-of select="../url/album" />_p<xsl:value-of select="." />_pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />__<xsl:value-of select="/webAlbums/photos/display/album/title" /></xsl:attribute>
+          <xsl:attribute name="href">Photos__<xsl:value-of select="../url/album" />_p<xsl:value-of select="." /><xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" /></xsl:if>__<xsl:value-of select="/webAlbums/photos/display/album/title" /></xsl:attribute>
 	</xsl:if>
 	<xsl:if test="/webAlbums/albums">
             <xsl:attribute name="href">Albums__p<xsl:value-of select="."/></xsl:attribute>

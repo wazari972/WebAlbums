@@ -241,33 +241,27 @@ public class TagBean implements TagLocal {
             type = 3;
         }
 
-        try {
-            List<Tag> lstT = tagDAO.queryAllowedTagByType(vSession, type);
-            for (Tag enrTag : lstT) {
-                XmlTag tag = new XmlTag();
-                tag.name = enrTag.getNom();
-                tag.id = enrTag.getId();
-                List<TagTheme> lstTT = enrTag.getTagThemeList();
-                Random rand = new Random();
-                //pick up a RANDOM valid picture visible from this theme
-                while (!lstTT.isEmpty()) {
-                    int i = rand.nextInt(lstTT.size());
-                    TagTheme enrTT = lstTT.get(i);
-                    if (enrTT.getPhoto() != null
-                            && (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
-                        tag.picture = new XmlPhotoId(enrTT.getPhoto().getId());
-                        tag.picture.path = enrTT.getPhoto().getPath(true);
-                        break;
-                    } else {
-                        lstTT.remove(i);
-                    }
+        List<Tag> lstT = tagDAO.queryAllowedTagByType(vSession, type);
+        for (Tag enrTag : lstT) {
+            XmlTag tag = new XmlTag();
+            tag.name = enrTag.getNom();
+            tag.id = enrTag.getId();
+            List<TagTheme> lstTT = enrTag.getTagThemeList();
+            Random rand = new Random();
+            //pick up a RANDOM valid picture visible from this theme
+            while (!lstTT.isEmpty()) {
+                int i = rand.nextInt(lstTT.size());
+                TagTheme enrTT = lstTT.get(i);
+                if (enrTT.getPhoto() != null
+                        && (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
+                    tag.picture = new XmlPhotoId(enrTT.getPhoto().getId());
+                    tag.picture.path = enrTT.getPhoto().getPath(true);
+                    break;
+                } else {
+                    lstTT.remove(i);
                 }
-                output.tagList.add(tag);
             }
-        } catch (Exception e) {
-            log.warn(e.getClass().toString(), "{}: {}", new Object[]{e.getClass().getSimpleName(), e});
-
-            output.exception = e.getMessage();
+            output.tagList.add(tag);
         }
         stopWatch.stop();
         return output;
