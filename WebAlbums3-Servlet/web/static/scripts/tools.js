@@ -21,7 +21,8 @@ function loadExernals(btId, url, divId, callback, async) {
     if (async == undefined) {
         async = true
     }
-    $(btId).hide()
+    if (btId != null)
+        $("#"+btId).hide()
     
     $.ajax({
         url:url,

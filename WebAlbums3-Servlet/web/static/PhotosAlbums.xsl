@@ -82,7 +82,7 @@
                 </span>
             </xsl:if>
             <span>&#160;</span>
-            <xsl:if test="/webAblums/infoLogin/@admin">
+            <xsl:if test="/webAlbums/loginInfo/@admin">
                 <span class="edit"><xsl:value-of select="photoId/@id" /></span>
             </xsl:if>
             <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
@@ -95,9 +95,8 @@
                     <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
                     Tags
                 </div>
-                <div>&#160;</div>
             </xsl:if>
-            <xsl:if test="/webAblums/infoLogin/@admin">
+            <xsl:if test="/webAlbums/loginInfo/@admin">
                 <xsl:apply-templates select="user" />
             </xsl:if>
             <div class="options">
@@ -109,7 +108,7 @@
                           <img src="static/images/reduire.gif" width="30px"/>
                         </a>
                     </xsl:if>
-                    <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
+                    <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets or /webAlbums/photos/random)">
                         <span class="exif"> <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>EXIF</span>
                     </xsl:if>
                 </xsl:if>
@@ -119,15 +118,13 @@
                            class="fullscreen"
                            src="static/images/out.png" width="30px">
                             <!-- no url rewritting -->
-                            <xsl:attribute name="rel">
-                                Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=FULLSCREEN
-                            </xsl:attribute>
+                            <xsl:attribute name="rel">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=FULLSCREEN</xsl:attribute>
                         </img>
                     </xsl:if>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
                     <a class="albumTT">
-                      <xsl:attribute name="title"><xsl:value-of select="albumName"/></xsl:attribute>
+                      <xsl:attribute name="title"><xsl:value-of select="albumDate"/> <xsl:value-of select="albumName"/></xsl:attribute>
                       <xsl:attribute name="id">album-target-<xsl:value-of select="@albumId"/></xsl:attribute>
                       <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
                       <img src="static/images/dossier.gif" width="30px"/>
@@ -141,16 +138,16 @@
                         <a class="edit" title="Edition" rel="singlepage[no]">
                           <!-- no url rewritting -->
                           <xsl:if test="/webAlbums/photos">
-                              <xsl:attribute name="href">Photos?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" />&amp;count=<xsl:value-of select="../@count"/>&amp;albmCount=<xsl:value-of select="../../../album/@count" />&amp;album=<xsl:value-of select="../../../album/@id"	/></xsl:attribute>
+                              <xsl:attribute name="href">Photos?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" />&amp;page=<xsl:value-of select="//*/page/@current"/>&amp;albmPage=<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />&amp;album=<xsl:value-of select="../../../album/@id"	/></xsl:attribute>
                           </xsl:if>
                           <xsl:if test="/webAlbums/tags">
-                              <xsl:attribute name="href">Tags?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" /><xsl:for-each select="/webAlbums/tags/display/title/tagList/*">&amp;tagAsked=<xsl:value-of select="photoId/@id" /></xsl:for-each><xsl:if test="/webAlbums/*/page/@current">&amp;page=<xsl:value-of select="/webAlbums/*/page/@current" /></xsl:if></xsl:attribute>
+                              <xsl:attribute name="href">Tags?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" /><xsl:for-each select="/webAlbums/tags/display/title/tagList/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="//*/page/@current" /></xsl:attribute>
                           </xsl:if>
                           <xsl:if test="/webAlbums/albums">
-                              <xsl:attribute name="href">Albums?action=EDIT&amp;id=<xsl:value-of select="../@id" />&amp;count=<xsl:value-of select="../@count"/></xsl:attribute>
+                              <xsl:attribute name="href">Albums?action=EDIT&amp;id=<xsl:value-of select="../@id" />&amp;page=<xsl:value-of select="//*/page/@current" /></xsl:attribute>
                           </xsl:if>
                           <xsl:if test="/webAlbums/carnets">
-                              <xsl:attribute name="href">Carnets?action=EDIT&amp;carnet=<xsl:value-of select="../@id" />&amp;count=<xsl:value-of select="../@count"/></xsl:attribute>
+                              <xsl:attribute name="href">Carnets?action=EDIT&amp;carnet=<xsl:value-of select="../@id" />&amp;page=<xsl:value-of select="../@carnetsPage"/></xsl:attribute>
                           </xsl:if>
                           <img src="static/images/edit.png" height="30px"/>
                         </a>

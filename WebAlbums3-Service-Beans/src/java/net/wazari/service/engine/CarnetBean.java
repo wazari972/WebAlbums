@@ -110,7 +110,6 @@ public class CarnetBean implements CarnetLocal {
             thisPage.carnetsPage = 0;
         EditMode inEditionMode = vSession.getEditionMode();
         Integer page = vSession.getPage();
-        Integer carnetsPage = vSession.getCarnetsPage();
 
         List<Carnet> carnets = null;
         Integer carnetId = vSession.getCarnet();
@@ -140,7 +139,7 @@ public class CarnetBean implements CarnetLocal {
             carnet.date = webPageService.xmlDate(enrCarnet.getDate(), oldDate);
             oldDate = enrCarnet.getDate() ;
             carnet.id = enrCarnet.getId();
-            carnet.carnetsPage = carnetsPage;
+            carnet.carnetsPage = page;
             carnet.name = enrCarnet.getNom();
             if (carnetId != null) {
                 carnet.text = StringUtil.escapeXML(enrCarnet.getText());

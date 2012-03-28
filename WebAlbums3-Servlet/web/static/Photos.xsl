@@ -10,7 +10,6 @@
     <xsl:apply-templates select="photoList"/>
   </xsl:template>
 
-
   <xsl:template match="photoList">
     <form method="post" id="massEditForm">
       <xsl:attribute name="action">

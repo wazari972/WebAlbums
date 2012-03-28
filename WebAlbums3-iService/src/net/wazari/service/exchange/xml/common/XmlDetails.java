@@ -24,6 +24,7 @@ public class XmlDetails {
     @XmlAttribute
     public Integer albumId;
     public String albumName;
+    public String albumDate;
     public XmlPhotoAlbumUser user;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;

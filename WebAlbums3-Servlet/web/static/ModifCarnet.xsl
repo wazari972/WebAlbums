@@ -25,11 +25,7 @@
       <div class="content">
 	<div class="body">
 	  <form method='post'>
-	    <xsl:attribute name="action">Carnets?
-&amp;count=<xsl:value-of select="@count" />
-&amp;carnet=<xsl:value-of select="@id" />
-#<xsl:value-of select="@id" />
-	    </xsl:attribute>
+	    <xsl:attribute name="action">Carnets?&amp;page=<xsl:value-of select="@page" />&amp;carnet=<xsl:value-of select="@id" />#<xsl:value-of select="@id" /></xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="nom">Nom:</label>
 	    <input id="carnetNom" type='text' size='40' maxlength='60' name='nom'
@@ -76,7 +72,7 @@
             </div>
             <div id="wmd-preview" class="wmd-panel wmd-preview carnet_text"></div>
                     <br/>
-	    <input type='button' value='Valider' class="carnetSubmit"/> &#160; 
+	    <input type='submit' value='Valider' class="carnetSubmit"/> &#160; 
             <input type='button' value='Enregistrer' class="carnetSave"/> &#160; 
             <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave2"/> <label for="carnetAutoSave2"> AutoSave</label>&#160; 
             <div class="localsave_info">Saved locally at: <span class="localsave_ts">not saved</span></div>
@@ -91,7 +87,7 @@
 	  <br/>
           <center>
               <a>
-                <xsl:attribute name="href">Carnets?count=<xsl:value-of select="@count"/>&amp;carnet=<xsl:value-of select="@id" /></xsl:attribute>
+                <xsl:attribute name="href">Carnets?page=<xsl:value-of select="@page"/>&amp;carnet=<xsl:value-of select="@id" /></xsl:attribute>
                 Retour au carnet
               </a>
           </center>

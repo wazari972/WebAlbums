@@ -1,6 +1,7 @@
 package net.wazari.view.servlet;
 
 import java.io.IOException;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlAlbums;
+import net.wazari.view.servlet.exchange.xml.XmlReturnTo;
 
 @WebServlet(
     name = "Albums",
@@ -71,6 +73,10 @@ public class Albums extends HttpServlet{
 
             if (action == Action.EDIT) {
                 output.edit = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession, submit);
+                XmlReturnTo returnTo = new XmlReturnTo();
+                returnTo.page = vSession.getPage();
+
+                output.return_to = returnTo ;
             }
         }
 

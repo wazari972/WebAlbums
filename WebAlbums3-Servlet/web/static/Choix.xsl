@@ -58,7 +58,8 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Places of the World
+	<h1>
+           <span>Places of the World</span>
         <xsl:if test="not(/webAlbums/choix/places)">
             <input id="placesLoader" type="button" value="+"/>
         </xsl:if>
@@ -77,7 +78,7 @@
       </div>
       <div class="content">
 	<h1>Photo Aléatoire <input id="randPictLoader" type="button" value="+"/>
-            &#160;
+            <span>&#160;</span>
             <!-- no url rewritting -->
             <a href="Photos?special=RANDOM" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">^</a>
         </h1>
@@ -95,7 +96,7 @@
 	<h1>Aléatoire par Années 
             <xsl:if test="not(/webAlbums/choix/years)">
                 <input id="yearsLoader" type="button" value="+"/>
-                &#160;
+                <span>&#160;</span>
                 <!-- no url rewritting -->
                 <a href="Albums?special=YEARS&amp;nbPerYear=5" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">^</a>
             </xsl:if>

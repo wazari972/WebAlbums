@@ -510,8 +510,10 @@ public class PhotoBean implements PhotoLocal {
                     Box.NONE, enrPhoto.getAlbum().getDate());
             
             details.albumId = enrPhoto.getAlbum().getId();
-            if (rq.type == TypeRequest.TAG)
+            if (rq.type == TypeRequest.TAG) {
                 details.albumName = enrPhoto.getAlbum().getNom();
+                details.albumDate = enrPhoto.getAlbum().getDate();
+            }
             details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager()
@@ -593,6 +595,8 @@ public class PhotoBean implements PhotoLocal {
         if (vSession.directFileAccess())
             details.photoId.path = enrPhoto.getPath(true) ;
         details.description = enrPhoto.getDescription();
+        details.albumName = enrPhoto.getAlbum().getNom();
+        details.albumDate = enrPhoto.getAlbum().getDate();
         //tags de cette photo
         details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, 
                              enrPhoto, Box.NONE, enrPhoto.getAlbum().getDate());

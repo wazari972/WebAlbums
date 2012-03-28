@@ -23,6 +23,7 @@ public class XmlAlbums {
     public XmlAlbumGraph graph;
     public XmlAlbumSelect select;
     public XmlAlbumEdit edit;
+    public XmlReturnTo return_to;
     public XmlAlbumDisplay display;
     public XmlAlbumAbout about;
     public XmlAlbums(){}

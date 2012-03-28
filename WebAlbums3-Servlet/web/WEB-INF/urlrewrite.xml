@@ -82,7 +82,7 @@
     <!--  CARNETS -->
     <rule>
         <from>^/Carnet__([0-9]+)_pc([0-9]*)__.*$</from>
-        <to >Carnets?carnet=$1&amp;carnetsPage=$2</to>
+        <to >Carnets?carnet=$1&amp;page=$2</to>
     </rule>
     <rule>
         <from>^/Carnets__p([0-9]*)$</from>

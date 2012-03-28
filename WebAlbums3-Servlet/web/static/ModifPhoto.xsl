@@ -17,8 +17,8 @@
       </div>
       <div class="content">
 	<div class="body">
-	  <form method='POST'>
-	    <xsl:attribute name="ACTION">
+	  <form method='post'>
+	    <xsl:attribute name="action">
 	      <xsl:call-template name="get_validate_addr" />
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />

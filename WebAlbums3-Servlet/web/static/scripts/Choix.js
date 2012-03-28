@@ -113,7 +113,7 @@ function init_loader() {
         loadExernals(null, 'Albums?special=YEARS', 'years') ;
     }) ;
 
-    $("#selectLoader").click(function () {
+    $("#selectLoader").click(function () {        
         loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
     }) ;
     

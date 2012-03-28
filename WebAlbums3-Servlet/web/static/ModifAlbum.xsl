@@ -10,20 +10,16 @@
 	<div class="body">
 	  <center>
 	    <img>
-	      <xsl:attribute name="src">Miniature__<xsl:value-of select="@picture" />.png</xsl:attribute>
+	      <xsl:attribute name="src">Miniature__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
 	    </img>
 	  </center>
 	</div>
       </div>
       <div class="content">
 	<div class="body">
-	  <form method='POST'>
-	    <xsl:attribute name="ACTION">Albums?
-&amp;count=<xsl:value-of select="@count" />
-&amp;id=<xsl:value-of select="@id" />
-#<xsl:value-of select="@id" />
-	    </xsl:attribute>
-	    <input type='hidden' name='action' value='SUBMIT' />
+	  <form method="post">
+	    <xsl:attribute name="action">Albums?&amp;page=<xsl:value-of select="/webAlbums/albums/return_to/page" />&amp;id=<xsl:value-of select="@id" />#<xsl:value-of select="@id" /></xsl:attribute>
+	    <input type='hidden' name='action' value='submit' />
 	    <label for="nom">Nom:</label>
 	    <input id="nom" type='text' size='40' maxlength='60' name='nom'
                    placeholder="Titre ..." required="true">
@@ -71,7 +67,7 @@
 	  <br/>
           <center>
               <a>
-                <xsl:attribute name="href">Albums?count=<xsl:value-of select="@count"/>#<xsl:value-of select="@id" /></xsl:attribute>
+                <xsl:attribute name="href">Albums?&amp;page=<xsl:value-of select="/webAlbums/albums/return_to/page" />&amp;id=<xsl:value-of select="@id" />#<xsl:value-of select="@id" /></xsl:attribute>
                 Retour aux albums
               </a>
           </center>

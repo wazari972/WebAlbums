@@ -85,8 +85,6 @@ function loadSinglePage(url, dont_scroll, force) {
         return ;
     }
 
-    var left = $("#left") ;
-
     inPlaceSinglePage = $.trim(url) ;
 
     
@@ -121,10 +119,10 @@ function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {
 
         var newPage = xsl_proc.transformToFragment (xml_doc, document);
         var newLeft = $(Node_getElementById(newPage, "left"))
-        var parent = left.parent() ;
+
         left.after(newLeft)
-        newLeft.show()
         left.remove()
+        newLeft.show()
         left = newLeft ;
         
     } else {

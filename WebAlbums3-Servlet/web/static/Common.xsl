@@ -109,7 +109,7 @@
             <xsl:if test="@checked = 'true'">
               <xsl:attribute name="selected">selected</xsl:attribute>	  
             </xsl:if>
-[<xsl:value-of select="name(.)"/>]<xsl:if test="@minor">(</xsl:if><xsl:value-of select="name"/><xsl:if test="@minor">)</xsl:if>
+            [<xsl:value-of select="name(.)"/>]<xsl:if test="@minor">(</xsl:if><xsl:value-of select="name"/><xsl:if test="@minor">)</xsl:if>
           </option>    
         </xsl:if>      
         <xsl:if test="not($style = 'list' or $style = 'multiple')">
@@ -122,42 +122,25 @@
             <xsl:value-of select="name"/>
             <xsl:if test="@minor">)</xsl:if>
           </a>
-          <xsl:if test="position() != last()">, </xsl:if>
-          <xsl:if test="position() = last() and name(.) = 'who' and (count(../what)!= 0 or count(../where) != 0)">, </xsl:if>
-          <xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">,  </xsl:if>      
+          <xsl:if test="position() != last()">, </xsl:if><xsl:if test="position() = last() and name(.) = 'who' and (count(../what)!= 0 or count(../where) != 0)">, </xsl:if><xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">,  </xsl:if>      
         </xsl:if>
         </xsl:if>
     </xsl:if>
   </xsl:template>
 
   <xsl:template match="exception">
-    <b><xsl:value-of select="."/></b><BR/>
+    <b><xsl:value-of select="."/></b><br/>
   </xsl:template>
   <xsl:template match="message">
-    <i><xsl:value-of select="."/></i><BR/>
+    <i><xsl:value-of select="."/></i><br/>
   </xsl:template>
   
   <xsl:template name="get_validate_addr">
-    <xsl:param name="to_add"></xsl:param>
-    
-    <xsl:if test="../return_to/name = 'Photos'">
-<xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
-&amp;id=<xsl:value-of select="@id" />
-&amp;count=<xsl:value-of select="../return_to/count" />
-&amp;album=<xsl:value-of select="../return_to/album" />
-&amp;albmCount=<xsl:value-of select="../return_to/albmCount" />
-#<xsl:value-of select="@id" />
-   </xsl:if>
-   <xsl:if test="../return_to/name = 'Tags'">
-<xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />
-&amp;page=<xsl:value-of select="../return_to/page" />
-<xsl:for-each select="../return_to/tagsAsked">
-&amp;tagAsked=<xsl:value-of select="." />
-</xsl:for-each>
-#<xsl:value-of select="id" />
-   </xsl:if>
- </xsl:template>
-
+    <xsl:param name="to_add"></xsl:param>    
+    <xsl:if test="../return_to/name = 'Photos'"><xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />&amp;id=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../return_to/page" />&amp;album=<xsl:value-of select="../return_to/album" />&amp;albmPage=<xsl:value-of select="../return_to/albmPage" />#<xsl:value-of select="@id" /></xsl:if>
+    <xsl:if test="../return_to/name = 'Tags'"><xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />&amp;page=<xsl:value-of select="../return_to/page" /><xsl:for-each select="../return_to/tagsAsked">&amp;tagAsked=<xsl:value-of select="." /></xsl:for-each>#<xsl:value-of select="id" /></xsl:if>
+  </xsl:template>
+  
   <xsl:template match="page">
     <div class="item">
       <div class="body">
