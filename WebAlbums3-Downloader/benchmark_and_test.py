@@ -3,7 +3,9 @@ from lxml import etree
 import tools
 import timeit
 
-DO_SAVE = True
+DO_SAVE = False
+DO_STATIC = True
+DO_BENCHMARK_ONLY = True
 
 class Difference(Exception):
     def __init__(self, url, name, ref, cur):
@@ -14,6 +16,8 @@ class Difference(Exception):
         
 
 def treat(xml, url, name):
+    if DO_BENCHMARK_ONLY:
+        return False
     path = tools.get_current_target_folder()+url+name+".xml"
     xml.find("time").text = "nothing"
     years = xml.find("*/years")
@@ -57,6 +61,6 @@ def compute():
 
 time = timeit.Timer(compute).timeit(1)
 with open("benchmark.log", "a+") as f:
-    string = "save? %s -- %d" % (DO_SAVE, time)
+    string = "save? %s -- %d ; static? %s, benchmark_only ? %s" % (DO_SAVE, time, DO_STATIC, DO_BENCHMARK_ONLY)
     print string
     f.write(string+"\n")

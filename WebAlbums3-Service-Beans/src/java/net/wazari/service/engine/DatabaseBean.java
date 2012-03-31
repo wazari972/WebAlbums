@@ -24,7 +24,6 @@ import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
-import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.database.XmlDatabaseCheck;
 import net.wazari.service.exchange.xml.database.XmlDatabaseDefault;

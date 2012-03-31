@@ -146,7 +146,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
 #######  COMMON ########################
 ########################################
 
-def login(user, paswd, save_index=True):
+def login(user, paswd, save_index=True, do_static=True):
     global headers
     data = dict(userName=user, userPass=paswd)
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
@@ -154,7 +154,7 @@ def login(user, paswd, save_index=True):
     headers = {'Cookie': response['set-cookie']}
     data = dict(themeId=9)
     get_XSLT()
-    get_index(save=False)
+    get_index(save=False, do_static=do_static)
     
 def get_choix(themeId, name="", make_index=False, want_static=True, want_background=True):
     global theme
@@ -167,8 +167,8 @@ def get_choix(themeId, name="", make_index=False, want_static=True, want_backgro
         get_static()
     return choix
 
-def get_index(full=False, save=False):
-    return get_a_page("index.html", full=full, save=save)
+def get_index(full=False, save=False, do_static=False):
+    return get_a_page("index.html" if do_static else "Index", full=full, save=save)
     
 def get_background(themeId, name):
     get_a_page("background__%s__%s.jpg" % (themeId, name), parse_and_transform=False)
