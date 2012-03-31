@@ -72,8 +72,6 @@ public class AlbumBean implements AlbumLocal {
     @EJB
     private UtilisateurFacadeLocal userDAO;
     @EJB
-    private PhotoFacadeLocal photoDAO;
-    @EJB
     private WebPageLocal webPageService;
     @EJB 
     private FilesFinder finder;
@@ -166,8 +164,6 @@ public class AlbumBean implements AlbumLocal {
                Restriction.THEME_ONLY, AlbumFacadeLocal.TopFirst.FIRST, bornes);
         }
         
-        String oldDate = null ;
-        
         XmlAlbumList output = new XmlAlbumList(albums.subset.size()) ;
         for(Album enrAlbum : albums.subset) {
             XmlAlbum album = new XmlAlbum();
@@ -176,8 +172,7 @@ public class AlbumBean implements AlbumLocal {
                 album.submit = submit ;
             }
 
-            album.date = webPageService.xmlDate(enrAlbum.getDate(), oldDate);
-            oldDate = enrAlbum.getDate() ;
+            album.date = webPageService.xmlDate(enrAlbum.getDate());
             album.id = enrAlbum.getId();
             album.title = enrAlbum.getNom();
 
@@ -194,7 +189,7 @@ public class AlbumBean implements AlbumLocal {
                     album.carnet = new ArrayList(enrAlbum.getCarnetList().size()) ;
                 
                 XmlCarnet carnet = new XmlCarnet();
-                carnet.date = webPageService.xmlDate(enrCarnet.getDate(), null);
+                carnet.date = webPageService.xmlDate(enrCarnet.getDate());
                 carnet.id = enrCarnet.getId();
                 carnet.name = enrCarnet.getNom();
                 if (enrCarnet.getPicture() != null) {
@@ -446,7 +441,7 @@ public class AlbumBean implements AlbumLocal {
         about.album = new XmlAlbum() ;
         about.album.id = enrAlbum.getId() ;
         about.album.title = enrAlbum.getNom() ;
-        about.album.date = webPageService.xmlDate(enrAlbum.getDate(), null);
+        about.album.date = webPageService.xmlDate(enrAlbum.getDate());
         about.album.details = new XmlDetails() ;
         if (enrAlbum.getPicture() != null) {
             about.album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;

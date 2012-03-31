@@ -74,7 +74,7 @@ public interface WebPageLocal {
     XmlAffichage xmlAffichage(ViewSession vSession) ;
 
     @PermitAll
-    XmlDate xmlDate(String strNewDate, String strOldDate) ;
+    XmlDate xmlDate(String strNewDate) ;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     void populateEntities();

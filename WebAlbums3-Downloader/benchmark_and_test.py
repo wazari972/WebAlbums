@@ -3,7 +3,7 @@ from lxml import etree
 import tools
 import timeit
 
-DO_SAVE = False
+DO_SAVE = True
 
 class Difference(Exception):
     def __init__(self, url, name, ref, cur):
@@ -52,7 +52,7 @@ tools.fail = fail
 tools.TARGET_PATH = "./test-ref"
 
 def compute():
-    tools.login("kevin", "", save_index=False)
+    tools.login("kevin", "", save_index=False, do_static=DO_STATIC)
     tools.get_a_theme(5, "Martinique", want_static=False, want_background=False)
 
 time = timeit.Timer(compute).timeit(1)

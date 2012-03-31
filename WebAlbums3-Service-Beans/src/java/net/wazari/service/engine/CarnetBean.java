@@ -134,7 +134,7 @@ public class CarnetBean implements CarnetLocal {
         for(Carnet enrCarnet : carnets) {
             XmlCarnet carnet = new XmlCarnet();
 
-            carnet.date = webPageService.xmlDate(enrCarnet.getDate(), oldDate);
+            carnet.date = webPageService.xmlDate(enrCarnet.getDate());
             oldDate = enrCarnet.getDate() ;
             carnet.id = enrCarnet.getId();
             carnet.carnetsPage = page;

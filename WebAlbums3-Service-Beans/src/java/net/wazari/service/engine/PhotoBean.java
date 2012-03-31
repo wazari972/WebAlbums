@@ -269,14 +269,14 @@ public class PhotoBean implements PhotoLocal {
         album.id = enrAlbum.getId();
         album.title = enrAlbum.getNom();
         album.droit = enrAlbum.getDroit().getNom();
-        album.date = webPageService.xmlDate(enrAlbum.getDate(), null);
+        album.date = webPageService.xmlDate(enrAlbum.getDate());
         
         for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
             if (album.carnet == null)
                 album.carnet = new ArrayList(enrAlbum.getCarnetList().size()) ;
 
             XmlCarnet carnet = new XmlCarnet();
-            carnet.date = webPageService.xmlDate(enrCarnet.getDate(), null);
+            carnet.date = webPageService.xmlDate(enrCarnet.getDate());
             carnet.id = enrCarnet.getId();
             carnet.name = enrCarnet.getNom();
             if (enrCarnet.getPicture() != null) {

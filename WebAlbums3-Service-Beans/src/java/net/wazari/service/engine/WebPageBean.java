@@ -69,6 +69,8 @@ public class WebPageBean implements WebPageLocal {
     @EJB
     private ThemeFacadeLocal themeDAO;
 
+    private static final SimpleDateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+    
     private static final long serialVersionUID = -8157612278920872716L;
     private static final Logger log = LoggerFactory.getLogger(WebPageBean.class.getName());
 
@@ -483,10 +485,10 @@ public class WebPageBean implements WebPageLocal {
             Box box, String date)
             throws WebAlbumsServiceException {
         XmlWebAlbumsList lst = displayListIBTN(mode, vSession, entity, box, null);
-        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+        
         Date ref;
         try {
-            ref = parser.parse(date);
+            ref = inputDate.parse(date);
         } catch (ParseException ex) {
             log.warn("Invalid date provided: {}", date);
             return lst;
@@ -499,7 +501,7 @@ public class WebPageBean implements WebPageLocal {
         for (XmlWebAlbumsTagWho person: lst.who) {
             if (person.birthdate != null) {
                 try {
-                    Date birth = parser.parse(person.birthdate);
+                    Date birth = inputDate.parse(person.birthdate);
                     dob.setTime(birth);
                     age = day.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
                     if (day.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))  
@@ -553,47 +555,26 @@ public class WebPageBean implements WebPageLocal {
         userDAO.newUser(4, UserLocal.USER_PUBLIC);
     }
 
-    private static final SimpleDateFormat annee = new SimpleDateFormat("yyyy");
-    private static final SimpleDateFormat mois = new SimpleDateFormat("MMMM");
-    private static final SimpleDateFormat jour = new SimpleDateFormat("dd");
+    private static final SimpleDateFormat year = new SimpleDateFormat("yyyy");
+    private static final SimpleDateFormat month = new SimpleDateFormat("MMMM");
+    private static final SimpleDateFormat day = new SimpleDateFormat("dd");
 
 
-    public XmlDate xmlDate(String strNewDate, String strOldDate) {
-        XmlDate temps = new XmlDate();
+    public XmlDate xmlDate(String strDate) {
+        XmlDate date = new XmlDate();
+        Date newDate ;
         try {
-            Date newDate = new SimpleDateFormat("yyyy-MM-dd").parse(strNewDate);
-
-            if (strOldDate == null) {
-                temps.year = annee.format(newDate);
-                temps.month = mois.format(newDate);
-                temps.day = jour.format(newDate);
-            } else {
-                Date oldDate = new SimpleDateFormat("yyyy-MM-dd").parse(strOldDate);
-
-                if (!annee.format(oldDate).equals(annee.format(newDate))) {
-                    temps.year = annee.format(newDate);
-                    temps.month = mois.format(newDate);
-                    temps.day = jour.format(newDate);
-                } else if (!mois.format(oldDate).equals(mois.format(newDate))) {
-
-                    temps.month = mois.format(newDate);
-                    temps.day = jour.format(newDate);
-
-                    // 1 jour = 86 400 secondes
-                } else if (!jour.format(oldDate).equals(jour.format(newDate))) {
-                    temps.day = jour.format(newDate);
-
-                } else {
-                    //nothing to display
-                }
-            }
-        } catch (Exception e) {
-            temps.year = "x";
-            temps.month = "xx";
-            temps.day = "xx";
+            newDate = inputDate.parse(strDate);
+        } catch(ParseException e) {
+            log.warn("Invalid date: {}", strDate);
+            return null;
         }
 
-        return temps;
+        date.year = year.format(newDate);
+        date.month = month.format(newDate);
+        date.day = day.format(newDate);
+        
+        return date;
     }
     
 }
