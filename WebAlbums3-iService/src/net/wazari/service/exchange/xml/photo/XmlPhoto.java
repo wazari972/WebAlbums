@@ -19,10 +19,8 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWh
 public class XmlPhoto extends XmlInfoException {
     public XmlPhotoSubmit submit;
     @XmlAttribute
-    public boolean checked;
+    public Boolean checked;
     public XmlDetails details;
-    @XmlAttribute
-    public int count;
     public XmlPhotoExif exif;
     public XmlWebAlbumsTagWho author;
 }
