@@ -3,9 +3,9 @@ function selectAll() {
     $(".massedit_chkbox").each(function() {
         $(this).prop('checked', select); 
     });
-    var bt = $("#massedit_selectall") ;
-    if (select) bt.prop('value',"Aucune");
-    else bt.prop('value',"Toutes");
+    var bt = $(this) ;
+    if (select) bt.attr('value',"Aucune");
+    else bt.attr('value',"Toutes");
     select = !select ;
     check_massedit()
 }

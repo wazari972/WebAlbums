@@ -106,7 +106,11 @@ function init_loader() {
     }) ;
 
     $("#randPictLoader").click(function () {
-        loadExernals(null, 'Photos?special=RANDOM', 'randPict') ;
+        function refresh() {
+            refresh_details()
+            refresh_editionMode()
+        }
+        loadExernals(null, 'Photos?special=RANDOM', 'randPict', refresh) ;
     }) ;
 
     $("#yearsLoader").click(function () {

@@ -49,10 +49,8 @@
 	<div class="body">
 	  <xsl:apply-templates select="message"/>
 	  <input type='hidden' name='action' value='MASSEDIT' />	  
+          <input type='button' class="edit edit_visible massedit_selectall" value="Toutes"/>
 	  <table class="massedit_box">
-	    <tr><td colspan='2'>
-		<input type='button' class="massedit_selectall" value="Toutes"/>
-	    </td></tr>
 	    <tr>
 	      <td><input id="turnRight" type='radio' name='turn' value='RIGHT'/></td>
 	      <td><label for="turnRight">Tourner vers la droite</label></td>
@@ -71,7 +69,7 @@
 		  <xsl:with-param name="name">addTag</xsl:with-param>
 		  <xsl:with-param name="id">massTagList</xsl:with-param>
                   <xsl:with-param name="mode">TAG_USED</xsl:with-param>
-                  <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
+                  <xsl:with-param name="mode2">TAG_NEVER_EVER</xsl:with-param>
                   <xsl:with-param name="incMinor">true</xsl:with-param>
 		</xsl:apply-templates>
 	      </td>

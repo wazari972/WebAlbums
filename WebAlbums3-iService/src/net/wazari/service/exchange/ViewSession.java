@@ -24,21 +24,15 @@ public interface ViewSession extends ServiceSession {
         TRUNK, EXPORT, CHECK_DB, CHECK_FS, STATS, PLUGINS, RELOAD_PLUGINS, CREATE_DIRS, SAVE_CONFIG, RELOAD_CONFIG, PRINT_CONFIG
     ,   MODMINOR}
 
-    enum EditMode {
-        VISITE, NORMAL, EDITION
-    }
-
     enum Box {
         NONE, MULTIPLE, LIST, MAP, MAP_SCRIPT
     }
 
     enum Mode {
-        TAG_USED, TAG_NUSED, TAG_ALL, TAG_NEVER, TAG_GEO
+        TAG_USED, TAG_NUSED, TAG_ALL, TAG_NEVER, TAG_NEVER_EVER, TAG_GEO
     }
 
     boolean getCompleteChoix();
-    
-    EditMode getEditionMode();
 
     Special getSpecial();
 

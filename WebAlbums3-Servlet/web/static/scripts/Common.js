@@ -26,10 +26,10 @@ function init_photoalbum_size() {
         $.post("Albums?special=PHOTOALBUM_SIZE", 
             {photoAlbumSize : $(this).val()},
             function(data) {
-                    if (loadSinglePage != undefined) {
-                        loadSinglePage(getCurrentPage(), true, true)
-                    } else
-                        alert("Please reload the page to refresh")
+                if (loadSinglePage != undefined) {
+                    loadSinglePage(getCurrentPage(), true, true)
+                } else
+                    alert("Please reload the page to refresh")
             }
          );
     })
@@ -57,6 +57,7 @@ function refresh_editionMode() {
     $("#mode_edition").text(value)
     if (value == 'VISITE') {
         $(".edit").hide()
+        $(".edit_visible").hide()
     } else if (value == 'EDITION') {
         
     } else
@@ -70,11 +71,13 @@ function body_mouseenter() {
 
 function body_mouseleave() {
     $(this).find(".edit").hide()
+    $(this).find(".edit_visible").show()
 }
 
 function do_init_mouse_hover() {
     $(".details").hover(body_mouseenter, body_mouseleave)
     $(".edit").hide()
+    $(".edit_visible").show()
 }
 
 function init_mouse_hover() {

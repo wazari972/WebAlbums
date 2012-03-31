@@ -92,10 +92,9 @@ public class UserBean implements UserLocal {
         log.info( "saveUser ({}-{})", new Object[]{enrUtil.getNom(), enrUtil.getId()});
         vSession.setUser(enrUtil);
 
-        log.info( "saveProperties (manager={}, editionMode={}, rootSession={})",
-                new Object[]{asThemeManager, ViewSession.EditMode.EDITION, isRootSession});
+        log.info( "saveProperties (manager={}, rootSession={})",
+                new Object[]{asThemeManager, isRootSession});
         vSession.setSessionManager(asThemeManager);
-        vSession.setEditionMode(ViewSession.EditMode.EDITION);
         vSession.setRootSession(isRootSession);
 
         log.info( "saveTheme ({})", enrTheme);
@@ -109,7 +108,6 @@ public class UserBean implements UserLocal {
     public void cleanUpSession(ViewSessionLogin vSession) {
         vSession.setUser(null);
         vSession.setSessionManager(null);
-        vSession.setEditionMode(null);
         vSession.setRootSession(null);
         vSession.setTheme(null);
     }

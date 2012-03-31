@@ -27,9 +27,7 @@ public interface ViewSessionLogin extends ViewSession {
     Principal getUserPrincipal();
 
     void login(String user, String passwd);
-
-    void setEditionMode(EditMode editMode);
-
+    
     String getUserName();
 
     String getUserPass();

@@ -64,12 +64,15 @@ function reloadSinglePage(event) {
     }
 }
 
-function loadSinglePage(url, dont_scroll, force) {
+function loadSinglePage(url, dont_scroll, force, async) {
     if (dont_scroll == undefined)
         dont_scroll = false
     
     if (force == undefined)
         force = false
+    
+    if (async == undefined)
+        async = false
     
     if (url == undefined) {
         url = getCurrentPage() ;
@@ -77,7 +80,11 @@ function loadSinglePage(url, dont_scroll, force) {
         if (pos != -1) {
             url = url.substring(0, pos) ;
         }
-
+    }
+    
+    //remove itermediate #s
+    if (url.indexOf("#") != url.lastIndexOf("#")) {
+        url = url.substring(0, url.indexOf("#")) + url.substring(url.lastIndexOf("#"))
     }
     inPlaceSinglePage_lock = 1 ;
 
@@ -100,7 +107,7 @@ function loadSinglePage(url, dont_scroll, force) {
                 500: function() {alert('Glassfish error ...');},
 		404: function() {alert('page not found');}
         },
-        async:true
+        async:async
     });
 }
 

@@ -27,7 +27,6 @@ import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.CarnetLocal;
 import net.wazari.service.exchange.ViewSession.Box;
@@ -108,7 +107,6 @@ public class CarnetBean implements CarnetLocal {
         thisPage.carnetsPage = vSession.getCarnetsPage() ;
         if (thisPage.carnetsPage == null)
             thisPage.carnetsPage = 0;
-        EditMode inEditionMode = vSession.getEditionMode();
         Integer page = vSession.getPage();
 
         List<Carnet> carnets = null;
@@ -169,9 +167,7 @@ public class CarnetBean implements CarnetLocal {
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager()) {
-                if (inEditionMode != EditMode.VISITE) {
-                    details.user = new XmlPhotoAlbumUser(enrCarnet.getDroit().getNom(), null);
-                }
+                details.user = new XmlPhotoAlbumUser(enrCarnet.getDroit().getNom(), null);
             }
             carnet.details = details ;
 

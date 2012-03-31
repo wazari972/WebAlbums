@@ -14,7 +14,7 @@
             <img>
                 <xsl:attribute name="class">fastedit_stars</xsl:attribute>
                 <xsl:attribute name="rel">
-                    <xsl:value-of select="photoId" />/<xsl:value-of select="$count" />
+                    <xsl:value-of select="$photoId" />/<xsl:value-of select="$count" />
                 </xsl:attribute>
                 <xsl:if test="$count > $stars">
                     <xsl:attribute name="src">static/images/star.off.png</xsl:attribute>
@@ -47,7 +47,7 @@
                       <xsl:attribute name="href"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoId/text()" /></xsl:attribute>
                   </xsl:if>
                   <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                      <xsl:attribute name="href">Photo__<xsl:value-of select="photoId/@id" />.png</xsl:attribute>
+                      <xsl:attribute name="href">Image__<xsl:value-of select="photoId/@id" /></xsl:attribute>
                   </xsl:if>
               </xsl:if>
               
@@ -85,17 +85,6 @@
             <xsl:if test="/webAlbums/loginInfo/@admin">
                 <span class="edit"><xsl:value-of select="photoId/@id" /></span>
             </xsl:if>
-            <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                <div class="fastedit_bt fastedit_desc_bt edit">
-                    <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
-                     Descr
-                </div>
-                <div class="fastedit_bt edit">&#160;||&#160;</div>
-                <div class="fastedit_bt fastedit_tag_bt edit">
-                    <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
-                    Tags
-                </div>
-            </xsl:if>
             <xsl:if test="/webAlbums/loginInfo/@admin">
                 <xsl:apply-templates select="user" />
             </xsl:if>
@@ -124,7 +113,7 @@
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
                     <a class="albumTT">
-                      <xsl:attribute name="title"><xsl:value-of select="albumDate"/> <xsl:value-of select="albumName"/></xsl:attribute>
+                      <xsl:attribute name="title"><xsl:value-of select="albumDate"/>&#160;<xsl:value-of select="albumName"/></xsl:attribute>
                       <xsl:attribute name="id">album-target-<xsl:value-of select="@albumId"/></xsl:attribute>
                       <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
                       <img src="static/images/dossier.gif" width="30px"/>
@@ -151,32 +140,30 @@
                           </xsl:if>
                           <img src="static/images/edit.png" height="30px"/>
                         </a>
+                        <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
+                            <div class="fastedit_bt fastedit_desc_bt edit">
+                                <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                 Descr
+                            </div>
+                            <div class="fastedit_bt edit">&#160;||&#160;</div>
+                            <div class="fastedit_bt fastedit_tag_bt edit">
+                                <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                Tags
+                            </div>
+                        </xsl:if>
                     </xsl:if>
-                    <xsl:if test="not(/webAlbums/albums)">
+                    <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
                         <div class="stars">
                             <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" /></xsl:attribute>
                             <xsl:call-template name="for-stars-loop">
                               <xsl:with-param name="count" select="5"/>
                               <xsl:with-param name="stars" select="@stars"/>
-                              <xsl:value-of name="stars" select="photoId/@id" />
+                              <xsl:with-param name="photoId" select="photoId/@id" />
                             </xsl:call-template>
+                            <span>
+                                <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" />_message</xsl:attribute>
+                            </span>
                         </div>
-                        <xsl:if test="/webAlbums/loginInfo/@admin">
-                            <span class="edit">
-                                <div class="fastedit">
-                                    <xsl:attribute name="id">fastedit_div_stars_<xsl:value-of select="photoId/@id" /></xsl:attribute>
-                                    <xsl:attribute name="rel"><xsl:value-of select="@stars" /></xsl:attribute>
-                                     <p>
-                                          <input name="stars" type='button' value="-" class="fastedit_stars_dec">
-                                              <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
-                                          </input>
-                                          <input name="stars" type='button' value="+" class="fastedit_stars_inc">
-                                              <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
-                                          </input>
-                                      </p>
-                               </div>
-                           </span>
-                       </xsl:if>
                     </xsl:if>
                     <xsl:apply-templates select="tagList">
                       <xsl:with-param name="style">none</xsl:with-param>
@@ -193,7 +180,7 @@
                                             <xsl:with-param name="style">list</xsl:with-param>
                                             <xsl:with-param name="id">fastedit_tag_<xsl:value-of select="photoId/@id" /></xsl:with-param>
                                             <xsl:with-param name="mode">TAG_USED</xsl:with-param>
-                                            <xsl:with-param name="mode2">TAG_NEVER</xsl:with-param>
+                                            <xsl:with-param name="mode2">TAG_NEVER_EVER</xsl:with-param>
                                             <xsl:with-param name="incMinor">true</xsl:with-param>
                                         </xsl:apply-templates><br/>           
                                         <input value="+" type="button" class="fastedit_addtag">

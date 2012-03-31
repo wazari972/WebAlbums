@@ -19,7 +19,6 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.xml.common.XmlDate;
@@ -64,9 +63,6 @@ public interface WebPageLocal {
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlWebAlbumsList displayMapInScript(ViewSession vSession) throws WebAlbumsServiceException;
-
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
-    EditMode getNextEditionMode(ViewSession vSession);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlPage xmlPage(XmlFrom from, Bornes bornes) ;

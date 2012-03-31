@@ -35,7 +35,6 @@ import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
@@ -372,7 +371,6 @@ public class PhotoBean implements PhotoLocal {
             throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayPhoto."+rq.type, log) ;
 
-        EditMode inEditionMode = vSession.getEditionMode();
         Integer page = vSession.getPage();
         Integer photoId = vSession.getId();
         
@@ -425,8 +423,7 @@ public class PhotoBean implements PhotoLocal {
 
         XmlPhotoList output = new XmlPhotoList(lstP.subset.size()) ;
         Turn turn = null;
-        if (vSession.isSessionManager()
-                && inEditionMode == EditMode.EDITION) {
+        if (vSession.isSessionManager()) {
             try {
                 Action action = vSession.getAction();
                 if (Action.MASSEDIT == action) {
@@ -494,8 +491,7 @@ public class PhotoBean implements PhotoLocal {
                     submitted = true ;
                 }
             }
-            if (vSession.isSessionManager()
-                    && inEditionMode == EditMode.EDITION) {
+            if (vSession.isSessionManager()) {
                 if ((reSelect || reSelectThis) && current) {
                     photo.checked = true ;
                 }
@@ -516,8 +512,7 @@ public class PhotoBean implements PhotoLocal {
             }
             details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
-            if (vSession.isSessionManager()
-                    && inEditionMode != EditMode.VISITE) {
+            if (vSession.isSessionManager()) {
                 String name;
                 boolean outside;
                 Utilisateur enrUser = userDAO.find(enrPhoto.getDroit());
@@ -549,12 +544,11 @@ public class PhotoBean implements PhotoLocal {
             output.submit = submit ;
         }
 
-        if (vSession.isSessionManager()
-                && inEditionMode == EditMode.EDITION) {
+        if (vSession.isSessionManager()) {
             XmlPhotoMassEdit massEdit = new XmlPhotoMassEdit();
             massEdit.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession,
                     Box.LIST, "newTag");
-            massEdit.tag_never = webPageService.displayListBN(Mode.TAG_NEVER, vSession,
+            massEdit.tag_never = webPageService.displayListBN(Mode.TAG_NEVER_EVER, vSession,
                     Box.LIST, "newTag");
             if (massEditParam) {
                 String msg;

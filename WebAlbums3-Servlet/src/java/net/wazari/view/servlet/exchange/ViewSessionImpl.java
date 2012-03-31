@@ -24,7 +24,6 @@ import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession.Action;
-import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionSession;
@@ -213,17 +212,6 @@ public class ViewSessionImpl implements
     @Override
     public void setUser(Utilisateur enrUser) {
         setSessionObject("user", enrUser);
-    }
-
-    /** ** **/
-    @Override
-    public EditMode getEditionMode() {
-        return getSessionObject("editionMode", EditMode.class);
-    }
-
-    @Override
-    public void setEditionMode(EditMode editMode) {
-        setSessionObject("editionMode", editMode);
     }
 
     /** ** **/

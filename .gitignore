@@ -9,3 +9,4 @@ private.xml
 WebAlbums3-Servlet/nbproject/private
 *~
 WebAlbums3-Downloader/static/
+*.pyc

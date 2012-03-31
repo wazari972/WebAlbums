@@ -32,7 +32,6 @@ import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.util.google.GooglePoint;
 import net.wazari.service.util.google.GooglePoint.Point;
@@ -91,22 +90,6 @@ public class WebPageBean implements WebPageLocal {
            je.printStackTrace();
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
-    }
-
-    @Override
-    public EditMode getNextEditionMode(ViewSession vSession) {
-        EditMode editionMode = vSession.getEditionMode();
-        EditMode next;
-        if (editionMode == EditMode.VISITE) {
-            next = EditMode.NORMAL;
-        } else if (editionMode == EditMode.NORMAL) {
-            next = EditMode.EDITION;
-        } else if (editionMode == EditMode.EDITION) {
-            next = EditMode.VISITE;
-        } else {
-            next = EditMode.NORMAL;
-        }
-        return next;
     }
 
     //try to get the 'asked' element
@@ -294,10 +277,10 @@ public class WebPageBean implements WebPageLocal {
                 log.info( "Load all tags");
                 //afficher tous les tags
                 tags = tagDAO.findAll();
-            } else if (mode == Mode.TAG_NUSED || mode == Mode.TAG_NEVER) {
+            } else if (mode == Mode.TAG_NUSED || mode == Mode.TAG_NEVER || mode == Mode.TAG_NEVER_EVER) {
                 List<Tag> notWantedTags = null;
                 //select the tags not used [in this theme]
-                if (mode == Mode.TAG_NEVER || vSession.isRootSession()) {
+                if (mode == Mode.TAG_NEVER || mode == Mode.TAG_NEVER_EVER || vSession.isRootSession()) {
                     //select all the tags used
                     log.info( "Select disting tags");
                     notWantedTags = tagPhotoDAO.selectDistinctTags();
@@ -309,7 +292,15 @@ public class WebPageBean implements WebPageLocal {
                 }
                 log.info( "Select no such tags");
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);
-
+                
+                if (mode == Mode.TAG_NEVER_EVER) {
+                   List<Tag> never_ever = new ArrayList<Tag>(); 
+                   for (Tag enrTag : tags)
+                       if (enrTag.getSonList().isEmpty())
+                           never_ever.add(enrTag);
+                   tags = never_ever;
+                }
+                
             } else /* not handled mode*/ {
                 output.exception = "Unknown handled mode :" + mode ;
                 return output ;

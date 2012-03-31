@@ -36,7 +36,6 @@ import net.wazari.service.entity.util.AlbumUtil;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.EditMode;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
@@ -132,7 +131,6 @@ public class AlbumBean implements AlbumLocal {
             throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
-        EditMode inEditionMode = vSession.getEditionMode();
         Integer albumId = vSession.getId();
         Integer page = vSession.getPage();
         Bornes bornes = null;
@@ -222,7 +220,7 @@ public class AlbumBean implements AlbumLocal {
                               vSession, enrAlbum, Box.NONE, enrAlbum.getDate());
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
-            if (vSession.isSessionManager() && inEditionMode != EditMode.VISITE) {
+            if (vSession.isSessionManager()) {
                 details.user = new XmlPhotoAlbumUser(enrAlbum.getDroit().getNom(), null);
                 details.userInside = new LinkedList<String>() ;
                 for (Utilisateur user : userDAO.loadUserInside(enrAlbum.getId())) {
