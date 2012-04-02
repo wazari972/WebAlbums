@@ -4,7 +4,7 @@ import tools
 import timeit
 
 DO_SAVE = False
-DO_STATIC = True
+DO_STATIC = False
 DO_BENCHMARK_ONLY = True
 
 class Difference(Exception):
