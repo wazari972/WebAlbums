@@ -60,7 +60,7 @@ def compute():
     tools.get_a_theme(5, "Martinique", want_static=False, want_background=False)
 
 time = timeit.Timer(compute).timeit(1)
-with open("benchmark.log", "a+") as f:
+with open("benchmark_and_test.log", "a+") as f:
     string = "save? %s -- %d ; static? %s, benchmark_only ? %s" % (DO_SAVE, time, DO_STATIC, DO_BENCHMARK_ONLY)
     print string
     f.write(string+"\n")

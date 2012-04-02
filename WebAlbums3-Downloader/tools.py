@@ -146,14 +146,15 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
 #######  COMMON ########################
 ########################################
 
-def login(user, paswd, save_index=True, do_static=True):
+def login(user, paswd, save_index=True, do_static=True, get_xslt=True):
     global headers
     data = dict(userName=user, userPass=paswd)
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
     response, content = h.request("%sUsers?action=LOGIN" % WA_URL, "POST", body=urlencode(data), headers=headers)
     headers = {'Cookie': response['set-cookie']}
     data = dict(themeId=9)
-    get_XSLT()
+    if get_xslt:
+        get_XSLT()
     get_index(save=False, do_static=do_static)
     
 def get_choix(themeId, name="", make_index=False, want_static=True, want_background=True):

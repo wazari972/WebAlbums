@@ -29,6 +29,7 @@ import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.dao.entity.Theme;
+import net.wazari.service.exchange.ViewSessionBenchmark;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.XmlImage;
@@ -70,11 +71,11 @@ public class DispatcherBean {
     @EJB private Config configServlet;
     @EJB private WebPageLocal webPageService;
     @EJB private UserLocal userService;
-
+    @EJB private Benchmark benchmarkServlet;
+    
     public enum Page {
-
         PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, 
-        DATABASE, CARNET}
+        DATABASE, CARNET, BENCHMARK}
 
     public void treat(ServletContext context,
             Page page,
@@ -185,6 +186,10 @@ public class DispatcherBean {
                         case DATABASE:
                             output.database = databaseServlet.treatDATABASE((ViewSessionDatabase) vSession);
                             break;
+                        case BENCHMARK:
+                            output.benchmark = benchmarkServlet.treatBENCHMARK((ViewSessionBenchmark) vSession);
+                            output.xslFile = null;
+                            break;
                         default: 
                             output.themes = indexServlet.treatVOID((ViewSession) vSession);
                             actualPage = Page.VOID;
@@ -253,8 +258,8 @@ public class DispatcherBean {
                             + "<!ENTITY laquo  \"&#171;\" >"
                             + "<!ENTITY raquo  \"&#187;\" >"
                             + "]>");
-
-                    sortie.println("<?xml-stylesheet type=\"text/xsl\" href=\"" + output.xslFile + "\"?>");
+                    if (output.xslFile != null)
+                        sortie.println("<?xml-stylesheet type=\"text/xsl\" href=\"" + output.xslFile + "\"?>");
                 }
                 //Create JAXB Context
                 JAXBContext jc = JAXBContext.newInstance(XmlWebAlbums.class);

@@ -31,6 +31,7 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.ViewSessionBenchmark;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
@@ -62,7 +63,8 @@ public class ViewSessionImpl implements
         ViewSessionImages, ViewSessionPhotoDisplayMassEdit, ViewSessionPhotoFastEdit,
         ViewSessionCarnet, ViewSessionCarnetDisplay, ViewSessionCarnetEdit, ViewSessionCarnetSubmit,
         ViewSessionDatabase, 
-        ViewSessionMaint{
+        ViewSessionMaint, 
+        ViewSessionBenchmark{
 
     private static final Logger log = LoggerFactory.getLogger(ViewSessionImpl.class.getCanonicalName());
     private HttpServletRequest request;
@@ -151,6 +153,16 @@ public class ViewSessionImpl implements
     @Override
     public Action getAction() {
         return getEnum("action", Action.class);
+    }
+    
+    @Override
+    public BenchAction getBenchAction() {
+        return getEnum("action", BenchAction.class);
+    }
+    
+    @Override
+    public Mode getMode() {
+        return getEnum("mode", Mode.class);
     }
 
     @Override
@@ -353,11 +365,6 @@ public class ViewSessionImpl implements
     @Override
     public Integer getRmTag() {
         return getInteger("rmTag");
-    }
-
-    @Override
-    public Mode getMode() {
-        return getEnum("mode", Mode.class);
     }
 
     @Override
