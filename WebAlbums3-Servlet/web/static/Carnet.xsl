@@ -67,6 +67,7 @@
             }
         </script>
        </xsl:if>
+       <div id="carnet_toc"/>
        <br/>
         <div id="carnet_text" class="carnet_text">
             <xsl:value-of select="."/>

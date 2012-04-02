@@ -154,3 +154,7 @@
 #massedit_item {
     /*display:none;*/
 }
+
+#carnet_toc h1 {
+    background-color: #58ACFA;
+}

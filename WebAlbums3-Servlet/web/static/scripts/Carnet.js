@@ -51,11 +51,33 @@ function init_markdown() {
     })
 }
 
+function init_toc() {
+    toc = $("#carnet_toc")
+    ol = $(document.createElement('ol'))
+    toc.append(ol)
+    $("#carnet_text h1").each(function() {
+        li = $(document.createElement('li'))
+        ol.append(li)
+        li.text($(this).text())
+        title = $(this)
+        li.click(function() {
+            window.scrollTo(0, (title.offset().top))
+        })
+    })
+    
+    
+}
+
+function init_page() {
+    init_markdown()
+    init_toc()
+}
+
 $(function() {
     if (get_data_page("carcnet_inited"))
         return
     save_data_page("carcnet_inited", true)
     
-    init_markdown()
-    add_callback("SinglePage", init_markdown)
+    init_page()
+    add_callback("SinglePage", init_page)
 })
