@@ -290,7 +290,7 @@ public class WebPageBean implements WebPageLocal {
                 } else /* TAG_NUSED*/ {
                     //select all the tags used in photo of this theme
                     log.info( "Select not used tags");
-                    notWantedTags = tagPhotoDAO.selectUnusedTags(vSession);
+                    notWantedTags = tagDAO.loadVisibleTags(vSession, false);
                 }
                 log.info( "Select no such tags");
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);

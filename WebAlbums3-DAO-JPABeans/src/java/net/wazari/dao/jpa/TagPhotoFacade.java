@@ -117,22 +117,6 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
-    public List<Tag> selectUnusedTags(ServiceSession session) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
-        Root<JPAAlbum> a = cq.from(JPAAlbum.class);
-        Root<JPATagPhoto> tp = cq.from(JPATagPhoto.class);
-
-        cq.where(
-                cb.equal(tp.get(JPATagPhoto_.photo).get(JPAPhoto_.album).get(JPAAlbum_.theme),
-                   session.getTheme())) ;
-        return (List) em.createQuery(cq.select(tp.get(JPATagPhoto_.tag)).distinct(true))
-                .setHint("org.hibernate.cacheable", true)
-                .setHint("org.hibernate.readOnly", true)
-                .getResultList();
-    }
-
-    @Override
     public TagPhoto newTagPhoto() {
         return new JPATagPhoto() ;
     }

@@ -45,9 +45,6 @@ public interface TagPhotoFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     List<Tag> selectDistinctTags() ;
 
-    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    List<Tag> selectUnusedTags(ServiceSession sSession) ;
-
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     TagPhoto newTagPhoto();
 
