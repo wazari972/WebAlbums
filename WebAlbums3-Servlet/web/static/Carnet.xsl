@@ -57,7 +57,7 @@
   </xsl:template>
    <xsl:template match="text">
        <br/>
-       <hr/>
+       <hr id="carnet_head"/>
        <xsl:if test="/webAlbums/affichage/@directAccess">
         <script type="text/javascript">
             carnet_static_lookup = {
@@ -67,10 +67,11 @@
             }
         </script>
        </xsl:if>
-       <div id="carnet_toc"/>
+       <div class="carnet_toc"/>
        <br/>
         <div id="carnet_text" class="carnet_text">
             <xsl:value-of select="."/>
         </div>
+        <div class="carnet_toc"/>
   </xsl:template>
 </xsl:stylesheet>

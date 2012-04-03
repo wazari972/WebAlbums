@@ -155,6 +155,9 @@
     /*display:none;*/
 }
 
-#carnet_toc h1 {
+.carnet_toc li {
     background-color: #58ACFA;
+}
+.carnet_toc li.current {
+    background-color: #00ACFA;
 }

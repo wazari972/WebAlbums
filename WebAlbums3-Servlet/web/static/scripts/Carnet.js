@@ -52,20 +52,35 @@ function init_markdown() {
 }
 
 function init_toc() {
-    toc = $("#carnet_toc")
-    ol = $(document.createElement('ol'))
-    toc.append(ol)
-    $("#carnet_text h1").each(function() {
-        li = $(document.createElement('li'))
-        ol.append(li)
-        li.text($(this).text())
-        title = $(this)
-        li.click(function() {
-            window.scrollTo(0, (title.offset().top))
-        })
+    toc = $(".carnet_toc")
+    toc.each(function() {
+        $(this).append(document.createElement('ol'))
     })
-    
-    
+    toc.children("ol:eq(0)").addClass("first")
+    ol = toc.children("ol")
+    $("#carnet_text").children("h1").each(function() {
+        var title = $(this)
+        ol.each(function() {
+            var li = $(document.createElement('li'))
+            li.text(title.text())
+            $(this).append(li)
+        
+            li.click(function() {
+                idx = li.index()
+                ol.each(function() {
+                    $(this).children().removeClass("current")
+                    $(this).children("li:eq("+idx+")").addClass("current")
+                })
+                title.prevAll().hide()
+                title.show()
+                title.nextAll().hide()
+                title.nextUntil("h1").show()
+                
+                if (!$(this).parent().hasClass("first"))
+                    window.scrollTo(0, $("#carnet_head").offset().top)
+            })
+        })
+    })    
 }
 
 function init_page() {
