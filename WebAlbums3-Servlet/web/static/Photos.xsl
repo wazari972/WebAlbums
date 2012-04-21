@@ -33,9 +33,9 @@
       <xsl:attribute name="rel"><xsl:value-of select="details/@stars" /></xsl:attribute>
       <div class="body">
 	<a>
-            <xsl:attribute name="id">anchor_<xsl:value-of select="details/photoId" /></xsl:attribute>
-            <xsl:attribute name="name"><xsl:value-of select="details/photoId" /></xsl:attribute>
-            </a>
+            <xsl:attribute name="id">anchor_<xsl:value-of select="details/photoId/@id" /></xsl:attribute>
+            <xsl:attribute name="name"><xsl:value-of select="details/photoId/@id" /></xsl:attribute>
+        </a>
 	<xsl:apply-templates select="message"/>
         <xsl:value-of select="submit/message" />
         <xsl:value-of select="submit/exception" />
