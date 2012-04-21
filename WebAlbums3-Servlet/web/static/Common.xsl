@@ -109,7 +109,7 @@
             <xsl:if test="@checked = 'true'">
               <xsl:attribute name="selected">selected</xsl:attribute>	  
             </xsl:if>
-            [<xsl:value-of select="name(.)"/>]<xsl:if test="@minor">(</xsl:if><xsl:value-of select="name"/><xsl:if test="@minor">)</xsl:if>
+            <!--[<xsl:value-of select="name(.)"/>]--><xsl:if test="@minor">(</xsl:if><xsl:value-of select="name"/><xsl:if test="@minor">)</xsl:if>
           </option>    
         </xsl:if>      
         <xsl:if test="not($style = 'list' or $style = 'multiple')">
