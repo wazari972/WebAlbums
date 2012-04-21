@@ -454,8 +454,13 @@ public class PhotoBean implements PhotoLocal {
                 Boolean chkbox = vSession.getMassEdit().getChk(enrPhoto.getId());
                 if (chkbox) {
                     current = true;
-
-                    if (turn != null) {
+                    if (turn == Turn.LEFT || turn == Turn.RIGHT) {
+                        if (!photoUtil.rotate(vSession, enrPhoto, degrees)) {
+                            photo.exception = "Erreur dans le ConvertWrapper ...";
+                            reSelectThis = true;
+                        }
+                    
+                    } else if (turn != null) {
                         String verb;
                         if (turn == Turn.TAG) {
                             photoUtil.addTags(enrPhoto, new Integer[]{tag});
@@ -475,11 +480,6 @@ public class PhotoBean implements PhotoLocal {
                             verb = "nothinged";
                         }
                         photo.message = "Tag " + tag + " " + verb + " from photo #" + enrPhoto.getId();
-                    } else if (turn == Turn.LEFT || turn == Turn.RIGHT) {
-                        if (!photoUtil.rotate(vSession, enrPhoto, degrees)) {
-                            photo.exception = "Erreur dans le ConvertWrapper ...";
-                            reSelectThis = true;
-                        }
                     }
                     countME++;
                 }
