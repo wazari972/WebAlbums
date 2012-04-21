@@ -67,16 +67,19 @@ function refresh_editionMode() {
 function body_mouseenter() {
     if (get_editionMode() == 'EDITION')
         $(this).find(".edit").show()
+    $(this).find(".optional").show()
 }
 
 function body_mouseleave() {
     $(this).find(".edit").hide()
+    $(this).find(".optional").hide()
     $(this).find(".edit_visible").show()
 }
 
 function do_init_mouse_hover() {
     $(".details").hover(body_mouseenter, body_mouseleave)
     $(".edit").hide()
+    $(".optional").hide()
     $(".edit_visible").show()
 }
 

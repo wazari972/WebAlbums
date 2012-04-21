@@ -1,14 +1,3 @@
-
-function updateFullImage(id) {
-    var img = document.getElementById("largeImg");
-    img.src = "Images?id="+id+"&mode=GRAND" ;
-}
-function init_fullscreen () {
-    $(".visio_img").click(function () {
-        updateFullImage($(this).prop("rel"))
-    })
-}
-
 /****************************************************/
 
 function init_tree() {
@@ -25,6 +14,5 @@ function init_tree() {
 /****************************************************/
 
 $(function() {
-    init_fullscreen()
     init_tree()
 })

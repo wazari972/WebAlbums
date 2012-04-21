@@ -81,77 +81,95 @@
                     </input>
                 </span>
             </xsl:if>
-            <span>&#160;</span>
             <xsl:if test="/webAlbums/loginInfo/@admin">
-                <span class="edit"><xsl:value-of select="photoId/@id" /></span>
+                <span class="edit">&#160;<xsl:value-of select="photoId/@id" /></span>
             </xsl:if>
             <xsl:if test="/webAlbums/loginInfo/@admin">
                 <xsl:apply-templates select="user" />
             </xsl:if>
             <div class="options">
-                <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
-                    <xsl:if test="not(/webAlbums/affichage/@static)">
-                        <a title="Photo réduite">
-                          <!-- no url rewritting -->
-                          <xsl:attribute name="href">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
-                          <img src="static/images/reduire.gif" width="30px"/>
+                <span class="optional">
+                    <xsl:if test="not(/webAlbums/carnets or /webAlbums/photos/random)">
+                        <a rel="singlepage[no]" target="_blank" title="Visionneuse">
+                            <xsl:if test="/webAlbums/albums">
+                                <xsl:attribute name="href">Visio__<xsl:value-of select="../@id" />_p0__<xsl:value-of select="../title" /></xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="/webAlbums/photos">
+                                <xsl:attribute name="href">Visio__<xsl:value-of select="../../../album/@id" />_p<xsl:value-of select="/webAlbums/photos/display/photoList/page/@current" /><xsl:if test="not(/webAlbums/affichage/@static)">_pa</xsl:if>__<xsl:value-of select="../../../album/title" />#<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="/webAlbums/tags">
+                                <xsl:attribute name="href">Tags?<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="/webAlbums/tags/display/photoList/page/@current"/>&amp;special=VISIONNEUSE#<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                            </xsl:if>
+                            <img src="static/images/slide.png" height="30px"/>
                         </a>
                     </xsl:if>
-                    <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets or /webAlbums/photos/random)">
-                        <span class="exif"> <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>EXIF</span>
+                    <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
+                        <xsl:if test="not(/webAlbums/affichage/@static)">
+                            <a title="Photo réduite">
+                              <!-- no url rewritting -->
+                              <xsl:attribute name="href">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=SHRINK&amp;width=800&amp;borderWidth=10&amp;borderColor=white</xsl:attribute>
+                              <img src="static/images/reduire.gif" width="30px"/>
+                            </a>
+                        </xsl:if>
+                        <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets or /webAlbums/photos/random)">
+                            <span class="exif"> <xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>EXIF</span>
+                        </xsl:if>
                     </xsl:if>
-                </xsl:if>
-                <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
-                    <xsl:if test="/webAlbums/affichage/remote or /webAblums/affichage/@static">
-                        <img alt="Photo en plein-ecran"
-                           class="fullscreen"
-                           src="static/images/out.png" width="30px">
-                            <!-- no url rewritting -->
-                            <xsl:attribute name="rel">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=FULLSCREEN</xsl:attribute>
-                        </img>
+                    <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
+                        <xsl:if test="/webAlbums/affichage/remote or /webAblums/affichage/@static">
+                            <img alt="Photo en plein-ecran"
+                               class="fullscreen"
+                               src="static/images/out.png" width="30px">
+                                <!-- no url rewritting -->
+                                <xsl:attribute name="rel">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=FULLSCREEN</xsl:attribute>
+                            </img>
+                        </xsl:if>
                     </xsl:if>
-                </xsl:if>
-                <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
-                    <a class="albumTT">
-                      <xsl:attribute name="title"><xsl:value-of select="albumDate"/>&#160;<xsl:value-of select="albumName"/></xsl:attribute>
-                      <xsl:attribute name="id">album-target-<xsl:value-of select="@albumId"/></xsl:attribute>
-                      <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
-                      <img src="static/images/dossier.gif" width="30px"/>
-                    </a>
+                      <xsl:if test="/webAlbums/loginInfo/@admin">
+                            <a class="edit" title="Edition" rel="singlepage[no]">
+                              <!-- no url rewritting -->
+                              <xsl:if test="/webAlbums/photos">
+                                  <xsl:attribute name="href">Photos?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" />&amp;page=<xsl:value-of select="//*/page/@current"/>&amp;albmPage=<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />&amp;album=<xsl:value-of select="../../../album/@id"	/></xsl:attribute>
+                              </xsl:if>
+                              <xsl:if test="/webAlbums/tags">
+                                  <xsl:attribute name="href">Tags?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" /><xsl:for-each select="/webAlbums/tags/display/title/tagList/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="//*/page/@current" /></xsl:attribute>
+                              </xsl:if>
+                              <xsl:if test="/webAlbums/albums">
+                                  <xsl:attribute name="href">Albums?action=EDIT&amp;id=<xsl:value-of select="../@id" />&amp;page=<xsl:value-of select="//*/page/@current" /></xsl:attribute>
+                              </xsl:if>
+                              <xsl:if test="/webAlbums/carnets">
+                                  <xsl:attribute name="href">Carnets?action=EDIT&amp;carnet=<xsl:value-of select="../@id" />&amp;page=<xsl:value-of select="../@carnetsPage"/></xsl:attribute>
+                              </xsl:if>
+                              <img src="static/images/edit.png" height="30px"/>
+                            </a>
+                            <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
+                                <div class="fastedit_bt fastedit_desc_bt edit">
+                                    <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                     Descr
+                                </div>
+                                <div class="fastedit_bt edit">&#160;||&#160;</div>
+                                <div class="fastedit_bt fastedit_tag_bt edit">
+                                    <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                    Tags
+                                </div>
+                            </xsl:if>
+                        </xsl:if>
+                    </span>
+                    <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
+                        <div>
+                            <p><xsl:value-of select="albumDate"/>&#160;</p>
+                            <a class="albumTT">
+                              <xsl:attribute name="title"><xsl:value-of select="albumName"/></xsl:attribute>
+                              <xsl:attribute name="id">album-target-<xsl:value-of select="@albumId"/></xsl:attribute>
+                              <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
+                              <xsl:value-of select="albumDate"/>&#160;<xsl:value-of select="albumName"/>
+                            </a>
+                        </div>
                     <span class="album_tooltip">
                         <xsl:attribute name="id">album-content-<xsl:value-of select="@albumId"/></xsl:attribute>
                         <xsl:attribute name="rel"><xsl:value-of select="@albumId"/></xsl:attribute>
                     </span>
                   </xsl:if>
-                  <xsl:if test="/webAlbums/loginInfo/@admin">
-                        <a class="edit" title="Edition" rel="singlepage[no]">
-                          <!-- no url rewritting -->
-                          <xsl:if test="/webAlbums/photos">
-                              <xsl:attribute name="href">Photos?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" />&amp;page=<xsl:value-of select="//*/page/@current"/>&amp;albmPage=<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />&amp;album=<xsl:value-of select="../../../album/@id"	/></xsl:attribute>
-                          </xsl:if>
-                          <xsl:if test="/webAlbums/tags">
-                              <xsl:attribute name="href">Tags?action=EDIT&amp;id=<xsl:value-of select="photoId/@id" /><xsl:for-each select="/webAlbums/tags/display/title/tagList/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="//*/page/@current" /></xsl:attribute>
-                          </xsl:if>
-                          <xsl:if test="/webAlbums/albums">
-                              <xsl:attribute name="href">Albums?action=EDIT&amp;id=<xsl:value-of select="../@id" />&amp;page=<xsl:value-of select="//*/page/@current" /></xsl:attribute>
-                          </xsl:if>
-                          <xsl:if test="/webAlbums/carnets">
-                              <xsl:attribute name="href">Carnets?action=EDIT&amp;carnet=<xsl:value-of select="../@id" />&amp;page=<xsl:value-of select="../@carnetsPage"/></xsl:attribute>
-                          </xsl:if>
-                          <img src="static/images/edit.png" height="30px"/>
-                        </a>
-                        <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                            <div class="fastedit_bt fastedit_desc_bt edit">
-                                <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
-                                 Descr
-                            </div>
-                            <div class="fastedit_bt edit">&#160;||&#160;</div>
-                            <div class="fastedit_bt fastedit_tag_bt edit">
-                                <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
-                                Tags
-                            </div>
-                        </xsl:if>
-                    </xsl:if>
                     <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
                         <div class="stars">
                             <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" /></xsl:attribute>

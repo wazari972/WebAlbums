@@ -137,8 +137,13 @@
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"/>
 	<script type="text/javascript" src="static/scripts/tools.js"/>
         <script type="text/javascript" src="static/scripts/Empty.js"/>
+        <script type="text/javascript" src="static/scripts/Visio.js"/>
 	<div style="overflow:auto;">
-	  <table>
+          <center>
+            <a href="javascript:nextprev(true)">prev</a><span>|</span>
+            <a href="javascript:nextprev()">next</a>
+          </center>
+	  <table id="visio_preview">
 	    <tr>
               <xsl:apply-templates select="@previ"/>
               <xsl:apply-templates select="@first"/>
@@ -168,14 +173,14 @@
                   <xsl:if test="/webAlbums/tags">
                     <xsl:attribute name="href">Tags?<xsl:for-each select="title/tagList/*">&amp;tagAsked=<xsl:value-of select="@id"/></xsl:for-each>&amp;page=<xsl:value-of select="photoList/page/@current"/></xsl:attribute>
                    </xsl:if>
-		  &#8629;
+		  <span>&#8629;</span>
 		</a>
 	      </td>
 	    </tr>
 	  </table>
 	</div>
-	<div style="">
-	  <img  id="largeImg" style="width:100%">
+	<div>
+	  <img  id="largeImg" style="max-width:100%">
               <xsl:if test="/webAlbums/affichage/@directAccess">
                   <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoList/photo[1]/details/photoId/text()" />.png</xsl:attribute>
               </xsl:if>
@@ -191,25 +196,25 @@
   <xsl:include href="Common.xsl"/>
   <xsl:template match="photo">
     <td>
-      <a href="#" class="visio_img">
-	<xsl:attribute name="rel"><xsl:value-of select="details/photoId"/></xsl:attribute>
-	<img height="200px">
-          <xsl:if test="/webAlbums/affichage/@directAccess">
-              <xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="details/photoId/text()" />.png
+      <a class="visio_img">
+	<xsl:attribute name="rel"><xsl:value-of select="details/photoId/@id"/></xsl:attribute>
+        <xsl:if test="/webAlbums/affichage/@directAccess">
+              <xsl:attribute name="href"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="details/photoId/@id" /></xsl:attribute>
           </xsl:if>
           <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-              Miniature__<xsl:value-of select="details/photoId/@id" />.png
+              <xsl:attribute name="href">Image__<xsl:value-of select="details/photoId/@id" /></xsl:attribute>
           </xsl:if>
-	  <xsl:attribute name="onmouseout">
-	    UnTip()
-	  </xsl:attribute>
-	  <xsl:attribute name="onmouseover">
-	    TagToTip('tip<xsl:value-of select="details/photoId" />')
-	  </xsl:attribute>
+	<img height="200px">
+          <xsl:if test="/webAlbums/affichage/@directAccess">
+              <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
+          </xsl:if>
+          <xsl:if test="not(/webAlbums/affichage/@directAccess)">
+              <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
+          </xsl:if>
 	</img>
       </a>
       <span style="display:none">
-	<xsl:attribute name="id">tip<xsl:value-of select="details/photoId" /></xsl:attribute>
+	<xsl:attribute name="id">tip<xsl:value-of select="details/photoId/@id" /></xsl:attribute>
 	<xsl:apply-templates select="details/tagList">
 	  <xsl:with-param name="style">none</xsl:with-param>
 	  <xsl:with-param name="mode">TAG_USED</xsl:with-param>
@@ -224,21 +229,17 @@
   <xsl:template match="prev|next|@first|@last|@nexti|@previ">
     <td>
       <a>
+          <xsl:attribute name="class">page_<xsl:value-of select="name(.)"/></xsl:attribute>
+          <xsl:attribute name="rel"><xsl:value-of select="."/></xsl:attribute>
 	  <xsl:if test="/webAlbums/photos">
               <xsl:attribute name="href">Photos?&amp;albmCount=<xsl:value-of select="../url/albmCount" />&amp;album=<xsl:value-of select="../url/album" />&amp;page=<xsl:value-of select="."/>&amp;special=VISIONNEUSE</xsl:attribute>
           </xsl:if>
 	  <xsl:if test="/webAlbums/tags">
               <xsl:attribute name="href">Tags?&amp;tagAsked=<xsl:value-of select="../url/tagAsked"/>&amp;page=<xsl:value-of select="."/>&amp;special=VISIONNEUSE</xsl:attribute>
 	  </xsl:if>
-          <xsl:if test="name(.) = 'nexti'">
-              »
-          </xsl:if>
-          <xsl:if test="name(.) = 'previ'">
-              «
-          </xsl:if>
-          <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')">
-              <xsl:value-of select="." />
-          </xsl:if>
+          <xsl:if test="name(.) = 'nexti'">»</xsl:if>
+          <xsl:if test="name(.) = 'previ'">«</xsl:if>
+          <xsl:if test="not(name(.) = 'nexti') and not (name(.) = 'previ')"><xsl:value-of select="." /></xsl:if>
       </a>
     </td>
   </xsl:template>
