@@ -94,8 +94,13 @@ function init_fastedit() {
     }) ;
 }
 
-$(function() {
+function init_tooltip() {
     $(".exif").ezpz_tooltip({stayOnContent: true});
+}
+
+$(function() {
+    init_tooltip()
+    add_callback("SinglePage", init_tooltip)
     init_massedit()
     init_fastedit()
 })
