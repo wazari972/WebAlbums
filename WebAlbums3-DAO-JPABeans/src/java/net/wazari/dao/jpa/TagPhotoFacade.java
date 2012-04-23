@@ -9,7 +9,6 @@ import java.util.Iterator;
 import net.wazari.dao.entity.Carnet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.*;
 import java.util.List;
 import javax.ejb.EJB;
@@ -23,8 +22,7 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
-import net.wazari.dao.jpa.entity.JPAAlbum;
-import net.wazari.dao.jpa.entity.JPAAlbum_;
+import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPAPhoto_;
 import net.wazari.dao.jpa.entity.JPATag;
@@ -47,7 +45,8 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     @EJB AlbumFacadeLocal albumDAO ;
     @EJB TagFacadeLocal   tagDAO ;
     @EJB ThemeFacadeLocal themeDAO ;
-
+    @EJB TagThemeFacadeLocal   tagThemeDAO ;
+    
     @Override
     public void create(TagPhoto tagPhoto) {
         tagPhoto.getPhoto().getTagPhotoList().add(tagPhoto);
@@ -69,10 +68,16 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
 
     @Override
     public void deleteByPhoto(Photo enrPhoto) {
+        int themeId = enrPhoto.getAlbum().getTheme().getId();
         Iterator<TagPhoto> it = enrPhoto.getTagPhotoList().iterator() ;
         while (it.hasNext()) {
             TagPhoto enrTagPhoto = it.next() ;
             enrTagPhoto.getTag().getTagPhotoList().remove(enrTagPhoto);
+            
+            TagTheme enrTagTheme = tagThemeDAO.loadByTagTheme(enrTagPhoto.getTag().getId(), themeId);
+            if (enrTagTheme != null && enrPhoto.equals(enrTagTheme.getPhoto()))
+                tagThemeDAO.remove(enrTagTheme);
+            
             it.remove();
             em.remove(enrTagPhoto);
         }

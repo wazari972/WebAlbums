@@ -19,7 +19,7 @@
 	<div class="body">
 	  <form method="post">
 	    <xsl:attribute name="action">Albums?&amp;page=<xsl:value-of select="/webAlbums/albums/return_to/page" />&amp;id=<xsl:value-of select="@id" />#<xsl:value-of select="@id" /></xsl:attribute>
-	    <input type='hidden' name='action' value='submit' />
+	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="nom">Nom:</label>
 	    <input id="nom" type='text' size='40' maxlength='60' name='nom'
                    placeholder="Titre ..." required="true">

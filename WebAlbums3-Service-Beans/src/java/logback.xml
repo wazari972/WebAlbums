@@ -45,7 +45,7 @@
             <pattern>%-12(%d{HH:mm} [%relative]) %-4level %-25logger{5} * %msg %ex</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>warn</level>
+            <level>debug</level>
         </filter>
     </appender>
 
@@ -54,17 +54,17 @@
             <pattern># %-12(%d{HH:mm} [%relative]) %-4level %-25logger{5} * %msg %ex%n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>warn</level>
+            <level>debug</level>
         </filter>
     </appender>
 
     <logger name="org.hibernate">
-         <level value="info"/>
+         <level value="warn"/>
     </logger>
 
 
     <logger additivity="false" name="net.wazari">
-        <level value="info"/>
+        <level value="debug"/>
         <appender-ref ref="net.wazari.FileAppender"/>
         <appender-ref ref="net.wazari.errors.FileAppender"/>
         <appender-ref ref="net.wazari.ConsoleAppender"/>
@@ -72,7 +72,6 @@
 
     <root>
         <level value="info"/>
-
         <appender-ref ref="root.ConsoleAppender"/>
     </root>
 </configuration>

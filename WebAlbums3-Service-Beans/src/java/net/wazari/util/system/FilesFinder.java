@@ -333,7 +333,7 @@ public class FilesFinder {
         boolean correct = true;
         for (Iterator<Photo> iter = enrAlbum.getPhotoList().iterator(); iter.hasNext();) {
             Photo enrPhoto = iter.next() ;
-             iter.remove();
+            iter.remove();
             if (!deletePhoto(enrPhoto, conf)) {
                 log.warn("Problem during the deletion ...");
                 correct = false;
@@ -362,6 +362,9 @@ public class FilesFinder {
             //suppression des tags de cette photo
             tagPhotoDAO.deleteByPhoto(enrPhoto);
 
+            if (enrPhoto.equals(enrPhoto.getAlbum().getPicture()))
+                enrPhoto.getAlbum().setPicture(null);
+            
             //suppression des photos physiquement
             url = "file://" + conf.getImagesPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false);
 
