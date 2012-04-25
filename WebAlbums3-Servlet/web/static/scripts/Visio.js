@@ -53,8 +53,16 @@ function nextprev(do_prev) {
  
  
 function updateFullImage(id) {
-    var img = document.getElementById("largeImg");
-    img.src = "Image__"+id ;
+    $("body").css("cursor", "wait");
+    img = "Image__"+id ;
+    
+    imgTag = $('#largeImg').prop("src", img)
+        .css("max-width", $("body").width())
+        .css("max-height", $("body").height()).load(function() {  
+          $("body").css("cursor", "auto")
+        })
+    
+    
 }
 function init_visio () {
     $(".visio_img").click(function () {
@@ -63,7 +71,12 @@ function init_visio () {
         return false
     })
     $("#visio_preview").hide()
+    document.body.style.overflow = 'hidden';
     nextprev()
+    
+    jwerty.key('s/n/→/↓', function () { nextprev()});
+    jwerty.key('p/←/↑', function () {nextprev(true)});
+    
 }
 
 $(function() {

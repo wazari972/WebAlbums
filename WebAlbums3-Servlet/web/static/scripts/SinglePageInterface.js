@@ -102,7 +102,7 @@ function loadSinglePage(url, dont_scroll, force, async) {
             //$("body").css("cursor", "auto");
             loadSinglePageBottomEnd(data, dont_scroll, url) ;
         },
-        complete:function() {;$("body").css("cursor", "auto");},
+        complete:function() {$("body").css("cursor", "auto")},
         statusCode: {
                 500: function() {alert('Glassfish error ...');},
 		404: function() {alert('page not found');}
