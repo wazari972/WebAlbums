@@ -74,7 +74,7 @@ public class JPAAlbum implements Album, Serializable {
     @Column(name = "AlbumDate", nullable = false, length = 10)
     private String date;
     
-    @XmlAttribute
+    @XmlTransient
     @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;

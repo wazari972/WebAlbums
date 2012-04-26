@@ -5,6 +5,7 @@
 
 package net.wazari.dao.jpa.entity;
 
+
 import java.io.Serializable;
 import java.util.List;
 import org.slf4j.Logger;
@@ -72,12 +73,12 @@ public class JPATheme implements Theme, Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
 
-    @XmlAttribute
+    @XmlTransient
     @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;
 
-    @XmlAttribute
+    @XmlTransient
     @JoinColumn(name = "Background", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto background;
