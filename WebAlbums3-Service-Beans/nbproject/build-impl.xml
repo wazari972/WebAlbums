@@ -124,6 +124,9 @@ is divided into following sections:
         <condition property="is.server.weblogic" value="true">
             <equals arg1="${j2ee.server.type}" arg2="WebLogic9"/>
         </condition>
+        <condition property="is.jars.in.ejbjar" value="true">
+            <equals arg1="${jars.in.ejbjar}" arg2="true"/>
+        </condition>
         <condition else="false" property="jdkBug6558476">
             <and>
                 <matches pattern="1\.[56]" string="${java.specification.version}"/>
@@ -487,7 +490,20 @@ exists or setup the property manually. For example like this:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="compile" if="is.server.weblogic" name="library-inclusion-in-archive">
+    <target depends="compile,-library-inclusion-in-archive-weblogic,-library-inclusion-in-archive-by-user" name="library-inclusion-in-archive"/>
+    <target if="is.jars.in.ejbjar" name="-library-inclusion-in-archive-by-user">
+        <copyfiles files="${file.reference.CP-Apache-commos-lang.2.5.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${reference.WebAlbums3-iService.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.RT-Log-logback-core-0.9.24.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.RT-Log-logback-classic-0.9.24.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${build.classes.dir}"/>
+    </target>
+    <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
         <basename file="${file.reference.CP-Apache-commos-lang.2.5.jar}" property="manifest.file.reference.CP-Apache-commos-lang.2.5.jar"/>
         <basename file="${reference.WebAlbums3-iService.jar}" property="manifest.reference.WebAlbums3-iService.jar"/>
         <basename file="${reference.WebAlbums3-iDAO.jar}" property="manifest.reference.WebAlbums3-iDAO.jar"/>
