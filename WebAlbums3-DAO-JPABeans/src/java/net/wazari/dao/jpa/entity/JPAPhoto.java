@@ -71,7 +71,7 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "Description", length = 200)
     private String description;
 
-    @XmlElement
+    @XmlAttribute
     @Column(name = "Stars", length = 2, nullable = false)
     private Integer stars = 3;
     
@@ -126,10 +126,6 @@ public class JPAPhoto implements Photo, Serializable {
     private JPAAlbum album;
 
     @XmlTransient
-    @Transient
-    private Integer albumId ;
-
-    @XmlTransient
     @ManyToMany(mappedBy="jPAPhotoList")
     private List<JPACarnet> jPACarnetList;    
     
@@ -137,10 +133,6 @@ public class JPAPhoto implements Photo, Serializable {
     @JoinColumn(name = "TagAuthor", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private JPATag tagAuthor;
-
-    @XmlTransient
-    @Transient
-    private Integer tagAuthorId ;
     
     public JPAPhoto() {
     }
@@ -337,27 +329,19 @@ public class JPAPhoto implements Photo, Serializable {
     @XmlAttribute
     public Integer getAlbumId() {
         if (album == null) {
-            return albumId ;
+            return null ;
         } else {
             return album.getId() ;
         }
     }
-
-    public void setAlbumId(Integer albumId) {
-        this.albumId = albumId ;
-    }
     
     @XmlAttribute
     public Integer getTagAuthorId() {
-        if (tagAuthorId == null) {
-            return tagAuthorId ;
+        if (tagAuthor == null) {
+            return null ;
         } else {
             return tagAuthor.getId() ;
         }
-    }
-
-    public void setTagAuthorIdd(Integer tagAuthorId) {
-        this.tagAuthorId = tagAuthorId ;
     }
 
     @Override

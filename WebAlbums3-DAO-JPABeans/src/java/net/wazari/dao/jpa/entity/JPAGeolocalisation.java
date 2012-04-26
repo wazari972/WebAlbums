@@ -47,12 +47,12 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
     @Column(name = "Tag", nullable = false)
     private Integer tag;
 
-    @XmlElement
+    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "Lat", nullable = false, length = 20)
     private String lat;
 
-    @XmlElement
+    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "Longitude", nullable = false, length = 20)
     private String longitude;

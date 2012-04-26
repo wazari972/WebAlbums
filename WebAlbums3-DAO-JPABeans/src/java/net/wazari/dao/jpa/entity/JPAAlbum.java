@@ -93,7 +93,7 @@ public class JPAAlbum implements Album, Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
 
-    @XmlTransient
+    @XmlElement(name="Gpx")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAGpx> jPAGpxList;
     
@@ -162,6 +162,14 @@ public class JPAAlbum implements Album, Serializable {
         this.date = date;
     }
 
+    @XmlAttribute
+    public Integer getPictureId() {
+        if (picture == null)
+            return null;
+        else
+            return picture.getId();
+    }
+    
     @Override
     public Photo getPicture() {
         return picture;
@@ -181,7 +189,7 @@ public class JPAAlbum implements Album, Serializable {
     public void setPhotoList(List<Photo> jPAPhotoList) {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
-
+    
     @Override
     public List<Gpx> getGpxList() {
         return (List) jPAGpxList;

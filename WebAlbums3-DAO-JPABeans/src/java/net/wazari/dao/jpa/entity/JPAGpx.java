@@ -54,7 +54,7 @@ public class JPAGpx implements Gpx, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
     
-    @XmlAttribute
+    @XmlElement
     @Basic(optional = false)
     @Column(name = "GpxPath", nullable = false)
     private String gpxPath;
@@ -104,6 +104,11 @@ public class JPAGpx implements Gpx, Serializable {
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    @XmlAttribute
+    private Integer getAlbumId() {
+        return this.album.getId();
     }
     
     @Override

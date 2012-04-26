@@ -82,6 +82,7 @@ public class JPACarnet implements Carnet, Serializable {
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;
     
+    @XmlTransient
     @ManyToMany
     @JoinTable(name = "CarnetPhoto",
         joinColumns = {
@@ -93,6 +94,7 @@ public class JPACarnet implements Carnet, Serializable {
     )
     private List<JPAPhoto> jPAPhotoList;
     
+    @XmlTransient
     @ManyToMany
     @JoinTable(name = "CarnetAlbum",
         joinColumns = {
@@ -104,10 +106,12 @@ public class JPACarnet implements Carnet, Serializable {
     )
     private List<JPAAlbum> jPAAlbumList;
     
+    @XmlTransient
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAUtilisateur droit;
     
+    @XmlTransient
     @JoinColumn(name = "Theme", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
@@ -160,11 +164,20 @@ public class JPACarnet implements Carnet, Serializable {
         return date;
     }
 
+    
     @Override
     public void setDate(String date) {
         this.date = date;
     }
 
+    @XmlAttribute
+    public Integer getPictureId() {
+        if (picture == null)
+            return null;
+        else
+            return picture.getId();
+    }
+    
     @Override
     public Photo getPicture() {
         return picture;
@@ -175,6 +188,14 @@ public class JPACarnet implements Carnet, Serializable {
         this.picture = (JPAPhoto) picture;
     }
 
+    @XmlAttribute
+    public Integer getDroitId() {
+        if (droit == null)
+            return null;
+        else
+            return droit.getId();
+    }
+    
     @Override
     public Utilisateur getDroit() {
         return (Utilisateur) droit;
@@ -185,6 +206,14 @@ public class JPACarnet implements Carnet, Serializable {
         this.droit = (JPAUtilisateur) droit;
     }
 
+    @XmlAttribute
+    public Integer getThemeId() {
+        if (theme == null)
+            return null;
+        else
+            return theme.getId();
+    }
+    
     @Override
     public Theme getTheme() {
         return (Theme) theme;

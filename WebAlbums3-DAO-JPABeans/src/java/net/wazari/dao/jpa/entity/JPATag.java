@@ -85,11 +85,11 @@ public class JPATag implements Tag, Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
-    @XmlElement
+    @XmlElement(name="geo")
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jPATag", fetch = FetchType.LAZY)
     private JPAGeolocalisation jPAGeolocalisation;
 
-    @XmlElement
+    @XmlElement(name="person")
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "jPATag", fetch = FetchType.LAZY)
     private JPAPerson jPAPerson;
         
@@ -97,7 +97,6 @@ public class JPATag implements Tag, Serializable {
     @JoinColumn(name = "Parent", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private JPATag parent;
-
 
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.LAZY)
@@ -203,6 +202,14 @@ public class JPATag implements Tag, Serializable {
     @Override
     public Tag getParent() {
         return parent;
+    }
+    
+    @XmlAttribute
+    public Integer getParentId() {
+        if (parent == null)
+            return null;
+        else
+            return parent.getId();
     }
 
     @Override

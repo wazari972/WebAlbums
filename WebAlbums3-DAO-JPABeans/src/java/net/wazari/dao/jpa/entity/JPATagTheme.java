@@ -57,7 +57,7 @@ public class JPATagTheme implements TagTheme, Serializable {
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto photo;
     
-    @XmlAttribute
+    @XmlTransient
     @Column(name = "isVisible")
     private Boolean isVisible;
 
@@ -97,6 +97,14 @@ public class JPATagTheme implements TagTheme, Serializable {
         this.photo = (JPAPhoto) photo;
     }
 
+    @XmlAttribute
+    public Boolean isVisible() {
+        if (isVisible == null || isVisible)
+            return true;
+        else
+            return null;
+    }
+    
     @Override
     public Boolean getIsVisible() {
         return isVisible;

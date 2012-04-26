@@ -8,13 +8,7 @@ package net.wazari.dao.jpa.entity.xml;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.TagPhoto;
-import net.wazari.dao.entity.TagTheme;
-import net.wazari.dao.entity.Theme;
-import net.wazari.dao.entity.Utilisateur;
+import net.wazari.dao.entity.*;
 import net.wazari.dao.jpa.entity.*;
 
 /**
@@ -35,11 +29,12 @@ public class WebAlbumsXML {
     @XmlElement private Tags Tags ;
     @XmlElement private TagThemes TagThemes ;
     @XmlElement private TagPhotos TagPhoto ;
+    @XmlElement private Carnets Carnets;
 
     private WebAlbumsXML(){}
     
     public WebAlbumsXML(List<Theme> themes, List<Utilisateur> utilisateurs, List<Album> albums, List<Photo> photos, 
-            List<Tag> tags, List<TagTheme> tagThemes, List<TagPhoto> tagPhoto)
+            List<Tag> tags, List<TagTheme> tagThemes, List<TagPhoto> tagPhoto, List<Carnet> carnets)
     {
         this.Themes = new Themes((List)themes);
         this.Utilisateurs = new Utilisateurs((List)utilisateurs);
@@ -48,6 +43,7 @@ public class WebAlbumsXML {
         this.Tags = new Tags((List)tags);
         this.TagThemes = new TagThemes((List)tagThemes);
         this.TagPhoto = new TagPhotos((List)tagPhoto);
+        this.Carnets = new Carnets((List)carnets);
     }
 
     public List<JPAAlbum> getAlbums() {
@@ -116,6 +112,14 @@ public class WebAlbumsXML {
         public TagPhotos() {}
         public TagPhotos(List<JPATagPhoto> TagPhoto) {
             this.TagPhoto = TagPhoto;
+        }
+    }
+    public static class Carnets {
+        public List<JPACarnet> Carnets ;
+
+        public Carnets() {}
+        public Carnets(List<JPACarnet> Carnets) {
+            this.Carnets = Carnets;
         }
     }
     public static class TagThemes {
