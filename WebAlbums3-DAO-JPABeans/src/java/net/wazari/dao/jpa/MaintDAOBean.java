@@ -11,6 +11,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
 import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.entity.Photo;
@@ -31,7 +32,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
     private PhotoFacadeLocal photoDAO;
 
     @Override
-    public void treatImportXML(boolean protect, final String path) {
+    public void treatImportXML(boolean protect, final String path) throws DatabaseFacadeLocalException {
         if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
             return;
         }
@@ -39,7 +40,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
     }
 
     @Override
-    public void treatExportXML(String path) {
+    public void treatExportXML(String path) throws DatabaseFacadeLocalException {
         xml.exportXml(path);
     }
 
@@ -52,7 +53,7 @@ public class MaintDAOBean implements MaintFacadeLocal {
     }
 
     @Override
-    public void treatFullImport(boolean protect, String path) {
+    public void treatFullImport(boolean protect, String path) throws DatabaseFacadeLocalException  {
         if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
             return;
         }

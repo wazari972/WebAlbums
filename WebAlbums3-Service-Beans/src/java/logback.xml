@@ -71,7 +71,7 @@
     </logger>
 
     <root>
-        <level value="info"/>
+        <level value="debug"/>
         <appender-ref ref="root.ConsoleAppender"/>
     </root>
 </configuration>

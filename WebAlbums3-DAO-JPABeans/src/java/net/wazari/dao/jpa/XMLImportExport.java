@@ -25,6 +25,7 @@ import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.jpa.entity.xml.WebAlbumsXML;
 import net.wazari.common.util.XmlUtils ;
+import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
 import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAGeolocalisation;
 import net.wazari.dao.jpa.entity.JPAPhoto;
@@ -61,7 +62,7 @@ public class XMLImportExport implements ImportExporter {
     private EntityManager em;
 
     @Override
-    public void exportXml(String path) {
+    public void exportXml(String path) throws DatabaseFacadeLocalException {
         WebAlbumsXML web = new WebAlbumsXML(themeDAO.findAll(), userDAO.findAll(), albumDAO.findAll(),
                 photoDAO.findAll(), tagDAO.findAll(), tagThemeDAO.findAll(), tagPhotoDAO.findAll()) ;
         try {
@@ -69,6 +70,7 @@ public class XMLImportExport implements ImportExporter {
             log.info( "XML Saved!");
         } catch (JAXBException ex) {
             log.error("JAXBException", ex);
+            throw new DatabaseFacadeLocalException(ex.getMessage());
         }
     }
 

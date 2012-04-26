@@ -6,7 +6,7 @@ import timeit
 from StringIO import StringIO
 
 STATIC_FOLDER = "/home/kevin/WebAlbums/WebAlbums3-Servlet/web/static"
-WA_URL = "http://127.0.0.1:8080/WebAlbums3/"
+WA_URL = "http://127.0.0.1:8080/WebAlbums3.5-dev/"
 TARGET_PATH = "./static"
 
 ABS_DATA_PATH = "/other/Web/"
@@ -146,7 +146,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
 #######  COMMON ########################
 ########################################
 
-def login(user, paswd, save_index=True, do_static=True, get_xslt=True):
+def login(user, paswd, save_index=True, do_static=True, get_xslt=True, parse_and_transform=True):
     global headers
     data = dict(userName=user, userPass=paswd)
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
@@ -155,12 +155,12 @@ def login(user, paswd, save_index=True, do_static=True, get_xslt=True):
     data = dict(themeId=9)
     if get_xslt:
         get_XSLT()
-    get_index(save=False, do_static=do_static)
+    get_index(save=save_index, do_static=do_static, parse_and_transform=parse_and_transform)
     
-def get_choix(themeId, name="", make_index=False, want_static=True, want_background=True):
+def get_choix(themeId, name="", make_index=False, want_static=True, want_background=True, parse_and_transform=True):
     global theme
     theme = name
-    choix = get_a_page("Choix__%s__" % themeId, name, make_index=make_index)
+    choix = get_a_page("Choix__%s__" % themeId, name, make_index=make_index, parse_and_transform=parse_and_transform)
     
     if want_background:
         get_background(themeId, name)
@@ -168,8 +168,8 @@ def get_choix(themeId, name="", make_index=False, want_static=True, want_backgro
         get_static()
     return choix
 
-def get_index(full=False, save=False, do_static=False):
-    return get_a_page("index.html" if do_static else "Index", full=full, save=save)
+def get_index(full=False, save=False, do_static=False, parse_and_transform=True):
+    return get_a_page("index.html" if do_static else "Index", full=full, save=save, parse_and_transform=parse_and_transform)
     
 def get_background(themeId, name):
     get_a_page("background__%s__%s.jpg" % (themeId, name), parse_and_transform=False)
