@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -87,6 +88,21 @@ public class ThemeFacade implements ThemeFacadeLocal {
         }
     }
 
+    @Override
+    public void preconfigureDatabase() {
+        Query q ;
+        q = em.createNativeQuery("ALTER TABLE `Album` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;");
+        q.executeUpdate();
+        q = em.createNativeQuery("ALTER TABLE `Photo` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;");
+        q.executeUpdate();
+        q = em.createNativeQuery("ALTER TABLE `Tag`   CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;");
+        q.executeUpdate();
+        q = em.createNativeQuery("ALTER TABLE `Theme` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;");
+        q.executeUpdate();
+        q = em.createNativeQuery("ALTER TABLE `Carnet` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;");
+        q.executeUpdate();
+    }
+    
     @Override
     public Theme newTheme(int id, String name) {
         Theme enrTheme = new JPATheme(id, name) ;

@@ -9,7 +9,7 @@
       <!-- for tests -->
       <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
       <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.SunONETransactionManagerLookup"/>
-      <property name="hibernate.generate_statistics" value="true"/>
+      <property name="hibernate.generate_statistics" value="false"/>
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
       <property name="hibernate.show_sql" value="false"/>
       <property name="hibernate.format_sql" value="false"/>
@@ -23,15 +23,12 @@
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
-      <property name="hibernate.generate_statistics" value="true"/>
+      <property name="hibernate.generate_statistics" value="false"/>
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-      <property name="hibernate.show_sql" value="true"/>
-      <property name="hibernate.format_sql" value="true"/>
-      <property name="hibernate.use_sql_comments" value="true"/>
+      <property name="hibernate.show_sql" value="false"/>
+      <property name="hibernate.format_sql" value="false"/>
+      <property name="hibernate.use_sql_comments" value="false"/>
       <property name="hibernate.hbm2ddl.auto" value="update"/>
-      <property name="hibernate.cache.use_query_cache" value="true"/>
-      <property name="hibernate.cache.use_second_level_cache" value="true"/>
-      <property name="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.EhCacheProvider"/>
     </properties>
   </persistence-unit>
 

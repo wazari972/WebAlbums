@@ -46,4 +46,7 @@ public interface ThemeFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void setBackground(Theme enrTheme, Photo pict);
+
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    public void preconfigureDatabase();
 }

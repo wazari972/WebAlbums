@@ -100,9 +100,9 @@ public class JPATagTheme implements TagTheme, Serializable {
     @XmlAttribute
     public Boolean isVisible() {
         if (isVisible == null || isVisible)
-            return true;
-        else
             return null;
+        else
+            return false;
     }
     
     @Override
