@@ -6,6 +6,7 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +23,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.*;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
@@ -234,6 +230,19 @@ public class JPACarnet implements Carnet, Serializable {
         this.jPAAlbumList = (List) jPAAlbumList;
     }
     
+    @XmlList
+    @XmlElementWrapper(name="Albums")
+    private List<Integer> getAlbumIdList() {
+        List<Integer> ids = new ArrayList<Integer>(jPAAlbumList.size());
+        for (Album enrAlbum : jPAAlbumList) 
+            ids.add(enrAlbum.getId());
+        return ids;
+    }
+
+    private void setAlbumIdList(List<Integer> jPAAlbumList) {
+        //TODO
+    }
+    
     @Override
     public List<Photo> getPhotoList() {
         return (List) jPAPhotoList;
@@ -242,6 +251,19 @@ public class JPACarnet implements Carnet, Serializable {
     @Override
     public void setPhotoList(List<Photo> jPAPhotoList) {
         this.jPAPhotoList = (List) jPAPhotoList;
+    }
+    
+    @XmlList
+    @XmlElementWrapper(name="Photos")
+    private List<Integer> getPhotoIdList() {
+        List<Integer> ids = new ArrayList<Integer>(jPAAlbumList.size());
+        for (Photo enrPhoto : jPAPhotoList) 
+            ids.add(enrPhoto.getId());
+        return ids;
+    }
+
+    private void setPhotoIdList(List<Integer> jPAAlbumList) {
+        //TODO
     }
 
     public String getTexte() {
