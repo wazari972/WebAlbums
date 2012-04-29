@@ -6,36 +6,24 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.entity.Theme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevinpouget
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "TagTheme",
     uniqueConstraints = {@UniqueConstraint(columnNames={"Tag", "Theme"})}
@@ -45,40 +33,26 @@ public class JPATagTheme implements TagTheme, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlTransient
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @XmlTransient
     @JoinColumn(name = "Photo", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto photo;
     
-    @XmlTransient
     @Column(name = "isVisible")
     private Boolean isVisible;
 
-    @XmlTransient
     @JoinColumn(name = "Theme", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
 
-    @XmlTransient
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag tag;
-
-
-    @XmlTransient
-    @Transient
-    private Integer themeId ;
-
-    @XmlTransient
-    @Transient
-    private Integer tagId ;
 
     public JPATagTheme() {
     }
@@ -125,6 +99,15 @@ public class JPATagTheme implements TagTheme, Serializable {
         this.theme = (JPATheme) theme;
     }
 
+    @XmlAttribute
+    public Integer getThemeId() {
+        return theme.getId() ;
+    }
+
+    public void setThemeId(Integer themeId) {
+        //TODO
+    }
+    
     @Override
     public Tag getTag() {
         return tag;
@@ -135,37 +118,20 @@ public class JPATagTheme implements TagTheme, Serializable {
         this.tag = (JPATag) tag;
     }
 
+    @XmlAttribute
+    public Integer getTagId() {
+        return tag.getId() ;
+    }
+
+    public void setTagId(Integer tagId) {
+        //TODO
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
         return hash;
-    }
-
-    @XmlAttribute
-    public Integer getThemeId() {
-        if (theme == null) {
-            return themeId ;
-        } else {
-            return theme.getId() ;
-        }
-    }
-
-    public void setThemeId(Integer themeId) {
-        this.themeId = themeId ;
-    }
-
-    @XmlAttribute
-    public Integer getTagId() {
-        if (tag == null) {
-            return tagId ;
-        } else {
-            return tag.getId() ;
-        }
-    }
-
-    public void setTagId(Integer tagId) {
-        this.tagId = tagId ;
     }
 
     @Override

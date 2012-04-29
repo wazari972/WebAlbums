@@ -7,42 +7,19 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
+import net.wazari.dao.entity.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.TagPhoto;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
  * @author kevinpouget
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "Photo",
     uniqueConstraints = {@UniqueConstraint(columnNames={"PhotoPath"})}
@@ -52,7 +29,6 @@ public class JPAPhoto implements Photo, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -62,74 +38,56 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @XmlElement
     @Basic(optional = false)
     @Column(name = "PhotoPath", nullable = false, length = 100)
     private String path;
 
-    @XmlElement
     @Column(name = "Description", length = 200)
     private String description;
 
-    @XmlAttribute
     @Column(name = "Stars", length = 2, nullable = false)
     private Integer stars = 3;
     
-    @XmlElement
     @Column(name = "Model", length = 100)
     private String model;
 
-    @XmlElement
     @Column(name = "DateMeta", length = 50)
     private String date;
 
-    
-    @XmlElement
     @Column(name = "Iso", length = 50)
     private String iso;
 
-    @XmlElement
     @Column(name = "Exposure", length = 50)
     private String exposure;
 
-    @XmlElement
     @Column(name = "Focal", length = 50)
     private String focal;
 
-    @XmlElement
     @Column(name = "Flash", length = 50)
     private String flash;
 
-    @XmlElement
     @Column(name = "Height", length = 50)
     private String height;
 
-    @XmlElement
     @Column(name = "Width", length = 50)
     private String width;
 
-    @XmlElement
     @Column(name = "Type", length = 50)
     private String type;
 
-    @XmlAttribute
     @JoinColumn(name = "Droit", nullable = true)
     private Integer droit;
 
-    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "photo", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
-    @XmlTransient
     @JoinColumn(name = "Album", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAAlbum album;
 
-    @XmlTransient
     @ManyToMany(mappedBy="jPAPhotoList")
     private List<JPACarnet> jPACarnetList;    
     
-    @XmlTransient
     @JoinColumn(name = "TagAuthor", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private JPATag tagAuthor;
@@ -146,6 +104,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.path = path;
     }
 
+    @XmlAttribute
     @Override
     public Integer getId() {
         return id;
@@ -156,6 +115,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.id = id;
     }
     
+    @XmlAttribute
     @Override
     public Integer getStars() {
         return stars;
@@ -170,12 +130,17 @@ public class JPAPhoto implements Photo, Serializable {
     public String getPath(boolean full) {
         return (full ? this.album.getTheme().getNom() + "/" : "") + path;
     }
+    
+    public String getPath() {
+        return path;
+    }
 
     @Override
     public void setPath(String path) {
         this.path = path;
     }
 
+    @XmlElement
     @Override
     public String getDescription() {
         return description;
@@ -186,6 +151,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.description = description;
     }
 
+    @XmlElement
     @Override
     public String getModel() {
         return model;
@@ -196,6 +162,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.model = model;
     }
 
+    @XmlElement
     @Override
     public String getDate() {
         return date;
@@ -206,6 +173,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.date = date;
     }
 
+    @XmlElement
     @Override
     public String getIso() {
         return iso;
@@ -216,6 +184,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.iso = iso;
     }
 
+    @XmlElement
     @Override
     public String getExposure() {
         return exposure;
@@ -226,6 +195,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.exposure = exposure;
     }
 
+    @XmlElement
     @Override
     public String getFocal() {
         return focal;
@@ -236,6 +206,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.focal = focal;
     }
 
+    @XmlElement
     @Override
     public String getFlash() {
         return flash;
@@ -246,6 +217,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.flash = flash;
     }
 
+    @XmlElement
     @Override
     public String getHeight() {
         return height;
@@ -256,6 +228,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.height = height;
     }
 
+    @XmlElement
     @Override
     public String getWidth() {
         return width;
@@ -266,6 +239,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.width = width;
     }
 
+    @XmlElement
     @Override
     public String getType() {
         return type;
@@ -276,6 +250,7 @@ public class JPAPhoto implements Photo, Serializable {
         this.type = type;
     }
 
+    @XmlAttribute
     @Override
     public Integer getDroit() {
         return droit;
@@ -286,9 +261,10 @@ public class JPAPhoto implements Photo, Serializable {
         this.droit = droit;
     }
 
-    @Override
-    public List<TagPhoto> getTagPhotoList() {
-        return (List) jPATagPhotoList;
+    @XmlElementWrapper(name="TagPhotos")
+    @XmlElement(name="TagPhoto",  type=JPATagPhoto.class)
+    public List getTagPhotoList() {
+        return jPATagPhotoList;
     }
 
     @Override
@@ -306,6 +282,15 @@ public class JPAPhoto implements Photo, Serializable {
         this.album = (JPAAlbum) album;
     }
     
+    @XmlAttribute
+    public Integer getAlbumId() {
+        return album.getId() ;
+    }
+    
+    public void setAlbum(Integer album) {
+        //TODO
+    }
+    
     @Override
     public Tag getTagAuthor() {
         return tagAuthor;
@@ -316,6 +301,19 @@ public class JPAPhoto implements Photo, Serializable {
         this.tagAuthor = (JPATag) tagAuthor;
     }
     
+    @XmlAttribute
+    public Integer getTagAuthorId() {
+        if (tagAuthor == null) {
+            return null ;
+        } else {
+            return tagAuthor.getId() ;
+        }
+    }
+    
+    public void setTagAuthorId(Integer id) {
+        //TODO
+    }
+    
     @Override
     public List<Carnet> getCarnetList() {
         return (List) jPACarnetList;
@@ -324,24 +322,6 @@ public class JPAPhoto implements Photo, Serializable {
     @Override
     public void setCarnetList(List<Carnet> jPACarnetList) {
         this.jPACarnetList = (List) jPACarnetList;
-    }
-
-    @XmlAttribute
-    public Integer getAlbumId() {
-        if (album == null) {
-            return null ;
-        } else {
-            return album.getId() ;
-        }
-    }
-    
-    @XmlAttribute
-    public Integer getTagAuthorId() {
-        if (tagAuthor == null) {
-            return null ;
-        } else {
-            return tagAuthor.getId() ;
-        }
     }
 
     @Override

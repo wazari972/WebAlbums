@@ -45,7 +45,7 @@ public class WebAlbumsDAOBean {
     public static final String PERSISTENCE_UNIT_MySQL_StandAlone = "WebAlbums-MySQL-StandAlone" ;
 
     public static final String PERSISTENCE_UNIT_Prod = PERSISTENCE_UNIT_MySQL_Prod ;
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Prod ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_Prod ;
 
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;

@@ -322,7 +322,7 @@ public class ConfigBean implements ConfigLocal {
             geo.setTag(enrTag.getId());
             geo.setLongitude(longit);
             geo.setLat(lat);
-            geo.setTag1(enrTag);
+            geo.setTag(enrTag.getId());
             geoDAO.create(geo);
         }
 

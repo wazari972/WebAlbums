@@ -7,30 +7,12 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
+import net.wazari.dao.entity.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.*;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.entity.Gpx;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.Theme;
-import net.wazari.dao.entity.Utilisateur;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -41,7 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 public class JPAAlbum implements Album, Serializable {
-    private static final Logger log = LoggerFactory.getLogger(JPACarnet.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(JPAAlbum.class.getName());
 
     private static final long serialVersionUID = 1L;
 
@@ -80,7 +62,6 @@ public class JPAAlbum implements Album, Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
 
-    @XmlElement(name="Gpx")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAGpx> jPAGpxList;
     
@@ -145,7 +126,7 @@ public class JPAAlbum implements Album, Serializable {
     }
 
     @XmlAttribute
-    private Integer getPictureId() {
+    public Integer getPictureId() {
         if (picture == null)
             return null;
         else
@@ -166,8 +147,10 @@ public class JPAAlbum implements Album, Serializable {
         this.picture = (JPAPhoto) picture;
     }
 
+    @XmlElementWrapper(name="Photos")
+    @XmlElement(name="Photo", type=JPAPhoto.class)
     @Override
-    public List<Photo> getPhotoList() {
+    public List getPhotoList() {
         return (List) jPAPhotoList;
     }
 
@@ -176,8 +159,9 @@ public class JPAAlbum implements Album, Serializable {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
     
+    //@XmlElement(name="Gpx")
     @Override
-    public List<Gpx> getGpxList() {
+    public List getGpxList() {
         return (List) jPAGpxList;
     }
 

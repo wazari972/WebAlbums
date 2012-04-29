@@ -6,32 +6,21 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Geolocalisation;
-import net.wazari.dao.entity.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevinpouget
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "Geolocalisation",
     uniqueConstraints = {@UniqueConstraint(columnNames={"Lat", "Longitude"})}
@@ -41,23 +30,19 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     @Id
     @Basic(optional = false)
     @Column(name = "Tag", nullable = false)
     private Integer tag;
 
-    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "Lat", nullable = false, length = 20)
     private String lat;
 
-    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "Longitude", nullable = false, length = 20)
     private String longitude;
 
-    @XmlTransient
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag jPATag;
@@ -75,6 +60,7 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
         this.longitude = longitude;
     }
 
+    @XmlAttribute
     @Override
     public Integer getTag() {
         return tag;
@@ -84,7 +70,8 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
     public void setTag(Integer tag) {
         this.tag = tag;
     }
-
+    
+    @XmlAttribute
     @Override
     public String getLat() {
         return lat;
@@ -95,6 +82,7 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
         this.lat = lat;
     }
 
+    @XmlAttribute
     @Override
     public String getLongitude() {
         return longitude;
@@ -103,16 +91,6 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
     @Override
     public void setLongitude(String longitude) {
         this.longitude = longitude;
-    }
-
-    @Override
-    public Tag getTag1() {
-        return (Tag) jPATag;
-    }
-
-    @Override
-    public void setTag1(Tag jPATag) {
-        this.jPATag = (JPATag) jPATag;
     }
 
     @Override

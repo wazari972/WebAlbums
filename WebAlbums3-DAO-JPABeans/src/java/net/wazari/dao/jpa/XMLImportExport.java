@@ -66,8 +66,8 @@ public class XMLImportExport implements ImportExporter {
 
     @Override
     public void exportXml(String path) throws DatabaseFacadeLocalException {
-        WebAlbumsXML web = new WebAlbumsXML(themeDAO.findAll(), userDAO.findAll(), albumDAO.findAll(),
-                photoDAO.findAll(), tagDAO.findAll(), tagThemeDAO.findAll(), tagPhotoDAO.findAll(), carnetDAO.findAll()) ;
+        WebAlbumsXML web = new WebAlbumsXML(themeDAO.findAll(), userDAO.findAll(),
+                tagDAO.findAll(), carnetDAO.findAll()) ;
         try {
             XmlUtils.save(new File(path+FILENAME), web, WebAlbumsXML.clazzez);
             log.info( "XML Saved!");
@@ -85,7 +85,7 @@ public class XMLImportExport implements ImportExporter {
                 log.warn("Couldn't load the XML backup ...");
                 return ;
             }
-
+/*
             Map<Integer, JPATag> tags = new HashMap<Integer, JPATag>(web.getTags().size()) ;
             Map<Integer, JPAPhoto> photos = new HashMap<Integer, JPAPhoto>(web.getPhotos().size()) ;
             Map<Integer, JPATheme> themes = new HashMap<Integer, JPATheme>(web.getThemes().size()) ;
@@ -174,6 +174,8 @@ public class XMLImportExport implements ImportExporter {
 
                 em.merge(enrTagTheme);
             }
+            * 
+            */
         } catch (Exception ex) {
             log.error(ex.getClass().toString(), ex);
         }

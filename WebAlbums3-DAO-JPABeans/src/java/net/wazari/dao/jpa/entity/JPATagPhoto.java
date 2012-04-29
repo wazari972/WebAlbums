@@ -6,35 +6,23 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagPhoto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevinpouget
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "TagPhoto",
     uniqueConstraints = {@UniqueConstraint(columnNames={"Tag", "Photo"})}
@@ -44,30 +32,19 @@ public class JPATagPhoto implements TagPhoto, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlTransient
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @XmlTransient
     @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATag tag;
 
-    @XmlTransient
     @JoinColumn(name = "Photo", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAPhoto photo;
-
-    @XmlTransient
-    @Transient
-    private Integer tagId ;
-
-    @XmlTransient
-    @Transient
-    private Integer photoId ;
 
     public JPATagPhoto() {
     }
@@ -99,28 +76,12 @@ public class JPATagPhoto implements TagPhoto, Serializable {
 
     @XmlAttribute
     public Integer getPhotoId() {
-        if (photo == null) {
-            return photoId ;
-        } else {
-            return photo.getId() ;
-        }
-    }
-
-    public void setPhotoId(Integer photoId) {
-        this.photoId = photoId ;
+        return photo.getId() ;
     }
 
     @XmlAttribute
     public Integer getTagId() {
-        if (tag == null) {
-            return tagId ;
-        } else {
-            return tag.getId() ;
-        }
-    }
-
-    public void setTagId(Integer tagId) {
-        this.tagId = tagId ;
+        return tag.getId() ;
     }
 
     @Override

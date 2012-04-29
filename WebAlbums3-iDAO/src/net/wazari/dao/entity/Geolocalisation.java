@@ -13,21 +13,12 @@ import java.io.Serializable;
  * @author kevinpouget
  */
 public interface Geolocalisation extends Serializable {
-
-    String getLat();
-
-    String getLongitude();
-
     Integer getTag();
-
-    Tag getTag1();
-
-    void setLat(String lat);
-
-    void setLongitude(String longitude);
-
     void setTag(Integer tag);
-
-    void setTag1(Tag tag1);
-
+            
+    String getLat();
+    void setLat(String lat);
+    
+    String getLongitude();
+    void setLongitude(String longitude);
 }
