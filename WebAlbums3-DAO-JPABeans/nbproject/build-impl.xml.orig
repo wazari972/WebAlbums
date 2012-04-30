@@ -15,7 +15,7 @@ is divided into following sections:
   - cleanup
 
         -->
-<project xmlns:ejbjarproject1="http://www.netbeans.org/ns/j2ee-ejbjarproject/1" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:ejbjarproject3="http://www.netbeans.org/ns/j2ee-ejbjarproject/3" basedir=".." default="default" name="WebAlbums3-Service-Beans-impl">
+<project xmlns:ejbjarproject1="http://www.netbeans.org/ns/j2ee-ejbjarproject/1" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:ejbjarproject3="http://www.netbeans.org/ns/j2ee-ejbjarproject/3" basedir=".." default="default" name="WebAlbums3-DAO-JPABeans-impl">
     <import file="ant-deploy.xml"/>
     <fail message="Please build using Ant 1.7.1 or higher.">
         <condition>
@@ -53,7 +53,9 @@ is divided into following sections:
         <mkdir dir="${meta.inf}"/>
         <property name="runmain.jvmargs" value=""/>
         <condition property="have.tests">
-            <or/>
+            <or>
+                <available file="${test.test.dir}"/>
+            </or>
         </condition>
         <condition property="have.sources">
             <or>
@@ -151,6 +153,7 @@ is divided into following sections:
     </target>
     <target depends="-pre-init,-init-private,-init-userdir,-init-user,-init-project,-do-init" name="-init-check">
         <fail unless="src.dir">Must set src.dir</fail>
+        <fail unless="test.test.dir">Must set test.test.dir</fail>
         <fail unless="build.dir">Must set build.dir</fail>
         <fail unless="build.generated.dir">Must set build.generated.dir</fail>
         <fail unless="dist.dir">Must set dist.dir</fail>
@@ -299,7 +302,11 @@ or ant -Dj2ee.platform.classpath=&lt;server_classpath&gt; (where no properties f
             <attribute default="**" name="testincludes"/>
             <sequential>
                 <junit dir="${basedir}" errorproperty="tests.failed" failureproperty="tests.failed" fork="true" showoutput="true" tempdir="${java.io.tmpdir}">
-                    <batchtest todir="${build.test.results.dir}"/>
+                    <batchtest todir="${build.test.results.dir}">
+                        <fileset dir="${test.test.dir}" excludes="@{excludes},${excludes}" includes="@{includes}">
+                            <filename name="@{testincludes}"/>
+                        </fileset>
+                    </batchtest>
                     <classpath>
                         <path path="${run.test.classpath}"/>
                         <path path="${j2ee.platform.classpath}"/>
@@ -466,18 +473,12 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.WebAlbums3-iDAO}/nbbuild.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
-        <ant antfile="${project.WebAlbums3-iService}/nbbuild.xml" inheritall="false" target="jar">
-            <property name="deploy.on.save" value="false"/>
-        </ant>
     </target>
     <target depends="init" if="dist.ear.dir" name="-deps-ear-jar" unless="no.deps">
         <ant antfile="${project.WebAlbums3-Commons}/nbbuild.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.WebAlbums3-iDAO}/nbbuild.xml" inheritall="false" target="jar">
-            <property name="deploy.on.save" value="false"/>
-        </ant>
-        <ant antfile="${project.WebAlbums3-iService}/nbbuild.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
@@ -490,42 +491,117 @@ exists or setup the property manually. For example like this:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="compile" if="is.server.weblogic" name="library-inclusion-in-archive">
-        <basename file="${file.reference.CP-Apache-commos-lang.2.5.jar}" property="manifest.file.reference.CP-Apache-commos-lang.2.5.jar"/>
-        <basename file="${reference.WebAlbums3-iService.jar}" property="manifest.reference.WebAlbums3-iService.jar"/>
+    <target depends="compile,-library-inclusion-in-archive-weblogic,-library-inclusion-in-archive-by-user" name="library-inclusion-in-archive"/>
+    <target if="is.jars.in.ejbjar" name="-library-inclusion-in-archive-by-user">
+        <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.classes.dir}"/>
+<<<<<<< HEAD
+        <copyfiles files="${file.reference.WebAlbums-libs-hibernate4}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+=======
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.antlr-2.7.7.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.classmate-0.5.4.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.commons-collections-3.1.jar-1}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.dom4j-1.6.1.jar-1}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-commons-annotations-4.0.0.CR2.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jandex-1.0.3.Final.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.javassist-3.12.0.GA.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jboss-logging-3.0.0.GA.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jta-1.1.jar-1}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.javaee6-doc-api.zip}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.javax.annotation.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jaxb-api-osgi.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.webservices-api-osgi.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${build.classes.dir}"/>
+>>>>>>> hotfix/classpath
+    </target>
+    <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
         <basename file="${reference.WebAlbums3-iDAO.jar}" property="manifest.reference.WebAlbums3-iDAO.jar"/>
         <basename file="${reference.WebAlbums3-Commons.jar}" property="manifest.reference.WebAlbums3-Commons.jar"/>
-        <basename file="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" property="manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar"/>
-        <basename file="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" property="manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar"/>
         <basename file="${file.reference.CP-Perf-perf4j-0.9.13.jar}" property="manifest.file.reference.CP-Perf-perf4j-0.9.13.jar"/>
-        <basename file="${file.reference.RT-Log-logback-core-0.9.24.jar}" property="manifest.file.reference.RT-Log-logback-core-0.9.24.jar"/>
-        <basename file="${file.reference.RT-Log-logback-classic-0.9.24.jar}" property="manifest.file.reference.RT-Log-logback-classic-0.9.24.jar"/>
-        <basename file="${file.reference.CP-DB-dbunit-2.4.5.jar}" property="manifest.file.reference.CP-DB-dbunit-2.4.5.jar"/>
+        <basename file="${file.reference.hibernate-core-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-core-4.0.0.CR3.jar"/>
+        <basename file="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar"/>
+        <basename file="${file.reference.antlr-2.7.7.jar}" property="manifest.file.reference.antlr-2.7.7.jar"/>
+        <basename file="${file.reference.classmate-0.5.4.jar}" property="manifest.file.reference.classmate-0.5.4.jar"/>
+        <basename file="${file.reference.commons-collections-3.1.jar-1}" property="manifest.file.reference.commons-collections-3.1.jar-1"/>
+        <basename file="${file.reference.dom4j-1.6.1.jar-1}" property="manifest.file.reference.dom4j-1.6.1.jar-1"/>
+        <basename file="${file.reference.hibernate-commons-annotations-4.0.0.CR2.jar}" property="manifest.file.reference.hibernate-commons-annotations-4.0.0.CR2.jar"/>
+        <basename file="${file.reference.hibernate-core-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-core-4.0.0.CR3.jar"/>
+        <basename file="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar"/>
+        <basename file="${file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}" property="manifest.file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+        <basename file="${file.reference.jandex-1.0.3.Final.jar}" property="manifest.file.reference.jandex-1.0.3.Final.jar"/>
+        <basename file="${file.reference.javassist-3.12.0.GA.jar}" property="manifest.file.reference.javassist-3.12.0.GA.jar"/>
+        <basename file="${file.reference.jboss-logging-3.0.0.GA.jar}" property="manifest.file.reference.jboss-logging-3.0.0.GA.jar"/>
+        <basename file="${file.reference.jta-1.1.jar-1}" property="manifest.file.reference.jta-1.1.jar-1"/>
+        <basename file="${file.reference.CP-Apache-commons-lang.2.5.jar}" property="manifest.file.reference.CP-Apache-commons-lang.2.5.jar"/>
+        <basename file="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" property="manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar"/>
+        <basename file="${file.reference.javaee6-doc-api.zip}" property="manifest.file.reference.javaee6-doc-api.zip"/>
+        <basename file="${file.reference.javax.annotation.jar}" property="manifest.file.reference.javax.annotation.jar"/>
+        <basename file="${file.reference.jaxb-api-osgi.jar}" property="manifest.file.reference.jaxb-api-osgi.jar"/>
+        <basename file="${file.reference.webservices-api-osgi.jar}" property="manifest.file.reference.webservices-api-osgi.jar"/>
+        <basename file="${libs.javaee-api-6.0.classpath}" property="manifest.libs.javaee-api-6.0.classpath"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 "/>
-            <attribute name="jar-1-Extension-Name" value="${manifest.file.reference.CP-Apache-commos-lang.2.5.jar}"/>
-            <attribute name="jar-2-Extension-Name" value="${manifest.reference.WebAlbums3-iService.jar}"/>
-            <attribute name="jar-3-Extension-Name" value="${manifest.reference.WebAlbums3-iDAO.jar}"/>
-            <attribute name="jar-4-Extension-Name" value="${manifest.reference.WebAlbums3-Commons.jar}"/>
-            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar}"/>
-            <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}"/>
-            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.CP-Perf-perf4j-0.9.13.jar}"/>
-            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.RT-Log-logback-core-0.9.24.jar}"/>
-            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.RT-Log-logback-classic-0.9.24.jar}"/>
-            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.CP-DB-dbunit-2.4.5.jar}"/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 jar-12 jar-13 jar-14 jar-15 jar-16 jar-17 jar-18 jar-19 jar-20 jar-21 jar-22 jar-23 jar-24 "/>
+            <attribute name="jar-1-Extension-Name" value="${manifest.reference.WebAlbums3-iDAO.jar}"/>
+            <attribute name="jar-2-Extension-Name" value="${manifest.reference.WebAlbums3-Commons.jar}"/>
+            <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.CP-Perf-perf4j-0.9.13.jar}"/>
+            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.hibernate-core-4.0.0.CR3.jar}"/>
+            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar}"/>
+            <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.antlr-2.7.7.jar}"/>
+            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.classmate-0.5.4.jar}"/>
+            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.commons-collections-3.1.jar-1}"/>
+            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.dom4j-1.6.1.jar-1}"/>
+            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.hibernate-commons-annotations-4.0.0.CR2.jar}"/>
+            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.hibernate-core-4.0.0.CR3.jar}"/>
+            <attribute name="jar-12-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar}"/>
+            <attribute name="jar-13-Extension-Name" value="${manifest.file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}"/>
+            <attribute name="jar-14-Extension-Name" value="${manifest.file.reference.jandex-1.0.3.Final.jar}"/>
+            <attribute name="jar-15-Extension-Name" value="${manifest.file.reference.javassist-3.12.0.GA.jar}"/>
+            <attribute name="jar-16-Extension-Name" value="${manifest.file.reference.jboss-logging-3.0.0.GA.jar}"/>
+            <attribute name="jar-17-Extension-Name" value="${manifest.file.reference.jta-1.1.jar-1}"/>
+            <attribute name="jar-18-Extension-Name" value="${manifest.file.reference.CP-Apache-commons-lang.2.5.jar}"/>
+            <attribute name="jar-19-Extension-Name" value="${manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar}"/>
+            <attribute name="jar-20-Extension-Name" value="${manifest.file.reference.javaee6-doc-api.zip}"/>
+            <attribute name="jar-21-Extension-Name" value="${manifest.file.reference.javax.annotation.jar}"/>
+            <attribute name="jar-22-Extension-Name" value="${manifest.file.reference.jaxb-api-osgi.jar}"/>
+            <attribute name="jar-23-Extension-Name" value="${manifest.file.reference.webservices-api-osgi.jar}"/>
+            <attribute name="jar-24-Extension-Name" value="${manifest.libs.javaee-api-6.0.classpath}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
-        <copyfiles files="${file.reference.CP-Apache-commos-lang.2.5.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${reference.WebAlbums3-iService.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.RT-Log-logback-core-0.9.24.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.RT-Log-logback-classic-0.9.24.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.antlr-2.7.7.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.classmate-0.5.4.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.commons-collections-3.1.jar-1}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.dom4j-1.6.1.jar-1}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-commons-annotations-4.0.0.CR2.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jandex-1.0.3.Final.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.javassist-3.12.0.GA.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jboss-logging-3.0.0.GA.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jta-1.1.jar-1}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.javaee6-doc-api.zip}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.javax.annotation.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jaxb-api-osgi.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.webservices-api-osgi.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">
@@ -769,8 +845,10 @@ exists or setup the property manually. For example like this:
         <!-- You can override this target in the ../build.xml file. -->
     </target>
     <target depends="init,compile,-pre-pre-compile-test,-pre-compile-test" if="have.tests" name="-do-compile-test">
-        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}:${j2ee.platform.embeddableejb.classpath}" debug="true" destdir="${build.test.classes.dir}" srcdir=""/>
-        <copy todir="${build.test.classes.dir}"/>
+        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}:${j2ee.platform.embeddableejb.classpath}" debug="true" destdir="${build.test.classes.dir}" srcdir="${test.test.dir}"/>
+        <copy todir="${build.test.classes.dir}">
+            <fileset dir="${test.test.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
+        </copy>
     </target>
     <target name="-post-compile-test">
         <!-- Empty placeholder for easier customization. -->
@@ -783,7 +861,7 @@ exists or setup the property manually. For example like this:
     </target>
     <target depends="init,compile,-pre-pre-compile-test,-pre-compile-test-single" if="have.tests" name="-do-compile-test-single">
         <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
-        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}:${j2ee.platform.embeddableejb.classpath}" debug="true" destdir="${build.test.classes.dir}" excludes="" includes="${javac.includes}" srcdir=""/>
+        <ejbjarproject2:javac classpath="${javac.test.classpath}:${j2ee.platform.classpath}:${j2ee.platform.embeddableejb.classpath}" debug="true" destdir="${build.test.classes.dir}" excludes="" includes="${javac.includes}" srcdir="${test.test.dir}"/>
     </target>
     <target name="-post-compile-test-single">
         <!-- Empty placeholder for easier customization. -->
@@ -876,7 +954,6 @@ exists or setup the property manually. For example like this:
     <target depends="init" name="deps-clean" unless="no.deps">
         <ant antfile="${project.WebAlbums3-Commons}/nbbuild.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.WebAlbums3-iDAO}/nbbuild.xml" inheritall="false" target="clean"/>
-        <ant antfile="${project.WebAlbums3-iService}/nbbuild.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="-do-clean">
         <delete dir="${build.dir}"/>
