@@ -126,6 +126,9 @@ is divided into following sections:
         <condition property="is.server.weblogic" value="true">
             <equals arg1="${j2ee.server.type}" arg2="WebLogic9"/>
         </condition>
+        <condition property="is.jars.in.ejbjar" value="true">
+            <equals arg1="${jars.in.ejbjar}" arg2="true"/>
+        </condition>
         <condition else="false" property="jdkBug6558476">
             <and>
                 <matches pattern="1\.[56]" string="${java.specification.version}"/>
@@ -488,30 +491,111 @@ exists or setup the property manually. For example like this:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="compile" if="is.server.weblogic" name="library-inclusion-in-archive">
+    <target depends="compile,-library-inclusion-in-archive-weblogic,-library-inclusion-in-archive-by-user" name="library-inclusion-in-archive"/>
+    <target if="is.jars.in.ejbjar" name="-library-inclusion-in-archive-by-user">
+        <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.antlr-2.7.7.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.classmate-0.5.4.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.commons-collections-3.1.jar-1}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.dom4j-1.6.1.jar-1}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-commons-annotations-4.0.0.CR2.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jandex-1.0.3.Final.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.javassist-3.12.0.GA.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jboss-logging-3.0.0.GA.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jta-1.1.jar-1}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.javaee6-doc-api.zip}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.javax.annotation.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.jaxb-api-osgi.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.webservices-api-osgi.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${build.classes.dir}"/>
+    </target>
+    <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
         <basename file="${reference.WebAlbums3-iDAO.jar}" property="manifest.reference.WebAlbums3-iDAO.jar"/>
         <basename file="${reference.WebAlbums3-Commons.jar}" property="manifest.reference.WebAlbums3-Commons.jar"/>
         <basename file="${file.reference.CP-Perf-perf4j-0.9.13.jar}" property="manifest.file.reference.CP-Perf-perf4j-0.9.13.jar"/>
-        <basename file="${file.reference.WebAlbums-libs-hibernate4}" property="manifest.file.reference.WebAlbums-libs-hibernate4"/>
         <basename file="${file.reference.hibernate-core-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-core-4.0.0.CR3.jar"/>
         <basename file="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar"/>
+        <basename file="${file.reference.antlr-2.7.7.jar}" property="manifest.file.reference.antlr-2.7.7.jar"/>
+        <basename file="${file.reference.classmate-0.5.4.jar}" property="manifest.file.reference.classmate-0.5.4.jar"/>
+        <basename file="${file.reference.commons-collections-3.1.jar-1}" property="manifest.file.reference.commons-collections-3.1.jar-1"/>
+        <basename file="${file.reference.dom4j-1.6.1.jar-1}" property="manifest.file.reference.dom4j-1.6.1.jar-1"/>
+        <basename file="${file.reference.hibernate-commons-annotations-4.0.0.CR2.jar}" property="manifest.file.reference.hibernate-commons-annotations-4.0.0.CR2.jar"/>
+        <basename file="${file.reference.hibernate-core-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-core-4.0.0.CR3.jar"/>
+        <basename file="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" property="manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar"/>
+        <basename file="${file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}" property="manifest.file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+        <basename file="${file.reference.jandex-1.0.3.Final.jar}" property="manifest.file.reference.jandex-1.0.3.Final.jar"/>
+        <basename file="${file.reference.javassist-3.12.0.GA.jar}" property="manifest.file.reference.javassist-3.12.0.GA.jar"/>
+        <basename file="${file.reference.jboss-logging-3.0.0.GA.jar}" property="manifest.file.reference.jboss-logging-3.0.0.GA.jar"/>
+        <basename file="${file.reference.jta-1.1.jar-1}" property="manifest.file.reference.jta-1.1.jar-1"/>
+        <basename file="${file.reference.CP-Apache-commons-lang.2.5.jar}" property="manifest.file.reference.CP-Apache-commons-lang.2.5.jar"/>
+        <basename file="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" property="manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar"/>
+        <basename file="${file.reference.javaee6-doc-api.zip}" property="manifest.file.reference.javaee6-doc-api.zip"/>
+        <basename file="${file.reference.javax.annotation.jar}" property="manifest.file.reference.javax.annotation.jar"/>
+        <basename file="${file.reference.jaxb-api-osgi.jar}" property="manifest.file.reference.jaxb-api-osgi.jar"/>
+        <basename file="${file.reference.webservices-api-osgi.jar}" property="manifest.file.reference.webservices-api-osgi.jar"/>
+        <basename file="${libs.javaee-api-6.0.classpath}" property="manifest.libs.javaee-api-6.0.classpath"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 "/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 jar-12 jar-13 jar-14 jar-15 jar-16 jar-17 jar-18 jar-19 jar-20 jar-21 jar-22 jar-23 jar-24 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.reference.WebAlbums3-iDAO.jar}"/>
             <attribute name="jar-2-Extension-Name" value="${manifest.reference.WebAlbums3-Commons.jar}"/>
             <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.CP-Perf-perf4j-0.9.13.jar}"/>
-            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.WebAlbums-libs-hibernate4}"/>
-            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.hibernate-core-4.0.0.CR3.jar}"/>
-            <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar}"/>
+            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.hibernate-core-4.0.0.CR3.jar}"/>
+            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar}"/>
+            <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.antlr-2.7.7.jar}"/>
+            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.classmate-0.5.4.jar}"/>
+            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.commons-collections-3.1.jar-1}"/>
+            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.dom4j-1.6.1.jar-1}"/>
+            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.hibernate-commons-annotations-4.0.0.CR2.jar}"/>
+            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.hibernate-core-4.0.0.CR3.jar}"/>
+            <attribute name="jar-12-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.0.0.CR3.jar}"/>
+            <attribute name="jar-13-Extension-Name" value="${manifest.file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}"/>
+            <attribute name="jar-14-Extension-Name" value="${manifest.file.reference.jandex-1.0.3.Final.jar}"/>
+            <attribute name="jar-15-Extension-Name" value="${manifest.file.reference.javassist-3.12.0.GA.jar}"/>
+            <attribute name="jar-16-Extension-Name" value="${manifest.file.reference.jboss-logging-3.0.0.GA.jar}"/>
+            <attribute name="jar-17-Extension-Name" value="${manifest.file.reference.jta-1.1.jar-1}"/>
+            <attribute name="jar-18-Extension-Name" value="${manifest.file.reference.CP-Apache-commons-lang.2.5.jar}"/>
+            <attribute name="jar-19-Extension-Name" value="${manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar}"/>
+            <attribute name="jar-20-Extension-Name" value="${manifest.file.reference.javaee6-doc-api.zip}"/>
+            <attribute name="jar-21-Extension-Name" value="${manifest.file.reference.javax.annotation.jar}"/>
+            <attribute name="jar-22-Extension-Name" value="${manifest.file.reference.jaxb-api-osgi.jar}"/>
+            <attribute name="jar-23-Extension-Name" value="${manifest.file.reference.webservices-api-osgi.jar}"/>
+            <attribute name="jar-24-Extension-Name" value="${manifest.libs.javaee-api-6.0.classpath}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.WebAlbums-libs-hibernate4}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.antlr-2.7.7.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.classmate-0.5.4.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.commons-collections-3.1.jar-1}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.dom4j-1.6.1.jar-1}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-commons-annotations-4.0.0.CR2.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-core-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-entitymanager-4.0.0.CR3.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jandex-1.0.3.Final.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.javassist-3.12.0.GA.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jboss-logging-3.0.0.GA.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jta-1.1.jar-1}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.javaee6-doc-api.zip}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.javax.annotation.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.jaxb-api-osgi.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.webservices-api-osgi.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

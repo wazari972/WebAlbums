@@ -8,9 +8,27 @@
             <included-library dirs="200">reference.WebAlbums3-iDAO.jar</included-library>
             <included-library dirs="200">reference.WebAlbums3-Commons.jar</included-library>
             <included-library dirs="200">file.reference.CP-Perf-perf4j-0.9.13.jar</included-library>
-            <included-library dirs="200">file.reference.WebAlbums-libs-hibernate4</included-library>
             <included-library dirs="200">file.reference.hibernate-core-4.0.0.CR3.jar</included-library>
             <included-library dirs="200">file.reference.hibernate-entitymanager-4.0.0.CR3.jar</included-library>
+            <included-library dirs="200">file.reference.antlr-2.7.7.jar</included-library>
+            <included-library dirs="200">file.reference.classmate-0.5.4.jar</included-library>
+            <included-library dirs="200">file.reference.commons-collections-3.1.jar-1</included-library>
+            <included-library dirs="200">file.reference.dom4j-1.6.1.jar-1</included-library>
+            <included-library dirs="200">file.reference.hibernate-commons-annotations-4.0.0.CR2.jar</included-library>
+            <included-library dirs="200">file.reference.hibernate-core-4.0.0.CR3.jar</included-library>
+            <included-library dirs="200">file.reference.hibernate-entitymanager-4.0.0.CR3.jar</included-library>
+            <included-library dirs="200">file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar</included-library>
+            <included-library dirs="200">file.reference.jandex-1.0.3.Final.jar</included-library>
+            <included-library dirs="200">file.reference.javassist-3.12.0.GA.jar</included-library>
+            <included-library dirs="200">file.reference.jboss-logging-3.0.0.GA.jar</included-library>
+            <included-library dirs="200">file.reference.jta-1.1.jar-1</included-library>
+            <included-library dirs="200">file.reference.CP-Apache-commons-lang.2.5.jar</included-library>
+            <included-library dirs="200">file.reference.CP-Log-slf4j-api-1.6.0.jar</included-library>
+            <included-library dirs="200">file.reference.javaee6-doc-api.zip</included-library>
+            <included-library dirs="200">file.reference.javax.annotation.jar</included-library>
+            <included-library dirs="200">file.reference.jaxb-api-osgi.jar</included-library>
+            <included-library dirs="200">file.reference.webservices-api-osgi.jar</included-library>
+            <included-library dirs="200">libs.javaee-api-6.0.classpath</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
