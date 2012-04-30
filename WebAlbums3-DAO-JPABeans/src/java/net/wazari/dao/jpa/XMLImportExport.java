@@ -64,19 +64,19 @@ public class XMLImportExport implements ImportExporter {
                 tagDAO.findAll(), carnetDAO.findAll()) ;
         try {
             XmlUtils.save(new File(path+FILENAME), web, WebAlbumsXML.clazzez);
-            log.info( "XML Saved!");
+            log.info( "XML Saved! into "+path+FILENAME);
         } catch (JAXBException ex) {
             log.error("JAXBException", ex);
-            throw new DatabaseFacadeLocalException(ex.getMessage());
+            throw new DatabaseFacadeLocalException(ex);
         }
     }
 
     @Override
-    public void importXml(String path) {
+    public void importXml(String path) throws DatabaseFacadeLocalException {
         try {
             WebAlbumsXML web = XmlUtils.reload(new FileInputStream(new File(path+FILENAME)), WebAlbumsXML.clazzez);
             if (web == null) {
-                log.warn("Couldn't load the XML backup ...");
+                log.warn("Couldn't load the XML backup file "+path+FILENAME+"...");
                 return ;
             }
             
@@ -98,30 +98,33 @@ public class XMLImportExport implements ImportExporter {
                 
                 if (enrTag.getGeolocalisation() != null) {
                     enrTag.getGeolocalisation().setTag(enrTag);
-                    em.merge(enrTag.getGeolocalisation());
                 }
                 
                 if (enrTag.getPerson() != null) {
                     enrTag.getPerson().setTag(enrTag);
-                    em.merge(enrTag.getPerson());
                 }
                 
-                tags.put(enrTag.getId(), em.merge(enrTag)) ;
+                tags.put(enrTag.getId(), enrTag) ;
             }
             
             for (JPATheme enrTheme : web.Themes) {
-                log.info( "Theme: {}", enrTheme) ;
-                em.merge(enrTheme);
+                log.info( "Theme: {}", enrTheme.getNom()) ;
                 themes.put(enrTheme.getId(), enrTheme) ;
                 
                 for (JPAAlbum enrAlbum : (List<JPAAlbum>)enrTheme.getAlbumList()) {
                     albums.put(enrAlbum.getId(), enrAlbum);
-                    enrAlbum.setTheme(enrTheme);
-                    em.merge(enrAlbum);
                     
-                    for (JPAGpx enrGpx : (List<JPAGpx>) enrAlbum.getGpxList()) {
-                        enrGpx.setAlbum(enrAlbum);
-                        em.merge(enrGpx);
+                    enrAlbum.setTheme(enrTheme);
+                    enrAlbum.setDroit(users.get(enrAlbum.droitId));
+                    
+                    if (enrAlbum.pictureId != null) {
+                        enrAlbum.setPicture(photos.get(enrAlbum.pictureId));
+                    }                    
+                    
+                    if (enrAlbum.getGpxList() != null) {
+                        for (JPAGpx enrGpx : (List<JPAGpx>) enrAlbum.getGpxList()) {
+                            enrGpx.setAlbum(enrAlbum);
+                        }
                     }
                     
                     for (JPAPhoto enrPhoto : (List<JPAPhoto>) enrAlbum.getPhotoList()) {
@@ -129,7 +132,6 @@ public class XMLImportExport implements ImportExporter {
                         
                         if (enrPhoto.tagAuthorId != null) {
                             enrPhoto.setTagAuthor(tags.get(enrPhoto.tagAuthorId));
-                            
                         }
                         
                         for (JPATagPhoto tagPhoto : (List<JPATagPhoto>) enrPhoto.getTagPhotoList()) {
@@ -137,18 +139,8 @@ public class XMLImportExport implements ImportExporter {
                             tagPhoto.setTag(tags.get(tagPhoto.tagId));
                         }
                         
-                        photos.put(enrPhoto.getId(), em.merge(enrPhoto));
+                        photos.put(enrPhoto.getId(), enrPhoto);
                     }
-                    
-                    
-                    if (enrAlbum.pictureId != null) {
-                        enrAlbum.setPicture(photos.get(enrAlbum.pictureId));
-                    }
-                    
-                    if (enrAlbum.droitId != null) {
-                        enrAlbum.setDroit(users.get(enrAlbum.droitId));
-                    }
-                    em.merge(enrAlbum);
                 }
                 
                 for (JPATagTheme enrTagTheme : (List<JPATagTheme>) enrTheme.getTagThemeList()) {
@@ -187,17 +179,24 @@ public class XMLImportExport implements ImportExporter {
                     enrTheme.setPicture(photos.get(enrTheme.pictureId));
                 }
                 
+                em.merge(enrTheme);
             }
+            
+            for (JPAAlbum a : albums.values())
+                em.merge(a);
+            
+            for (JPAPhoto p : photos.values())
+                em.merge(p);
             
             /************************************/
             for (JPATag enrTag : web.Tags) {
                 if (enrTag.parentId != null) {
                     enrTag.setParent(tags.get(enrTag.parentId));
-                    em.merge(enrTag);
                 }
+                em.merge(enrTag);
             }
         } catch (Exception ex) {
-            log.error(ex.getClass().toString(), ex);
+            throw new DatabaseFacadeLocalException(ex);
         }
     }
 

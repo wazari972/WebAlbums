@@ -135,7 +135,7 @@ public class JPAAlbum implements Album, Serializable {
     
     @Transient
     public Integer pictureId ;
-    private void setPictureId(Integer picture) {
+    public void setPictureId(Integer picture) {
         this.pictureId = picture;
     }
     
@@ -157,7 +157,7 @@ public class JPAAlbum implements Album, Serializable {
     }
 
     @Override
-    public void setPhotoList(List<Photo> jPAPhotoList) {
+    public void setPhotoList(List jPAPhotoList) {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
     
@@ -168,7 +168,7 @@ public class JPAAlbum implements Album, Serializable {
     }
 
     @Override
-    public void setGpxList(List<Gpx> jPAGpxList) {
+    public void setGpxList(List jPAGpxList) {
         this.jPAGpxList = (List) jPAGpxList;
     }
     
@@ -190,6 +190,8 @@ public class JPAAlbum implements Album, Serializable {
     @Transient
     public Integer droitId;
     public void setDroitId(Integer droit) {
+        if (droit == null)
+            log.warn("DROIT is null "+this.id);
         this.droitId = droit;
     }
 

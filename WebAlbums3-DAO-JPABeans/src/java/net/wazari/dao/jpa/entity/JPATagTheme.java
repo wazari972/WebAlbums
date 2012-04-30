@@ -82,7 +82,7 @@ public class JPATagTheme implements TagTheme, Serializable {
     
     @Transient
     public Integer photoId;
-    private void setPhotoId(Integer photoId) {
+    public void setPhotoId(Integer photoId) {
         this.photoId = photoId;
     }
 

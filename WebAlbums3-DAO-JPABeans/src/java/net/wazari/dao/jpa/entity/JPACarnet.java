@@ -164,7 +164,7 @@ public class JPACarnet implements Carnet, Serializable {
     
     @Transient
     public Integer pictureId ;
-    private void setPictureId(Integer picture) {
+    public void setPictureId(Integer picture) {
         this.pictureId = picture;
     }
     
@@ -186,6 +186,8 @@ public class JPACarnet implements Carnet, Serializable {
     @Transient
     public Integer droitId;
     public void setDroitId(Integer droit) {
+        if (droit == null)
+            log.warn("DROIT is null "+this.id);
         this.droitId = droit;
     }
     
@@ -210,7 +212,7 @@ public class JPACarnet implements Carnet, Serializable {
 
     @Transient
     public List<Integer> albumIdList ;
-    private void setAlbumIdList(List<Integer> albumIdList) {
+    public void setAlbumIdList(List<Integer> albumIdList) {
         this.albumIdList = albumIdList;
     }
     
@@ -225,7 +227,7 @@ public class JPACarnet implements Carnet, Serializable {
     }
     
     @XmlList
-    @XmlElement(name="Photos")
+    @XmlElement(name="Photo")
     public List<Integer> getPhotoIdList() {
         List<Integer> ids = new ArrayList<Integer>(jPAAlbumList.size());
         for (Photo enrPhoto : jPAPhotoList) 
@@ -235,7 +237,7 @@ public class JPACarnet implements Carnet, Serializable {
 
     @Transient
     public List<Integer> photoIdList;
-    private void setPhotoIdList(List<Integer> photoIdList) {
+    public void setPhotoIdList(List<Integer> photoIdList) {
         this.photoIdList = photoIdList;
     }
 

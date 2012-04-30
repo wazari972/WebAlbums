@@ -58,6 +58,7 @@ public class DatabaseBean implements DatabaseLocal {
             output.message = "Import OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
+            log.warn("Couldn't import ... {}", e);
         }
         return output;
     }
@@ -69,6 +70,7 @@ public class DatabaseBean implements DatabaseLocal {
             output.message = "Export OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
+            log.warn("Couldn't export ... {}", e);
         }
         return output;
     }
@@ -160,6 +162,7 @@ public class DatabaseBean implements DatabaseLocal {
             log.warn(output.message);
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
+            log.warn("Couldn't check ... {}", e);
         }
         return output;
     }
@@ -171,6 +174,7 @@ public class DatabaseBean implements DatabaseLocal {
             output.message = "Trunk OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
+            log.warn("Couldn't trunk ... {}", e);
         }
         return output;
     }

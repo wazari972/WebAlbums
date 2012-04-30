@@ -131,6 +131,7 @@ public class JPAPhoto implements Photo, Serializable {
         return (full ? this.album.getTheme().getNom() + "/" : "") + path;
     }
     
+    @XmlElement
     public String getPath() {
         return path;
     }
@@ -269,7 +270,7 @@ public class JPAPhoto implements Photo, Serializable {
     }
 
     @Override
-    public void setTagPhotoList(List<TagPhoto> jPATagPhotoList) {
+    public void setTagPhotoList(List jPATagPhotoList) {
         this.jPATagPhotoList = (List) jPATagPhotoList;
     }
 

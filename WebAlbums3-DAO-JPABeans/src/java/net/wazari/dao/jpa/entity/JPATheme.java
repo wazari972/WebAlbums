@@ -102,7 +102,7 @@ public class JPATheme implements Theme, Serializable {
     }
 
     @Override
-    public void setTagThemeList(List<TagTheme> jPATagThemeList) {
+    public void setTagThemeList(List jPATagThemeList) {
         this.jPATagThemeList = (List) jPATagThemeList;
     }
 
@@ -114,7 +114,7 @@ public class JPATheme implements Theme, Serializable {
     }
 
     @Override
-    public void setAlbumList(List<Album> jPAAlbumList) {
+    public void setAlbumList(List jPAAlbumList) {
         this.jPAAlbumList = (List) jPAAlbumList;
     }
 
@@ -126,7 +126,7 @@ public class JPATheme implements Theme, Serializable {
     }
     
     @Override
-    public void setCarnetList(List<Carnet> jPACarnetList) {
+    public void setCarnetList(List jPACarnetList) {
         this.jPACarnetList = (List) jPACarnetList;
     }
     
@@ -173,8 +173,9 @@ public class JPATheme implements Theme, Serializable {
     }
     @Transient
     public Integer backgroundId;
-    private void setBackground(Integer picture) {
+    public void setBackground(Integer picture) {
         this.backgroundId = picture;
+        log.info("SET");
     }
 
     @Override
