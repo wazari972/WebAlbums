@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Person;
+import net.wazari.dao.entity.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,11 @@ public class JPAPerson implements Person, Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "Tag", nullable = false)
-    private Integer tag;
+    private Integer id;
+    
+    @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    private JPATag tag;
 
     @Basic(optional = true)
     @Column(name = "Birthdate", nullable = true, length = 10)
@@ -41,31 +46,26 @@ public class JPAPerson implements Person, Serializable {
     @Column(name = "Contact", nullable = true, length = 100)
     private String contact;
 
-    @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    private JPATag jPATag;
-
     public JPAPerson() {
     }
 
-    public JPAPerson(Integer tag) {
-        this.tag = tag;
+    public JPAPerson(Tag tag) {
+        this.tag = (JPATag) tag;
     }
 
-    public JPAPerson(Integer tag, String birthdate) {
-        this.tag = tag;
+    public JPAPerson(Tag tag, String birthdate) {
+        this.tag = (JPATag) tag;
         this.birthdate = birthdate;
     }
 
-    @XmlAttribute
     @Override
-    public Integer getTag() {
-        return tag;
+    public Tag getTag() {
+        return (JPATag) tag;
     }
     
     @Override
-    public void setTag(Integer tag) {
-        this.tag = tag;
+    public void setTag(Tag tag) {
+        this.tag = (JPATag) tag;
     }
 
     @XmlAttribute

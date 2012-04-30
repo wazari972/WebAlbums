@@ -133,8 +133,10 @@ public class JPAAlbum implements Album, Serializable {
             return picture.getId();
     }
     
-    private void setPictureId(Photo picture) {
-        //TODO
+    @Transient
+    public Integer pictureId ;
+    private void setPictureId(Integer picture) {
+        this.pictureId = picture;
     }
     
     @Override
@@ -184,9 +186,11 @@ public class JPAAlbum implements Album, Serializable {
     public Integer getDroitId() {
         return droit.getId();
     }
-
+    
+    @Transient
+    public Integer droitId;
     public void setDroitId(Integer droit) {
-        //TODO
+        this.droitId = droit;
     }
 
     @Override
@@ -197,15 +201,6 @@ public class JPAAlbum implements Album, Serializable {
     @Override
     public void setTheme(Theme theme) {
         this.theme = (JPATheme) theme;
-    }
-    
-    @XmlAttribute
-    public Integer getThemeId() {
-        return droit.getId();
-    }
-
-    public void setThemeId(Integer droit) {
-        //TODO
     }
     
     @Override

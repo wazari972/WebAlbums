@@ -45,7 +45,7 @@ public class WebAlbumsDAOBean {
     public static final String PERSISTENCE_UNIT_MySQL_StandAlone = "WebAlbums-MySQL-StandAlone" ;
 
     public static final String PERSISTENCE_UNIT_Prod = PERSISTENCE_UNIT_MySQL_Prod ;
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_Prod ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Prod ;
 
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
@@ -66,7 +66,6 @@ public class WebAlbumsDAOBean {
         if (session.isRootSession()) {
             return TRUE ;
         } else {
-            //albm.theme = session.getTheme().getId()
             return cb.equal(theme.get(JPATheme_.id),
                             session.getTheme().getId()) ;
         }

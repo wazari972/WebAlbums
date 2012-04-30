@@ -25,16 +25,16 @@ public class WebAlbumsXML {
 
     @XmlElementWrapper(name="Themes")
     @XmlElement(name="Theme")
-    private List<JPATheme> Themes ;
+    public List<JPATheme> Themes ;
     @XmlElementWrapper(name="Utilisateurs")
     @XmlElement(name="Utilisateur")
-    private List<JPAUtilisateur> Utilisateurs ;
+    public List<JPAUtilisateur> Utilisateurs ;
     @XmlElementWrapper(name="Tags")
     @XmlElement(name="Tag")
-    private List<JPATag> Tags ;
+    public List<JPATag> Tags ;
     @XmlElementWrapper(name="Carnets")
     @XmlElement(name="Carnet")
-    private List<JPACarnet> Carnets;
+    public List<JPACarnet> Carnets;
 
     private WebAlbumsXML(){}
     
@@ -46,17 +46,4 @@ public class WebAlbumsXML {
         this.Tags = (List) tags;
         this.Carnets = (List) carnets;
     }
-/*
-    public List<JPATag> getTags() {
-        return (List) Tags.Tag;
-    }
-
-    public List<JPATheme> getThemes() {
-        return (List) Themes.Theme;
-    }
-
-    public List<JPAUtilisateur> getUtilisateurs() {
-        return (List) Utilisateurs.Utilisateur ;
-    }
-*/
 }

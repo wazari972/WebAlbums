@@ -70,6 +70,21 @@ public class JPATagTheme implements TagTheme, Serializable {
     public void setPhoto(Photo photo) {
         this.photo = (JPAPhoto) photo;
     }
+    
+    @XmlAttribute
+    public Integer getPhotoId() {
+        if (this.photo == null) {
+            return null;
+        } else {
+            return this.photo.getId();
+        }
+    }
+    
+    @Transient
+    public Integer photoId;
+    private void setPhotoId(Integer photoId) {
+        this.photoId = photoId;
+    }
 
     @XmlAttribute
     public Boolean isVisible() {
@@ -98,15 +113,6 @@ public class JPATagTheme implements TagTheme, Serializable {
     public void setTheme(Theme theme) {
         this.theme = (JPATheme) theme;
     }
-
-    @XmlAttribute
-    public Integer getThemeId() {
-        return theme.getId() ;
-    }
-
-    public void setThemeId(Integer themeId) {
-        //TODO
-    }
     
     @Override
     public Tag getTag() {
@@ -123,8 +129,10 @@ public class JPATagTheme implements TagTheme, Serializable {
         return tag.getId() ;
     }
 
+    @Transient
+    public Integer tagId;
     public void setTagId(Integer tagId) {
-        //TODO
+        this.tagId = tagId;
     }
     
     @Override

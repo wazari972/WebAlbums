@@ -16,5 +16,6 @@ public abstract class JPAAlbum_ {
     public static volatile SingularAttribute<JPAAlbum, String> date;
     public static volatile SingularAttribute<JPAAlbum, JPAUtilisateur> droit;
     public static volatile SingularAttribute<JPAAlbum, String> nom;
+    public static volatile ListAttribute<JPAAlbum, JPACarnet> jPACarnetList;
 }
 

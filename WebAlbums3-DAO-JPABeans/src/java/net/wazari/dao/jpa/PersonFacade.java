@@ -40,7 +40,7 @@ public class PersonFacade implements PersonFacadeLocal {
     @Override
     public Person newPerson(Tag enrTag) {
         JPAPerson p = new JPAPerson();
-        p.setTag(enrTag.getId());
+        p.setTag(enrTag);
         return p;
     }
 }

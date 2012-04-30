@@ -9,9 +9,8 @@ package net.wazari.dao.entity;
  * @author kevin
  */
 public interface Person {
-
-    Integer getTag();
-    void setTag(Integer tag);
+    Tag getTag();
+    void setTag(Tag tag);
             
     String getBirthdate();
     void setBirthdate(String birthdate);

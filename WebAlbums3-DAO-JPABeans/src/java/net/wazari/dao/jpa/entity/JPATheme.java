@@ -10,10 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.TagTheme;
-import net.wazari.dao.entity.Theme;
+import net.wazari.dao.entity.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +48,9 @@ public class JPATheme implements Theme, Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
+    private List<JPACarnet> jPACarnetList;
 
     @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
@@ -118,6 +118,18 @@ public class JPATheme implements Theme, Serializable {
         this.jPAAlbumList = (List) jPAAlbumList;
     }
 
+    @XmlElementWrapper(name="Carnets")
+    @XmlElement(name="Carnet", type=JPACarnet.class)
+    @Override
+    public List getCarnetList() {
+        return jPACarnetList;
+    }
+    
+    @Override
+    public void setCarnetList(List<Carnet> jPACarnetList) {
+        this.jPACarnetList = (List) jPACarnetList;
+    }
+    
     @Override
     public Photo getPicture() {
         return picture;
@@ -136,8 +148,10 @@ public class JPATheme implements Theme, Serializable {
             return picture.getId();
     }
 
+    @Transient
+    public Integer pictureId;
     public void setPictureId(Integer picture) {
-        //TODO
+        this.pictureId = picture;
     }
     
     @Override
@@ -157,9 +171,10 @@ public class JPATheme implements Theme, Serializable {
         else
             return background.getId();
     }
-
+    @Transient
+    public Integer backgroundId;
     private void setBackground(Integer picture) {
-        //TODO
+        this.backgroundId = picture;
     }
 
     @Override
@@ -185,5 +200,4 @@ public class JPATheme implements Theme, Serializable {
     public String toString() {
         return "net.wazari.dao.jpa.entity.JPATheme[id=" + id + "]";
     }
-
 }

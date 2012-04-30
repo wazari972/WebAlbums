@@ -210,11 +210,13 @@ public class DatabaseBean implements DatabaseLocal {
                 vSession.setRootSession(Boolean.FALSE);
                 vSession.setTheme(curEnrTheme);
             }
+            
             xmlTheme.tags = tagDAO.loadVisibleTags(vSession, false).size();
             if (xmlRootTheme != null) {
                 vSession.setRootSession(Boolean.TRUE);
                 vSession.setTheme(enrTheme);
             }
+            
             if (xmlRootTheme == null || xmlRootTheme.tag == null) {
                 Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession);
                 List<XmlTagCloudEntry> lst = new ArrayList<XmlTagCloudEntry>(map.size());
@@ -232,8 +234,8 @@ public class DatabaseBean implements DatabaseLocal {
         }
         
         if (xmlRootTheme != null)  {
-            xmlRootTheme.tags = tagDAO.findAll().size();
             output.theme.add(xmlRootTheme);
+            xmlRootTheme.tags = tagDAO.findAll().size();
         }
         return output;
     }

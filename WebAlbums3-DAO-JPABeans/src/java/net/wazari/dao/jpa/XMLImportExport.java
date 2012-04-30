@@ -8,6 +8,7 @@ package net.wazari.dao.jpa;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +28,7 @@ import net.wazari.dao.jpa.entity.xml.WebAlbumsXML;
 import net.wazari.common.util.XmlUtils ;
 import net.wazari.dao.*;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
-import net.wazari.dao.jpa.entity.JPAAlbum;
-import net.wazari.dao.jpa.entity.JPAGeolocalisation;
-import net.wazari.dao.jpa.entity.JPAPhoto;
-import net.wazari.dao.jpa.entity.JPATag;
-import net.wazari.dao.jpa.entity.JPATagPhoto;
-import net.wazari.dao.jpa.entity.JPATagTheme;
-import net.wazari.dao.jpa.entity.JPATheme;
-import net.wazari.dao.jpa.entity.JPAUtilisateur;
+import net.wazari.dao.jpa.entity.*;
 /**
  *
  * @author kevinpouget
@@ -85,97 +79,123 @@ public class XMLImportExport implements ImportExporter {
                 log.warn("Couldn't load the XML backup ...");
                 return ;
             }
-/*
-            Map<Integer, JPATag> tags = new HashMap<Integer, JPATag>(web.getTags().size()) ;
-            Map<Integer, JPAPhoto> photos = new HashMap<Integer, JPAPhoto>(web.getPhotos().size()) ;
-            Map<Integer, JPATheme> themes = new HashMap<Integer, JPATheme>(web.getThemes().size()) ;
-            Map<Integer, JPAAlbum> albums = new HashMap<Integer, JPAAlbum>(web.getAlbums().size()) ;
-            Map<Integer, JPAUtilisateur> users = new HashMap<Integer, JPAUtilisateur>(web.getUtilisateurs().size()) ;
+            
+            Map<Integer, JPATag> tags = new HashMap<Integer, JPATag>(web.Tags.size()) ;
+            Map<Integer, JPAPhoto> photos = new HashMap<Integer, JPAPhoto>() ;
+            Map<Integer, JPATheme> themes = new HashMap<Integer, JPATheme>(web.Themes.size()) ;
+            Map<Integer, JPAAlbum> albums = new HashMap<Integer, JPAAlbum>() ;
+            Map<Integer, JPAUtilisateur> users = new HashMap<Integer, JPAUtilisateur>(web.Utilisateurs.size()) ;
 
-            for (JPATheme enrTheme : web.getThemes()) {
+            for (JPAUtilisateur enrUser : web.Utilisateurs) {
+                log.info( "User: {}", enrUser) ;
+                
+                users.put(enrUser.getId(), em.merge(enrUser)) ;
+            }            
+            
+            log.info( "Import {} Tag",web.Tags.size()) ;
+            for (JPATag enrTag : web.Tags) {
+                log.info( "Tag: {}", enrTag) ;
+                
+                if (enrTag.getGeolocalisation() != null) {
+                    enrTag.getGeolocalisation().setTag(enrTag);
+                    em.merge(enrTag.getGeolocalisation());
+                }
+                
+                if (enrTag.getPerson() != null) {
+                    enrTag.getPerson().setTag(enrTag);
+                    em.merge(enrTag.getPerson());
+                }
+                
+                tags.put(enrTag.getId(), em.merge(enrTag)) ;
+            }
+            
+            for (JPATheme enrTheme : web.Themes) {
                 log.info( "Theme: {}", enrTheme) ;
                 em.merge(enrTheme);
                 themes.put(enrTheme.getId(), enrTheme) ;
+                
+                for (JPAAlbum enrAlbum : (List<JPAAlbum>)enrTheme.getAlbumList()) {
+                    albums.put(enrAlbum.getId(), enrAlbum);
+                    enrAlbum.setTheme(enrTheme);
+                    em.merge(enrAlbum);
+                    
+                    for (JPAGpx enrGpx : (List<JPAGpx>) enrAlbum.getGpxList()) {
+                        enrGpx.setAlbum(enrAlbum);
+                        em.merge(enrGpx);
+                    }
+                    
+                    for (JPAPhoto enrPhoto : (List<JPAPhoto>) enrAlbum.getPhotoList()) {
+                        enrPhoto.setAlbum(enrAlbum);
+                        
+                        if (enrPhoto.tagAuthorId != null) {
+                            enrPhoto.setTagAuthor(tags.get(enrPhoto.tagAuthorId));
+                            
+                        }
+                        
+                        for (JPATagPhoto tagPhoto : (List<JPATagPhoto>) enrPhoto.getTagPhotoList()) {
+                            tagPhoto.setPhoto(enrPhoto);
+                            tagPhoto.setTag(tags.get(tagPhoto.tagId));
+                        }
+                        
+                        photos.put(enrPhoto.getId(), em.merge(enrPhoto));
+                    }
+                    
+                    
+                    if (enrAlbum.pictureId != null) {
+                        enrAlbum.setPicture(photos.get(enrAlbum.pictureId));
+                    }
+                    
+                    if (enrAlbum.droitId != null) {
+                        enrAlbum.setDroit(users.get(enrAlbum.droitId));
+                    }
+                    em.merge(enrAlbum);
+                }
+                
+                for (JPATagTheme enrTagTheme : (List<JPATagTheme>) enrTheme.getTagThemeList()) {
+                    enrTagTheme.setTheme(enrTheme);
+                    enrTagTheme.setTag(tags.get(enrTagTheme.tagId));
+                    
+                    if (enrTagTheme.photoId != null) {
+                        enrTagTheme.setPhoto(photos.get(enrTagTheme.photoId));
+                    }
+                }
+                
+                for (JPACarnet enrCarnet : (List<JPACarnet>) enrTheme.getCarnetList()) {
+                    for (Integer albumId : enrCarnet.albumIdList) {
+                        enrCarnet.getAlbumList().add(albums.get(albumId));
+                    }
+
+                    for (Integer photoId : enrCarnet.photoIdList) {
+                        enrCarnet.getPhotoList().add(photos.get(photoId));
+                    }
+
+                    if (enrCarnet.pictureId != null) {
+                        enrCarnet.setPicture(photos.get(enrCarnet.pictureId));
+                    }
+
+                    if (enrCarnet.droitId != null) {
+                        enrCarnet.setDroit(users.get(enrCarnet.droitId));
+                    }
+
+                    em.merge(enrCarnet);
+                }
+                
+                if (enrTheme.backgroundId != null) {
+                    enrTheme.setBackground(photos.get(enrTheme.backgroundId));
+                }
+                if (enrTheme.pictureId != null) {
+                    enrTheme.setPicture(photos.get(enrTheme.pictureId));
+                }
+                
             }
             
-            for (JPAUtilisateur enrUser : web.getUtilisateurs()) {
-                log.info( "User: {}", enrUser) ;
-                em.merge(enrUser);
-                users.put(enrUser.getId(), enrUser) ;
-            }
-
-            log.info( "Import {} Album",web.getAlbums().size()) ;
-            for (JPAAlbum enrAlbum : web.getAlbums()) {
-                log.info( "Album: {}", enrAlbum) ;
-
-                //Theme enrTheme = themeDAO.find(enrAlbum.getThemeId()) ;
-                //enrAlbum.setTheme(enrTheme) ;
-                enrAlbum.setTheme(themes.get(enrAlbum.getThemeId())) ;
-
-                //Utilisateur enrUser = userDAO.find(enrAlbum.getDroitId()) ;
-                //enrAlbum.setDroit(enrUser) ;
-                enrAlbum.setDroit(users.get(enrAlbum.getDroitId())) ;
-
-                em.merge(enrAlbum);
-                albums.put(enrAlbum.getId(), enrAlbum) ;
-            }
-
-            log.info( "Import {} Photo",web.getPhotos().size()) ;
-            for (JPAPhoto enrPhoto : web.getPhotos()) {
-                log.info( "Photo: {} ({})", new Object[]{enrPhoto, enrPhoto.getAlbumId()}) ;
-
-                //Album enrAlbum = albumDAO.find(enrPhoto.getAlbumId()) ;
-                //enrPhoto.setAlbum(enrAlbum) ;
-                enrPhoto.setAlbum(albums.get(enrPhoto.getAlbumId())) ;
-
-                em.merge(enrPhoto);
-                photos.put(enrPhoto.getId(), enrPhoto) ;
-            }
-
-            log.info( "Import {} Tag",web.getTags().size()) ;
-            for (JPATag enrTag : web.getTags()) {
-                log.info( "Tag: {}", enrTag) ;
-
-                JPAGeolocalisation enrGeo = enrTag.getGeolocalisation() ;
-                if (enrGeo != null) {
-                    enrGeo.setTag1(enrTag);
-                    log.info( "\tGeo: {}", enrGeo) ;
+            /************************************/
+            for (JPATag enrTag : web.Tags) {
+                if (enrTag.parentId != null) {
+                    enrTag.setParent(tags.get(enrTag.parentId));
+                    em.merge(enrTag);
                 }
-                em.merge(enrTag);
-                tags.put(enrTag.getId(), enrTag) ;
             }
-
-            log.info( "Import {} TagPhoto",web.getTagPhoto().size()) ;
-            for (JPATagPhoto enrTagPhoto : web.getTagPhoto()) {
-                log.info( "TagPhoto: {}", enrTagPhoto) ;
-
-                //Tag enrTag = tagDAO.find(enrTagPhoto.getTagId()) ;
-                //enrTagPhoto.setTag(enrTag) ;
-                enrTagPhoto.setTag(tags.get(enrTagPhoto.getTagId())) ;
-
-                //Photo enrPhoto = photoDAO.find(enrTagPhoto.getPhotoId()) ;
-                //enrTagPhoto.setPhoto(enrPhoto) ;
-                enrTagPhoto.setPhoto(photos.get(enrTagPhoto.getPhotoId())) ;
-
-                em.merge(enrTagPhoto);
-            }
-
-            log.info( "Import {} TagThemes",web.getTagThemes().size()) ;
-            for (JPATagTheme enrTagTheme : web.getTagThemes()) {
-                log.info( "TagTheme: {}", enrTagTheme) ;
-
-                //Tag enrTag = tagDAO.find(enrTagTheme.getTagId()) ;
-                //enrTagTheme.setTag(enrTag) ;
-                enrTagTheme.setTag(tags.get(enrTagTheme.getTagId())) ;
-
-                //Theme enrTheme = themeDAO.find(enrTagTheme.getThemeId()) ;
-                //enrTagTheme.setTheme(enrTheme) ;
-                enrTagTheme.setTheme(themes.get(enrTagTheme.getThemeId())) ;
-
-                em.merge(enrTagTheme);
-            }
-            * 
-            */
         } catch (Exception ex) {
             log.error(ex.getClass().toString(), ex);
         }

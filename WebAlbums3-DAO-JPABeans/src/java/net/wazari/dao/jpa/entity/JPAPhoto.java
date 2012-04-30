@@ -263,6 +263,7 @@ public class JPAPhoto implements Photo, Serializable {
 
     @XmlElementWrapper(name="TagPhotos")
     @XmlElement(name="TagPhoto",  type=JPATagPhoto.class)
+    @Override
     public List getTagPhotoList() {
         return jPATagPhotoList;
     }
@@ -280,15 +281,6 @@ public class JPAPhoto implements Photo, Serializable {
     @Override
     public void setAlbum(Album album) {
         this.album = (JPAAlbum) album;
-    }
-    
-    @XmlAttribute
-    public Integer getAlbumId() {
-        return album.getId() ;
-    }
-    
-    public void setAlbum(Integer album) {
-        //TODO
     }
     
     @Override
@@ -310,8 +302,10 @@ public class JPAPhoto implements Photo, Serializable {
         }
     }
     
+    @Transient
+    public Integer tagAuthorId;
     public void setTagAuthorId(Integer id) {
-        //TODO
+        this.tagAuthorId = id;
     }
     
     @Override

@@ -75,13 +75,14 @@ public class JPATagPhoto implements TagPhoto, Serializable {
     }
 
     @XmlAttribute
-    public Integer getPhotoId() {
-        return photo.getId() ;
-    }
-
-    @XmlAttribute
     public Integer getTagId() {
         return tag.getId() ;
+    }
+    
+    @Transient
+    public Integer tagId;
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId;
     }
 
     @Override

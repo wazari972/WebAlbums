@@ -90,15 +90,6 @@ public class JPAGpx implements Gpx, Serializable {
         this.gpxPath = gpxPath;
     }
     
-    @XmlAttribute
-    public Integer getAlbumId() {
-        return this.album.getId();
-    }
-    
-    public void setAlbumId(Integer albumId) {
-        //TODO
-    }
-    
     @Override
     public Album getAlbum() {
         return (Album) this.album;

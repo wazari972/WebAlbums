@@ -319,10 +319,9 @@ public class ConfigBean implements ConfigLocal {
             }
 
             Geolocalisation geo = geoDAO.newGeolocalisation();
-            geo.setTag(enrTag.getId());
+            geo.setTag(enrTag);
             geo.setLongitude(longit);
             geo.setLat(lat);
-            geo.setTag(enrTag.getId());
             geoDAO.create(geo);
         }
 

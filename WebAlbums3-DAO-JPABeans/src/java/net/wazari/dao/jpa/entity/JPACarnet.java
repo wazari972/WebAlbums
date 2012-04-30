@@ -50,7 +50,7 @@ public class JPACarnet implements Carnet, Serializable {
 
     @Column(name = "Texte")
     @Lob
-    private String texte;
+    private String text;
     
     @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
@@ -143,14 +143,6 @@ public class JPACarnet implements Carnet, Serializable {
     public void setDate(String date) {
         this.date = date;
     }
-
-    @XmlAttribute
-    public Integer getPictureId() {
-        if (picture == null)
-            return null;
-        else
-            return picture.getId();
-    }
     
     @Override
     public Photo getPicture() {
@@ -161,13 +153,19 @@ public class JPACarnet implements Carnet, Serializable {
     public void setPicture(Photo picture) {
         this.picture = (JPAPhoto) picture;
     }
-
+    
     @XmlAttribute
-    public Integer getDroitId() {
-        if (droit == null)
+    public Integer getPictureId() {
+        if (picture == null)
             return null;
         else
-            return droit.getId();
+            return picture.getId();
+    }
+    
+    @Transient
+    public Integer pictureId ;
+    private void setPictureId(Integer picture) {
+        this.pictureId = picture;
     }
     
     @Override
@@ -179,23 +177,16 @@ public class JPACarnet implements Carnet, Serializable {
     public void setDroit(Utilisateur droit) {
         this.droit = (JPAUtilisateur) droit;
     }
-
+    
     @XmlAttribute
-    public Integer getThemeId() {
-        if (theme == null)
-            return null;
-        else
-            return theme.getId();
+    public Integer getDroitId() {
+        return droit.getId();
     }
     
-    @Override
-    public Theme getTheme() {
-        return (Theme) theme;
-    }
-
-    @Override
-    public void setTheme(Theme theme) {
-        this.theme = (JPATheme) theme;
+    @Transient
+    public Integer droitId;
+    public void setDroitId(Integer droit) {
+        this.droitId = droit;
     }
     
     @Override
@@ -217,8 +208,10 @@ public class JPACarnet implements Carnet, Serializable {
         return ids;
     }
 
-    private void setAlbumIdList(List<Integer> jPAAlbumList) {
-        //TODO
+    @Transient
+    public List<Integer> albumIdList ;
+    private void setAlbumIdList(List<Integer> albumIdList) {
+        this.albumIdList = albumIdList;
     }
     
     @Override
@@ -240,19 +233,31 @@ public class JPACarnet implements Carnet, Serializable {
         return ids;
     }
 
-    private void setPhotoIdList(List<Integer> jPAAlbumList) {
-        //TODO
+    @Transient
+    public List<Integer> photoIdList;
+    private void setPhotoIdList(List<Integer> photoIdList) {
+        this.photoIdList = photoIdList;
     }
 
     @XmlElement
     @Override
     public String getText() {
-        return texte;
+        return text;
     }
 
     @Override
-    public void setText(String texte) {
-        this.texte = texte;
+    public void setText(String text) {
+        this.text = text;
+    }
+    
+    @Override
+    public Theme getTheme() {
+        return (Theme) theme;
+    }
+
+    @Override
+    public void setTheme(Theme theme) {
+        this.theme = (JPATheme) theme;
     }
 
     @Override

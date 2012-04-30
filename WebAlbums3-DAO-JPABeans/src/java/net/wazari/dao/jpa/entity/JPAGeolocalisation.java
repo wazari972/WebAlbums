@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.dao.entity.Geolocalisation;
+import net.wazari.dao.entity.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,11 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "Tag", nullable = false)
-    private Integer tag;
+    private Integer id;
+    
+    @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    private JPATag tag;
 
     @Basic(optional = false)
     @Column(name = "Lat", nullable = false, length = 20)
@@ -43,32 +48,23 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
     @Column(name = "Longitude", nullable = false, length = 20)
     private String longitude;
 
-    @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    private JPATag jPATag;
-
     public JPAGeolocalisation() {
     }
 
-    public JPAGeolocalisation(Integer tag) {
-        this.tag = tag;
-    }
-
-    public JPAGeolocalisation(Integer tag, String lat, String longitude) {
-        this.tag = tag;
+    public JPAGeolocalisation(Tag tag, String lat, String longitude) {
+        this.tag = (JPATag) tag;
         this.lat = lat;
         this.longitude = longitude;
     }
 
-    @XmlAttribute
     @Override
-    public Integer getTag() {
-        return tag;
+    public Tag getTag() {
+        return (JPATag) tag;
     }
 
     @Override
-    public void setTag(Integer tag) {
-        this.tag = tag;
+    public void setTag(Tag tag) {
+        this.tag = (JPATag) tag;
     }
     
     @XmlAttribute
