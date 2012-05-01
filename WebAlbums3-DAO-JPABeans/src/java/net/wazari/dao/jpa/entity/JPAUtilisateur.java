@@ -43,7 +43,7 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "droit", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "droit", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
 
     public JPAUtilisateur() {

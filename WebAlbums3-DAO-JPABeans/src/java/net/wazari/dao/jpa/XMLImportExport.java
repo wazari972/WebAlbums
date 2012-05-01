@@ -8,6 +8,7 @@ package net.wazari.dao.jpa;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import net.wazari.dao.jpa.entity.xml.WebAlbumsXML;
 import net.wazari.common.util.XmlUtils ;
 import net.wazari.dao.*;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
+import net.wazari.dao.entity.*;
 import net.wazari.dao.jpa.entity.*;
 /**
  *
@@ -86,117 +88,232 @@ public class XMLImportExport implements ImportExporter {
             Map<Integer, JPAAlbum> albums = new HashMap<Integer, JPAAlbum>() ;
             Map<Integer, JPAUtilisateur> users = new HashMap<Integer, JPAUtilisateur>(web.Utilisateurs.size()) ;
 
-            for (JPAUtilisateur enrUser : web.Utilisateurs) {
-                log.info( "User: {}", enrUser) ;
-                
-                users.put(enrUser.getId(), em.merge(enrUser)) ;
-            }            
+            // only way to put that *** in the database !
+            em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0;").executeUpdate();
             
-            log.info( "Import {} Tag",web.Tags.size()) ;
-            for (JPATag enrTag : web.Tags) {
-                log.info( "Tag: {}", enrTag) ;
-                
-                if (enrTag.getGeolocalisation() != null) {
-                    enrTag.getGeolocalisation().setTag(enrTag);
+            log.warn( "Put entities in the cache") ;
+            if (web.Themes != null) {
+                for (JPATheme enrTheme : web.Themes) {
+                    if (enrTheme.getAlbumList() != null) {
+                        for (JPAAlbum enrAlbum : (List<JPAAlbum>) enrTheme.getAlbumList()) {
+                            albums.put(enrAlbum.getId(), enrAlbum);
+                            
+                            if (enrAlbum.getPhotoList() != null) {
+                                for (JPAPhoto enrPhoto : (List<JPAPhoto>) enrAlbum.getPhotoList()) {
+                                    photos.put(enrPhoto.getId(), enrPhoto);
+                                }
+                            }
+                        }
+                    }
                 }
-                
-                if (enrTag.getPerson() != null) {
-                    enrTag.getPerson().setTag(enrTag);
-                }
-                
-                tags.put(enrTag.getId(), enrTag) ;
+            }
+            if (web.Utilisateurs != null) {
+                for (JPAUtilisateur enrUser : web.Utilisateurs) {
+                    users.put(enrUser.getId(), em.merge(enrUser)) ;
+                }            
             }
             
-            for (JPATheme enrTheme : web.Themes) {
-                log.info( "Theme: {}", enrTheme.getNom()) ;
-                themes.put(enrTheme.getId(), enrTheme) ;
+            log.warn( "Process entities") ;
+            if (web.Tags != null) {
+                log.warn( "Import {} Tag",web.Tags.size()) ;
+                for (JPATag enrTag : web.Tags) {
+                    if (enrTag.getGeolocalisation() != null) {
+                        enrTag.getGeolocalisation().setTag(enrTag);
+                        em.persist(enrTag.getGeolocalisation());
+                    }
+
+                    if (enrTag.getPerson() != null) {
+                        enrTag.getPerson().setTag(enrTag);
+                        em.persist(enrTag.getPerson());
+                    }
+                    
+                    tags.put(enrTag.getId(), em.merge(enrTag)) ;
+                }
                 
-                for (JPAAlbum enrAlbum : (List<JPAAlbum>)enrTheme.getAlbumList()) {
-                    albums.put(enrAlbum.getId(), enrAlbum);
+                log.warn("Second pass for the tags");
+                for (JPATag enrTag : web.Tags) {
+                    if (enrTag.parentId != null) {
+                        JPATag enrTagParent = tags.get(enrTag.parentId);
+                        enrTag.setParent(enrTagParent);
+                        if (enrTagParent.getSonList() == null) 
+                            enrTagParent.setSonList(new LinkedList<Tag>());
+                        enrTagParent.getSonList().add(enrTag);
+                    }
+                    em.merge(enrTag);
+                }
+            }
+            
+            if (web.Themes != null) {
+                for (JPATheme enrTheme : web.Themes) {
+                    log.info( "Theme: {}", enrTheme.getNom()) ;                    
                     
-                    enrAlbum.setTheme(enrTheme);
-                    enrAlbum.setDroit(users.get(enrAlbum.droitId));
-                    
-                    if (enrAlbum.pictureId != null) {
-                        enrAlbum.setPicture(photos.get(enrAlbum.pictureId));
-                    }                    
-                    
-                    if (enrAlbum.getGpxList() != null) {
-                        for (JPAGpx enrGpx : (List<JPAGpx>) enrAlbum.getGpxList()) {
-                            enrGpx.setAlbum(enrAlbum);
+                    if (enrTheme.getCarnetList() != null) {
+                        for (JPACarnet enrCarnet : (List<JPACarnet>) enrTheme.getCarnetList()) {
+                            log.info( "Carnet: {}", enrCarnet.getNom()) ;
+                            
+                            if (enrCarnet.droitId != null) {
+                                enrCarnet.setDroit(users.get(enrCarnet.droitId));
+                            }
+                            
+                            enrCarnet.setTheme(enrTheme);
+                            em.persist(enrCarnet);
                         }
                     }
                     
-                    for (JPAPhoto enrPhoto : (List<JPAPhoto>) enrAlbum.getPhotoList()) {
-                        enrPhoto.setAlbum(enrAlbum);
-                        
-                        if (enrPhoto.tagAuthorId != null) {
-                            enrPhoto.setTagAuthor(tags.get(enrPhoto.tagAuthorId));
+                    if (enrTheme.getAlbumList() != null) {
+                        for (JPAAlbum enrAlbum : (List<JPAAlbum>) enrTheme.getAlbumList()) {
+                            log.info( "Album: {}", enrAlbum.getNom()) ;
+
+                            enrAlbum.setTheme(enrTheme);
+                            Utilisateur enrUser = users.get(enrAlbum.droitId);
+                            enrAlbum.setDroit(enrUser);
+                            if (enrUser.getAlbumList() == null)
+                                enrUser.setAlbumList(new LinkedList<Album>());
+                            enrUser.getAlbumList().add(enrAlbum);
+                            
+                            if (enrAlbum.getGpxList() != null) {
+                                for (JPAGpx enrGpx : (List<JPAGpx>) enrAlbum.getGpxList()) {
+                                    enrGpx.setAlbum(enrAlbum);
+                                    em.merge(enrGpx);
+                                }
+                            }
+                            
+                            if (enrAlbum.getPhotoList() != null) {
+                                for (JPAPhoto enrPhoto : (List<JPAPhoto>) enrAlbum.getPhotoList()) {
+                                    enrPhoto.setAlbum(enrAlbum);
+                                    
+                                    if (enrPhoto.getTagPhotoList() != null) {
+                                        for (JPATagPhoto tagPhoto : (List<JPATagPhoto>) enrPhoto.getTagPhotoList()) {
+                                            tagPhoto.setPhoto(enrPhoto);
+                                            
+                                            JPATag enrTag = tags.get(tagPhoto.tagId);
+                                            tagPhoto.setTag(enrTag);
+                                            if (enrTag.getTagPhotoList() == null)
+                                                enrTag.setTagPhotoList(new LinkedList<TagPhoto>());
+                                            enrTag.getTagPhotoList().add(tagPhoto);
+                                        }
+                                    }
+                                    em.merge(enrPhoto);
+                                }
+                            }
+                            em.merge(enrAlbum);
                         }
-                        
-                        for (JPATagPhoto tagPhoto : (List<JPATagPhoto>) enrPhoto.getTagPhotoList()) {
-                            tagPhoto.setPhoto(enrPhoto);
-                            tagPhoto.setTag(tags.get(tagPhoto.tagId));
-                        }
-                        
-                        photos.put(enrPhoto.getId(), enrPhoto);
                     }
+
+                    if (enrTheme.getTagThemeList() != null) {
+                        for (JPATagTheme enrTagTheme : (List<JPATagTheme>) enrTheme.getTagThemeList()) {
+                            enrTagTheme.setTheme(enrTheme);
+                            
+                            JPATag enrTag = tags.get(enrTagTheme.tagId);
+                            enrTagTheme.setTag(enrTag);
+                            if (enrTag.getTagThemeList() == null)
+                                enrTag.setTagThemeList(new LinkedList<TagTheme>());
+                            enrTag.getTagThemeList().add(enrTagTheme);
+                        }
+                    }
+                    em.merge(enrTheme);
                 }
-                
-                for (JPATagTheme enrTagTheme : (List<JPATagTheme>) enrTheme.getTagThemeList()) {
-                    enrTagTheme.setTheme(enrTheme);
-                    enrTagTheme.setTag(tags.get(enrTagTheme.tagId));
+            }
+            
+            log.warn("Second pass for the themes");
+            
+            if (web.Themes != null) {
+                for (JPATheme enrTheme : web.Themes) {
+                    log.info( "2. Theme: {}", enrTheme.getNom()) ;
+
+                    if (enrTheme.getCarnetList() != null) {
+                        for (JPACarnet enrCarnet : (List<JPACarnet>) enrTheme.getCarnetList()) {
+                            log.info( "2. Carnet: {}", enrCarnet.getNom()) ;
+                            
+                            if (enrCarnet.pictureId != null) {
+                                enrCarnet.setPicture(photos.get(enrCarnet.pictureId));
+                            }
+                            
+                            if (enrCarnet.albumIdList != null) {
+                                if (enrCarnet.getAlbumList() == null)
+                                    enrCarnet.setAlbumList(new LinkedList<Album>());
+                                for (Integer albumId : enrCarnet.albumIdList) {
+                                    JPAAlbum enrAlbum = albums.get(albumId);
+                                    
+                                    enrCarnet.getAlbumList().add(enrAlbum);
+                                    
+                                    if (enrAlbum.getCarnetList() == null)
+                                        enrAlbum.setCarnetList(new LinkedList<Carnet>());
+                                    enrAlbum.getCarnetList().add(enrCarnet);
+                                    em.merge(enrAlbum);
+                                }
+                            }
+
+                            if (enrCarnet.photoIdList != null) {
+                                if (enrCarnet.getPhotoList() == null)
+                                    enrCarnet.setPhotoList(new LinkedList<Photo>());
+                                
+                                for (Integer photoId : enrCarnet.photoIdList) {
+                                    JPAPhoto enrPhoto = photos.get(photoId);
+                                    enrCarnet.getPhotoList().add(enrPhoto);
+                                    
+                                    if (enrPhoto.getCarnetList() == null)
+                                        enrPhoto.setCarnetList(new LinkedList<Carnet>());
+                                    enrPhoto.getCarnetList().add(enrCarnet);
+                                    em.merge(enrPhoto);
+                                }
+                            }
+                            
+                            em.merge(enrCarnet);
+                        }
+                    }
                     
-                    if (enrTagTheme.photoId != null) {
-                        enrTagTheme.setPhoto(photos.get(enrTagTheme.photoId));
-                    }
-                }
-                
-                for (JPACarnet enrCarnet : (List<JPACarnet>) enrTheme.getCarnetList()) {
-                    for (Integer albumId : enrCarnet.albumIdList) {
-                        enrCarnet.getAlbumList().add(albums.get(albumId));
+                    if (enrTheme.getAlbumList() != null) {
+                        for (JPAAlbum enrAlbum : (List<JPAAlbum>) enrTheme.getAlbumList()) {
+                            log.info( "2. Album: {}", enrAlbum.getNom()) ;
+                            
+                            if (enrAlbum.pictureId != null) {
+                                enrAlbum.setPicture(photos.get(enrAlbum.pictureId));
+                            }                    
+
+                            if (enrAlbum.getPhotoList() != null) {
+                                for (JPAPhoto enrPhoto : (List<JPAPhoto>) enrAlbum.getPhotoList()) {
+                                    
+                                    if (enrPhoto.tagAuthorId != null) {
+                                        JPATag enrTag = tags.get(enrPhoto.tagAuthorId);
+                                        enrPhoto.setTagAuthor(enrTag);
+                                        if (enrTag.getAuthorList() == null)
+                                            enrTag.setAuthorList(new LinkedList<Photo>());
+                                        enrTag.getAuthorList().add(enrPhoto);
+                                        em.merge(enrTag);
+                                    }
+                                    em.merge(enrPhoto);
+                                }
+                            }
+                            em.merge(enrAlbum);
+                        }
                     }
 
-                    for (Integer photoId : enrCarnet.photoIdList) {
-                        enrCarnet.getPhotoList().add(photos.get(photoId));
+                    if (enrTheme.getTagThemeList() != null) {
+                        for (JPATagTheme enrTagTheme : (List<JPATagTheme>) enrTheme.getTagThemeList()) {
+                            
+                            if (enrTagTheme.photoId != null) {
+                                enrTagTheme.setPhoto(photos.get(enrTagTheme.photoId));
+                            }
+                        }
                     }
-
-                    if (enrCarnet.pictureId != null) {
-                        enrCarnet.setPicture(photos.get(enrCarnet.pictureId));
+                    
+                    if (enrTheme.backgroundId != null) {
+                        enrTheme.setBackground(photos.get(enrTheme.backgroundId));
                     }
-
-                    if (enrCarnet.droitId != null) {
-                        enrCarnet.setDroit(users.get(enrCarnet.droitId));
+                    if (enrTheme.pictureId != null) {
+                        enrTheme.setPicture(photos.get(enrTheme.pictureId));
                     }
-
-                    em.merge(enrCarnet);
+                    em.merge(enrTheme);
                 }
-                
-                if (enrTheme.backgroundId != null) {
-                    enrTheme.setBackground(photos.get(enrTheme.backgroundId));
-                }
-                if (enrTheme.pictureId != null) {
-                    enrTheme.setPicture(photos.get(enrTheme.pictureId));
-                }
-                
-                em.merge(enrTheme);
             }
             
-            for (JPAAlbum a : albums.values())
-                em.merge(a);
             
-            for (JPAPhoto p : photos.values())
-                em.merge(p);
             
-            /************************************/
-            for (JPATag enrTag : web.Tags) {
-                if (enrTag.parentId != null) {
-                    enrTag.setParent(tags.get(enrTag.parentId));
-                }
-                em.merge(enrTag);
-            }
         } catch (Exception ex) {
             throw new DatabaseFacadeLocalException(ex);
+        } finally {
+            //em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1;").executeUpdate();
         }
     }
 

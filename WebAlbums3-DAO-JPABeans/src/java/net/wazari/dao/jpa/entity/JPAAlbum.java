@@ -51,7 +51,7 @@ public class JPAAlbum implements Album, Serializable {
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAPhoto> jPAPhotoList;
 
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)
@@ -62,7 +62,7 @@ public class JPAAlbum implements Album, Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAGpx> jPAGpxList;
     
     @ManyToMany(mappedBy="jPAAlbumList")

@@ -63,7 +63,7 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "Focal", length = 50)
     private String focal;
 
-    @Column(name = "Flash", length = 50)
+    @Column(name = "Flash", length = 150)
     private String flash;
 
     @Column(name = "Height", length = 50)

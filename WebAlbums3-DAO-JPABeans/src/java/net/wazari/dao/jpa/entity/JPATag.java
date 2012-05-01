@@ -50,10 +50,10 @@ public class JPATag implements Tag, Serializable {
     @Column(name = "IsMinor", nullable = true)
     private Boolean minor;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
@@ -66,10 +66,10 @@ public class JPATag implements Tag, Serializable {
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private JPATag parent;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private List<JPATag> sonList;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tagAuthor", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tagAuthor", fetch = FetchType.LAZY)
     private List<JPAPhoto> authorList;
     
     public JPATag() {
