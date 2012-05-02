@@ -59,10 +59,10 @@ public class JPACarnet implements Carnet, Serializable {
     @ManyToMany
     @JoinTable(name = "CarnetPhoto",
         joinColumns = {
-          @JoinColumn(name="carnet", unique = true)           
+          @JoinColumn(name="Carnet")           
         },
         inverseJoinColumns = {
-          @JoinColumn(name="photo")
+          @JoinColumn(name="Photo")
         }
     )
     private List<JPAPhoto> jPAPhotoList;
@@ -70,10 +70,10 @@ public class JPACarnet implements Carnet, Serializable {
     @ManyToMany
     @JoinTable(name = "CarnetAlbum",
         joinColumns = {
-          @JoinColumn(name="carnet", unique = true)           
+          @JoinColumn(name="Carnet")           
         },
         inverseJoinColumns = {
-          @JoinColumn(name="album")
+          @JoinColumn(name="Album")
         }
     )
     private List<JPAAlbum> jPAAlbumList;
@@ -201,10 +201,11 @@ public class JPACarnet implements Carnet, Serializable {
         this.jPAAlbumList = (List) jPAAlbumList;
     }
     
-    @XmlList
-    @XmlElement(name="Albums")
+    @XmlAttribute(name="AlbumId")
     public List<Integer> getAlbumIdList() {
-        List<Integer> ids = new ArrayList<Integer>(jPAAlbumList.size());
+        List<Integer> ids = new ArrayList<Integer>();
+        if (jPAAlbumList == null)
+            return ids;
         for (Album enrAlbum : jPAAlbumList) 
             ids.add(enrAlbum.getId());
         return ids;
@@ -226,10 +227,11 @@ public class JPACarnet implements Carnet, Serializable {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
     
-    @XmlList
-    @XmlElement(name="Photo")
+    @XmlAttribute(name="PhotoId")
     public List<Integer> getPhotoIdList() {
-        List<Integer> ids = new ArrayList<Integer>(jPAAlbumList.size());
+        List<Integer> ids = new ArrayList<Integer>();
+        if (jPAPhotoList == null)
+            return ids;
         for (Photo enrPhoto : jPAPhotoList) 
             ids.add(enrPhoto.getId());
         return ids;

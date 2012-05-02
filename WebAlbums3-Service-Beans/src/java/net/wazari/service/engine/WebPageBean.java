@@ -332,7 +332,7 @@ public class WebPageBean implements WebPageLocal {
                     //ensure that this tag is displayed in this theme
                     //(in root theme, diplay all of theme)
                     TagTheme enrTagTh = tagThemeDAO.loadByTagTheme(enrTag.getId(), vSession.getTheme().getId());
-                    if (enrTagTh != null && !enrTagTh.getIsVisible()) {
+                    if (enrTagTh != null && enrTagTh.isVisible() == false) {
                         //Root session can see all the tags, otherwise restrict
                         if (!vSession.isRootSession()) {
                             continue;

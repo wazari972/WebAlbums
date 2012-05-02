@@ -173,9 +173,8 @@ public class JPATheme implements Theme, Serializable {
     }
     @Transient
     public Integer backgroundId;
-    public void setBackground(Integer picture) {
+    public void setBackgroundId(Integer picture) {
         this.backgroundId = picture;
-        log.info("SET");
     }
 
     @Override

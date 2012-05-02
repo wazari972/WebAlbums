@@ -49,15 +49,6 @@ public class JPAPerson implements Person, Serializable {
     public JPAPerson() {
     }
 
-    public JPAPerson(Tag tag) {
-        this.tag = (JPATag) tag;
-    }
-
-    public JPAPerson(Tag tag, String birthdate) {
-        this.tag = (JPATag) tag;
-        this.birthdate = birthdate;
-    }
-
     @Override
     public Tag getTag() {
         return (JPATag) tag;
@@ -66,6 +57,7 @@ public class JPAPerson implements Person, Serializable {
     @Override
     public void setTag(Tag tag) {
         this.tag = (JPATag) tag;
+        this.id = tag.getId();
     }
 
     @XmlAttribute
@@ -111,7 +103,7 @@ public class JPAPerson implements Person, Serializable {
 
     @Override
     public String toString() {
-        return "net.wazari.dao.jpa.entity.JPAPerson[tag=" + tag + "]";
+        return "net.wazari.dao.jpa.entity.JPAPerson[tag=" + tag + "("+id+")]";
     }
 
 }

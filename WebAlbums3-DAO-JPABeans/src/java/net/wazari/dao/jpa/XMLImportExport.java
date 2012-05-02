@@ -7,6 +7,7 @@ package net.wazari.dao.jpa;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,6 +57,10 @@ public class XMLImportExport implements ImportExporter {
     private PhotoFacadeLocal photoDAO ;
     @EJB
     private CarnetFacadeLocal carnetDAO ;
+    @EJB
+    private GeolocalisationFacadeLocal geoDAO;
+    @EJB
+    private PersonFacadeLocal personDAO;
     
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
@@ -82,14 +87,11 @@ public class XMLImportExport implements ImportExporter {
                 return ;
             }
             
-            Map<Integer, JPATag> tags = new HashMap<Integer, JPATag>(web.Tags.size()) ;
+            Map<Integer, JPATag> tags = new HashMap<Integer, JPATag>() ;
             Map<Integer, JPAPhoto> photos = new HashMap<Integer, JPAPhoto>() ;
-            Map<Integer, JPATheme> themes = new HashMap<Integer, JPATheme>(web.Themes.size()) ;
             Map<Integer, JPAAlbum> albums = new HashMap<Integer, JPAAlbum>() ;
-            Map<Integer, JPAUtilisateur> users = new HashMap<Integer, JPAUtilisateur>(web.Utilisateurs.size()) ;
-
-            // only way to put that *** in the database !
-            em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0;").executeUpdate();
+            Map<Integer, JPATheme> themes = new HashMap<Integer, JPATheme>() ;
+            Map<Integer, JPAUtilisateur> users = new HashMap<Integer, JPAUtilisateur>() ;
             
             if (web.Utilisateurs != null) {
                 for (JPAUtilisateur enrUser : web.Utilisateurs) {
@@ -100,64 +102,90 @@ public class XMLImportExport implements ImportExporter {
             log.warn( "Process entities") ;
             if (web.Tags != null) {
                 log.warn( "Import {} Tag",web.Tags.size()) ;
+                
                 for (JPATag enrTag : web.Tags) {
+                    log.info( "Tag: {}", enrTag.getNom()) ;
+
+                    Tag newTag = tagDAO.newTag();
+                    newTag.setId(enrTag.getId());
+                    newTag.setNom(enrTag.getNom());
+                    newTag.setTagType(enrTag.getTagType());
+                    newTag.setMinor(enrTag.isMinor());
+                    newTag = em.merge(newTag);
+                    
                     if (enrTag.getGeolocalisation() != null) {
-                        enrTag.getGeolocalisation().setTag(enrTag);
-                        em.merge(enrTag.getGeolocalisation());
+                        JPAGeolocalisation enrGeo = enrTag.getGeolocalisation();
+                        Geolocalisation newGeo = geoDAO.newGeolocalisation();
+                        newGeo.setTag(newTag);
+                        
+                        newGeo.setLat(enrGeo.getLat());
+                        newGeo.setLongitude(enrGeo.getLongitude());
+                        
+                        newTag.setGeolocalisation(newGeo);
+                        
+                        newTag = em.merge(newTag);
                     }
 
                     if (enrTag.getPerson() != null) {
-                        enrTag.getPerson().setTag(enrTag);
-                        em.merge(enrTag.getPerson());
+                        Person enrPerson = enrTag.getPerson();
+                        Person newPerson = personDAO.newPerson();
+                        newPerson.setTag(newTag);
+                        
+                        newPerson.setBirthdate(enrPerson.getBirthdate());
+                        newPerson.setContact(enrPerson.getContact());
+                        
+                        newTag.setPerson(newPerson);
+                        newTag = em.merge(newTag);
                     }
                     
-                    tags.put(enrTag.getId(), em.merge(enrTag)) ;
+                    tags.put(enrTag.getId(), (JPATag) em.merge(newTag)) ;
                 }
                 
-                log.warn("Second pass for the tags");
                 for (JPATag enrTag : web.Tags) {
                     if (enrTag.parentId != null) {
-                        JPATag enrTagParent = tags.get(enrTag.parentId);
-                        enrTag.setParent(enrTagParent);
-                        if (enrTagParent.getSonList() == null) 
-                            enrTagParent.setSonList(new LinkedList<Tag>());
-                        enrTagParent.getSonList().add(enrTag);
+                        log.info( "Tag {} with parent {}", enrTag.getNom(), enrTag.parentId) ;
+                        // not the best implementation, but only solution which 
+                        // works without messing with PERSONS without id ...
+                        Tag currentTag = tagDAO.find(enrTag.getId());
+                        Tag parentTag = tagDAO.find(enrTag.parentId);
+                        currentTag.setParent(parentTag);
+                        
+                        em.merge(currentTag);
                     }
-                    em.merge(enrTag);
                 }
             }
             
             if (web.Themes != null) {
+                Collections.reverse(web.Themes);
                 for (JPATheme enrTheme : web.Themes) {
-                    log.info( "Theme: {}", enrTheme.getNom()) ;                    
+                    log.info( "Theme: {}", enrTheme.getNom()) ;
                     
                     Theme newTheme = themeDAO.newTheme(enrTheme.getId(), enrTheme.getNom());
                     newTheme = em.merge(newTheme) ;
                     
                     if (enrTheme.getAlbumList() != null) {
                         for (JPAAlbum enrAlbum : (List<JPAAlbum>) enrTheme.getAlbumList()) {
-                            log.info( "Album: {}", enrAlbum.getNom()) ;
+                            //log.info( "Album: {}", enrAlbum.getNom()) ;
 
                             Album newAlbum = albumDAO.newAlbum();
+                            newAlbum.setId(enrAlbum.getId());
                             newAlbum.setTheme(newTheme);
                             newAlbum.setDescription(enrAlbum.getDescription());
                             newAlbum.setDate(enrAlbum.getDate());
                             newAlbum.setNom(enrAlbum.getNom());
                             
+                            newAlbum.setDroit(users.get(enrAlbum.droitId));
+                            newAlbum = em.merge(newAlbum);
+                            albums.put(enrAlbum.getId(), (JPAAlbum) newAlbum);
+                            
                             newAlbum.setGpxList(new LinkedList<Gpx>());
                             if (enrAlbum.getGpxList() != null) {
                                 for (JPAGpx enrGpx : (List<JPAGpx>) enrAlbum.getGpxList()) {
-                                    enrGpx.setAlbum(enrAlbum);
+                                    enrGpx.setAlbum(newAlbum);
                                     newAlbum.getGpxList().add(enrGpx);
                                     em.merge(enrGpx);
                                 }
                             }
-                            
-                            newAlbum.setDroit(users.get(enrAlbum.droitId));
-                            
-                            newAlbum = em.merge(newAlbum);
-                            
-                            albums.put(enrAlbum.getId(), (JPAAlbum) newAlbum);
                             
                             if (enrAlbum.getPhotoList() != null) {
                                 for (JPAPhoto enrPhoto : (List<JPAPhoto>) enrAlbum.getPhotoList()) {
@@ -178,8 +206,9 @@ public class XMLImportExport implements ImportExporter {
                                     newPhoto.setHeight(enrPhoto.getHeight());
                                     newPhoto.setWidth(enrPhoto.getWidth());
                                     newPhoto.setFlash(enrPhoto.getFlash());
-
-                                    photos.put(newPhoto.getId(), (JPAPhoto) em.merge(newPhoto));
+                                    newPhoto.setFocal(enrPhoto.getFocal());
+                                    
+                                    newPhoto =  em.merge(newPhoto);
                                     
                                     if (enrPhoto.getTagPhotoList() != null) {
                                         for (JPATagPhoto tagPhoto : (List<JPATagPhoto>) enrPhoto.getTagPhotoList()) {
@@ -206,7 +235,8 @@ public class XMLImportExport implements ImportExporter {
                                         em.merge(enrTag);
                                     }
                                     
-                                    em.merge(newPhoto);
+                                    newPhoto = em.merge(newPhoto);
+                                    photos.put(newPhoto.getId(), (JPAPhoto) newPhoto);
                                 }
                             }
                             
@@ -217,7 +247,35 @@ public class XMLImportExport implements ImportExporter {
                             em.merge(newAlbum);
                         }
                     }
-
+                    
+                    if (enrTheme.getTagThemeList() != null) {
+                        for (JPATagTheme enrTagTheme : (List<JPATagTheme>) enrTheme.getTagThemeList()) {
+                            TagTheme newTagTheme = tagThemeDAO.newTagTheme();
+                            newTagTheme.setTheme(newTheme);
+                            
+                            newTagTheme.setTag(tags.get(enrTagTheme.tagId));
+                            newTagTheme.setPhoto(photos.get(enrTagTheme.photoId));
+                            newTagTheme.setVisible(enrTagTheme.isVisible());
+                            
+                            if (enrTagTheme.photoId != null) {
+                                newTagTheme.setPhoto(photos.get(enrTagTheme.photoId));
+                            }
+                            
+                            em.merge(newTagTheme);
+                        }
+                    }
+                    
+                    if (enrTheme.backgroundId != null) {
+                        newTheme.setBackground(photos.get(enrTheme.backgroundId));
+                    }
+                    if (enrTheme.pictureId != null) {
+                        newTheme.setPicture(photos.get(enrTheme.pictureId));
+                    }
+                    
+                    themes.put(newTheme.getId(), (JPATheme) em.merge(newTheme));
+                }
+                
+                for (JPATheme enrTheme : web.Themes) {
                     if (enrTheme.getCarnetList() != null) {
                         for (JPACarnet enrCarnet : (List<JPACarnet>) enrTheme.getCarnetList()) {
                             log.info( "Carnet: {}", enrCarnet.getNom()) ;
@@ -229,7 +287,9 @@ public class XMLImportExport implements ImportExporter {
                             newCarnet.setText(enrCarnet.getText());
                             newCarnet.setDate(enrCarnet.getDate());
                             newCarnet.setNom(enrCarnet.getNom());
-                            newCarnet.setTheme(newTheme);
+                            newCarnet.setTheme(themes.get(enrTheme.getId()));
+                            
+                            newCarnet = em.merge(newCarnet);
                             
                             if (enrCarnet.pictureId != null) {
                                 newCarnet.setPicture(photos.get(enrCarnet.pictureId));
@@ -239,66 +299,26 @@ public class XMLImportExport implements ImportExporter {
                                 newCarnet.setAlbumList(new LinkedList<Album>());
                                 for (Integer albumId : enrCarnet.albumIdList) {
                                     JPAAlbum enrAlbum = albums.get(albumId);
-                                    
                                     newCarnet.getAlbumList().add(enrAlbum);
-                                    
-                                    if (enrAlbum.getCarnetList() == null)
-                                        enrAlbum.setCarnetList(new LinkedList<Carnet>());
-                                    
-                                    enrAlbum.getCarnetList().add(enrCarnet);
-                                    em.merge(enrAlbum);
                                 }
                             }
-
+                            
                             if (enrCarnet.photoIdList != null) {
                                 newCarnet.setPhotoList(new LinkedList<Photo>());
                                 
                                 for (Integer photoId : enrCarnet.photoIdList) {
                                     JPAPhoto enrPhoto = photos.get(photoId);
                                     newCarnet.getPhotoList().add(enrPhoto);
-                                    
-                                    if (enrPhoto.getCarnetList() == null)
-                                        enrPhoto.setCarnetList(new LinkedList<Carnet>());
-                                    enrPhoto.getCarnetList().add(enrCarnet);
-                                    em.merge(enrPhoto);
                                 }
                             }
                             
                             em.merge(newCarnet);
                         }
                     }
-                    
-                    if (enrTheme.getTagThemeList() != null) {
-                        for (JPATagTheme enrTagTheme : (List<JPATagTheme>) enrTheme.getTagThemeList()) {
-                            TagTheme newTagTheme = tagThemeDAO.newTagTheme();
-                            newTagTheme.setTheme(newTheme);
-                            
-                            newTagTheme.setTag(tags.get(enrTagTheme.tagId));
-                            newTagTheme.setPhoto(photos.get(enrTagTheme.photoId));
-                            
-                            if (enrTagTheme.photoId != null) {
-                                newTagTheme.setPhoto(photos.get(enrTagTheme.photoId));
-                            }
-                            
-                            em.merge(newTagTheme);
-                            
-                        }
-                    }
-                    
-                    if (enrTheme.backgroundId != null) {
-                        newTheme.setBackground(photos.get(enrTheme.backgroundId));
-                    }
-                    if (enrTheme.pictureId != null) {
-                        newTheme.setPicture(photos.get(enrTheme.pictureId));
-                    }
-                    
-                    em.merge(newTheme);
                 }
             }
         } catch (Exception ex) {
             throw new DatabaseFacadeLocalException(ex);
-        } finally {
-            //em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1;").executeUpdate();
         }
     }
 

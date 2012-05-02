@@ -23,9 +23,7 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
-@Table(name = "Geolocalisation",
-    uniqueConstraints = {@UniqueConstraint(columnNames={"Lat", "Longitude"})}
-)
+@Table(name = "Geolocalisation")
 public class JPAGeolocalisation implements Geolocalisation, Serializable {
     private static final Logger log = LoggerFactory.getLogger(JPAGeolocalisation.class.getName());
 
@@ -55,6 +53,7 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
         this.tag = (JPATag) tag;
         this.lat = lat;
         this.longitude = longitude;
+        this.id = tag.getId();
     }
 
     @Override
@@ -65,6 +64,7 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
     @Override
     public void setTag(Tag tag) {
         this.tag = (JPATag) tag;
+        this.id = tag.getId();
     }
     
     @XmlAttribute

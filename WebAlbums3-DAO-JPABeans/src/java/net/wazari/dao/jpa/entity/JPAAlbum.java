@@ -161,7 +161,7 @@ public class JPAAlbum implements Album, Serializable {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
     
-    //@XmlElement(name="Gpx")
+    @XmlElement(name="Gpx", type=JPAGpx.class)
     @Override
     public List getGpxList() {
         return (List) jPAGpxList;

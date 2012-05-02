@@ -161,6 +161,10 @@ public class JPATag implements Tag, Serializable {
         this.jPAGeolocalisation = (JPAGeolocalisation) jPAGeolocalisation;
     }
     
+    public void setGeolocalisation(JPAGeolocalisation jPAGeolocalisation) {
+        this.jPAGeolocalisation = jPAGeolocalisation;
+    }
+    
     @XmlElement(name="person")
     @Override
     public JPAPerson getPerson() {
@@ -170,6 +174,10 @@ public class JPATag implements Tag, Serializable {
     @Override
     public void setPerson(Person jPAPerson) {
         this.jPAPerson = (JPAPerson) jPAPerson;
+    }
+    
+    public void setPerson(JPAPerson jPAPerson) {
+        this.jPAPerson = jPAPerson;
     }
 
     @Override

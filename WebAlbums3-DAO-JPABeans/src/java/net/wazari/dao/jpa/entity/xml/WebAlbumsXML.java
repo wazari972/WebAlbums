@@ -20,7 +20,7 @@ import net.wazari.dao.jpa.entity.*;
 public class WebAlbumsXML {
     public static final Class<?>[] clazzez = new Class<?>[]
     {WebAlbumsXML.class, JPATheme.class, JPAUtilisateur.class,
-    JPAAlbum.class, JPATag.class, JPATagTheme.class, JPATagPhoto.class /*JPAPhoto.class/*,
+    JPAAlbum.class, JPATag.class, JPATagTheme.class, JPATagPhoto.class, JPAGpx.class/*,
      */} ;
 
     @XmlElementWrapper(name="Themes")
