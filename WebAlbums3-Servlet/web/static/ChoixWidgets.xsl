@@ -26,7 +26,7 @@
                     <xsl:if test="not(/webAlbums/affichage/@static)"><xsl:attribute name="class">albumTT</xsl:attribute></xsl:if>
                     <xsl:attribute name="id">album-target-<xsl:value-of select="@id"/></xsl:attribute>
                     <xsl:attribute name="href">Photos__<xsl:value-of select="@id"/>_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
-                    <xsl:value-of select="name"/>
+                    <xsl:value-of select="name"/><xsl:if test="gpx"><small> (GPX)</small></xsl:if>
                 </a>
                 <xsl:if test="not(/webAlbums/affichage/@static)">
                     <span class="album_tooltip">

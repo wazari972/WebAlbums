@@ -98,9 +98,16 @@ function init_tooltip() {
     $(".exif").ezpz_tooltip({stayOnContent: true});
 }
 
+function init_gpx() {
+    $(".gpx_visu").each(function() {
+        init_gpx_box("gpx_box", $(this).text(), "http://127.0.0.1:8080/WebAlbums3.5-dev/"+$(this).attr("href"))
+    })
+}
+
 $(function() {
     init_tooltip()
     add_callback("SinglePage", init_tooltip)
     init_massedit()
     init_fastedit()
+    init_gpx()
 })

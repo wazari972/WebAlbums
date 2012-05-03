@@ -125,6 +125,11 @@
                 
                 <script type="text/javascript" src="static/scripts/tools.js"/>
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
+                    <xsl:if test="/webAlbums/photos/display/album/gpx">
+                        <script src="static/scripts/lib/OpenLayers.js"/>
+                        <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+                        <script src="static/scripts/OpenLayerFunctions.js"/>
+                    </xsl:if>
                     <script type="text/javascript" src="static/scripts/Photos.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags">

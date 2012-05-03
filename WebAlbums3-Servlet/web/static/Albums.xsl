@@ -70,6 +70,7 @@
             <xsl:if test="gpx">
                <div class="gpx_opt">
                    <xsl:apply-templates select="gpx"/>
+                   <div id="gpx_box" style="width:500px; height:500px"></div>
                 </div>
             </xsl:if>
 	  </h2>
@@ -116,11 +117,15 @@
   </xsl:template>
   <xsl:template match="album/gpx">
     <p> 
-    <small>
-        <a target="_blank" rel="singlepage[no]">
-            <xsl:attribute name="href">GPX__<xsl:value-of select="@id" />.gpx</xsl:attribute>
-            <xsl:value-of select="description" />
-        </a>
+        <small>
+            <a class="gpx_visu">
+                <xsl:attribute name="href">GPX__<xsl:value-of select="@id" />.gpx</xsl:attribute>
+                <xsl:value-of select="description" />
+            </a>
+            &#160;(<a target="_blank" rel="singlepage[no]">
+                <xsl:attribute name="href">GPX__<xsl:value-of select="@id" />.gpx</xsl:attribute>
+                <span>dl</span>
+            </a>)
         </small>
     </p>
     <br/>

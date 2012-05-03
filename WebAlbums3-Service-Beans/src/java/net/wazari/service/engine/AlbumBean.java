@@ -1,63 +1,43 @@
 package net.wazari.service.engine;
 
 
-import net.wazari.service.exchange.xml.album.XmlAlbumYear;
-import net.wazari.service.exchange.xml.album.XmlAlbum;
-import net.wazari.service.exchange.xml.common.XmlDetails;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
-import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.entity.Gpx;
-import net.wazari.dao.entity.Photo;
-
-import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.TagPhoto;
+import net.wazari.dao.entity.*;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.AlbumLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.AlbumUtil;
-import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
+import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
-import net.wazari.dao.entity.Utilisateur;
-import net.wazari.service.exchange.xml.album.XmlAlbumAbout;
-import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
-import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
-import net.wazari.service.exchange.xml.album.XmlAlbumGraph;
-import net.wazari.service.exchange.xml.album.XmlAlbumList;
-import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
-import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
-import net.wazari.service.exchange.xml.album.XmlAlbumTop;
-import net.wazari.service.exchange.xml.album.XmlAlbumYears;
-import net.wazari.service.exchange.xml.album.XmlGpx;
+import net.wazari.service.exchange.xml.album.*;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
+import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.util.system.FilesFinder;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class AlbumBean implements AlbumLocal {
@@ -312,6 +292,16 @@ public class AlbumBean implements AlbumLocal {
                         }
                     }
                 }
+            }
+            
+            for (Gpx enrGpx : enrAlbum.getGpxList()) {
+                if (album.gpx == null)
+                    album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
+                XmlGpx gpx = new XmlGpx();
+                gpx.id = enrGpx.getId();
+                gpx.description = enrGpx.getDescription();
+                
+                album.gpx.add(gpx);
             }
             
             select.album.add(album);
