@@ -16,43 +16,33 @@ import net.wazari.dao.entity.facades.EntityWithId;
 public interface Carnet extends EntityWithId {
     SimpleDateFormat DATE_STANDARD = new SimpleDateFormat("yyyy-MM-dd");
 
-    String getDate();
-
-    String getDescription();
-    
-    String getText();
-
-    Utilisateur getDroit();
-
     Integer getId();
-
-    String getNom();
-
-    List<Photo> getPhotoList();
+    void setId(Integer id);
     
-    List<Album> getAlbumList();
-
-    Photo getPicture();
-
-    Theme getTheme();
-
+    String getDate();
     void setDate(String date);
-
+    
+    String getDescription();
     void setDescription(String description);
     
+    String getText();
     void setText(String text);
-
-    void setDroit(Utilisateur droit);
-
-    void setId(Integer id);
-
+    
+    String getNom();
     void setNom(String nom);
 
+    List<Photo> getPhotoList();
     void setPhotoList(List<Photo> photoList);
-
+    
+    List<Album> getAlbumList();
+    void setAlbumList(List<Album> enrAlbums);
+    
+    Photo getPicture();
     void setPicture(Photo picture);
 
+    Theme getTheme();
     void setTheme(Theme theme);
-
-    void setAlbumList(List<Album> enrAlbums);
+    
+    Utilisateur getDroit();
+    void setDroit(Utilisateur droit);    
 }

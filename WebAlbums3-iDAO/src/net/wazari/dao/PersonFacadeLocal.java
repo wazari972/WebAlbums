@@ -20,7 +20,7 @@ import net.wazari.dao.entity.Tag;
 public interface PersonFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    Person newPerson(Tag enrTag) ;
+    Person newPerson() ;
     
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void create(Person person);

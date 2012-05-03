@@ -26,6 +26,7 @@ public class DatabaseFacade implements DatabaseFacadeLocal {
         if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT.equals(WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod)) {
             throw new DatabaseFacadeLocalException("Protected");
         }
+        log.info("Import from "+path);
         xml.importXml(path);
     }
 

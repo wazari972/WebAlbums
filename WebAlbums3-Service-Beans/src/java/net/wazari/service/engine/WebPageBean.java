@@ -332,7 +332,7 @@ public class WebPageBean implements WebPageLocal {
                     //ensure that this tag is displayed in this theme
                     //(in root theme, diplay all of theme)
                     TagTheme enrTagTh = tagThemeDAO.loadByTagTheme(enrTag.getId(), vSession.getTheme().getId());
-                    if (enrTagTh != null && !enrTagTh.getIsVisible()) {
+                    if (enrTagTh != null && enrTagTh.isVisible() == false) {
                         //Root session can see all the tags, otherwise restrict
                         if (!vSession.isRootSession()) {
                             continue;
@@ -548,6 +548,7 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public void populateEntities() {
         log.warn("Database empty, creating Root theme and Users");
+        themeDAO.preconfigureDatabase();
         themeDAO.newTheme(ThemeFacadeLocal.THEME_ROOT_ID, ThemeFacadeLocal.THEME_ROOT_NAME) ;
         userDAO.newUser(1, UserLocal.USER_ADMIN);
         userDAO.newUser(2, UserLocal.USER_FAMILLE);

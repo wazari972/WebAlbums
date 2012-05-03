@@ -4,11 +4,9 @@
  */
 package net.wazari.dao;
 
-import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
-import net.wazari.dao.exchange.ServiceSession;
 
 /**
  *
@@ -21,6 +19,9 @@ public interface DatabaseFacadeLocal {
         public DatabaseFacadeLocalException() {}
         public DatabaseFacadeLocalException(String msg) {
             super(msg);
+        }
+        public DatabaseFacadeLocalException(Throwable reason) {
+            super(reason);
         }
     }
     

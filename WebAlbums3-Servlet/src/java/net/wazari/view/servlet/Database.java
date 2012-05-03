@@ -61,8 +61,8 @@ public class Database extends HttpServlet {
         
         if (vSession.isSessionManager()) {
             output.default_ = databaseService.treatDEFAULT(vSession);
-            output.default_.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
-                                                           Box.MULTIPLE);
+//            output.default_.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
+//                                                           Box.MULTIPLE);
             File file;
             switch (action) {
                 case IMPORT:

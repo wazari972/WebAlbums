@@ -6,31 +6,22 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.dao.entity.Person;
 import net.wazari.dao.entity.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevinpouget
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "Person")
 public class JPAPerson implements Person, Serializable {
@@ -38,44 +29,38 @@ public class JPAPerson implements Person, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     @Id
     @Basic(optional = false)
     @Column(name = "Tag", nullable = false)
-    private Integer tag;
+    private Integer id;
+    
+    @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    private JPATag tag;
 
-    @XmlElement
     @Basic(optional = true)
     @Column(name = "Birthdate", nullable = true, length = 10)
     private String birthdate = null;
     
-    @XmlElement
     @Basic(optional = true)
     @Column(name = "Contact", nullable = true, length = 100)
     private String contact;
 
-    @XmlTransient
-    @JoinColumn(name = "Tag", referencedColumnName = "ID", nullable = false, insertable = false, updatable = false)
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    private JPATag jPATag;
-
     public JPAPerson() {
     }
 
-    public JPAPerson(Integer tag) {
-        this.tag = tag;
-    }
-
-    public JPAPerson(Integer tag, String birthdate) {
-        this.tag = tag;
-        this.birthdate = birthdate;
-    }
-
     @Override
-    public Integer getTag() {
-        return tag;
+    public Tag getTag() {
+        return (JPATag) tag;
+    }
+    
+    @Override
+    public void setTag(Tag tag) {
+        this.tag = (JPATag) tag;
+        this.id = tag.getId();
     }
 
+    @XmlAttribute
     @Override
     public String getBirthdate() {
         return birthdate;
@@ -86,6 +71,7 @@ public class JPAPerson implements Person, Serializable {
         this.birthdate = birthdate;
     }
     
+    @XmlAttribute
     @Override
     public String getContact() {
         return contact;
@@ -95,15 +81,7 @@ public class JPAPerson implements Person, Serializable {
     public void setContact(String contact) {
         this.contact = contact;
     }
-
-    @Override
-    public Tag getTag1() {
-        return (Tag) jPATag;
-    }
-
-    public void setTag(Integer tag) {
-        this.tag = tag;
-    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -125,7 +103,7 @@ public class JPAPerson implements Person, Serializable {
 
     @Override
     public String toString() {
-        return "net.wazari.dao.jpa.entity.JPAPerson[tag=" + tag + "]";
+        return "net.wazari.dao.jpa.entity.JPAPerson[tag=" + tag + "("+id+")]";
     }
 
 }

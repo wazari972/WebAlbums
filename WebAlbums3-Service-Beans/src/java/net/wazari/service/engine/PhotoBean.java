@@ -218,7 +218,7 @@ public class PhotoBean implements PhotoLocal {
                 enrTagTh.setTheme(actualTheme);
                 enrTagTh.setTag(enrTag);
                 //par défaut le tag est visible
-                enrTagTh.setIsVisible(true);
+                enrTagTh.setVisible(true);
 
                 tagThemeDAO.create(enrTagTh);
             } else {

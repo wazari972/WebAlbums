@@ -200,7 +200,8 @@ public class ConfigBean implements ConfigLocal {
 
         Person enrPerson = enrTag.getPerson();
         if (enrPerson == null) {
-            enrPerson = personDAO.newPerson(enrTag);
+            enrPerson = personDAO.newPerson();
+            enrPerson.setTag(enrTag);
             personDAO.create(enrPerson);
         }
         String oldBirthdate = enrPerson.getBirthdate() ;
@@ -261,9 +262,9 @@ public class ConfigBean implements ConfigLocal {
             tagThemeDAO.create(enrTagTheme);
         }
         if (visible != null && visible) {
-            enrTagTheme.setIsVisible(true);
+            enrTagTheme.setVisible(true);
         } else {
-            enrTagTheme.setIsVisible(false);
+            enrTagTheme.setVisible(false);
         }
         tagThemeDAO.edit(enrTagTheme);
         output.message = "Le tag " + tag + " est maintenant : " + (visible ? "visible" : "invisible");
@@ -319,10 +320,9 @@ public class ConfigBean implements ConfigLocal {
             }
 
             Geolocalisation geo = geoDAO.newGeolocalisation();
-            geo.setTag(enrTag.getId());
+            geo.setTag(enrTag);
             geo.setLongitude(longit);
             geo.setLat(lat);
-            geo.setTag1(enrTag);
             geoDAO.create(geo);
         }
 

@@ -21,7 +21,7 @@
         <input type='hidden' name='themeId' value='SUBMIT'>
             <xsl:attribute name="value"><xsl:value-of select="@id"/></xsl:attribute>
         </input>
-        <a>
+        <a rel="singlepage[no]">
             <xsl:attribute name="href"><xsl:if test="/webAlbums/affichage/@static"><xsl:value-of select="@name"/>/</xsl:if>Choix__<xsl:value-of select="@id"/>__<xsl:value-of select="@name"/></xsl:attribute>
             <img class="index_img">
                 <xsl:attribute name="alt">
