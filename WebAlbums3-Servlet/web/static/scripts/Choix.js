@@ -46,7 +46,7 @@ function loadGoogleMap() {
     var map = new google.maps.Map(document.getElementById('mapChoix'), {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-    $.getJSON("Choix?special=map&type=JSON",
+    $.getJSON("Choix?special=MAP&type=JSON",
         function(data) {
               $.each(data, function(key, val) {
                 pointToMarker(val, imageBounds, map, markers)

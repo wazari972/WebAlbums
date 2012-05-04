@@ -5,6 +5,12 @@
 
 /** **** **/
 
+#gpx_box {
+    width:500px; 
+    height:500px;
+    display: none;
+}
+
 .localsave_info {
     font: 10px Arial, Helvetica, sans-serif;
 }

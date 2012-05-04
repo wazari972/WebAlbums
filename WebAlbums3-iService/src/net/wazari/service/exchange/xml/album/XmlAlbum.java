@@ -26,7 +26,7 @@ public class XmlAlbum {
     public Integer id;
     public String title;
     public XmlAlbumSubmit submit;
-    public XmlDetails details;
+    public XmlDetails details = new XmlDetails();
     public String name;
     public XmlPhotoId picture;
     public XmlDate date;

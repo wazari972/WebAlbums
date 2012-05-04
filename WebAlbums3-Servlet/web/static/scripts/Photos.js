@@ -99,8 +99,21 @@ function init_tooltip() {
 }
 
 function init_gpx() {
-    $(".gpx_visu").each(function() {
-        init_gpx_box("gpx_box", $(this).text(), "http://127.0.0.1:8080/WebAlbums3.5-dev/"+$(this).attr("href"))
+    $(".gpx_visu").click(function() {        
+        var map = $("#gpx_box").data("map")
+        if (map == undefined) {
+            $("#gpx_box").show()
+            map = init_osm_box("gpx_box")
+            $("#gpx_box").data("map", map)
+        }
+        
+        layer = $(this).data("layer")
+        if (layer == undefined) {
+            layer = init_gpx_layer(map, $(this).text(), "http://127.0.0.1:8080/WebAlbums3.5-dev/"+$(this).attr("rel"))
+            $(this).data("layer", layer)
+        } else {
+            zoomTo(map, layer)
+        }
     })
 }
 

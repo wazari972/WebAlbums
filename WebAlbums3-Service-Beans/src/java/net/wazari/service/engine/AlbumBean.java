@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
+import net.wazari.dao.GpxFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
@@ -57,6 +58,8 @@ public class AlbumBean implements AlbumLocal {
     private FilesFinder finder;
     @EJB
     private TagFacadeLocal tagDAO;
+    @EJB
+    private GpxFacadeLocal gpxDAO;
     
     @Override
     public XmlAlbumEdit treatAlbmEDIT(ViewSessionAlbumEdit vSession,
@@ -70,8 +73,6 @@ public class AlbumBean implements AlbumLocal {
         }
 
         Integer albumId = vSession.getId();
-        Integer page = vSession.getPage();
-        page = (page == null ? 0 : page);
 
         Album enrAlbum = albumDAO.find(albumId);
 
@@ -81,17 +82,27 @@ public class AlbumBean implements AlbumLocal {
         }
 
         if (enrAlbum.getPicture() != null) {
-            output.picture = new XmlPhotoId(enrAlbum.getPicture().getId());
+            output.album.picture = new XmlPhotoId(enrAlbum.getPicture().getId());
             if (vSession.directFileAccess())
-                output.picture.path = enrAlbum.getPicture().getPath(true);
+                output.album.picture.path = enrAlbum.getPicture().getPath(true);
         }
-        output.name = enrAlbum.getNom();
-        output.id = enrAlbum.getId();
-        output.description = enrAlbum.getDescription();
-        output.description = "";
+        output.album.name = enrAlbum.getNom();
+        output.album.id = enrAlbum.getId();
+        output.album.details.description = enrAlbum.getDescription();
         
-        output.date = enrAlbum.getDate();
+        output.album.albmDate = enrAlbum.getDate();
 
+        
+        for (Gpx enrGpx : enrAlbum.getGpxList()) {
+                if (output.album.gpx == null)
+                    output.album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
+                XmlGpx gpx = new XmlGpx();
+                gpx.id = enrGpx.getId();
+                gpx.description = enrGpx.getDescription();
+                
+                output.album.gpx.add(gpx);
+            }
+        
         output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
                 Box.MULTIPLE);
         output.tag_nused = webPageService.displayListLB(Mode.TAG_NUSED, vSession, null,
@@ -156,12 +167,10 @@ public class AlbumBean implements AlbumLocal {
             album.id = enrAlbum.getId();
             album.title = enrAlbum.getNom();
 
-            XmlDetails details = new XmlDetails();
-
             if (enrAlbum.getPicture() != null) {
-                details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId());
+                album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId());
                 if (vSession.directFileAccess()) {
-                    details.photoId.path = enrAlbum.getPicture().getPath(true) ;
+                    album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
                 }
             }
             for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
@@ -179,7 +188,7 @@ public class AlbumBean implements AlbumLocal {
                 }
                 album.carnet.add(carnet);
             }
-            details.description = enrAlbum.getDescription();
+            album.details.description = enrAlbum.getDescription();
             
             for (Gpx enrGpx : enrAlbum.getGpxList()) {
                 if (album.gpx == null)
@@ -191,18 +200,17 @@ public class AlbumBean implements AlbumLocal {
                 album.gpx.add(gpx);
             }
             //tags de l'album
-            details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, 
+            album.details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, 
                               vSession, enrAlbum, Box.NONE, enrAlbum.getDate());
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager()) {
-                details.user = new XmlPhotoAlbumUser(enrAlbum.getDroit().getNom(), null);
-                details.userInside = new LinkedList<String>() ;
+                album.details.user = new XmlPhotoAlbumUser(enrAlbum.getDroit().getNom(), null);
+                album.details.userInside = new LinkedList<String>() ;
                 for (Utilisateur user : userDAO.loadUserInside(enrAlbum.getId())) {
-                    details.userInside.add(user.getNom()) ;
+                    album.details.userInside.add(user.getNom()) ;
                 }
             }
-            album.details = details ;
 
             album.photoCount.put("album", new XmlAlbum.Counter(enrAlbum.getPhotoList().size()));
 
@@ -397,9 +405,18 @@ public class AlbumBean implements AlbumLocal {
                 Date d = new SimpleDateFormat("yyyy-MM-dd").parse(date);
                 enrAlbum.setDate(date);
             } catch (ParseException ex) {
-                log.info("Date format incorrect: "+date);
+                log.warn("Date format incorrect: "+date);
             }
 
+        }
+        
+        for (Gpx enrGpx : enrAlbum.getGpxList()) {
+            String newDescr = vSession.getGpxDescr(enrGpx.getId());
+            
+            if (!enrGpx.getDescription().equals(newDescr)) {
+                enrGpx.setDescription(newDescr);
+                gpxDAO.edit(enrGpx);
+            }
         }
         albumDAO.edit(enrAlbum);
 
@@ -432,7 +449,7 @@ public class AlbumBean implements AlbumLocal {
         about.album.id = enrAlbum.getId() ;
         about.album.title = enrAlbum.getNom() ;
         about.album.date = webPageService.xmlDate(enrAlbum.getDate());
-        about.album.details = new XmlDetails() ;
+        
         if (enrAlbum.getPicture() != null) {
             about.album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
             if (vSession.directFileAccess())
