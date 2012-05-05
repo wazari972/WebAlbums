@@ -131,7 +131,7 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Géolocalisations <input id="googleMapLoader" type="button" value="+"/></h1>
+	<h1>Géolocalisations <input id="mapLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <center>
 	    <div id="mapChoix"/>

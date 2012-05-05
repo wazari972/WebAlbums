@@ -124,12 +124,16 @@
 		<xsl:call-template name="print_return_link" />
                 
                 <script type="text/javascript" src="static/scripts/tools.js"/>
+                
+                <xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix">
+                    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+                    <script src="http://openlayers.org/api/OpenLayers.js"></script>
+                    <!--<script src="static/scripts/lib/OpenLayers.js"/>-->
+                    <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+                    <script src="static/scripts/OpenLayerFunctions.js"/>
+                </xsl:if>
+                
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-                    <xsl:if test="/webAlbums/photos/display/album/gpx">
-                        <script src="static/scripts/lib/OpenLayers.js"/>
-                        <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
-                        <script src="static/scripts/OpenLayerFunctions.js"/>
-                    </xsl:if>
                     <script type="text/javascript" src="static/scripts/Photos.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags">

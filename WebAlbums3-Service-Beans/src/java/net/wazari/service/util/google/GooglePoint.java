@@ -50,7 +50,7 @@ public class GooglePoint {
         str.append(" \"id\":\"").append(p.id).append("\",");
         str.append(" \"lat\":\"").append(p.lat).append("\",");
         str.append(" \"lng\":\"").append(p.lng).append("\",");
-        str.append(" \"picture\":\"").append(p.photoId).append("\"}");
+        str.append(" \"picture\":\"").append(p.photoId).append("\",");
         str.append(" \"picturePath\":\"").append(p.photoPath).append("\"}");
         i--;
         if (i != 0)

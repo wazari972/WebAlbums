@@ -35,19 +35,19 @@
     width: 400px;
   }
 
-.gmap_content h1 {
+.map_content h1 {
     width: 200px;
     color: #ffffff;
 }
 
-.gmap_content {
+.map_content {
     width:220px;
     height:200px;
 
 }
-.gmap_content img {
-    max-width:100px;
-    max-height:100px;
+.map_content img {
+    max-width:200px;
+    max-height:300px;
     vertical-align:middle;
 }
 

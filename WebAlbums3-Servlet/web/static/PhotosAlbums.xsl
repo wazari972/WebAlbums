@@ -74,6 +74,19 @@
             </a>
         </div>
         <div class="info">
+            <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
+                <div class="stars">
+                    <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                    <xsl:call-template name="for-stars-loop">
+                        <xsl:with-param name="count" select="5"/>
+                        <xsl:with-param name="stars" select="@stars"/>
+                        <xsl:with-param name="photoId" select="photoId/@id" />
+                    </xsl:call-template>
+                    <span>
+                        <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" />_message</xsl:attribute>
+                    </span>
+                </div>
+            </xsl:if>
             <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
                 <span class="massedit_chk edit">
                     <input type="checkbox" class="massedit_chkbox" value="modif">
@@ -170,19 +183,6 @@
                         <xsl:attribute name="rel"><xsl:value-of select="@albumId"/></xsl:attribute>
                     </span>
                   </xsl:if>
-                    <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
-                        <div class="stars">
-                            <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" /></xsl:attribute>
-                            <xsl:call-template name="for-stars-loop">
-                              <xsl:with-param name="count" select="5"/>
-                              <xsl:with-param name="stars" select="@stars"/>
-                              <xsl:with-param name="photoId" select="photoId/@id" />
-                            </xsl:call-template>
-                            <span>
-                                <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" />_message</xsl:attribute>
-                            </span>
-                        </div>
-                    </xsl:if>
                     <xsl:apply-templates select="tagList">
                       <xsl:with-param name="style">none</xsl:with-param>
                       <xsl:with-param name="mode">TAG_USED</xsl:with-param>
