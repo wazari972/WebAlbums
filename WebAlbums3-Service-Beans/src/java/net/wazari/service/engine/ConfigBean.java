@@ -130,7 +130,7 @@ public class ConfigBean implements ConfigLocal {
             return output ;
         }
 
-        if (lng == null || lat == null) {
+        if (lng == null || lat == null || lng == "" || lat == "") {
             output.exception = "La geoloc " + lng + "/" + lat + " n'est pas correcte..." ;
             return output;
         }

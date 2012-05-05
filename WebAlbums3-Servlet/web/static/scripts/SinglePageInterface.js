@@ -12,10 +12,8 @@ function prepareDisplayXSL() {
         success:function(html){
             displayXsl = html;
         },
-
         async:false
     });
-
 }
 
 function singlePageCached(url) {

@@ -5,61 +5,6 @@ function pointToContent(point) {
           +"</div>"
 }
 
-function pointToMarker(point, imageBounds, mymap, markers) {
-    var latlng = new google.maps.LatLng(point.lat, point.lng);
-    imageBounds.extend(latlng) ;
-    
-    var IW = new google.maps.InfoWindow({
-       content:pointToContent(point),
-       maxWidth: 250,
-       map: mymap
-    });
-
-    var M = new google.maps.Marker({position: latlng, title: "Toto"});
-    
-    google.maps.event.addListener(M, 'click', function() {
-      IW.open(mymap, M);
-    });
-    
-    markers.push(M);
-}
-
-function putMarkersOnMapSimple (map, markers) {
-      $.each(markers, function(key, marker) {
-        marker.setMap(map)
-      })
-}
-
-function putMarkersOnMapGrouped (map, markers) {
-      new MarkerClusterer(map, markers)
-}
-
-function init_maps() {
-    $.getScript("static/scripts/lib/google-maps-utility-library-v3/markerclusterer.js")
-    putMarkersOnMap = putMarkersOnMapSimple
-    //putMarkersOnMap = putMarkersOnMapGrouped
-}
-
-function loadGoogleMap() {
-    var imageBounds = new google.maps.LatLngBounds();
-    var markers = []
-    var map = new google.maps.Map(document.getElementById('mapChoix'), {
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    });
-    $.getJSON("Choix?special=MAP&type=JSON",
-        function(data) {
-              $.each(data, function(key, val) {
-                pointToMarker(val, imageBounds, map, markers)
-              })
-              
-              map.setCenter(imageBounds.getCenter())
-              map.fitBounds(imageBounds)
-
-              putMarkersOnMap(map, markers);
-        }
-    );
-}
-
 function printDate(strDate) {
     var dDate = new Date(parseInt(strDate)) ;
     var dateOut = dDate.toString() ;
@@ -95,10 +40,10 @@ function addMarker(map, markers, point) {
     var marker = feature.createMarker();
     feature.closeBox = true;
     feature.popupClass =  OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-        'autoSize': true,
+        'autoSize': true
     });
     feature.data.popupContentHTML = pointToContent(point);
-    feature.data.overflow = "auto";
+    feature.data.overflow = "hidden";
    
     marker = feature.createMarker();
  
@@ -130,7 +75,7 @@ function populateMap(map) {
     var size = new OpenLayers.Size(21,25);
     var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
     var icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png',size,offset);
-
+    
     $.getJSON("Choix?special=MAP&type=JSON",
         function(data) {
             $.each(data, function(key, point) {
@@ -139,20 +84,9 @@ function populateMap(map) {
 
             map.addControl(new OpenLayers.Control.LayerSwitcher());
             map.zoomToExtent(markers.getDataExtent());
+            $("body").css("cursor", "auto");
         }
-    ).error(function(e, textStatus) { alert("error"+e+textStatus); });
-}
-
-function loadMap() {
-    map = init_osm_box("mapChoix")
-    populateMap(map)
-}
-
-function loadGoogleMapWrapper() {
-    loadGoogleMap() 
-    if (enableSinglePage != undefined) {
-        setTimeout("enableSinglePage()", 3000)
-    }
+    ).error(function(e, textStatus) { alert("error"+e+textStatus); $("body").css("cursor", "auto");});
 }
 
 function init_loader() {
@@ -202,8 +136,10 @@ function init_loader() {
     $("#mapLoader").click(function () {
         $("#mapLoader").fadeOut() ;
         $("#mapChoix").addClass("mapChoix") ;
-        loadMap();
-    }).click() ;
+        var map = loadMap("mapChoix");
+        $("body").css("cursor", "wait");
+        populateMap(map)
+    }) ;
 }
 
 //triggered when SELECT widget is loaded
@@ -283,6 +219,5 @@ function draw_graph() {
 
 $(function() {
     save_theme()
-    init_maps()
     init_loader()
 })

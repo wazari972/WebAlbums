@@ -125,8 +125,8 @@
                 
                 <script type="text/javascript" src="static/scripts/tools.js"/>
                 
-                <xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix">
-                    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+                <xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix or webAlbums/config">
+                    <!--<script src="http://maps.google.com/maps/api/js?sensor=false"></script>-->
                     <script src="http://openlayers.org/api/OpenLayers.js"></script>
                     <!--<script src="static/scripts/lib/OpenLayers.js"/>-->
                     <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>

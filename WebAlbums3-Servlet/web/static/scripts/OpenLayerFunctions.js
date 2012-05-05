@@ -1,37 +1,15 @@
-zoom = 1
-    function get_mm_bikeTracks(bounds) {
+var mapCenter = {
+    lon: 5.7779693603516,
+    lat: 45.212268217196,
+    zoom: 10
+}
 
-        llbounds = new OpenLayers.Bounds();
-        llbounds.extend(OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.left,bounds.bottom));
-        llbounds.extend(OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.right,bounds.top));
-        url = "http://mm-lbserver.dnsalias.com/mm-mapserver_v2/wms/wms.php?REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1&LAYERS=MM_BIKETRACKS&STYLES=&FORMAT=image/png&BGCOLOR=0xFFFFFF&TRANSPARENT=TRUE&SRS=EPSG:4326&BBOX="
-        url = url + llbounds.toBBOX() + "&WIDTH=256&HEIGHT=256"
-        return url
-      }
 
-      function sliderInit() {
-        var slider = YAHOO.widget.Slider.getHorizSlider("sliderbg", "sliderthumb", -16, 220+16-4-1);
-        slider.getRealValue = function() {
-          return Math.round((this.getValue()-16)*100/(220-4-1))/100; 
-        }
-        slider.setValue(220*0.5+16-2);
-        slider.subscribe("change", function(offsetFromStart) {
-          for (var i = map.layers.length-1; i >= 0; i--) {
-            if (!map.layers[i].isBaseLayer && !map.layers[i].noOpaq) {
-              map.layers[i].setOpacity(slider.getRealValue());
-            }
-          }
-        });
-      }
 function init_osm_box(divName) {
     map = new OpenLayers.Map (divName, {
         controls:[
             new OpenLayers.Control.MouseDefaults(),
-            new OpenLayers.Control.Navigation(),
-            new OpenLayers.Control.PanZoomBar(),
-            new OpenLayers.Control.MousePosition(),
-            new OpenLayers.Control.LayerSwitcher(),
-            new OpenLayers.Control.Attribution()],
+            new OpenLayers.Control.LayerSwitcher()],
         maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
         maxResolution: 156543.0399,
         numZoomLevels: 19,
@@ -63,7 +41,10 @@ function init_osm_box(divName) {
     map.addControl(new OpenLayers.Control.LayerSwitcher());
         
 
-    map.setCenter(new OpenLayers.LonLat(0, 0), 0);
+    map.setCenter(new OpenLayers.LonLat(mapCenter.lon, mapCenter.lat).transform(
+        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+        new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+    ), mapCenter.zoom);
 
     return map
 }
@@ -89,4 +70,14 @@ function init_gpx_layer(map, name, file) {
 
 function zoomTo(map, layer) {
     map.zoomToExtent(layer.getDataExtent());    
+}
+
+function get_mm_bikeTracks(bounds) {
+
+    llbounds = new OpenLayers.Bounds();
+    llbounds.extend(OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.left,bounds.bottom));
+    llbounds.extend(OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.right,bounds.top));
+    url = "http://mm-lbserver.dnsalias.com/mm-mapserver_v2/wms/wms.php?REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1&LAYERS=MM_BIKETRACKS&STYLES=&FORMAT=image/png&BGCOLOR=0xFFFFFF&TRANSPARENT=TRUE&SRS=EPSG:4326&BBOX="
+    url = url + llbounds.toBBOX() + "&WIDTH=256&HEIGHT=256"
+    return url
 }

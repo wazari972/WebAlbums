@@ -44,9 +44,6 @@
 		  <input id="newTag" name="nom" type='text' size='20' maxlength='40'
                          placeholder="Nom du tag"/>
                 </td>
-                <td align="left">
-                  <input type="button" value="Go to" id="btGoto"/>
-                </td>
 	      </tr>
 	      <tr>
 		<td><label for="lstNewParentTag">Parent :</label></td> 
@@ -117,9 +114,22 @@
               <xsl:with-param name="type">where</xsl:with-param>
               <xsl:with-param name="incMinor">true</xsl:with-param>
             </xsl:apply-templates>
-		
-            <input id="lngID_2" name='lng' type='hidden'/>
-            <input id="latID_2" name='lat' type='hidden'/>
+            <br/><br/>
+            <table>
+               <tr>	
+		<td align='left'><label for="lngId">Long</label></td>
+		<td>
+		  <input id="lngID_2" name='lng' type='text' size='20' maxlength='20'/>
+		</td>	
+	      </tr>
+	      <tr>	
+		<td align='left'><label for="latID">Lat</label></td>
+		<td>
+		  <input id="latID_2" name='lat' type='text' size='20' maxlength='20'/>
+		</td>	
+	      </tr>
+            </table>
+            <br/>
 	    <input id="valModGeo" type='submit' value='Valider'/>
 	  </form>
 	</div>

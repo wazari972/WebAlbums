@@ -1,7 +1,10 @@
+function loadMap(divName) {
+    return init_osm_box(divName)
+}
+
 function callURL(url) {
     return $.get(url)
 }
-
 
 function loadExernals(btId, url, divId, callback, async) {
     if (async == undefined) {
