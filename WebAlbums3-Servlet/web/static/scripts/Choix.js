@@ -5,27 +5,6 @@ function pointToContent(point) {
           +"</div>"
 }
 
-function printDate(strDate) {
-    var dDate = new Date(parseInt(strDate)) ;
-    var dateOut = dDate.toString() ;
-    return dateOut.substring(0, dateOut.length - 24) ;
-}
-
-function trimAlbums(min, max, name) {
-    $('.selectAlbum').each(function(index) {
-        
-        if (parseInt($(this).prop('rel'))  < min ) {
-           $(this).hide() ;
-        } else if (parseInt($(this).prop('rel'))  > max) {
-            $(this).hide() ;
-        } else if ($(this).text().toUpperCase().indexOf(name.toUpperCase()) == -1) {
-            $(this).hide() ;
-        } else {
-            $(this).show() ;
-        }
-    });
-}
-
 AutoSizeFramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
     'autoSize': true
 });
@@ -100,35 +79,53 @@ function init_loader() {
     }) ;
 }
 
+function trimAlbums(min, max, name) {
+    $('.selectAlbum').each(function(index) {
+        if (parseInt($(this).prop('rel'))  < min ) {
+           $(this).hide() ;
+        } else if (parseInt($(this).prop('rel'))  > max) {
+            $(this).hide() ;
+        } else if ($(this).text().toUpperCase().indexOf(name.toUpperCase()) == -1) {
+            $(this).hide() ;
+        } else {
+            $(this).show() ;
+        }
+    });
+}
+
+function printDate(strDate) {
+    var dDate = new Date(parseInt(strDate)) ;
+    var dateOut = dDate.toString() ;
+    return dateOut.substring(0, dateOut.length - 24) ;
+}
+
 //triggered when SELECT widget is loaded
 function do_init_slider(data) {
+    $("#fromDate").text(printDate(data.fromDate));
+    $("#toDate").text(printDate(data.toDate));
     
     var NOW = new Date().getTime() ;
     var sliderOption = {
       range: true,
-      min: 0,
-      max: NOW,
+      min: data.fromDate,
+      max: data.toDate+1,
       step: 100000000,
-      slide: function(event, ui) {
-          $("#fromDate").text(printDate(ui.values[0]));
-          $("#toDate").text(printDate(ui.values[1]));
-          trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
+      values: [data.fromDate, data.toDate],
+      stop: function(event, ui) {
+          $("#fromDate").text(printDate(ui.values[0]))
+          $("#toDate").text(printDate(ui.values[1]))
+          //trimAlbums(ui.values[0], ui.values[1], $("#albmName").val())
+          return true
       }
      } ;
+     
      $("#slider-range").prop("rel", "singlepage[no]");
-     
      $("#slider-range").slider(sliderOption);
-     $("#fromDate").text(printDate(data.fromDate));
-     $("#toDate").text(printDate(data.toDate));
      
-     $("#slider-range").slider( "option", "max", data.toDate+$( "#slider-range" ).slider( "option", "step" ));
-     $("#slider-range").slider( "option", "min", data.fromDate);
-
-     $("#slider-range").slider( "option", "values", [data.fromDate, data.toDate]);
      $("#albmName").keyup(
         function(){
-           trimAlbums($("#slider-range").slider( "option", "range", "min" ),
-                      $("#slider-range").slider( "option", "range", "max" ),
+           trimAlbums($("#slider-range").slider("option", "range", "min"),
+                      $("#slider-range").slider("option", "range", "max"),
                       $(this).val());
 
         }

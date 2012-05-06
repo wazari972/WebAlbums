@@ -69,7 +69,7 @@ function init_buttons() {
 var last_point = null;
 function init_map() {
     var map = loadMap("map_search")
-    
+    return
     var markers = new OpenLayers.Layer.Markers("Tags");
     map.addLayer(markers);
     

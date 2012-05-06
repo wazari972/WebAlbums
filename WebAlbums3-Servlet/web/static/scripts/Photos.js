@@ -101,6 +101,7 @@ function init_tooltip() {
 function get_tag_layer(map, do_zoom) {
     var layer = $("#showTagMap").data("layer")
     if (layer == undefined) {
+        
         layer = init_tag_layer(map, do_zoom)
         $("#showTagMap").data("layer", layer)
     }
@@ -120,10 +121,8 @@ function init_tag_layer (map, do_zoom) {
         marker = addMarker(map, markers, point, function(x){return x.name})
         $(this).data("marker", marker)
     })
-
-    if (do_zoom)
-        zoomTo(map, markers, true)
-
+    
+    zoomTo(map, markers, do_zoom)
     return markers
 }
 
@@ -163,6 +162,8 @@ function init_gpx() {
     $(".tag_visu").click(function() {
         var map = get_map()
         get_tag_layer(map, true)
+        marker = $(this).data("marker")
+        map.setCenter(marker.lonlat)
     })
 }
 
