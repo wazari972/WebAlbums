@@ -39,7 +39,6 @@ function init_osm_box(divName) {
     ]);
 
     map.addControl(new OpenLayers.Control.LayerSwitcher());
-        
 
     map.setCenter(new OpenLayers.LonLat(mapCenter.lon, mapCenter.lat).transform(
         new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
@@ -62,14 +61,14 @@ function init_gpx_layer(map, name, file) {
     map.addLayer(lgpx);
     
     lgpx.events.register("loadend", lgpx , function (e) {
-        zoomTo(map, lgpx)
+        zoomTo(map, lgpx, false)
     });
     
     return lgpx
 }
 
-function zoomTo(map, layer) {
-    map.zoomToExtent(layer.getDataExtent());    
+function zoomTo(map, layer, closest) {
+    map.zoomToExtent(layer.getDataExtent(), closest);    
 }
 
 function get_mm_bikeTracks(bounds) {
@@ -80,4 +79,43 @@ function get_mm_bikeTracks(bounds) {
     url = "http://mm-lbserver.dnsalias.com/mm-mapserver_v2/wms/wms.php?REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1&LAYERS=MM_BIKETRACKS&STYLES=&FORMAT=image/png&BGCOLOR=0xFFFFFF&TRANSPARENT=TRUE&SRS=EPSG:4326&BBOX="
     url = url + llbounds.toBBOX() + "&WIDTH=256&HEIGHT=256"
     return url
+}
+
+var currentPopup = null;
+function addMarker(map, markers, point, pointToContent_p) {
+    var lnglat = new OpenLayers.LonLat(point.lng, point.lat).transform(
+        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+        new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+    );
+        
+    var feature = new OpenLayers.Feature(markers, lnglat);      
+    var marker = feature.createMarker();
+    feature.closeBox = true;
+    feature.popupClass =  OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
+        'autoSize': true
+    });
+    feature.data.popupContentHTML = pointToContent_p(point);
+    feature.data.overflow = "hidden";
+   
+    marker = feature.createMarker();
+ 
+    markerClick = function (evt) {
+        if (this.popup == null) {
+            alert("oups")
+        } else {
+            this.popup.toggle();
+            if (currentPopup != null)
+                currentPopup.hide()
+        }
+        currentPopup = this.popup;
+        OpenLayers.Event.stop(evt);
+    };
+    marker.events.register("mousedown", feature, markerClick);
+    markers.addMarker(marker);
+
+    feature.popup = feature.createPopup(feature.closeBox);
+    map.addPopup(feature.popup);
+    feature.popup.hide();
+    
+    return marker;
 }

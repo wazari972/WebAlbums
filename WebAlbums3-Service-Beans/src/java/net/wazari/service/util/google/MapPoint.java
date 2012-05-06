@@ -1,9 +1,9 @@
 package net.wazari.service.util.google ;
 
-import java.util.List ;
-import java.util.ArrayList ;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GooglePoint {
+public class MapPoint {
   private List<Point> points = new ArrayList<Point>();
   
   static public class Point {

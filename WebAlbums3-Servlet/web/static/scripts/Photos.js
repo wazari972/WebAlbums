@@ -98,8 +98,37 @@ function init_tooltip() {
     $(".exif").ezpz_tooltip({stayOnContent: true});
 }
 
+function get_tag_layer(map, do_zoom) {
+    var layer = $("#showTagMap").data("layer")
+    if (layer == undefined) {
+        layer = init_tag_layer(map, do_zoom)
+        $("#showTagMap").data("layer", layer)
+    }
+    return layer
+}
+
+function init_tag_layer (map, do_zoom) {
+    var markers = new OpenLayers.Layer.Markers("Geo Tags");
+    map.addLayer(markers);
+
+    $(".tag_visu").each(function() {
+        var point = {
+            lat: $(this).attr('rel').split('/')[0],
+            lng: $(this).attr('rel').split('/')[1],
+            name: $(this).text()
+        }
+        marker = addMarker(map, markers, point, function(x){return x.name})
+        $(this).data("marker", marker)
+    })
+
+    if (do_zoom)
+        zoomTo(map, markers, true)
+
+    return markers
+}
+
 function init_gpx() {
-    $(".gpx_visu").click(function() {        
+    var get_map = function() {
         var map = $("#gpx_box").data("map")
         if (map == undefined) {
             $("#gpx_box").show()
@@ -107,13 +136,33 @@ function init_gpx() {
             $("#gpx_box").data("map", map)
         }
         
+        return map
+    }
+    
+    $(".gpx_visu").click(function() {        
+        var map = get_map()
+        $("#tags_visu").show()
+        $("#gpx_box").show()
         layer = $(this).data("layer")
         if (layer == undefined) {
             layer = init_gpx_layer(map, $(this).text(), "http://127.0.0.1:8080/WebAlbums3.5-dev/"+$(this).attr("rel"))
             $(this).data("layer", layer)
         } else {
-            zoomTo(map, layer)
+            zoomTo(map, layer, false)
         }
+        get_tag_layer(map, false)
+    })
+    
+    $("#showTagMap").click(function() {
+       $("#tags_visu").toggle()
+       $("#gpx_box").toggle()
+       var map = get_map()
+       get_tag_layer(map, true)
+    });
+    
+    $(".tag_visu").click(function() {
+        var map = get_map()
+        get_tag_layer(map, true)
     })
 }
 

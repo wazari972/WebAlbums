@@ -20,7 +20,7 @@ public class XmlPhoto extends XmlInfoException {
     public XmlPhotoSubmit submit;
     @XmlAttribute
     public Boolean checked;
-    public XmlDetails details;
+    public XmlDetails details = new XmlDetails();
     public XmlPhotoExif exif;
     public XmlWebAlbumsTagWho author;
 }

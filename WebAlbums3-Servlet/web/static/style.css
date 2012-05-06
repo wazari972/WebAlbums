@@ -5,6 +5,11 @@
 
 /** **** **/
 
+#tags_visu {
+    display: none;
+    font: 10px Arial, Helvetica, sans-serif;
+}
+
 #gpx_box {
     width:500px; 
     height:500px;

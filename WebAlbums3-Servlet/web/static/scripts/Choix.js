@@ -29,57 +29,15 @@ function trimAlbums(min, max, name) {
 AutoSizeFramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
     'autoSize': true
 });
-var currentPopup = null;
-function addMarker(map, markers, point) {
-    var lnglat = new OpenLayers.LonLat(point.lng, point.lat).transform(
-        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-        new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
-    );
-        
-    var feature = new OpenLayers.Feature(markers, lnglat);      
-    var marker = feature.createMarker();
-    feature.closeBox = true;
-    feature.popupClass =  OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-        'autoSize': true
-    });
-    feature.data.popupContentHTML = pointToContent(point);
-    feature.data.overflow = "hidden";
-   
-    marker = feature.createMarker();
- 
-    markerClick = function (evt) {
-        if (this.popup == null) {
-            alert("oups")
-        } else {
-            this.popup.toggle();
-            if (currentPopup != null)
-                currentPopup.hide()
-        }
-        currentPopup = this.popup;
-        OpenLayers.Event.stop(evt);
-    };
-    marker.events.register("mousedown", feature, markerClick);
-    markers.addMarker(marker);
-
-    feature.popup = feature.createPopup(feature.closeBox);
-    map.addPopup(feature.popup);
-    feature.popup.hide();
-    
-    
-}
 
 function populateMap(map) {    
     var markers = new OpenLayers.Layer.Markers("Geo Tags");
     map.addLayer(markers);
-
-    var size = new OpenLayers.Size(21,25);
-    var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-    var icon = new OpenLayers.Icon('http://www.openlayers.org/dev/img/marker.png',size,offset);
     
     $.getJSON("Choix?special=MAP&type=JSON",
         function(data) {
             $.each(data, function(key, point) {
-                addMarker(map, markers, point, icon.clone())
+                addMarker(map, markers, point, pointToContent)
             })
 
             map.addControl(new OpenLayers.Control.LayerSwitcher());
