@@ -147,7 +147,7 @@ function init_gpx() {
         $("#gpx_box").show()
         layer = $(this).data("layer")
         if (layer == undefined) {
-            layer = init_gpx_layer(map, $(this).text(), "http://127.0.0.1:8080/WebAlbums3.5-dev/"+$(this).attr("rel"))
+            layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"))
             $(this).data("layer", layer)
         } else {
             zoomTo(map, layer, false)

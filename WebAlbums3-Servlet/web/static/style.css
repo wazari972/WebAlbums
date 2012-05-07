@@ -5,10 +5,14 @@
 
 /** **** **/
 
+#gpxChoix {
+    width:500px; 
+    height:500px;
+}
+
 .fastedit_stars {
     width: 12px;
     height: 13px;
-        
 }
 
 .star_on {

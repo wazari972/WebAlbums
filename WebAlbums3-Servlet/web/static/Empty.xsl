@@ -16,6 +16,7 @@
     <xsl:apply-templates select="/webAlbums/albums/graph" />
     <xsl:apply-templates select="/webAlbums/albums/select" />
     <xsl:apply-templates select="/webAlbums/albums/about" />
+    <xsl:apply-templates select="/webAlbums/albums/gpxes" />
 
     <xsl:apply-templates select="/webAlbums/photos/random" />
     <xsl:apply-templates select="/webAlbums/photos/display" />
@@ -38,11 +39,7 @@
       <xsl:apply-templates select="details"/>
     </center>
   </xsl:template>
-
-  <xsl:template match="albums/about">
-      <xsl:apply-templates select="album"/>
-  </xsl:template>
-
+  
   <xsl:template match="about/album">
     <h3>
         <a>

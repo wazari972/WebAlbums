@@ -26,6 +26,30 @@ function populateMap(map) {
     ).error(function(e, textStatus) { alert("error"+e+textStatus); $("body").css("cursor", "auto");});
 }
 
+function createGpxesMap() {
+    var map = loadMap("gpxChoix");
+    $("#gpxChoix").data("map", map)
+    var bounds = null;
+    $(".gpxTrack").each(function () {
+        var do_extend = function (mmap, llayer) {
+            if (bounds == null) {
+                bounds = llayer.getDataExtent()
+            } else
+                bounds.extend(llayer.getDataExtent())
+            map.zoomToExtent(bounds, false);
+        }
+        var layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"), do_extend)
+        $(this).data("layer", layer)
+    })
+
+    $(".gpxTrack").click(function() {
+        map = $("#gpxChoix").data("map")
+        var layer = $(this).data("layer")
+        zoomTo(map, layer, false)
+    })
+    
+}
+
 function init_loader() {
     $("#albumsLoader").click(function () {
         loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
@@ -63,6 +87,10 @@ function init_loader() {
 
     $("#selectLoader").click(function () {        
         loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
+    }) ;
+    
+    $("#gpsLoader").click(function () {        
+        loadExernals('gpsLoader', 'Albums?special=GPX', 'gpsChoix', createGpxesMap) ;
     }) ;
     
     $("#tagGraphLoader").click(function () {
@@ -104,7 +132,6 @@ function do_init_slider(data) {
     $("#fromDate").text(printDate(data.fromDate));
     $("#toDate").text(printDate(data.toDate));
     
-    var NOW = new Date().getTime() ;
     var sliderOption = {
       range: true,
       min: data.fromDate,

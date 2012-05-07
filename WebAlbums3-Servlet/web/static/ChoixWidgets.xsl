@@ -215,4 +215,30 @@
         </xsl:if>
     </li>
   </xsl:template>
+  
+  <xsl:template match="/webAlbums/albums/gpxes">
+      <xsl:if test="/webAlbums/albums/gpxes/gpx">
+        <div>
+            <xsl:apply-templates select="/webAlbums/albums/gpxes/gpx"/>
+            <div id="gpxChoix"></div>
+        </div>
+      </xsl:if>
+      <xsl:if test="not(/webAlbums/albums/gpxes/gpx)">
+          <div>pas de trace disponnible</div>
+      </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="/webAlbums/albums/gpxes/gpx">
+    <p>
+        <a class="gpxTrack">
+            <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:value-of select="description"/>
+        </a>
+        (<a><xsl:attribute name="href">Photos__<xsl:value-of select="@albumId"/>_p0_pa__</xsl:attribute> <xsl:value-of select="albumName"/></a>)
+    </p>
+  </xsl:template>
+  
+  <xsl:template match="albums/about">
+      <xsl:apply-templates select="album"/>
+  </xsl:template>
 </xsl:stylesheet>

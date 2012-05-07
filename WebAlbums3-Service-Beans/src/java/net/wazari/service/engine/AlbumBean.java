@@ -30,7 +30,6 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.service.exchange.xml.album.*;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
-import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
@@ -222,6 +221,30 @@ public class AlbumBean implements AlbumLocal {
         return output ;
     }
 
+    @Override
+    public XmlAlbumGpx treatGPX(ViewSessionAlbum vSession) {
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
+        XmlAlbumGpx gpxList = new XmlAlbumGpx();
+        
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
+                         Restriction.THEME_ONLY, TopFirst.ALL, null);
+        for (Album enrAlbum : albums.subset) {
+            for (Gpx enrGpx : enrAlbum.getGpxList()) {
+                XmlGpx gpx = new XmlGpx();
+                
+                gpx.description = enrGpx.getDescription();
+                gpx.id = enrGpx.getId();
+                gpx.albumId = enrGpx.getAlbum().getId();
+                gpx.albumName = enrGpx.getAlbum().getNom();
+                
+                gpxList.gpx.add(gpx);
+            }
+        }
+        
+        stopWatch.stop("Service.treatGPX") ;
+        return gpxList;
+    }
+    
     @Override
     public XmlAlbumTop treatTOP(ViewSessionAlbum vSession) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;

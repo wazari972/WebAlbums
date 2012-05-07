@@ -5,13 +5,7 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
-import net.wazari.service.exchange.xml.album.XmlAlbumAbout;
-import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
-import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
-import net.wazari.service.exchange.xml.album.XmlAlbumGraph;
-import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
-import net.wazari.service.exchange.xml.album.XmlAlbumTop;
-import net.wazari.service.exchange.xml.album.XmlAlbumYears;
+import net.wazari.service.exchange.xml.album.*;
 
 /**
  *
@@ -26,5 +20,6 @@ public class XmlAlbums {
     public XmlReturnTo return_to;
     public XmlAlbumDisplay display;
     public XmlAlbumAbout about;
+    public XmlAlbumGpx gpxes;
     public XmlAlbums(){}
 }

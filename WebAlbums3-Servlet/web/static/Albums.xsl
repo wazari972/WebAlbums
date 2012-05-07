@@ -139,7 +139,7 @@
     <p> 
         <small>
             <a class="gpx_visu">
-                <xsl:attribute name="rel">GPX__<xsl:value-of select="@id" />.gpx</xsl:attribute>
+                <xsl:attribute name="rel"><xsl:value-of select="@id" /></xsl:attribute>
                 <xsl:value-of select="description" />
             </a>
             &#160;(<a target="_blank" rel="singlepage[no]">

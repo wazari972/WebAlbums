@@ -126,6 +126,7 @@
 	</div>
       </div>
     </div>
+    
     <div class="item">
       <div class="date">
 	<span></span>
@@ -136,6 +137,18 @@
 	  <center>
 	    <div id="mapChoix"/>
 	  </center>
+	</div>
+      </div>
+    </div>
+    
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
+      <div class="content">
+	<h1>Traces Gpx <input id="gpsLoader" type="button" value="+"/></h1>
+	<div class="body">
+            <div id="gpsChoix"/>
 	</div>
       </div>
     </div>

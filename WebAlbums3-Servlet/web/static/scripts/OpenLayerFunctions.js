@@ -116,19 +116,23 @@ function init_osm_box(divName) {
 }
 
 gpx_layers = []
-function init_gpx_layer(map, name, file) {
+function init_gpx_layer(map, name, file_id, ready_callback) {    
+    file = "GPX__"+file_id+".gpx"
     
     // Add the Layer with the GPX Track
     var lgpx = new OpenLayers.Layer.GML(name, file, {
             format: OpenLayers.Format.GPX,
-            style: {strokeColor: "green", strokeWidth: 5, strokeOpacity: 0.5},
+            style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 0.5},
             projection: new OpenLayers.Projection("EPSG:4326")
     });
 
     map.addLayer(lgpx);
     
     lgpx.events.register("loadend", lgpx , function (e) {
-        zoomTo(map, lgpx, false)
+        if (ready_callback == undefined)
+            zoomTo(map, lgpx, false)
+        else
+            ready_callback(map, lgpx)
     });
     
     return lgpx
