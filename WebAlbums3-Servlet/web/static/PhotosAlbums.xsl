@@ -11,16 +11,15 @@
                 <xsl:with-param name="stars" select="$stars"/>
                 <xsl:with-param name="photoId" select="$photoId"/>
             </xsl:call-template>
-            <img>
-                <xsl:attribute name="class">fastedit_stars</xsl:attribute>
+            <img src="static/images/void.png">
                 <xsl:attribute name="rel">
                     <xsl:value-of select="$photoId" />/<xsl:value-of select="$count" />
                 </xsl:attribute>
                 <xsl:if test="$count > $stars">
-                    <xsl:attribute name="src">static/images/star.off.png</xsl:attribute>
+                    <xsl:attribute name="class">fastedit_stars star_off</xsl:attribute>
                 </xsl:if>
                 <xsl:if test="not($count > $stars)">
-                    <xsl:attribute name="src">static/images/star.on.png</xsl:attribute>
+                    <xsl:attribute name="class">fastedit_stars star_on</xsl:attribute>
                 </xsl:if>
             </img>
         </xsl:if>

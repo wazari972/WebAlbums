@@ -45,8 +45,7 @@ function set_stars(photoid, stars) {
     $.post("Photos?special=FASTEDIT", 
         {id : photoid, stars:stars},
         function(data) {
-            $("#stars_"+photoid+"_message").text("Stars set. Reloading ...")
-            reload_page_cb(data, photoid);
+            $("#stars_"+photoid+"_message").text("")
         }
      );
 }
@@ -68,7 +67,11 @@ function init_fastedit() {
         stars = $(this).attr('rel').split('/')[1];
 
         set_stars(photoid, parseInt(stars))
-
+        $(this).prevAll("img").removeClass("star_off").addClass("star_on")
+        $(this).removeClass("star_off").addClass("star_on")
+        $(this).nextAll("img").removeClass("star_on").addClass("star_off")
+        
+        
     }) ;
 
     $(".fastedit_addtag").click(function () {

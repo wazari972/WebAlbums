@@ -88,10 +88,10 @@ function init_osm_box(divName) {
     
     map.addLayers([
         new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
-        //new OpenLayers.Layer.Google( "Google Streets", { 'sphericalMercator': true, attribution: ', Uses GeoLite data by <a href="http://maxmind.com/">MaxMind</a>', numZoomLevels:18, displayInLayerSwitcher: true, permalink: "goostr" } ),
-        //new OpenLayers.Layer.Google( "Google MapMaker", { type: G_MAPMAKER_NORMAL_MAP, 'sphericalMercator': true, attribution: ', Uses GeoLite data by <a href="http://maxmind.com/">MaxMind</a>', numZoomLevels:18, permalink: "goomak" } ),
-        //new OpenLayers.Layer.Google( "Google Aerial", { type: G_SATELLITE_MAP, 'sphericalMercator': true, attribution: ', Uses GeoLite data by <a href="http://maxmind.com/">MaxMind</a>', numZoomLevels:19, permalink: "goosat" } ),
-        //new OpenLayers.Layer.Google( "Google Physical", { type: G_PHYSICAL_MAP, 'sphericalMercator': true, attribution: ', Uses GeoLite data by <a href="http://maxmind.com/">MaxMind</a>', numZoomLevels:16, permalink: "goophy" } ),
+        /*new OpenLayers.Layer.Google( "Google Streets", {'sphericalMercator': true, numZoomLevels:18, displayInLayerSwitcher: true} ),
+        new OpenLayers.Layer.Google( "Google MapMaker", {type: G_MAPMAKER_NORMAL_MAP, 'sphericalMercator': true,  numZoomLevels:18} ),
+        new OpenLayers.Layer.Google( "Google Aerial", {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels:19} ),
+        new OpenLayers.Layer.Google( "Google Physical", {type: G_PHYSICAL_MAP, 'sphericalMercator': true, numZoomLevels:16} ),*/
 
         new OpenLayers.Layer.OSM( "OSM Cycle Map", "http://tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
         { displayOutsideMaxExtent: true, 

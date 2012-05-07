@@ -5,6 +5,20 @@
 
 /** **** **/
 
+.fastedit_stars {
+    width: 12px;
+    height: 13px;
+        
+}
+
+.star_on {
+    background-image: url(images/star.on.png)
+}
+
+.star_off {
+    background-image: url(images/star.off.png)
+}
+
 #tags_visu {
     display: none;
     font: 10px Arial, Helvetica, sans-serif;
