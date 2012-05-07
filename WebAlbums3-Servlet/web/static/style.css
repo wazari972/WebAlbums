@@ -5,6 +5,35 @@
 
 /** **** **/
 
+#gpxChoix {
+    width:500px; 
+    height:500px;
+}
+
+.fastedit_stars {
+    width: 12px;
+    height: 13px;
+}
+
+.star_on {
+    background-image: url(images/star.on.png)
+}
+
+.star_off {
+    background-image: url(images/star.off.png)
+}
+
+#tags_visu {
+    display: none;
+    font: 10px Arial, Helvetica, sans-serif;
+}
+
+#gpx_box {
+    width:500px; 
+    height:500px;
+    display: none;
+}
+
 .localsave_info {
     font: 10px Arial, Helvetica, sans-serif;
 }
@@ -29,19 +58,19 @@
     width: 400px;
   }
 
-.gmap_content h1 {
+.map_content h1 {
     width: 200px;
     color: #ffffff;
 }
 
-.gmap_content {
+.map_content {
     width:220px;
     height:200px;
 
 }
-.gmap_content img {
-    max-width:100px;
-    max-height:100px;
+.map_content img {
+    max-width:200px;
+    max-height:300px;
     vertical-align:middle;
 }
 

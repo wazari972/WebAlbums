@@ -52,6 +52,12 @@
                           <xsl:attribute name="rel">Photos?album=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../photoList/page/@current" />&amp;special=FULLSCREEN</xsl:attribute>                          
                         </img>
                     </xsl:if>
+                    <xsl:if test="/webAlbums/photos/display/album/details/tagList/where">
+                        <a rel="singlepage[no]" id="showTagMap">
+                            <xsl:attribute name="title">Afficher la carte des tags.</xsl:attribute>
+                            <img src="static/images/map.png" height="30px"/>
+                        </a>
+                    </xsl:if>
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                           <span>&#160;</span>
                           <a rel="singlepage[no]" title="Edition de l'album" class="edit">
@@ -68,8 +74,10 @@
                 </div>
             </xsl:if>
             <xsl:if test="gpx">
-               <div class="gpx_opt">
+               <div class="map_opt">
                    <xsl:apply-templates select="gpx"/>
+                   <xsl:apply-templates select="details/tagList"/>
+                   <div id="gpx_box"></div>
                 </div>
             </xsl:if>
 	  </h2>
@@ -90,6 +98,19 @@
       </div>
     </div>
   </xsl:template>
+
+  <xsl:template match="/webAlbums/photos/display/album/details/tagList">
+    <ul id="tags_visu"><xsl:apply-templates select="where"/><br/></ul>
+  </xsl:template>
+
+<xsl:template match="/webAlbums/photos/display/album/details/tagList/where">
+    <li>
+        <a class="tag_visu">
+            <xsl:attribute name="rel"><xsl:value-of select="@lat"/>/<xsl:value-of select="@longit"/></xsl:attribute>
+            <xsl:value-of select="."/>
+        </a>
+    </li>
+</xsl:template>
 
   <xsl:template match="message">
     <i><xsl:value-of select="."/></i><br/>
@@ -114,13 +135,17 @@
     </p>
     <br/>
   </xsl:template>
-  <xsl:template match="album/gpx">
+  <xsl:template match="display/album/gpx">
     <p> 
-    <small>
-        <a target="_blank" rel="singlepage[no]">
-            <xsl:attribute name="href">GPX__<xsl:value-of select="@id" />.gpx</xsl:attribute>
-            <xsl:value-of select="description" />
-        </a>
+        <small>
+            <a class="gpx_visu">
+                <xsl:attribute name="rel"><xsl:value-of select="@id" /></xsl:attribute>
+                <xsl:value-of select="description" />
+            </a>
+            &#160;(<a target="_blank" rel="singlepage[no]">
+                <xsl:attribute name="href">GPX__<xsl:value-of select="@id" />.gpx</xsl:attribute>
+                <span>dl</span>
+            </a>)
         </small>
     </p>
     <br/>

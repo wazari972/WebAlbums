@@ -124,6 +124,16 @@
 		<xsl:call-template name="print_return_link" />
                 
                 <script type="text/javascript" src="static/scripts/tools.js"/>
+                
+                <xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix or webAlbums/config">
+                    <!--<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+                    <script src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false"></script>-->
+                    <script src="http://openlayers.org/api/OpenLayers.js"></script>
+                    <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+                    <script src="http://api.ign.fr/geoportail/api/js/1.3.0/GeoportalMin.js?key=1454623408623333731" charset="utf-8" ></script>
+                    <script src="static/scripts/OpenLayerFunctions.js"/>
+                </xsl:if>
+                
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
                     <script type="text/javascript" src="static/scripts/Photos.js"/>
                 </xsl:if>

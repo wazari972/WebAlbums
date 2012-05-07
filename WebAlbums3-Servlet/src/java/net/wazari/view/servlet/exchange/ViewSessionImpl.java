@@ -361,6 +361,11 @@ public class ViewSessionImpl implements
     public boolean getChk(Integer id) {
         return "modif".equals(getString("chk" + id));
     }
+    
+    @Override
+    public String getGpxDescr(Integer id) {
+        return getString("gpx_descr_" + id);
+    }
 
     @Override
     public Integer getRmTag() {

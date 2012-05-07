@@ -5,12 +5,10 @@
 
 package net.wazari.service.exchange.xml.album;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlUserList;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
-import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 
 /**
  *
@@ -20,14 +18,9 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 public class XmlAlbumEdit {
     public XmlAlbumSubmit submit;
     public String exception;
-    public XmlPhotoId picture;
-    public String name;
-    @XmlAttribute
-    public Integer count;
-    @XmlAttribute
-    public Integer id;
-    public String description;
-    public String date;
+    
+    public XmlAlbum album = new XmlAlbum();
+    
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
     @XmlElement(name = "tagList")

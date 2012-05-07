@@ -674,28 +674,28 @@ exists or setup the property manually. For example like this:
         <dirname file="${dist.war}" property="dist.jar.dir"/>
         <mkdir dir="${dist.jar.dir}"/>
         <jar compress="${jar.compress}" jarfile="${dist.war}">
-            <fileset dir="${build.web.dir}"/>
+            <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*"/>
         </jar>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist" if="do.war.package.with.custom.manifest" name="-do-dist-with-manifest">
         <dirname file="${dist.war}" property="dist.jar.dir"/>
         <mkdir dir="${dist.jar.dir}"/>
         <jar compress="${jar.compress}" jarfile="${dist.war}" manifest="${build.meta.inf.dir}/MANIFEST.MF">
-            <fileset dir="${build.web.dir}"/>
+            <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*"/>
         </jar>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist" if="do.tmp.war.package.without.custom.manifest" name="-do-tmp-dist-without-manifest">
         <dirname file="${dist.war}" property="dist.jar.dir"/>
         <mkdir dir="${dist.jar.dir}"/>
         <jar compress="${jar.compress}" jarfile="${dist.war}">
-            <fileset dir="${build.web.dir}"/>
+            <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*"/>
         </jar>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist" if="do.tmp.war.package.with.custom.manifest" name="-do-tmp-dist-with-manifest">
         <dirname file="${dist.war}" property="dist.jar.dir"/>
         <mkdir dir="${dist.jar.dir}"/>
         <jar compress="${jar.compress}" jarfile="${dist.war}" manifest="${build.meta.inf.dir}/MANIFEST.MF">
-            <fileset dir="${build.web.dir}"/>
+            <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*"/>
         </jar>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist,-do-dist-with-manifest,-do-dist-without-manifest" name="do-dist"/>
@@ -708,6 +708,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Plugins.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.urlrewrite-3.2.0.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.org-netbeans-modules-java-j2seproject-copylibstask.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -720,6 +721,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.WebAlbums3-Plugins.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.urlrewrite-3.2.0.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.org-netbeans-modules-java-j2seproject-copylibstask.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>
@@ -728,7 +730,7 @@ exists or setup the property manually. For example like this:
         <dirname file="${dist.ear.war}" property="dist.jar.dir"/>
         <mkdir dir="${dist.jar.dir}"/>
         <jar compress="${jar.compress}" jarfile="${dist.ear.war}" manifest="${build.web.dir}/META-INF/MANIFEST.MF">
-            <fileset dir="${build.web.dir}"/>
+            <fileset dir="${build.web.dir}" excludes="WEB-INF/classes/.netbeans_*"/>
         </jar>
     </target>
     <target name="-post-dist">

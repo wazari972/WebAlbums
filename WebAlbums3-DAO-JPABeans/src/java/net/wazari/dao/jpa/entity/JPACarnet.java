@@ -6,33 +6,14 @@
 package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
+import net.wazari.dao.entity.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.Theme;
-import net.wazari.dao.entity.Utilisateur;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -41,13 +22,12 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "Carnet")
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class JPACarnet implements Carnet, Serializable {
     private static final Logger log = LoggerFactory.getLogger(JPACarnet.class.getName());
 
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -57,26 +37,21 @@ public class JPACarnet implements Carnet, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
-    @XmlElement
     @Column(name = "Description", length = 255)
     private String description;
 
-    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "CarnetDate", nullable = false, length = 10)
     private String date;
 
-    @XmlElement
     @Column(name = "Texte")
     @Lob
-    private String texte;
+    private String text;
     
-    @XmlAttribute
     @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;
@@ -84,10 +59,10 @@ public class JPACarnet implements Carnet, Serializable {
     @ManyToMany
     @JoinTable(name = "CarnetPhoto",
         joinColumns = {
-          @JoinColumn(name="carnet", unique = true)           
+          @JoinColumn(name="Carnet")           
         },
         inverseJoinColumns = {
-          @JoinColumn(name="photo")
+          @JoinColumn(name="Photo")
         }
     )
     private List<JPAPhoto> jPAPhotoList;
@@ -95,10 +70,10 @@ public class JPACarnet implements Carnet, Serializable {
     @ManyToMany
     @JoinTable(name = "CarnetAlbum",
         joinColumns = {
-          @JoinColumn(name="carnet", unique = true)           
+          @JoinColumn(name="Carnet")           
         },
         inverseJoinColumns = {
-          @JoinColumn(name="album")
+          @JoinColumn(name="Album")
         }
     )
     private List<JPAAlbum> jPAAlbumList;
@@ -124,6 +99,7 @@ public class JPACarnet implements Carnet, Serializable {
         this.date = date;
     }
 
+    @XmlAttribute
     @Override
     public Integer getId() {
         return id;
@@ -134,6 +110,7 @@ public class JPACarnet implements Carnet, Serializable {
         this.id = id;
     }
 
+    @XmlElement
     @Override
     public String getNom() {
         return nom;
@@ -144,6 +121,7 @@ public class JPACarnet implements Carnet, Serializable {
         this.nom = nom;
     }
 
+    @XmlElement
     @Override
     public String getDescription() {
         return description;
@@ -154,16 +132,18 @@ public class JPACarnet implements Carnet, Serializable {
         this.description = description;
     }
 
+    @XmlAttribute
     @Override
     public String getDate() {
         return date;
     }
 
+    
     @Override
     public void setDate(String date) {
         this.date = date;
     }
-
+    
     @Override
     public Photo getPicture() {
         return picture;
@@ -173,7 +153,21 @@ public class JPACarnet implements Carnet, Serializable {
     public void setPicture(Photo picture) {
         this.picture = (JPAPhoto) picture;
     }
-
+    
+    @XmlAttribute
+    public Integer getPictureId() {
+        if (picture == null)
+            return null;
+        else
+            return picture.getId();
+    }
+    
+    @Transient
+    public Integer pictureId ;
+    public void setPictureId(Integer picture) {
+        this.pictureId = picture;
+    }
+    
     @Override
     public Utilisateur getDroit() {
         return (Utilisateur) droit;
@@ -183,15 +177,18 @@ public class JPACarnet implements Carnet, Serializable {
     public void setDroit(Utilisateur droit) {
         this.droit = (JPAUtilisateur) droit;
     }
-
-    @Override
-    public Theme getTheme() {
-        return (Theme) theme;
+    
+    @XmlAttribute
+    public Integer getDroitId() {
+        return droit.getId();
     }
-
-    @Override
-    public void setTheme(Theme theme) {
-        this.theme = (JPATheme) theme;
+    
+    @Transient
+    public Integer droitId;
+    public void setDroitId(Integer droit) {
+        if (droit == null)
+            log.warn("DROIT is null "+this.id);
+        this.droitId = droit;
     }
     
     @Override
@@ -204,6 +201,22 @@ public class JPACarnet implements Carnet, Serializable {
         this.jPAAlbumList = (List) jPAAlbumList;
     }
     
+    @XmlAttribute(name="AlbumId")
+    public List<Integer> getAlbumIdList() {
+        List<Integer> ids = new ArrayList<Integer>();
+        if (jPAAlbumList == null)
+            return ids;
+        for (Album enrAlbum : jPAAlbumList) 
+            ids.add(enrAlbum.getId());
+        return ids;
+    }
+
+    @Transient
+    public List<Integer> albumIdList ;
+    public void setAlbumIdList(List<Integer> albumIdList) {
+        this.albumIdList = albumIdList;
+    }
+    
     @Override
     public List<Photo> getPhotoList() {
         return (List) jPAPhotoList;
@@ -213,13 +226,42 @@ public class JPACarnet implements Carnet, Serializable {
     public void setPhotoList(List<Photo> jPAPhotoList) {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
-
-    public String getTexte() {
-        return texte;
+    
+    @XmlAttribute(name="PhotoId")
+    public List<Integer> getPhotoIdList() {
+        List<Integer> ids = new ArrayList<Integer>();
+        if (jPAPhotoList == null)
+            return ids;
+        for (Photo enrPhoto : jPAPhotoList) 
+            ids.add(enrPhoto.getId());
+        return ids;
     }
 
-    public void setTexte(String texte) {
-        this.texte = texte;
+    @Transient
+    public List<Integer> photoIdList;
+    public void setPhotoIdList(List<Integer> photoIdList) {
+        this.photoIdList = photoIdList;
+    }
+
+    @XmlElement
+    @Override
+    public String getText() {
+        return text;
+    }
+
+    @Override
+    public void setText(String text) {
+        this.text = text;
+    }
+    
+    @Override
+    public Theme getTheme() {
+        return (Theme) theme;
+    }
+
+    @Override
+    public void setTheme(Theme theme) {
+        this.theme = (JPATheme) theme;
     }
 
     @Override
@@ -245,16 +287,4 @@ public class JPACarnet implements Carnet, Serializable {
     public String toString() {
         return "net.wazari.dao.jpa.entity.JPACarnet[id=" + id + "]";
     }
-
-    @Override
-    public String getText() {
-        return this.texte;
-        
-    }
-
-    @Override
-    public void setText(String text) {
-        this.texte = text;
-    }
-
 }

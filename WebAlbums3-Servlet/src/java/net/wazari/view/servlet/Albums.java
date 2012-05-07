@@ -58,6 +58,9 @@ public class Albums extends HttpServlet{
         } else if (special == Special.ABOUT) {
             output.about = albumService.treatABOUT(vSession);
             return output ;
+        } else if (special == Special.GPX) {
+            output.gpxes = albumService.treatGPX(vSession);
+            return output ;
         } else if (special == Special.PHOTOALBUM_SIZE) {
             vSession.setPhotoAlbumSize(vSession.getPhotoAlbumSize());
             return null;

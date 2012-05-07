@@ -7,35 +7,12 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
+import net.wazari.dao.entity.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.entity.Gpx;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.Theme;
-import net.wazari.dao.entity.Utilisateur;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -44,13 +21,12 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "Album")
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 public class JPAAlbum implements Album, Serializable {
-    private static final Logger log = LoggerFactory.getLogger(JPACarnet.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(JPAAlbum.class.getName());
 
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -60,54 +36,37 @@ public class JPAAlbum implements Album, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
-    @XmlElement
     @Column(name = "Description", length = 255)
     private String description;
 
-    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "AlbumDate", nullable = false, length = 10)
     private String date;
     
-    @XmlAttribute
     @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;
     
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAPhoto> jPAPhotoList;
 
-    @XmlTransient
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAUtilisateur droit;
     
-    @XmlTransient
     @JoinColumn(name = "Theme", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
 
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "album", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAGpx> jPAGpxList;
     
-    @XmlTransient
     @ManyToMany(mappedBy="jPAAlbumList")
     private List<JPACarnet> jPACarnetList;
-    
-    @XmlTransient
-    @Transient
-    private Integer themeId = null ;
-
-    @XmlTransient
-    @Transient
-    private Integer droitId = null ;
 
     public JPAAlbum() {
     }
@@ -122,6 +81,7 @@ public class JPAAlbum implements Album, Serializable {
         this.date = date;
     }
 
+    @XmlAttribute
     @Override
     public Integer getId() {
         return id;
@@ -132,6 +92,7 @@ public class JPAAlbum implements Album, Serializable {
         this.id = id;
     }
 
+    @XmlElement
     @Override
     public String getNom() {
         return nom;
@@ -142,6 +103,7 @@ public class JPAAlbum implements Album, Serializable {
         this.nom = nom;
     }
 
+    @XmlElement
     @Override
     public String getDescription() {
         return description;
@@ -152,6 +114,7 @@ public class JPAAlbum implements Album, Serializable {
         this.description = description;
     }
 
+    @XmlAttribute
     @Override
     public String getDate() {
         return date;
@@ -162,6 +125,20 @@ public class JPAAlbum implements Album, Serializable {
         this.date = date;
     }
 
+    @XmlAttribute
+    public Integer getPictureId() {
+        if (picture == null)
+            return null;
+        else
+            return picture.getId();
+    }
+    
+    @Transient
+    public Integer pictureId ;
+    public void setPictureId(Integer picture) {
+        this.pictureId = picture;
+    }
+    
     @Override
     public Photo getPicture() {
         return picture;
@@ -172,23 +149,26 @@ public class JPAAlbum implements Album, Serializable {
         this.picture = (JPAPhoto) picture;
     }
 
+    @XmlElementWrapper(name="Photos")
+    @XmlElement(name="Photo", type=JPAPhoto.class)
     @Override
-    public List<Photo> getPhotoList() {
+    public List getPhotoList() {
         return (List) jPAPhotoList;
     }
 
     @Override
-    public void setPhotoList(List<Photo> jPAPhotoList) {
+    public void setPhotoList(List jPAPhotoList) {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
-
+    
+    @XmlElement(name="Gpx", type=JPAGpx.class)
     @Override
-    public List<Gpx> getGpxList() {
+    public List getGpxList() {
         return (List) jPAGpxList;
     }
 
     @Override
-    public void setGpxList(List<Gpx> jPAGpxList) {
+    public void setGpxList(List jPAGpxList) {
         this.jPAGpxList = (List) jPAGpxList;
     }
     
@@ -201,6 +181,19 @@ public class JPAAlbum implements Album, Serializable {
     public void setDroit(Utilisateur droit) {
         this.droit = (JPAUtilisateur) droit;
     }
+    
+    @XmlAttribute
+    public Integer getDroitId() {
+        return droit.getId();
+    }
+    
+    @Transient
+    public Integer droitId;
+    public void setDroitId(Integer droit) {
+        if (droit == null)
+            log.warn("DROIT is null "+this.id);
+        this.droitId = droit;
+    }
 
     @Override
     public Theme getTheme() {
@@ -210,32 +203,6 @@ public class JPAAlbum implements Album, Serializable {
     @Override
     public void setTheme(Theme theme) {
         this.theme = (JPATheme) theme;
-    }
-
-    @XmlAttribute
-    public Integer getDroitId() {
-        if (droit == null) {
-            return droitId ;
-        } else {
-            return droit.getId() ;
-        }
-    }
-
-    public void setDroitId(Integer droitId) {
-        this.droitId = droitId ;
-    }
-
-    @XmlAttribute
-    public Integer getThemeId() {
-        if (theme == null) {
-            return themeId ;
-        } else {
-            return theme.getId() ;
-        }
-    }
-
-    public void setThemeId(Integer themeId) {
-        this.themeId = themeId ;
     }
     
     @Override

@@ -5,6 +5,8 @@ import javax.ejb.EJB;
 
 import javax.ejb.Stateless;
 
+import net.wazari.common.exception.WebAlbumsException.ErrorType;
+import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
 import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.service.AlbumLocal;
 import net.wazari.service.exchange.Configuration;
@@ -40,27 +42,30 @@ public class MaintBean implements MaintLocal {
 
     public XmlMaint treatMAINT(ViewSessionMaint vSession) throws WebAlbumsServiceException {
         MaintAction action = vSession.getMaintAction();
+        try {
+            XmlMaint output = new XmlMaint();
+            if (MaintAction.EXPORT_XML == action) {
+                maintDAO.treatExportXML(getPath(vSession.getConfiguration()));
+            } else if (MaintAction.IMPORT_XML == action) {
+                maintDAO.treatImportXML(vSession.getConfiguration().wantsProtectDB(), getPath(vSession.getConfiguration()));
+            } else if (MaintAction.TRUNCATE_DB == action) {
+                maintDAO.treatTruncateDB(vSession.getConfiguration().wantsProtectDB());
+            } else if (MaintAction.PRINT_STATS == action) {
+                maintDAO.treatDumpStats();
+            } else if (MaintAction.BENCHMARK == action) {
+                benchmark(vSession);
 
-        XmlMaint output = new XmlMaint();
-        if (MaintAction.EXPORT_XML == action) {
-            maintDAO.treatExportXML(getPath(vSession.getConfiguration()));
-        } else if (MaintAction.IMPORT_XML == action) {
-            maintDAO.treatImportXML(vSession.getConfiguration().wantsProtectDB(), getPath(vSession.getConfiguration()));
-        } else if (MaintAction.TRUNCATE_DB == action) {
-            maintDAO.treatTruncateDB(vSession.getConfiguration().wantsProtectDB());
-        } else if (MaintAction.PRINT_STATS == action) {
-            maintDAO.treatDumpStats();
-        } else if (MaintAction.BENCHMARK == action) {
-            benchmark(vSession);
-
-        } else if (MaintAction.UPDATE_DAO == action) {
-            maintDAO.treatUpdate();
-        } else {
-            for (MaintAction act : Arrays.asList(MaintAction.values())) {
-                output.actions.add(act.toString());
+            } else if (MaintAction.UPDATE_DAO == action) {
+                maintDAO.treatUpdate();
+            } else {
+                for (MaintAction act : Arrays.asList(MaintAction.values())) {
+                    output.actions.add(act.toString());
+                }
             }
+            return output;
+        } catch (DatabaseFacadeLocalException e) {
+            throw new WebAlbumsServiceException(ErrorType.DatabaseException, e);
         }
-        return output;
     }
     private static final int REPETITION = 100;
 

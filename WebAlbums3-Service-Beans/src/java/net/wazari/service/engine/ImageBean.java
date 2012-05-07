@@ -59,7 +59,7 @@ public class ImageBean implements ImageLocal {
     public XmlImage treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
         ImgMode mode = vSession.getImgMode();
-        mode = (mode == null ? ImgMode.PETIT : mode) ;
+        mode = (mode == null ? ImgMode.MINI : mode) ;
 
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
@@ -119,7 +119,7 @@ public class ImageBean implements ImageLocal {
                     return output ;
                 }
 
-                type = (mode == ImgMode.PETIT || enrPhoto.getType() == null ? "image/png" : enrPhoto.getType());
+                type = (mode == ImgMode.MINI || enrPhoto.getType() == null ? "image/png" : enrPhoto.getType());
                 if (mode == ImgMode.SHRINK) {
 
                     try {

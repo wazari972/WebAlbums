@@ -1,21 +1,10 @@
-function loadMaps() {
-    var script = document.createElement("script")
-    script.setAttribute("src", "http://maps.google.com/maps/api/js?sensor=false&callback=loadGoogleMapWrapper")
-    script.setAttribute("type", "text/javascript")
-    document.documentElement.firstChild.appendChild(script)
-}
-
-function loadGoogleMapWrapper() {
-    loadGoogleMap() 
-    if (enableSinglePage != undefined) {
-        setTimeout("enableSinglePage()", 3000)
-    }
+function loadMap(divName) {
+    return init_osm_box(divName)
 }
 
 function callURL(url) {
     return $.get(url)
 }
-
 
 function loadExernals(btId, url, divId, callback, async) {
     if (async == undefined) {

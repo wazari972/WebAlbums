@@ -33,8 +33,8 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.util.google.GooglePoint;
-import net.wazari.service.util.google.GooglePoint.Point;
+import net.wazari.service.util.google.MapPoint;
+import net.wazari.service.util.google.MapPoint.Point;
 
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.facades.EntityWithId;
@@ -280,7 +280,7 @@ public class WebPageBean implements WebPageLocal {
                 //afficher tous les tags
                 tags = tagDAO.findAll();
             } else if (mode == Mode.TAG_NUSED || mode == Mode.TAG_NEVER || mode == Mode.TAG_NEVER_EVER) {
-                List<Tag> notWantedTags = null;
+                List<Tag> notWantedTags;
                 //select the tags not used [in this theme]
                 if (mode == Mode.TAG_NEVER || mode == Mode.TAG_NEVER_EVER || vSession.isRootSession()) {
                     //select all the tags used
@@ -311,9 +311,9 @@ public class WebPageBean implements WebPageLocal {
 
         output.mode = mode ;
 
-        GooglePoint map = null;
+        MapPoint map = null;
         if (box == Box.MAP_SCRIPT) {
-            map = new GooglePoint();
+            map = new MapPoint();
         }
 
         log.info( "Mode: {}, Box: {}, list: {}", new Object[]{mode, box, ids});
@@ -332,7 +332,7 @@ public class WebPageBean implements WebPageLocal {
                     //ensure that this tag is displayed in this theme
                     //(in root theme, diplay all of theme)
                     TagTheme enrTagTh = tagThemeDAO.loadByTagTheme(enrTag.getId(), vSession.getTheme().getId());
-                    if (enrTagTh != null && !enrTagTh.getIsVisible()) {
+                    if (enrTagTh != null && enrTagTh.isVisible() != null && !enrTagTh.isVisible()) {
                         //Root session can see all the tags, otherwise restrict
                         if (!vSession.isRootSession()) {
                             continue;
@@ -365,6 +365,14 @@ public class WebPageBean implements WebPageLocal {
                     case 2: tag = new XmlWebAlbumsTagWhat(); break;
                     case 3: tag = new XmlWebAlbumsTagWhere(); break ;
                     default: throw new RuntimeException("Unkown tag type "+enrTag.getNom()+"->"+enrTag.getTagType()) ;
+                }
+                
+                if (mode == Mode.TAG_GEO) {
+                    if (enrTag.getGeolocalisation() != null) {
+                        XmlWebAlbumsTagWhere tagGeo = (XmlWebAlbumsTagWhere) tag;
+                        tagGeo.longit = enrTag.getGeolocalisation().getLongitude();
+                        tagGeo.lat = enrTag.getGeolocalisation().getLat();
+                    }
                 }
             }
             //display the value [if in ids][select if in ids]
@@ -548,6 +556,7 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public void populateEntities() {
         log.warn("Database empty, creating Root theme and Users");
+        themeDAO.preconfigureDatabase();
         themeDAO.newTheme(ThemeFacadeLocal.THEME_ROOT_ID, ThemeFacadeLocal.THEME_ROOT_NAME) ;
         userDAO.newUser(1, UserLocal.USER_ADMIN);
         userDAO.newUser(2, UserLocal.USER_FAMILLE);

@@ -16,6 +16,7 @@
     <xsl:apply-templates select="/webAlbums/albums/graph" />
     <xsl:apply-templates select="/webAlbums/albums/select" />
     <xsl:apply-templates select="/webAlbums/albums/about" />
+    <xsl:apply-templates select="/webAlbums/albums/gpxes" />
 
     <xsl:apply-templates select="/webAlbums/photos/random" />
     <xsl:apply-templates select="/webAlbums/photos/display" />
@@ -38,11 +39,7 @@
       <xsl:apply-templates select="details"/>
     </center>
   </xsl:template>
-
-  <xsl:template match="albums/about">
-      <xsl:apply-templates select="album"/>
-  </xsl:template>
-
+  
   <xsl:template match="about/album">
     <h3>
         <a>
@@ -137,12 +134,9 @@
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"/>
 	<script type="text/javascript" src="static/scripts/tools.js"/>
         <script type="text/javascript" src="static/scripts/Empty.js"/>
+        <script type="text/javascript" src="static/scripts/lib/jwerty.js"/>
         <script type="text/javascript" src="static/scripts/Visio.js"/>
 	<div style="overflow:auto;">
-          <center>
-            <a href="javascript:nextprev(true)">prev</a><span>|</span>
-            <a href="javascript:nextprev()">next</a>
-          </center>
 	  <table id="visio_preview">
 	    <tr>
               <xsl:apply-templates select="@previ"/>
@@ -179,16 +173,16 @@
 	    </tr>
 	  </table>
 	</div>
-	<div>
-	  <img  id="largeImg" style="max-width:100%">
+        <center style="background-color:#222">
+          <img  id="largeImg" style="max-width:100%">
               <xsl:if test="/webAlbums/affichage/@directAccess">
                   <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoList/photo[1]/details/photoId/text()" />.png</xsl:attribute>
               </xsl:if>
               <xsl:if test="not(/webAlbums/affichage/@directAccess)">
                   <xsl:attribute name="src">Image__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
               </xsl:if>
-	  </img>
-	</div>
+          </img>
+          </center>
       </body>
     </html>
   </xsl:template>

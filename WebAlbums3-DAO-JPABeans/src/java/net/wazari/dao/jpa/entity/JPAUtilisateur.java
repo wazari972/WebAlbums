@@ -7,35 +7,20 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Utilisateur;
 import org.hibernate.annotations.GenericGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevinpouget
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "Utilisateur",
     uniqueConstraints = {@UniqueConstraint(columnNames={"Nom"})}
@@ -45,7 +30,6 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -54,13 +38,12 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
     )
     @Column(name = "ID", nullable = false)
     private Integer id;
-    @XmlElement
+    
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "droit", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "droit", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
 
     public JPAUtilisateur() {
@@ -75,6 +58,7 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
         this.nom = nom;
     }
 
+    @XmlAttribute
     @Override
     public Integer getId() {
         return id;
@@ -85,6 +69,7 @@ public class JPAUtilisateur implements Utilisateur, Serializable {
         this.id = id;
     }
 
+    @XmlValue
     @Override
     public String getNom() {
         return nom;

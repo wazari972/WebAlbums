@@ -5,41 +5,22 @@
 
 package net.wazari.dao.jpa.entity;
 
+
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
+import net.wazari.dao.entity.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.TagTheme;
-import net.wazari.dao.entity.Theme;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
  * @author kevinpouget
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "Theme",
     uniqueConstraints = {@UniqueConstraint(columnNames={"Nom"})}
@@ -49,7 +30,6 @@ public class JPATheme implements Theme, Serializable {
     
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -59,25 +39,23 @@ public class JPATheme implements Theme, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
     private String nom;
 
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
 
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "theme", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "theme", fetch = FetchType.LAZY)
     private List<JPAAlbum> jPAAlbumList;
+    
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "theme", fetch = FetchType.LAZY)
+    private List<JPACarnet> jPACarnetList;
 
-    @XmlAttribute
     @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;
 
-    @XmlAttribute
     @JoinColumn(name = "Background", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto background;
@@ -93,7 +71,8 @@ public class JPATheme implements Theme, Serializable {
         this.id = id;
         this.nom = nom;
     }
-
+    
+    @XmlAttribute
     @Override
     public Integer getId() {
         return id;
@@ -104,6 +83,7 @@ public class JPATheme implements Theme, Serializable {
         this.id = id;
     }
 
+    @XmlElement
     @Override
     public String getNom() {
         return nom;
@@ -114,26 +94,42 @@ public class JPATheme implements Theme, Serializable {
         this.nom = nom;
     }
 
+    @XmlElementWrapper(name="TagThemes")
+    @XmlElement(name="TagTheme",  type=JPATagTheme.class)
     @Override
-    public List<TagTheme> getTagThemeList() {
+    public List getTagThemeList() {
         return (List) jPATagThemeList;
     }
 
     @Override
-    public void setTagThemeList(List<TagTheme> jPATagThemeList) {
+    public void setTagThemeList(List jPATagThemeList) {
         this.jPATagThemeList = (List) jPATagThemeList;
     }
 
+    @XmlElementWrapper(name="Albums")
+    @XmlElement(name="Album", type=JPAAlbum.class)
     @Override
-    public List<Album> getAlbumList() {
-        return (List) jPAAlbumList;
+    public List getAlbumList() {
+        return jPAAlbumList;
     }
 
     @Override
-    public void setAlbumList(List<Album> jPAAlbumList) {
+    public void setAlbumList(List jPAAlbumList) {
         this.jPAAlbumList = (List) jPAAlbumList;
     }
 
+    @XmlElementWrapper(name="Carnets")
+    @XmlElement(name="Carnet", type=JPACarnet.class)
+    @Override
+    public List getCarnetList() {
+        return jPACarnetList;
+    }
+    
+    @Override
+    public void setCarnetList(List jPACarnetList) {
+        this.jPACarnetList = (List) jPACarnetList;
+    }
+    
     @Override
     public Photo getPicture() {
         return picture;
@@ -144,6 +140,20 @@ public class JPATheme implements Theme, Serializable {
         this.picture = (JPAPhoto) picture;
     }
     
+    @XmlAttribute
+    public Integer getPictureId() {
+        if (picture == null)
+            return null;
+        else
+            return picture.getId();
+    }
+
+    @Transient
+    public Integer pictureId;
+    public void setPictureId(Integer picture) {
+        this.pictureId = picture;
+    }
+    
     @Override
     public Photo getBackground() {
         return background;
@@ -152,6 +162,19 @@ public class JPATheme implements Theme, Serializable {
     @Override
     public void setBackground(Photo background) {
         this.background = (JPAPhoto) background;
+    }
+    
+    @XmlAttribute
+    public Integer getBackgroundId() {
+        if (background == null)
+            return null;
+        else
+            return background.getId();
+    }
+    @Transient
+    public Integer backgroundId;
+    public void setBackgroundId(Integer picture) {
+        this.backgroundId = picture;
     }
 
     @Override
@@ -177,5 +200,4 @@ public class JPATheme implements Theme, Serializable {
     public String toString() {
         return "net.wazari.dao.jpa.entity.JPATheme[id=" + id + "]";
     }
-
 }

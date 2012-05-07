@@ -7,42 +7,19 @@ package net.wazari.dao.jpa.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.*;
+import javax.xml.bind.annotation.*;
+import net.wazari.dao.entity.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import net.wazari.dao.entity.Geolocalisation;
-import net.wazari.dao.entity.Person;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.TagPhoto;
-import net.wazari.dao.entity.TagTheme;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
  * @author kevinpouget
  */
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "Tag",
     uniqueConstraints = {@UniqueConstraint(columnNames={"Nom"})}
@@ -52,7 +29,6 @@ public class JPATag implements Tag, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlAttribute
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY, generator="IdOrGenerated")
@@ -62,49 +38,38 @@ public class JPATag implements Tag, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @XmlElement
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 40)
     private String nom;
 
-    @XmlAttribute
     @Basic(optional = false)
     @Column(name = "TagType", nullable = false)
     private int tagType;
 
-    @XmlAttribute
     @Basic(optional = true)
     @Column(name = "IsMinor", nullable = true)
     private Boolean minor;
     
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagTheme> jPATagThemeList;
 
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "tag", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
-    @XmlElement
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "jPATag", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
     private JPAGeolocalisation jPAGeolocalisation;
 
-    @XmlElement
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "jPATag", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "tag", fetch = FetchType.LAZY)
     private JPAPerson jPAPerson;
         
-    @XmlTransient
     @JoinColumn(name = "Parent", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private JPATag parent;
 
-
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private List<JPATag> sonList;
 
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tagAuthor", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tagAuthor", fetch = FetchType.LAZY)
     private List<JPAPhoto> authorList;
     
     public JPATag() {
@@ -120,6 +85,7 @@ public class JPATag implements Tag, Serializable {
         this.tagType = tagType;
     }
 
+    @XmlAttribute
     @Override
     public Integer getId() {
         return id;
@@ -130,6 +96,7 @@ public class JPATag implements Tag, Serializable {
         this.id = id;
     }
 
+    @XmlElement
     @Override
     public String getNom() {
         return nom;
@@ -140,6 +107,7 @@ public class JPATag implements Tag, Serializable {
         this.nom = nom;
     }
 
+    @XmlAttribute
     @Override
     public Boolean isMinor() {
         return minor;
@@ -150,6 +118,7 @@ public class JPATag implements Tag, Serializable {
         this.minor = minor;
     }
     
+    @XmlAttribute
     @Override
     public int getTagType() {
         return tagType;
@@ -180,6 +149,8 @@ public class JPATag implements Tag, Serializable {
         this.jPATagPhotoList = (List) jPATagPhotoList;
     }
 
+    
+    @XmlElement(name="geo")
     @Override
     public JPAGeolocalisation getGeolocalisation() {
         return jPAGeolocalisation;
@@ -190,6 +161,11 @@ public class JPATag implements Tag, Serializable {
         this.jPAGeolocalisation = (JPAGeolocalisation) jPAGeolocalisation;
     }
     
+    public void setGeolocalisation(JPAGeolocalisation jPAGeolocalisation) {
+        this.jPAGeolocalisation = jPAGeolocalisation;
+    }
+    
+    @XmlElement(name="person")
     @Override
     public JPAPerson getPerson() {
         return jPAPerson;
@@ -198,6 +174,10 @@ public class JPATag implements Tag, Serializable {
     @Override
     public void setPerson(Person jPAPerson) {
         this.jPAPerson = (JPAPerson) jPAPerson;
+    }
+    
+    public void setPerson(JPAPerson jPAPerson) {
+        this.jPAPerson = jPAPerson;
     }
 
     @Override
@@ -208,6 +188,20 @@ public class JPATag implements Tag, Serializable {
     @Override
     public void setParent(Tag parent) {
         this.parent = (JPATag) parent;
+    }
+    
+    @XmlAttribute
+    public Integer getParentId() {
+        if (parent == null)
+            return null;
+        else
+            return parent.getId();
+    }
+    
+    @Transient
+    public Integer parentId;
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
     
     @Override
@@ -240,7 +234,6 @@ public class JPATag implements Tag, Serializable {
 
     @Override
     public boolean equals(Object object) {
-        //TODO understand the difference between other.id and other.getId() ;
         if (!(object instanceof JPATag)) {
             return false;
         }

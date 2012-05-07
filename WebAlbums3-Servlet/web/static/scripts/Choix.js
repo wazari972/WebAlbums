@@ -1,85 +1,53 @@
 function pointToContent(point) {
-    return "<div class='gmap_content'>"
-          +"  <h1><a href='Tags?tagAsked="+point.id+"'>"+point.name+"</a></h1>\n"
-          +"  <img src='Images?mode=PETIT&id="+point.picture+"' />\n"
+    return "<div class='map_content'>"
+          +"  <h1><a href='Tag__"+point.id+"__"+"point.name"+"'>"+point.name+"</a></h1>\n"
+          +"  <center><img src='Miniature__"+point.picture+".png' /></center>\n"
           +"</div>"
 }
 
-function pointToMarker(point, imageBounds, mymap, markers) {
-    var latlng = new google.maps.LatLng(point.lat, point.lng);
-    imageBounds.extend(latlng) ;
+AutoSizeFramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
+    'autoSize': true
+});
+
+function populateMap(map) {    
+    var markers = new OpenLayers.Layer.Markers("Geo Tags");
+    map.addLayer(markers);
     
-    var IW = new google.maps.InfoWindow({
-       content:pointToContent(point),
-       maxWidth: 250,
-       map: mymap
-    });
-
-    var M = new google.maps.Marker({position: latlng, title: "Toto"});
-    
-    google.maps.event.addListener(M, 'click', function() {
-      IW.open(mymap, M);
-    });
-    
-    markers.push(M);
-}
-
-function putMarkersOnMapSimple (map, markers) {
-      $.each(markers, function(key, marker) {
-        marker.setMap(map)
-      })
-}
-
-function putMarkersOnMapGrouped (map, markers) {
-      new MarkerClusterer(map, markers)
-}
-
-function init_maps() {
-    $.getScript("static/scripts/lib/google-maps-utility-library-v3/markerclusterer.js")
-    putMarkersOnMap = putMarkersOnMapSimple
-    //putMarkersOnMap = putMarkersOnMapGrouped
-}
-
-function loadGoogleMap() {
-    var imageBounds = new google.maps.LatLngBounds();
-    var markers = []
-    var map = new google.maps.Map(document.getElementById('mapChoix'), {
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    });
-    $.getJSON("Choix?special=map&type=JSON",
+    $.getJSON("Choix?special=MAP&type=JSON",
         function(data) {
-              $.each(data, function(key, val) {
-                pointToMarker(val, imageBounds, map, markers)
-              })
-              
-              map.setCenter(imageBounds.getCenter())
-              map.fitBounds(imageBounds)
+            $.each(data, function(key, point) {
+                addMarker(map, markers, point, pointToContent)
+            })
 
-              putMarkersOnMap(map, markers);
+            map.addControl(new OpenLayers.Control.LayerSwitcher());
+            map.zoomToExtent(markers.getDataExtent());
+            $("body").css("cursor", "auto");
         }
-    );
+    ).error(function(e, textStatus) { alert("error"+e+textStatus); $("body").css("cursor", "auto");});
 }
 
-function printDate(strDate) {
-    var dDate = new Date(parseInt(strDate)) ;
-    var dateOut = dDate.toString() ;
-    return dateOut.substring(0, dateOut.length - 24) ;
-}
-
-function trimAlbums(min, max, name) {
-    $('.selectAlbum').each(function(index) {
-        
-        if (parseInt($(this).prop('rel'))  < min ) {
-           $(this).hide() ;
-        } else if (parseInt($(this).prop('rel'))  > max) {
-            $(this).hide() ;
-        } else if ($(this).text().toUpperCase().indexOf(name.toUpperCase()) == -1) {
-            $(this).hide() ;
-        } else {
-            $(this).show() ;
+function createGpxesMap() {
+    var map = loadMap("gpxChoix");
+    $("#gpxChoix").data("map", map)
+    var bounds = null;
+    $(".gpxTrack").each(function () {
+        var do_extend = function (mmap, llayer) {
+            if (bounds == null) {
+                bounds = llayer.getDataExtent()
+            } else
+                bounds.extend(llayer.getDataExtent())
+            map.zoomToExtent(bounds, false);
         }
-    });
+        var layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"), do_extend)
+        $(this).data("layer", layer)
+    })
 
+    $(".gpxTrack").click(function() {
+        map = $("#gpxChoix").data("map")
+        var layer = $(this).data("layer")
+        zoomTo(map, layer, false)
+    })
+    
 }
 
 function init_loader() {
@@ -121,47 +89,70 @@ function init_loader() {
         loadExernals('selectLoader', 'Albums?special=SELECT', 'select') ;
     }) ;
     
+    $("#gpsLoader").click(function () {        
+        loadExernals('gpsLoader', 'Albums?special=GPX', 'gpsChoix', createGpxesMap) ;
+    }) ;
+    
     $("#tagGraphLoader").click(function () {
         data = $("#tagChoix").serialize()
         loadExernals(null, 'Albums?special=GRAPH&'+data, 'tagGraph', draw_graph, true, data) ;
     }) ;
 
-    $("#googleMapLoader").click(function () {
-        $("#googleMapLoader").fadeOut() ;
+    $("#mapLoader").click(function () {
+        $("#mapLoader").fadeOut() ;
         $("#mapChoix").addClass("mapChoix") ;
-        loadMaps();
+        var map = loadMap("mapChoix");
+        $("body").css("cursor", "wait");
+        populateMap(map)
     }) ;
+}
+
+function trimAlbums(min, max, name) {
+    $('.selectAlbum').each(function(index) {
+        if (parseInt($(this).prop('rel'))  < min ) {
+           $(this).hide() ;
+        } else if (parseInt($(this).prop('rel'))  > max) {
+            $(this).hide() ;
+        } else if ($(this).text().toUpperCase().indexOf(name.toUpperCase()) == -1) {
+            $(this).hide() ;
+        } else {
+            $(this).show() ;
+        }
+    });
+}
+
+function printDate(strDate) {
+    var dDate = new Date(parseInt(strDate)) ;
+    var dateOut = dDate.toString() ;
+    return dateOut.substring(0, dateOut.length - 24) ;
 }
 
 //triggered when SELECT widget is loaded
 function do_init_slider(data) {
+    $("#fromDate").text(printDate(data.fromDate));
+    $("#toDate").text(printDate(data.toDate));
     
-    var NOW = new Date().getTime() ;
     var sliderOption = {
       range: true,
-      min: 0,
-      max: NOW,
+      min: data.fromDate,
+      max: data.toDate+1,
       step: 100000000,
-      slide: function(event, ui) {
-          $("#fromDate").text(printDate(ui.values[0]));
-          $("#toDate").text(printDate(ui.values[1]));
-          trimAlbums(ui.values[0], ui.values[1], $("#albmName").val()) ;
+      values: [data.fromDate, data.toDate],
+      stop: function(event, ui) {
+          $("#fromDate").text(printDate(ui.values[0]))
+          $("#toDate").text(printDate(ui.values[1]))
+          //trimAlbums(ui.values[0], ui.values[1], $("#albmName").val())
+          return true
       }
      } ;
+     
      $("#slider-range").prop("rel", "singlepage[no]");
-     
      $("#slider-range").slider(sliderOption);
-     $("#fromDate").text(printDate(data.fromDate));
-     $("#toDate").text(printDate(data.toDate));
      
-     $("#slider-range").slider( "option", "max", data.toDate+$( "#slider-range" ).slider( "option", "step" ));
-     $("#slider-range").slider( "option", "min", data.fromDate);
-
-     $("#slider-range").slider( "option", "values", [data.fromDate, data.toDate]);
      $("#albmName").keyup(
         function(){
-           trimAlbums($("#slider-range").slider( "option", "range", "min" ),
-                      $("#slider-range").slider( "option", "range", "max" ),
+           trimAlbums($("#slider-range").slider("option", "range", "min"),
+                      $("#slider-range").slider("option", "range", "max"),
                       $(this).val());
 
         }
@@ -210,6 +201,5 @@ function draw_graph() {
 
 $(function() {
     save_theme()
-    init_maps()
     init_loader()
 })

@@ -16,6 +16,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class XmlGpx {
     @XmlAttribute
     public Integer id;
+    @XmlAttribute
+    public Integer albumId;
+    @XmlElement
+    public String albumName;
     @XmlElement
     public String description;
     @XmlElement

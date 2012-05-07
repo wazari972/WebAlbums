@@ -46,7 +46,7 @@
   max-connection-usage-count="0"
   max-pool-size="32"
   max-wait-time-in-millis="60000" name="cpMySQLWebAlbumsTest" non-transactional-connections="false" pool-resize-quantity="2" res-type="javax.sql.DataSource" statement-timeout-in-seconds="-1" steady-pool-size="8" validate-atmost-once-period-in-seconds="0" wrap-jdbc-objects="false">
-        <property name="URL" value="jdbc:mysql://127.0.0.1/WebAlbums_test"/>
+        <property name="URL" value="jdbc:mysql://127.0.0.1/WebAlbums-New"/>
         <property name="User" value="wazari972"/>
         <property name="Password" value="ijaheb"/>
         <property name="characterEncoding" value="latin1"/>

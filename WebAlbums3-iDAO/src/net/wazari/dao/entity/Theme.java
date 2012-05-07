@@ -14,28 +14,24 @@ import net.wazari.dao.entity.facades.EntityWithId;
  * @author kevinpouget
  */
 public interface Theme extends Serializable, EntityWithId {
-
-    List<Album> getAlbumList();
-
     Integer getId();
-
-    String getNom();
-
-    List<TagTheme> getTagThemeList();
-
-    void setAlbumList(List<Album> albumList);
-
     void setId(Integer id);
-
+    
+    String getNom();
     void setNom(String nom);
-
+    
+    List<TagTheme> getTagThemeList();
     void setTagThemeList(List<TagTheme> tagThemeList);
 
     Photo getPicture() ;
-
     void setPicture(Photo picture) ;
     
     Photo getBackground() ;
-
     void setBackground(Photo background) ;
+    
+    List<Album> getAlbumList();
+    void setAlbumList(List<Album> carnetList);
+    
+    List<Album> getCarnetList();
+    void setCarnetList(List<Carnet> carnetList);
 }

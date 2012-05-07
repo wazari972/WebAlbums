@@ -4,7 +4,7 @@
   <module>
     <web>
       <web-uri>WebAlbums3-Servlet.war</web-uri>
-      <context-root>/WebAlbums3.5.beta3</context-root>
+      <context-root>/WebAlbums3.5-beta4</context-root>
     </web>
   </module>
   <module>

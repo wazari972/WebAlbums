@@ -58,6 +58,7 @@ public class DatabaseBean implements DatabaseLocal {
             output.message = "Import OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
+            log.warn("Couldn't import ... {}", e);
         }
         return output;
     }
@@ -69,6 +70,7 @@ public class DatabaseBean implements DatabaseLocal {
             output.message = "Export OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
+            log.warn("Couldn't export ... {}", e);
         }
         return output;
     }
@@ -160,6 +162,7 @@ public class DatabaseBean implements DatabaseLocal {
             log.warn(output.message);
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
+            log.warn("Couldn't check ... {}", e);
         }
         return output;
     }
@@ -171,6 +174,7 @@ public class DatabaseBean implements DatabaseLocal {
             output.message = "Trunk OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
+            log.warn("Couldn't trunk ... {}", e);
         }
         return output;
     }
@@ -210,11 +214,13 @@ public class DatabaseBean implements DatabaseLocal {
                 vSession.setRootSession(Boolean.FALSE);
                 vSession.setTheme(curEnrTheme);
             }
+            
             xmlTheme.tags = tagDAO.loadVisibleTags(vSession, false).size();
             if (xmlRootTheme != null) {
                 vSession.setRootSession(Boolean.TRUE);
                 vSession.setTheme(enrTheme);
             }
+            
             if (xmlRootTheme == null || xmlRootTheme.tag == null) {
                 Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession);
                 List<XmlTagCloudEntry> lst = new ArrayList<XmlTagCloudEntry>(map.size());
@@ -232,8 +238,8 @@ public class DatabaseBean implements DatabaseLocal {
         }
         
         if (xmlRootTheme != null)  {
-            xmlRootTheme.tags = tagDAO.findAll().size();
             output.theme.add(xmlRootTheme);
+            xmlRootTheme.tags = tagDAO.findAll().size();
         }
         return output;
     }

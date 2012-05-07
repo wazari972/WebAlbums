@@ -1,51 +1,33 @@
 package net.wazari.service.engine;
 
-import net.wazari.service.exchange.ViewSessionPhoto;
-import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
-import net.wazari.dao.AlbumFacadeLocal;
-import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.dao.TagFacadeLocal;
-import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.dao.ThemeFacadeLocal;
-import net.wazari.dao.UtilisateurFacadeLocal;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.entity.Gpx;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.TagTheme;
-import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.Theme;
-import net.wazari.dao.entity.Utilisateur;
+import net.wazari.dao.*;
+import net.wazari.dao.entity.*;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
-import net.wazari.util.system.FilesFinder;
-import net.wazari.dao.exchange.ServiceSession.ListOrder;
-import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlGpx;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
@@ -53,19 +35,14 @@ import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
-import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
-import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
-import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
-import net.wazari.service.exchange.xml.photo.XmlPhotoFastEdit;
-import net.wazari.service.exchange.xml.photo.XmlPhotoId;
-import net.wazari.service.exchange.xml.photo.XmlPhotoList;
-import net.wazari.service.exchange.xml.photo.XmlPhotoMassEdit;
-import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
-import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
+import net.wazari.service.exchange.xml.photo.*;
+import net.wazari.util.system.FilesFinder;
 import net.wazari.util.system.SystemTools;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -218,7 +195,7 @@ public class PhotoBean implements PhotoLocal {
                 enrTagTh.setTheme(actualTheme);
                 enrTagTh.setTag(enrTag);
                 //par défaut le tag est visible
-                enrTagTh.setIsVisible(true);
+                enrTagTh.setVisible(true);
 
                 tagThemeDAO.create(enrTagTh);
             } else {
@@ -256,8 +233,7 @@ public class PhotoBean implements PhotoLocal {
             return output ;
         }
 
-        Album enrAlbum = null;
-        enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
+        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
         if (enrAlbum == null) {
             output.exception = "L'album (" + albumId + ") n'existe pas "
                     + "ou n'est pas accessible..." ;
@@ -288,6 +264,10 @@ public class PhotoBean implements PhotoLocal {
             album.carnet.add(carnet);
         }
         
+        //tags de l'album
+        album.details.tag_used = webPageService.displayListIBTD(Mode.TAG_GEO, 
+                            vSession, enrAlbum, Box.NONE, enrAlbum.getDate());
+        
         for (Gpx enrGpx : enrAlbum.getGpxList()) {
             if (album.gpx == null)
                 album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
@@ -300,13 +280,12 @@ public class PhotoBean implements PhotoLocal {
             album.gpx.add(gpx);
         }
         
-        XmlDetails details = new XmlDetails() ;
-        details.description = enrAlbum.getDescription() ;
+        album.details.description = enrAlbum.getDescription() ;
         
         if (enrAlbum.getPicture() != null) {
-            details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
+            album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
             if (vSession.directFileAccess())
-                details.photoId.path = enrAlbum.getPicture().getPath(true) ;
+                album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
         }
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Photos";
@@ -496,21 +475,21 @@ public class PhotoBean implements PhotoLocal {
                     photo.checked = true ;
                 }
             }
-            XmlDetails details = new XmlDetails();
-            details.photoId = new XmlPhotoId(enrPhoto.getId());
+            
+            photo.details.photoId = new XmlPhotoId(enrPhoto.getId());
             if (vSession.directFileAccess())
-                details.photoId.path = enrPhoto.getPath(true) ;
-            details.description = enrPhoto.getDescription();
+                photo.details.photoId.path = enrPhoto.getPath(true) ;
+            photo.details.description = enrPhoto.getDescription();
             //tags de cette photo
-            details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
+            photo.details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
                     Box.NONE, enrPhoto.getAlbum().getDate());
             
-            details.albumId = enrPhoto.getAlbum().getId();
+            photo.details.albumId = enrPhoto.getAlbum().getId();
             if (rq.type == TypeRequest.TAG) {
-                details.albumName = enrPhoto.getAlbum().getNom();
-                details.albumDate = enrPhoto.getAlbum().getDate();
+                photo.details.albumName = enrPhoto.getAlbum().getNom();
+                photo.details.albumDate = enrPhoto.getAlbum().getDate();
             }
-            details.stars = enrPhoto.getStars();
+            photo.details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager()) {
                 String name;
@@ -523,9 +502,9 @@ public class PhotoBean implements PhotoLocal {
                     name = userDAO.loadUserOutside(enrPhoto.getAlbum().getId()).getNom();
                     outside = true;
                 }
-                details.user = new XmlPhotoAlbumUser(name, outside);
+                photo.details.user = new XmlPhotoAlbumUser(name, outside);
             }
-            photo.details = details ;
+             
             if (enrPhoto.getTagAuthor() != null) {
                 Tag enrAuthor = enrPhoto.getTagAuthor();
                 photo.author = new XmlWebAlbumsTagWho();
