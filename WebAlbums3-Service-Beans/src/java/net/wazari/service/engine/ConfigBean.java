@@ -3,35 +3,17 @@ package net.wazari.service.engine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
-import net.wazari.dao.GeolocalisationFacadeLocal;
-import net.wazari.dao.PersonFacadeLocal;
-import net.wazari.dao.TagFacadeLocal;
-import net.wazari.dao.TagPhotoFacadeLocal;
-import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.util.system.FilesFinder;
-import net.wazari.dao.ThemeFacadeLocal;
-
+import net.wazari.dao.*;
 import net.wazari.dao.entity.*;
-
 import net.wazari.service.ConfigLocal;
-import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.xml.config.XmlConfigDelTag;
-import net.wazari.service.exchange.xml.config.XmlConfigDelTheme;
-import net.wazari.service.exchange.xml.config.XmlConfigImport;
-import net.wazari.service.exchange.xml.config.XmlConfigLinkTag;
-import net.wazari.service.exchange.xml.config.XmlConfigModGeo;
-import net.wazari.service.exchange.xml.config.XmlConfigModMinor;
-import net.wazari.service.exchange.xml.config.XmlConfigModPers;
-import net.wazari.service.exchange.xml.config.XmlConfigModTag;
-import net.wazari.service.exchange.xml.config.XmlConfigModVis;
-import net.wazari.service.exchange.xml.config.XmlConfigNewTag;
+import net.wazari.service.exchange.ViewSessionConfig;
+import net.wazari.service.exchange.xml.config.*;
+import net.wazari.util.system.FilesFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ConfigBean implements ConfigLocal {

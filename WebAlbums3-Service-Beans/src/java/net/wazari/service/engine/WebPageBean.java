@@ -5,55 +5,41 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import java.io.InputStream;
-import java.text.ParseException;
-import net.wazari.service.exchange.xml.common.XmlFrom;
-import net.wazari.service.exchange.xml.common.XmlLoginInfo;
 import java.security.Principal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
-import net.wazari.dao.TagFacadeLocal;
-import net.wazari.dao.TagPhotoFacadeLocal;
-import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.dao.*;
 import net.wazari.dao.entity.*;
-
+import net.wazari.dao.entity.facades.EntityWithId;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
-
+import net.wazari.service.entity.util.MapPoint;
+import net.wazari.service.entity.util.MapPoint.Point;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.util.google.MapPoint;
-import net.wazari.service.util.google.MapPoint.Point;
-
-import net.wazari.dao.ThemeFacadeLocal;
-import net.wazari.dao.entity.facades.EntityWithId;
-import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlPage;
-import net.wazari.service.exchange.xml.common.XmlDate;
-import net.wazari.service.exchange.xml.common.XmlUser;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
+import net.wazari.service.exchange.xml.common.*;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.ListType;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhat;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
-import net.wazari.service.exchange.xml.common.XmlUserList;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.ListType;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class WebPageBean implements WebPageLocal {

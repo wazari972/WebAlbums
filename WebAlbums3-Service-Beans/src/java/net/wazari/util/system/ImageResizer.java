@@ -1,6 +1,5 @@
  package net.wazari.util.system;
 
-import net.wazari.common.util.StringUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -8,13 +7,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Stack;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import net.wazari.common.util.StringUtil;
 import net.wazari.service.exchange.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ImageResizer {

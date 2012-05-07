@@ -1,4 +1,4 @@
-package net.wazari.service.util.google ;
+package net.wazari.service.entity.util ;
 
 import java.util.ArrayList;
 import java.util.List;

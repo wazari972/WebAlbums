@@ -8,14 +8,10 @@ package net.wazari.common.plugins;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.annotation.*;
+import net.wazari.common.plugins.Importer.SanityStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import net.wazari.common.plugins.Importer.SanityStatus;
 
 /**
  *

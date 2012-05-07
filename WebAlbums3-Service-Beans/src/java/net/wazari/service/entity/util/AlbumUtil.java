@@ -1,20 +1,18 @@
 package net.wazari.service.entity.util;
 
-import java.text.SimpleDateFormat;
-
-import net.wazari.dao.entity.Photo;
-
 import java.text.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.text.SimpleDateFormat;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the object class that relates to the Album table.

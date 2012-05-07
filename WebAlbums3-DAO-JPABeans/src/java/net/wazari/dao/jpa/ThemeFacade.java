@@ -5,23 +5,22 @@
 package net.wazari.dao.jpa;
 
 import java.util.ArrayList;
-import net.wazari.dao.*;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.jpa.entity.JPATheme;
 import net.wazari.dao.jpa.entity.JPATheme_;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

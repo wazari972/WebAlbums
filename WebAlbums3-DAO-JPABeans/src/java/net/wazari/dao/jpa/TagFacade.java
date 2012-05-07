@@ -4,15 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import net.wazari.dao.exchange.ServiceSession;
-import net.wazari.dao.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -20,20 +12,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.ListJoin;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import net.wazari.dao.TagFacadeLocal;
+import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Tag;
-import net.wazari.dao.jpa.entity.JPAAlbum_;
-import net.wazari.dao.jpa.entity.JPAPhoto;
-import net.wazari.dao.jpa.entity.JPAPhoto_;
-import net.wazari.dao.jpa.entity.JPATag;
-import net.wazari.dao.jpa.entity.JPATagPhoto;
-import net.wazari.dao.jpa.entity.JPATagPhoto_;
-import net.wazari.dao.jpa.entity.JPATag_;
+import net.wazari.dao.exchange.ServiceSession;
+import net.wazari.dao.jpa.entity.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

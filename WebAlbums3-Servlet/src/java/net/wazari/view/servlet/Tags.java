@@ -1,18 +1,13 @@
 package net.wazari.view.servlet;
 
-import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.servlet.http.HttpServletRequest;
-
-
 import java.io.IOException;
-
+import java.util.Arrays;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.TagLocal;
@@ -22,10 +17,12 @@ import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
-import net.wazari.view.servlet.exchange.xml.XmlTags;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlReturnTo;
+import net.wazari.view.servlet.exchange.xml.XmlTags;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(
     name = "Tags",

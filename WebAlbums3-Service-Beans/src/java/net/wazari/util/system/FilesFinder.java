@@ -11,27 +11,17 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Stack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.common.plugins.Importer.Capability;
-
-import net.wazari.dao.AlbumFacadeLocal;
-import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.dao.TagPhotoFacadeLocal;
-import net.wazari.dao.ThemeFacadeLocal;
-import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.common.util.StringUtil;
+import net.wazari.dao.*;
 import net.wazari.dao.entity.*;
-
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
-
-import net.wazari.common.util.StringUtil;
-import net.wazari.dao.CarnetFacadeLocal;
-import net.wazari.dao.GpxFacadeLocal;
 import net.wazari.util.system.ImageResizer.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class FilesFinder {

@@ -5,7 +5,6 @@
 package net.wazari.dao;
 
 import java.util.Collection;
-import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -15,6 +14,7 @@ import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 
 /**

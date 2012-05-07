@@ -5,16 +5,11 @@
 
 package net.wazari.dao;
 
-import net.wazari.dao.entity.Carnet;
-import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.TagPhoto;
+import net.wazari.dao.entity.*;
 
 /**
  *

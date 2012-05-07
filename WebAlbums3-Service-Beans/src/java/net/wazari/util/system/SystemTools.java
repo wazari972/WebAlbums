@@ -1,29 +1,29 @@
 package net.wazari.util.system;
 
-import net.wazari.common.plugins.Importer.Capability;
-import net.wazari.service.exchange.ViewSessionImages;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.facades.SubsetOf;
-import net.wazari.service.PhotoLocal.PhotoRequest;
-import net.wazari.service.PhotoLocal.TypeRequest;
-import net.wazari.service.entity.util.PhotoUtil;
-import net.wazari.service.exchange.ViewSession;
 import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.Importer.Capability;
 import net.wazari.common.plugins.Importer.Metadata;
 import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.ProcessCallbackImpl;
+import net.wazari.dao.PhotoFacadeLocal;
+import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
+import net.wazari.service.PhotoLocal.PhotoRequest;
+import net.wazari.service.PhotoLocal.TypeRequest;
 import net.wazari.service.PluginManagerLocal;
+import net.wazari.service.entity.util.PhotoUtil;
+import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSessionImages;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class SystemTools {

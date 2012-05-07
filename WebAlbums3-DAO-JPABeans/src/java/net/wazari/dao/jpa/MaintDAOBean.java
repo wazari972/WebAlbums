@@ -5,8 +5,6 @@
 package net.wazari.dao.jpa;
 
 import java.text.Normalizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -15,6 +13,8 @@ import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
 import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.entity.Photo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

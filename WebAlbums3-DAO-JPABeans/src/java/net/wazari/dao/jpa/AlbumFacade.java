@@ -5,29 +5,26 @@
 package net.wazari.dao.jpa;
 
 import java.util.List;
-import net.wazari.dao.exchange.ServiceSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import net.wazari.dao.AlbumFacadeLocal;
+import net.wazari.dao.AlbumFacadeLocal.Restriction;
+import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAAlbum_;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
-import net.wazari.dao.AlbumFacadeLocal;
-import net.wazari.dao.AlbumFacadeLocal.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  *
  * @author kevin

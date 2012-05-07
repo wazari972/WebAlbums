@@ -5,27 +5,21 @@
 
 package net.wazari.service;
 
-import net.wazari.service.exchange.ViewSessionPhoto;
-import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
-import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
-import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
-import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import java.util.Collection;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
-import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Tag;
+import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.xml.common.XmlFrom;
-import net.wazari.service.exchange.xml.photo.XmlPhotoAbout;
-import net.wazari.service.exchange.xml.photo.XmlPhotoList;
-import net.wazari.service.exchange.xml.photo.XmlPhotoFastEdit;
+import net.wazari.service.exchange.xml.photo.*;
 
 /**
  *

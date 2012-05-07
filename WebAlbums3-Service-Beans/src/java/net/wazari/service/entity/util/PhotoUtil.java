@@ -1,19 +1,12 @@
 package net.wazari.service.entity.util;
 
-import net.wazari.dao.entity.Theme;
-import javax.swing.ImageIcon;
 import java.awt.Image;
-
-
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.swing.ImageIcon;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
@@ -21,12 +14,14 @@ import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Gpx;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
-import net.wazari.dao.exception.WebAlbumsDaoException;
+import net.wazari.dao.entity.Theme;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.xml.photo.XmlPhotoExif;
 import net.wazari.service.exchange.xml.photo.XmlPhotoExif.XmlPhotoExifEntry;
 import net.wazari.util.system.SystemTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the object class that relates to the Photo table.

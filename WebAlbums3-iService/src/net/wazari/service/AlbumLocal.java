@@ -5,12 +5,6 @@
 
 package net.wazari.service;
 
-import net.wazari.service.exchange.xml.album.XmlAlbumYears;
-import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
-import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
-import net.wazari.service.exchange.xml.album.XmlAlbumDisplay;
-import net.wazari.service.exchange.xml.album.XmlAlbumTop;
-import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;

@@ -27,8 +27,6 @@ import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession.Action;
-import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.ConfigurationXML;

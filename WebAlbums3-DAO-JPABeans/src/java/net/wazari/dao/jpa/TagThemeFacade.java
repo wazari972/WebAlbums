@@ -6,9 +6,6 @@ package net.wazari.dao.jpa;
 
 import java.util.List;
 import java.util.Random;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import net.wazari.dao.*;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -17,11 +14,16 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import net.wazari.dao.TagFacadeLocal;
+import net.wazari.dao.TagThemeFacadeLocal;
+import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.jpa.entity.JPATagTheme;
 import net.wazari.dao.jpa.entity.JPATagTheme_;
 import net.wazari.dao.jpa.entity.JPATag_;
 import net.wazari.dao.jpa.entity.JPATheme_;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

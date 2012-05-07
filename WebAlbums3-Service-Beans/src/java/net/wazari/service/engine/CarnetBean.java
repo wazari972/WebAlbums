@@ -1,51 +1,45 @@
 package net.wazari.service.engine;
 
 
-import net.wazari.service.exchange.xml.common.XmlDetails;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.common.util.StringUtil;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
-
 import net.wazari.dao.CarnetFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
-
+import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.service.CarnetLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.dao.entity.Utilisateur;
-import net.wazari.service.CarnetLocal;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
-import net.wazari.service.exchange.xml.carnet.XmlCarnet;
-import net.wazari.service.exchange.xml.carnet.XmlCarnetEdit;
-import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
-import net.wazari.service.exchange.xml.carnet.XmlCarnetsDisplay;
-import net.wazari.service.exchange.xml.carnet.XmlCarnetsTop;
+import net.wazari.service.exchange.xml.carnet.*;
+import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.util.system.FilesFinder;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class CarnetBean implements CarnetLocal {

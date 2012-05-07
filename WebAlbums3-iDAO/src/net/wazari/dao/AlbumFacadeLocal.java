@@ -8,11 +8,11 @@ package net.wazari.dao;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
-import net.wazari.dao.exchange.ServiceSession;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession;
 
 /**
  *

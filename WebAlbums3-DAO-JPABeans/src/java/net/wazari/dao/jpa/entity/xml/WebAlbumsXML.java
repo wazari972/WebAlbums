@@ -9,7 +9,10 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.wazari.dao.entity.*;
+import net.wazari.dao.entity.Carnet;
+import net.wazari.dao.entity.Tag;
+import net.wazari.dao.entity.Theme;
+import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.jpa.entity.*;
 
 /**

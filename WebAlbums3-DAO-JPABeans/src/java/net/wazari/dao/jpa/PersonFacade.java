@@ -5,12 +5,11 @@
 
 package net.wazari.dao.jpa;
 
-import net.wazari.dao.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import net.wazari.dao.PersonFacadeLocal;
 import net.wazari.dao.entity.Person;
-import net.wazari.dao.entity.Tag;
 import net.wazari.dao.jpa.entity.JPAPerson;
 
 /**

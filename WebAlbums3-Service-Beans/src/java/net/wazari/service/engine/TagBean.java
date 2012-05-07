@@ -1,47 +1,32 @@
 package net.wazari.service.engine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.Stack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ejb.Stateless;
+import java.util.*;
 import javax.ejb.EJB;
-
-import net.wazari.dao.entity.TagTheme;
+import javax.ejb.Stateless;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.entity.Tag;
-
+import net.wazari.dao.entity.TagTheme;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.PhotoLocal.PhotoRequest;
 import net.wazari.service.PhotoLocal.TypeRequest;
 import net.wazari.service.TagLocal;
 import net.wazari.service.WebPageLocal;
+import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionTag;
-import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
-import net.wazari.service.exchange.xml.tag.XmlTag;
-import net.wazari.service.exchange.xml.tag.XmlTagAbout;
-import net.wazari.service.exchange.xml.tag.XmlTagCloud;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
-import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
-import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
-import net.wazari.service.exchange.xml.tag.XmlTagTitle;
+import net.wazari.service.exchange.xml.tag.*;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class TagBean implements TagLocal {

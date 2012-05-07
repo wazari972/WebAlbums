@@ -5,20 +5,14 @@
 package net.wazari.util.system;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 import javax.ejb.Singleton;
 import net.wazari.common.plugins.Importer;
+import net.wazari.common.plugins.System;
 import net.wazari.common.util.ClassPathUtil;
 import net.wazari.service.PluginManagerLocal;
-import net.wazari.common.plugins.System;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

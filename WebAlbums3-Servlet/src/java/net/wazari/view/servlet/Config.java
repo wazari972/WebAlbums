@@ -1,16 +1,12 @@
 package net.wazari.view.servlet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.servlet.http.HttpServletRequest;
-
 import java.io.IOException;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.ConfigLocal;
 import net.wazari.service.WebPageLocal;
@@ -21,6 +17,8 @@ import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.xml.config.XmlConfig;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(
     name = "Config",

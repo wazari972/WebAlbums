@@ -9,7 +9,6 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Person;
-import net.wazari.dao.entity.Tag;
 
 /**
  *

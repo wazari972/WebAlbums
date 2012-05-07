@@ -1,14 +1,14 @@
 package net.wazari.service.engine;
 
-import net.wazari.service.SessionManagerLocal;
 import java.io.File;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import net.wazari.service.SessionManagerLocal;
 import net.wazari.service.exchange.ViewSessionSession;
 import net.wazari.util.system.SystemTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class SessionManagerBean implements SessionManagerLocal {

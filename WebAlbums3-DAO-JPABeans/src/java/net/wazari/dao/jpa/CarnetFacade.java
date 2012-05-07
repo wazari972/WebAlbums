@@ -5,9 +5,6 @@
 package net.wazari.dao.jpa;
 
 import java.util.List;
-import net.wazari.dao.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -17,7 +14,9 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
+import net.wazari.dao.CarnetFacadeLocal;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
@@ -26,6 +25,8 @@ import net.wazari.dao.jpa.entity.JPACarnet;
 import net.wazari.dao.jpa.entity.JPACarnet_;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
