@@ -186,16 +186,15 @@
                         <div>
                             <p>
                                 <xsl:value-of select="albumDate"/>&#160;
-                            </p>
-                            <a class="albumTT">
-                                <xsl:attribute name="title">
+                                <a class="albumTT">
+                                    <xsl:attribute name="title">
+                                        <xsl:value-of select="albumName"/>
+                                    </xsl:attribute>
+                                    <xsl:attribute name="id">album-target-<xsl:value-of select="@albumId"/></xsl:attribute>
+                                    <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
                                     <xsl:value-of select="albumName"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="id">album-target-<xsl:value-of select="@albumId"/></xsl:attribute>
-                                <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
-                                <xsl:value-of select="albumDate"/>&#160;
-                                <xsl:value-of select="albumName"/>
-                            </a>
+                                </a>
+                            </p>
                         </div>
                         <span class="album_tooltip">
                             <xsl:attribute name="id">album-content-<xsl:value-of select="@albumId"/>
@@ -212,9 +211,7 @@
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                         <span class="edit">
                             <div class="fastedit">
-                                <xsl:attribute name="id">fastedit_div_tag_
-                                    <xsl:value-of select="photoId/@id" />
-                                </xsl:attribute>
+                                <xsl:attribute name="id">fastedit_div_tag_<xsl:value-of select="photoId/@id" /></xsl:attribute>
                                 <p>
                                     <xsl:apply-templates select="../../massEdit/tagList">
                                         <xsl:with-param name="style">list</xsl:with-param>

@@ -601,13 +601,13 @@ public class ViewSessionImpl implements
                 log.info( "Unknown class {} for parameter {}", new Object[]{type, name});
             }
         } catch (ClassCastException e) {
-            log.info( "Can''t cast value {} into class {}", new Object[]{val, type});
+            log.warn( "Can''t cast value {} into class {}", new Object[]{val, type});
         } catch (NullPointerException e) {
-            log.info( "NullPointerException with {} for class {} ({})", new Object[]{val, type, name});
+            log.warn( "NullPointerException with {} for class {} ({})", new Object[]{val, type, name});
         } catch (NumberFormatException e) {
-            log.info( "NumberFormatException with  '{}' for class {} ({})", new Object[]{val, type, name});
+            log.warn( "NumberFormatException with  '{}' for class {} ({})", new Object[]{val, type, name});
         } catch (IllegalArgumentException e) {
-            log.info( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
+            log.warn( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
         }
         log.debug( "getObject param:{} type:{} returned {}", new Object[]{name, type, ret});
         return ret;

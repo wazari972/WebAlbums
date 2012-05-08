@@ -38,7 +38,7 @@
 	    <br/>
             <label for="desc">Description:</label>
 	    <textarea id="desc" name='desc' rows='5' cols='60' placeholder="Description ...">
-	      <xsl:value-of select="description" />
+	      <xsl:value-of select="details/description" />
 	    </textarea>
 	    <br/>
 	    <xsl:apply-templates select="../tagList">

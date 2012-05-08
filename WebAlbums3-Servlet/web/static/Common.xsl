@@ -139,7 +139,7 @@
   <xsl:template name="get_validate_addr">
     <xsl:param name="to_add"></xsl:param>    
     <xsl:if test="../return_to/name = 'Photos'"><xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />&amp;id=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../return_to/page" />&amp;album=<xsl:value-of select="../return_to/album" />&amp;albmPage=<xsl:value-of select="../return_to/albmPage" />#<xsl:value-of select="@id" /></xsl:if>
-    <xsl:if test="../return_to/name = 'Tags'"><xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />&amp;page=<xsl:value-of select="../return_to/page" /><xsl:for-each select="../return_to/tagsAsked">&amp;tagAsked=<xsl:value-of select="." /></xsl:for-each>#<xsl:value-of select="id" /></xsl:if>
+    <xsl:if test="../return_to/name = 'Tags'  "><xsl:value-of select="../return_to/name"/>?<xsl:value-of select="$to_add" />&amp;id=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../return_to/page" /><xsl:for-each select="../return_to/tagsAsked">&amp;tagAsked=<xsl:value-of select="." /></xsl:for-each>#<xsl:value-of select="@id" /></xsl:if>
   </xsl:template>
   
   <xsl:template match="page">
