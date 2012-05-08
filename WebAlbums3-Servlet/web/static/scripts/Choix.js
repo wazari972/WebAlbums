@@ -59,7 +59,6 @@ function createGpxesMap() {
             zoomTo(map, layer, false)
         }
     })
-    
 }
 
 function init_loader() {
