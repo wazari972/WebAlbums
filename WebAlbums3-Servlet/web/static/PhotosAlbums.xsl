@@ -109,7 +109,7 @@
                     </span>
                 </xsl:if>
                 <xsl:if test="/webAlbums/loginInfo/@admin">
-                    <span class="edit">&#160;<xsl:value-of select="photoId/@id" /></span>
+                    <span class="edit">&#160;<xsl:if test="/webAlbums/albums/about"><xsl:value-of select="../@id" /></xsl:if><xsl:if test="not(/webAlbums/albums/about)"><xsl:value-of select="photoId/@id" /></xsl:if></span>
                 </xsl:if>
                 <xsl:if test="/webAlbums/loginInfo/@admin">
                     <xsl:apply-templates select="user" />

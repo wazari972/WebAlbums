@@ -29,27 +29,35 @@ function populateMap(map) {
 function createGpxesMap() {
     var map = loadMap("gpxChoix");
     $("#gpxChoix").data("map", map)
-    var bounds = null;
-    var last_index = $(".gpxTrack").size() - 1
     
     $(".gpxTrack").each(function (index) {
-        var do_extend = function (mmap, llayer) {
-            if (bounds == null) {
-                bounds = llayer.getDataExtent()
-            } else
-                bounds.extend(llayer.getDataExtent())
+        var this_trak = $(this)
+        var ready = function() {
+            layer.setVisibility(false)
+            this_trak.data("ready", true)
+            var text = this_trak.text()
+            this_trak.text(text.substring(0, text.length - 4))
             
-            if (index == last_index)
-                map.zoomToExtent(bounds, false);
         }
-        var layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"), do_extend)
+        var layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"), ready)
         $(this).data("layer", layer)
+        $(this).data("ready", false)
+        this_trak.text(this_trak.text()+" ...")
     })
 
     $(".gpxTrack").click(function() {
-        map = $("#gpxChoix").data("map")
+        if (!$(this).data("ready")) {
+            alert("Track not ready yet.")
+            return
+        }
         var layer = $(this).data("layer")
-        zoomTo(map, layer, false)
+        if (layer.getVisibility()) {
+            layer.setVisibility(false)
+        } else {
+            map = $("#gpxChoix").data("map")
+            layer.setVisibility(true)
+            zoomTo(map, layer, false)
+        }
     })
     
 }
