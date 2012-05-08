@@ -122,8 +122,8 @@ function init_gpx_layer(map, name, file_id, ready_callback) {
     // Add the Layer with the GPX Track
     var lgpx = new OpenLayers.Layer.GML(name+" "+file_id, file, {
             format: OpenLayers.Format.GPX,
-            style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 0.5},
-            projection: new OpenLayers.Projection("EPSG:4326"),
+            style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 1},
+            projection: new OpenLayers.Projection("EPSG:4326")
     });
 
     map.addLayer(lgpx);
