@@ -15,8 +15,7 @@
     <xsl:apply-templates select="exception"/>
     <xsl:apply-templates select="message"/>
     <xsl:if test="not(/webAlbums/carnets/display/carnet/text)">
-    <!-- no url rewritting -->
-    <center><a class="edit" href="Carnets?action=EDIT" rel="singlepage[no]">Nouveau carnet</a></center>
+        <center><a href="Carnets?action=EDIT" rel="singlepage[no]">Nouveau carnet</a></center>
     </xsl:if>
     <xsl:apply-templates select="carnet"/>
     <xsl:apply-templates select="page"/>

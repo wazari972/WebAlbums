@@ -54,7 +54,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
 
     @Override
     public void remove(Carnet carnet) {
-        em.remove(em.merge(carnet));
+        em.remove(carnet);
     }
 
     @Override

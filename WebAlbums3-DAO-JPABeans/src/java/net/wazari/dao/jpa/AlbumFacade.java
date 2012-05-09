@@ -51,7 +51,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
 
     @Override
     public void remove(Album album) {
-        em.remove(em.merge(album));
+        em.remove(album);
     }
 
     @Override

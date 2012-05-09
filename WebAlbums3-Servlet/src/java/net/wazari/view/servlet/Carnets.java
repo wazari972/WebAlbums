@@ -55,8 +55,8 @@ public class Carnets extends HttpServlet{
                     if (!submit.valid)
                         output.exception = submit.exception ;
                     else
-                        output.message = "true" ;
-                    log.info("-->"+submit.valid);
+                        output.message = submit.carnet.getId().toString() ;
+                    
                     return output;
                     
                 } else if (submit != null && !submit.valid)

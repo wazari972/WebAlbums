@@ -124,12 +124,10 @@ public class CarnetBean implements CarnetLocal {
             output.page = webPageService.xmlPage(thisPage, bornes);
         }
         
-        String oldDate = null ;
         for(Carnet enrCarnet : carnets) {
             XmlCarnet carnet = new XmlCarnet();
 
             carnet.date = webPageService.xmlDate(enrCarnet.getDate());
-            oldDate = enrCarnet.getDate() ;
             carnet.id = enrCarnet.getId();
             carnet.carnetsPage = page;
             carnet.name = enrCarnet.getNom();
@@ -199,6 +197,7 @@ public class CarnetBean implements CarnetLocal {
         if (supprParam) {
             if (finder.deleteCarnet(enrCarnet, vSession.getConfiguration())) {
                 output.message = "Carnet correctement  supprimé !";
+                output.valid = true;
             } else {
                 output.exception = 
                         "an error occured during the carnet deletion ...";
