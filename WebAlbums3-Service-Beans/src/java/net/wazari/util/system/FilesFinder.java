@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Stack;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.common.plugins.Importer.Capability;
@@ -384,6 +385,28 @@ public class FilesFinder {
             log.warn("URISyntaxException {}", url);
         }
         return false;
+    }
+    
+    public boolean deleteGpx(Gpx enrGpx, Configuration conf) {
+        
+        //suppression des photos physiquement
+        String url = "file://" + conf.getImagesPath(true) + SEP + enrGpx.getAlbum().getTheme().getNom() + SEP + enrGpx.getGpxPath();
+
+        File fichier;
+        try {
+            fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
+            if (!fichier.delete()) {
+                log.warn("Could not delete the gpx file at {}...", fichier.getCanonicalPath());
+                return false;
+            }
+        } catch (Exception ex) {
+            log.warn("Could not create the URL to remove the GPX: {}", ex.getMessage(), ex);
+            return false;
+        }
+        
+        gpxDAO.remove(enrGpx);
+        
+        return true ;
     }
 
     public boolean deleteCarnet(Carnet enrCarnet, Configuration configuration) {  

@@ -93,14 +93,14 @@ public class AlbumBean implements AlbumLocal {
 
         
         for (Gpx enrGpx : enrAlbum.getGpxList()) {
-                if (output.album.gpx == null)
-                    output.album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
-                XmlGpx gpx = new XmlGpx();
-                gpx.id = enrGpx.getId();
-                gpx.description = enrGpx.getDescription();
-                
-                output.album.gpx.add(gpx);
-            }
+            if (output.album.gpx == null)
+                output.album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
+            XmlGpx gpx = new XmlGpx();
+            gpx.id = enrGpx.getId();
+            gpx.description = enrGpx.getDescription();
+
+            output.album.gpx.add(gpx);
+        }
         
         output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
                 Box.MULTIPLE);
@@ -430,16 +430,25 @@ public class AlbumBean implements AlbumLocal {
             } catch (ParseException ex) {
                 log.warn("Date format incorrect: "+date);
             }
-
         }
         
+        List<Gpx> to_remove = new LinkedList<Gpx>();
         for (Gpx enrGpx : enrAlbum.getGpxList()) {
+            boolean suppr = vSession.getGpxSuppr(enrGpx.getId());
+            if (suppr) {
+                to_remove.add(enrGpx);
+                continue;
+            }
             String newDescr = vSession.getGpxDescr(enrGpx.getId());
             
             if (!enrGpx.getDescription().equals(newDescr)) {
                 enrGpx.setDescription(newDescr);
                 gpxDAO.edit(enrGpx);
             }
+        }
+        for (Gpx enrGpx : to_remove) {
+            enrAlbum.getGpxList().remove(enrGpx);
+            finder.deleteGpx(enrGpx, vSession.getConfiguration());
         }
         albumDAO.edit(enrAlbum);
 

@@ -88,10 +88,13 @@
   <xsl:template match="edit/album/gpx">
     <p>
         <label><xsl:attribute name="for">gpx_<xsl:value-of select="@id"/></xsl:attribute>GPX n°<xsl:value-of select="@id"/> : </label>
-        <input type='text' size='31' maxlength='31'>
+        <input type='text'  size='20' maxlength='31'>
             <xsl:attribute name="name">gpx_descr_<xsl:value-of select="@id"/></xsl:attribute>
         <xsl:attribute name="id">gpx_<xsl:value-of select="@id"/></xsl:attribute>
         <xsl:attribute name="value"><xsl:value-of select="description"/></xsl:attribute>
+        </input>
+        <input type='text' size='16' placeholder="supprimer ce GPX">
+            <xsl:attribute name="name">gpx_suppr_<xsl:value-of select="@id"/></xsl:attribute>
         </input>
     </p>
   </xsl:template>

@@ -355,6 +355,12 @@ public class ViewSessionImpl implements
     public String getGpxDescr(Integer id) {
         return getString("gpx_descr_" + id);
     }
+    
+    @Override
+    public boolean getGpxSuppr(Integer id) {
+        String suppr = getString("suppr") ;
+        return "supprimer ce GPX".equals(suppr);
+    }
 
     @Override
     public Integer getRmTag() {
