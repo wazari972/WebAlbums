@@ -16,7 +16,7 @@ public interface ViewSessionPhoto extends ViewSession {
         
         String getDesc();
         
-        Integer[] getTags();
+        Integer[] getTagAsked();
         
         TagAction getTagAction();
         

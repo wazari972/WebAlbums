@@ -607,9 +607,8 @@ public class PhotoBean implements PhotoLocal {
             enrPhoto.setDescription(desc);
             output.desc_status = XmlPhotoFastEdit.Status.OK;
         }
-        
-        
-        for(Integer tagId : vSession.getTags()) {
+
+        for(Integer tagId : vSession.getTagAsked()) {
             Tag enrTag = tagDAO.find(tagId);
             if (enrTag == null)
                 continue;
@@ -623,7 +622,6 @@ public class PhotoBean implements PhotoLocal {
             } catch (WebAlbumsServiceException ex) {
                 output.tag_msg = ex.getMessage();
                 output.tag_status = XmlPhotoFastEdit.Status.ERROR;
-                break;
             }
         }
         

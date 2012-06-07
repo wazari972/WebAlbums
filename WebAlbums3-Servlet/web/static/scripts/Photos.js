@@ -28,7 +28,8 @@ function add_rm_tag(photoid, tagact) {
         alert("No tag selected ...")
         return
     }
-    $.post("Photos?special=FASTEDIT", 
+    
+    $.post("Photos?special=FASTEDIT&"+$("#fastedit_tag_"+photoid).serialize(), 
         {id : photoid, tagAction:tagact, tags:tagid},
         function(data) {
             reload_page_cb(data, photoid);
@@ -52,41 +53,39 @@ function set_stars(photoid, stars) {
 
 function init_fastedit() {
     $(".fastedit_tag_bt").click(function () {
-        id = $(this).attr('rel');
+        var id = $(this).attr('rel');
         $("#fastedit_div_tag_"+id).toggle("fast")
         $("#fastedit_div_tag_"+id).parent(".edit").toggleClass("edit_visible")
     }) ;
     $(".fastedit_desc_bt").click(function () {
-        id = $(this).attr('rel');
+        var id = $(this).attr('rel');
         $("#desc_"+id).toggle("fast")
         $("#fastedit_div_desc_"+id).toggle("fast")
         $("#fastedit_div_desc_"+id).parent(".edit").toggleClass("edit_visible")
     }) ;
     $(".fastedit_stars").click(function () {
-        photoid = $(this).attr('rel').split('/')[0];
-        stars = $(this).attr('rel').split('/')[1];
+        var photoid = $(this).attr('rel').split('/')[0];
+        var stars = $(this).attr('rel').split('/')[1];
 
         set_stars(photoid, parseInt(stars))
         $(this).prevAll("img").removeClass("star_off").addClass("star_on")
         $(this).removeClass("star_off").addClass("star_on")
         $(this).nextAll("img").removeClass("star_on").addClass("star_off")
-        
-        
     }) ;
 
     $(".fastedit_addtag").click(function () {
-        photoid = $(this).attr('rel');
+        var photoid = $(this).attr('rel');
         add_rm_tag(photoid, "ADD")
     }) ;
 
     $(".fastedit_rmtag").click(function () {
-        photoid = $(this).attr('rel');
+        var photoid = $(this).attr('rel');
         add_rm_tag(photoid, "RM")
     }) ;
 
     $(".fastedit_desc").click(function () {
-        photoid = $(this).attr('rel');
-        photodesc = $("#fastedit_desc_"+photoid).val()
+        var photoid = $(this).attr('rel');
+        var photodesc = $("#fastedit_desc_"+photoid).val()
 
         $.post("Photos?special=FASTEDIT", 
             {id : photoid, desc:photodesc},
@@ -95,6 +94,13 @@ function init_fastedit() {
             }
          );
     }) ;
+    $(".fastedit_tag").attr("multiple", "true")
+    $(".fastedit_tag option").each(function() {
+        if ($(this).val() == -1)
+           $(this).remove()
+    })
+    $(".fastedit_tag").chosen();
+    
 }
 
 function init_tooltip() {
@@ -121,7 +127,7 @@ function init_tag_layer (map, do_zoom) {
             lng: $(this).attr('rel').split('/')[1],
             name: $(this).text()
         }
-        marker = addMarker(map, markers, point, function(x){return x.name})
+        var marker = addMarker(map, markers, point, function(x){return x.name})
         $(this).data("marker", marker)
     })
     
@@ -145,7 +151,7 @@ function init_gpx() {
         var map = get_map()
         $("#tags_visu").show()
         $("#gpx_box").show()
-        layer = $(this).data("layer")
+        var layer = $(this).data("layer")
         if (layer == undefined) {
             layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"))
             $(this).data("layer", layer)
@@ -165,14 +171,13 @@ function init_gpx() {
     $(".tag_visu").click(function() {
         var map = get_map()
         get_tag_layer(map, true)
-        marker = $(this).data("marker")
+        var marker = $(this).data("marker")
         map.setCenter(marker.lonlat)
     })
 }
 
 $(function() {
     init_tooltip()
-    add_callback("SinglePage", init_tooltip)
     init_massedit()
     init_fastedit()
     init_gpx()
