@@ -16,11 +16,13 @@
         <link href="static/style.css"     rel="stylesheet" type="text/css" media="screen" />
         <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
         <style type="text/css">body {<xsl:if test="not(/webAlbums/affichage/@background)">background: #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if><xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(background<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>.jpg) fixed no-repeat;</xsl:if>}</style>
+        <link type="text/css"  rel="stylesheet" href="static/scripts/lib/jquery/css/chosen.css"/>
       </head>
       <body>
         <script type="text/javascript"> var directAccess = false; <xsl:if test="/webAlbums/affichage/@directAccess"> directAccess = true; root_path = "<xsl:value-of select="$RootPath" />"; photo_folder = "<xsl:value-of select="/webAlbums/affichage/photo_folder" />"; mini_folder = "<xsl:value-of select="/webAlbums/affichage/mini_folder" />"; </xsl:if> var staticAccess = false; <xsl:if test="/webAlbums/affichage/@static"> staticAccess = true ;</xsl:if></script>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"/>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"/>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-chosen.js"/>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"/>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.ezpz_tooltip.js"/>
         
@@ -144,10 +146,10 @@
                     <script type="text/javascript" src="static/scripts/Config.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/choix">
-                    <link type="text/css" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" rel="stylesheet" media="screen"/>
+                    <link   type="text/css" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" rel="stylesheet" media="screen"/>
                     <script type="text/javascript" src="static/scripts/lib/raphael.js"/>
                     <script type="text/javascript" src="static/scripts/lib/morris.js"/>
-                    <script src="static/scripts/Choix.js" type='text/javascript'/>
+                    <script type="text/javascript" src="static/scripts/Choix.js"/>
                 </xsl:if>
 	      </div>
 	      <div id="footer">

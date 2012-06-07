@@ -213,4 +213,5 @@ function draw_graph() {
 $(function() {
     save_theme()
     init_loader()
+    $("#tagChoix").chosen();
 })

@@ -23,13 +23,13 @@ function reload_page_cb(data, photoid, cb) {
 }
 
 function add_rm_tag(photoid, tagact) {
-    tagid = $("#fastedit_tag_"+id).val()
-    if (!(tagid > 0)) {
+    var tagid = $("#fastedit_tag_"+photoid).val()
+    if (tagid == null || tagid < 0) {
         alert("No tag selected ...")
         return
     }
     $.post("Photos?special=FASTEDIT", 
-        {id : photoid, tagAction:tagact, tag:tagid},
+        {id : photoid, tagAction:tagact, tags:tagid},
         function(data) {
             reload_page_cb(data, photoid);
         }

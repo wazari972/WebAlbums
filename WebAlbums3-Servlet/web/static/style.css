@@ -5,6 +5,10 @@
 
 /** **** **/
 
+.fastedit_tag {
+    width: 150px
+}
+
 #gpxChoix {
     width:500px; 
     height:500px;

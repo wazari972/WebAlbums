@@ -11,6 +11,8 @@
     <xsl:param name="box">MULTIPLE</xsl:param>
     <xsl:param name="onChange"></xsl:param>
     <xsl:param name="id"></xsl:param>
+    <xsl:param name="class"></xsl:param>
+    <xsl:param name="placeHolder"></xsl:param>
     <xsl:if test="not(@box) or @box = $box">
     <xsl:if test="not(@mode) or @mode = $mode">
       <xsl:if test="who|what|where">            
@@ -25,6 +27,9 @@
 	    </xsl:if>
 	    <xsl:if test="not($id = '')">
 	      <xsl:attribute name="id"><xsl:value-of select="$id" /></xsl:attribute>
+	    </xsl:if>
+            <xsl:if test="not($class = '')">
+	      <xsl:attribute name="class"><xsl:value-of select="$class" /></xsl:attribute>
 	    </xsl:if>
 	    <xsl:attribute name="name"><xsl:value-of select="$name"/></xsl:attribute>
 

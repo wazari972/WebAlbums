@@ -218,6 +218,7 @@
                                         <xsl:with-param name="id">fastedit_tag_<xsl:value-of select="photoId/@id" /></xsl:with-param>
                                         <xsl:with-param name="mode">TAG_USED</xsl:with-param>
                                         <xsl:with-param name="mode2">TAG_NEVER_EVER</xsl:with-param>
+										<xsl:with-param name="class">fastedit_tag</xsl:with-param>
                                         <xsl:with-param name="incMinor">true</xsl:with-param>
                                     </xsl:apply-templates>
                                     <br/>           
