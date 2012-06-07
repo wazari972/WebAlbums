@@ -52,14 +52,18 @@ function init_common() {
 /******************************************/
 
 function refresh_editionMode() {
-    value = get_editionMode()
+    var value = get_editionMode()
     set_editionMode(value)
     $("#mode_edition").text(value)
     if (value == 'VISITE') {
         $(".edit").hide()
         $(".edit_visible").hide()
     } else if (value == 'EDITION') {
-        
+        //nothing to do
+    } else if (value == 'NO MOVE') {
+        $(".edit").show()
+        $(".edit_visible").show()
+        $(".optional").show()
     } else
         alert('unknown edition mode value: '+value)
 }
@@ -71,9 +75,13 @@ function body_mouseenter() {
 }
 
 function body_mouseleave() {
+    var value = get_editionMode()
+    if (value == 'NO MOVE') 
+        return
+    
     //check if a 'fastedit_tag_' is currently selected, 
     //see below why
-    limited = false
+    var limited = false
     try {
         selected_id = $(document.activeElement).attr("id")
         if (selected_id != undefined) {
@@ -96,8 +104,11 @@ function body_mouseleave() {
 
 function do_init_mouse_hover() {
     $(".details").hover(body_mouseenter, body_mouseleave)
-    $(".edit").hide()
-    $(".optional").hide()
+    var value = get_editionMode()
+    if (value != 'NO MOVE') {
+        $(".edit").hide()
+        $(".optional").hide()
+    }
     $(".edit_visible").show()
 }
 
@@ -121,6 +132,8 @@ function toogle_editionMode() {
     mode = get_editionMode() 
     
     if (mode == 'VISITE') {
+        set_editionMode('NO MOVE')
+    } else if (mode == 'NO MOVE') {
         set_editionMode('EDITION')
     } else if (mode == 'EDITION') {
         set_editionMode('VISITE')
