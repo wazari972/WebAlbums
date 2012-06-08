@@ -22,17 +22,19 @@ function reload_page_cb(data, photoid, cb) {
         alert("Please reload the page to refresh")
 }
 
-function add_rm_tag(photoid, tagact) {
-    var tagid = $("#fastedit_tag_"+photoid).val()
-    if (tagid == null || tagid < 0) {
-        alert("No tag selected ...")
-        return
-    }
-    
-    $.post("Photos?special=FASTEDIT&"+$("#fastedit_tag_"+photoid).serialize(), 
-        {id : photoid, tagAction:tagact, tags:tagid},
+function set_tags(photoid) {
+    var tags = $("#fastedit_tag_"+photoid)
+    var target = tags.parents(".info").find("div .tags")
+    $.post("Photos?special=FASTEDIT&tagAction=SET&"+tags.serialize(), 
+        {id : photoid},
         function(data) {
-            reload_page_cb(data, photoid);
+            // need to ensure that it's OK ...
+            var newHtml = ""
+            $("#fastedit_tag_"+photoid+" option:selected").each(function() {
+                newHtml += $(this).text() + " "
+            })
+            target.html(newHtml)
+            $(".fastedit_tag_bt").click()
         }
      );
 }
@@ -55,13 +57,13 @@ function init_fastedit() {
     $(".fastedit_tag_bt").click(function () {
         var id = $(this).attr('rel');
         $("#fastedit_div_tag_"+id).toggle("fast")
-        $("#fastedit_div_tag_"+id).parent(".edit").toggleClass("edit_visible")
+        $("#fastedit_div_tag_"+id).parents(".edit").toggleClass("edit_visible")
     }) ;
     $(".fastedit_desc_bt").click(function () {
         var id = $(this).attr('rel');
         $("#desc_"+id).toggle("fast")
         $("#fastedit_div_desc_"+id).toggle("fast")
-        $("#fastedit_div_desc_"+id).parent(".edit").toggleClass("edit_visible")
+        $("#fastedit_div_desc_"+id).parents(".edit").toggleClass("edit_visible")
     }) ;
     $(".fastedit_stars").click(function () {
         var photoid = $(this).attr('rel').split('/')[0];
@@ -73,14 +75,9 @@ function init_fastedit() {
         $(this).nextAll("img").removeClass("star_on").addClass("star_off")
     }) ;
 
-    $(".fastedit_addtag").click(function () {
+    $(".fastedit_settags").click(function () {
         var photoid = $(this).attr('rel');
-        add_rm_tag(photoid, "ADD")
-    }) ;
-
-    $(".fastedit_rmtag").click(function () {
-        var photoid = $(this).attr('rel');
-        add_rm_tag(photoid, "RM")
+        set_tags(photoid)
     }) ;
 
     $(".fastedit_desc").click(function () {
@@ -94,13 +91,14 @@ function init_fastedit() {
             }
          );
     }) ;
-    $(".fastedit_tag").attr("multiple", "true")
-    $(".fastedit_tag option").each(function() {
-        if ($(this).val() == -1)
-           $(this).remove()
+    $(".details").each(function() {
+        var list = $(this).find(".fastedit_tag")
+        $(this).find(".tag_link").each(function() {
+            list.find("option[value = '"+$(this).attr("rel")+"']").attr("selected", "true")
+        })
     })
     $(".fastedit_tag").chosen();
-    
+    $("#massTagList").chosen();
 }
 
 function init_tooltip() {

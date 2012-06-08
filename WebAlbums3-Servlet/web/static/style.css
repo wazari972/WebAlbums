@@ -5,8 +5,11 @@
 
 /** **** **/
 
+#massTagList {
+    width: 200px
+}
 .fastedit_tag {
-    width: 150px
+    width: 200px
 }
 
 #gpxChoix {
@@ -136,7 +139,6 @@
 .details {
     position: relative;
     width: 100%;
-    overflow:hidden;
     margin:auto;
 }
 

@@ -342,8 +342,8 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public Integer getAddTag() {
-        return getInteger("addTag");
+    public Integer[] getAddTags() {
+        return getIntArray("addTag");
     }
 
     @Override

@@ -201,4 +201,9 @@ public class PhotoFacade implements PhotoFacadeLocal {
             return null ;
         }
     }
+    
+    @Override
+    public void pleaseFlush() {
+        em.flush();
+    }
 }

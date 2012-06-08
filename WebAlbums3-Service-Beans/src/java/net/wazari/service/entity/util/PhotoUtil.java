@@ -50,17 +50,14 @@ public class PhotoUtil {
 
     public void addTags(Photo p, Integer[] tags)
             throws WebAlbumsServiceException {
-
         log.info( "add tags to photo {}", p);
-        if (tags == null) {
+        if (tags == null)
             return;
-        }
 
         List<TagPhoto> list = p.getTagPhotoList();
         //ajouter les nouveaux tags
         //qui ne sont pas encore dans la liste existante
         for (int i = 0; i < tags.length; i++) {
-            log.info( "add tag {}", tags[i]);
             boolean already = false;
 
             //verifier que le tag est bien dans la base
@@ -82,27 +79,23 @@ public class PhotoUtil {
                     nouveau.setTag(enrTag);
                     log.info( "Ajout du tag : {}", enrTag.getNom());
                     tagPhotoDAO.create(nouveau);
-                } else {
+                } else
                     log.info( "already: {}", enrTag.getNom());
-                }
-            } else {
+            } else
                 log.warn( "Erreur dans l''id du Tag : {}: introuvable !", tags[i]);
-            }
         }
     }
 
-    public void removeTag(Photo p, int tag) throws WebAlbumsServiceException {
+    public void removeTag(Photo p, Integer tag) throws WebAlbumsServiceException {
         TagPhoto toRemove = null ;
         for (TagPhoto enrTp : p.getTagPhotoList()) {
-            if (enrTp.getTag().getId() == tag) {
+            if (enrTp.getTag().getId().equals(tag)) {
                 toRemove = enrTp ;
                 break ;
             }
         }
-        if (toRemove != null) {
+        if (toRemove != null)
             tagPhotoDAO.remove(toRemove);
-        }
-
     }
 
     public void removeExtraTags(Photo p, Integer[] tags) throws WebAlbumsServiceException {

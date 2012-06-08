@@ -12,7 +12,7 @@ public interface ViewSessionPhoto extends ViewSession {
 
     interface ViewSessionPhotoFastEdit extends ViewSessionPhoto {
 
-        enum TagAction {ADD, RM}
+        enum TagAction {SET}
         
         String getDesc();
         
@@ -56,7 +56,7 @@ public interface ViewSessionPhoto extends ViewSession {
 
             boolean getChk(Integer id);
 
-            Integer getAddTag();
+            Integer[] getAddTags();
 
             Integer getRmTag();
         }

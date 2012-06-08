@@ -56,4 +56,7 @@ public interface PhotoFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Photo loadRandom(ServiceSession vSession);
+
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    void pleaseFlush();
 }
