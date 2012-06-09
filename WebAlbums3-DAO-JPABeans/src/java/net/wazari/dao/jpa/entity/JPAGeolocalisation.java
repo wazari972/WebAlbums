@@ -69,12 +69,12 @@ public class JPAGeolocalisation implements Geolocalisation, Serializable {
     
     @XmlAttribute
     @Override
-    public String getLat() {
+    public String getLatitude() {
         return lat;
     }
 
     @Override
-    public void setLat(String lat) {
+    public void setLatitude(String lat) {
         this.lat = lat;
     }
 

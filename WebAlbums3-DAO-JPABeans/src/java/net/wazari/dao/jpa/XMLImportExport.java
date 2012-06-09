@@ -107,7 +107,7 @@ public class XMLImportExport implements ImportExporter {
                         Geolocalisation newGeo = geoDAO.newGeolocalisation();
                         newGeo.setTag(newTag);
                         
-                        newGeo.setLat(enrGeo.getLat());
+                        newGeo.setLatitude(enrGeo.getLatitude());
                         newGeo.setLongitude(enrGeo.getLongitude());
                         
                         newTag.setGeolocalisation(newGeo);
@@ -150,12 +150,12 @@ public class XMLImportExport implements ImportExporter {
                     log.info( "Theme: {}", enrTheme.getNom()) ;
                     
                     Theme newTheme = themeDAO.newTheme(enrTheme.getId(), enrTheme.getNom());
+                    newTheme.setLatitude(enrTheme.getLatitude());
+                    newTheme.setLongitude(enrTheme.getLongitude());
                     newTheme = em.merge(newTheme) ;
                     
                     if (enrTheme.getAlbumList() != null) {
                         for (JPAAlbum enrAlbum : (List<JPAAlbum>) enrTheme.getAlbumList()) {
-                            //log.info( "Album: {}", enrAlbum.getNom()) ;
-
                             Album newAlbum = albumDAO.newAlbum();
                             newAlbum.setId(enrAlbum.getId());
                             newAlbum.setTheme(newTheme);

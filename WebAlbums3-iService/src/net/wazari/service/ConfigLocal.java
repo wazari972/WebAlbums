@@ -26,6 +26,9 @@ public interface ConfigLocal {
     XmlConfigImport treatIMPORT(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
+    XmlConfigSetHome treatSETHOME(ViewSessionConfig vSession) throws WebAlbumsServiceException;
+    
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlConfigModGeo treatMODGEO(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)

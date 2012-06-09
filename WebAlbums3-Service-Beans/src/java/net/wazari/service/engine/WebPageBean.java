@@ -144,8 +144,10 @@ public class WebPageBean implements WebPageLocal {
         Theme enrTheme = vSession.getTheme();
         Utilisateur enrUtil = vSession.getUser() ;
         Principal principal = vSession.getUserPrincipal() ;
+        
         login.theme = (enrTheme == null ? null : enrTheme.getNom());
         login.themeid = (enrTheme == null ? null : enrTheme.getId());
+        
         if (enrUtil != null) {
             login.role = enrUtil.getNom() ;
         }
@@ -162,6 +164,11 @@ public class WebPageBean implements WebPageLocal {
             login.root = true ;
         }
 
+        if (enrTheme != null) {
+            login.latitude = enrTheme.getLatitude();
+            login.longitude = enrTheme.getLongitude();
+        }
+        
         return login;
     }
 
@@ -245,7 +252,7 @@ public class WebPageBean implements WebPageLocal {
             throws WebAlbumsServiceException 
     {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
-        List<Tag> tags = null;
+        List<Tag> tags;
 
         XmlWebAlbumsList output = new XmlWebAlbumsList();
         boolean geoOnly = mode == Mode.TAG_GEO;
@@ -335,7 +342,7 @@ public class WebPageBean implements WebPageLocal {
                             photoPath = enrTagTh.getPhoto().getPath(true);
                         }
                         p = new Point(enrTag.getNom(), enrTag.getId(),
-                                enrGeo.getLat(),
+                                enrGeo.getLatitude(),
                                 enrGeo.getLongitude(),
                                 photoId, photoPath);
                         nom = enrTag.getNom();
@@ -357,7 +364,7 @@ public class WebPageBean implements WebPageLocal {
                     if (enrTag.getGeolocalisation() != null) {
                         XmlWebAlbumsTagWhere tagGeo = (XmlWebAlbumsTagWhere) tag;
                         tagGeo.longit = enrTag.getGeolocalisation().getLongitude();
-                        tagGeo.lat = enrTag.getGeolocalisation().getLat();
+                        tagGeo.lat = enrTag.getGeolocalisation().getLatitude();
                     }
                 }
             }
@@ -489,16 +496,16 @@ public class WebPageBean implements WebPageLocal {
         }
         
         Calendar dob = Calendar.getInstance();
-        Calendar day = Calendar.getInstance();  
-        day.setTime(ref);
+        Calendar getday = Calendar.getInstance();  
+        getday.setTime(ref);
         int age ;
         for (XmlWebAlbumsTagWho person: lst.who) {
             if (person.birthdate != null) {
                 try {
                     Date birth = inputDate.parse(person.birthdate);
                     dob.setTime(birth);
-                    age = day.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
-                    if (day.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))  
+                    age = getday.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
+                    if (getday.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))  
                         age--;
                     person.birthdate = Integer.toString(age);
                 } catch (ParseException ex) {

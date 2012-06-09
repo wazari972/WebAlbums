@@ -77,13 +77,13 @@
 	      <tr>	
 		<td align='left'><label for="lngId">Long</label></td>
 		<td>
-		  <input id="lngID" name='lng' type='text' size='20' maxlength='20'/>
+		  <input class="map_latlng" id="lngID" name='lng' type='text' size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	      <tr>	
 		<td align='left'><label for="latID">Lat</label></td>
 		<td>
-		  <input id="latID" name='lat' type='text' size='20' maxlength='20'/>
+		  <input class="map_latlng" id="latID" name='lat' type='text' size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	    </table>
@@ -94,6 +94,37 @@
       </div>
     </div>
 
+    <div class="item">
+      <a name="setHome"/>
+      <div class="date">
+	<span>*</span>
+      </div>
+      <div class="content">
+	<h1>Centre du theme</h1>
+        <div class="body">
+            <xsl:apply-templates select="sethome"/>
+            <form action='#setHome' method='POST'>
+                <input type='hidden' name='action' value='SETHOME'/>
+                <table>
+                    <tr>	
+                        <td align='left'><label for="lngId">Long</label></td>
+                        <td>
+                        <input class="map_latlng" id="lngID_3" name='lng' type='text' size='20' maxlength='20'/>
+                        </td>	
+                    </tr>
+                    <tr>	
+                        <td align='left'><label for="latID">Lat</label></td>
+                        <td>
+                        <input class="map_latlng" id="latID_3" name='lat' type='text' size='20' maxlength='20'/>
+                        </td>	
+                    </tr>
+                </table>
+                <input id="valSetHome" type='submit' value='Valider'/>
+            </form>
+        </div>
+     </div>
+    </div>
+    
     <div class="item">
       <a name="modGeo"/>
       <div class="date">
@@ -119,13 +150,13 @@
                <tr>	
 		<td align='left'><label for="lngId">Long</label></td>
 		<td>
-		  <input id="lngID_2" name='lng' type='text' size='20' maxlength='20'/>
+		  <input class="map_latlng" id="lngID_2" name='lng' type='text' size='20' maxlength='20'/>
 		</td>	
 	      </tr>
 	      <tr>	
 		<td align='left'><label for="latID">Lat</label></td>
 		<td>
-		  <input id="latID_2" name='lat' type='text' size='20' maxlength='20'/>
+		  <input class="map_latlng" id="latID_2" name='lat' type='text' size='20' maxlength='20'/>
 		</td>	
 	      </tr>
             </table>
@@ -366,23 +397,26 @@
     <xsl:apply-templates select="shutdown" />
   </xsl:template>
 
-  <xsl:template match="import|newtag|modtag|deltag|modGeo|modvis">
+  <xsl:template match="import|newtag|modtag|deltag|modGeo|modvis|sethome">
     <xsl:apply-templates select="exception|message" />
 
     <xsl:apply-templates select="newName" />
     <xsl:apply-templates select="alreadyName" />
     <xsl:apply-templates select="newLngLat" />
   </xsl:template>
+  
   <xsl:template match="newName">
     Nom correctement changé de <b><xsl:value-of select="../oldName"/></b> vers <b><xsl:value-of select="."/></b>
   </xsl:template>
   <xsl:template match="alreadyName">
     Le nom <b> <xsl:value-of select="."/></b> est déjà utilisé ...
   </xsl:template>
-  <xsl:template match="newLngLat">
+  <xsl:template match="modgeo/newLngLat">
     Nouvelle géolocalisation: <b> <xsl:value-of select="."/></b>
   </xsl:template>
-
+  <xsl:template match="sethome/newLngLat">
+    Nouveau centre: <b><xsl:value-of select="."/></b>
+  </xsl:template>
 <xsl:template match="modminor">
       <xsl:if test="newMinor">
           Tag minor set to "<xsl:value-of select="newMinor"/>".

@@ -93,6 +93,30 @@ public class ConfigBean implements ConfigLocal {
     }
 
     @Override
+    public XmlConfigSetHome treatSETHOME(ViewSessionConfig vSession)
+            throws WebAlbumsServiceException {
+        XmlConfigSetHome output = new XmlConfigSetHome();
+        
+        String lng = vSession.getLng();
+        String lat = vSession.getLat();
+        
+        if (lng == null || lat == null || lng.length() == 0 || lat.length() == 0) {
+            output.exception = "La geoloc " + lng + "/" + lat + " n'est pas correcte..." ;
+            return output;
+        }
+            
+        Theme enrTheme = vSession.getTheme();
+        enrTheme.setLatitude(lat);
+        enrTheme.setLongitude(lng);
+        
+        themeDAO.edit(enrTheme);
+        
+        output.newLngLat = lng + "/" + lat ;
+
+        return output ;
+    }
+    
+    @Override
     public XmlConfigModGeo treatMODGEO(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigModGeo output = new XmlConfigModGeo();
@@ -112,14 +136,14 @@ public class ConfigBean implements ConfigLocal {
             return output ;
         }
 
-        if (lng == null || lat == null || lng == "" || lat == "") {
+        if (lng == null || lat == null || lng.length() == 0 || lat.length() == 0) {
             output.exception = "La geoloc " + lng + "/" + lat + " n'est pas correcte..." ;
             return output;
         }
 
         Geolocalisation enrGeo = enrTag.getGeolocalisation();
         enrGeo.setLongitude(lng);
-        enrGeo.setLat(lat);
+        enrGeo.setLatitude(lat);
         geoDAO.edit(enrGeo);
 
         output.newLngLat = lng + "/" + lat ;
@@ -304,7 +328,7 @@ public class ConfigBean implements ConfigLocal {
             Geolocalisation geo = geoDAO.newGeolocalisation();
             geo.setTag(enrTag);
             geo.setLongitude(longit);
-            geo.setLat(lat);
+            geo.setLatitude(lat);
             geoDAO.create(geo);
         }
 

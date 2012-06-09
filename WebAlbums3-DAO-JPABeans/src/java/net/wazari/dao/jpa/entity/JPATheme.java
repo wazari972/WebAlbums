@@ -61,6 +61,12 @@ public class JPATheme implements Theme, Serializable {
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto background;
     
+    @Column(name = "Lat", nullable = true, length = 20)
+    private String lat;
+
+    @Column(name = "Longitude", nullable = true, length = 20)
+    private String longitude;
+    
     public JPATheme() {
     }
 
@@ -172,6 +178,7 @@ public class JPATheme implements Theme, Serializable {
         else
             return background.getId();
     }
+    
     @Transient
     public Integer backgroundId;
     public void setBackgroundId(Integer picture) {
@@ -184,7 +191,29 @@ public class JPATheme implements Theme, Serializable {
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
+    
+    @XmlAttribute
+    @Override
+    public String getLatitude() {
+        return lat;
+    }
 
+    @Override
+    public void setLatitude(String lat) {
+        this.lat = lat;
+    }
+
+    @XmlAttribute
+    @Override
+    public String getLongitude() {
+        return longitude;
+    }
+
+    @Override
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+    
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof JPATheme)) {

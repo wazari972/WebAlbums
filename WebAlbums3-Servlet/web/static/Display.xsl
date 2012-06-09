@@ -134,6 +134,9 @@
                     <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
                     <script src="http://api.ign.fr/geoportail/api/js/1.3.0/GeoportalMin.js" charset="utf-8" ></script>
                     <script src="static/scripts/OpenLayerFunctions.js"/>
+                    <xsl:if test="/webAlbums/loginInfo/@latitude and /webAlbums/loginInfo/@longitude">
+                        <script type="text/javascript"> mapCenter.lat = <xsl:value-of select="/webAlbums/loginInfo/@latitude" />; mapCenter.lon = <xsl:value-of select="/webAlbums/loginInfo/@longitude" /></script>
+                    </xsl:if>
                 </xsl:if>
                 
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">

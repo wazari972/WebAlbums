@@ -18,6 +18,7 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 public class XmlConfig extends XmlInfoException {
     public XmlConfigImport irnport;
     public XmlConfigNewTag newtag;
+    public XmlConfigSetHome sethome;
     public XmlConfigModTag modtag;
     public XmlConfigModVis modvis;
     public XmlConfigModGeo modgeo;
@@ -34,5 +35,4 @@ public class XmlConfig extends XmlInfoException {
     public XmlWebAlbumsList tag_geo;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_never;
-
 }

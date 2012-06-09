@@ -40,79 +40,61 @@ public class Config extends HttpServlet {
     public XmlConfig treatCONFIG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
 
+        if (!vSession.isSessionManager())
+            return null;
+        
         XmlConfig output = new XmlConfig();
 
         Action action = vSession.getAction();
-        if (vSession.isSessionManager()) {
-
-            if (action == Action.IMPORT) {
+        if (action == null) action = Action.DEFAULT;
+        switch(action) {
+            case IMPORT:
                 output.irnport = configService.treatIMPORT(vSession);
-            }
-
-            //ajout d'un nouveau tag
-            if (Action.NEWTAG == action) {
+                break;
+            case NEWTAG:
                 output.newtag = configService.treatNEWTAG(vSession);
-            }
-
-            //Renommage d'un tag tag
-            if (Action.MODTAG == action) {
+                break;
+            case MODTAG:
                 output.modtag = configService.treatMODTAG(vSession);
-            }
-
-            //Changement de visibilité d'un tag
-            if (Action.MODVIS == action) {
+                break;
+            case SETHOME:
+                output.sethome = configService.treatSETHOME(vSession);
+                break;
+            case MODVIS:
                 output.modvis = configService.treatMODVIS(vSession);
-            }
-
-            //modification d'une geolocalisation
-            if (Action.MODGEO == action) {
+                break;
+            case MODGEO:
                 output.modgeo = configService.treatMODGEO(vSession);
-            }
-
-            //liens de parenté
-            if (Action.LINKTAG == action) {
+                break;
+            case LINKTAG:
                 output.linktag = configService.treatLINKTAG(vSession);
-            }
-            
-            //details about a person
-            if (Action.MODPERS == action) {
+                break;
+            case MODPERS:
                 output.modpers = configService.treatMODPERS(vSession);
-            }
-            
-            //details about a person
-            if (Action.MODMINOR == action) {
+                break;
+            case MODMINOR:
                 output.modminor = configService.treatMODMINOR(vSession);
-            }
-            
-            //liens de parenté
-            if (Action.LINKTAG == action) {
-                output.linktag = configService.treatLINKTAG(vSession);
-            }
-
-            //suppression d'un tag
-            if (Action.DELTAG == action) {
+                break;
+            case DELTAG:
                 output.deltag = configService.treatDELTAG(vSession);
-            }
-
-            //suppression d'un tag
-            if (Action.DELTHEME == action) {
+                break;
+            case DELTHEME:
                 output.deltheme = configService.treatDELTHEME(vSession);
-            }
-
-            if (System.getProperty(SHUTDOWN_PORT_PPT) != null) {
-                output.shutdown = System.getProperty(SHUTDOWN_PORT_PPT) ;
-            }
-            
-            output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
-                    Box.MULTIPLE);
-            output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
-                    Box.MULTIPLE);
-            output.tag_geo = webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
-                    Box.MULTIPLE);
-
-        } else {
-            output.exception = "Vous n'êtes pas manager ..." ;
+                break;
+            default:
+                break;
         }
+
+        if (System.getProperty(SHUTDOWN_PORT_PPT) != null)
+            output.shutdown = System.getProperty(SHUTDOWN_PORT_PPT);
+
+
+        output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
+                Box.MULTIPLE);
+        output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
+                Box.MULTIPLE);
+        output.tag_geo = webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
+                Box.MULTIPLE);
 
         return output ;
     }

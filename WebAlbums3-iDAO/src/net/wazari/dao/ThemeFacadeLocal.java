@@ -10,6 +10,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
+import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 
@@ -48,5 +49,8 @@ public interface ThemeFacadeLocal {
     void setBackground(Theme enrTheme, Photo pict);
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    public void preconfigureDatabase();
+    void preconfigureDatabase();
+    
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    void edit(Theme enrTheme);
 }

@@ -34,6 +34,11 @@ public class ThemeFacade implements ThemeFacadeLocal {
     private EntityManager em;
 
     @Override
+    public void edit(Theme enrTheme) {
+        em.merge(enrTheme);
+    }
+    
+    @Override
     public void remove(Theme theme, boolean protect) {
         if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
             throw new IllegalStateException("cannot remove a theme while ProtectedDB is enabled") ;
