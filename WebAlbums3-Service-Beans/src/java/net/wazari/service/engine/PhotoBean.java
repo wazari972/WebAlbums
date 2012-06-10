@@ -366,7 +366,7 @@ public class PhotoBean implements PhotoLocal {
                                                   ListOrder.ASC);
                 } else {
                     lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
-                                               ListOrder.ASC);
+                                               ListOrder.DESC);
                 }
                 for (Photo enrPhoto : lstP.subset) {
                     if (enrPhoto.getId() == photoId) {
@@ -389,7 +389,7 @@ public class PhotoBean implements PhotoLocal {
                                           ListOrder.ASC);
             } else {
                 lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
-                                           ListOrder.ASC);
+                                           ListOrder.DESC);
             }
         }        
 

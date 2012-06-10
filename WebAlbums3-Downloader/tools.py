@@ -5,9 +5,9 @@ from lxml import etree
 import timeit
 from StringIO import StringIO
 
-STATIC_FOLDER = "/home/kevin/WebAlbums/WebAlbums3-Servlet/web/static"
+STATIC_FOLDER = "../WebAlbums3-Servlet/web/static"
 WA_URL = "http://127.0.0.1:8080/WebAlbums3.5-dev/"
-TARGET_PATH = "./static"
+TARGET_PATH = "./download"
 
 ABS_DATA_PATH = "/other/Web/"
 

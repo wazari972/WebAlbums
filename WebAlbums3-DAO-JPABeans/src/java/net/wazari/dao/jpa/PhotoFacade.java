@@ -135,6 +135,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
                 webDAO.getRestrictionToCurrentTheme(session, 
                                     p.get(JPAPhoto_.album).get(JPAAlbum_.theme))
                 );
+        
         cq.groupBy(p.get(JPAPhoto_.id)) ;
         webDAO.setOrder(cq, cb, order, p.get(JPAPhoto_.path)) ;
         

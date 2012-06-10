@@ -73,7 +73,7 @@ public class WebAlbumsDAOBean {
             ListOrder order, Expression<?> field) {
         if (order == null) return ;
 
-        Order orderBy = null ;
+        Order orderBy ;
         switch(order) {
             case ASC: orderBy = cb.asc(field) ; break ;
             case DESC: orderBy = cb.desc(field) ; break ;
