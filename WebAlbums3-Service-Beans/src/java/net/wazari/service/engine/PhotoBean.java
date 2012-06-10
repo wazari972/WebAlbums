@@ -618,7 +618,7 @@ public class PhotoBean implements PhotoLocal {
         try {
             TagAction action = vSession.getTagAction();
             if (action == TagAction.SET) {
-                photoUtil.setTags(enrPhoto, vSession.getTagAsked());
+                photoUtil.setTags(enrPhoto, vSession.getTagSet());
                 output.tag_status = XmlPhotoFastEdit.Status.OK;
             } else {
                 output.tag_msg = "Not tag action selected";

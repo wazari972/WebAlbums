@@ -60,7 +60,7 @@ function refresh_editionMode() {
         $(".edit_visible").hide()
     } else if (value == 'EDITION') {
         //nothing to do
-    } else if (value == 'NO MOVE') {
+    } else if (value == 'INTENSIVE EDIT') {
         $(".edit").show()
         $(".edit_visible").show()
         $(".optional").show()
@@ -76,14 +76,14 @@ function body_mouseenter() {
 
 function body_mouseleave() {
     var value = get_editionMode()
-    if (value == 'NO MOVE') 
+    if (value == 'INTENSIVE EDIT') 
         return
     
     //check if a 'fastedit_tag_' is currently selected, 
     //see below why
     var limited = false
     try {
-        selected_id = $(document.activeElement).attr("id")
+        var selected_id = $(document.activeElement).attr("id")
         if (selected_id != undefined) {
             if (selected_id.substring(0, "fastedit_tag_".length) == "fastedit_tag_") {
                 limited = true
@@ -105,7 +105,7 @@ function body_mouseleave() {
 function do_init_mouse_hover() {
     $(".details").hover(body_mouseenter, body_mouseleave)
     var value = get_editionMode()
-    if (value != 'NO MOVE') {
+    if (value != 'INTENSIVE EDIT') {
         $(".edit").hide()
         $(".optional").hide()
     }
@@ -129,15 +129,16 @@ function get_editionMode() {
 }
 
 function toogle_editionMode() {
-    mode = get_editionMode() 
+    var mode = get_editionMode() 
     
     if (mode == 'VISITE') {
-        set_editionMode('NO MOVE')
-    } else if (mode == 'NO MOVE') {
+        set_editionMode('INTENSIVE EDIT')
+    } else if (mode == 'INTENSIVE EDIT') {
         set_editionMode('EDITION')
     } else if (mode == 'EDITION') {
         set_editionMode('VISITE')
     }
+        
     refresh_editionMode()
 }
 

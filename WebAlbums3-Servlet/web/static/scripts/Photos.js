@@ -25,6 +25,11 @@ function reload_page_cb(data, photoid, cb) {
 function set_tags(photoid) {
     var tags = $("#fastedit_tag_"+photoid)
     var target = tags.parents(".info").find("div .tags")
+    var to_click = tags.parents(".info").find(".fastedit_tag_bt")
+    
+    var index = $('.fastedit_tag_bt').index(to_click);
+    var to_click_2nd = $('.fastedit_tag_bt').slice(index+1,index+2);
+    
     $.post("Photos?special=FASTEDIT&tagAction=SET&"+tags.serialize(), 
         {id : photoid},
         function(data) {
@@ -34,7 +39,10 @@ function set_tags(photoid) {
                 newHtml += $(this).text() + " "
             })
             target.html(newHtml)
-            $(".fastedit_tag_bt").click()
+            to_click.click()
+            
+            if (get_editionMode() == 'INTENSIVE EDIT')
+                to_click_2nd.click()       
         }
      );
 }
@@ -56,8 +64,11 @@ function set_stars(photoid, stars) {
 function init_fastedit() {
     $(".fastedit_tag_bt").click(function () {
         var id = $(this).attr('rel');
-        $("#fastedit_div_tag_"+id).toggle("fast")
-        $("#fastedit_div_tag_"+id).parents(".edit").toggleClass("edit_visible")
+        var div_fast_tag = $("#fastedit_div_tag_"+id)
+        div_fast_tag.toggle("fast")
+        div_fast_tag.parents(".edit").toggleClass("edit_visible")
+        div_fast_tag.find("input").focus()
+        
     }) ;
     $(".fastedit_desc_bt").click(function () {
         var id = $(this).attr('rel');
@@ -78,16 +89,19 @@ function init_fastedit() {
     $(".fastedit_settags").click(function () {
         var photoid = $(this).attr('rel');
         set_tags(photoid)
-    }) ;
+    })
 
     $(".fastedit_desc").click(function () {
         var photoid = $(this).attr('rel');
-        var photodesc = $("#fastedit_desc_"+photoid).val()
-
+        var desc = $("#fastedit_desc_"+photoid)
+        var photodesc = desc.val()
+        var target = desc.parents(".info").find("div .description")
+        var to_click = desc.parents(".info").find(".fastedit_desc_bt")
         $.post("Photos?special=FASTEDIT", 
             {id : photoid, desc:photodesc},
             function(data) {
-                reload_page_cb(data, photoid);
+                target.text(photodesc)
+                to_click.click()
             }
          );
     }) ;
@@ -98,7 +112,9 @@ function init_fastedit() {
         })
     })
     $(".fastedit_tag").chosen();
+
     $("#massTagList").chosen();
+    
 }
 
 function init_tooltip() {

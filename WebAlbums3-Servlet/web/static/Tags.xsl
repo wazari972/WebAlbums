@@ -25,23 +25,14 @@
                                     <xsl:value-of select="name" />
                                 </xsl:for-each>" en plein-écran
                             </xsl:attribute>
-                            <xsl:attribute name="rel">Tags?
-                                <xsl:for-each select="tagList/*">&amp;tagAsked=
-                                    <xsl:value-of select="@id" />
-                                </xsl:for-each>&amp;page=
-                                <xsl:value-of select="../photoList/page/@current"/>&amp;special=FULLSCREEN
-                            </xsl:attribute>
+                            <xsl:attribute name="rel">Tags?<xsl:for-each select="tagList/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="../photoList/page/@current"/>&amp;special=FULLSCREEN</xsl:attribute>
                             <img src="static/images/out.png" height="30px"/>
                         </a>
                     </xsl:if>
                     <span>&#160;</span>
                     <xsl:if test="not(/webAlbums/affichage/@static)">
                         <a rel="singlepage[no]">
-                            <xsl:attribute name="title">"
-                                <xsl:for-each select="tagList/*">&#160;
-                                    <xsl:value-of select="name" />
-                                </xsl:for-each>" en visionneuse
-                            </xsl:attribute>
+                            <xsl:attribute name="title">"<xsl:for-each select="tagList/*">&#160;<xsl:value-of select="name" /></xsl:for-each>" en visionneuse</xsl:attribute>
                             <xsl:attribute name="href">Tags?<xsl:for-each select="tagList/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="../photoList/page/@current"/>&amp;special=VISIONNEUSE</xsl:attribute>
                             <img src="static/images/slide.png" height="30px"/>
                         </a>

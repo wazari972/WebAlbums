@@ -89,7 +89,7 @@
 		    <xsl:value-of select="/webAlbums/tags/display/title/tagList/*[1]/@id"/>
 		  </xsl:attribute>
 		</input>
-		<td><input id="turnMove" type='radio' name='turn' value='MVTAG' /></td>
+		<td><input id="turnMove" type='radio' name='turn' value='MVTAG' class="massedit_action massedit_tag" /></td>
 		<td><label for="massTagList">Déplacer depuis </label><b><xsl:value-of select="/webAlbums/tags/display/title/tagList/*[1]/name"/></b> vers</td>
 	      </tr>
 	    </xsl:if>

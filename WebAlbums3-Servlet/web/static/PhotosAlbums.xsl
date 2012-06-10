@@ -125,12 +125,14 @@
                         <xsl:with-param name="incMinor">true</xsl:with-param>
                         <xsl:with-param name="setRel">true</xsl:with-param>
                     </xsl:apply-templates>
+                    <xsl:if test="not(tagList/*)"><div class="tags"/></xsl:if>
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                         <span class="edit">
                             <div class="fastedit">
                                 <xsl:attribute name="id">fastedit_div_tag_<xsl:value-of select="photoId/@id" /></xsl:attribute>
                                 <p>
                                     <xsl:apply-templates select="../../massEdit/tagList">
+                                        <xsl:with-param name="name">tagSet</xsl:with-param>
                                         <xsl:with-param name="style">multiple</xsl:with-param>
                                         <xsl:with-param name="id">fastedit_tag_<xsl:value-of select="photoId/@id" /></xsl:with-param>
                                         <xsl:with-param name="mode">TAG_USED</xsl:with-param>

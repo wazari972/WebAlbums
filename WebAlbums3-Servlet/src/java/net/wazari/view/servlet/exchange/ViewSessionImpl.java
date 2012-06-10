@@ -378,6 +378,11 @@ public class ViewSessionImpl implements
     }
 
     @Override
+    public Integer[] getTagSet() {
+        return getIntArray("tagSet");
+    }
+    
+    @Override
     public Integer[] getTagAsked() {
         return getIntArray("tagAsked");
     }
