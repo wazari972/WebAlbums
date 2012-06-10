@@ -162,7 +162,7 @@
 	      <td>
 		<a title="Retour à la normal">
                   <xsl:if test="/webAlbums/photos">
-                    <xsl:attribute name="href">Photos?albmCount=<xsl:value-of select="album/@count" />&amp;album=<xsl:value-of select="album/@id" />&amp;page=<xsl:value-of select="photoList/page/@current"/></xsl:attribute>
+                    <xsl:attribute name="href">Photos__<xsl:value-of select="album/@id" />_p<xsl:value-of select="photoList/page/@current"/>__<xsl:value-of select="/webAlbums/photos/display/album/title"/></xsl:attribute>
                   </xsl:if>
                   <xsl:if test="/webAlbums/tags">
                     <xsl:attribute name="href">Tags?<xsl:for-each select="title/tagList/*">&amp;tagAsked=<xsl:value-of select="@id"/></xsl:for-each>&amp;page=<xsl:value-of select="photoList/page/@current"/></xsl:attribute>
@@ -173,7 +173,7 @@
 	    </tr>
 	  </table>
 	</div>
-        <center style="background-color:#222">
+        <center style="background-color:#222; overflow:scroll">
           <img  id="largeImg" style="max-width:100%">
               <xsl:if test="/webAlbums/affichage/@directAccess">
                   <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="photoList/photo[1]/details/photoId/text()" />.png</xsl:attribute>
@@ -193,17 +193,17 @@
       <a class="visio_img">
 	<xsl:attribute name="rel"><xsl:value-of select="details/photoId/@id"/></xsl:attribute>
         <xsl:if test="/webAlbums/affichage/@directAccess">
-              <xsl:attribute name="href"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="details/photoId/@id" /></xsl:attribute>
+              <xsl:attribute name="href"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/photo_folder" /><xsl:value-of select="details/photoId/text()" /></xsl:attribute>
           </xsl:if>
           <xsl:if test="not(/webAlbums/affichage/@directAccess)">
               <xsl:attribute name="href">Image__<xsl:value-of select="details/photoId/@id" /></xsl:attribute>
           </xsl:if>
 	<img height="200px">
           <xsl:if test="/webAlbums/affichage/@directAccess">
-              <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
+              <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="details/photoId/text()" />.png</xsl:attribute>
           </xsl:if>
           <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-              <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
+              <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/text()" />.png</xsl:attribute>
           </xsl:if>
 	</img>
       </a>
@@ -226,7 +226,7 @@
           <xsl:attribute name="class">page_<xsl:value-of select="name(.)"/></xsl:attribute>
           <xsl:attribute name="rel"><xsl:value-of select="."/></xsl:attribute>
 	  <xsl:if test="/webAlbums/photos">
-              <xsl:attribute name="href">Photos?&amp;albmCount=<xsl:value-of select="../url/albmCount" />&amp;album=<xsl:value-of select="../url/album" />&amp;page=<xsl:value-of select="."/>&amp;special=VISIONNEUSE</xsl:attribute>
+              <xsl:attribute name="href">Visio__<xsl:value-of select="../url/album" />_p<xsl:value-of select="."/>__<xsl:value-of select="/webAlbums/photos/display/album/title"/></xsl:attribute>
           </xsl:if>
 	  <xsl:if test="/webAlbums/tags">
               <xsl:attribute name="href">Tags?&amp;tagAsked=<xsl:value-of select="../url/tagAsked"/>&amp;page=<xsl:value-of select="."/>&amp;special=VISIONNEUSE</xsl:attribute>

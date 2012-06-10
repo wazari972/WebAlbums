@@ -52,11 +52,10 @@ function nextprev(do_prev) {
 }
  
  
-function updateFullImage(id) {
+function updateFullImage(href) {
     $("body").css("cursor", "wait");
-    img = "Image__"+id ;
     
-    imgTag = $('#largeImg').prop("src", img)
+    $('#largeImg').prop("src", href)
         .css("max-width", $("body").width())
         .css("max-height", $("body").height()).load(function() {  
           $("body").css("cursor", "auto")
@@ -67,7 +66,7 @@ function updateFullImage(id) {
 function init_visio () {
     $(".visio_img").click(function () {
         current = $(this)
-        updateFullImage($(this).prop("rel"))
+        updateFullImage($(this).prop("href"))
         return false
     })
     $("#visio_preview").hide()
@@ -76,7 +75,6 @@ function init_visio () {
     
     jwerty.key('s/n/→/↓', function () { nextprev()});
     jwerty.key('p/←/↑', function () {nextprev(true)});
-    
 }
 
 $(function() {
