@@ -10,3 +10,5 @@ WebAlbums3-Servlet/nbproject/private
 *~
 WebAlbums3-Downloader/static/
 *.pyc
+/WebAlbums3-FS/JnetFS_Java/dist/
+/WebAlbums3-FS/JnetFS_Java/build/
