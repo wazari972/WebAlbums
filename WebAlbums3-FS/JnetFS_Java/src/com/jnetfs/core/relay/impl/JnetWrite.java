@@ -10,14 +10,8 @@ package com.jnetfs.core.relay.impl;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetWrite extends JnetOperate {
-
-    public static JnetWrite instance = new JnetWrite();
-
-    public JnetWrite() {
-        super("write");
-    }
-
+public class JnetWrite {
+    
     public static byte[] getDate(JnetJNIConnector conn) throws JnetException {
         return conn.getBytes("buffer");
     }

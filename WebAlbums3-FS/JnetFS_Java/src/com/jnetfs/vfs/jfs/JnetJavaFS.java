@@ -19,7 +19,6 @@ import java.util.Map;
 
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
-import com.jnetfs.core.relay.impl.ACLAdpater;
 import com.jnetfs.core.relay.impl.JnetAttributes;
 import com.jnetfs.core.relay.impl.JnetChmod;
 import com.jnetfs.core.relay.impl.JnetEnv;
@@ -53,14 +52,7 @@ public class JnetJavaFS extends JnetFSAdapter {
     //last file handle
     protected static long file_handle = 1000;
     protected static long clientcount = 0;
-
-    /**
-     * default constructor
-     */
-    public JnetJavaFS() {
-        super(new ACLAdpater());
-    }
-
+    
     /**
      * init file system
      *

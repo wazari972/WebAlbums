@@ -14,7 +14,6 @@ import java.util.Map;
 
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
-import com.jnetfs.core.relay.impl.ACLAdpater;
 import com.jnetfs.core.relay.impl.JnetAttributes;
 import com.jnetfs.core.relay.impl.JnetFSAdapter;
 import com.jnetfs.core.relay.impl.JnetFSImpl;
@@ -37,13 +36,6 @@ public class JnetDBFS extends JnetFSAdapter {
     protected static DB db;
     //last file handle
     protected static long file_handle = 1000;
-
-    /**
-     * default constructor
-     */
-    public JnetDBFS() {
-        super(new ACLAdpater());
-    }
 
     /**
      * init file system

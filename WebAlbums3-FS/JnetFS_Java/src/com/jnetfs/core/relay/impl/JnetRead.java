@@ -10,14 +10,8 @@ package com.jnetfs.core.relay.impl;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetRead extends JnetOperate {
-
-    public static JnetRead instance = new JnetRead();
-
-    public JnetRead() {
-        super("read");
-    }
-
+public class JnetRead {
+    
     public static void setDate(JnetJNIConnector conn, byte[] data) {
         conn.setBytes("buffer", data);
     }

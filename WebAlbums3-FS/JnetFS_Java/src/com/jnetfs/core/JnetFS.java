@@ -7,35 +7,13 @@
  */
 package com.jnetfs.core;
 
+import com.jnetfs.core.relay.JnetJNIConnector;
+import com.jnetfs.core.relay.impl.JnetFSAdapter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import com.jnetfs.core.relay.IRequest;
-import com.jnetfs.core.relay.JnetJNIConnector;
-import com.jnetfs.core.relay.impl.JnetAttributes;
-import com.jnetfs.core.relay.impl.JnetChmod;
-import com.jnetfs.core.relay.impl.JnetCreate;
-import com.jnetfs.core.relay.impl.JnetDelete;
-import com.jnetfs.core.relay.impl.JnetDestroy;
-import com.jnetfs.core.relay.impl.JnetFlush;
-import com.jnetfs.core.relay.impl.JnetHello;
-import com.jnetfs.core.relay.impl.JnetInit;
-import com.jnetfs.core.relay.impl.JnetList;
-import com.jnetfs.core.relay.impl.JnetMkdir;
-import com.jnetfs.core.relay.impl.JnetOpen;
-import com.jnetfs.core.relay.impl.JnetRead;
-import com.jnetfs.core.relay.impl.JnetReadLink;
-import com.jnetfs.core.relay.impl.JnetRelease;
-import com.jnetfs.core.relay.impl.JnetRename;
-import com.jnetfs.core.relay.impl.JnetRmdir;
-import com.jnetfs.core.relay.impl.JnetStatfs;
-import com.jnetfs.core.relay.impl.JnetSymLink;
-import com.jnetfs.core.relay.impl.JnetTouch;
-import com.jnetfs.core.relay.impl.JnetTruncate;
-import com.jnetfs.core.relay.impl.JnetWrite;
-import com.jnetfs.core.relay.impl.RequestImpl;
+import net.wazari.view.vfs.WebAlbumsFS;
 
 /**
  * Bridge Fuse-J to jnetFS
@@ -43,6 +21,8 @@ import com.jnetfs.core.relay.impl.RequestImpl;
  * @author jacky
  */
 public final class JnetFS implements Code {
+    
+    private JnetFSAdapter adapter = new WebAlbumsFS() ;
 
     /**
      * init file system
@@ -52,7 +32,8 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int init(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetInit.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        System.out.println("count"+adapter);
+        return adapter.init(jniEnv);
     }
 
     /**
@@ -63,7 +44,7 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int destroy(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetDestroy.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        return adapter.destroy(jniEnv);
     }
 
     /**
@@ -74,7 +55,7 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int attributes(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetAttributes.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        return adapter.attributes(jniEnv);
     }
 
     /**
@@ -85,7 +66,7 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int list(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetList.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        return adapter.list(jniEnv);
     }
 
     /**
@@ -96,7 +77,7 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int open(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetOpen.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        return adapter.open(jniEnv);
     }
 
     /**
@@ -107,18 +88,7 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int read(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetRead.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * write to file
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException JnetException
-     */
-    public int write(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetWrite.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        return adapter.read(jniEnv);
     }
 
     /**
@@ -129,18 +99,7 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int release(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetRelease.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * truncate a file
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return OK
-     * @throws JnetException JnetException
-     */
-    public int truncate(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetTruncate.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        return adapter.release(jniEnv);
     }
 
     /**
@@ -151,73 +110,7 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int flush(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetFlush.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * create a file
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException JnetException
-     */
-    public int create(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetCreate.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * create a directory
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException JnetException
-     */
-    public int mkdir(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetMkdir.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * remove a file
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException JnetException
-     */
-    public int delete(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetDelete.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * remove a directory
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException JnetException
-     */
-    public int rmdir(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetRmdir.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * rename a file
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException
-     */
-    public int rename(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetRename.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * change the time
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException
-     */
-    public int touch(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetTouch.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        return adapter.flush(jniEnv);
     }
 
     /**
@@ -228,40 +121,7 @@ public final class JnetFS implements Code {
      * @throws JnetException
      */
     public int statfs(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetStatfs.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * change the mode of a file
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException
-     */
-    public int chmod(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetChmod.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * create a symlink
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException
-     */
-    public int symlink(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetSymLink.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
-    }
-
-    /**
-     * read the content of link
-     *
-     * @param jniEnv JnetJNIConnector
-     * @return status
-     * @throws JnetException
-     */
-    public int readlink(JnetJNIConnector jniEnv) throws JnetException {
-        return JnetReadLink.instance.operate(RequestImpl.getInstance(jniEnv)).getErrCode();
+        return adapter.statfs(jniEnv);
     }
 
     /**
@@ -328,7 +188,7 @@ public final class JnetFS implements Code {
                 "JavaNET FileSystem 1.0 Copyright (C) 2009 - " + Calendar.getInstance().get(Calendar.YEAR) + " Jacky WU (hongzhi_wu@hotmail.com)\n"
                 + "This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
                 + "This is free software, and you are welcome to redistribute it\n"
-                + "under certain conditions; type `show c' for details.\n"
+                + "under certain conditions.\n"
                 + "see <http://www.gnu.org/licenses/>";
         System.out.println(licence);
         //setup parameter for java(fuse)
@@ -354,11 +214,7 @@ public final class JnetFS implements Code {
                 System.exit(0);
             }
         }
-        IRequest request = RequestImpl.getInstance("hello", new JnetJNIConnector());
-        if (!JnetHello.instance.operate(request).isOK()) {
-            System.out.println("Can't connect to JavaNET FileSystem server.");
-            System.exit(-1);
-        }
+
         //set java daemon
         if (fuseArgs.indexOf("-s") == -1) {
             fuseArgs.add("-s");
@@ -370,13 +226,16 @@ public final class JnetFS implements Code {
         try {
             //setup shutdown hook/unmount JnetFS
             final String mountPoint = mpoint;
+            final JnetFS jnet = new JnetFS();
             Runtime.getRuntime().addShutdownHook(new Thread() {
 
+                @Override
                 public void run() {
-                    new JnetFS().umount(mountPoint);
+                    System.out.println("Bye!");
+                    jnet.umount(mountPoint);
                 }
             });
-            System.exit(new JnetFS().mount(fargv, false));
+            System.exit(jnet.mount(fargv, false));
         } catch (Throwable ex) {
             ex.printStackTrace();
             System.exit(-1);
@@ -399,8 +258,9 @@ public final class JnetFS implements Code {
      * @param arg String
      */
     private native void umount(String path);
-
+    
     static {
         System.loadLibrary("JnetFS");
     }
+    
 }

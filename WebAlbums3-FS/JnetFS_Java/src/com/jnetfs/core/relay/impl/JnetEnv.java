@@ -7,10 +7,9 @@
  */
 package com.jnetfs.core.relay.impl;
 
+import com.jnetfs.core.relay.JnetJNIConnector;
 import java.io.InputStream;
 import java.util.Properties;
-
-import com.jnetfs.core.relay.JnetJNIConnector;
 
 /**
  * Jnet environment
@@ -212,7 +211,7 @@ public class JnetEnv {
      *
      * @return Properties
      */
-    protected final static Properties load() {
+    protected static Properties load() {
         Properties r = properties.get();
         if (r == null) {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();

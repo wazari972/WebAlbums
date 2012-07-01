@@ -9,13 +9,7 @@ package com.jnetfs.core.relay.impl;
 
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetList extends JnetOperate {
-
-    public static JnetList instance = new JnetList();
-
-    public JnetList() {
-        super("list");
-    }
+public class JnetList {
 
     public static void addName(JnetJNIConnector conn, int pos, String name) {
         conn.setString("file_" + pos, name);

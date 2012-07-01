@@ -9,13 +9,7 @@ package com.jnetfs.core.relay.impl;
 
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetAttributes extends JnetOperate {
-
-    public static JnetAttributes instance = new JnetAttributes();
-
-    public JnetAttributes() {
-        super("attributes");
-    }
+public class JnetAttributes {
 
     public static void setMode(JnetJNIConnector conn, int mode) {
         conn.setInteger("st_mode", mode);

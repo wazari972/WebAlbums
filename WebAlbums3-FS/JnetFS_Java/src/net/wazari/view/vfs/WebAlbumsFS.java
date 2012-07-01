@@ -1,23 +1,14 @@
-package com.jnetfs.vfs.httpfs;
+package net.wazari.view.vfs;
 
+import com.jnetfs.core.JnetException;
+import com.jnetfs.core.relay.JnetJNIConnector;
+import com.jnetfs.core.relay.impl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import com.jnetfs.core.JnetException;
-import com.jnetfs.core.relay.JnetJNIConnector;
-import com.jnetfs.core.relay.impl.ACLAdpater;
-import com.jnetfs.core.relay.impl.JnetAttributes;
-import com.jnetfs.core.relay.impl.JnetEnv;
-import com.jnetfs.core.relay.impl.JnetFSAdapter;
-import com.jnetfs.core.relay.impl.JnetFSImpl;
-import com.jnetfs.core.relay.impl.JnetList;
-import com.jnetfs.core.relay.impl.JnetOpen;
-import com.jnetfs.core.relay.impl.JnetRead;
-import com.jnetfs.core.relay.impl.JnetStatfs;
-
-public class JnetHttpFS extends JnetFSAdapter {
+public class WebAlbumsFS extends JnetFSAdapter {
     // opened files
 
     private FileInfo fileInfo = null;
@@ -27,19 +18,11 @@ public class JnetHttpFS extends JnetFSAdapter {
     private int retry = 5;
 
     static class FileInfo {
-
         public String fullname = null;
         public String shortname = null;
         public long length = 0;
         public long lastupdate = 0;
         public long reference = 0;
-    }
-
-    /**
-     * default constructor
-     */
-    public JnetHttpFS() {
-        super(new ACLAdpater());
     }
 
     /**
@@ -49,6 +32,7 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return status
      * @throws JnetException JnetException
      */
+    @Override
     public int init(JnetJNIConnector jniEnv) throws JnetException {
         debug("INIT");
         clientcount++;
@@ -99,6 +83,7 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return status
      * @throws JnetException JnetException
      */
+    @Override
     public int destroy(JnetJNIConnector jniEnv) throws JnetException {
         debug("DESTROY");
         clientcount--;
@@ -115,16 +100,17 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return status
      * @throws JnetException JnetException
      */
+    @Override
     public int attributes(JnetJNIConnector jniEnv) throws JnetException {
         String path = jniEnv.getString(JnetFSImpl.PATH);
         if (path == null || path.length() < 1) {
             return ENOENT;
         }
         debug("ATTRIBUTES\t" + path);
-        int st_mode = 0;
+        int st_mode;
         long st_nlink = 1;
-        long st_mtim = 0;
-        long st_size = 0;
+        long st_mtim;
+        long st_size;
         if ("/".equals(path)) {
             st_size = 1 << 12;
             st_mode = getRigtsMask(true);
@@ -149,6 +135,7 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return status
      * @throws JnetException JnetException
      */
+    @Override
     public int list(JnetJNIConnector jniEnv) throws JnetException {
         String path = jniEnv.getString(JnetFSImpl.PATH);
         if (path == null) {
@@ -170,6 +157,7 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return status
      * @throws JnetException JnetException
      */
+    @Override
     public int open(JnetJNIConnector jniEnv) throws JnetException {
         String path = jniEnv.getString(JnetFSImpl.PATH);
         if (path == null || path.length() < 1) {
@@ -202,6 +190,7 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return count
      * @throws JnetException JnetException
      */
+    @Override
     public int read(JnetJNIConnector jniEnv) throws JnetException {
         String path = jniEnv.getString(JnetFSImpl.PATH);
         if (path == null) {
@@ -244,7 +233,7 @@ public class JnetHttpFS extends JnetFSAdapter {
                 }
                 is.close();
                 JnetRead.setDate(jniEnv, buffer);
-                buffer = null;
+                
                 return (int) size;
             } catch (IOException ex) {
             }
@@ -259,6 +248,7 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return OK
      * @throws JnetException JnetException
      */
+    @Override
     public int release(JnetJNIConnector jniEnv) throws JnetException {
         String path = jniEnv.getString(JnetFSImpl.PATH);
         if (path == null) {
@@ -275,6 +265,7 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return status
      * @throws JnetException JnetException
      */
+    @Override
     public int flush(JnetJNIConnector jniEnv) throws JnetException {
         String path = jniEnv.getString(JnetFSImpl.PATH);
         debug("CLOSE\t" + path);
@@ -289,6 +280,7 @@ public class JnetHttpFS extends JnetFSAdapter {
      * @return status
      * @throws JnetException
      */
+    @Override
     public int statfs(JnetJNIConnector jniEnv) throws JnetException {
         String path = jniEnv.getString(JnetFSImpl.PATH);
         debug("STATFS\t" + path);

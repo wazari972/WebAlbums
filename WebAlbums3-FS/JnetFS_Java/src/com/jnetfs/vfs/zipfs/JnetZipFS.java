@@ -20,7 +20,6 @@ import java.util.zip.ZipFile;
 
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
-import com.jnetfs.core.relay.impl.ACLAdpater;
 import com.jnetfs.core.relay.impl.JnetAttributes;
 import com.jnetfs.core.relay.impl.JnetEnv;
 import com.jnetfs.core.relay.impl.JnetFSAdapter;
@@ -54,13 +53,6 @@ public class JnetZipFS extends JnetFSAdapter {
     // last file handle
     protected static long file_handle = 1000;
     protected static long clientcount = 0;
-
-    /**
-     * default constructor
-     */
-    public JnetZipFS() {
-        super(new ACLAdpater());
-    }
 
     /**
      * init file system

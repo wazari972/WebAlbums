@@ -8,17 +8,9 @@
 package com.jnetfs.core.relay.impl;
 
 import com.jnetfs.core.JnetException;
-import com.jnetfs.core.relay.IRequest;
-import com.jnetfs.core.relay.IResponse;
 import com.jnetfs.core.relay.JnetJNIConnector;
 
 public class JnetFSAdapter extends JnetFSImpl {
-
-    protected ACL acl = null;
-
-    public JnetFSAdapter(ACL acl) {
-        this.acl = acl;
-    }
 
     public int hello(JnetJNIConnector jniEnv) throws JnetException {
         return ESUCCESS;
@@ -102,20 +94,5 @@ public class JnetFSAdapter extends JnetFSImpl {
 
     public int readlink(JnetJNIConnector jniEnv) throws JnetException {
         return ENOSYS;
-    }
-
-    public final void checkRights(IRequest request) throws JnetException {
-        JnetJNIConnector conn = request.getConnector();
-        acl.isAllowed(conn.getString(JnetFSImpl.ROOT),
-                conn.getString("user"),
-                conn.getString("password"));
-    }
-
-    public IResponse ok() {
-        return ok(null);
-    }
-
-    public IResponse ok(JnetJNIConnector connector) {
-        return ResponseImpl.getInstance(ESUCCESS, connector);
     }
 }

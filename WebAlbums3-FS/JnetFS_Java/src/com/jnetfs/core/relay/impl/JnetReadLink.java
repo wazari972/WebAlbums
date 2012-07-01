@@ -9,13 +9,7 @@ package com.jnetfs.core.relay.impl;
 
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetReadLink extends JnetOperate {
-
-    public static JnetReadLink instance = new JnetReadLink();
-
-    public JnetReadLink() {
-        super("readlink");
-    }
+public class JnetReadLink {
 
     public static void setRealPath(JnetJNIConnector conn, String name) {
         conn.setString("realPath", name);

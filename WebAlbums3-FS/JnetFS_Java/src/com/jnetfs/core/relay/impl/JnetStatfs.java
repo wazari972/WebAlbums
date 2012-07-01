@@ -9,13 +9,7 @@ package com.jnetfs.core.relay.impl;
 
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetStatfs extends JnetOperate {
-
-    public static JnetStatfs instance = new JnetStatfs();
-
-    public JnetStatfs() {
-        super("statfs");
-    }
+public class JnetStatfs {
 
     public static void setNameMaxLen(JnetJNIConnector conn, long val) {
         conn.setLong("f_namemax", val);

@@ -10,13 +10,7 @@ package com.jnetfs.core.relay.impl;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetOpen extends JnetOperate {
-
-    public static JnetOpen instance = new JnetOpen();
-
-    public JnetOpen() {
-        super("open");
-    }
+public class JnetOpen {
 
     public static void setHandle(JnetJNIConnector conn, long handle) {
         conn.setLong(".fh", handle);

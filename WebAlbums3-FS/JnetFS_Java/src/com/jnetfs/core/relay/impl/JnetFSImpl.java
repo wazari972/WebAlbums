@@ -7,22 +7,15 @@
  */
 package com.jnetfs.core.relay.impl;
 
-import java.lang.reflect.Method;
-import java.util.Date;
-
 import com.jnetfs.core.Code;
-import com.jnetfs.core.JnetException;
-import com.jnetfs.core.relay.IOperate;
-import com.jnetfs.core.relay.IRequest;
-import com.jnetfs.core.relay.IResponse;
-import com.jnetfs.core.relay.JnetJNIConnector;
+import java.util.Date;
 
 /**
  * OS operation
  *
  * @author jacky
  */
-public abstract class JnetFSImpl implements IOperate, Code {
+public abstract class JnetFSImpl implements Code {
     //File system debug
 
     protected static final boolean debug = JnetEnv.getJnetdebug();
@@ -31,30 +24,6 @@ public abstract class JnetFSImpl implements IOperate, Code {
     public static final String TO = "OS_PATH_TO";
     public static final String ROOT = "OS_ROOT";
     public static final String JNET_FS = "OS_JNETFS";
-
-    /**
-     * I/O operate
-     *
-     * @param request IRequest
-     * @return IResponse
-     */
-    public final synchronized IResponse operate(IRequest request) {
-        String cmd = request.getCommand();
-        int r = 0;
-        try {
-            checkRights(request);
-            Method method = getClass().getMethod(cmd, JnetJNIConnector.class);
-            r = (Integer) method.invoke(this, request.getConnector());
-            method = null;
-        } catch (Throwable ex) {
-            if (ex instanceof JnetException) {
-                r = ((JnetException) ex).getCode();
-            } else {
-                r = EIO;
-            }
-        }
-        return ResponseImpl.getInstance(r, request.getConnector());
-    }
 
     /**
      * Debug output
@@ -66,12 +35,4 @@ public abstract class JnetFSImpl implements IOperate, Code {
             System.out.println(new Date() + "\t" + obj);
         }
     }
-
-    /**
-     * rights check
-     *
-     * @param request IRequest
-     * @throws JnetException JnetException
-     */
-    public abstract void checkRights(IRequest request) throws JnetException;
 }

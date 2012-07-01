@@ -10,14 +10,8 @@ package com.jnetfs.core.relay.impl;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetChmod extends JnetOperate {
-
-    public static JnetChmod instance = new JnetChmod();
-
-    public JnetChmod() {
-        super("chmod");
-    }
-
+public class JnetChmod {
+    
     public static int getMode(JnetJNIConnector conn) throws JnetException {
         return conn.getInteger("mode_t");
     }

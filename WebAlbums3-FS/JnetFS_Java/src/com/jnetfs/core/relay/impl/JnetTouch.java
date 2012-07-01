@@ -10,13 +10,7 @@ package com.jnetfs.core.relay.impl;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetTouch extends JnetOperate {
-
-    public static JnetTouch instance = new JnetTouch();
-
-    public JnetTouch() {
-        super("touch");
-    }
+public class JnetTouch {
 
     public static long getSecond(JnetJNIConnector conn) throws JnetException {
         return conn.getLong("timespec_0.tv_sec");
