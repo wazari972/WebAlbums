@@ -1,6 +1,3 @@
-var singlePage_cache = {"Choix": ""} ;
-//var ANCHOR_PREFIX = "#pg=" ;
-
 var inPlaceSinglePage = null;
 var inPlaceSinglePage_lock = null;
 
@@ -15,12 +12,6 @@ function prepareDisplayXSL() {
         async:false
     });
 }
-
-function singlePageCached(url) {
-    var cache = singlePage_cache[url] != undefined ;
-    return cache ;
-}
-
 
 function getCurrentPage() {
     return getCurrentSinglePage() ;
@@ -44,9 +35,10 @@ function Node_getElementById(node, id) {
     return null;
 }
 
-cached = {}
-counter = 0
+var cached = {}
+var counter = 0
 function reloadSinglePage(event) {
+    var data, left
     if (event.state != null)
         data = cached[event.state]
     else
@@ -116,46 +108,41 @@ function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {
         cached["first"] = $("#left")
     }
     
-    // Use object detection to find out if we have
-    // Firefox/Mozilla/Opera or IE XSLT support.
-    if (typeof XSLTProcessor != "undefined") {
-        var xsl_proc = new XSLTProcessor ();
-        xsl_proc.importStylesheet (displayXsl);
-
-        var newPage = xsl_proc.transformToFragment (xml_doc, document);
-        var newLeft = $(Node_getElementById(newPage, "left"))
-
+    var xsl_proc = new XSLTProcessor ();
+    xsl_proc.importStylesheet (displayXsl);
+    var newDocument = xsl_proc.transformToDocument (xml_doc);
+    
+    $(newDocument).ready(function() {    
+        var newLeft = $(Node_getElementById(newDocument, "left"))
+        
         left.after(newLeft)
+        
         left.remove()
         newLeft.show()
         left = newLeft ;
-        
-    } else {
-        alert("underfined XSLT processor") ;
-    }
-    
-    $("#gen_time").text(($(xml_doc).find("time").text()))
-    
-    enableSinglePage() ;
-    inPlaceSinglePage_lock = null ;
-    
-    cached[counter] = left
-    history.pushState(counter, /*title*/ null, url);
-    counter += 1
-    
-    
-    if (dont_scroll) {
-        //nothing to do
-    } else if (url.indexOf("#") > -1) {
-        anchor = url.substring(url.indexOf("#")+1)
-        if ($("#anchor_"+anchor) && $("#anchor_"+anchor).offset())
-            window.scrollTo(0, ($("#anchor_"+anchor).offset().top))
-    } else {
-        $(window).scrollTop(0) ;
-    }
-    
-    if (callbacks["SinglePage"] != undefined)
-        callbacks["SinglePage"]()
+
+        $("#gen_time").text(($(xml_doc).find("time").text()))
+
+        enableSinglePage() ;
+        inPlaceSinglePage_lock = null ;
+
+        cached[counter] = left
+        history.pushState(counter, /*title*/ null, url);
+        counter += 1
+
+        if (dont_scroll) {
+            //nothing to do
+        } else if (url.indexOf("#") > -1) {
+            var anchor = url.substring(url.indexOf("#")+1)
+            if ($("#anchor_"+anchor) && $("#anchor_"+anchor).offset())
+                window.scrollTo(0, ($("#anchor_"+anchor).offset().top))
+        } else {
+            $(window).scrollTop(0) ;
+        }
+
+        if (callbacks["SinglePage"] != undefined)
+            callbacks["SinglePage"]()
+    })
 }
 
 function enableSinglePage() {
@@ -193,7 +180,6 @@ function init_singlepage() {
     prepareDisplayXSL() ;
     enableSinglePage() ;
 }
-
 
 $(function(){
     // Revert to a previously saved state

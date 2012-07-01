@@ -10,7 +10,8 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import net.wazari.dao.entity.*;
+import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.Theme;
 import org.hibernate.annotations.GenericGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,12 @@ public class JPATheme implements Theme, Serializable {
     @JoinColumn(name = "Background", referencedColumnName = "ID", nullable = true)
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto background;
+    
+    @Column(name = "Lat", nullable = true, length = 20)
+    private String lat;
+
+    @Column(name = "Longitude", nullable = true, length = 20)
+    private String longitude;
     
     public JPATheme() {
     }
@@ -171,6 +178,7 @@ public class JPATheme implements Theme, Serializable {
         else
             return background.getId();
     }
+    
     @Transient
     public Integer backgroundId;
     public void setBackgroundId(Integer picture) {
@@ -183,7 +191,29 @@ public class JPATheme implements Theme, Serializable {
         hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
+    
+    @XmlAttribute
+    @Override
+    public String getLatitude() {
+        return lat;
+    }
 
+    @Override
+    public void setLatitude(String lat) {
+        this.lat = lat;
+    }
+
+    @XmlAttribute
+    @Override
+    public String getLongitude() {
+        return longitude;
+    }
+
+    @Override
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+    
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof JPATheme)) {

@@ -1,22 +1,20 @@
 package net.wazari.view.servlet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.servlet.http.HttpServletRequest;
-
 import java.io.IOException;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.ImageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(
     name = "Images",

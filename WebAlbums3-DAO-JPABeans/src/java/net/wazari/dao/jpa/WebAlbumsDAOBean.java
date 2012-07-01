@@ -6,28 +6,23 @@ package net.wazari.dao.jpa;
 
 import java.util.Iterator;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.annotation.security.RolesAllowed;
-import net.wazari.dao.exchange.ServiceSession;
-import net.wazari.dao.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.*;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
+import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Utilisateur;
+import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import net.wazari.dao.jpa.entity.JPATheme;
 import net.wazari.dao.jpa.entity.JPATheme_;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -78,7 +73,7 @@ public class WebAlbumsDAOBean {
             ListOrder order, Expression<?> field) {
         if (order == null) return ;
 
-        Order orderBy = null ;
+        Order orderBy ;
         switch(order) {
             case ASC: orderBy = cb.asc(field) ; break ;
             case DESC: orderBy = cb.desc(field) ; break ;

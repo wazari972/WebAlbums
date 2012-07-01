@@ -34,4 +34,10 @@ public interface Theme extends Serializable, EntityWithId {
     
     List<Album> getCarnetList();
     void setCarnetList(List<Carnet> carnetList);
+    
+    String getLatitude();
+    void setLatitude(String lat);
+    
+    String getLongitude();
+    void setLongitude(String longitude);
 }

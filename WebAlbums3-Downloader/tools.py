@@ -5,9 +5,9 @@ from lxml import etree
 import timeit
 from StringIO import StringIO
 
-STATIC_FOLDER = "/home/kevin/WebAlbums/WebAlbums3-Servlet/web/static"
+STATIC_FOLDER = "../WebAlbums3-Servlet/web/static"
 WA_URL = "http://127.0.0.1:8080/WebAlbums3.5-dev/"
-TARGET_PATH = "./static"
+TARGET_PATH = "./download"
 
 ABS_DATA_PATH = "/other/Web/"
 
@@ -47,13 +47,13 @@ def print_error_report():
     print "======================"
     for (e, url, name, response, content) in errors:
         print "Error %s" % e
-        print "For url: %s%s" % url, repr(name)
+        print "For url: %s%s" % (url, repr(name))
         print "Response: %s" % response
         print "------------"
     
 count = 0
 theme = None
-def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, make_index=False):
+def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, make_index=False, use_empty_xsl=False):
     global count
     
     name = name.encode("latin1")
@@ -90,7 +90,9 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
             else:
                 root_path = get_data_path_for_url()
             
-            content_to_full = displayXslt(content_to_return, RootPath="'%s'" % root_path)
+            xslt = displayXslt if not use_empty_xsl else emptyXslt
+            
+            content_to_full = xslt(content_to_return, RootPath="'%s'" % root_path)
             
             if not full:
                 content_to_save = etree.tostring(content_to_full, pretty_print=False, method="html")
@@ -154,7 +156,7 @@ def login(user, paswd, save_index=True, do_static=True, get_xslt=True, parse_and
     headers = {'Cookie': response['set-cookie']}
     data = dict(themeId=9)
     if get_xslt:
-        get_XSLT()
+        prepare_XSLTs()
     get_index(save=save_index, do_static=do_static, parse_and_transform=parse_and_transform)
     
 def get_choix(themeId, name="", make_index=False, want_static=True, want_background=True, parse_and_transform=True):
@@ -194,17 +196,23 @@ class PrefixResolver(etree.Resolver):
         return self.resolve_string(stylesheet, context)
     
 displayXslt = None
-def get_XSLT():
-    global displayXslt
+emptyXslt = None
+
+def prepare_XSLTs():
+    global displayXslt, emptyXslt
     if displayXslt is None:
-        print "Get stylesheets"
-        parser = etree.XMLParser()
-        parser.resolvers.add(PrefixResolver())
-        display = get_a_page("static/Display.xsl", parse_and_transform=False, save=False)
-        displayXml = etree.parse(StringIO(display), parser)
-        displayXslt = etree.XSLT(displayXml)
+        displayXslt = get_XSLT("static/Display.xsl")
+        emptyXslt = get_XSLT("static/Empty.xsl")
         
-    return displayXslt
+def get_XSLT(path):
+    print "Get stylesheets"
+    parser = etree.XMLParser()
+    parser.resolvers.add(PrefixResolver())
+    page = get_a_page(path, parse_and_transform=False, save=False)
+    xml = etree.parse(StringIO(page), parser)
+    xslt = etree.XSLT(xml)
+        
+    return xslt
     
 ########################################
 #######  ALBUMS ########################
@@ -240,7 +248,10 @@ def get_all_albums():
 ########################################
 #######  PHOTOS ########################
 ########################################
-        
+
+def get_a_visioSet(albmId, page=0, name="", full=False):
+    return get_a_page("Visio__%s_p%s__" % (albmId, page), name, full=full, use_empty_xsl=True)
+
 def get_a_photoSet(albmId, page=0, name="", full=False):
     return get_a_page("Photos__%s_p%s__" % (albmId, page), name, full=full)
     
@@ -254,6 +265,9 @@ def get_all_photos_of_photoSet(albumId, name="", full=False):
     if first is None:
         print "Couldn't fetch photos from %s/%s" % (repr(name), albumId)
         return
+    
+    get_a_visioSet(albumId, name=name, full=full)
+        
     page = first.find("photos").find("display").find("photoList").find("page")
     if page.get("last") is not None:
         nb_pages = int(page.get("last"))
@@ -263,6 +277,7 @@ def get_all_photos_of_photoSet(albumId, name="", full=False):
         nb_pages = 0
     for cur_page in range(1, nb_pages+1):
         current = get_a_photoSet(albumId, cur_page, name, full=full)
+        get_a_visioSet(albumId, cur_page, name, full=full)
         
         
 ########################################

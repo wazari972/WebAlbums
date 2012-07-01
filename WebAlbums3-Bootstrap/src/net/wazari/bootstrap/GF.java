@@ -11,8 +11,6 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.util.LinkedList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -27,11 +25,9 @@ import org.glassfish.api.ActionReport.MessagePart;
 import org.glassfish.api.admin.CommandRunner;
 import org.glassfish.api.admin.ParameterMap;
 import org.glassfish.api.deployment.DeployCommandParameters;
-import org.glassfish.api.embedded.ContainerBuilder;
-import org.glassfish.api.embedded.EmbeddedDeployer;
-import org.glassfish.api.embedded.EmbeddedFileSystem;
-import org.glassfish.api.embedded.LifecycleException;
-import org.glassfish.api.embedded.Server;
+import org.glassfish.internal.embedded.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -103,6 +99,10 @@ public class GF {
             String appName = null;
             DeployCommandParameters params = new DeployCommandParameters();
             appName = deployer.deploy(new File(cfg.webAlbumsEAR), params);
+            if (appName == null) {
+                log.info( "Couldn't deploy ...");
+                return;
+            }
             log.info( "Deployed {}", appName);
 
             long loadingTime = System.currentTimeMillis();
@@ -184,7 +184,9 @@ public class GF {
     }
 
     private static void createJDBC_add_Resources(Server server, String path) throws Throwable {
-        if (!new File(path).exists()) throw new IllegalArgumentException(path + " doesn't exists") ;
+        if (!new File(path).exists())
+            throw new IllegalArgumentException(path + " doesn't exists") ;
+        
         ParameterMap params = new ParameterMap();
         params.add("", path );
         asAdmin(server, "add-resources", params);

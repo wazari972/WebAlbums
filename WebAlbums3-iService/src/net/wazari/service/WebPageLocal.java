@@ -5,8 +5,6 @@
 
 package net.wazari.service;
 
-import net.wazari.service.exchange.xml.XmlAffichage;
-import net.wazari.service.exchange.xml.XmlPage;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
@@ -21,11 +19,9 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionLogin;
-import net.wazari.service.exchange.xml.common.XmlDate;
-import net.wazari.service.exchange.xml.common.XmlFrom;
-import net.wazari.service.exchange.xml.common.XmlLoginInfo;
-import net.wazari.service.exchange.xml.common.XmlUserList;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
+import net.wazari.service.exchange.xml.XmlAffichage;
+import net.wazari.service.exchange.xml.XmlPage;
+import net.wazari.service.exchange.xml.common.*;
 
 /**
  *

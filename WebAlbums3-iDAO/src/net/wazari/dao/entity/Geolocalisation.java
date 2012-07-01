@@ -16,8 +16,8 @@ public interface Geolocalisation extends Serializable {
     Tag getTag();
     void setTag(Tag tag);
             
-    String getLat();
-    void setLat(String lat);
+    String getLatitude();
+    void setLatitude(String lat);
     
     String getLongitude();
     void setLongitude(String longitude);

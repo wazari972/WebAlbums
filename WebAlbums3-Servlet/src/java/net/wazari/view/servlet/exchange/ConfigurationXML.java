@@ -4,24 +4,15 @@
  */
 package net.wazari.view.servlet.exchange;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.xml.bind.annotation.*;
+import net.wazari.common.util.XmlUtils;
+import net.wazari.service.exchange.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import net.wazari.service.exchange.Configuration;
-import net.wazari.common.util.XmlUtils;
 
 /**
  *

@@ -2,9 +2,6 @@ package net.wazari.view.servlet;
 
 
 import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletConfig;
@@ -17,6 +14,8 @@ import net.wazari.service.ThemeLocal;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.xml.XmlThemes;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @WebServlet(

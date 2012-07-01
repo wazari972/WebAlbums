@@ -4,6 +4,9 @@ function updateLocation(lat, lng) {
 
     $("#latID_2").val(lat) ;
     $("#lngID_2").val(lng) ;
+    
+    $("#latID_3").val(lat) ;
+    $("#lngID_3").val(lng) ;
 }
 
 function checkValidity(listId, validateBtId) {
@@ -21,6 +24,8 @@ function pleaseConfirm(form) {
 }
 
 function init_buttons() {
+    $(".map_latlng").attr('readonly', 'readonly')
+    
     $("#lstModGeo").change(function () {
         checkValidity("lstModGeo", "valModGeo")
     }) ;
@@ -69,7 +74,7 @@ function init_buttons() {
 var last_point = null;
 function init_map() {
     var map = loadMap("map_search")
-    return
+    
     var markers = new OpenLayers.Layer.Markers("Tags");
     map.addLayer(markers);
     

@@ -5,8 +5,6 @@
 
 package net.wazari.view.servlet.exchange;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.servlet.annotation.WebListener;
@@ -14,6 +12,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import net.wazari.service.SessionManagerLocal;
 import net.wazari.view.servlet.exchange.ViewSessionImpl.ViewSessionLoginImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Web application lifecycle listener.

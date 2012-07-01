@@ -42,9 +42,6 @@
             <br/>
             <xsl:value-of select="@name"/>
         </a>
-        <xsl:if test="not(/webAlbums/affichage/@static)">
-            <input type="submit" value="X"/>
-        </xsl:if>
     </form><br/><br/>
   </xsl:template>
 </xsl:stylesheet>

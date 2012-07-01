@@ -5,7 +5,6 @@
 
 package net.wazari.dao;
 
-import net.wazari.dao.exchange.ServiceSession;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +12,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Tag;
+import net.wazari.dao.exchange.ServiceSession;
 
 /**
  *

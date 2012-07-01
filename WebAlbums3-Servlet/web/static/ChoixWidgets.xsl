@@ -162,7 +162,7 @@
         		<xsl:attribute name="href">Photos__<xsl:value-of select="@id"/>_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
                   </xsl:if>
                   <xsl:if test="name(..) = 'topCarnets'">
-                        <xsl:attribute name="href"><xsl:value-of select="@id"/><xsl:if test="not(/webAlbums/affichage/@static)">_pc0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
+                        <xsl:attribute name="href">Carnet__<xsl:value-of select="@id"/><xsl:if test="not(/webAlbums/affichage/@static)">_pc0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
                   </xsl:if>		
                   <xsl:value-of select="name"/>
 	      </a>

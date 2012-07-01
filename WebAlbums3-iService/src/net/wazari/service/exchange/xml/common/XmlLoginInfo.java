@@ -23,4 +23,8 @@ public class XmlLoginInfo {
     public String user;
     public String role;
 
+    @XmlAttribute
+    public String latitude;
+    @XmlAttribute
+    public String longitude;
 }

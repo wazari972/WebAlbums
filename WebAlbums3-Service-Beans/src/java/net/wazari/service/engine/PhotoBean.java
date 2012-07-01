@@ -366,7 +366,7 @@ public class PhotoBean implements PhotoLocal {
                                                   ListOrder.ASC);
                 } else {
                     lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
-                                               ListOrder.ASC);
+                                               ListOrder.DESC);
                 }
                 for (Photo enrPhoto : lstP.subset) {
                     if (enrPhoto.getId() == photoId) {
@@ -389,12 +389,12 @@ public class PhotoBean implements PhotoLocal {
                                           ListOrder.ASC);
             } else {
                 lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
-                                           ListOrder.ASC);
+                                           ListOrder.DESC);
             }
         }        
 
         String degrees = "0";
-        Integer tag = null;
+        Integer[] tags = null;
         int countME = 0;
         boolean massEditParam = false;
         boolean reSelect = false;
@@ -403,25 +403,25 @@ public class PhotoBean implements PhotoLocal {
         XmlPhotoList output = new XmlPhotoList(lstP.subset.size()) ;
         Turn turn = null;
         if (vSession.isSessionManager()) {
-            try {
-                Action action = vSession.getAction();
-                if (Action.MASSEDIT == action) {
-                    turn = vSession.getMassEdit().getTurn();
-                    stopWatch.setTag(stopWatch.getTag()+".MASSEDIT."+turn) ;
-                    if (turn == Turn.LEFT) {
-                        degrees = "270";
-                    } else if (turn == Turn.RIGHT) {
-                        degrees = "90";
-                    } else if (turn == Turn.TAG || turn == Turn.UNTAG || turn == Turn.MVTAG) {
-                        tag = vSession.getMassEdit().getAddTag();
-                    } else if (turn == Turn.AUTHOR) {
-                        tag = vSession.getMassEdit().getAddTag();
-                    }
-                    massEditParam = true;
+            Action action = vSession.getAction();
+            if (Action.MASSEDIT == action) {
+                turn = vSession.getMassEdit().getTurn();
+                stopWatch.setTag(stopWatch.getTag()+".MASSEDIT."+turn) ;
+                if (turn == Turn.LEFT) {
+                    degrees = "270";
+                } else if (turn == Turn.RIGHT) {
+                    degrees = "90";
+                } else if (turn == Turn.TAG || turn == Turn.UNTAG || turn == Turn.MVTAG) {
+                    tags = vSession.getMassEdit().getAddTags();
+                } else if (turn == Turn.AUTHOR) {
+                    tags = vSession.getMassEdit().getAddTags();
                 }
-            } catch (NoSuchElementException e) {
-                output.exception = "NoSuchElementException: "+ tag;
-                reSelect = true;
+                massEditParam = true;
+                if ((turn == Turn.MVTAG || turn == Turn.AUTHOR) && tags.length != 1) {
+                    massEditParam = false;
+                    output.exception = "Please select only one tag for this action: "+ turn;
+                    turn = null;
+                }
             }
         }
 
@@ -442,23 +442,30 @@ public class PhotoBean implements PhotoLocal {
                     } else if (turn != null) {
                         String verb;
                         if (turn == Turn.TAG) {
-                            photoUtil.addTags(enrPhoto, new Integer[]{tag});
+                            photoUtil.addTags(enrPhoto, tags);
                             verb = "added";
                         } else if (turn == Turn.UNTAG) {
-                            photoUtil.removeTag(enrPhoto, tag);
+                            for (Integer tag : tags) {
+                                log.warn("remove "+tag);
+                                photoUtil.removeTag(enrPhoto, tag);
+                            }
                             verb = "removed";
                         } else if (turn == Turn.MVTAG) {
                             Integer rmTag = vSession.getMassEdit().getRmTag();
                             photoUtil.removeTag(enrPhoto, rmTag);
-                            photoUtil.addTags(enrPhoto, new Integer[]{tag});
+                            photoUtil.addTags(enrPhoto, tags);
                             verb = "added and tag " + rmTag + " removed";
                         } else if (turn == Turn.AUTHOR) {
-                            enrPhoto.setTagAuthor(tagDAO.find(tag));
+                            enrPhoto.setTagAuthor(tagDAO.find(tags[0]));
                             verb = "set as author";
                         } else {
                             verb = "nothinged";
                         }
-                        photo.message = "Tag " + tag + " " + verb + " from photo #" + enrPhoto.getId();
+                        String str = " ";
+                        for (Integer tag : tags)
+                            str += tag + " ";
+                                
+                        photo.message = "Tag" + str + " " + verb + " to photo #" + enrPhoto.getId();
                     }
                     countME++;
                 }
@@ -607,22 +614,19 @@ public class PhotoBean implements PhotoLocal {
             enrPhoto.setDescription(desc);
             output.desc_status = XmlPhotoFastEdit.Status.OK;
         }
-        
-        
-        Integer tagId = vSession.getTag();
-        Tag enrTag = tagDAO.find(tagId);
-        if (enrTag != null) {
-            try {
-                TagAction action = vSession.getTagAction();
-                if (action == null || action == TagAction.ADD) 
-                    photoUtil.addTags(enrPhoto, new Integer []{tagId});
-                else
-                    photoUtil.removeTag(enrPhoto, tagId);
+
+        try {
+            TagAction action = vSession.getTagAction();
+            if (action == TagAction.SET) {
+                photoUtil.setTags(enrPhoto, vSession.getTagSet());
                 output.tag_status = XmlPhotoFastEdit.Status.OK;
-            } catch (WebAlbumsServiceException ex) {
-                output.tag_msg = ex.getMessage();
+            } else {
+                output.tag_msg = "Not tag action selected";
                 output.tag_status = XmlPhotoFastEdit.Status.ERROR;
             }
+        } catch (WebAlbumsServiceException ex) {
+            output.tag_msg = ex.getMessage();
+            output.tag_status = XmlPhotoFastEdit.Status.ERROR;
         }
         
         Integer stars = vSession.getStars();
@@ -630,6 +634,8 @@ public class PhotoBean implements PhotoLocal {
             enrPhoto.setStars(stars);
             output.stars_status = XmlPhotoFastEdit.Status.OK;
         }
+        
+        photoDAO.pleaseFlush();
         
         return output;
     }

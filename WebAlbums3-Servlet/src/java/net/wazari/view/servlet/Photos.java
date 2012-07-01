@@ -1,10 +1,6 @@
 package net.wazari.view.servlet;
 
-import net.wazari.view.servlet.exchange.xml.XmlReturnTo;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -21,9 +17,12 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
-import net.wazari.view.servlet.exchange.xml.XmlPhotos;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import net.wazari.view.servlet.exchange.xml.XmlPhotos;
+import net.wazari.view.servlet.exchange.xml.XmlReturnTo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(
     name = "Photos",

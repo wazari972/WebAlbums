@@ -5,10 +5,10 @@
 
 package net.wazari.dao.jpa;
 
-import net.wazari.dao.*;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import net.wazari.dao.GeolocalisationFacadeLocal;
 import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.jpa.entity.JPAGeolocalisation;
 

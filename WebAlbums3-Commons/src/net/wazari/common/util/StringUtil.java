@@ -1,7 +1,5 @@
 package net.wazari.common.util;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class StringUtil {

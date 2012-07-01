@@ -16,11 +16,13 @@
         <link href="static/style.css"     rel="stylesheet" type="text/css" media="screen" />
         <link href="static/pagination.css" rel="stylesheet" type="text/css" media="screen" />
         <style type="text/css">body {<xsl:if test="not(/webAlbums/affichage/@background)">background: #62993B url(static/images/back_all.jpg) fixed no-repeat;</xsl:if><xsl:if test="/webAlbums/affichage/@background"     >background: #62993B url(background<xsl:if test="/webAlbums/affichage/@static">__<xsl:value-of select="/webAlbums/loginInfo/themeid" />__<xsl:value-of select="/webAlbums/loginInfo/theme" /></xsl:if>.jpg) fixed no-repeat;</xsl:if>}</style>
+        <link type="text/css"  rel="stylesheet" href="static/scripts/lib/jquery/css/chosen.css"/>
       </head>
       <body>
         <script type="text/javascript"> var directAccess = false; <xsl:if test="/webAlbums/affichage/@directAccess"> directAccess = true; root_path = "<xsl:value-of select="$RootPath" />"; photo_folder = "<xsl:value-of select="/webAlbums/affichage/photo_folder" />"; mini_folder = "<xsl:value-of select="/webAlbums/affichage/mini_folder" />"; </xsl:if> var staticAccess = false; <xsl:if test="/webAlbums/affichage/@static"> staticAccess = true ;</xsl:if></script>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"/>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"/>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-chosen.js"/>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"/>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.ezpz_tooltip.js"/>
         
@@ -125,14 +127,17 @@
                 
                 <script type="text/javascript" src="static/scripts/tools.js"/>
                 
-                <xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix or webAlbums/config">
+                <!--<xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix or webAlbums/config">-->
                     <!--<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
                     <script src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false"></script>-->
                     <script src="http://openlayers.org/api/OpenLayers.js"></script>
                     <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
-                    <script src="http://api.ign.fr/geoportail/api/js/1.3.0/GeoportalMin.js?key=1454623408623333731" charset="utf-8" ></script>
+                    <script src="http://api.ign.fr/geoportail/api/js/1.3.0/GeoportalMin.js" charset="utf-8" ></script>
                     <script src="static/scripts/OpenLayerFunctions.js"/>
-                </xsl:if>
+                    <xsl:if test="/webAlbums/loginInfo/@latitude and /webAlbums/loginInfo/@longitude">
+                        <script type="text/javascript"> mapCenter.lat = <xsl:value-of select="/webAlbums/loginInfo/@latitude" />; mapCenter.lon = <xsl:value-of select="/webAlbums/loginInfo/@longitude" /></script>
+                    </xsl:if>
+                <!--</xsl:if>-->
                 
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
                     <script type="text/javascript" src="static/scripts/Photos.js"/>
@@ -144,10 +149,10 @@
                     <script type="text/javascript" src="static/scripts/Config.js"/>
                 </xsl:if>
                 <xsl:if test="/webAlbums/choix">
-                    <link type="text/css" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" rel="stylesheet" media="screen"/>
+                    <link   type="text/css" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" rel="stylesheet" media="screen"/>
                     <script type="text/javascript" src="static/scripts/lib/raphael.js"/>
                     <script type="text/javascript" src="static/scripts/lib/morris.js"/>
-                    <script src="static/scripts/Choix.js" type='text/javascript'/>
+                    <script type="text/javascript" src="static/scripts/Choix.js"/>
                 </xsl:if>
 	      </div>
 	      <div id="footer">

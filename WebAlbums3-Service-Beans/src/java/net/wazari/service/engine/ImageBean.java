@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import net.wazari.service.exchange.ViewSessionImages;
-
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,15 +12,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
-import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.common.util.StringUtil;
 import net.wazari.dao.GpxFacadeLocal;
+import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Gpx;
@@ -32,16 +26,18 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
-
 import net.wazari.service.ImageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.util.system.SystemTools;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ImageBean implements ImageLocal {

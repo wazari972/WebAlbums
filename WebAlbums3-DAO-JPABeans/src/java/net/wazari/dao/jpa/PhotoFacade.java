@@ -5,33 +5,26 @@
 package net.wazari.dao.jpa;
 
 import java.util.Collection;
-import net.wazari.dao.exchange.ServiceSession;
-import net.wazari.dao.*;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ListJoin;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import net.wazari.dao.AlbumFacadeLocal;
+import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
-import net.wazari.dao.jpa.entity.JPAAlbum_;
-import net.wazari.dao.jpa.entity.JPAPhoto;
-import net.wazari.dao.jpa.entity.JPAPhoto_;
-import net.wazari.dao.jpa.entity.JPATagPhoto;
-import net.wazari.dao.jpa.entity.JPATagPhoto_;
+import net.wazari.dao.jpa.entity.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -142,6 +135,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
                 webDAO.getRestrictionToCurrentTheme(session, 
                                     p.get(JPAPhoto_.album).get(JPAAlbum_.theme))
                 );
+        
         cq.groupBy(p.get(JPAPhoto_.id)) ;
         webDAO.setOrder(cq, cb, order, p.get(JPAPhoto_.path)) ;
         
@@ -207,5 +201,10 @@ public class PhotoFacade implements PhotoFacadeLocal {
         } catch (NoResultException e) {
             return null ;
         }
+    }
+    
+    @Override
+    public void pleaseFlush() {
+        em.flush();
     }
 }

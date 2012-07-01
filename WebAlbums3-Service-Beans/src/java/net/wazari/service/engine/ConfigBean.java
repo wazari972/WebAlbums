@@ -3,35 +3,17 @@ package net.wazari.service.engine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
-import net.wazari.dao.GeolocalisationFacadeLocal;
-import net.wazari.dao.PersonFacadeLocal;
-import net.wazari.dao.TagFacadeLocal;
-import net.wazari.dao.TagPhotoFacadeLocal;
-import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.util.system.FilesFinder;
-import net.wazari.dao.ThemeFacadeLocal;
-
+import net.wazari.dao.*;
 import net.wazari.dao.entity.*;
-
 import net.wazari.service.ConfigLocal;
-import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.xml.config.XmlConfigDelTag;
-import net.wazari.service.exchange.xml.config.XmlConfigDelTheme;
-import net.wazari.service.exchange.xml.config.XmlConfigImport;
-import net.wazari.service.exchange.xml.config.XmlConfigLinkTag;
-import net.wazari.service.exchange.xml.config.XmlConfigModGeo;
-import net.wazari.service.exchange.xml.config.XmlConfigModMinor;
-import net.wazari.service.exchange.xml.config.XmlConfigModPers;
-import net.wazari.service.exchange.xml.config.XmlConfigModTag;
-import net.wazari.service.exchange.xml.config.XmlConfigModVis;
-import net.wazari.service.exchange.xml.config.XmlConfigNewTag;
+import net.wazari.service.exchange.ViewSessionConfig;
+import net.wazari.service.exchange.xml.config.*;
+import net.wazari.util.system.FilesFinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ConfigBean implements ConfigLocal {
@@ -111,6 +93,30 @@ public class ConfigBean implements ConfigLocal {
     }
 
     @Override
+    public XmlConfigSetHome treatSETHOME(ViewSessionConfig vSession)
+            throws WebAlbumsServiceException {
+        XmlConfigSetHome output = new XmlConfigSetHome();
+        
+        String lng = vSession.getLng();
+        String lat = vSession.getLat();
+        
+        if (lng == null || lat == null || lng.length() == 0 || lat.length() == 0) {
+            output.exception = "La geoloc " + lng + "/" + lat + " n'est pas correcte..." ;
+            return output;
+        }
+            
+        Theme enrTheme = vSession.getTheme();
+        enrTheme.setLatitude(lat);
+        enrTheme.setLongitude(lng);
+        
+        themeDAO.edit(enrTheme);
+        
+        output.newLngLat = lng + "/" + lat ;
+
+        return output ;
+    }
+    
+    @Override
     public XmlConfigModGeo treatMODGEO(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigModGeo output = new XmlConfigModGeo();
@@ -130,14 +136,14 @@ public class ConfigBean implements ConfigLocal {
             return output ;
         }
 
-        if (lng == null || lat == null || lng == "" || lat == "") {
+        if (lng == null || lat == null || lng.length() == 0 || lat.length() == 0) {
             output.exception = "La geoloc " + lng + "/" + lat + " n'est pas correcte..." ;
             return output;
         }
 
         Geolocalisation enrGeo = enrTag.getGeolocalisation();
         enrGeo.setLongitude(lng);
-        enrGeo.setLat(lat);
+        enrGeo.setLatitude(lat);
         geoDAO.edit(enrGeo);
 
         output.newLngLat = lng + "/" + lat ;
@@ -322,7 +328,7 @@ public class ConfigBean implements ConfigLocal {
             Geolocalisation geo = geoDAO.newGeolocalisation();
             geo.setTag(enrTag);
             geo.setLongitude(longit);
-            geo.setLat(lat);
+            geo.setLatitude(lat);
             geoDAO.create(geo);
         }
 

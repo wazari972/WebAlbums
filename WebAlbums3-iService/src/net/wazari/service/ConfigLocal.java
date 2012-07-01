@@ -5,21 +5,12 @@
 
 package net.wazari.service;
 
-import net.wazari.service.exchange.xml.config.XmlConfigDelTag;
-import net.wazari.service.exchange.xml.config.XmlConfigImport;
-import net.wazari.service.exchange.xml.config.XmlConfigDelTheme;
-import net.wazari.service.exchange.xml.config.XmlConfigNewTag;
-import net.wazari.service.exchange.xml.config.XmlConfigModVis;
-import net.wazari.service.exchange.xml.config.XmlConfigLinkTag;
-import net.wazari.service.exchange.xml.config.XmlConfigModGeo;
-import net.wazari.service.exchange.xml.config.XmlConfigModTag;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionConfig;
-import net.wazari.service.exchange.xml.config.XmlConfigModMinor;
-import net.wazari.service.exchange.xml.config.XmlConfigModPers;
+import net.wazari.service.exchange.xml.config.*;
 
 /**
  *
@@ -34,6 +25,9 @@ public interface ConfigLocal {
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlConfigImport treatIMPORT(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
+    XmlConfigSetHome treatSETHOME(ViewSessionConfig vSession) throws WebAlbumsServiceException;
+    
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlConfigModGeo treatMODGEO(ViewSessionConfig vSession) throws WebAlbumsServiceException;
 

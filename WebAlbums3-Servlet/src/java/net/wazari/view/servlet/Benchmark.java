@@ -1,9 +1,6 @@
 package net.wazari.view.servlet;
 
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -19,6 +16,8 @@ import net.wazari.service.exchange.ViewSessionBenchmark;
 import net.wazari.service.exchange.ViewSessionBenchmark.BenchAction;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlBenchmark;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(
     name = "Benchmark",

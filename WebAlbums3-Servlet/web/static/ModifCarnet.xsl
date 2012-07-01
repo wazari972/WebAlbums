@@ -24,7 +24,8 @@
       </div>
       <div class="content">
 	<div class="body">
-	  <form method='post'>
+	  <form method='post' id="formModifCarnet">
+              <!-- &carnet=..# must be last, see ModifCarnet.js -->
 	    <xsl:attribute name="action">Carnets?&amp;page=<xsl:value-of select="@page" />&amp;carnet=<xsl:value-of select="@id" />#<xsl:value-of select="@id" /></xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="nom">Nom:</label>

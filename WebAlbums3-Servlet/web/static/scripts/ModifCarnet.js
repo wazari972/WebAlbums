@@ -25,7 +25,7 @@ function saveCarnet(silent) {
         silent = false
     
     //id = getParameterByName("carnet")
-    id = $("#carnetNom").attr("rel")
+    var id = $("#carnetNom").attr("rel")
     $.post("Carnets?action=SAVE", 
         {carnet : id,
          nom : $("#carnetNom").val(),
@@ -39,20 +39,32 @@ function saveCarnet(silent) {
         },
         function(xml) {
             xml = $(xml)
-            
             setTimeout(function(){$(".carnetSave").val("Enregistrer")}, 5000);
             if (xml.find("exception").text() != "") {
                 if (!silent)
                     alert(">"+xml.find("exception").text()+"<")
-                $(".carnetSave").val("Error...")
+                $(".carnetSave").val("Error... "+xml.find("exception").text())
+            } else {
+                if ($("#carnetNom").attr("rel") == "") {
+                    id = xml.find("message").text()
+                    $("#carnetNom").attr("rel", id)
+                    var action = $("#formModifCarnet").attr("action")
+                    var idx = action.indexOf("carnet=#")
+                    if (idx != -1) {
+                        var hashIdx = action.indexOf("#")
+                        action = action.substring(0, hashIdx) + id + action.substring(hashIdx)
+                        $("#formModifCarnet").attr("action", action)
+                    }
+                }
             }
+            
             autoSaveLocal()
             $(".carnetSave").val("Saved!")
         }
      );
 }
 
-autosave_timer = undefined
+var autosave_timer = undefined
 function toggleAutoSaveCarnet() {
     if ($(this).attr("checked") == "checked") {
         $(".carnetAutoSave").attr("checked", "checked")

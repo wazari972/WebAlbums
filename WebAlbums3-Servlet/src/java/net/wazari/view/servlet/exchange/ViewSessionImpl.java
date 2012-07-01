@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,32 +20,23 @@ import javax.servlet.http.HttpSession;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
-import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Special;
-import net.wazari.service.exchange.ViewSessionLogin;
-import net.wazari.service.exchange.ViewSessionSession;
-import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
-import net.wazari.service.exchange.ViewSessionBenchmark;
-import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
-import net.wazari.service.exchange.ViewSessionConfig;
-import net.wazari.service.exchange.ViewSessionDatabase;
-import net.wazari.service.exchange.ViewSessionImages;
-import net.wazari.service.exchange.ViewSessionMaint;
-import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
-import net.wazari.service.exchange.ViewSessionTag;
+import net.wazari.service.exchange.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -353,8 +342,8 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public Integer getAddTag() {
-        return getInteger("addTag");
+    public Integer[] getAddTags() {
+        return getIntArray("addTag");
     }
 
     @Override
@@ -365,6 +354,12 @@ public class ViewSessionImpl implements
     @Override
     public String getGpxDescr(Integer id) {
         return getString("gpx_descr_" + id);
+    }
+    
+    @Override
+    public boolean getGpxSuppr(Integer id) {
+        String suppr = getString("suppr") ;
+        return "supprimer ce GPX".equals(suppr);
     }
 
     @Override
@@ -382,6 +377,11 @@ public class ViewSessionImpl implements
         return getInteger("albmPage");
     }
 
+    @Override
+    public Integer[] getTagSet() {
+        return getIntArray("tagSet");
+    }
+    
     @Override
     public Integer[] getTagAsked() {
         return getIntArray("tagAsked");
@@ -612,13 +612,13 @@ public class ViewSessionImpl implements
                 log.info( "Unknown class {} for parameter {}", new Object[]{type, name});
             }
         } catch (ClassCastException e) {
-            log.info( "Can''t cast value {} into class {}", new Object[]{val, type});
+            log.warn( "Can''t cast value {} into class {}", new Object[]{val, type});
         } catch (NullPointerException e) {
-            log.info( "NullPointerException with {} for class {} ({})", new Object[]{val, type, name});
+            log.warn( "NullPointerException with {} for class {} ({})", new Object[]{val, type, name});
         } catch (NumberFormatException e) {
-            log.info( "NumberFormatException with  '{}' for class {} ({})", new Object[]{val, type, name});
+            log.warn( "NumberFormatException with  '{}' for class {} ({})", new Object[]{val, type, name});
         } catch (IllegalArgumentException e) {
-            log.info( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
+            log.warn( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
         }
         log.debug( "getObject param:{} type:{} returned {}", new Object[]{name, type, ret});
         return ret;

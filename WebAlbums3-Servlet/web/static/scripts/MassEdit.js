@@ -11,38 +11,27 @@ function selectAll() {
 }
 
 function validMass() {
-    var selected = false ;
-
-    var chks = document.getElementsByTagName("input");
-    for(var i = 0; i < chks.length && !selected; i++) {
-        if (chks[i].type == 'checkbox' && chks[i].name.match("chk")) {
-            if (chks[i].checked) selected = true ;
-        }
-    }
-
-    if (!selected) {
-        alert("Pas de photo selectionnée...");
-        return ;
-    }
-
-    selected = false ;
-    var turn = document.getElementsByName("turn");
-    for(var j = 0; j < turn.length && !selected; j++) {
-        if (turn[j].checked) {
-            if (turn[j].value.match("tag")) {
-                if (document.getElementById("massTagList").value != -1) {
-                    selected = true ;
-                }
-            }
-            else {
-                selected = true ;
-            }
-        }
-    }
-    if (!selected) {
+    if ($(".massedit_action:checked").size() == 0) {
         alert("Pas d'action à effectuer / tag selectionné ...") ;
         return ;
     }
+        
+    var size_photos = $(".massedit_chkbox:checked").size()
+    if (size_photos == 0) {
+        alert("Pas de photo selectionnée ...");
+        return ;
+    }
+    var size_tags = $("#massTagList option:selected").size()
+    if (size_tags == 0 && $(".massedit_tag").is(":checked")) {
+        alert("Pas de tag selectionné...");
+        return ;
+    }
+    
+    if (($("#turnAuthor").is(":checked") || $("#turnMove").is(":checked")) && size_tags != 1) {
+        alert("Selectionnez seulement un tag ...");
+        return ;
+    }
+    
     document.forms[0].submit()
 }
 
@@ -62,7 +51,6 @@ function check_massedit() {
         $(".massedit_chk").addClass("edit")
         $(this).parent().show()
     }
-    
 }
 
 function init_mass() {

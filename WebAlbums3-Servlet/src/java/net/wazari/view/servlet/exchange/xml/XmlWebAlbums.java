@@ -7,14 +7,9 @@ package net.wazari.view.servlet.exchange.xml;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import net.wazari.service.exchange.xml.XmlAffichage;
-import net.wazari.service.exchange.xml.XmlChoix;
-import net.wazari.service.exchange.xml.config.XmlConfig;
-import net.wazari.service.exchange.xml.XmlImage;
-import net.wazari.service.exchange.xml.XmlLogin;
-import net.wazari.service.exchange.xml.XmlMaint;
-import net.wazari.service.exchange.xml.XmlThemes;
+import net.wazari.service.exchange.xml.*;
 import net.wazari.service.exchange.xml.common.XmlLoginInfo;
+import net.wazari.service.exchange.xml.config.XmlConfig;
 
 /**
  *

@@ -12,9 +12,9 @@ import com.drew.metadata.exif.ExifReader;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
+import net.wazari.common.plugins.GenericImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.wazari.common.plugins.GenericImporter;
 
 /**
  *

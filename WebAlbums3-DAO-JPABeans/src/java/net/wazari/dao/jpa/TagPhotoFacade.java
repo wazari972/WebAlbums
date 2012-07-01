@@ -6,10 +6,6 @@ package net.wazari.dao.jpa;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import net.wazari.dao.entity.Carnet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import net.wazari.dao.*;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -18,17 +14,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import net.wazari.dao.entity.Album;
-import net.wazari.dao.entity.Photo;
-import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.TagPhoto;
-import net.wazari.dao.entity.TagTheme;
-import net.wazari.dao.jpa.entity.JPAPhoto;
-import net.wazari.dao.jpa.entity.JPAPhoto_;
-import net.wazari.dao.jpa.entity.JPATag;
-import net.wazari.dao.jpa.entity.JPATagPhoto;
-import net.wazari.dao.jpa.entity.JPATagPhoto_;
-import net.wazari.dao.jpa.entity.JPATag_;
+import net.wazari.dao.*;
+import net.wazari.dao.entity.*;
+import net.wazari.dao.jpa.entity.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

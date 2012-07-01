@@ -5,12 +5,11 @@
 
 package net.wazari.service;
 
-import net.wazari.service.exchange.ViewSessionCarnet;
-import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;

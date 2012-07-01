@@ -7,12 +7,12 @@ package net.wazari.plugin;
 
 import java.io.File;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.wazari.common.plugins.GenericImporter;
 import net.wazari.common.plugins.Importer.Capability;
 import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.Importer.SanityStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

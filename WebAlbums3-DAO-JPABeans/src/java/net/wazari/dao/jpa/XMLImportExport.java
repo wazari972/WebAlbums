@@ -7,31 +7,20 @@ package net.wazari.dao.jpa;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.bind.JAXBException;
-import net.wazari.dao.AlbumFacadeLocal;
-import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.dao.TagFacadeLocal;
-import net.wazari.dao.TagPhotoFacadeLocal;
-import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.dao.ThemeFacadeLocal;
-import net.wazari.dao.UtilisateurFacadeLocal;
-import net.wazari.dao.jpa.entity.xml.WebAlbumsXML;
-import net.wazari.common.util.XmlUtils ;
-import net.wazari.dao.*;
+import net.wazari.common.util.XmlUtils;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
+import net.wazari.dao.*;
 import net.wazari.dao.entity.*;
 import net.wazari.dao.jpa.entity.*;
+import net.wazari.dao.jpa.entity.xml.WebAlbumsXML;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  *
  * @author kevinpouget
@@ -118,7 +107,7 @@ public class XMLImportExport implements ImportExporter {
                         Geolocalisation newGeo = geoDAO.newGeolocalisation();
                         newGeo.setTag(newTag);
                         
-                        newGeo.setLat(enrGeo.getLat());
+                        newGeo.setLatitude(enrGeo.getLatitude());
                         newGeo.setLongitude(enrGeo.getLongitude());
                         
                         newTag.setGeolocalisation(newGeo);
@@ -161,12 +150,12 @@ public class XMLImportExport implements ImportExporter {
                     log.info( "Theme: {}", enrTheme.getNom()) ;
                     
                     Theme newTheme = themeDAO.newTheme(enrTheme.getId(), enrTheme.getNom());
+                    newTheme.setLatitude(enrTheme.getLatitude());
+                    newTheme.setLongitude(enrTheme.getLongitude());
                     newTheme = em.merge(newTheme) ;
                     
                     if (enrTheme.getAlbumList() != null) {
                         for (JPAAlbum enrAlbum : (List<JPAAlbum>) enrTheme.getAlbumList()) {
-                            //log.info( "Album: {}", enrAlbum.getNom()) ;
-
                             Album newAlbum = albumDAO.newAlbum();
                             newAlbum.setId(enrAlbum.getId());
                             newAlbum.setTheme(newTheme);

@@ -5,55 +5,41 @@ import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import java.io.InputStream;
-import java.text.ParseException;
-import net.wazari.service.exchange.xml.common.XmlFrom;
-import net.wazari.service.exchange.xml.common.XmlLoginInfo;
 import java.security.Principal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-
-import net.wazari.dao.TagFacadeLocal;
-import net.wazari.dao.TagPhotoFacadeLocal;
-import net.wazari.dao.TagThemeFacadeLocal;
-import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.dao.*;
 import net.wazari.dao.entity.*;
-
+import net.wazari.dao.entity.facades.EntityWithId;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
-
+import net.wazari.service.entity.util.MapPoint;
+import net.wazari.service.entity.util.MapPoint.Point;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.util.google.MapPoint;
-import net.wazari.service.util.google.MapPoint.Point;
-
-import net.wazari.dao.ThemeFacadeLocal;
-import net.wazari.dao.entity.facades.EntityWithId;
-import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlPage;
-import net.wazari.service.exchange.xml.common.XmlDate;
-import net.wazari.service.exchange.xml.common.XmlUser;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
+import net.wazari.service.exchange.xml.common.*;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.ListType;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhat;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
-import net.wazari.service.exchange.xml.common.XmlUserList;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.ListType;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class WebPageBean implements WebPageLocal {
@@ -158,8 +144,10 @@ public class WebPageBean implements WebPageLocal {
         Theme enrTheme = vSession.getTheme();
         Utilisateur enrUtil = vSession.getUser() ;
         Principal principal = vSession.getUserPrincipal() ;
+        
         login.theme = (enrTheme == null ? null : enrTheme.getNom());
         login.themeid = (enrTheme == null ? null : enrTheme.getId());
+        
         if (enrUtil != null) {
             login.role = enrUtil.getNom() ;
         }
@@ -176,6 +164,11 @@ public class WebPageBean implements WebPageLocal {
             login.root = true ;
         }
 
+        if (enrTheme != null) {
+            login.latitude = enrTheme.getLatitude();
+            login.longitude = enrTheme.getLongitude();
+        }
+        
         return login;
     }
 
@@ -259,7 +252,7 @@ public class WebPageBean implements WebPageLocal {
             throws WebAlbumsServiceException 
     {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
-        List<Tag> tags = null;
+        List<Tag> tags;
 
         XmlWebAlbumsList output = new XmlWebAlbumsList();
         boolean geoOnly = mode == Mode.TAG_GEO;
@@ -349,7 +342,7 @@ public class WebPageBean implements WebPageLocal {
                             photoPath = enrTagTh.getPhoto().getPath(true);
                         }
                         p = new Point(enrTag.getNom(), enrTag.getId(),
-                                enrGeo.getLat(),
+                                enrGeo.getLatitude(),
                                 enrGeo.getLongitude(),
                                 photoId, photoPath);
                         nom = enrTag.getNom();
@@ -371,7 +364,7 @@ public class WebPageBean implements WebPageLocal {
                     if (enrTag.getGeolocalisation() != null) {
                         XmlWebAlbumsTagWhere tagGeo = (XmlWebAlbumsTagWhere) tag;
                         tagGeo.longit = enrTag.getGeolocalisation().getLongitude();
-                        tagGeo.lat = enrTag.getGeolocalisation().getLat();
+                        tagGeo.lat = enrTag.getGeolocalisation().getLatitude();
                     }
                 }
             }
@@ -503,16 +496,16 @@ public class WebPageBean implements WebPageLocal {
         }
         
         Calendar dob = Calendar.getInstance();
-        Calendar day = Calendar.getInstance();  
-        day.setTime(ref);
+        Calendar getday = Calendar.getInstance();  
+        getday.setTime(ref);
         int age ;
         for (XmlWebAlbumsTagWho person: lst.who) {
             if (person.birthdate != null) {
                 try {
                     Date birth = inputDate.parse(person.birthdate);
                     dob.setTime(birth);
-                    age = day.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
-                    if (day.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))  
+                    age = getday.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
+                    if (getday.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))  
                         age--;
                     person.birthdate = Integer.toString(age);
                 } catch (ParseException ex) {

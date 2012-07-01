@@ -2,23 +2,17 @@ package net.wazari.service.engine;
 
 import java.util.Arrays;
 import javax.ejb.EJB;
-
 import javax.ejb.Stateless;
-
 import net.wazari.common.exception.WebAlbumsException.ErrorType;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
 import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.service.AlbumLocal;
-import net.wazari.service.exchange.Configuration;
-import net.wazari.service.exchange.ViewSessionMaint;
-import net.wazari.service.exchange.ViewSessionMaint.MaintAction;
 import net.wazari.service.MaintLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
-import net.wazari.service.exchange.ViewSessionTag;
+import net.wazari.service.exchange.ViewSessionMaint.MaintAction;
+import net.wazari.service.exchange.*;
 import net.wazari.service.exchange.xml.XmlMaint;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;

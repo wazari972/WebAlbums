@@ -1,22 +1,20 @@
 package net.wazari.view.servlet;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.io.IOException;
-
 import java.security.Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.xml.XmlLogin;
 import net.wazari.view.servlet.DispatcherBean.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(
     name = "Users",

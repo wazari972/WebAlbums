@@ -5,7 +5,6 @@
 
 package net.wazari.common.plugins;
 
-import java.io.File;
 import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.Importer.SanityStatus;
 

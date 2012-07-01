@@ -52,20 +52,20 @@
           <input type='button' class="edit edit_visible massedit_selectall" value="Toutes"/>
 	  <table class="massedit_box">
 	    <tr>
-	      <td><input id="turnRight" type='radio' name='turn' value='RIGHT'/></td>
+	      <td><input id="turnRight" type='radio' name='turn' class="massedit_action" value='RIGHT'/></td>
 	      <td><label for="turnRight">Tourner vers la droite</label></td>
 	    </tr>
 	    <tr>
-	      <td><input id="turnLeft" type='radio' name='turn' value='LEFT' /></td>
+	      <td><input id="turnLeft" type='radio' name='turn' class="massedit_action" value='LEFT' /></td>
 	      <td><label for="turnLeft">Tourner vers la gauche</label></td>
 	    </tr>
 	    <tr><td>&#160;</td></tr>
 	    <tr>
-	      <td><input id="turnTag" type='radio' name='turn' value='TAG' /></td>
+	      <td><input id="turnTag" type='radio' name='turn' class="massedit_action massedit_tag" value='TAG' /></td>
 	      <td><label for="turnTag">Tagger avec</label></td>
 	      <td rowspan='3'>
 		<xsl:apply-templates select="tagList">
-		  <xsl:with-param name="style">list</xsl:with-param>
+		  <xsl:with-param name="style">multiple</xsl:with-param>
 		  <xsl:with-param name="name">addTag</xsl:with-param>
 		  <xsl:with-param name="id">massTagList</xsl:with-param>
                   <xsl:with-param name="mode">TAG_USED</xsl:with-param>
@@ -75,11 +75,11 @@
 	      </td>
 	    </tr>
 	    <tr>
-	      <td><input id="turnUntag" type='radio' name='turn' value='UNTAG' /></td>
+	      <td><input id="turnUntag" type='radio' name='turn' class="massedit_action massedit_tag" value='UNTAG' /></td>
 	      <td><label for="turnUntag">Enlever le tag</label></td>
 	    </tr>
 	    <tr>
-	      <td><input id="turnAuthor" type='radio' name='turn' value='AUTHOR' /></td>
+	      <td><input id="turnAuthor" type='radio' name='turn' class="massedit_action massedit_tag" value='AUTHOR' /></td>
 	      <td><label for="turnAuthor">Définir l'auteur</label></td>
 	    </tr>
 	    <xsl:if test="/webAlbums/tags">
@@ -89,7 +89,7 @@
 		    <xsl:value-of select="/webAlbums/tags/display/title/tagList/*[1]/@id"/>
 		  </xsl:attribute>
 		</input>
-		<td><input type='radio' name='turn' value='MVTAG' /></td>
+		<td><input id="turnMove" type='radio' name='turn' value='MVTAG' class="massedit_action massedit_tag" /></td>
 		<td><label for="massTagList">Déplacer depuis </label><b><xsl:value-of select="/webAlbums/tags/display/title/tagList/*[1]/name"/></b> vers</td>
 	      </tr>
 	    </xsl:if>

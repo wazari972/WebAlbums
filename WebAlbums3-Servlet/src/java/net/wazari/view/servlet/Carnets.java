@@ -1,9 +1,6 @@
 package net.wazari.view.servlet;
 
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -22,6 +19,8 @@ import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
 import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlCarnets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(
     name = "Carnets",
@@ -56,8 +55,8 @@ public class Carnets extends HttpServlet{
                     if (!submit.valid)
                         output.exception = submit.exception ;
                     else
-                        output.message = "true" ;
-                    log.info("-->"+submit.valid);
+                        output.message = submit.carnet.getId().toString() ;
+                    
                     return output;
                     
                 } else if (submit != null && !submit.valid)

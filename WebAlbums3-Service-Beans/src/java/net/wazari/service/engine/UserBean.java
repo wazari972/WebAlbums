@@ -1,8 +1,6 @@
 package net.wazari.service.engine;
 
 import java.security.Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +12,8 @@ import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 public class UserBean implements UserLocal {
