@@ -198,6 +198,7 @@
           <xsl:if test="not(/webAlbums/affichage/@directAccess)">
               <xsl:attribute name="href">Image__<xsl:value-of select="details/photoId/@id" /></xsl:attribute>
           </xsl:if>
+          <xsl:attribute name="rel"><xsl:value-of select="details/photoId/@id" /></xsl:attribute>
 	<img height="200px">
           <xsl:if test="/webAlbums/affichage/@directAccess">
               <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="details/photoId/text()" />.png</xsl:attribute>
