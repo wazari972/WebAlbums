@@ -10,4 +10,19 @@ package net.wazari.libvfs.inteface;
  */
 public interface IFile {
     String getContent();
+    long getSize();
+    long getTime();
+    
+    String getShortname(IDirectory context);
+
+    boolean supports(long flags);
+
+    void incReference();
+    void decReference();
+
+    long getHandle();
+
+    void release();
+
+    void close();
 }

@@ -7,9 +7,8 @@ package net.wazari.libvfs.test;
 import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.annotation.Directory;
-import net.wazari.libvfs.annotation.RootDirectory;
+import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IFile;
 
 /**
@@ -21,8 +20,8 @@ public class Test {
         treatFolder(new Root(), 0);
     }
     public static void treatFolder(Object current, int depth) {
-        if (current.getClass().isAnnotationPresent(RootDirectory.class)) {
-            RootDirectory annotation = current.getClass().getAnnotation(RootDirectory.class);
+        if (current.getClass().isAnnotationPresent(Directory.class)) {
+            Directory annotation = current.getClass().getAnnotation(Directory.class);
             print("<root directory: "+annotation.name()+">", depth);
         }
         print("===", depth);

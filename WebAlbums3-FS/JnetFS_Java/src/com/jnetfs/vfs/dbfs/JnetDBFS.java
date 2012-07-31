@@ -203,7 +203,7 @@ public class JnetDBFS extends JnetFSAdapter {
             byte buffer[] = new byte[(int) size];
             vs.seek((int) offset);
             vs.read(buffer);
-            JnetRead.setDate(jniEnv, buffer);
+            JnetRead.setData(jniEnv, buffer);
         } catch (IOException ex) {
             debug("Access " + path + " error.");
             return EACCES;

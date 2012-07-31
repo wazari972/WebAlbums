@@ -5,17 +5,13 @@ import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.StringBufferInputStream;
+import java.util.Map;
+import net.wazari.libvfs.inteface.IDirectory;
+import net.wazari.libvfs.inteface.IFile;
 
 public class WebAlbumsFS extends JnetFSAdapter {
-    // opened files
-
-    private FileInfo fileInfo = null;
-    //last file handle
-    private long file_handle = 1000;
     private long clientcount = 0;
-    private int retry = 5;
 
     static class FileInfo {
         public String fullname = null;
@@ -36,44 +32,9 @@ public class WebAlbumsFS extends JnetFSAdapter {
     public int init(JnetJNIConnector jniEnv) throws JnetException {
         debug("INIT");
         clientcount++;
-        try {
-            if (fileInfo == null) {
-                URLConnection conn = new URL(JnetEnv.getJnetRoot()).openConnection();
-                conn.addRequestProperty("Range", "bytes=0-");
-                conn.setDoInput(true);
-                conn.connect();
-                String response = conn.getHeaderField(0);
-                if (response.indexOf("HTTP/1.1") == -1) {
-                    throw new IOException("server doesn't support HTTP/1.1");
-                }
-                if (response.indexOf("206") == -1) {
-                    throw new IOException("server doesn't support download partially, or bad url!");
-                }
-                int length = conn.getContentLength();
-                fileInfo = new FileInfo();
-                fileInfo.fullname = JnetEnv.getJnetRoot();
-                String shortname = fileInfo.fullname;
-                int idx = shortname.lastIndexOf("/");
-                if (idx != -1) {
-                    shortname = shortname.substring(idx + 1).trim();
-                } else {
-                    shortname = "web.data";
-                }
-                fileInfo.shortname = shortname;
-                fileInfo.length = length;
-                fileInfo.lastupdate = conn.getLastModified();
-                try {
-                    int times = Integer.parseInt(JnetEnv.getPropoerty("jnet.http.retry"));
-                    if (times > 0) {
-                        retry = times;
-                    }
-                } catch (NumberFormatException ex) {
-                }
-            }
-            return ESUCCESS;
-        } catch (IOException ex) {
-            throw new JnetException(EIO, ex.getMessage());
-        }
+        
+        return ESUCCESS;
+        
     }
 
     /**
@@ -87,9 +48,7 @@ public class WebAlbumsFS extends JnetFSAdapter {
     public int destroy(JnetJNIConnector jniEnv) throws JnetException {
         debug("DESTROY");
         clientcount--;
-        if (clientcount <= 0) {
-            fileInfo = null;
-        }
+
         return ESUCCESS;
     }
 
@@ -107,24 +66,29 @@ public class WebAlbumsFS extends JnetFSAdapter {
             return ENOENT;
         }
         debug("ATTRIBUTES\t" + path);
-        int st_mode;
-        long st_nlink = 1;
-        long st_mtim;
-        long st_size;
-        if ("/".equals(path)) {
-            st_size = 1 << 12;
-            st_mode = getRigtsMask(true);
-        } else if (fileInfo.shortname.equals(path.substring(1))) {
-            st_size = fileInfo.length;
-            st_mode = getRigtsMask(false);
-        } else {
+        
+        IFile file = Resolver.getFile(path) ;
+        if (file == null) {
+            debug("ATTRIBUTES no file\t" + path);
             return EACCES;
         }
-        st_mtim = fileInfo.lastupdate / 1000L;
+        
+        int st_mode;
+        long st_mtim = file.getTime() / 1000L;
+        long st_size;
+        if (file instanceof IDirectory) {
+            st_size = 1 << 12;
+            st_mode = getFileDirMask(true);
+        } else {
+            st_size = file.getSize();
+            st_mode = getFileDirMask(false);
+        }
+        
         JnetAttributes.setMode(jniEnv, st_mode);
         JnetAttributes.setTime(jniEnv, st_mtim);
-        JnetAttributes.setLinks(jniEnv, st_nlink);
+        JnetAttributes.setLinks(jniEnv, 1);
         JnetAttributes.setSize(jniEnv, st_size);
+        
         return ESUCCESS;
     }
 
@@ -142,11 +106,19 @@ public class WebAlbumsFS extends JnetFSAdapter {
             return ENOENT;
         }
         debug("LIST\t" + path);
-        if (!"/".equals(path)) {
+        
+        IFile file = Resolver.getFile(path) ;
+        if (file == null || !(file instanceof IDirectory)) {
             return EACCES;
         }
-        JnetList.addName(jniEnv, 0, fileInfo.shortname);
-        JnetList.setCount(jniEnv, 1);
+        IDirectory dir = (IDirectory) file;
+        int i = 0;
+        Map<String, IFile> files = dir.listFiles();
+        for (String inFilenames : files.keySet()) {
+            JnetList.addName(jniEnv, i++, inFilenames);
+        }
+        JnetList.setCount(jniEnv, i);
+        
         return ESUCCESS;
     }
 
@@ -163,23 +135,25 @@ public class WebAlbumsFS extends JnetFSAdapter {
         if (path == null || path.length() < 1) {
             return ENOENT;
         }
+        
         debug("OPEN\t" + path);
-        if (!fileInfo.shortname.equals(path.substring(1))) {
+        IFile file = Resolver.getFile(path) ;
+        if (file == null) {
             return ENOENT;
         }
+        
         long flags = JnetOpen.getFlags(jniEnv);
         flags &= O_ACCMODE;
-        switch ((int) flags) {
-            case O_RDONLY:
-                break;
-            case O_WRONLY:
-            case O_RDWR:
+        if (!file.supports(flags)) {
                 return EACCES;
         }
-        fileInfo.reference++;
-        JnetOpen.setHandle(jniEnv, file_handle);
+        
+        file.incReference();
+        JnetOpen.setHandle(jniEnv, file.getHandle());
+        
         JnetOpen.setDirectIO(jniEnv, false);
         JnetOpen.setKeepCache(jniEnv, false);
+        
         return ESUCCESS;
     }
 
@@ -196,49 +170,40 @@ public class WebAlbumsFS extends JnetFSAdapter {
         if (path == null) {
             return ENOENT;
         }
+        
         debug("READ\t" + path);
-        if (!fileInfo.shortname.equals(path.substring(1))) {
+        IFile file = Resolver.getFile(path) ;
+        if (file == null) {
             return ENOENT;
         }
-        long size = JnetRead.getSize(jniEnv);
-        long offset = JnetRead.getOffset(jniEnv);
-        long maxlen = fileInfo.length;
-        if (offset >= maxlen) {
+        
+        long SIZE = JnetRead.getSize(jniEnv);
+        long OFFSET = JnetRead.getOffset(jniEnv);
+        
+        long maxlen = file.getSize();
+        if (OFFSET >= maxlen) {
             return 0;
         }
-        if (maxlen - offset < size) {
-            size = maxlen - offset;
+        if (maxlen - OFFSET < SIZE) {
+            SIZE = maxlen - OFFSET;
         }
-        byte buffer[] = new byte[(int) size];
-        for (int i = 0; i < retry; i++) {
-            try {
-                URLConnection conn = new URL(fileInfo.fullname).openConnection();
-                conn.setConnectTimeout(30 * 1000);
-                String range = "bytes=" + offset + "-" + (offset + size - 1);
-                conn.addRequestProperty("Range", range);
-                conn.setDoInput(true);
-                conn.connect();
-                String response = conn.getHeaderField(0);
-                if (response.indexOf("HTTP/1.1") == -1) {
-                    throw new IOException("server doesn't support HTTP/1.1");
-                }
-                if (response.indexOf("206") == -1) {
-                    throw new IOException("server doesn't support download partially, or bad url!");
-                }
-                int count = 0;
-                InputStream is = conn.getInputStream();
-                while (count < buffer.length) {
-                    int c = is.read(buffer, count, buffer.length - count);
-                    count += c;
-                }
-                is.close();
-                JnetRead.setDate(jniEnv, buffer);
-                
-                return (int) size;
-            } catch (IOException ex) {
+        byte buffer[] = new byte[(int) SIZE];
+        try {
+            //String range = "bytes=" + OFFSET + "-" + (OFFSET + SIZE - 1);
+
+            int count = 0;
+            InputStream is = new StringBufferInputStream(file.getContent());
+            while (count < buffer.length) {
+                int c = is.read(buffer, count, buffer.length - count);
+                count += c;
             }
+            is.close();
+            JnetRead.setData(jniEnv, buffer);
+
+            return (int) SIZE;
+        } catch (IOException ex) {
+            return EIO;
         }
-        return EIO;
     }
 
     /**
@@ -254,7 +219,15 @@ public class WebAlbumsFS extends JnetFSAdapter {
         if (path == null) {
             return ENOENT;
         }
+        
         debug("RELEASE\t" + path);
+        IFile file = Resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        
+        file.release();
+        
         return ESUCCESS;
     }
 
@@ -268,8 +241,19 @@ public class WebAlbumsFS extends JnetFSAdapter {
     @Override
     public int flush(JnetJNIConnector jniEnv) throws JnetException {
         String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
         debug("CLOSE\t" + path);
-        fileInfo.reference--;
+        IFile file = Resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        
+        file.close();
+        file.decReference();
+        
         return ESUCCESS;
     }
 
@@ -285,7 +269,7 @@ public class WebAlbumsFS extends JnetFSAdapter {
         String path = jniEnv.getString(JnetFSImpl.PATH);
         debug("STATFS\t" + path);
         long count = 1;
-        JnetStatfs.setNameMaxLen(jniEnv, 255);
+        JnetStatfs.setNameMaxLen(jniEnv, 2550);
         JnetStatfs.setBlockSize(jniEnv, 1 << 12);
         JnetStatfs.setBlocks(jniEnv, count / (1 << 12));
         JnetStatfs.setFreeBlocks(jniEnv, 0);
@@ -304,11 +288,11 @@ public class WebAlbumsFS extends JnetFSAdapter {
      * @param file File
      * @return rights
      */
-    protected int getRigtsMask(boolean root) {
+    protected int getFileDirMask(boolean isDir) {
         int r = 0;
         r |= 1 << 2; //read-only
         r = (r << 6) | (r << 3);
-        if (root) {
+        if (isDir) {
             r |= S_IFDIR;
         } else {
             r |= S_IFREG;

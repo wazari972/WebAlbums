@@ -12,7 +12,7 @@ import com.jnetfs.core.relay.JnetJNIConnector;
 
 public class JnetRead {
     
-    public static void setDate(JnetJNIConnector conn, byte[] data) {
+    public static void setData(JnetJNIConnector conn, byte[] data) {
         conn.setBytes("buffer", data);
     }
 

@@ -279,7 +279,7 @@ public class JnetJavaFS extends JnetFSAdapter {
                 info.file.seek(offset);
             }
             info.file.readFully(buffer);
-            JnetRead.setDate(jniEnv, buffer);
+            JnetRead.setData(jniEnv, buffer);
             buffer = null;
         } catch (IOException ex) {
             return EIO;

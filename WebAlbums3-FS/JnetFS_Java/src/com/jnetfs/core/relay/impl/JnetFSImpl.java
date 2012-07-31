@@ -30,7 +30,7 @@ public abstract class JnetFSImpl implements Code {
      *
      * @param obj Object
      */
-    protected void debug(Object obj) {
+    public static void debug(Object obj) {
         if (debug) {
             System.out.println(new Date() + "\t" + obj);
         }

@@ -289,7 +289,7 @@ public class JnetZipFS extends JnetFSAdapter {
                 }
                 b += s;
             }
-            JnetRead.setDate(jniEnv, buffer);
+            JnetRead.setData(jniEnv, buffer);
             buffer = null;
             info.position += size;
         } catch (IOException ex) {

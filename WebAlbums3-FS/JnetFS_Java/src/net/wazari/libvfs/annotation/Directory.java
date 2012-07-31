@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * @author kevin
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface Directory {
     String name() default "";
 }
