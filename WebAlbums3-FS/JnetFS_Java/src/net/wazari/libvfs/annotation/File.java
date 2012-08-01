@@ -15,11 +15,11 @@ import java.lang.annotation.Target;
  */
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface File {
-    public enum Access {RO, RW}
+    public enum Access {R, W, X}
     
-    Access access() default Access.RO;
+    Access[] access() default Access.R;
     
-    String name();
+    String name() default "";
 }

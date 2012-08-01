@@ -4,6 +4,8 @@
  */
 package net.wazari.libvfs.inteface;
 
+import net.wazari.libvfs.annotation.File;
+
 /**
  *
  * @author kevin
@@ -11,9 +13,10 @@ package net.wazari.libvfs.inteface;
 public interface IFile {
     String getContent();
     long getSize();
+    File.Access[] getAccess();
     long getTime();
     
-    String getShortname(IDirectory context);
+    String getShortname();
 
     boolean supports(long flags);
 
@@ -22,7 +25,10 @@ public interface IFile {
 
     long getHandle();
 
+    void open();
     void release();
-
     void close();
+    
+    void setParent(IDirectory parent);
+    IDirectory getParent();
 }

@@ -4,12 +4,17 @@
  */
 package net.wazari.libvfs.inteface;
 
-import java.util.Map;
+import java.util.List;
+import net.wazari.libvfs.annotation.File;
 
 /**
  *
  * @author kevin
  */
 public interface IDirectory extends IFile {
-    Map<String, IFile> listFiles() ;
+    List<IFile> listFiles() ;
+    
+    File.Access[] getAccess(IFile file);
+    
+    String getShortname(IFile file);
 }

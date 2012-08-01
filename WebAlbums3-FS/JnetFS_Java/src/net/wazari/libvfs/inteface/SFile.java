@@ -4,16 +4,17 @@
  */
 package net.wazari.libvfs.inteface;
 
+import net.wazari.libvfs.annotation.File.Access;
+
 
 /**
  *
  * @author kevin
  */
-public abstract class SFile implements IFile {
-    public int reference = 0;
-    public int mtime = 1000 ;
-    
+public class SFile implements IFile {
+    public int reference = 0;    
     protected String content = "Generic content";
+    protected IDirectory parent = null;
     
     @Override
     public boolean supports(long flags) {
@@ -43,7 +44,7 @@ public abstract class SFile implements IFile {
     
     @Override
     public long getSize() {
-        return content.length();
+        return getContent().length();
     }
     
     @Override
@@ -62,7 +63,35 @@ public abstract class SFile implements IFile {
     }
     
     @Override
-    public String getShortname(IDirectory context) {
-        return "generic_file" ;
+    public void open() {}
+    
+    @Override
+    public String getShortname() {
+        String name = parent.getShortname(this);
+        
+        if (name != null) {
+            return name;
+        } else {
+            return "generic_file";
+        }
+    }
+
+    @Override
+    public Access[] getAccess() {
+        if (getParent() != null) {
+            return getParent().getAccess(this);
+        } else {
+            return new Access[]{Access.R};
+        }
+    }
+    
+    @Override
+    public IDirectory getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(IDirectory parent) {
+        this.parent = parent;
     }
 }

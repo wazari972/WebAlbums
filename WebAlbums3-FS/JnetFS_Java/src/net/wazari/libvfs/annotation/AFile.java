@@ -9,5 +9,4 @@ package net.wazari.libvfs.annotation;
  * @author kevin
  */
 public interface AFile {
-    
 }

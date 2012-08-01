@@ -13,7 +13,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import net.wazari.view.vfs.WebAlbumsFS;
+import net.wazari.libvfs.vfs.LibVFS;
 
 /**
  * Bridge Fuse-J to jnetFS
@@ -22,7 +22,7 @@ import net.wazari.view.vfs.WebAlbumsFS;
  */
 public final class JnetFS implements Code {
     
-    private JnetFSAdapter adapter = new WebAlbumsFS() ;
+    private JnetFSAdapter adapter = new LibVFS() ;
 
     /**
      * init file system
@@ -32,7 +32,6 @@ public final class JnetFS implements Code {
      * @throws JnetException JnetException
      */
     public int init(JnetJNIConnector jniEnv) throws JnetException {
-        System.out.println("count"+adapter);
         return adapter.init(jniEnv);
     }
 

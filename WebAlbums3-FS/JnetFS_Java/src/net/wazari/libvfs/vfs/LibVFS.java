@@ -1,16 +1,20 @@
-package net.wazari.view.vfs;
+package net.wazari.libvfs.vfs;
 
+import com.jnetfs.core.Code;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
+import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
+import net.wazari.view.vfs.Root;
 
-public class WebAlbumsFS extends JnetFSAdapter {
+public class LibVFS extends JnetFSAdapter {
     private long clientcount = 0;
 
     static class FileInfo {
@@ -21,6 +25,8 @@ public class WebAlbumsFS extends JnetFSAdapter {
         public long reference = 0;
     }
 
+    private Resolver resolver = null;
+    
     /**
      * init file system
      *
@@ -32,6 +38,8 @@ public class WebAlbumsFS extends JnetFSAdapter {
     public int init(JnetJNIConnector jniEnv) throws JnetException {
         debug("INIT");
         clientcount++;
+        
+        resolver = new Resolver(new Root());
         
         return ESUCCESS;
         
@@ -66,29 +74,42 @@ public class WebAlbumsFS extends JnetFSAdapter {
             return ENOENT;
         }
         debug("ATTRIBUTES\t" + path);
-        
-        IFile file = Resolver.getFile(path) ;
+        IFile file = resolver.getFile(path) ;
         if (file == null) {
-            debug("ATTRIBUTES no file\t" + path);
-            return EACCES;
+            debug("ATTRIBUTES no file");
+             return ENOENT;
         }
         
-        int st_mode;
-        long st_mtim = file.getTime() / 1000L;
-        long st_size;
+        File.Access[] access = file.getAccess();
+        
+        int mode = 0;
+        
+        if (Arrays.asList(access).contains(File.Access.R)) {
+            debug("ATTRIBUTES R");
+            mode |= 1 << 2; 
+        }
+        if (Arrays.asList(access).contains(File.Access.W)) {
+            debug("ATTRIBUTES W");
+            mode |= 1 << 1; 
+        }
+        if (Arrays.asList(access).contains(File.Access.X)) {
+            debug("ATTRIBUTES X");
+            mode |= 1;
+        }
+        mode = (mode << 6) | (mode << 3);
         if (file instanceof IDirectory) {
-            st_size = 1 << 12;
-            st_mode = getFileDirMask(true);
+            mode |= Code.S_IFDIR;
         } else {
-            st_size = file.getSize();
-            st_mode = getFileDirMask(false);
+            mode |= Code.S_IFREG;
+            //r |= S_IFLNK;
         }
+        debug("ATTRIBUTES "+mode);
+        JnetAttributes.setMode(jniEnv, mode);
+        JnetAttributes.setTime(jniEnv, file.getTime() / 1000L);
+        JnetAttributes.setSize(jniEnv, file.getSize());
         
-        JnetAttributes.setMode(jniEnv, st_mode);
-        JnetAttributes.setTime(jniEnv, st_mtim);
         JnetAttributes.setLinks(jniEnv, 1);
-        JnetAttributes.setSize(jniEnv, st_size);
-        
+
         return ESUCCESS;
     }
 
@@ -107,15 +128,16 @@ public class WebAlbumsFS extends JnetFSAdapter {
         }
         debug("LIST\t" + path);
         
-        IFile file = Resolver.getFile(path) ;
+        IFile file = resolver.getFile(path) ;
         if (file == null || !(file instanceof IDirectory)) {
             return EACCES;
         }
         IDirectory dir = (IDirectory) file;
         int i = 0;
-        Map<String, IFile> files = dir.listFiles();
-        for (String inFilenames : files.keySet()) {
-            JnetList.addName(jniEnv, i++, inFilenames);
+        List<IFile> files = dir.listFiles();
+        for (IFile inFile : files) {
+            String name = inFile.getShortname();
+            JnetList.addName(jniEnv, i++, name);
         }
         JnetList.setCount(jniEnv, i);
         
@@ -136,24 +158,28 @@ public class WebAlbumsFS extends JnetFSAdapter {
             return ENOENT;
         }
         
-        debug("OPEN\t" + path);
-        IFile file = Resolver.getFile(path) ;
+        IFile file = resolver.getFile(path) ;
         if (file == null) {
+            debug("OPEN\t" + path + "(ENOENT)");
             return ENOENT;
         }
         
         long flags = JnetOpen.getFlags(jniEnv);
+        
+        debug("OPEN\t" + path + "("+flags+")");
         flags &= O_ACCMODE;
         if (!file.supports(flags)) {
-                return EACCES;
+            debug("OPEN\t" + path + "(EACCES)");
+            return EACCES;
         }
         
         file.incReference();
+        file.open();
         JnetOpen.setHandle(jniEnv, file.getHandle());
         
         JnetOpen.setDirectIO(jniEnv, false);
         JnetOpen.setKeepCache(jniEnv, false);
-        
+        debug("Opened with success");
         return ESUCCESS;
     }
 
@@ -172,7 +198,7 @@ public class WebAlbumsFS extends JnetFSAdapter {
         }
         
         debug("READ\t" + path);
-        IFile file = Resolver.getFile(path) ;
+        IFile file = resolver.getFile(path) ;
         if (file == null) {
             return ENOENT;
         }
@@ -190,7 +216,6 @@ public class WebAlbumsFS extends JnetFSAdapter {
         byte buffer[] = new byte[(int) SIZE];
         try {
             //String range = "bytes=" + OFFSET + "-" + (OFFSET + SIZE - 1);
-
             int count = 0;
             InputStream is = new StringBufferInputStream(file.getContent());
             while (count < buffer.length) {
@@ -221,7 +246,7 @@ public class WebAlbumsFS extends JnetFSAdapter {
         }
         
         debug("RELEASE\t" + path);
-        IFile file = Resolver.getFile(path) ;
+        IFile file = resolver.getFile(path) ;
         if (file == null) {
             return ENOENT;
         }
@@ -246,7 +271,7 @@ public class WebAlbumsFS extends JnetFSAdapter {
         }
         
         debug("CLOSE\t" + path);
-        IFile file = Resolver.getFile(path) ;
+        IFile file = resolver.getFile(path) ;
         if (file == null) {
             return ENOENT;
         }
@@ -281,22 +306,175 @@ public class WebAlbumsFS extends JnetFSAdapter {
         JnetStatfs.setFileSID(jniEnv, 0);
         return ESUCCESS;
     }
-
-    /**
-     * get file rights
-     *
-     * @param file File
-     * @return rights
-     */
-    protected int getFileDirMask(boolean isDir) {
-        int r = 0;
-        r |= 1 << 2; //read-only
-        r = (r << 6) | (r << 3);
-        if (isDir) {
-            r |= S_IFDIR;
-        } else {
-            r |= S_IFREG;
+    
+    @Override
+    public int write(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            debug("WRITE\tENOENT");
+            return ENOENT;
         }
-        return r;
+        
+        debug("WRITE\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        
+        
+        return ENOSYS;
+    }
+    
+    @Override
+    public int create(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("CREATE\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        
+        return ENOSYS;
+    }
+
+    @Override
+    public int mkdir(JnetJNIConnector jniEnv) throws JnetException {
+        debug("MKDIR");
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("MKDIR\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        
+        return ENOSYS;
+    }
+
+    @Override
+    public int delete(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("DELETE\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        return ENOSYS;
+    }
+
+    @Override
+    public int rmdir(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("RMDIR\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        return ENOSYS;
+    }
+
+    @Override
+    public int rename(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("RENAME\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        return ENOSYS;
+    }
+
+    @Override
+    public int touch(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("TOUCH\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        return ENOSYS;
+    }
+
+    @Override
+    public int symlink(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("SYMLINK\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        return ENOSYS;
+    }
+
+    @Override
+    public int readlink(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("READLINK\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        return ENOSYS;
+    }
+    
+    @Override
+    public int truncate(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("TRUNCATE\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        return ENOSYS;
+    }
+    
+    @Override
+    public int chmod(JnetJNIConnector jniEnv) throws JnetException {
+        String path = jniEnv.getString(JnetFSImpl.PATH);
+        if (path == null) {
+            return ENOENT;
+        }
+        
+        debug("CHMOD\t" + path);
+        IFile file = resolver.getFile(path) ;
+        if (file == null) {
+            return ENOENT;
+        }
+        return ESUCCESS;
     }
 }

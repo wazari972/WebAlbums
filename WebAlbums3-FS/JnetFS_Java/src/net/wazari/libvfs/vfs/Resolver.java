@@ -2,34 +2,35 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.wazari.view.vfs;
+package net.wazari.libvfs.vfs;
 
-import java.util.Map;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.IntrosDirectory;
-import net.wazari.libvfs.test.Root;
+import net.wazari.libvfs.inteface.IntrosDirectory.IntrosRoot;
 
 /**
  *
  * @author kevin
  */
 public class Resolver {
-    public static IFile getFile(String search) {
-        IntrosDirectory start = new IntrosDirectory(new Root(), null);
-        
+    private IntrosRoot root ;
+    public Resolver(ADirectory rootDir) {
+        root = new IntrosRoot(rootDir);
+    }
+    public IFile getFile(String search) {
         if (search.equals("/")) {
-            return start;
+            return root;
         }
         
-        return getFile(start, "", search);
+        return getFile(root, "", search);
     }
     
-    public static IFile getFile(IntrosDirectory current, String path, String search) {
-        Map<String, IFile> map = current.listFiles();
-        for (String fname : map.keySet()) {
-            IFile file = map.get(fname);
-            String fullname = path + "/" + fname ;
+    public IFile getFile(IntrosDirectory current, String path, String search) {
+        for (IFile file : current.listFiles())  {
+            file.setParent(current);
+                
+            String fullname = path + "/" + file.getShortname();
             
             if (search.equals(fullname)) {
                 return file;
@@ -42,7 +43,7 @@ public class Resolver {
                 
             } else if (file instanceof ADirectory) {
                 if (search.startsWith(fullname)) {
-                    return (IFile) getFile(new IntrosDirectory((ADirectory) file, fname), fullname, search);
+                    return (IFile) getFile(new IntrosDirectory(current, (ADirectory) file), fullname, search);
                 }
                 
             } else {
