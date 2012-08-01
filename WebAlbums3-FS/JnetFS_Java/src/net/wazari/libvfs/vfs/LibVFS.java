@@ -12,7 +12,6 @@ import java.util.List;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
-import net.wazari.view.vfs.Root;
 
 public class LibVFS extends JnetFSAdapter {
     private long clientcount = 0;
@@ -25,7 +24,7 @@ public class LibVFS extends JnetFSAdapter {
         public long reference = 0;
     }
 
-    private Resolver resolver = null;
+    public static Resolver resolver = null;
     
     /**
      * init file system
@@ -38,8 +37,6 @@ public class LibVFS extends JnetFSAdapter {
     public int init(JnetJNIConnector jniEnv) throws JnetException {
         debug("INIT");
         clientcount++;
-        
-        resolver = new Resolver(new Root());
         
         return ESUCCESS;
         

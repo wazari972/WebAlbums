@@ -234,7 +234,7 @@ public final class JnetFS implements Code {
                     jnet.umount(mountPoint);
                 }
             });
-            System.exit(jnet.mount(fargv, false));
+            jnet.mount(fargv, false);
         } catch (Throwable ex) {
             ex.printStackTrace();
             System.exit(-1);

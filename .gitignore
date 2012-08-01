@@ -12,3 +12,5 @@ WebAlbums3-Downloader/static/
 *.pyc
 /WebAlbums3-FS/JnetFS_Java/dist/
 /WebAlbums3-FS/JnetFS_Java/build/
+/WebAlbums3-FS/WebAlbums3-FS/build/
+/WebAlbums3-FS/WebAlbums3-FS/dist/

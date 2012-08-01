@@ -14,6 +14,7 @@ import net.wazari.libvfs.inteface.IntrosDirectory.IntrosRoot;
  * @author kevin
  */
 public class Resolver {
+    
     private IntrosRoot root ;
     public Resolver(ADirectory rootDir) {
         root = new IntrosRoot(rootDir);
