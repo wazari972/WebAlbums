@@ -12,6 +12,8 @@ import java.util.List;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
+import net.wazari.libvfs.inteface.ILink;
+import net.wazari.libvfs.inteface.SLink;
 
 public class LibVFS extends JnetFSAdapter {
     private long clientcount = 0;
@@ -74,7 +76,7 @@ public class LibVFS extends JnetFSAdapter {
         IFile file = resolver.getFile(path) ;
         if (file == null) {
             debug("ATTRIBUTES no file");
-             return ENOENT;
+            return ENOENT;
         }
         
         File.Access[] access = file.getAccess();
@@ -95,10 +97,15 @@ public class LibVFS extends JnetFSAdapter {
         }
         mode = (mode << 6) | (mode << 3);
         if (file instanceof IDirectory) {
+            debug("ATTRIBUTES DIR");
             mode |= Code.S_IFDIR;
+        } else if (file instanceof ILink) {
+            debug("ATTRIBUTES LNK");
+            mode |= Code.S_IFLNK;
         } else {
+            
+            debug("ATTRIBUTES REG");
             mode |= Code.S_IFREG;
-            //r |= S_IFLNK;
         }
         debug("ATTRIBUTES "+mode);
         JnetAttributes.setMode(jniEnv, mode);
@@ -127,6 +134,7 @@ public class LibVFS extends JnetFSAdapter {
         
         IFile file = resolver.getFile(path) ;
         if (file == null || !(file instanceof IDirectory)) {
+            debug("LIST\t EACCES " + EACCES);
             return EACCES;
         }
         IDirectory dir = (IDirectory) file;
@@ -432,6 +440,7 @@ public class LibVFS extends JnetFSAdapter {
 
     @Override
     public int readlink(JnetJNIConnector jniEnv) throws JnetException {
+        debug("READLINK");
         String path = jniEnv.getString(JnetFSImpl.PATH);
         if (path == null) {
             return ENOENT;
@@ -439,10 +448,13 @@ public class LibVFS extends JnetFSAdapter {
         
         debug("READLINK\t" + path);
         IFile file = resolver.getFile(path) ;
-        if (file == null) {
+        if (file == null || !(file instanceof SLink)) {
             return ENOENT;
         }
-        return ENOSYS;
+        
+        JnetReadLink.setRealPath(jniEnv, ((SLink) file).getTarget());
+        
+        return ESUCCESS;
     }
     
     @Override

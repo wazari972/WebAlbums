@@ -10,13 +10,14 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionTag;
 
 /**
  *
  * @author kevin
  */
-public class Session implements ViewSession, ViewSessionTag {
+public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum {
     public Theme theme;
     public Session(Theme theme) {
         this.theme = theme;
@@ -142,12 +143,12 @@ public class Session implements ViewSession, ViewSessionTag {
 
     @Override
     public int getPhotoAlbumSize() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 15;
     }    
 
     @Override
     public Integer[] getTagAsked() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new Integer[0];
     }
 
     @Override

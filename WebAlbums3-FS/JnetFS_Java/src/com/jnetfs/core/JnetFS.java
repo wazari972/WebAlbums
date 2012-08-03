@@ -21,7 +21,6 @@ import net.wazari.libvfs.vfs.LibVFS;
  * @author jacky
  */
 public final class JnetFS implements Code {
-    
     private JnetFSAdapter adapter = new LibVFS() ;
 
     /**
@@ -121,6 +120,11 @@ public final class JnetFS implements Code {
      */
     public int statfs(JnetJNIConnector jniEnv) throws JnetException {
         return adapter.statfs(jniEnv);
+    }
+    
+    
+    public int readlink(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.readlink(jniEnv);
     }
 
     /**

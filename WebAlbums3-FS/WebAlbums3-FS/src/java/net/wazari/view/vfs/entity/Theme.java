@@ -24,7 +24,7 @@ import net.wazari.view.vfs.Session;
 public class Theme extends SDirectory implements ADirectory {
     @Directory
     @File(name="Albums")
-    public final Albums albums = new Albums(this);
+    public final Albums albums;
     @Directory
     @File(name="Tags")
     public final Tags tags ;
@@ -34,14 +34,16 @@ public class Theme extends SDirectory implements ADirectory {
     
     @Directory
     @File(name="Geolocalizations")
-    public final Geolocalizations geoloc = new Geolocalizations(this);
+    public final Tags geoloc;
     
     private String name;
 
     Theme(int id, String name, Launch aThis) throws WebAlbumsServiceException {
         this.name = name;
-         
-        this.tags = new Tags(new Session(new ATheme(id, name)), aThis);
+        Session s = new Session(new ATheme(id, name));
+        this.tags = new Tags(s, aThis, false);
+        this.geoloc = new Tags(s, aThis, true);
+        this.albums = new Albums(s, aThis);
     }
     
     @Override

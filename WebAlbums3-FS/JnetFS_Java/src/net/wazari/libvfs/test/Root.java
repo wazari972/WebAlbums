@@ -8,9 +8,12 @@ import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.annotation.File.Access;
+import net.wazari.libvfs.annotation.Link;
 import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.libvfs.inteface.SFile;
+import net.wazari.libvfs.inteface.SLink;
+import net.wazari.libvfs.vfs.Resolver;
 
 /**
  *
@@ -38,6 +41,10 @@ public class Root extends SDirectory implements ADirectory {
     @File(name="sub", access={File.Access.R, File.Access.W, File.Access.X})
     public SubFolder sub = new SubFolder();
     
+    @Link
+    @File(name="link")
+    public MyLink link = new MyLink();
+    
     public static class SubFolder implements ADirectory {
         @File(name="test1.txt", access={Access.R, Access.W})
         public IFile desc = new Content("111111111111");
@@ -45,7 +52,21 @@ public class Root extends SDirectory implements ADirectory {
         @File(access={File.Access.R})
         public IFile tags = new Variable("zzzzzzzzzz");
     }
+    
+    public static void main (String[] args) {
+        Root root = new Root();
+        net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
+        com.jnetfs.core.JnetFS.main(new String[]{"/home/kevin/vayrac/WebAlbums/WebAlbums3-FS/test"});
+    }
 }
+
+class MyLink extends SLink {
+    @Override
+    public String getTarget() {
+        return "/home/kevin/";
+    }
+}
+
 class Content extends SFile {
     public Content(String content) {
         this.content = content;

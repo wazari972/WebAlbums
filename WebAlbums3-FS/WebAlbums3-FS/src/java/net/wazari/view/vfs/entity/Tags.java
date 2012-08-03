@@ -24,17 +24,19 @@ public class Tags implements ADirectory {
     @File
     public List<Tag> tags = new LinkedList<Tag>();
     
-    public Tags(ViewSession session, Launch aThis) throws WebAlbumsServiceException {
+    public Tags(ViewSession session, Launch aThis, boolean geoOnly) throws WebAlbumsServiceException {
         XmlWebAlbumsList entries = aThis.webPageService.displayListLB(ViewSession.Mode.TAG_USED, session, null,
                 ViewSession.Box.MULTIPLE);
         
-        List<XmlTag> tagList = (List) entries.who;
-        tagList.addAll(entries.what);
+        List<XmlTag> tagList = new LinkedList<XmlTag>() ;
+        if (!geoOnly) {
+            tagList.addAll(entries.who);
+            tagList.addAll(entries.what);
+        }
         tagList.addAll(entries.where);
         
         for (XmlTag tag : tagList) {
             tags.add(new Tag(tag.name)) ;
         }
     }
-    
 }

@@ -12,6 +12,9 @@ import net.wazari.libvfs.inteface.SDirectory;
  * @author kevin
  */
 public class Tag extends SDirectory implements ADirectory {
+    
+    
+    
     private String name ;
     public Tag(String name) {
         this.name = name;
