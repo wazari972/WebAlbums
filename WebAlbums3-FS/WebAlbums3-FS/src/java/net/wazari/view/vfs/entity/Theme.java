@@ -8,6 +8,8 @@ import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
+import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.Session;
 
 /**
  *
@@ -19,7 +21,7 @@ public class Theme extends SDirectory implements ADirectory {
     public final Albums albums = new Albums(this);
     @Directory
     @File(name="Tags")
-    public final Albums tags = new Albums(this);
+    public final Tags tags = new Tags(this);
     @Directory
     @File(name="Carnets")
     public final Carnets carnets = new Carnets(this);
@@ -31,7 +33,12 @@ public class Theme extends SDirectory implements ADirectory {
     private String name;
     
     public Theme(String name) {
+        
+    }
+
+    Theme(String name, Launch aThis) {
         this.name = name;
+        aThis.tagService.treatTagDISPLAY(new Session("") , null);
     }
     
     @Override

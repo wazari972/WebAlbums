@@ -11,5 +11,9 @@ import net.wazari.libvfs.annotation.ADirectory;
  * @author kevin
  */
 public class Tags implements ADirectory {
+
+    Tags(Theme aThis) {
+        
+    }
     
 }
