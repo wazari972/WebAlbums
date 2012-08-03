@@ -46,7 +46,6 @@ public class Resolver {
                 if (search.startsWith(fullname)) {
                     return (IFile) getFile(new IntrosDirectory(current, (ADirectory) file), fullname, search);
                 }
-                
             } else {
                 //nothing to do here, wrong file
             } 

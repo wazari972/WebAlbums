@@ -9,6 +9,8 @@ package com.jnetfs.core.relay.impl;
 
 import com.jnetfs.core.Code;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * OS operation
@@ -16,6 +18,8 @@ import java.util.Date;
  * @author jacky
  */
 public abstract class JnetFSImpl implements Code {
+    
+    private static final Logger log = LoggerFactory.getLogger(JnetFSImpl.class.toString());
     //File system debug
 
     protected static final boolean debug = JnetEnv.getJnetdebug();

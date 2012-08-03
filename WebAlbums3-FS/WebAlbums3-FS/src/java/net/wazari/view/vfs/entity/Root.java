@@ -9,6 +9,7 @@ import java.util.List;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
+import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.XmlTheme;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
@@ -22,9 +23,9 @@ public class Root implements ADirectory {
     @Directory
     public List<Theme> themes = new LinkedList<Theme>();
 
-    public Root(Launch aThis) {
-        for (XmlTheme theme : aThis.themeService.getThemeList(new Session()).theme) {
-            themes.add(new Theme(theme.name, aThis));
+    public Root(Launch aThis) throws WebAlbumsServiceException {
+        for (XmlTheme theme : aThis.themeService.getThemeList(new Session(null)).theme) {
+            themes.add(new Theme(theme.id, theme.name, aThis));
         }
     }
 }

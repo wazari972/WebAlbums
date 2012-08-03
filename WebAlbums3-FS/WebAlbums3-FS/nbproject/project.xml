@@ -18,6 +18,10 @@
                     <file>${reference.WebAlbums3-iDAO.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
+                <library dirs="200">
+                    <file>${reference.WebAlbums3-Commons.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
             <source-roots>
@@ -32,6 +36,14 @@
                 <foreign-project>JnetFS_Java</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>WebAlbums3-Commons</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>nbbuild.xml</script>
                 <target>jar</target>
                 <clean-target>clean</clean-target>
                 <id>jar</id>

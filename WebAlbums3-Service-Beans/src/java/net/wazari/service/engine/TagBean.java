@@ -43,7 +43,7 @@ public class TagBean implements TagLocal {
     private SystemTools sysTools;
 
     @Override
-    public XmlTagDisplay treatTagDISPLAY(ViewSessionTag vSeavoir >ssion, XmlPhotoSubmit submit) throws WebAlbumsServiceException {
+    public XmlTagDisplay treatTagDISPLAY(ViewSessionTag vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagDISPLAY", log);
         XmlTagDisplay output = new XmlTagDisplay();
         Integer[] tags = vSession.getTagAsked();

@@ -4,16 +4,37 @@
  */
 package net.wazari.view.vfs.entity;
 
+import java.util.LinkedList;
+import java.util.List;
 import net.wazari.libvfs.annotation.ADirectory;
+import net.wazari.libvfs.annotation.Directory;
+import net.wazari.libvfs.annotation.File;
+import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
+import net.wazari.service.exchange.xml.tag.XmlTag;
+import net.wazari.view.vfs.Launch;
 
 /**
  *
  * @author kevin
  */
 public class Tags implements ADirectory {
-
-    Tags(Theme aThis) {
+    @Directory
+    @File
+    public List<Tag> tags = new LinkedList<Tag>();
+    
+    public Tags(ViewSession session, Launch aThis) throws WebAlbumsServiceException {
+        XmlWebAlbumsList entries = aThis.webPageService.displayListLB(ViewSession.Mode.TAG_USED, session, null,
+                ViewSession.Box.MULTIPLE);
         
+        List<XmlTag> tagList = (List) entries.who;
+        tagList.addAll(entries.what);
+        tagList.addAll(entries.where);
+        
+        for (XmlTag tag : tagList) {
+            tags.add(new Tag(tag.name)) ;
+        }
     }
     
 }

@@ -87,7 +87,7 @@ public class SDirectory implements IDirectory {
     
     @Override
     public List<IFile> listFiles() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."+this);
     }
     
     @Override
@@ -97,7 +97,7 @@ public class SDirectory implements IDirectory {
 
     @Override
     public Access[] getAccess() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new  Access[]{Access.R};
     }
 
     @Override

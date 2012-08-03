@@ -111,13 +111,11 @@ public class IntrosDirectory extends SDirectory {
         for (Object field_value : map.keySet()) {
             Field aField = map.get(field_value);
             
-            if (aField.isAnnotationPresent(File.class) && field_value instanceof IFile) {
+            if (aField.isAnnotationPresent(File.class) && field_value instanceof IFile && !(field_value instanceof ADirectory)) {
                 IFile son = (IFile) field_value;
                 son.setParent(this);
                 files.add(son);
-            }
-            
-            if (aField.isAnnotationPresent(Directory.class)) {
+            } else if (aField.isAnnotationPresent(Directory.class)) {
                 if (field_value instanceof ADirectory) {
                     files.add(new IntrosDirectory(this, (ADirectory) field_value));
                 } else if (field_value instanceof List) {

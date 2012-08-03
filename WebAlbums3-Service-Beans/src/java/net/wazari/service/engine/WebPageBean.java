@@ -290,9 +290,11 @@ public class WebPageBean implements WebPageLocal {
                 
                 if (mode == Mode.TAG_NEVER_EVER) {
                    List<Tag> never_ever = new ArrayList<Tag>(); 
-                   for (Tag enrTag : tags)
-                       if (enrTag.getSonList().isEmpty())
+                   for (Tag enrTag : tags) {
+                        if (enrTag.getSonList().isEmpty()) {
                            never_ever.add(enrTag);
+                       }
+                    }
                    tags = never_ever;
                 }
                 
@@ -388,8 +390,9 @@ public class WebPageBean implements WebPageLocal {
                 }
                 if (written) {
                     if (tag instanceof XmlWebAlbumsTagWho && enrTag.getPerson() != null) {
-                        if (enrTag.getPerson().getBirthdate() != null && !"".equals(enrTag.getPerson().getBirthdate()))
+                        if (enrTag.getPerson().getBirthdate() != null && !"".equals(enrTag.getPerson().getBirthdate())) {
                             ((XmlWebAlbumsTagWho) tag).birthdate = enrTag.getPerson().getBirthdate();
+                        }
                     }
                     tag.name = nom ;
                     tag.id = tagId.getId() ;
