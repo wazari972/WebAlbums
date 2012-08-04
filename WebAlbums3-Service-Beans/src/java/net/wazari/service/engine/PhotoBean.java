@@ -560,7 +560,6 @@ public class PhotoBean implements PhotoLocal {
 
     @Override
     public XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException {
-
         Photo enrPhoto = photoDAO.loadRandom(vSession);
         if (enrPhoto == null) return null ;
         XmlPhotoRandom output = new XmlPhotoRandom() ;

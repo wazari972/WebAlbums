@@ -15,5 +15,13 @@ import net.wazari.libvfs.annotation.File;
 public class Listing implements ADirectory {
     @Directory
     @File(name="all")
-    public Photos all = new Photos(this) ;
+    public Photo all = new Photo(null) ;
+
+    @Override
+    public void load() throws Exception {
+    }
+
+    @Override
+    public void unload() {
+    }
 }

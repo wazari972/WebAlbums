@@ -13,12 +13,17 @@ import java.util.Map;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
  */
 public class IntrosDirectory extends SDirectory {
+    private static final Logger log = LoggerFactory.getLogger(IntrosDirectory.class.getCanonicalName()) ;
+    
+    private List<IFile> inFiles = null;
     private ADirectory directory;
     
     public IntrosDirectory(IntrosDirectory parent, ADirectory adir) {
@@ -103,9 +108,21 @@ public class IntrosDirectory extends SDirectory {
         return map;
     }
     
+    private Map<ADirectory, IntrosDirectory> cache = new HashMap<ADirectory, IntrosDirectory>();
     @Override
     public List<IFile> listFiles() {
-        List<IFile> files = new LinkedList<IFile>();
+        if (inFiles != null) {
+            return inFiles;
+        }
+        
+        inFiles = new LinkedList<IFile>();
+        try {
+            log.warn("Load {}", this.directory);
+            directory.load();
+            log.warn("Loaded {}", this.directory);
+        } catch (Exception ex) {
+            log.warn("Loading {} failed ... {}", this.directory, ex);
+        }
         
         Map<Object, Field> map = getDirFields();
         for (Object field_value : map.keySet()) {
@@ -114,18 +131,20 @@ public class IntrosDirectory extends SDirectory {
             if (aField.isAnnotationPresent(File.class) && field_value instanceof IFile && !(field_value instanceof ADirectory)) {
                 IFile son = (IFile) field_value;
                 son.setParent(this);
-                files.add(son);
+                inFiles.add(son);
             } else if (aField.isAnnotationPresent(Directory.class)) {
+                IntrosDirectory toAdd = null;
+                
                 if (field_value instanceof ADirectory) {
-                    files.add(new IntrosDirectory(this, (ADirectory) field_value));
+                    inFiles.add(new IntrosDirectory(this, (ADirectory) field_value));
                 } else if (field_value instanceof List) {
                     for (ADirectory adir : (List<ADirectory>) field_value) {
-                        files.add(new IntrosDirectory(this, (ADirectory) adir));
+                        inFiles.add(new IntrosDirectory(this, (ADirectory) adir));
                     }
                 }
             }
         }
-        return files;
+        return inFiles;
     }
     
     @Override
@@ -156,6 +175,14 @@ public class IntrosDirectory extends SDirectory {
             return ((IDirectory) target).getShortname();
         } else {
             return null;
+        }
+    }
+    
+    @Override
+    public void rmdir() {
+        if (directory instanceof IDirectory) {
+            ((IDirectory) directory).rmdir();
+            inFiles = null;
         }
     }
     

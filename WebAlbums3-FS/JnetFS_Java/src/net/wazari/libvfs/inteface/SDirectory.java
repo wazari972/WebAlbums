@@ -104,4 +104,8 @@ public class SDirectory implements IDirectory {
     public Access[] getAccess(IFile file) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void rmdir() {
+    }
 }

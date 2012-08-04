@@ -10,9 +10,9 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
-import net.wazari.service.exchange.ViewSessionTag;
+import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
-import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
+import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
 
@@ -20,7 +20,7 @@ import net.wazari.view.vfs.Session;
  *
  * @author kevin
  */
-public class Tag extends SDirectory implements ADirectory {
+public class Album extends SDirectory implements ADirectory {
     
     @File
     public List<Photo> photos = new LinkedList<Photo>();
@@ -28,13 +28,13 @@ public class Tag extends SDirectory implements ADirectory {
     private String name ;
     private final Theme theme;
     private final Launch aThis;
-    private final int tagId;
+    private final int albumId;
     
-    public Tag(String name, int tagId, net.wazari.dao.entity.Theme theme, Launch aThis) {
-        this.name = name;
+    public Album(String date, String name, int albumId, net.wazari.dao.entity.Theme theme, Launch aThis) {
+        this.name = date + " " + name;
         this.theme = theme;
         this.aThis = aThis;
-        this.tagId = tagId;
+        this.albumId = albumId;
     }
     
     @Override
@@ -45,9 +45,10 @@ public class Tag extends SDirectory implements ADirectory {
     @Override
     public void load() throws Exception {
         Session session = new Session(theme);
-        session.setTagAsked(new Integer[]{tagId});
-        XmlTagDisplay tags = aThis.tagService.treatTagDISPLAY((ViewSessionTag) session, null);
-        for (XmlPhoto photo : tags.photoList.photo) {
+        session.setAlbum(albumId);
+        
+        XmlPhotoDisplay photodisp = aThis.photoService.treatPhotoDISPLAY((ViewSessionPhoto.ViewSessionPhotoDisplay) session, null);
+        for (XmlPhoto photo : photodisp.photoList.photo) {
             photos.add(new Photo(photo.details));
         }
     }

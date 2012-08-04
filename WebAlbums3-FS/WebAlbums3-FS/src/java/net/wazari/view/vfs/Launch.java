@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.libvfs.vfs.Resolver;
 import net.wazari.service.AlbumLocal;
+import net.wazari.service.PhotoLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
@@ -23,6 +24,7 @@ import net.wazari.view.vfs.entity.Root;
  * @author kevin
  */
 public class Launch extends HttpServlet {
+    @EJB public PhotoLocal photoService;
     @EJB public AlbumLocal albumService;
     @EJB public ThemeLocal themeService ;
     @EJB public TagLocal tagService;
@@ -42,7 +44,7 @@ public class Launch extends HttpServlet {
                 request.login("kevin", "");
                 out.println("<h1> Logged in</h1>");
             } catch (ServletException e) {
-                out.println("<h1> ServletException" + e + "</h1>");
+                
             }
             out.println("<h1> Logged in " + System.getProperty("java.library.path") + "</h1>");
             
@@ -52,6 +54,7 @@ public class Launch extends HttpServlet {
                 com.jnetfs.core.JnetFS.main(new String[]{"/home/kevin/vayrac/WebAlbums/WebAlbums3-FS/test"});
             } catch (Exception e) {
                  out.println("<h1> JNetFSException" + e + "</h1>");
+                  e.printStackTrace();
             }
             out.println("<h1> Logged in " + request.getUserPrincipal().getName() + "</h1>");
             out.println("<h1>Servlet Launch at " + request.getContextPath() + "</h1>");

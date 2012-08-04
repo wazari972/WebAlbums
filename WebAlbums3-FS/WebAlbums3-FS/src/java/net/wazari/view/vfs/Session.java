@@ -11,19 +11,20 @@ import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionTag;
 
 /**
  *
  * @author kevin
  */
-public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum {
+public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, ViewSessionPhotoDisplay {
     public Theme theme;
+    public Integer[] tagAsked = new Integer[0];
+    
     public Session(Theme theme) {
         this.theme = theme;
     }
-
-    
     
     @Override
     public boolean getCompleteChoix() {
@@ -32,12 +33,12 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum {
 
     @Override
     public ViewSession.Special getSpecial() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public ViewSession.Action getAction() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
@@ -103,7 +104,7 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum {
 
     @Override
     public boolean directFileAccess() {
-        return false;
+        return true;
     }
 
     @Override
@@ -143,22 +144,26 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum {
 
     @Override
     public int getPhotoAlbumSize() {
-        return 15;
+        return 150;
     }    
 
+    public void setTagAsked(Integer[] tagAsked) {
+        this.tagAsked = tagAsked;
+    }
+    
     @Override
     public Integer[] getTagAsked() {
-        return new Integer[0];
+        return this.tagAsked;
     }
 
     @Override
     public boolean getWantTagChildren() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return false;
     }
 
     @Override
     public Integer getId() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
@@ -171,28 +176,38 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public void setAlbum(Integer album) {
+        this.album = album;
+    }
+    
+    private Integer album = null;
     @Override
     public Integer getAlbum() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return album;
     }
 
     @Override
     public Integer getAlbmPage() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public Integer getPage() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public Integer getNbPerYear() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 10;
     }
 
     @Override
     public void setPhotoAlbumSize(int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ViewSessionPhotoDisplayMassEdit getMassEdit() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

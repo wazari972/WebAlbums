@@ -22,10 +22,21 @@ import net.wazari.view.vfs.Session;
 public class Root implements ADirectory {
     @Directory
     public List<Theme> themes = new LinkedList<Theme>();
+    private final Launch aThis;
 
     public Root(Launch aThis) throws WebAlbumsServiceException {
+        this.aThis = aThis;
+    }
+
+    @Override
+    public void load() throws Exception {
         for (XmlTheme theme : aThis.themeService.getThemeList(new Session(null)).theme) {
             themes.add(new Theme(theme.id, theme.name, aThis));
         }
+    }
+
+    @Override
+    public void unload() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

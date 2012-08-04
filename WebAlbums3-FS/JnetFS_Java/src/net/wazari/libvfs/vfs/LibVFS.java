@@ -387,10 +387,13 @@ public class LibVFS extends JnetFSAdapter {
         
         debug("RMDIR\t" + path);
         IFile file = resolver.getFile(path) ;
-        if (file == null) {
+        if (file == null || !(file instanceof IDirectory)) {
             return ENOENT;
         }
-        return ENOSYS;
+        
+        ((IDirectory) file).rmdir();
+        
+        return ESUCCESS;
     }
 
     @Override

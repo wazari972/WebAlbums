@@ -55,6 +55,14 @@ public final class JnetFS implements Code {
     public int attributes(JnetJNIConnector jniEnv) throws JnetException {
         return adapter.attributes(jniEnv);
     }
+    
+    public int rmdir(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.rmdir(jniEnv);
+    }
+    
+    public int chmod(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.chmod(jniEnv);
+    }
 
     /**
      * read directory
@@ -89,6 +97,10 @@ public final class JnetFS implements Code {
         return adapter.read(jniEnv);
     }
 
+    public int write(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.write(jniEnv);
+    }
+    
     /**
      * release file
      *
@@ -241,7 +253,6 @@ public final class JnetFS implements Code {
             jnet.mount(fargv, false);
         } catch (Throwable ex) {
             ex.printStackTrace();
-            System.exit(-1);
         }
     }
 
@@ -263,7 +274,11 @@ public final class JnetFS implements Code {
     private native void umount(String path);
     
     static {
-        System.loadLibrary("JnetFS");
+        try {
+            System.loadLibrary("JnetFS");
+        } catch (UnsatisfiedLinkError e) {
+            e.printStackTrace();
+        }
     }
     
 }

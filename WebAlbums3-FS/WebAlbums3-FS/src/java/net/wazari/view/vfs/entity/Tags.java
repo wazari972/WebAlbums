@@ -4,15 +4,11 @@
  */
 package net.wazari.view.vfs.entity;
 
-import java.util.LinkedList;
-import java.util.List;
+import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
-import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.view.vfs.Launch;
 
 /**
@@ -21,22 +17,30 @@ import net.wazari.view.vfs.Launch;
  */
 public class Tags implements ADirectory {
     @Directory
-    @File
-    public List<Tag> tags = new LinkedList<Tag>();
+    @File(name="Geolocalisations")
+    public TagDirectory where ;
+
+    @Directory
+    @File(name="Personnes")
+    public TagDirectory who ;
     
-    public Tags(ViewSession session, Launch aThis, boolean geoOnly) throws WebAlbumsServiceException {
-        XmlWebAlbumsList entries = aThis.webPageService.displayListLB(ViewSession.Mode.TAG_USED, session, null,
-                ViewSession.Box.MULTIPLE);
+    @Directory
+    @File(name="QuoiCa")
+    public TagDirectory what ;
+
+    public Tags(Theme theme, Launch aThis, boolean b) throws WebAlbumsServiceException {
+        who = new TagDirectory(theme, aThis, TagDirectory.WhatTag.WHO);
         
-        List<XmlTag> tagList = new LinkedList<XmlTag>() ;
-        if (!geoOnly) {
-            tagList.addAll(entries.who);
-            tagList.addAll(entries.what);
-        }
-        tagList.addAll(entries.where);
+        what = new TagDirectory(theme, aThis, TagDirectory.WhatTag.WHAT);
         
-        for (XmlTag tag : tagList) {
-            tags.add(new Tag(tag.name)) ;
-        }
+        where = new TagDirectory(theme, aThis, TagDirectory.WhatTag.WHERE);
+    }
+    
+    @Override
+    public void load() throws Exception {
+    }
+
+    @Override
+    public void unload() {
     }
 }

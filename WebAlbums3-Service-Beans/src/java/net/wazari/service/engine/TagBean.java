@@ -47,8 +47,7 @@ public class TagBean implements TagLocal {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagDISPLAY", log);
         XmlTagDisplay output = new XmlTagDisplay();
         Integer[] tags = vSession.getTagAsked();
-        Integer page = vSession.getPage();
-
+        
         boolean wantChildren = vSession.getWantTagChildren();
         if (tags != null) {
             Set<Tag> tagSet = new HashSet<Tag>(tags.length);
@@ -83,6 +82,7 @@ public class TagBean implements TagLocal {
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet);
             Special special = vSession.getSpecial();
             if (Special.FULLSCREEN == special) {
+                Integer page = vSession.getPage();
                 sysTools.fullscreenMultiple(vSession, rq, null, page, "Tags", tagsId.toString());
                 stopWatch.stop("Service.treatTagDISPLAY.FULLSCREEN");
                 return null;

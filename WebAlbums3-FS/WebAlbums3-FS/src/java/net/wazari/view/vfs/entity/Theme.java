@@ -32,23 +32,38 @@ public class Theme extends SDirectory implements ADirectory {
     @File(name="Carnets")
     public final Carnets carnets = new Carnets(this);
     
-    @Directory
-    @File(name="Geolocalizations")
-    public final Tags geoloc;
-    
     private String name;
+    
+    @Directory
+    @File(name="Random")
+    public final Random random;
 
     Theme(int id, String name, Launch aThis) throws WebAlbumsServiceException {
         this.name = name;
-        Session s = new Session(new ATheme(id, name));
-        this.tags = new Tags(s, aThis, false);
-        this.geoloc = new Tags(s, aThis, true);
-        this.albums = new Albums(s, aThis);
+        net.wazari.dao.entity.Theme theme = new ATheme(id, name);
+        
+        this.tags = new Tags(theme, aThis, false);
+        this.albums = new Albums(theme, aThis);
+        
+        this.random = new Random(theme, aThis);
     }
     
     @Override
     public String getShortname() {
         return name;
+    }
+
+    @Override
+    public void load() throws Exception {
+    }
+
+    @Override
+    public void unload() {
+    }
+    
+    @Override
+    public String toString() {
+        return "Directory["+name+"]";
     }
     
     public class ATheme implements net.wazari.dao.entity.Theme {

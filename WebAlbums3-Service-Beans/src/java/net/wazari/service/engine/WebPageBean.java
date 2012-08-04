@@ -494,7 +494,10 @@ public class WebPageBean implements WebPageLocal {
         try {
             ref = inputDate.parse(date);
         } catch (ParseException ex) {
-            log.warn("Invalid date provided: {}", date);
+            log.warn("Invalid date provided: `{}`", date);
+            return lst;
+        } catch (NumberFormatException ex) {
+            log.warn("Invalid date provided: '{}'", date);
             return lst;
         }
         
@@ -512,6 +515,8 @@ public class WebPageBean implements WebPageLocal {
                         age--;
                     person.birthdate = Integer.toString(age);
                 } catch (ParseException ex) {
+                    log.warn("Invalid birth date for tag {}: {}", person.name, person.birthdate);
+                } catch (NumberFormatException ex) {
                     log.warn("Invalid birth date for tag {}: {}", person.name, person.birthdate);
                 }
             }

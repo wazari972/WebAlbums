@@ -374,6 +374,7 @@ public class AlbumBean implements AlbumLocal {
                 XmlAlbum album = new XmlAlbum();
                 album.id = enrAlbum.getId();
                 album.name = enrAlbum.getNom();
+                album.albmDate = enrAlbum.getDate();
                 if (enrAlbum.getPicture() != null) {
                     album.picture = new XmlPhotoId(enrAlbum.getPicture().getId());
                     if (vSession.directFileAccess())

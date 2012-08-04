@@ -15,6 +15,7 @@ import net.wazari.libvfs.inteface.SFile;
 import net.wazari.libvfs.inteface.SLink;
 import net.wazari.libvfs.vfs.Resolver;
 
+
 /**
  *
  * @author kevin
@@ -44,6 +45,16 @@ public class Root extends SDirectory implements ADirectory {
     @Link
     @File(name="link")
     public MyLink link = new MyLink();
+
+    @Override
+    public void load() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void unload() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     public static class SubFolder implements ADirectory {
         @File(name="test1.txt", access={Access.R, Access.W})
@@ -51,6 +62,16 @@ public class Root extends SDirectory implements ADirectory {
         
         @File(access={File.Access.R})
         public IFile tags = new Variable("zzzzzzzzzz");
+
+        @Override
+        public void load() throws Exception {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void unload() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
     
     public static void main (String[] args) {
@@ -59,7 +80,6 @@ public class Root extends SDirectory implements ADirectory {
         com.jnetfs.core.JnetFS.main(new String[]{"/home/kevin/vayrac/WebAlbums/WebAlbums3-FS/test"});
     }
 }
-
 class MyLink extends SLink {
     @Override
     public String getTarget() {

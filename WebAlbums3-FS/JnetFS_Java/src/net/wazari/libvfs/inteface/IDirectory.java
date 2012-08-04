@@ -17,4 +17,6 @@ public interface IDirectory extends IFile {
     File.Access[] getAccess(IFile file);
     
     String getShortname(IFile file);
+
+    void rmdir();
 }
