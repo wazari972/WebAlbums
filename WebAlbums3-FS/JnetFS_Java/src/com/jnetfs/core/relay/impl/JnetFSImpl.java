@@ -35,8 +35,6 @@ public abstract class JnetFSImpl implements Code {
      * @param obj Object
      */
     public static void debug(Object obj) {
-        if (debug) {
-            System.out.println(new Date() + "\t" + obj);
-        }
+        log.warn(obj.toString());
     }
 }

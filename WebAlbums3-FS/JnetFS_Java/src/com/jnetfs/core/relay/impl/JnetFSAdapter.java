@@ -10,8 +10,7 @@ package com.jnetfs.core.relay.impl;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 
-public class JnetFSAdapter extends JnetFSImpl {
-
+public class JnetFSAdapter extends JnetFSImpl {    
     public int hello(JnetJNIConnector jniEnv) throws JnetException {
         return ESUCCESS;
     }

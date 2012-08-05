@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 public class IntrosDirectory extends SDirectory {
-    private static final Logger log = LoggerFactory.getLogger(IntrosDirectory.class.getCanonicalName()) ;
+    private static final Logger log = LoggerFactory.getLogger(IntrosDirectory.class.getCanonicalName());
     
     private List<IFile> inFiles = null;
     private ADirectory directory;
@@ -79,31 +79,36 @@ public class IntrosDirectory extends SDirectory {
     }
         
     private Map<Object, Field> getDirFields() {
+        
         Map<Object, Field> map = new HashMap<Object, Field>();
-        for (Field aField : directory.getClass().getDeclaredFields()) {
-            if (aField == null) {
-                continue;
-            }
-            
-            Object field_value;
-            try {
-                field_value = aField.get(directory) ;
-            } catch (IllegalArgumentException ex) {
-                //print(ex.getMessage());
-                //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                continue;
-            } catch (IllegalAccessException ex) {
-                //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                continue;
-            }
-            if (field_value instanceof List) {
-                
-                for (Object o : (List) field_value) {
-                    map.put(o, aField);
+        Class clazz = directory.getClass();
+        while (clazz != null) {
+            for (Field aField : clazz.getDeclaredFields()) {
+                if (aField == null) {
+                    continue;
                 }
-            } else {
-                map.put(field_value, aField);
+
+                Object field_value;
+                try {
+                    field_value = aField.get(directory) ;
+                } catch (IllegalArgumentException ex) {
+                    //print(ex.getMessage());
+                    //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                } catch (IllegalAccessException ex) {
+                    //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                    continue;
+                }
+                if (field_value instanceof List) {
+
+                    for (Object o : (List) field_value) {
+                        map.put(o, aField);
+                    }
+                } else {
+                    map.put(field_value, aField);
+                }
             }
+            clazz = clazz.getSuperclass();
         }
         return map;
     }

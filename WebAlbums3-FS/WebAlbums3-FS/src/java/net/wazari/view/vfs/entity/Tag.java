@@ -9,18 +9,21 @@ import java.util.List;
 import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.File;
-import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
+import net.wazari.service.exchange.xml.tag.XmlTagCloud;
 import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
  */
-public class Tag extends SDirectory implements ADirectory {
+public class Tag extends TagDirectory implements ADirectory {
+    private static final Logger log = LoggerFactory.getLogger(Tag.class.getCanonicalName()) ;
     
     @File
     public List<Photo> photos = new LinkedList<Photo>();
@@ -31,6 +34,12 @@ public class Tag extends SDirectory implements ADirectory {
     private final int tagId;
     
     public Tag(String name, int tagId, net.wazari.dao.entity.Theme theme, Launch aThis) {
+        this(null, name, tagId, theme, aThis);
+    }
+    
+    
+    public Tag(List<XmlTagCloud.XmlTagCloudEntry> tagInside, String name, int tagId, net.wazari.dao.entity.Theme theme, Launch aThis) {
+        super(tagInside, theme, aThis);
         this.name = name;
         this.theme = theme;
         this.aThis = aThis;
@@ -44,12 +53,14 @@ public class Tag extends SDirectory implements ADirectory {
 
     @Override
     public void load() throws Exception {
+        log.warn("Load images from : {}", this);
         Session session = new Session(theme);
         session.setTagAsked(new Integer[]{tagId});
         XmlTagDisplay tags = aThis.tagService.treatTagDISPLAY((ViewSessionTag) session, null);
         for (XmlPhoto photo : tags.photoList.photo) {
             photos.add(new Photo(photo.details));
         }
+        super.load();
     }
 
     @Override

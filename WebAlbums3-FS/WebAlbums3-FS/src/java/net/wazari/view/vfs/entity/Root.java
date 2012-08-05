@@ -13,6 +13,8 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.XmlTheme;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -20,6 +22,8 @@ import net.wazari.view.vfs.Session;
  */
 @File
 public class Root implements ADirectory {
+    private static final Logger log = LoggerFactory.getLogger(Root.class.getCanonicalName()) ;
+    
     @Directory
     public List<Theme> themes = new LinkedList<Theme>();
     private final Launch aThis;
@@ -30,7 +34,9 @@ public class Root implements ADirectory {
 
     @Override
     public void load() throws Exception {
+        log.warn("LOAD ROOT");
         for (XmlTheme theme : aThis.themeService.getThemeList(new Session(null)).theme) {
+            log.warn("LOAD ROOT {}", theme.name);
             themes.add(new Theme(theme.id, theme.name, aThis));
         }
     }

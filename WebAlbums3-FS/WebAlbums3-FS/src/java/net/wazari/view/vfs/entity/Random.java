@@ -10,7 +10,6 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
-import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
@@ -19,13 +18,12 @@ import net.wazari.service.exchange.xml.album.XmlAlbumYears;
 import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
-import net.wazari.view.vfs.entity.TagDirectory.WhatTag;
 
 /**
  *
  * @author kevin
  */
-public class Random extends SDirectory implements ADirectory {
+public class Random implements ADirectory {
     @File(name="random.jpg")
     public Photo photo;
     
@@ -52,14 +50,6 @@ public class Random extends SDirectory implements ADirectory {
         XmlPhotoRandom rand = aThis.photoService.treatRANDOM(session);
         photo = new Photo(rand.details);
         years = new RandYears(theme, aThis);
-    }
-    
-    @Override
-    public void rmdir() {
-        try {
-            load();
-        } catch (Exception e) {
-        }
     }
 
     @Override

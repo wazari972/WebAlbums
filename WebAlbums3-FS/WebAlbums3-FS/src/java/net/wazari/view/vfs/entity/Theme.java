@@ -15,7 +15,6 @@ import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.view.vfs.Launch;
-import net.wazari.view.vfs.Session;
 
 /**
  *
@@ -38,11 +37,15 @@ public class Theme extends SDirectory implements ADirectory {
     @File(name="Random")
     public final Random random;
 
+    @Directory
+    @File(name="Resize")
+    public final Resize resize;
+    
     Theme(int id, String name, Launch aThis) throws WebAlbumsServiceException {
         this.name = name;
         net.wazari.dao.entity.Theme theme = new ATheme(id, name);
         
-        this.tags = new Tags(theme, aThis, false);
+        this.tags = new Tags(theme, aThis);
         this.albums = new Albums(theme, aThis);
         
         this.random = new Random(theme, aThis);

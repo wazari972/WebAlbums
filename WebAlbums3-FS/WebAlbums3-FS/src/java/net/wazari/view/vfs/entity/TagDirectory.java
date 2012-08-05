@@ -4,59 +4,61 @@
  */
 package net.wazari.view.vfs.entity;
 
+import com.jnetfs.core.relay.impl.JnetFSAdapter;
+import com.jnetfs.vfs.dbfs.JnetDBFS;
 import java.util.LinkedList;
 import java.util.List;
 import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
-import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
+import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.service.exchange.xml.tag.XmlTag;
+import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.view.vfs.Launch;
-import net.wazari.view.vfs.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
  */
-public class TagDirectory implements ADirectory {
-    public enum WhatTag {WHO, WHERE, WHAT}
+public class TagDirectory extends SDirectory implements ADirectory {
+    private static final Logger log = LoggerFactory.getLogger(TagDirectory.class.getCanonicalName()) ;
     
     @Directory
     @File
-    public List<Tag> tags = new LinkedList<Tag>();
+    public List<Tag> tagFiles = new LinkedList<Tag>();
     
     private final Theme theme;
     private final Launch aThis;
-    private final WhatTag what;
+    private List<XmlTag> tagList = null;
+    private List<XmlTagCloudEntry> tagCloud = null;
     
-    public TagDirectory(net.wazari.dao.entity.Theme theme, Launch aThis, WhatTag what) throws WebAlbumsServiceException {
+    public TagDirectory(net.wazari.dao.entity.Theme theme, Launch aThis, List<XmlTag> tagList) {
         this.theme = theme;
         this.aThis = aThis;
-        this.what = what;
+        this.tagList = tagList;
+    }
+
+    public TagDirectory(List<XmlTagCloudEntry> tagCloud, Theme theme, Launch aThis) {
+        this.theme = theme;
+        this.aThis = aThis;
+        this.tagCloud = tagCloud;
     }
 
     @Override
     public void load() throws Exception {
-        Session session = new Session(theme);
-        XmlWebAlbumsList entries = aThis.webPageService.displayListLB(ViewSession.Mode.TAG_USED, session, null,
-                ViewSession.Box.MULTIPLE);
-        
-        List<XmlTag> tagList = new LinkedList<XmlTag>() ;
-        if (what == WhatTag.WHO) {
-            tagList.addAll(entries.who);
-        }
-        if (what == WhatTag.WHAT) {
-            tagList.addAll(entries.what);
-        }
-        if (what == WhatTag.WHERE) {
-            tagList.addAll(entries.where);
-        }
-        
-        for (XmlTag tag : tagList) {
-            tags.add(new Tag(tag.name, tag.id, theme, aThis)) ;
+        log.warn("Load directories from : {}", this);
+        if (tagList != null) {
+            for (XmlTag tag : tagList) {
+                tagFiles.add(new Tag(tag.name, tag.id, theme, aThis)) ;
+            }
+        } else if (tagCloud != null) {
+            for (XmlTagCloudEntry tag : tagCloud) {
+                log.warn("Add directory: {} ", tag.name);
+                tagFiles.add(new Tag(tag.tag, tag.nb+" "+tag.name, tag.id, theme, aThis)) ;
+            }
         }
     }
 
