@@ -14,10 +14,5 @@ public class Config implements ADirectory {
 
     @Override
     public void load() throws Exception {
-    }
-
-    @Override
-    public void unload() {
-    }
-    
+    }    
 }

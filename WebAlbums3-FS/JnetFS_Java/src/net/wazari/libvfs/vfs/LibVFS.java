@@ -14,8 +14,11 @@ import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.ILink;
 import net.wazari.libvfs.inteface.SLink;
+import org.slf4j.LoggerFactory;
 
 public class LibVFS extends JnetFSAdapter {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(LibVFS.class.getCanonicalName()) ;
+    
     private long clientcount = 0;
 
     static class FileInfo {
@@ -326,7 +329,6 @@ public class LibVFS extends JnetFSAdapter {
             return ENOENT;
         }
         
-        
         return ENOSYS;
     }
     
@@ -338,12 +340,28 @@ public class LibVFS extends JnetFSAdapter {
         }
         
         debug("CREATE\t" + path);
+        
         IFile file = resolver.getFile(path) ;
-        if (file == null) {
-            return ENOENT;
+        if (file != null) {
+            return EEXIST;
         }
         
-        return ENOSYS;
+        String dirname = path.substring(0, path.lastIndexOf("/"));
+        String filename = path.substring(path.lastIndexOf("/") + 1);
+        
+        file = resolver.getFile(dirname) ;
+        if (file == null || !(file instanceof IDirectory)) {
+            return ENOENT;
+        }
+        try {
+            ((IDirectory) file).create(filename);
+            log.warn("Touch {} sucess: {}", path);
+            return ESUCCESS;
+        } catch (Exception e) {
+            log.warn("Touch {} failed: {}", path, e);
+            return EFAULT;
+        }
+        
     }
 
     @Override
@@ -354,13 +372,19 @@ public class LibVFS extends JnetFSAdapter {
             return ENOENT;
         }
         
-        debug("MKDIR\t" + path);
-        IFile file = resolver.getFile(path) ;
-        if (file == null) {
+        String dirname = path.substring(0, path.lastIndexOf("/"));
+        String filename = path.substring(path.lastIndexOf("/") + 1);
+        
+        debug("MKDIR\t" + dirname + "<>"+filename);
+        IFile file = resolver.getFile(dirname) ;
+        debug("MKDIR\t" + dirname + "<>"+file);
+        if (file == null || !(file instanceof IDirectory)) {
             return ENOENT;
         }
         
-        return ENOSYS;
+        ((IDirectory) file).mkdir(filename);
+        
+        return ESUCCESS;
     }
 
     @Override
@@ -372,10 +396,15 @@ public class LibVFS extends JnetFSAdapter {
         
         debug("DELETE\t" + path);
         IFile file = resolver.getFile(path) ;
-        if (file == null) {
+        if (file == null || (file instanceof IDirectory)) {
             return ENOENT;
         }
-        return ENOSYS;
+        try {
+            file.unlink();
+            return ESUCCESS;
+        } catch (Exception ex) {
+            return ENOSYS;
+        }
     }
 
     @Override
@@ -403,12 +432,39 @@ public class LibVFS extends JnetFSAdapter {
             return ENOENT;
         }
         
-        debug("RENAME\t" + path);
+        String to = jniEnv.getString(JnetFSImpl.TO);
+        debug("RENAME\t" + path+" into "+to);
         IFile file = resolver.getFile(path) ;
         if (file == null) {
             return ENOENT;
         }
-        return ENOSYS;
+        String dirname = to.substring(0, to.lastIndexOf("/"));
+        String filename = to.substring(to.lastIndexOf("/") + 1);
+        
+        IFile targetDir = resolver.getFile(dirname) ;
+        debug("RENAME\t targetdir" + dirname+" is "+targetDir);
+        if (targetDir == null) {
+            return ENOENT;
+        } else if (!(targetDir instanceof IDirectory)) {
+            return ENOTDIR;
+        }
+        
+        IFile targetFile = resolver.getFile((IDirectory) targetDir, filename, path);
+        
+        debug("RENAME\t targetfile is" + filename+" is "+targetFile);
+        if (targetFile != null) {
+            return EEXIST;
+        }
+        try {
+            debug("RENAME\t do rename");
+            file.rename((IDirectory) targetDir, filename);
+            return ESUCCESS;
+        } catch (Exception e) {
+            debug("RENAME\t failed "+e);
+            e.printStackTrace();
+            return EINVAL;
+        }
+        
     }
 
     @Override

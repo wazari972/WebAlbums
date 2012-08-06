@@ -61,10 +61,6 @@ public class TagDirectory extends SDirectory implements ADirectory {
             }
         }
     }
-
-    @Override
-    public void unload() {
-    }
     
     @Override
     public String toString() {

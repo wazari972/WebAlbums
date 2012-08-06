@@ -57,19 +57,15 @@ public class Tag extends TagDirectory implements ADirectory {
         Session session = new Session(theme);
         session.setTagAsked(new Integer[]{tagId});
         XmlTagDisplay tags = aThis.tagService.treatTagDISPLAY((ViewSessionTag) session, null);
+        log.warn("Load images from : {} == {} images", this, tags.photoList.photo.size());
         for (XmlPhoto photo : tags.photoList.photo) {
-            photos.add(new Photo(photo.details));
+            photos.add(new Photo(photo.details, true));
         }
         super.load();
-    }
-
-    @Override
-    public void unload() {
     }
     
     @Override
     public String toString() {
         return "Directory[tags/"+name+"]";
     }
-    
 }

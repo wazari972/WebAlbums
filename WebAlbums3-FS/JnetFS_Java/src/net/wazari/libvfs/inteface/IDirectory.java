@@ -19,4 +19,11 @@ public interface IDirectory extends IFile {
     String getShortname(IFile file);
 
     void rmdir();
+    
+    void mkdir(String name);
+    
+    void create(String name) throws Exception ;
+    
+    void addFile(IFile file);
+    void rmFile(IFile file);
 }

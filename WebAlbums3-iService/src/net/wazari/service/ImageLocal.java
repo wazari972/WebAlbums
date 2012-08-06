@@ -23,4 +23,7 @@ public interface ImageLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlImage treatIMG(ViewSessionImages vSession) throws WebAlbumsServiceException;
 
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    String treatSHRINK(ViewSessionImages vSession) throws WebAlbumsServiceException;
+
 }

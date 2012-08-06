@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import net.wazari.libvfs.annotation.ADirectory;
+import net.wazari.libvfs.annotation.CanChange;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import org.slf4j.Logger;
@@ -26,9 +27,12 @@ public class IntrosDirectory extends SDirectory {
     private List<IFile> inFiles = null;
     private ADirectory directory;
     
-    public IntrosDirectory(IntrosDirectory parent, ADirectory adir) {
+    public IntrosDirectory(IDirectory parent, ADirectory adir) {
         this.parent = parent;
         this.directory = adir;
+        if (adir instanceof IFile) {
+            ((IFile) adir).setParent(parent);
+        }
     }
     
     @Override
@@ -79,7 +83,6 @@ public class IntrosDirectory extends SDirectory {
     }
         
     private Map<Object, Field> getDirFields() {
-        
         Map<Object, Field> map = new HashMap<Object, Field>();
         Class clazz = directory.getClass();
         while (clazz != null) {
@@ -91,16 +94,11 @@ public class IntrosDirectory extends SDirectory {
                 Object field_value;
                 try {
                     field_value = aField.get(directory) ;
-                } catch (IllegalArgumentException ex) {
-                    //print(ex.getMessage());
-                    //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                    continue;
-                } catch (IllegalAccessException ex) {
-                    //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
                     continue;
                 }
+                
                 if (field_value instanceof List) {
-
                     for (Object o : (List) field_value) {
                         map.put(o, aField);
                     }
@@ -113,42 +111,72 @@ public class IntrosDirectory extends SDirectory {
         return map;
     }
     
-    private Map<ADirectory, IntrosDirectory> cache = new HashMap<ADirectory, IntrosDirectory>();
+    @Override 
+    public void addFile(IFile file) {
+        if (inFiles == null) {
+            return;
+        }
+        
+        inFiles.add(file);
+    }
+    
+    @Override 
+    public void rmFile(IFile file) {
+        if (inFiles == null) {
+            return;
+        }
+        
+        inFiles.remove(file);
+    }
+    
     @Override
     public List<IFile> listFiles() {
-        if (inFiles != null) {
+        boolean changed = directory instanceof CanChange && ((CanChange) directory).contentChanged();
+        //if it's not the first time we come here the dir can change and did not change
+        if (inFiles != null && !changed) {
             return inFiles;
         }
         
-        inFiles = new LinkedList<IFile>();
-        try {
-            log.warn("Load {}", this.directory);
-            directory.load();
-            log.warn("Loaded {}", this.directory);
-        } catch (Exception ex) {
-            log.warn("Loading {} failed ... {}", this.directory, ex);
+        //if it's the first time we come
+        if (inFiles == null && (changed || !(directory instanceof CanChange))) {
+            try {
+                log.warn("Load {}", this.directory);
+                directory.load();
+                log.warn("Loaded {}", this.directory);
+            } catch (Exception ex) {
+                log.warn("Loading {} failed ... {}", this.directory, ex);
+                ex.printStackTrace();
+            }
         }
-        
+        inFiles = new LinkedList<IFile>();
+
         Map<Object, Field> map = getDirFields();
         for (Object field_value : map.keySet()) {
             Field aField = map.get(field_value);
-            
             if (aField.isAnnotationPresent(File.class) && field_value instanceof IFile && !(field_value instanceof ADirectory)) {
                 IFile son = (IFile) field_value;
                 son.setParent(this);
                 inFiles.add(son);
             } else if (aField.isAnnotationPresent(Directory.class)) {
-                IntrosDirectory toAdd = null;
-                
                 if (field_value instanceof ADirectory) {
-                    inFiles.add(new IntrosDirectory(this, (ADirectory) field_value));
+                    ADirectory adir = (ADirectory) field_value;
+                    inFiles.add(new IntrosDirectory(this, adir));
                 } else if (field_value instanceof List) {
-                    for (ADirectory adir : (List<ADirectory>) field_value) {
-                        inFiles.add(new IntrosDirectory(this, (ADirectory) adir));
+                    for (Object afile : (List) field_value) {
+                        if (afile instanceof ADirectory) {
+                            inFiles.add(new IntrosDirectory(this, (ADirectory) afile));
+                        } else if (afile instanceof IFile) {
+                            inFiles.add((IFile) afile);
+                        }
                     }
                 }
             }
         }
+        
+        if (directory instanceof CanChange) {
+            ((CanChange) directory).contentRead();
+        }
+        
         return inFiles;
     }
     
@@ -187,7 +215,13 @@ public class IntrosDirectory extends SDirectory {
     public void rmdir() {
         if (directory instanceof IDirectory) {
             ((IDirectory) directory).rmdir();
-            inFiles = null;
+        }
+    }
+    
+    @Override
+    public void create(String path) throws Exception {
+        if (directory instanceof IDirectory) {
+            ((IDirectory) directory).create(path);
         }
     }
     

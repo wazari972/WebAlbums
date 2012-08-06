@@ -8,6 +8,7 @@ package net.wazari.libvfs.annotation;
  *
  * @author kevin
  */
-public interface ADirectory extends AFile {
-    void load() throws Exception ;
+public interface CanChange {
+    void contentRead();
+    boolean contentChanged();
 }

@@ -63,7 +63,14 @@ public class SFile implements IFile {
     }
     
     @Override
-    public void open() {}
+    public void open() {
+    
+    }
+    
+    @Override
+    public void unlink() throws Exception {
+            
+    }
     
     @Override
     public String getShortname() {
@@ -93,5 +100,9 @@ public class SFile implements IFile {
     @Override
     public void setParent(IDirectory parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public void rename(IDirectory targetDir, String filename) throws Exception {
     }
 }

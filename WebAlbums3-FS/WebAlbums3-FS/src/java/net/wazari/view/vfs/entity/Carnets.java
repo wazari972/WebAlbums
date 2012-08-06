@@ -19,9 +19,4 @@ public class Carnets implements ADirectory {
     @Override
     public void load() throws Exception {
     }
-
-    @Override
-    public void unload() {
-    }
-    
 }

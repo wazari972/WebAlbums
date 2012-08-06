@@ -23,32 +23,30 @@ import net.wazari.view.vfs.Launch;
 public class Theme extends SDirectory implements ADirectory {
     @Directory
     @File(name="Albums")
-    public final Albums albums;
+    public Albums albums;
     @Directory
     @File(name="Tags")
-    public final Tags tags ;
+    public Tags tags ;
     @Directory
     @File(name="Carnets")
-    public final Carnets carnets = new Carnets(this);
+    public Carnets carnets = new Carnets(this);
     
     private String name;
     
     @Directory
     @File(name="Random")
-    public final Random random;
+    public Random random;
 
     @Directory
     @File(name="Resize")
-    public final Resize resize;
+    public Resize resize;
+    private final ATheme theme;
+    private final Launch aThis;
     
     Theme(int id, String name, Launch aThis) throws WebAlbumsServiceException {
         this.name = name;
-        net.wazari.dao.entity.Theme theme = new ATheme(id, name);
-        
-        this.tags = new Tags(theme, aThis);
-        this.albums = new Albums(theme, aThis);
-        
-        this.random = new Random(theme, aThis);
+        this.theme = new ATheme(id, name);
+        this.aThis = aThis;
     }
     
     @Override
@@ -58,10 +56,12 @@ public class Theme extends SDirectory implements ADirectory {
 
     @Override
     public void load() throws Exception {
-    }
-
-    @Override
-    public void unload() {
+        this.tags = new Tags(theme, aThis);
+        this.albums = new Albums(theme, aThis);
+        
+        this.random = new Random(theme, aThis);
+        
+        this.resize = new Resize(theme, aThis);
     }
     
     @Override

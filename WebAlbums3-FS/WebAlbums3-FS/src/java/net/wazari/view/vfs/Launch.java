@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.libvfs.vfs.Resolver;
 import net.wazari.service.AlbumLocal;
+import net.wazari.service.ImageLocal;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.ThemeLocal;
@@ -24,6 +25,7 @@ import net.wazari.view.vfs.entity.Root;
  * @author kevin
  */
 public class Launch extends HttpServlet {
+    @EJB public ImageLocal imageService;
     @EJB public PhotoLocal photoService;
     @EJB public AlbumLocal albumService;
     @EJB public ThemeLocal themeService ;

@@ -50,11 +50,6 @@ public class Root extends SDirectory implements ADirectory {
     public void load() throws Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    public void unload() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     
     public static class SubFolder implements ADirectory {
         @File(name="test1.txt", access={Access.R, Access.W})
@@ -65,11 +60,6 @@ public class Root extends SDirectory implements ADirectory {
 
         @Override
         public void load() throws Exception {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void unload() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }

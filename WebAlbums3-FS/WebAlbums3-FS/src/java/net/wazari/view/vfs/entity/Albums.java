@@ -22,7 +22,6 @@ import net.wazari.view.vfs.Session;
  * @author kevin
  */
 public class Albums extends Listing implements ADirectory {
-
     @Directory
     @File
     public List<Album> albums = new LinkedList<Album>();
@@ -42,9 +41,5 @@ public class Albums extends Listing implements ADirectory {
         for (XmlAlbum album : entries.album) {
             albums.add(new Album(album.albmDate, album.name, album.id, theme, aThis)) ;
         }
-    }
-
-    @Override
-    public void unload() {
     }
 }

@@ -15,7 +15,6 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlAlbumYear;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
-import net.wazari.service.exchange.xml.photo.XmlPhotoRandom;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
 
@@ -25,12 +24,8 @@ import net.wazari.view.vfs.Session;
  */
 public class Random implements ADirectory {
     @File(name="random.jpg")
-    public Photo photo;
-    
-    @File(name="random_album")
-    @Directory
-    public Album album;
-    
+    public RandomPhoto photo;
+
     @File(name="By Years")
     @Directory
     public RandYears years;
@@ -47,13 +42,8 @@ public class Random implements ADirectory {
     public void load() throws Exception {
         Session session = new Session(theme);
         
-        XmlPhotoRandom rand = aThis.photoService.treatRANDOM(session);
-        photo = new Photo(rand.details);
+        photo = new RandomPhoto(aThis, session);
         years = new RandYears(theme, aThis);
-    }
-
-    @Override
-    public void unload() {
     }
 
     public static class RandYear extends SDirectory implements ADirectory {
@@ -85,11 +75,6 @@ public class Random implements ADirectory {
                 albums.add(new Album(anAlbum.albmDate, anAlbum.name, anAlbum.id, theme, aThis));
             }
         }
-
-        @Override
-        public void unload() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
     }
 
     public static class RandYears implements ADirectory {
@@ -114,9 +99,20 @@ public class Random implements ADirectory {
                 years.add(new RandYear(year.year, year.album, theme, aThis));
             }
         }
+    }
 
+    public static class RandomPhoto extends Photo {
+        private final Session session;
+        private final Launch aThis;
+        public RandomPhoto(Launch aThis, Session session) throws Exception {
+            super(aThis.photoService.treatRANDOM(session).details);
+            this.session = session;
+            this.aThis = aThis;
+        }
+        
         @Override
-        public void unload() {
+        public void unlink() throws Exception {
+            this.setTarget(aThis.photoService.treatRANDOM(session).details.photoId.path);
         }
     }
 }

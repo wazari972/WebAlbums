@@ -104,8 +104,35 @@ public class SDirectory implements IDirectory {
     public Access[] getAccess(IFile file) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    public void unlink() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public void rmdir() {
+    }
+    
+    @Override
+    public void mkdir(String name) {
+    }
+
+    @Override
+    public void create(String name) throws Exception {
+    }
+
+    @Override
+    public void rename(IDirectory targetDir, String filename) {
+    }
+
+    @Override
+    public void addFile(IFile file) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void rmFile(IFile file) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

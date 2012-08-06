@@ -28,7 +28,10 @@ public interface IFile {
     void open();
     void release();
     void close();
+    void unlink() throws Exception;
     
     void setParent(IDirectory parent);
     IDirectory getParent();
+
+    void rename(IDirectory targetDir, String filename) throws Exception ;
 }

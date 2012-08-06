@@ -111,6 +111,10 @@ public final class JnetFS implements Code {
     public int release(JnetJNIConnector jniEnv) throws JnetException {
         return adapter.release(jniEnv);
     }
+    
+    public int truncate(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.truncate(jniEnv);
+    }
 
     /**
      * Close a file
@@ -121,6 +125,30 @@ public final class JnetFS implements Code {
      */
     public int flush(JnetJNIConnector jniEnv) throws JnetException {
         return adapter.flush(jniEnv);
+    }
+    
+    public int create(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.create(jniEnv);
+    }
+    
+    public int mkdir(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.mkdir(jniEnv);
+    }
+    
+    public int delete(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.delete(jniEnv);
+    }
+    
+    public int rename(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.rename(jniEnv);
+    }
+    
+    public int symlink(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.symlink(jniEnv);
+    }
+    
+    public int touch(JnetJNIConnector jniEnv) throws JnetException {
+        return adapter.touch(jniEnv);
     }
 
     /**

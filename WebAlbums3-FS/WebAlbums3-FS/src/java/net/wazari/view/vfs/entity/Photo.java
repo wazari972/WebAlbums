@@ -12,23 +12,52 @@ import net.wazari.service.exchange.xml.common.XmlDetails;
  * @author kevin
  */
 public class Photo extends SLink {
-    private String name;
-    private String target;
+    protected String name;
+    protected String target;
+    protected int id;
+    
+    protected boolean doCompletePath = true;
+    protected boolean uniqName = false;
+    
+    public Photo(String path, String name, int id) {
+        setTarget(path);
+        this.name = name;
+        this.id = id;
+    }
+    
+    public Photo(XmlDetails details, String name) {
+        setTarget(details.photoId.path);
+        this.name = name;
+        this.id = details.photoId.id;
+    }
+    
+    public Photo(XmlDetails details, boolean uniq) {
+        this(details);
+        
+        this.uniqName = uniq;
+    }
     
     public Photo(XmlDetails details) {
-        if (details == null)
-            return;
-        target = details.photoId.path;
+        setTarget(details.photoId.path);
+        this.id = details.photoId.id;
+    }
+    
+    protected final void setTarget(String target) {
+        this.target = target;
         name = target.substring(target.lastIndexOf("/")+1);
     }
     
     @Override
     public String getTarget() {
-        return "/home/kevin/vayrac/data/images/"+target;
+        if (doCompletePath) {
+            return "/home/kevin/vayrac/data/images/"+target;
+        } else {
+            return target;
+        }
     }
     
     @Override
     public String getShortname() {
-        return name;
+        return (uniqName ? Integer.toString(id) + "-" : "") + name;
     }
 }

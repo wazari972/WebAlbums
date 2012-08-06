@@ -57,8 +57,4 @@ public class Tags implements ADirectory {
         XmlTagCloud theCloud = aThis.tagService.treatTagCloud(session);
         cloud = new TagDirectory(theCloud.parentList, theme, aThis);
     }
-
-    @Override
-    public void unload() {
-    }
 }

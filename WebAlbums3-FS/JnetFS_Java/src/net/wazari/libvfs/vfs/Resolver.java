@@ -5,6 +5,7 @@
 package net.wazari.libvfs.vfs;
 
 import net.wazari.libvfs.annotation.ADirectory;
+import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.IntrosDirectory;
 import net.wazari.libvfs.inteface.IntrosDirectory.IntrosRoot;
@@ -20,14 +21,14 @@ public class Resolver {
         root = new IntrosRoot(rootDir);
     }
     public IFile getFile(String search) {
-        if (search.equals("/")) {
+        if (search.equals("/") || search.equals("")) {
             return root;
         }
         
         return getFile(root, "", search);
     }
     
-    public IFile getFile(IntrosDirectory current, String path, String search) {
+    public IFile getFile(IDirectory current, String path, String search) {
         for (IFile file : current.listFiles())  {
             file.setParent(current);
                 

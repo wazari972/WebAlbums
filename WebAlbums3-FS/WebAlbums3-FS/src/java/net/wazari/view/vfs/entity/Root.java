@@ -9,6 +9,7 @@ import java.util.List;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
+import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.XmlTheme;
 import net.wazari.view.vfs.Launch;
@@ -21,11 +22,17 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @File
-public class Root implements ADirectory {
+public class Root extends SDirectory implements ADirectory {
     private static final Logger log = LoggerFactory.getLogger(Root.class.getCanonicalName()) ;
     
+    @File
     @Directory
     public List<Theme> themes = new LinkedList<Theme>();
+    
+    @Directory
+    @File
+    public List<SDirectory> trashes = new LinkedList<SDirectory>();
+    
     private final Launch aThis;
 
     public Root(Launch aThis) throws WebAlbumsServiceException {
@@ -40,9 +47,11 @@ public class Root implements ADirectory {
             themes.add(new Theme(theme.id, theme.name, aThis));
         }
     }
-
+    
     @Override
-    public void unload() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void mkdir(String name) {
+        if (name.startsWith(".Trash")) {
+            trashes.add(new SDirectory());
+        }
     }
 }

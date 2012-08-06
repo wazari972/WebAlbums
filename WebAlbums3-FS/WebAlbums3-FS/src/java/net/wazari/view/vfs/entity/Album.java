@@ -52,14 +52,9 @@ public class Album extends SDirectory implements ADirectory {
             photos.add(new Photo(photo.details));
         }
     }
-
-    @Override
-    public void unload() {
-    }
     
     @Override
     public String toString() {
         return "Directory[tags/"+name+"]";
     }
-    
 }

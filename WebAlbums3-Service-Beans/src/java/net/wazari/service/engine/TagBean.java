@@ -54,8 +54,9 @@ public class TagBean implements TagLocal {
             for (int tagId : Arrays.asList(tags)) {
                 try {
                     Tag enrTag = tagDAO.find(tagId);
-                    if (enrTag == null)
+                    if (enrTag == null) {
                         continue;
+                    }
                     tagSet.add(enrTag);
                     if (wantChildren) {
                         tagSet.addAll(tagDAO.getChildren(enrTag));
@@ -64,7 +65,7 @@ public class TagBean implements TagLocal {
                     log.warn("Tag {} cannot be looked up", tagId);
                 }
             }
-
+            log.warn("DISPLAY TAGS FROM {}", tagSet);
             XmlFrom thisPage = new XmlFrom();
             thisPage.name = "Tags";
             List<Integer> tagsAsked = new ArrayList<Integer>(tagSet.size());
@@ -171,7 +172,7 @@ public class TagBean implements TagLocal {
                 PairTagXmlBuilder pair = enrSonStack.pop();
 
                 Long nbElts = map.get(pair.tag);
-                if (nbElts == null) {
+                if (nbElts == null || nbElts == 0) {
                     // the tag is not in the map, so it has 0 elements in the
                     // current theme.
                     nbElts = 0L;
@@ -182,8 +183,8 @@ public class TagBean implements TagLocal {
                 } else {
                     // it's in the map, so remove it, we'll process it right now
                     map.remove(pair.tag);
-
                 }
+                
                 int size = (int)(SIZE_MIN + ((double) nbElts/max) * SIZE_SCALE);
 
                 pair.parentList.add(pair.xml);
@@ -199,8 +200,35 @@ public class TagBean implements TagLocal {
             }
             enrCurrentTag = null;
         }
+        
+        for (XmlTagCloudEntry tag : output.parentList) {
+            updateParentTagCloud(tag);
+        }
+        
         stopWatch.stop();
         return output;
+    }
+    
+    private long updateParentTagCloud(XmlTagCloudEntry tag) {
+        long sonCount = tag.nb;
+        List<XmlTagCloudEntry> toRemove = new LinkedList<XmlTagCloudEntry>();
+        for (XmlTagCloudEntry son : tag.tag) {
+            long count = updateParentTagCloud(son);
+            
+            sonCount += count;
+            
+            if (count == 0) {
+                toRemove.add(son);
+            }
+        }
+        
+        for (XmlTagCloudEntry rm : toRemove) {
+            tag.tag.remove(rm);
+        }
+        
+        tag.nb = sonCount;
+        
+        return sonCount;
     }
 
     @Override
