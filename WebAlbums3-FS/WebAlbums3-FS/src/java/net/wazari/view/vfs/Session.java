@@ -18,7 +18,6 @@ import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionTag;
-import net.wazari.view.vfs.entity.Config;
 
 /**
  *

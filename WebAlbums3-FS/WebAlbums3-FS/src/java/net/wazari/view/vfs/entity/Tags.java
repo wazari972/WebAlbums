@@ -50,11 +50,11 @@ public class Tags implements ADirectory {
         XmlWebAlbumsList entries = aThis.webPageService.displayListLB(ViewSession.Mode.TAG_USED, session, null,
                 ViewSession.Box.MULTIPLE);
         
-        who = new TagDirectory(theme, aThis, (List) entries.who);
-        what = new TagDirectory(theme, aThis, (List) entries.what);
-        where = new TagDirectory(theme, aThis, (List) entries.where);
+        who = new TagDirectory(null, theme, aThis, (List) entries.who);
+        what = new TagDirectory(null, theme, aThis, (List) entries.what);
+        where = new TagDirectory(null, theme, aThis, (List) entries.where);
         
         XmlTagCloud theCloud = aThis.tagService.treatTagCloud(session);
-        cloud = new TagDirectory(theCloud.parentList, theme, aThis);
+        cloud = new TagDirectory(null, theCloud.parentList, theme, aThis);
     }
 }

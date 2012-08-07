@@ -135,4 +135,8 @@ public class SDirectory implements IDirectory {
     public void rmFile(IFile file) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void touch() {
+    }
 }

@@ -34,4 +34,6 @@ public interface IFile {
     IDirectory getParent();
 
     void rename(IDirectory targetDir, String filename) throws Exception ;
+
+    void touch();
 }

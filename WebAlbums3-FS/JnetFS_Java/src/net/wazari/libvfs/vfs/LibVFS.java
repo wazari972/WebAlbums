@@ -102,11 +102,10 @@ public class LibVFS extends JnetFSAdapter {
         if (file instanceof IDirectory) {
             debug("ATTRIBUTES DIR");
             mode |= Code.S_IFDIR;
-        } else if (file instanceof ILink) {
+        } else if (file instanceof ILink && !((ILink) file).forceFile()) {
             debug("ATTRIBUTES LNK");
             mode |= Code.S_IFLNK;
         } else {
-            
             debug("ATTRIBUTES REG");
             mode |= Code.S_IFREG;
         }
@@ -259,9 +258,15 @@ public class LibVFS extends JnetFSAdapter {
             return ENOENT;
         }
         
-        file.release();
-        
-        return ESUCCESS;
+        try {
+            debug("RELEASE\t do release");
+            file.release();
+            return ESUCCESS;
+        } catch (Exception e) {
+            debug("RELEASE\t failed "+e);
+            e.printStackTrace();
+            return EFAULT;
+        }
     }
 
     /**
@@ -284,10 +289,16 @@ public class LibVFS extends JnetFSAdapter {
             return ENOENT;
         }
         
-        file.close();
-        file.decReference();
-        
-        return ESUCCESS;
+        try {
+            debug("CLOSE\t do release");
+            file.close();
+            file.decReference();
+            return ESUCCESS;
+        } catch (Exception e) {
+            debug("CLOSE\t failed "+e);
+            e.printStackTrace();
+            return EFAULT;
+        }
     }
 
     /**
@@ -354,14 +365,14 @@ public class LibVFS extends JnetFSAdapter {
             return ENOENT;
         }
         try {
+            debug("CREATE\t do create" + path);
             ((IDirectory) file).create(filename);
-            log.warn("Touch {} sucess: {}", path);
             return ESUCCESS;
         } catch (Exception e) {
-            log.warn("Touch {} failed: {}", path, e);
+            log.warn("CREATE {} failed: {}", path, e);
+            e.printStackTrace();
             return EFAULT;
         }
-        
     }
 
     @Override
@@ -375,16 +386,20 @@ public class LibVFS extends JnetFSAdapter {
         String dirname = path.substring(0, path.lastIndexOf("/"));
         String filename = path.substring(path.lastIndexOf("/") + 1);
         
-        debug("MKDIR\t" + dirname + "<>"+filename);
         IFile file = resolver.getFile(dirname) ;
-        debug("MKDIR\t" + dirname + "<>"+file);
         if (file == null || !(file instanceof IDirectory)) {
             return ENOENT;
         }
         
-        ((IDirectory) file).mkdir(filename);
-        
-        return ESUCCESS;
+        try {
+            debug("MKDIR\t do create" + path);
+            ((IDirectory) file).mkdir(filename);
+            return ESUCCESS;
+        } catch (Exception e) {
+            log.warn("MKDIR {} failed: {}", path, e);
+            e.printStackTrace();
+            return EFAULT;
+        }
     }
 
     @Override
@@ -399,11 +414,15 @@ public class LibVFS extends JnetFSAdapter {
         if (file == null || (file instanceof IDirectory)) {
             return ENOENT;
         }
+        
         try {
+            debug("DELETE\t do delete" + path);
             file.unlink();
             return ESUCCESS;
-        } catch (Exception ex) {
-            return ENOSYS;
+        } catch (Exception e) {
+            log.warn("DELETE {} failed: {}", path, e);
+            e.printStackTrace();
+            return EFAULT;
         }
     }
 
@@ -420,9 +439,15 @@ public class LibVFS extends JnetFSAdapter {
             return ENOENT;
         }
         
-        ((IDirectory) file).rmdir();
-        
-        return ESUCCESS;
+        try {
+            debug("RMDIR\t do rmdir" + path);
+            ((IDirectory) file).rmdir();
+            return ESUCCESS;
+        } catch (Exception e) {
+            log.warn("RMDIR {} failed: {}", path, e);
+            e.printStackTrace();
+            return EFAULT;
+        }
     }
 
     @Override
@@ -462,9 +487,8 @@ public class LibVFS extends JnetFSAdapter {
         } catch (Exception e) {
             debug("RENAME\t failed "+e);
             e.printStackTrace();
-            return EINVAL;
+            return EFAULT;
         }
-        
     }
 
     @Override
@@ -479,7 +503,16 @@ public class LibVFS extends JnetFSAdapter {
         if (file == null) {
             return ENOENT;
         }
-        return ENOSYS;
+        
+        try {
+            debug("TOUCH\t do touch");
+            file.touch();
+            return ESUCCESS;
+        } catch (Exception e) {
+            debug("TOUCH\t failed "+e);
+            e.printStackTrace();
+            return EFAULT;
+        }
     }
 
     @Override
@@ -511,9 +544,15 @@ public class LibVFS extends JnetFSAdapter {
             return ENOENT;
         }
         
-        JnetReadLink.setRealPath(jniEnv, ((SLink) file).getTarget());
-        
-        return ESUCCESS;
+        try {
+            debug("READLINK\t do readlink");
+            JnetReadLink.setRealPath(jniEnv, ((SLink) file).getTarget());
+            return ESUCCESS;
+        } catch (Exception e) {
+            debug("READLINK\t failed "+e);
+            e.printStackTrace();
+            return EFAULT;
+        }
     }
     
     @Override
@@ -528,7 +567,16 @@ public class LibVFS extends JnetFSAdapter {
         if (file == null) {
             return ENOENT;
         }
-        return ENOSYS;
+        
+        try {
+            debug("TRUNCATE\t do truncate");
+            /***/
+            return ESUCCESS;
+        } catch (Exception e) {
+            debug("TRUNCATE\t failed "+e);
+            e.printStackTrace();
+            return EFAULT;
+        }
     }
     
     @Override
@@ -543,6 +591,15 @@ public class LibVFS extends JnetFSAdapter {
         if (file == null) {
             return ENOENT;
         }
-        return ESUCCESS;
+        
+        try {
+            debug("CHMOD\t do chmod");
+            /***/
+            return ESUCCESS;
+        } catch (Exception e) {
+            debug("CHMOD\t failed "+e);
+            e.printStackTrace();
+            return EFAULT;
+        }
     }
 }

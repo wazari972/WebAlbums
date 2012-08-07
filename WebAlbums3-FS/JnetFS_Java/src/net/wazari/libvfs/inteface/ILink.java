@@ -10,4 +10,6 @@ package net.wazari.libvfs.inteface;
  */
 public interface ILink extends IFile {
     String getTarget();
+
+    boolean forceFile();
 }

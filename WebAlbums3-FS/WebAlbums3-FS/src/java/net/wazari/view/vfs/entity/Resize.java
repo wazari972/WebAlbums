@@ -45,31 +45,31 @@ public class Resize extends SDirectory implements ADirectory, CanChange {
     }
 
     private static String getReducedPath(Integer id, String name, Theme theme, Launch aThis) throws WebAlbumsServiceException {
+        if (id == null) {
+            return null;
+        }
+        
         String path;
         Session session = new Session(theme);
         String[] names = name.split("\\.");
         
         session.setId(id);
         
-        if (id != null) {
-            path = "/dev/null";
-        } else {
-            if (names.length > 1) {
-                int width = Integer.parseInt(names[1]);
-                session.setWidth(width);
-                if (names.length > 2) {
-                    String color = names[2];
-                    session.setBorderColor(color);
-                    if (names.length > 3) {
-                        Integer border = Integer.parseInt(names[3]);
-                        session.setBorderWidth(border);
-                    }
+        if (names.length > 1) {
+            int width = Integer.parseInt(names[1]);
+            session.setWidth(width);
+            if (names.length > 2) {
+                String color = names[2];
+                session.setBorderColor(color);
+                if (names.length > 3) {
+                    Integer border = Integer.parseInt(names[3]);
+                    session.setBorderWidth(border);
                 }
-                path = aThis.imageService.treatSHRINK(session); 
-            } else {
-                path = aThis.photoService.treatABOUT(session).details.photoId.path;
             }
-        } 
+            path = aThis.imageService.treatSHRINK(session);
+        } else {
+            path = aThis.photoService.treatABOUT(session).details.photoId.path;
+        }
         
         return path;
     }
@@ -104,21 +104,31 @@ public class Resize extends SDirectory implements ADirectory, CanChange {
         private Theme theme;
         private Launch aThis;
 
-        public ResizePhoto(String path, String name, int id, Theme theme, Launch aThis) {
+        public ResizePhoto(String path, String name, Integer id, Theme theme, Launch aThis) {
             super(path, name, id);
             this.theme = theme;
             this.aThis = aThis;
             
-            this.doCompletePath = false;
+            this.doCompletePath = (name.indexOf(".") == -1);
         }
         
         @Override
         public void rename(IDirectory targetDir, String name) throws Exception {
-            String path = getReducedPath(getId(name), name, theme, aThis);
-            
+            this.id = getId(name);
+            log.warn("RENAME into {} ==> {}", name, id);
+            if (this.id != null) {
+                this.target = getReducedPath(id, name, theme, aThis);
+            }
             this.name = name;
-            this.target = path;
+            this.forceFile = (this.id == null);
+            this.doCompletePath = (name.indexOf(".") == -1);
+        }
+        
+        @Override
+        public void unlink() throws Exception {
+            if (getParent() != null) {
+                getParent().rmFile(this);
+            }
         }
     }
-    
 }

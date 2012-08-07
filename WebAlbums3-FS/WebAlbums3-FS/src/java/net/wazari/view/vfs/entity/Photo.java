@@ -14,15 +14,18 @@ import net.wazari.service.exchange.xml.common.XmlDetails;
 public class Photo extends SLink {
     protected String name;
     protected String target;
-    protected int id;
+    protected Integer id;
     
     protected boolean doCompletePath = true;
     protected boolean uniqName = false;
+    protected boolean forceFile = false;
     
-    public Photo(String path, String name, int id) {
+    public Photo(String path, String name, Integer id) {
         setTarget(path);
         this.name = name;
         this.id = id;
+        
+        this.forceFile = (this.id == null);
     }
     
     public Photo(XmlDetails details, String name) {
@@ -42,7 +45,18 @@ public class Photo extends SLink {
         this.id = details.photoId.id;
     }
     
+    @Override
+    public boolean forceFile() {
+        return this.forceFile;
+    }
+    
     protected final void setTarget(String target) {
+        this.forceFile = (target == null);
+        
+        if (this.forceFile) {
+            return;
+        }
+        
         this.target = target;
         name = target.substring(target.lastIndexOf("/")+1);
     }
@@ -50,6 +64,7 @@ public class Photo extends SLink {
     @Override
     public String getTarget() {
         if (doCompletePath) {
+            //return "/home/bounette/Bureau/images/"+target;
             return "/home/kevin/vayrac/data/images/"+target;
         } else {
             return target;

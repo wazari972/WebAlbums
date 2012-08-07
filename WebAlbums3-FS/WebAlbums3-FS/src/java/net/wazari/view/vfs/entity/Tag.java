@@ -31,19 +31,16 @@ public class Tag extends TagDirectory implements ADirectory {
     private String name ;
     private final Theme theme;
     private final Launch aThis;
-    private final int tagId;
     
-    public Tag(String name, int tagId, net.wazari.dao.entity.Theme theme, Launch aThis) {
+    public Tag(String name, Integer tagId, net.wazari.dao.entity.Theme theme, Launch aThis) {
         this(null, name, tagId, theme, aThis);
     }
     
-    
-    public Tag(List<XmlTagCloud.XmlTagCloudEntry> tagInside, String name, int tagId, net.wazari.dao.entity.Theme theme, Launch aThis) {
-        super(tagInside, theme, aThis);
+    public Tag(List<XmlTagCloud.XmlTagCloudEntry> tagInside, String name, Integer tagId, net.wazari.dao.entity.Theme theme, Launch aThis) {
+        super(tagId, tagInside, theme, aThis);
         this.name = name;
         this.theme = theme;
         this.aThis = aThis;
-        this.tagId = tagId;
     }
     
     @Override

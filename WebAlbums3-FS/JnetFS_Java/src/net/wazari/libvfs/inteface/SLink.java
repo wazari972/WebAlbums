@@ -14,5 +14,9 @@ public class SLink extends SFile implements ILink {
     public String getTarget() {
         return "generic_link";
     }
-    
+
+    @Override
+    public boolean forceFile() {
+        return false;
+    }
 }
