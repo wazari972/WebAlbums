@@ -17,15 +17,17 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionTag;
 
 /**
  *
  * @author kevin
  */
-public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, ViewSessionPhotoDisplay, ViewSessionPhoto, ViewSessionImages {
+public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, ViewSessionPhotoDisplay, ViewSessionPhoto, ViewSessionImages, ViewSessionPhotoFastEdit {
     public Theme theme;
     public Integer[] tagAsked = new Integer[0];
+    private Integer[] tagSet;
     
     public Session(Theme theme) {
         this.theme = theme;
@@ -344,6 +346,35 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     @Override
     public OutputStream getOutputStream() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String getDesc() {
+        return null;
+    }
+
+    public void setTagSet(Integer[] tagSet) {
+        this.tagSet = tagSet;
+    }
+    
+    @Override
+    public Integer[] getTagSet() {
+        return tagSet;
+    }
+
+    private TagAction tagAction = null;
+    @Override
+    public TagAction getTagAction() {
+        return tagAction;
+    }
+    
+    public void setTagAction(TagAction action) {
+        this.tagAction = action;
+    }
+
+    @Override
+    public Integer getStars() {
+        return null;
     }
 }
 

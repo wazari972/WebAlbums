@@ -35,6 +35,10 @@ public class IntrosDirectory extends SDirectory {
         }
     }
     
+    public ADirectory getADirectory() {
+        return this.directory;
+    }
+    
     @Override
     public File.Access[] getAccess() {
         File.Access[] access = null;
