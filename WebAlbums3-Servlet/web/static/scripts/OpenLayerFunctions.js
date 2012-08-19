@@ -97,7 +97,7 @@ function init_osm_box(divName) {
 
         new OpenLayers.Layer.OSM( "OSM Cycle Map", "http://tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
         { displayOutsideMaxExtent: true, 
-            opacity: 0.5, isBaseLayer: false, visibility: false, numZoomLevels:17, permalink: "cycle" } ),
+            opacity: 0.5, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" } ),
 
         new OpenLayers.Layer.OSM( "Hillshading", "http://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png",
         { displayOutsideMaxExtent: true, 
