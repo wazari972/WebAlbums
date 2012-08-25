@@ -5,10 +5,14 @@
 package net.wazari.bootstrap;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.net.BindException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
@@ -20,11 +24,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.bootstrap.GF.Config.User;
-import org.glassfish.api.ActionReport;
-import org.glassfish.api.ActionReport.MessagePart;
-import org.glassfish.api.admin.CommandRunner;
 import org.glassfish.api.admin.ParameterMap;
 import org.glassfish.api.deployment.DeployCommandParameters;
+import org.glassfish.embeddable.CommandResult;
+import org.glassfish.embeddable.Deployer;
+import org.glassfish.embeddable.GlassFish;
+import org.glassfish.embeddable.GlassFishException;
+import org.glassfish.embeddable.GlassFishProperties;
+import org.glassfish.embeddable.GlassFishRuntime;
+import org.glassfish.embeddable.archive.ScatteredEnterpriseArchive;
 import org.glassfish.internal.embedded.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,24 +77,23 @@ public class GF {
             return;
         }
 
-        Server server = null;
-        EmbeddedDeployer deployer = null;
+        GlassFish server = null;
+        Deployer deployer = null;
+        String appName = null;
         try {
-            File installDirGF = new File(cfg.glassfishDIR);
-            installDirGF = installDirGF.getCanonicalFile();
-            log.warn( "Using Glassfish FS: {}", installDirGF);
-            
+            log.warn( "Using Glassfish FS: {}", cfg.glassfishDIR);
+            File installDirGF = new File(cfg.glassfishDIR).getCanonicalFile();
 
             EmbeddedFileSystem.Builder efsb = new EmbeddedFileSystem.Builder();
             efsb.autoDelete(false);
             efsb.installRoot(installDirGF, true);
 
-            /*EAR not recognized with domain ...*/
+            /* EAR not recognized with domain ...*/
             //File instanceGF = new File(cfg.glassfishDIR+"/domains/domain1");
             //efsb.instanceRoot(instanceGF) ;
             EmbeddedFileSystem efs = efsb.build();
 
-            server = startServer(cfg.port, efs);
+            server = startServer(cfg.port);
 
             for (User usr : cfg.user) {
                 createUsers(server, usr);
@@ -95,10 +102,10 @@ public class GF {
             createJDBC_add_Resources(server, cfg.sunResourcesXML);
 
             deployer = server.getDeployer();
-            log.info("Deploying ");
-            String appName = null;
-            DeployCommandParameters params = new DeployCommandParameters();
-            appName = deployer.deploy(new File(cfg.webAlbumsEAR), params);
+            
+            log.info("Deploying EAR: {}", cfg.webAlbumsEAR);
+            
+            appName = deployer.deploy(new File(cfg.webAlbumsEAR));
             if (appName == null) {
                 log.info( "Couldn't deploy ...");
                 return;
@@ -116,8 +123,8 @@ public class GF {
             servSocker.close();
 
         } finally {
-            if (deployer != null) {
-                deployer.undeployAll();
+            if (deployer != null && appName != null) {
+                deployer.undeploy(appName);
             }
             if (server != null) {
                 server.stop();
@@ -130,62 +137,69 @@ public class GF {
         }
     }
 
-    private static Server startServer(int port, EmbeddedFileSystem efs) throws LifecycleException, IOException {
-        Server.Builder builder = new Server.Builder("test");
-        if (efs != null) {
-            builder.embeddedFileSystem(efs);
-        }
-        builder.logger(true);
-        Server server = builder.build();
-        server.addContainer(ContainerBuilder.Type.all);
-        server.start();
-
-        // Specify the port
-        server.createPort(port);
-
-        return server;
-
+    private static GlassFish startServer(int port) throws LifecycleException, IOException, GlassFishException {
+        /** Create and start GlassFish which listens at 8080 http port */
+        GlassFishProperties gfProps = new GlassFishProperties();
+        gfProps.setPort("http-listener", port); // refer JavaDocs for the details of this API.
+        System.setProperty("java.security.auth.login.config",
+            "/home/kevin/other/apps/glassfishv3.0.1/glassfish/domains/domain1/" + File.separator +
+            "config" + File.separator + "login.conf");
+        GlassFish glassfish = GlassFishRuntime.bootstrap().newGlassFish(gfProps);
+        
+        glassfish.start();
+        
+        return glassfish;
     }
 
-    private static List<MessagePart> asAdmin(Server server, String command, ParameterMap params) throws Throwable {
-        CommandRunner runner = server.getHabitat().getComponent(CommandRunner.class);
-        ActionReport report = server.getHabitat().getComponent(ActionReport.class);
-        log.info( "Invoke {} {}", new Object[]{command, params});
+    private static void asAdmin(GlassFish server, String command, ParameterMap params) throws Throwable {
+        org.glassfish.embeddable.CommandRunner runner = server.getCommandRunner();
 
-        log.info( "command \"{}\" invoked", command);
-        if (params == null) {
-            runner.getCommandInvocation(command, report).execute();
-        } else {
-            runner.getCommandInvocation(command, report).parameters(params).execute();
-        }
-        log.info( "command finished with {}", report.getActionExitCode());
+        log.info("Invoke {} {}", new Object[]{command, params});
 
-        if (report.hasFailures()) {
-            if (report.getFailureCause() != null) {
-                throw report.getFailureCause();
-            } else {
-                throw new Exception(report.getMessage());
+        log.info("command \"{}\" invoked", command);
+        ArrayList<String> paramLst = new ArrayList<String>();
+        if (params != null) {
+            for (String key : params.keySet()) {
+                for (String value: params.get(key)) {
+                    if (key.length() != 0) {
+                        paramLst.add("--"+key);
+                    }
+                    paramLst.add(value);
+                }
             }
         }
+        String[] paramArray = paramLst.toArray(new String[0]);
+        CommandResult result = runner.run(command, paramArray);
+        log.info( "command finished with {}", result.getExitStatus());
 
-        return report.getTopMessagePart().getChildren();
+        if (result.getFailureCause() != null) {
+            throw result.getFailureCause();
+        }
+
+        //log.info("--> {}", result.getOutput());
     }
 
-    private static void createUsers(Server server, User usr) throws Throwable {
+    private static void createUsers(GlassFish server, User usr) throws Throwable {
         ParameterMap params = new ParameterMap();
-
-        params.add("username", usr.name);
-        params.add("userpassword", usr.password);
-        
+        File tmp = File.createTempFile("embGF-", "-Webalbums");
+        {
+            tmp.createNewFile();
+            Writer out = new OutputStreamWriter(new FileOutputStream(tmp));
+            out.append("AS_ADMIN_USERPASSWORD="+usr.password);
+            out.close();
+        }
+        params.add("passwordfile", tmp.getAbsolutePath());
         params.add("groups", usr.groups);
-        
+        params.add("", usr.name);
         
         asAdmin(server, "create-file-user", params);
+        tmp.delete();
     }
 
-    private static void createJDBC_add_Resources(Server server, String path) throws Throwable {
-        if (!new File(path).exists())
+    private static void createJDBC_add_Resources(GlassFish server, String path) throws Throwable {
+        if (!new File(path).exists()) {
             throw new IllegalArgumentException(path + " doesn't exists") ;
+        }
         
         ParameterMap params = new ParameterMap();
         params.add("", path );
