@@ -5,6 +5,7 @@
 
 package net.wazari.dao.jpa;
 
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -26,6 +27,21 @@ import net.wazari.dao.jpa.entity.JPAGpx_;
 public class GpxFacade implements GpxFacadeLocal {
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
+    
+    @Override
+    public List<Gpx> findAll() {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JPAGpx> cq = cb.createQuery(JPAGpx.class) ;
+            Root<JPAGpx> g = cq.from(JPAGpx.class);
+            
+            return (List) em.createQuery(cq)
+                    .setHint("org.hibernate.cacheable", true)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return null ;
+        }
+    }
     
     @Override
     public Gpx find(Integer id) {

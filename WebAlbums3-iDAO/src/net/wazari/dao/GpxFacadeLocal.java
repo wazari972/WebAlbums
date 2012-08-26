@@ -4,6 +4,7 @@
  */
 package net.wazari.dao;
 
+import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Gpx;
@@ -30,4 +31,7 @@ public interface GpxFacadeLocal {
     
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Gpx loadByPath(String path);
+
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    public List<Gpx> findAll();
 }

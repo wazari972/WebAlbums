@@ -5,14 +5,19 @@
 package net.wazari.dao.jpa;
 
 import java.text.Normalizer;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
 import net.wazari.dao.MaintFacadeLocal;
-import net.wazari.dao.PhotoFacadeLocal;
-import net.wazari.dao.entity.Photo;
+import net.wazari.dao.entity.Gpx;
+import net.wazari.dao.jpa.entity.JPAGpx;
+import net.wazari.dao.jpa.entity.JPAPhoto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +31,8 @@ public class MaintDAOBean implements MaintFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(MaintDAOBean.class.getName());
     @PersistenceContext(unitName = WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
-    @EJB
-    ImportExporter xml;
-    @EJB
-    private PhotoFacadeLocal photoDAO;
-
+    @EJB ImportExporter xml;
+    
     @Override
     public void treatImportXML(boolean protect, final String path) throws DatabaseFacadeLocalException {
         if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT == WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
@@ -63,41 +65,29 @@ public class MaintDAOBean implements MaintFacadeLocal {
     public static String sansAccents(String source) {
             return Normalizer.normalize(source, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
     }
-    @Override
-    public void treatUpdate() {
-        int count = 0 ;
-        int countsans = 0 ;
-        for (Photo enrPhoto : photoDAO.findAll()) {
-            String pathSansAccent = sansAccents(enrPhoto.getPath(false)) ;
-            if (pathSansAccent.equals(enrPhoto.getPath(false))) {
-                countsans++ ;
-                continue ;
-            }
-
-            log.info("change from {} to {}", enrPhoto.getPath(false), pathSansAccent) ;
-            enrPhoto.setPath(pathSansAccent) ;
-            photoDAO.edit(enrPhoto) ;
-            count++ ;
-        }
-        log.info("count: {}", count);
-        log.info("countsans: {}", countsans);
-        em.flush();
-    }
-
+    
+    
     
     @Override
-    public void treatDumpStats() {
-/*        Statistics stats = ((EntityManagerImpl) em.getDelegate()).getSession().getSessionFactory().getStatistics();
+    public void treatUpdate() {
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPAGpx> cq = cb.createQuery(JPAGpx.class) ;
+        Root<JPAGpx> g = cq.from(JPAGpx.class);
 
-        stats.logSummary();
-        for (String query : stats.getQueries()) {
-            //QueryStatistics qStats = stats.getQueryStatistics(query);
-            log.info(query);
-            //log.log(Level.INFO, "\tgetExecutionCount {}", qStats.getExecutionCount());
-            //log.log(Level.INFO, "\tgetExecutionAvgTime {}", qStats.getExecutionAvgTime());
-            //log.log(Level.INFO, "\tgetExecutionMaxTime {}", qStats.getExecutionMaxTime());
-            //log.log(Level.INFO, "\tgetExecutionRowCount {}", qStats.getExecutionRowCount());
+        List<Gpx> all = (List) em.createQuery(cq)
+                .setHint("org.hibernate.cacheable", true)
+                .getResultList();
+        
+        for (Gpx enrGpx : all) {
+            JPAPhoto enrPhoto = new JPAPhoto();
+            
+            enrPhoto.setAlbum(enrGpx.getAlbum());
+            enrPhoto.setPath(enrGpx.getGpxPath());
+            enrPhoto.setDescription(enrGpx.getDescription());
+            enrPhoto.setIsGpx(true);
+            
+            em.merge(enrPhoto);
         }
- */
     }
 }

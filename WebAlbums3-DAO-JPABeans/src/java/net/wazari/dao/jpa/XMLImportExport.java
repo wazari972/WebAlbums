@@ -167,9 +167,9 @@ public class XMLImportExport implements ImportExporter {
                             newAlbum = em.merge(newAlbum);
                             albums.put(enrAlbum.getId(), (JPAAlbum) newAlbum);
                             
-                            newAlbum.setGpxList(new LinkedList<Gpx>());
+                            newAlbum.setGpxList(new LinkedList<Photo>());
                             if (enrAlbum.getGpxList() != null) {
-                                for (JPAGpx enrGpx : (List<JPAGpx>) enrAlbum.getGpxList()) {
+                                for (Photo enrGpx : (List<Photo>) enrAlbum.getGpxList()) {
                                     enrGpx.setAlbum(newAlbum);
                                     newAlbum.getGpxList().add(enrGpx);
                                     em.merge(enrGpx);
@@ -207,8 +207,9 @@ public class XMLImportExport implements ImportExporter {
                                             
                                             JPATag enrTag = tags.get(tagPhoto.tagId);
                                             newTagPhoto.setTag(enrTag);
-                                            if (enrTag.getTagPhotoList() == null)
+                                            if (enrTag.getTagPhotoList() == null) {
                                                 enrTag.setTagPhotoList(new LinkedList<TagPhoto>());
+                                            }
                                             enrTag.getTagPhotoList().add(newTagPhoto);
                                             
                                             em.merge(newTagPhoto);
@@ -218,8 +219,9 @@ public class XMLImportExport implements ImportExporter {
                                     if (enrPhoto.tagAuthorId != null) {
                                         JPATag enrTag = tags.get(enrPhoto.tagAuthorId);
                                         newPhoto.setTagAuthor(enrTag);
-                                        if (enrTag.getAuthorList() == null)
+                                        if (enrTag.getAuthorList() == null) {
                                             enrTag.setAuthorList(new LinkedList<Photo>());
+                                        }
                                         enrTag.getAuthorList().add(newPhoto);
                                         em.merge(enrTag);
                                     }
