@@ -15,8 +15,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
 import net.wazari.dao.MaintFacadeLocal;
-import net.wazari.dao.entity.Gpx;
-import net.wazari.dao.jpa.entity.JPAGpx;
 import net.wazari.dao.jpa.entity.JPAPhoto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,23 +69,5 @@ public class MaintDAOBean implements MaintFacadeLocal {
     @Override
     public void treatUpdate() {
         
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<JPAGpx> cq = cb.createQuery(JPAGpx.class) ;
-        Root<JPAGpx> g = cq.from(JPAGpx.class);
-
-        List<Gpx> all = (List) em.createQuery(cq)
-                .setHint("org.hibernate.cacheable", true)
-                .getResultList();
-        
-        for (Gpx enrGpx : all) {
-            JPAPhoto enrPhoto = new JPAPhoto();
-            
-            enrPhoto.setAlbum(enrGpx.getAlbum());
-            enrPhoto.setPath(enrGpx.getGpxPath());
-            enrPhoto.setDescription(enrGpx.getDescription());
-            enrPhoto.setIsGpx(true);
-            
-            em.merge(enrPhoto);
-        }
     }
 }

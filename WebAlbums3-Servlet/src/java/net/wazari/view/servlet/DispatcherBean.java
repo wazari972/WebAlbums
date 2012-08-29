@@ -88,9 +88,11 @@ public class DispatcherBean {
             //request.authenticate(response);
             
             /* TO BE REMOVED ... one day */
-            try {
-                request.login("kevin", "");
-            } catch (ServletException e) {}
+            if (request.getUserPrincipal() == null) {
+                try {
+                    request.login("kevin", "");
+                } catch (ServletException e) {}
+            }
         }
         
         log.info("============= <{}> =============", page);

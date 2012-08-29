@@ -492,6 +492,9 @@ public class PhotoBean implements PhotoLocal {
             if (vSession.directFileAccess()) {
                 photo.details.photoId.path = enrPhoto.getPath(true) ;
             }
+            
+            photo.details.isGpx = enrPhoto.isGpx() != null && enrPhoto.isGpx(); //keep null if false
+            
             photo.details.description = enrPhoto.getDescription();
             //tags de cette photo
             photo.details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,

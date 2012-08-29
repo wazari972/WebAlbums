@@ -81,6 +81,7 @@ public class AlbumBean implements AlbumLocal {
         output.album.id = enrAlbum.getId();
         output.album.details.description = enrAlbum.getDescription();
         
+        
         output.album.albmDate = enrAlbum.getDate();
 
         int count = 0;
@@ -166,6 +167,8 @@ public class AlbumBean implements AlbumLocal {
                 if (vSession.directFileAccess()) {
                     album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
                 }
+                
+                album.details.isGpx = enrAlbum.getPicture().isGpx() != null && enrAlbum.getPicture().isGpx(); //keep null if false
             }
             for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
                 if (album.carnet == null) {
