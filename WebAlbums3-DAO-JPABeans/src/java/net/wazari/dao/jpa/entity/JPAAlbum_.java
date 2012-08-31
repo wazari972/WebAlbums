@@ -10,7 +10,7 @@ public abstract class JPAAlbum_ {
     public static volatile SingularAttribute<JPAAlbum, JPAPhoto> picture;
     public static volatile SingularAttribute<JPAAlbum, Integer> id;
     public static volatile ListAttribute<JPAAlbum, JPAPhoto> jPAPhotoList;
-    public static volatile ListAttribute<JPAAlbum, JPAGpx> jPAGpxList;
+    public static volatile ListAttribute<JPAAlbum, JPAPhoto> jPAGpxList;
     public static volatile SingularAttribute<JPAAlbum, String> description;
     public static volatile SingularAttribute<JPAAlbum, JPATheme> theme;
     public static volatile SingularAttribute<JPAAlbum, String> date;

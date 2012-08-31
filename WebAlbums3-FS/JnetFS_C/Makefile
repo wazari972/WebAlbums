@@ -17,9 +17,9 @@ OBJS += build/JnetFS.o
 #C_DEPS += build/JnetFS.d 
 
 
-LIBJVM_DIR=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.3.x86_64/jre/lib/amd64/server
-INCJVM_DIR=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.3.x86_64/include/
-INCJVM_OS_DIR=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.3.x86_64/include/linux/
+LIBJVM_DIR=/usr/lib/jvm/java-6-openjdk/jre/lib/amd64/server/
+INCJVM_DIR=${INCJVM_DIR}include/
+INCJVM_OS_DIR=${INCJVM_OS_DIR}linux/
 
 # Each subdirectory must supply rules for building sources it contributes
 build/%.o: src/%.c

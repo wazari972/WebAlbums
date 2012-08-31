@@ -67,7 +67,7 @@ public class Root extends SDirectory implements ADirectory {
     public static void main (String[] args) {
         Root root = new Root();
         net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
-        com.jnetfs.core.JnetFS.main(new String[]{"/home/kevin/vayrac/WebAlbums/WebAlbums3-FS/test"});
+        com.jnetfs.core.JnetFS.main(new String[]{"/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test"});
     }
 }
 class MyLink extends SLink {

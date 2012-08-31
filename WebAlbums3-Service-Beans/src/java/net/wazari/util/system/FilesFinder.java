@@ -11,7 +11,6 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Stack;
-import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.common.plugins.Importer.Capability;
@@ -26,29 +25,19 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class FilesFinder {
-
     private static final String SEP = File.separator;
     private static final int DEFAULT_USER = 3;
     
     private static final Logger log = LoggerFactory.getLogger(FilesFinder.class.getCanonicalName());
-    @EJB
-    private CarnetFacadeLocal carnetDAO;
-    @EJB
-    private ThemeFacadeLocal themeDAO;
-    @EJB
-    private AlbumFacadeLocal albumDAO;
-    @EJB
-    private UtilisateurFacadeLocal userDAO;
-    @EJB
-    private GpxFacadeLocal gpxDAO;
-    @EJB
-    private PhotoFacadeLocal photoDAO;
-    @EJB
-    private TagPhotoFacadeLocal tagPhotoDAO;
-    @EJB
-    private SystemTools sysTools;
-    @EJB
-    private ImageResizer resizer;
+    
+    @EJB private CarnetFacadeLocal carnetDAO;
+    @EJB private ThemeFacadeLocal themeDAO;
+    @EJB private AlbumFacadeLocal albumDAO;
+    @EJB private UtilisateurFacadeLocal userDAO;
+    @EJB private PhotoFacadeLocal photoDAO;
+    @EJB private TagPhotoFacadeLocal tagPhotoDAO;
+    @EJB private SystemTools sysTools;
+    @EJB private ImageResizer resizer;
 
     public boolean importAuthor(ViewSession vSession,
             String themeName, Configuration conf) {
@@ -121,7 +110,9 @@ public class FilesFinder {
             }
         }
 
-        if (dirTheme != null) resizer.resize(conf, stack, dirTheme);
+        if (dirTheme != null) {
+            resizer.resize(conf, stack, dirTheme);
+        }
 
         if (!correct) {
             log.warn("An error occured during initialization process ...");
@@ -273,49 +264,43 @@ public class FilesFinder {
         
         String photoPath = albumPath + sansAccents(photo.getName());
         boolean dontThumbnail = false;
-        if ("gpx".equals(ext)) {
-            Gpx enrGpx = gpxDAO.loadByPath(photoPath);
-            
-            if (enrGpx == null) {
-                enrGpx = gpxDAO.newGpx(enrAlbum);
-                enrGpx.setDescription(enrAlbum.getNom());
-                enrGpx.setGpxPath(photoPath);
-                gpxDAO.create(enrGpx);
-            }
-            dontThumbnail = true;
-        } else {
-            if (!sysTools.supports(type, ext, Capability.THUMBNAIL)) {
-                log.warn("### " + photo + " n'est pas supportée ... (" + type + ")");
-                return false;
-            }
-
-            Photo enrPhoto = photoDAO.loadByPath(photoPath);
-
-            //si l'image (son path) n'est pas encore dans la base
-            if (enrPhoto == null) {
-                log.info("### Creation d'un nouvel enregistrement");
-                //on crée la nouvelle photo
-                enrPhoto = photoDAO.newPhoto();
-                enrPhoto.setDescription("");
-                enrPhoto.setPath(photoPath);
-
-                sysTools.retrieveMetadata(type, null, enrPhoto, photo.getAbsolutePath());
-                enrPhoto.setAlbum(enrAlbum);
-                enrPhoto.setType(type);
-                log.info("### Album " + enrPhoto.getAlbum());
-                photoDAO.create(enrPhoto);
-            } else /* sinon on update son nom d'album*/ {
-                log.info("### Mise à jour de l'enregistrement");
-                enrPhoto.setAlbum(enrAlbum);
-
-                photoDAO.edit(enrPhoto);
-            }
+ 
+        if (!sysTools.supports(type, ext, Capability.THUMBNAIL)) {
+            log.warn("### " + photo + " n'est pas supportée ... (" + type + ")");
+            return false;
         }
+
+        Photo enrPhoto = photoDAO.loadByPath(photoPath);
+
+        //si l'image (son path) n'est pas encore dans la base
+        if (enrPhoto == null) {
+            log.info("### Creation d'un nouvel enregistrement");
+            //on crée la nouvelle photo
+            enrPhoto = photoDAO.newPhoto();
+            enrPhoto.setDescription("");
+            enrPhoto.setPath(photoPath);
+
+            sysTools.retrieveMetadata(type, null, enrPhoto, photo.getAbsolutePath());
+            enrPhoto.setAlbum(enrAlbum);
+            enrPhoto.setType(type);
+            log.info("### Album " + enrPhoto.getAlbum());
+            photoDAO.create(enrPhoto);
+        } else /* sinon on update son nom d'album*/ {
+            log.info("### Mise à jour de l'enregistrement");
+            enrPhoto.setAlbum(enrAlbum);
+
+            photoDAO.edit(enrPhoto);
+        }
+        
+        if ("gpx".equals(ext)) {
+            enrPhoto.setIsGpx(true);
+            photoDAO.edit(enrPhoto);
+        }
+        
         ImageResizer.Element elt = new ImageResizer.Element(enrAlbum.getTheme().getNom()+SEP+photoPath, photo, type, dontThumbnail);
         stack.push(elt);
         log.info("### Import of : " + photo.getName() + " : completed");
         return true;
-
     }
 
     public boolean deleteAlbum(Album enrAlbum, Configuration conf) {
@@ -351,8 +336,9 @@ public class FilesFinder {
             //suppression des tags de cette photo
             tagPhotoDAO.deleteByPhoto(enrPhoto);
 
-            if (enrPhoto.equals(enrPhoto.getAlbum().getPicture()))
+            if (enrPhoto.equals(enrPhoto.getAlbum().getPicture())) {
                 enrPhoto.getAlbum().setPicture(null);
+            }
             
             //suppression des photos physiquement
             url = "file://" + conf.getImagesPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false);
@@ -385,28 +371,6 @@ public class FilesFinder {
             log.warn("URISyntaxException {}", url);
         }
         return false;
-    }
-    
-    public boolean deleteGpx(Gpx enrGpx, Configuration conf) {
-        
-        //suppression des photos physiquement
-        String url = "file://" + conf.getImagesPath(true) + SEP + enrGpx.getAlbum().getTheme().getNom() + SEP + enrGpx.getGpxPath();
-
-        File fichier;
-        try {
-            fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
-            if (!fichier.delete()) {
-                log.warn("Could not delete the gpx file at {}...", fichier.getCanonicalPath());
-                return false;
-            }
-        } catch (Exception ex) {
-            log.warn("Could not create the URL to remove the GPX: {}", ex.getMessage(), ex);
-            return false;
-        }
-        
-        gpxDAO.remove(enrGpx);
-        
-        return true ;
     }
 
     public boolean deleteCarnet(Carnet enrCarnet, Configuration configuration) {  

@@ -19,4 +19,6 @@ public interface DatabaseLocal {
     XmlDatabaseCheck treatCHECK(ViewSession vSession);
     XmlDatabaseDefault treatDEFAULT(ViewSessionDatabase vSession);
     XmlDatabaseStats treatSTATS(ViewSessionDatabase vSession);
+    void treatUPDATE(ViewSessionDatabase vSession);
+    void treatUPDATE_DAO(ViewSessionDatabase vSession);
 }

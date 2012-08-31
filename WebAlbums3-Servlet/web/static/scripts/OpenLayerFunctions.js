@@ -89,7 +89,7 @@ function init_osm_box(divName) {
     } );
     
     map.addLayers([
-        new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
+        //new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
         /*new OpenLayers.Layer.Google( "Google Streets", {'sphericalMercator': true, numZoomLevels:18, displayInLayerSwitcher: true} ),
         new OpenLayers.Layer.Google( "Google MapMaker", {type: G_MAPMAKER_NORMAL_MAP, 'sphericalMercator': true,  numZoomLevels:18} ),
         new OpenLayers.Layer.Google( "Google Aerial", {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels:19} ),
@@ -97,7 +97,7 @@ function init_osm_box(divName) {
 
         new OpenLayers.Layer.OSM( "OSM Cycle Map", "http://tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
         { displayOutsideMaxExtent: true, 
-            opacity: 0.5, isBaseLayer: false, visibility: false, numZoomLevels:17, permalink: "cycle" } ),
+            opacity: 0.5, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" } ),
 
         new OpenLayers.Layer.OSM( "Hillshading", "http://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png",
         { displayOutsideMaxExtent: true, 

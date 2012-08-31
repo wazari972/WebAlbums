@@ -63,21 +63,22 @@ public class WebPageBean implements WebPageLocal {
     static {
         log.warn( "FilesFinder.initialized {}", SystemTools.initate());
         log.warn("Loading WebAlbums3-Service-Beans");
-        
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
     
         try {
-          JoranConfigurator configurator = new JoranConfigurator();
-          configurator.setContext(lc);
-          // the context was probably already configured by default configuration rules
-          lc.reset(); 
-          InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("logback.xml") ;
+            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+            
+            JoranConfigurator configurator = new JoranConfigurator();
+            configurator.setContext(lc);
+            // the context was probably already configured by default configuration rules
+            lc.reset(); 
+            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("logback.xml") ;
           
-          configurator.doConfigure(stream);
-        } catch (JoranException je) {
+            configurator.doConfigure(stream);
+            
+            StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+        } catch (Exception je) {
            je.printStackTrace();
         }
-        StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
     }
 
     //try to get the 'asked' element

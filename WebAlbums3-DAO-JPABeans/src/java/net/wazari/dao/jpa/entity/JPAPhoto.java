@@ -95,6 +95,9 @@ public class JPAPhoto implements Photo, Serializable {
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private JPATag tagAuthor;
     
+    @JoinColumn(name = "IsGpx", nullable = true)
+    private Boolean isGpx = false;
+    
     public JPAPhoto() {
     }
 
@@ -116,6 +119,17 @@ public class JPAPhoto implements Photo, Serializable {
     @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    @XmlAttribute
+    @Override
+    public Boolean isGpx() {
+        return isGpx;
+    }
+
+    @Override
+    public void setIsGpx(Boolean isGpx) {
+        this.isGpx = isGpx;
     }
     
     @XmlAttribute

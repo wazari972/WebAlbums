@@ -30,8 +30,5 @@ public interface MaintFacadeLocal {
     void treatFullImport(boolean protect, String path) throws DatabaseFacadeLocalException ;
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
-    void treatDumpStats() ;
-
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void treatUpdate();
 }
