@@ -65,7 +65,7 @@ public class Photo extends SLink {
     public String getTarget() {
         if (doCompletePath) {
             //return "/home/bounette/Bureau/images/"+target;
-            return "/home/kevin/vayrac/data/images/"+target;
+            return "/other/Web/data/images/"+target;
         } else {
             return target;
         }

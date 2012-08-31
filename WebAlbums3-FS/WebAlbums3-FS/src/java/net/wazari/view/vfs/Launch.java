@@ -53,7 +53,7 @@ public class Launch extends HttpServlet {
             try {
                 Root root = new Root(this);
                 net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
-                com.jnetfs.core.JnetFS.main(new String[]{"/home/kevin/vayrac/WebAlbums/WebAlbums3-FS/test"});
+                com.jnetfs.core.JnetFS.main(new String[]{"/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test"});
             } catch (Exception e) {
                  out.println("<h1> JNetFSException" + e + "</h1>");
                   e.printStackTrace();
