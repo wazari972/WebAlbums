@@ -14,7 +14,6 @@
             <included-library dirs="200">file.reference.CP-Perf-perf4j-0.9.13.jar</included-library>
             <included-library dirs="200">file.reference.RT-Log-logback-core-0.9.24.jar</included-library>
             <included-library dirs="200">file.reference.RT-Log-logback-classic-0.9.24.jar</included-library>
-            <included-library dirs="200">file.reference.CP-DB-dbunit-2.4.5.jar</included-library>
             <included-library dirs="200">libs.javaee-api-6.0.classpath</included-library>
             <source-roots>
                 <root id="src.dir"/>
