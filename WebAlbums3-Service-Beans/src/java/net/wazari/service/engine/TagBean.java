@@ -4,6 +4,7 @@ import java.util.*;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.TagFacadeLocal;
+import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.service.PhotoLocal;
@@ -20,8 +21,8 @@ import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
-import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.service.exchange.xml.tag.*;
+import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -192,7 +193,10 @@ public class TagBean implements TagLocal {
                 pair.xml.nb = nbElts;
                 pair.xml.id = pair.tag.getId();
                 pair.xml.name = pair.tag.getNom();
-
+                if (pair.tag.getGeolocalisation() != null) {
+                    Geolocalisation geo = pair.tag.getGeolocalisation();
+                    pair.xml.setGeo(geo.getLatitude(), geo.getLongitude());
+                }
                 for (Tag enrSon : pair.tag.getSonList()) {
                     XmlTagCloudEntry xmlSon = new XmlTagCloudEntry();
                     enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon, pair.xml.tag));
@@ -259,6 +263,12 @@ public class TagBean implements TagLocal {
             XmlTag tag = new XmlTag();
             tag.name = enrTag.getNom();
             tag.id = enrTag.getId();
+            
+            if (enrTag.getGeolocalisation() != null) {
+                Geolocalisation geo = enrTag.getGeolocalisation();
+                tag.setGeo(geo.getLatitude(), geo.getLongitude());
+            }
+            
             List<TagTheme> lstTT = enrTag.getTagThemeList();
             Random rand = new Random();
             //pick up a RANDOM valid picture visible from this theme

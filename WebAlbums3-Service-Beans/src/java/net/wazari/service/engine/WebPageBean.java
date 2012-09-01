@@ -2,7 +2,6 @@ package net.wazari.service.engine;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 import java.io.InputStream;
 import java.security.Principal;
@@ -61,7 +60,7 @@ public class WebPageBean implements WebPageLocal {
     private static final Logger log = LoggerFactory.getLogger(WebPageBean.class.getName());
 
     static {
-        log.warn( "FilesFinder.initialized {}", SystemTools.initate());
+        log.warn("FilesFinder.initialized {}", SystemTools.initate());
         log.warn("Loading WebAlbums3-Service-Beans");
     
         try {

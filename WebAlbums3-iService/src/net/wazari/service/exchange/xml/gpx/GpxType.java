@@ -14,6 +14,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -47,6 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "gpxType", propOrder = {
     "metadata",
@@ -62,9 +64,9 @@ public class GpxType {
     protected List<RteType> rte;
     protected List<TrkType> trk;
     protected ExtensionsType extensions;
-    @XmlAttribute(name = "version", required = true)
+    @XmlAttribute(name = "version")
     protected String version;
-    @XmlAttribute(name = "creator", required = true)
+    @XmlAttribute(name = "creator")
     protected String creator;
 
     /**

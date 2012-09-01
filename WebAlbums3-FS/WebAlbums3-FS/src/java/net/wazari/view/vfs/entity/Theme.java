@@ -14,13 +14,20 @@ import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.xml.tag.XmlTag;
+import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
 import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
  */
 public class Theme extends SDirectory implements ADirectory {
+    private static final Logger log = LoggerFactory.getLogger(Theme.class.getCanonicalName()) ;
+    
     @Directory
     @File(name="Albums")
     public Albums albums;
@@ -40,6 +47,10 @@ public class Theme extends SDirectory implements ADirectory {
     @Directory
     @File(name="Resize")
     public Resize resize;
+    
+    @File
+    public GpxFile location;
+    
     private final ATheme theme;
     private final Launch aThis;
     
@@ -62,11 +73,26 @@ public class Theme extends SDirectory implements ADirectory {
         this.random = new Random(theme, aThis);
         
         this.resize = new Resize(theme, aThis);
+        
+        this.loadLocation();
     }
     
     @Override
     public String toString() {
         return "Directory["+name+"]";
+    }
+
+    private void loadLocation() throws WebAlbumsServiceException {
+        Session session = new Session(theme);
+        GpxPoints loc = new GpxPoints();
+        
+        XmlTagPersonsPlaces lst = aThis.tagService.treatTagPlaces(session);
+        for (XmlTag tag : lst.tagList) {
+            if (tag.loc != null) {
+                loc.addPoint(tag.name, tag.loc.lat, tag.loc.longit);
+            }
+        }
+        location = new GpxFile(loc);
     }
     
     public class ATheme implements net.wazari.dao.entity.Theme {
