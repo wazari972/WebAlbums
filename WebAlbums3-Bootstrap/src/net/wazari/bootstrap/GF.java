@@ -4,9 +4,13 @@
  */
 package net.wazari.bootstrap;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.util.StatusPrinter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -25,14 +29,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.bootstrap.GF.Config.User;
 import org.glassfish.api.admin.ParameterMap;
-import org.glassfish.api.deployment.DeployCommandParameters;
 import org.glassfish.embeddable.CommandResult;
 import org.glassfish.embeddable.Deployer;
 import org.glassfish.embeddable.GlassFish;
 import org.glassfish.embeddable.GlassFishException;
 import org.glassfish.embeddable.GlassFishProperties;
 import org.glassfish.embeddable.GlassFishRuntime;
-import org.glassfish.embeddable.archive.ScatteredEnterpriseArchive;
 import org.glassfish.internal.embedded.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,8 +51,24 @@ public class GF {
     public static void main(String[] args) throws LifecycleException, IOException, InterruptedException, Throwable {
         long timeStart = System.currentTimeMillis() ;
         log.warn("Starting WebAlbums GF bootstrap");
-
-
+    
+/*        try {
+            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+            
+            JoranConfigurator configurator = new JoranConfigurator();
+            configurator.setContext(lc);
+            // the context was probably already configured by default configuration rules
+            lc.reset(); 
+            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("logback.xml") ;
+          
+            configurator.doConfigure(stream);
+            
+            StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+        } catch (Exception je) {
+           je.printStackTrace();
+           throw je;
+        }
+*/
         Config cfg = Config.load();
         Integer stopPort = cfg.port + 1;
         log.info(Config.print(cfg)) ;

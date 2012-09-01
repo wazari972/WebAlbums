@@ -13,6 +13,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.DatabaseFacadeLocal;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
+import net.wazari.dao.MaintFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Album;
@@ -25,8 +26,8 @@ import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSessionDatabase;
-import net.wazari.service.exchange.xml.database.XmlDatabaseStats.XmlDatabaseStatsTheme;
 import net.wazari.service.exchange.xml.database.*;
+import net.wazari.service.exchange.xml.database.XmlDatabaseStats.XmlDatabaseStatsTheme;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class DatabaseBean implements DatabaseLocal {
     @EJB TagFacadeLocal tagDAO;
     @EJB DatabaseFacadeLocal databaseDAO;
     @EJB private PhotoUtil photoUtil ;
+    @EJB MaintFacadeLocal maintDAO;
     
     public XmlDatabaseImport treatIMPORT(ViewSession vSession) {
         XmlDatabaseImport output = new XmlDatabaseImport() ;
@@ -74,27 +76,31 @@ public class DatabaseBean implements DatabaseLocal {
         XmlDatabaseCheck output = new XmlDatabaseCheck() ;
         
         Action action = vSession.getAction() ;
-        if (action == null)
+        if (action == null) {
             return output;
+        }
         
         try {
             Theme enrTheme = themeDAO.find(vSession.getTheme().getId());
-            if (enrTheme == null)
+            if (enrTheme == null) {
                 throw new DatabaseFacadeLocalException("Theme not set");
+            }
             if (vSession.getConfiguration().isPathURL()) {
                 throw new DatabaseFacadeLocalException("URL path checking not implemented yet");
             }
             List<Theme> themes = new LinkedList<Theme>();
-            if (vSession.isRootSession())
-                //Hibernate exception if direct
+            if (vSession.isRootSession()) {
                 themes.addAll(themeDAO.findAll());
-            else
+            }
+            else {
                 themes.add(enrTheme);
+            }
             
             int count = 0;
             for (Theme curEnrTheme : themes) {
-                if (curEnrTheme.getId() == ThemeFacadeLocal.THEME_ROOT_ID)
+                if (curEnrTheme.getId() == ThemeFacadeLocal.THEME_ROOT_ID) {
                     continue ;
+                }
                 List<String> images = null;
                 List<String> mini = null;
                 
@@ -110,8 +116,9 @@ public class DatabaseBean implements DatabaseLocal {
                         for (File year : themeDir.listFiles()) {
                             for (File albums : year.listFiles()) {
                                 for (File image : albums.listFiles()) {
-                                    if (image.getName().endsWith(".gpx"))
+                                    if (image.getName().endsWith(".gpx")) {
                                         continue ;
+                                    }
                                     current.add(image.getAbsolutePath());
                                 }
                             }
@@ -133,10 +140,11 @@ public class DatabaseBean implements DatabaseLocal {
                         for (String filepath : new String[]{photoUtil.getImagePath(vSession, enrPhoto), photoUtil.getMiniPath(vSession, enrPhoto)}) {
                             if (action == Action.CHECK_DB) {
                                 File f = new File(filepath);
-                                if (!f.exists())
+                                if (!f.exists()) {
                                     output.files.add(filepath+": missing");
-                                else if (!f.canRead())
+                                } else if (!f.canRead()) {
                                     output.files.add(filepath+": not readable");
+                                }
                             } else if (action == Action.CHECK_FS) {
                                 
                                 boolean removed = current.remove(filepath);
@@ -191,8 +199,9 @@ public class DatabaseBean implements DatabaseLocal {
             xmlRootTheme = new XmlDatabaseStatsTheme("root");
         }
         for (Theme curEnrTheme : themes) {
-            if (curEnrTheme.getId() == 1)
+            if (curEnrTheme.getId() == 1) {
                 continue;
+            }
             XmlDatabaseStatsTheme xmlTheme = new XmlDatabaseStatsTheme(curEnrTheme.getNom());
             output.theme.add(xmlTheme);
             
@@ -225,10 +234,11 @@ public class DatabaseBean implements DatabaseLocal {
                     xmlCloudEntry.nb = map.get(enrTag);
                     lst.add(xmlCloudEntry);
                 }
-                if (xmlRootTheme == null)
+                if (xmlRootTheme == null) {
                     xmlTheme.tag = lst;
-                else
+                } else {
                     xmlRootTheme.tag = lst;
+                }
             }
         }
         
@@ -243,6 +253,14 @@ public class DatabaseBean implements DatabaseLocal {
         XmlDatabaseDefault output = new XmlDatabaseDefault() ;
         
         return output;
+    }
+    
+    public void treatUPDATE(ViewSessionDatabase vSession) {
+        
+    }
+    
+    public void treatUPDATE_DAO(ViewSessionDatabase vSession) {
+        maintDAO.treatUpdate();
     }
     
 }

@@ -18,6 +18,8 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 
 @XmlRootElement
 public class XmlDetails {
+    @XmlAttribute
+    public Boolean isGpx;
     public XmlPhotoId photoId;
     public List<String> userInside;
     public String description;

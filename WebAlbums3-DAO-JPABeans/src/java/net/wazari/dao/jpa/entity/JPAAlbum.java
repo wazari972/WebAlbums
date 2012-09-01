@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import net.wazari.dao.entity.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +52,14 @@ public class JPAAlbum implements Album, Serializable {
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;
     
+    @Where(clause="isGpx is null or not(isGpx)")
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAPhoto> jPAPhotoList;
 
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.LAZY)
+    @Where(clause="not(isGpx is null) and isGpx")
+    private List<JPAPhoto> jPAGpxList;
+    
     @JoinColumn(name = "Droit", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAUtilisateur droit;
@@ -61,9 +67,6 @@ public class JPAAlbum implements Album, Serializable {
     @JoinColumn(name = "Theme", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPATheme theme;
-
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.LAZY)
-    private List<JPAGpx> jPAGpxList;
     
     @ManyToMany(mappedBy="jPAAlbumList")
     private List<JPACarnet> jPACarnetList;
@@ -161,7 +164,7 @@ public class JPAAlbum implements Album, Serializable {
         this.jPAPhotoList = (List) jPAPhotoList;
     }
     
-    @XmlElement(name="Gpx", type=JPAGpx.class)
+    @XmlElement(name="Gpx", type=JPAPhoto.class)
     @Override
     public List getGpxList() {
         return (List) jPAGpxList;

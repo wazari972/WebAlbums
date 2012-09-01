@@ -2,7 +2,6 @@ package net.wazari.service.engine;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -248,8 +247,9 @@ public class PhotoBean implements PhotoLocal {
         album.date = webPageService.xmlDate(enrAlbum.getDate());
         
         for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
-            if (album.carnet == null)
+            if (album.carnet == null) {
                 album.carnet = new ArrayList(enrAlbum.getCarnetList().size()) ;
+            }
 
             XmlCarnet carnet = new XmlCarnet();
             carnet.date = webPageService.xmlDate(enrCarnet.getDate());
@@ -257,8 +257,9 @@ public class PhotoBean implements PhotoLocal {
             carnet.name = enrCarnet.getNom();
             if (enrCarnet.getPicture() != null) {
                 carnet.picture = new XmlPhotoId(enrCarnet.getPicture().getId());
-                if (vSession.directFileAccess()) 
+                if (vSession.directFileAccess()) {
                     carnet.picture.path = enrCarnet.getPicture().getPath(true);
+                }
             }
 
             album.carnet.add(carnet);
@@ -268,13 +269,15 @@ public class PhotoBean implements PhotoLocal {
         album.details.tag_used = webPageService.displayListIBTD(Mode.TAG_GEO, 
                             vSession, enrAlbum, Box.NONE, enrAlbum.getDate());
         
-        for (Gpx enrGpx : enrAlbum.getGpxList()) {
-            if (album.gpx == null)
+        for (Photo enrGpx : enrAlbum.getGpxList()) {
+            if (album.gpx == null) {
                 album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
+            }
             XmlGpx gpx = new XmlGpx();
             gpx.id = enrGpx.getId();
-            if (vSession.directFileAccess())
-                gpx.path = enrGpx.getGpxPath();
+            if (vSession.directFileAccess()) {
+                gpx.path = enrGpx.getPath(true);
+            }
             gpx.description = enrGpx.getDescription();
 
             album.gpx.add(gpx);
@@ -284,8 +287,9 @@ public class PhotoBean implements PhotoLocal {
         
         if (enrAlbum.getPicture() != null) {
             album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
-            if (vSession.directFileAccess())
+            if (vSession.directFileAccess()) {
                 album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
+            }
         }
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Photos";
@@ -462,8 +466,9 @@ public class PhotoBean implements PhotoLocal {
                             verb = "nothinged";
                         }
                         String str = " ";
-                        for (Integer tag : tags)
+                        for (Integer tag : tags) {
                             str += tag + " ";
+                        }
                                 
                         photo.message = "Tag" + str + " " + verb + " to photo #" + enrPhoto.getId();
                     }
@@ -484,8 +489,12 @@ public class PhotoBean implements PhotoLocal {
             }
             
             photo.details.photoId = new XmlPhotoId(enrPhoto.getId());
-            if (vSession.directFileAccess())
+            if (vSession.directFileAccess()) {
                 photo.details.photoId.path = enrPhoto.getPath(true) ;
+            }
+            
+            photo.details.isGpx = enrPhoto.isGpx() != null && enrPhoto.isGpx(); //keep null if false
+            
             photo.details.description = enrPhoto.getDescription();
             //tags de cette photo
             photo.details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
@@ -517,8 +526,9 @@ public class PhotoBean implements PhotoLocal {
                 photo.author = new XmlWebAlbumsTagWho();
                 photo.author.name = enrAuthor.getNom();
                 photo.author.id = enrAuthor.getId();
-                if (enrAuthor.getPerson() != null)
+                if (enrAuthor.getPerson() != null) {
                     photo.author.contact = enrAuthor.getPerson().getContact();
+                }
             }
             photo.exif = photoUtil.getXmlExif(enrPhoto) ;
             
@@ -562,7 +572,9 @@ public class PhotoBean implements PhotoLocal {
     public XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException {
 
         Photo enrPhoto = photoDAO.loadRandom(vSession);
-        if (enrPhoto == null) return null ;
+        if (enrPhoto == null) {
+            return null ;
+        }
         XmlPhotoRandom output = new XmlPhotoRandom() ;
         
         output.details = transformToDetails(vSession, enrPhoto) ;
@@ -587,7 +599,9 @@ public class PhotoBean implements PhotoLocal {
 
     public XmlPhotoAbout treatABOUT(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Photo enrPhoto = photoDAO.loadIfAllowed(vSession, vSession.getId());
-        if(enrPhoto == null) return null ;
+        if(enrPhoto == null) {
+            return null ;
+        }
 
         XmlPhotoAbout output = new XmlPhotoAbout() ;
         output.details = transformToDetails(vSession, enrPhoto) ;

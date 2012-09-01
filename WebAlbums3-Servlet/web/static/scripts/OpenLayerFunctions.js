@@ -89,7 +89,7 @@ function init_osm_box(divName) {
     } );
     
     map.addLayers([
-        new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
+        //new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
         /*new OpenLayers.Layer.Google( "Google Streets", {'sphericalMercator': true, numZoomLevels:18, displayInLayerSwitcher: true} ),
         new OpenLayers.Layer.Google( "Google MapMaker", {type: G_MAPMAKER_NORMAL_MAP, 'sphericalMercator': true,  numZoomLevels:18} ),
         new OpenLayers.Layer.Google( "Google Aerial", {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels:19} ),

@@ -79,6 +79,12 @@ public class Database extends HttpServlet {
                 case STATS:
                     output.stats = databaseService.treatSTATS(vSession);
                     break;
+                case UPDATE:
+                    databaseService.treatUPDATE(vSession);
+                    break;
+                case UPDATE_DAO:
+                    databaseService.treatUPDATE_DAO(vSession);
+                    break;
                 case RELOAD_PLUGINS:
                     systemTools.reloadPlugins(ConfigurationXML.getConf().getPluginsPath());
                 case PLUGINS:

@@ -15,11 +15,9 @@ import java.util.Random;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.common.util.StringUtil;
-import net.wazari.dao.GpxFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
-import net.wazari.dao.entity.Gpx;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.Theme;
@@ -45,7 +43,6 @@ public class ImageBean implements ImageLocal {
     private static final long serialVersionUID = 1L;
     @EJB private PhotoFacadeLocal photoDAO ;
     @EJB private TagFacadeLocal tagDAO ;
-    @EJB private GpxFacadeLocal gpxDAO ;
     @EJB private PhotoUtil photoUtil ;
 
     @EJB private SystemTools sysTools ;
@@ -61,102 +58,98 @@ public class ImageBean implements ImageLocal {
 
         XmlImage output = new XmlImage();
         Integer imgId = vSession.getId();
-        Photo enrPhoto = null;
-        String filepath = null;
-        String type = null;
+        Photo enrPhoto;
+        String filepath;
+        String type;
         Theme enrThemeForBackground = vSession.getTheme() ;
         try {
-            if (mode == ImgMode.GPX) {
-                Gpx enrGpx = gpxDAO.find(imgId);
-                type = "application/xml";
-                filepath = photoUtil.getGpxPath(vSession, enrGpx) ;
-            } else {
-                if (mode == ImgMode.RANDOM_TAG) {
-                    if (tagDAO.find(imgId) != null) {
-                        Collection<Tag> tagLst = Arrays.asList(new Tag[]{tagDAO.find(imgId)});
-                        SubsetOf<Photo> photos = photoDAO.loadByTags(vSession, tagLst, new Bornes(1), ListOrder.RANDOM);
-                        if (!photos.subset.isEmpty()) {
-                            imgId = photos.subset.get(0).getId() ;
-                            mode = ImgMode.GRAND ;
-                        } else {
-                            log.warn("No photo in tag: {}",imgId);
-                            imgId = null ;
-                        }
+            if (mode == ImgMode.RANDOM_TAG) {
+                if (tagDAO.find(imgId) != null) {
+                    Collection<Tag> tagLst = Arrays.asList(new Tag[]{tagDAO.find(imgId)});
+                    SubsetOf<Photo> photos = photoDAO.loadByTags(vSession, tagLst, new Bornes(1), ListOrder.RANDOM);
+                    if (!photos.subset.isEmpty()) {
+                        imgId = photos.subset.get(0).getId() ;
+                        mode = ImgMode.GRAND ;
                     } else {
-                        log.warn("No such tag: {}",imgId);
+                        log.warn("No photo in tag: {}",imgId);
                         imgId = null ;
                     }
-                } else if (mode == ImgMode.BACKGROUND) {
-                    if (vSession.isRootSession()) {
-                        List<Theme> lstThemes = themeDAO.findAll() ;
-                        enrThemeForBackground = lstThemes.get(new Random().nextInt(lstThemes.size())) ;
-                        log.info("Using Theme[{}] for root background picture", enrThemeForBackground);
-
-                    }
-                    if (enrThemeForBackground != null && enrThemeForBackground.getBackground() != null) {
-                        imgId = enrThemeForBackground.getBackground().getId() ;
-                    }
-                }
-
-
-                if (imgId == null) {
-                    output.exception = "No photo asked ... (id=null)" ;
-                    return output;
-                }
-
-                enrPhoto = photoDAO.loadIfAllowed(vSession, imgId);
-                if (enrPhoto == null) {
-                    output.exception = "Cette photo (" + imgId + ") n'est pas accessible ou n'existe pas ..." ;
-                    return output ;
-                }
-
-                if (enrPhoto.getPath(false) == null) {
-                    output.exception = "Cette photo (" + imgId + ") a un path null ..." ;
-                    return output ;
-                }
-
-                type = (mode == ImgMode.MINI || enrPhoto.getType() == null ? "image/png" : enrPhoto.getType());
-                if (mode == ImgMode.SHRINK) {
-
-                    try {
-                        Integer width = vSession.getWidth();
-                        filepath = sysTools.shrink(vSession, enrPhoto, width);
-                        log.warn("Shrinked filepath: {}", filepath) ;
-                    } catch (NumberFormatException e) {
-                        output.exception = "Impossible de parser la taille demandee" ;
-                        return output ;
-                    }
-
-                    try {
-                        Integer borderWidth = vSession.getBorderWidth();
-                        if (borderWidth != null) {
-                            String color = vSession.getBorderColor() ;
-                            sysTools.addBorder(vSession, enrPhoto, new Integer(borderWidth), color, filepath);
-                            log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
-                        }
-                    } catch (NumberFormatException e) {
-                        output.exception = "Impossible de parser le taille de la bordure a ajouter" ;
-                        return output ;
-                    }
-                } else if (mode == ImgMode.BACKGROUND) {
-                    final int SIZE = 1280 ;
-
-                    String backgroundpath =  vSession.getConfiguration()
-                            .getTempPath()+enrThemeForBackground.getNom()+File.separator+SIZE+".jpg" ;
-                    if (vSession.getConfiguration().isPathURL()) {
-                        filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
-                    } else if (!new File (backgroundpath).exists()) {
-                        filepath = sysTools.shrink(vSession, enrPhoto, SIZE, backgroundpath);
-                    } else {
-                        filepath = backgroundpath ;
-                    }
-
-                } else if (mode == ImgMode.GRAND) {
-                    filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
                 } else {
-                    filepath = photoUtil.getMiniPath(vSession, enrPhoto);
+                    log.warn("No such tag: {}",imgId);
+                    imgId = null ;
+                }
+            } else if (mode == ImgMode.BACKGROUND) {
+                if (vSession.isRootSession()) {
+                    List<Theme> lstThemes = themeDAO.findAll() ;
+                    enrThemeForBackground = lstThemes.get(new Random().nextInt(lstThemes.size())) ;
+                    log.info("Using Theme[{}] for root background picture", enrThemeForBackground);
+
+                }
+                if (enrThemeForBackground != null && enrThemeForBackground.getBackground() != null) {
+                    imgId = enrThemeForBackground.getBackground().getId() ;
                 }
             }
+
+
+            if (imgId == null) {
+                output.exception = "No photo asked ... (id=null)" ;
+                return output;
+            }
+
+            enrPhoto = photoDAO.loadIfAllowed(vSession, imgId);
+            if (enrPhoto == null) {
+                output.exception = "Cette photo (" + imgId + ") n'est pas accessible ou n'existe pas ..." ;
+                return output ;
+            }
+
+            if (enrPhoto.getPath(false) == null) {
+                output.exception = "Cette photo (" + imgId + ") a un path null ..." ;
+                return output ;
+            }
+
+            type = (mode == ImgMode.MINI || enrPhoto.getType() == null ? "image/png" : enrPhoto.getType());
+            if (mode == ImgMode.SHRINK) {
+                try {
+                    Integer width = vSession.getWidth();
+                    filepath = sysTools.shrink(vSession, enrPhoto, width);
+                    log.warn("Shrinked filepath: {}", filepath) ;
+                } catch (NumberFormatException e) {
+                    output.exception = "Impossible de parser la taille demandee" ;
+                    return output ;
+                }
+
+                try {
+                    Integer borderWidth = vSession.getBorderWidth();
+                    if (borderWidth != null) {
+                        String color = vSession.getBorderColor() ;
+                        sysTools.addBorder(vSession, enrPhoto, new Integer(borderWidth), color, filepath);
+                        log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
+                    }
+                } catch (NumberFormatException e) {
+                    output.exception = "Impossible de parser le taille de la bordure a ajouter" ;
+                    return output ;
+                }
+            } else if (mode == ImgMode.BACKGROUND) {
+                final int SIZE = 1280 ;
+
+                String backgroundpath =  vSession.getConfiguration()
+                        .getTempPath()+enrThemeForBackground.getNom()+File.separator+SIZE+".jpg" ;
+                if (vSession.getConfiguration().isPathURL()) {
+                    filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
+                } else if (!new File (backgroundpath).exists()) {
+                    filepath = sysTools.shrink(vSession, enrPhoto, SIZE, backgroundpath);
+                } else {
+                    filepath = backgroundpath ;
+                }
+
+            } else if (mode == ImgMode.GRAND) {
+                filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
+            } else if (mode == ImgMode.GPX) {
+                filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
+            } else {
+                filepath = photoUtil.getMiniPath(vSession, enrPhoto);
+            }
+            
 
             //redirect if the image can be accessed from HTTP
             if (vSession.getConfiguration().isPathURL()) {
