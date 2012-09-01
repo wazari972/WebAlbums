@@ -18,8 +18,8 @@ OBJS += build/JnetFS.o
 
 
 LIBJVM_DIR=/usr/lib/jvm/java-6-openjdk/jre/lib/amd64/server/
-INCJVM_DIR=${INCJVM_DIR}include/
-INCJVM_OS_DIR=${INCJVM_OS_DIR}linux/
+INCJVM_DIR=${JVM_DIR}include/
+INCJVM_OS_DIR=${INCJVM_DIR}linux/
 
 # Each subdirectory must supply rules for building sources it contributes
 build/%.o: src/%.c
@@ -51,6 +51,7 @@ lib/libJnetFS.so: $(OBJS)
 	gcc -shared -o"lib/libJnetFS.so" $(OBJS) $(LIBS) 
 	@echo 'Finished building target: $@'
 	@echo ' '
+	@mkdir test
 
 # Other Targets
 clean:
