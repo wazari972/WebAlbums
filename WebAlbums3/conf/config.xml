@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<config port="8089">
+<config port="9000">
     <sunResourcesXML>conf/sun-resources.xml</sunResourcesXML>
     <webAlbumsEAR>bin/WebAlbums3-ea.ear</webAlbumsEAR>
     <glassfishDIR>./glassfish</glassfishDIR>

@@ -157,8 +157,7 @@ public class GF {
         gfProps.setPort("http-listener", port); // refer JavaDocs for the details of this API.
         System.setProperty("java.library.path","/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/lib");
         System.setProperty("java.security.auth.login.config",
-            "/home/kevin/other/apps/glassfishv3.0.1/glassfish/domains/domain1/" + File.separator +
-            "config" + File.separator + "login.conf");
+            "/home/kevin/other/apps/glassfishv3.0.1/glassfish/domains/domain1/config/login.conf");
         GlassFish glassfish = GlassFishRuntime.bootstrap().newGlassFish(gfProps);
         
         glassfish.start();
