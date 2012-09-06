@@ -4,8 +4,8 @@
     <webAlbumsEAR>bin/WebAlbums3-ea.ear</webAlbumsEAR>
     <glassfishDIR>./glassfish</glassfishDIR>
     <users>
-        <user name="Kevin" password="" groups="Admin:Manager"/>
-        <user name="Marine" password="" groups="Admin"/>
+        <user name="kevin" password="" groups="Admin:Manager"/>
+        <user name="Marine" password="" groups="Admin:Manager"/>
         <user name="Joelle" password="" groups="Famille"/>
         <user name="Nasham" password="" groups="Amis"/>
         <user name="Machin" password="" groups="Autres"/>
