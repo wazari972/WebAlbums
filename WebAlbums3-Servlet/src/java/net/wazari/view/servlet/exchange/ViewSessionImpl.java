@@ -645,8 +645,6 @@ public class ViewSessionImpl implements
 
     @Override
     public boolean isRemoteAccess() {
-        log.info( "local: {}", request.getLocalAddr()) ;
-        log.info( "remote: {}", request.getRemoteAddr()) ;
         return !request.getLocalAddr().equals(request.getRemoteHost()) ;
     }
 

@@ -154,12 +154,12 @@ public class WebPageBean implements WebPageLocal {
         if (principal != null) {
             login.user = principal.getName();
         }
-        log.info( "logged as manager? {}", vSession.isSessionManager());
+        log.debug( "logged as manager? {}", vSession.isSessionManager());
         if (vSession.isSessionManager() && !vSession.getStatic()) {
             login.admin = true ;
         }
-        log.info( "logged as admin? {}", vSession.isAdminSession());
-        log.info( "logged as root? {}", vSession.isRootSession());
+        log.debug( "logged as admin? {}", vSession.isAdminSession());
+        log.debug( "logged as root? {}", vSession.isRootSession());
         if (vSession.isRootSession()) {
             login.root = true ;
         }
@@ -261,15 +261,15 @@ public class WebPageBean implements WebPageLocal {
             if (mode != Mode.TAG_USED && mode != Mode.TAG_GEO) {
                 throw new RuntimeException("Don't want to process mode " + mode + " when not logged at manager");
             }
-            log.info( "Load visible tags (only for geo?{})", geoOnly);
+            log.debug( "Load visible tags (only for geo?{})", geoOnly);
             tags = tagDAO.loadVisibleTags(vSession, geoOnly);
         } else /* current manager*/ {
 
             if (mode == Mode.TAG_USED || mode == Mode.TAG_GEO) {
-                log.info( "Load visible tags (only for geo?{})", geoOnly);
+                log.debug( "Load visible tags (only for geo?{})", geoOnly);
                 tags = tagDAO.loadVisibleTags(vSession, geoOnly);
             } else if (mode == Mode.TAG_ALL) {
-                log.info( "Load all tags");
+                log.debug( "Load all tags");
                 //afficher tous les tags
                 tags = tagDAO.findAll();
             } else if (mode == Mode.TAG_NUSED || mode == Mode.TAG_NEVER || mode == Mode.TAG_NEVER_EVER) {
@@ -277,15 +277,15 @@ public class WebPageBean implements WebPageLocal {
                 //select the tags not used [in this theme]
                 if (mode == Mode.TAG_NEVER || mode == Mode.TAG_NEVER_EVER || vSession.isRootSession()) {
                     //select all the tags used
-                    log.info( "Select disting tags");
+                    log.debug( "Select disting tags");
                     notWantedTags = tagPhotoDAO.selectDistinctTags();
 
                 } else /* TAG_NUSED*/ {
                     //select all the tags used in photo of this theme
-                    log.info( "Select not used tags");
+                    log.debug( "Select not used tags");
                     notWantedTags = tagDAO.loadVisibleTags(vSession, false);
                 }
-                log.info( "Select no such tags");
+                log.debug( "Select no such tags");
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);
                 
                 if (mode == Mode.TAG_NEVER_EVER) {
@@ -311,7 +311,7 @@ public class WebPageBean implements WebPageLocal {
             map = new MapPoint();
         }
 
-        log.info( "Mode: {}, Box: {}, list: {}", new Object[]{mode, box, ids});
+        log.debug( "Mode: {}, Box: {}, list: {}", new Object[]{mode, box, ids});
 
         for (Tag enrTag : tags) {
             XmlTag tag = new XmlTag();

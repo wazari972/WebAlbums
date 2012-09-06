@@ -63,9 +63,12 @@ public class Photo extends SLink {
     
     @Override
     public String getTarget() {
+        String path = System.getProperty("root.path") ;
+        if (path == null) {
+            path = "/other/Web/" ;
+        }
         if (doCompletePath) {
-            //return "/home/bounette/Bureau/images/"+target;
-            return "/other/Web/data/images/"+target;
+            return path+"data/images/"+target;
         } else {
             return target;
         }
