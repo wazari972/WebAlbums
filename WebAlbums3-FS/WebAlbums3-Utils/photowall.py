@@ -2,6 +2,7 @@
 import os
 import tempfile
 import pipes
+import subprocess
 
 try:
   from wand.image import Image
@@ -24,15 +25,15 @@ PATH="/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test/Root/Random/"
 
 
 #define the size of the picture
-WIDTH=2048
-HEIGHT=1560
+WIDTH=10000
+HEIGHT=5000
+
+#define how many lines do we want
+LINES=20
 
 #minimum width of cropped image. Below that, we black it out
 #only for POLAROID
 MIN_CROP=100
-
-#define how many lines do we want
-LINES=4
 
 # False if PATH is a normal directory, True if it is WebAlbums-FS
 USE_VFS=True
@@ -73,13 +74,18 @@ def get_next_file_vfs():
 
 def get_file_details(filename):
   try:
-    link = os.readlink(filename)
+    link = filename
+    try:
+      link = os.readlink(filename)
+    except OSError:
+      pass
     link = pipes.quote(link)
     names = link[link.index("/images"):].split("/")[2:]
     theme, year, album, fname = names
     
-    return album
-  except OSError:
+    return "%s (%s)" % (album, theme)
+  except Exception as e:
+    print e
     return get_file_details_dir(filename)
 
 ###########################################
@@ -112,11 +118,11 @@ get_next_file = get_next_file_vfs if USE_VFS else get_next_file_dir
 def do_append(first, second, underneath=False):
   sign = "-" if underneath else "+"
   background = "-background black" if DO_POLAROID else ""
-  command = "convert %s %sappend %s %s %s" % (background, sign, first, second, first)
-  ret = os.system(command)
+  command = "convert -gravity center %s %sappend %s %s %s" % (background, sign, first, second, first)
+  ret = subprocess.call(command, shell=True)
   
   if ret != 0:
-    raise object("failed")
+    raise Exception("Command failed: ", command)
 
 def do_polaroid (image, details):
   tmp = tempfile.NamedTemporaryFile(delete=False, suffix=IMG_FORMAT_SUFFIX)
@@ -124,13 +130,14 @@ def do_polaroid (image, details):
   image.save(filename=tmp.name)
   
   if details is not None and WANT_CAPTION:
-    caption = "-caption '%s'" % details
+    caption = """-caption "%s" """ % details.replace("'", "\\'")
   else:
     caption = ""
+    
   command = "convert -bordercolor snow -background black -gravity center %(caption)s +polaroid %(name)s %(name)s" % {"name":tmp.name, "caption":caption}
-  ret = os.system(command)
+  ret = subprocess.call(command, shell=True)
   if ret != 0:
-    raise object("failed")
+    raise Exception("Command failed: "+ command)
   
   img = Image(filename=tmp.name).clone()
   
@@ -153,10 +160,12 @@ def photowall(name):
     output_row = None
     row_width = 0
     #concatenate until the image width is reached
+    img_count = 0
     while row_width < WIDTH:
       filename = get_next_file() if previous_filename is None else previous_filename
       previous_filename = None
       
+      print img_count,
       if mime is not None:
 	mimetype = mime.from_file(filename)
 	if "symbolic link" in mimetype:
@@ -174,6 +183,7 @@ def photowall(name):
 	except OSError:
 	  print filename
 	  
+      img_count += 1
       image = Image(filename=filename)
       with image.clone() as clone:
 	factor = float(LINE_HEIGHT)/clone.height
@@ -230,7 +240,7 @@ def photowall_all_themes():
     PATH = "%s%s/Random/" % (MOUNT_PATH, theme)
     name = photowall(theme)
     print "==>", name
-    os.system("eog %s &" % name)
+    ret = subprocess.call("eog %s &" % name, shell=True)
     
 if __name__=="__main__":
   if USE_VFS and DO_ALL_THEMES:
