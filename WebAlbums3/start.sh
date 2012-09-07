@@ -1,4 +1,4 @@
-ROOT_PATH=/other/Web
+ROOT_PATH=$(cat root.path)
 WA_HOME="."
 java -Droot.path=$ROOT_PATH \
      -Dfile.encoding=UTF-8 \
