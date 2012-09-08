@@ -17,17 +17,15 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  */
 public class XmlTagCloud {
     @XmlElement(name = "tag")
-    public List<XmlTagCloudEntry> parentList = new LinkedList<XmlTagCloudEntry>() ;
+    public List<XmlTagCloudEntry> parentList = new LinkedList<XmlTagCloudEntry>();
 
-    public static class XmlTagCloudEntry {
+    public static class XmlTagCloudEntry extends XmlTag{
+        
         @XmlAttribute
         public int size;
         @XmlAttribute
         public Long nb;
-        @XmlAttribute
-        public Integer id;
-        public String name;
         @XmlElementWrapper(name = "children")
-        public List<XmlTagCloudEntry> tag = new LinkedList<XmlTagCloudEntry>() ;
+        public List<XmlTagCloudEntry> tag = new LinkedList<XmlTagCloudEntry>();
     }
 }

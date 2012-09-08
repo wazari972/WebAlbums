@@ -4,11 +4,11 @@ function pointToContent(point) {
           +"  <center><img src='Miniature__"+point.picture+".png' /></center>\n"
           +"</div>"
 }
-
+/*
 AutoSizeFramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
     'autoSize': true
 });
-
+*/
 function populateMap(map) {    
     var markers = new OpenLayers.Layer.Markers("Geo Tags");
     map.addLayer(markers);

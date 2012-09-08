@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.xml.bind.annotation.*;
 import net.wazari.common.util.XmlUtils;
+import net.wazari.common.util.XmlUtils;
 import net.wazari.service.exchange.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

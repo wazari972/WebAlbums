@@ -12,7 +12,7 @@ import net.wazari.dao.exchange.ServiceSession;
  *
  * @author kevin
  */
-public interface ViewSession extends ServiceSession {
+public interface ViewSession extends ServiceSession{
     enum Special {
         TOP5, FULLSCREEN, VISIONNEUSE, CLOUD, PERSONS, PLACES, UPDATE, YEARS, PHOTOALBUM_SIZE,
         SELECT, RANDOM, ABOUT, FASTEDIT, JUST_THEME, MAP, GRAPH, GPX}

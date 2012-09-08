@@ -5,17 +5,12 @@
 package net.wazari.dao.jpa;
 
 import java.text.Normalizer;
-import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import net.wazari.dao.DatabaseFacadeLocal.DatabaseFacadeLocalException;
 import net.wazari.dao.MaintFacadeLocal;
-import net.wazari.dao.jpa.entity.JPAPhoto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

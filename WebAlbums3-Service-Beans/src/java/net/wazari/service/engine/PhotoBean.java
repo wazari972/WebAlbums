@@ -301,9 +301,7 @@ public class PhotoBean implements PhotoLocal {
             sysTools.fullscreenMultiple(vSession, rq, enrAlbum.getId(), page, "Albums");
         }
         output.photoList = displayPhoto(rq, vSession, submit, thisPage);
-
-
-
+        
         stopWatch.stop() ;
         return output ;
     }
@@ -396,7 +394,8 @@ public class PhotoBean implements PhotoLocal {
                                            ListOrder.DESC);
             }
         }        
-
+        log.warn("Load by tags: setSize{}", lstP.setSize);
+        log.warn("Load by tags: setSize{}", lstP.subset.size());
         String degrees = "0";
         Integer[] tags = null;
         int countME = 0;
@@ -570,7 +569,6 @@ public class PhotoBean implements PhotoLocal {
 
     @Override
     public XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException {
-
         Photo enrPhoto = photoDAO.loadRandom(vSession);
         if (enrPhoto == null) {
             return null ;
@@ -629,18 +627,30 @@ public class PhotoBean implements PhotoLocal {
             output.desc_status = XmlPhotoFastEdit.Status.OK;
         }
 
-        try {
-            TagAction action = vSession.getTagAction();
-            if (action == TagAction.SET) {
-                photoUtil.setTags(enrPhoto, vSession.getTagSet());
+        TagAction action = vSession.getTagAction();
+        if (action != null) {
+            try {
+                Integer[] tagSet = vSession.getTagSet();
+
                 output.tag_status = XmlPhotoFastEdit.Status.OK;
-            } else {
-                output.tag_msg = "Not tag action selected";
+
+                if (tagSet == null || tagSet.length == 0) {
+                    output.tag_status = XmlPhotoFastEdit.Status.ERROR;
+                    output.tag_msg = "Not tag selected";
+                } else if (action == TagAction.SET) {
+                    photoUtil.setTags(enrPhoto, tagSet);
+                } else if (action == TagAction.ADD) {
+                    photoUtil.addTags(enrPhoto, tagSet);
+                } else if (action == TagAction.RM) {
+                    photoUtil.removeTag(enrPhoto, tagSet[0]);
+                } else {
+                    output.tag_status = XmlPhotoFastEdit.Status.ERROR;
+                    output.tag_msg = "Not tag action selected";
+                }
+            } catch (WebAlbumsServiceException ex) {
+                output.tag_msg = ex.getMessage();
                 output.tag_status = XmlPhotoFastEdit.Status.ERROR;
             }
-        } catch (WebAlbumsServiceException ex) {
-            output.tag_msg = ex.getMessage();
-            output.tag_status = XmlPhotoFastEdit.Status.ERROR;
         }
         
         Integer stars = vSession.getStars();

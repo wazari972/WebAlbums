@@ -49,6 +49,35 @@ public class ImageBean implements ImageLocal {
     @EJB private ThemeFacadeLocal themeDAO ;
 
     @Override
+    public String treatSHRINK(ViewSessionImages vSession)
+            throws WebAlbumsServiceException {
+        Photo enrPhoto = photoDAO.loadIfAllowed(vSession, vSession.getId());
+        if (enrPhoto == null) {
+            return"Cette photo (" + vSession.getId() + ") n'est pas accessible ou n'existe pas ..." ;
+        }
+        String filepath;
+        try {
+            Integer width = vSession.getWidth();
+            filepath = sysTools.shrink(vSession, enrPhoto, width);
+            log.warn("Shrinked filepath: {}", filepath) ;
+        } catch (NumberFormatException e) {
+            return "Impossible de parser la taille demandee" ;
+        }
+        
+        try {
+            Integer borderWidth = vSession.getBorderWidth();
+            if (borderWidth != null) {
+                String color = vSession.getBorderColor() ;
+                sysTools.addBorder(vSession, enrPhoto, new Integer(borderWidth), color, filepath);
+                log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
+            }
+        } catch (NumberFormatException e) {
+            return "Impossible de parser le taille de la bordure a ajouter" ;
+        }
+        return filepath;
+    }
+    
+    @Override
     public XmlImage treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
         ImgMode mode = vSession.getImgMode();
@@ -132,7 +161,7 @@ public class ImageBean implements ImageLocal {
             } else if (mode == ImgMode.BACKGROUND) {
                 final int SIZE = 1280 ;
 
-                String backgroundpath =  vSession.getConfiguration()
+                String backgroundpath = vSession.getConfiguration()
                         .getTempPath()+enrThemeForBackground.getNom()+File.separator+SIZE+".jpg" ;
                 if (vSession.getConfiguration().isPathURL()) {
                     filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
@@ -178,10 +207,10 @@ public class ImageBean implements ImageLocal {
         } catch (Exception e) {
             log.warn ("{}: {} ", e.getClass().getSimpleName(), e) ;
             output.exception = e.getMessage();
-        } 
+        }
         return output;
     }
-
+    
     protected static Boolean sendFile(ViewSessionImages vSession,
                                       String filepath,
                                       String type,

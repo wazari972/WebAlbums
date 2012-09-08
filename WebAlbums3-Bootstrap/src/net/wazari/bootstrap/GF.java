@@ -4,21 +4,21 @@
  */
 package net.wazari.bootstrap;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.util.StatusPrinter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.BindException;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -69,7 +69,7 @@ public class GF {
            throw je;
         }
 */
-        Config cfg = Config.load();
+        final Config cfg = Config.load();
         Integer stopPort = cfg.port + 1;
         log.info(Config.print(cfg)) ;
         System.setProperty(SHUTDOWN_PORT_PPT, stopPort.toString()) ;
@@ -111,7 +111,7 @@ public class GF {
             //efsb.instanceRoot(instanceGF) ;
             EmbeddedFileSystem efs = efsb.build();
 
-            server = startServer(cfg.port);
+            server = startServer(cfg.port, cfg.glassfishDIR);
 
             for (User usr : cfg.user) {
                 createUsers(server, usr);
@@ -133,8 +133,25 @@ public class GF {
             long loadingTime = System.currentTimeMillis();
             float time = ((float) (loadingTime - timeStart) / 1000);
 
-            log.info( "Ready to server at http://localhost:{}/WebAlbums3-Servlet after {}s", new Object[] {Integer.toString(cfg.port), time});
-            log.info( "Connect to http://localhost:{} to shutdown the server", Integer.toString(stopPort));
+            Runnable fs = new Runnable() {
+
+                public void run() {
+                    try {
+                        log.info("Opening WebAlbums-FS");
+                        final URL myURL = new URL("http://localhost:"+cfg.port+"/WebAlbums3-FS/Launch");
+                        URLConnection myURLConnection = myURL.openConnection();
+                        myURLConnection.connect();
+                        log.info("WebAlbums-FS finished");
+                    } catch (IOException ex) {
+                        java.util.logging.Logger.getLogger(GF.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            } ;
+            new Thread(fs).start();
+            
+            log.info("Ready to server at http://localhost:{}/WebAlbums3.5-dev after {}s", new Object[] {Integer.toString(cfg.port), time});
+            log.info("Try http://localhost:{}/WebAlbums3-FS/Launch to launch the Filesystem", new Object[] {Integer.toString(cfg.port)});
+            log.info("Connect to http://localhost:{} to shutdown the server", Integer.toString(stopPort));
 
             ServerSocket servSocker = new ServerSocket(stopPort);
             servSocker.accept().close();
@@ -155,13 +172,13 @@ public class GF {
         }
     }
 
-    private static GlassFish startServer(int port) throws LifecycleException, IOException, GlassFishException {
+    private static GlassFish startServer(int port, String glassfishDIR) throws LifecycleException, IOException, GlassFishException {
         /** Create and start GlassFish which listens at 8080 http port */
         GlassFishProperties gfProps = new GlassFishProperties();
         gfProps.setPort("http-listener", port); // refer JavaDocs for the details of this API.
+        System.setProperty("java.library.path","/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/lib");
         System.setProperty("java.security.auth.login.config",
-            "/home/kevin/other/apps/glassfishv3.0.1/glassfish/domains/domain1/" + File.separator +
-            "config" + File.separator + "login.conf");
+            glassfishDIR+"/config/login.conf");
         GlassFish glassfish = GlassFishRuntime.bootstrap().newGlassFish(gfProps);
         
         glassfish.start();
