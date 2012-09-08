@@ -132,24 +132,8 @@ public class GF {
 
             long loadingTime = System.currentTimeMillis();
             float time = ((float) (loadingTime - timeStart) / 1000);
-
-            Runnable fs = new Runnable() {
-
-                public void run() {
-                    try {
-                        log.info("Opening WebAlbums-FS");
-                        final URL myURL = new URL("http://localhost:"+cfg.port+"/WebAlbums3-FS/Launch");
-                        URLConnection myURLConnection = myURL.openConnection();
-                        myURLConnection.connect();
-                        log.info("WebAlbums-FS finished");
-                    } catch (IOException ex) {
-                        java.util.logging.Logger.getLogger(GF.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            } ;
-            new Thread(fs).start();
             
-            log.info("Ready to server at http://localhost:{}/WebAlbums3.5-dev after {}s", new Object[] {Integer.toString(cfg.port), time});
+            log.info("Ready to server at http://localhost:{}/WebAlbums3.5-beta6 after {}s", new Object[] {Integer.toString(cfg.port), time});
             log.info("Try http://localhost:{}/WebAlbums3-FS/Launch to launch the Filesystem", new Object[] {Integer.toString(cfg.port)});
             log.info("Connect to http://localhost:{} to shutdown the server", Integer.toString(stopPort));
 
