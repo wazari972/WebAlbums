@@ -4,6 +4,7 @@ import java.util.*;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.TagFacadeLocal;
+import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.service.PhotoLocal;
@@ -20,8 +21,8 @@ import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
-import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.service.exchange.xml.tag.*;
+import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.util.system.SystemTools;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -47,16 +48,16 @@ public class TagBean implements TagLocal {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagDISPLAY", log);
         XmlTagDisplay output = new XmlTagDisplay();
         Integer[] tags = vSession.getTagAsked();
-        Integer page = vSession.getPage();
-
+        
         boolean wantChildren = vSession.getWantTagChildren();
         if (tags != null) {
             Set<Tag> tagSet = new HashSet<Tag>(tags.length);
             for (int tagId : Arrays.asList(tags)) {
                 try {
                     Tag enrTag = tagDAO.find(tagId);
-                    if (enrTag == null)
+                    if (enrTag == null) {
                         continue;
+                    }
                     tagSet.add(enrTag);
                     if (wantChildren) {
                         tagSet.addAll(tagDAO.getChildren(enrTag));
@@ -65,7 +66,7 @@ public class TagBean implements TagLocal {
                     log.warn("Tag {} cannot be looked up", tagId);
                 }
             }
-
+            log.warn("DISPLAY TAGS FROM {}", tagSet);
             XmlFrom thisPage = new XmlFrom();
             thisPage.name = "Tags";
             List<Integer> tagsAsked = new ArrayList<Integer>(tagSet.size());
@@ -83,6 +84,7 @@ public class TagBean implements TagLocal {
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet);
             Special special = vSession.getSpecial();
             if (Special.FULLSCREEN == special) {
+                Integer page = vSession.getPage();
                 sysTools.fullscreenMultiple(vSession, rq, null, page, "Tags", tagsId.toString());
                 stopWatch.stop("Service.treatTagDISPLAY.FULLSCREEN");
                 return null;
@@ -171,7 +173,7 @@ public class TagBean implements TagLocal {
                 PairTagXmlBuilder pair = enrSonStack.pop();
 
                 Long nbElts = map.get(pair.tag);
-                if (nbElts == null) {
+                if (nbElts == null || nbElts == 0) {
                     // the tag is not in the map, so it has 0 elements in the
                     // current theme.
                     nbElts = 0L;
@@ -182,8 +184,8 @@ public class TagBean implements TagLocal {
                 } else {
                     // it's in the map, so remove it, we'll process it right now
                     map.remove(pair.tag);
-
                 }
+                
                 int size = (int)(SIZE_MIN + ((double) nbElts/max) * SIZE_SCALE);
 
                 pair.parentList.add(pair.xml);
@@ -191,7 +193,10 @@ public class TagBean implements TagLocal {
                 pair.xml.nb = nbElts;
                 pair.xml.id = pair.tag.getId();
                 pair.xml.name = pair.tag.getNom();
-
+                if (pair.tag.getGeolocalisation() != null) {
+                    Geolocalisation geo = pair.tag.getGeolocalisation();
+                    pair.xml.setGeo(geo.getLatitude(), geo.getLongitude());
+                }
                 for (Tag enrSon : pair.tag.getSonList()) {
                     XmlTagCloudEntry xmlSon = new XmlTagCloudEntry();
                     enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon, pair.xml.tag));
@@ -199,8 +204,35 @@ public class TagBean implements TagLocal {
             }
             enrCurrentTag = null;
         }
+        
+        for (XmlTagCloudEntry tag : output.parentList) {
+            updateParentTagCloud(tag);
+        }
+        
         stopWatch.stop();
         return output;
+    }
+    
+    private long updateParentTagCloud(XmlTagCloudEntry tag) {
+        long sonCount = tag.nb;
+        List<XmlTagCloudEntry> toRemove = new LinkedList<XmlTagCloudEntry>();
+        for (XmlTagCloudEntry son : tag.tag) {
+            long count = updateParentTagCloud(son);
+            
+            sonCount += count;
+            
+            if (count == 0) {
+                toRemove.add(son);
+            }
+        }
+        
+        for (XmlTagCloudEntry rm : toRemove) {
+            tag.tag.remove(rm);
+        }
+        
+        tag.nb = sonCount;
+        
+        return sonCount;
     }
 
     @Override
@@ -231,6 +263,12 @@ public class TagBean implements TagLocal {
             XmlTag tag = new XmlTag();
             tag.name = enrTag.getNom();
             tag.id = enrTag.getId();
+            
+            if (enrTag.getGeolocalisation() != null) {
+                Geolocalisation geo = enrTag.getGeolocalisation();
+                tag.setGeo(geo.getLatitude(), geo.getLongitude());
+            }
+            
             List<TagTheme> lstTT = enrTag.getTagThemeList();
             Random rand = new Random();
             //pick up a RANDOM valid picture visible from this theme

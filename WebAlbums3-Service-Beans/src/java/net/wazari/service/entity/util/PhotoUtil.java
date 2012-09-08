@@ -11,7 +11,6 @@ import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagPhotoFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
-import net.wazari.dao.entity.Gpx;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
 import net.wazari.dao.entity.Theme;
@@ -29,18 +28,14 @@ import org.slf4j.LoggerFactory;
  */
 @Stateless
 public class PhotoUtil {
-
     private static final Logger log = LoggerFactory.getLogger(PhotoUtil.class.toString());
     private static final long serialVersionUID = 1L;
+    
     @EJB SystemTools sysTools ;
-    @EJB
-    TagPhotoFacadeLocal tagPhotoDAO;
-    @EJB
-    TagFacadeLocal tagDAO;
-    @EJB
-    ThemeFacadeLocal themeDAO;
-    @EJB
-    UtilisateurFacadeLocal userDAO;
+    @EJB TagPhotoFacadeLocal tagPhotoDAO;
+    @EJB TagFacadeLocal tagDAO;
+    @EJB ThemeFacadeLocal themeDAO;
+    @EJB UtilisateurFacadeLocal userDAO;
 
     public void setTags(Photo p, Integer[] tags)
             throws WebAlbumsServiceException {
@@ -51,8 +46,9 @@ public class PhotoUtil {
     public void addTags(Photo p, Integer[] tags)
             throws WebAlbumsServiceException {
         log.info( "add tags to photo {}", p);
-        if (tags == null)
-            return;
+        if (tags == null) {
+                    return;
+                }
 
         List<TagPhoto> list = p.getTagPhotoList();
         //ajouter les nouveaux tags
@@ -79,10 +75,12 @@ public class PhotoUtil {
                     nouveau.setTag(enrTag);
                     log.info( "Ajout du tag : {}", enrTag.getNom());
                     tagPhotoDAO.create(nouveau);
-                } else
+                } else {
                     log.info( "already: {}", enrTag.getNom());
-            } else
+                }
+            } else {
                 log.warn( "Erreur dans l''id du Tag : {}: introuvable !", tags[i]);
+            }
         }
     }
 
@@ -94,8 +92,9 @@ public class PhotoUtil {
                 break ;
             }
         }
-        if (toRemove != null)
+        if (toRemove != null) {
             tagPhotoDAO.remove(toRemove);
+        }
     }
 
     public void removeExtraTags(Photo p, Integer[] tags) throws WebAlbumsServiceException {
@@ -166,20 +165,7 @@ public class PhotoUtil {
         }
     }
 
-    /***/
-    public String getThemedPath(Gpx g) {
-        Theme enrTheme = g.getAlbum().getTheme();
-        if (enrTheme == null) {
-            return null;
-        }
-        return enrTheme.getNom() + "/" + g.getGpxPath();
-    }
-
-    public String getGpxPath(ViewSession vSession, Gpx g) {
-        String sep = vSession.getConfiguration().getSep() ;
-        return vSession.getConfiguration().getImagesPath(true) + getThemedPath(g);
-    }
-    
+    /***/    
     public String getImagePath(ViewSession vSession, Photo p) {
         String sep = vSession.getConfiguration().getSep() ;
         return vSession.getConfiguration().getImagesPath(true) + p.getPath(true);

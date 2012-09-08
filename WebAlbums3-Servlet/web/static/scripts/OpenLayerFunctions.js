@@ -59,6 +59,7 @@ function init_geoportail_base_layer() {
 }
 
 function add_geoportail_layer(map) {
+    return;
     var ready = function () {
         var geo_eu = init_geoportail_EU_layer(map)
         map.addLayers([
@@ -76,8 +77,9 @@ function add_geoportail_layer(map) {
 function init_osm_box(divName) {
     var map = new OpenLayers.Map (divName, {
         controls:[
-            new OpenLayers.Control.MouseDefaults(),
-            new OpenLayers.Control.LayerSwitcher()],
+            new OpenLayers.Control.Navigation(),
+            new OpenLayers.Control.LayerSwitcher()
+            ],
         maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
         maxResolution: 156543.0399,
         numZoomLevels: 19,
@@ -87,7 +89,7 @@ function init_osm_box(divName) {
     } );
     
     map.addLayers([
-        new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
+        //new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
         /*new OpenLayers.Layer.Google( "Google Streets", {'sphericalMercator': true, numZoomLevels:18, displayInLayerSwitcher: true} ),
         new OpenLayers.Layer.Google( "Google MapMaker", {type: G_MAPMAKER_NORMAL_MAP, 'sphericalMercator': true,  numZoomLevels:18} ),
         new OpenLayers.Layer.Google( "Google Aerial", {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels:19} ),
@@ -95,7 +97,7 @@ function init_osm_box(divName) {
 
         new OpenLayers.Layer.OSM( "OSM Cycle Map", "http://tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
         { displayOutsideMaxExtent: true, 
-            opacity: 0.5, isBaseLayer: false, visibility: false, numZoomLevels:17, permalink: "cycle" } ),
+            opacity: 0.5, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" } ),
 
         new OpenLayers.Layer.OSM( "Hillshading", "http://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png",
         { displayOutsideMaxExtent: true, 
@@ -115,16 +117,27 @@ function init_osm_box(divName) {
     return map
 }
 
-gpx_layers = []
+var gpx_layers = [];
 function init_gpx_layer(map, name, file_id, ready_callback) {
     file = "GPX__"+file_id+".gpx"
     
     // Add the Layer with the GPX Track
+    var lgpx = new OpenLayers.Layer.Vector(name+" "+file_id, {
+                protocol: new OpenLayers.Protocol.HTTP({
+                    url: file,
+                    format: new OpenLayers.Format.GPX
+                }),
+                projection: new OpenLayers.Projection("EPSG:4326"),
+                style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 1},
+                strategies: [new OpenLayers.Strategy.Fixed()]
+            })
+    
+    /*
     var lgpx = new OpenLayers.Layer.GML(name+" "+file_id, file, {
             format: OpenLayers.Format.GPX,
             style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 1},
             projection: new OpenLayers.Projection("EPSG:4326")
-    });
+    });*/
 
     map.addLayer(lgpx);
     

@@ -132,7 +132,7 @@
                     <script src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false"></script>-->
                     <script src="http://openlayers.org/api/OpenLayers.js"></script>
                     <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
-                    <script src="http://api.ign.fr/geoportail/api/js/1.3.0/GeoportalMin.js" charset="utf-8" ></script>
+                    <!--<script src="http://api.ign.fr/geoportail/api/js/1.3.0/GeoportalMin.js" charset="utf-8" ></script>-->
                     <script src="static/scripts/OpenLayerFunctions.js"/>
                     <xsl:if test="/webAlbums/loginInfo/@latitude and /webAlbums/loginInfo/@longitude">
                         <script type="text/javascript"> mapCenter.lat = <xsl:value-of select="/webAlbums/loginInfo/@latitude" />; mapCenter.lon = <xsl:value-of select="/webAlbums/loginInfo/@longitude" /></script>

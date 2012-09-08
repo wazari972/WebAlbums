@@ -71,6 +71,7 @@ public class SystemTools {
         //build temp/USER
         File dir = new File(root, vSession.getUser().getNom());
         if (!dir.isDirectory() && !dir.mkdir()) {
+            log.warn("COULD NOT CREATE TMEP DIRE");
             return null;
         }
         dir.deleteOnExit();

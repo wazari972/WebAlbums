@@ -4,7 +4,7 @@
   <module>
     <web>
       <web-uri>WebAlbums3-Servlet.war</web-uri>
-      <context-root>/WebAlbums3.5-beta5</context-root>
+      <context-root>/WebAlbums3.5-beta6</context-root>
     </web>
   </module>
   <module>
@@ -12,5 +12,11 @@
   </module>
   <module>
     <ejb>WebAlbums3-Service-Beans.jar</ejb>
+  </module>
+  <module>
+    <web>
+      <web-uri>WebAlbums3-FS.war</web-uri>
+      <context-root>/WebAlbums3-FS</context-root>
+    </web>
   </module>
 </application>

@@ -1,1 +1,9 @@
-java -Droot.path=/other/Web -classpath lib/RT-DB-mysql-connector-java-5.1.12-bin.jar:lib/glassfish-embedded-all-3.0.1.jar:lib/cglib-nodep-2.2.jar:bin/WebAlbums3-Bootstrap.jar net.wazari.bootstrap.GF
+#!/bin/sh
+#change root.path as you need
+# then git update-index --assume-unchanged WebAlbums3/root.path
+ROOT_PATH=$(cat root.path)
+WA_HOME="."
+java -Droot.path=$ROOT_PATH \
+     -Dfile.encoding=UTF-8 \
+	 -Djava.library.path=$WA_HOME/lib \
+	 -jar $WA_HOME/dist/WebAlbums3-Bootstrap.jar

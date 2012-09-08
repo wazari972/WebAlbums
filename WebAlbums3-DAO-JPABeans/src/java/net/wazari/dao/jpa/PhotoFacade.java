@@ -145,6 +145,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
         //TODO this might not be the better implementation ...
         int size = q.getResultList().size() ;
         if (bornes != null && bornes.getFirstElement() != null) {
+            
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getPhotoAlbumSize());
         }
