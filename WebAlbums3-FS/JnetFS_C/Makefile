@@ -51,7 +51,6 @@ lib/libJnetFS.so: $(OBJS)
 	gcc -shared -o"lib/libJnetFS.so" $(OBJS) $(LIBS) 
 	@echo 'Finished building target: $@'
 	@echo ' '
-	@mkdir test
 
 # Other Targets
 clean:
