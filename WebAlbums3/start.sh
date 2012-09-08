@@ -1,3 +1,6 @@
+#!/bin/sh
+#change root.path as you need
+# then git update-index --assume-unchanged WebAlbums3/root.path
 ROOT_PATH=$(cat root.path)
 WA_HOME="."
 java -Droot.path=$ROOT_PATH \
