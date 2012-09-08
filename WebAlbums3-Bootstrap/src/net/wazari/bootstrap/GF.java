@@ -133,7 +133,7 @@ public class GF {
             long loadingTime = System.currentTimeMillis();
             float time = ((float) (loadingTime - timeStart) / 1000);
             
-            log.info("Ready to server at http://localhost:{}/WebAlbums3.5-beta6 after {}s", new Object[] {Integer.toString(cfg.port), time});
+            log.info("Ready to server at http://localhost:{}/WebAlbums3.5-dev after {}s", new Object[] {Integer.toString(cfg.port), time});
             log.info("Try http://localhost:{}/WebAlbums3-FS/Launch to launch the Filesystem", new Object[] {Integer.toString(cfg.port)});
             log.info("Connect to http://localhost:{} to shutdown the server", Integer.toString(stopPort));
 
