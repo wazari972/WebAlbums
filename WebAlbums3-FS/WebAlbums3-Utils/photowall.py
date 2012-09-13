@@ -50,9 +50,13 @@ WANT_CAPTION=True
 # False if we want to add pictures randomly
 DO_WALL=False
 
+DO_RESIZE=False
+
 ### VFS options ###
 DO_ALL_THEMES=False
 MOUNT_PATH="/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test/"
+
+SWITCH_TO_MINI=True
 
 ### Directory options ###
 
@@ -61,7 +65,7 @@ PICK_RANDOM=False #not implemented yet
 
 
 ## Random wall options ##
-SLEEP_TIME=1
+SLEEP_TIME=0
 
 ###########################################
 
@@ -82,7 +86,15 @@ def get_next_file_vfs():
       previous = PATH+filename
       if "gpx" in previous:
 	return get_next_file()
-      return previous
+      to_return = previous
+      try:
+        to_return = os.readlink(to_return)
+      except OSError:
+        pass
+
+      if SWITCH_TO_MINI:
+        to_return = to_return.replace("/images/", "/miniatures/") + ".png"
+      return to_return
 
 def get_file_details(filename):
   try:
@@ -92,7 +104,7 @@ def get_file_details(filename):
     except OSError:
       pass
     link = pipes.quote(link)
-    names = link[link.index("/images"):].split("/")[2:]
+    names = link[link.index("/miniatures/" if SWITCH_TO_MINI else "/images"):].split("/")[2:]
     theme, year, album, fname = names
     
     return "%s (%s)" % (album, theme)
@@ -308,10 +320,12 @@ def random_wall(name):
     
   while True:
     filename = get_next_file()
+    print filename
     img = Image(filename=filename)
     with img.clone() as clone:
-      factor = float(LINE_HEIGHT)/clone.height
-      clone.resize(width=int(clone.width*factor), height=int(clone.height*factor))
+      if DO_RESIZE:
+        factor = float(LINE_HEIGHT)/clone.height
+        clone.resize(width=int(clone.width*factor), height=int(clone.height*factor))
                      
       do_polaroid_and_random_composite(target_filename, target, clone, filename)
 
