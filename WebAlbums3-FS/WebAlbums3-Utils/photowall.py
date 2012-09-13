@@ -21,22 +21,20 @@ except ImportError:
   mime = None
   #https://github.com/ahupp/python-magic
   
-
-PATH="/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test/Root/Random/"
+PATH="/home/kevin/WebAlbums/WebAlbums3/WebAlbums3-FS/Grenoble/Random"
 #PATH="/home/kevin/ardeche triees/"
 
 
 #define the size of the picture
-WIDTH=2048
-HEIGHT=1560
+WIDTH=1366
+HEIGHT=786
 
 #define how many lines do we want
-LINES=20
+LINES=3
 
 #minimum width of cropped image. Below that, we black it out
 #only for POLAROID
 MIN_CROP=100
-
 
 IMG_FORMAT_SUFFIX=".png"
 
@@ -66,6 +64,10 @@ PICK_RANDOM=False #not implemented yet
 SLEEP_TIME=1
 
 ###########################################
+
+if PATH[-1] != "/":
+	PATH += "/"
+
 ###########################################
 
 previous = None
@@ -134,14 +136,15 @@ def do_append(first, second, underneath=False):
   if ret != 0:
     raise Exception("Command failed: ", command)
 
-def do_polaroid (image, details, background="black", suffix=None):
+def do_polaroid (image, filename=None, background="black", suffix=None):
   if suffix is None:
     suffix = IMG_FORMAT_SUFFIX
   tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
   tmp.close()
   image.save(filename=tmp.name)
   
-  if details is not None and WANT_CAPTION:
+  if WANT_CAPTION and filename:
+    details = get_file_details(filename)
     caption = """-caption "%s" """ % details.replace("'", "\\'")
   else:
     caption = ""
@@ -159,7 +162,7 @@ def do_polaroid (image, details, background="black", suffix=None):
   
   return img
 
-def do_blank_image(height, width, filename, color="blue"):
+def do_blank_image(height, width, filename, color="black"):
   command = "convert -size %dx%d xc:%s %s" % (width, height, color, filename)
 
   ret = subprocess.call(command, shell=True)
@@ -167,8 +170,9 @@ def do_blank_image(height, width, filename, color="blue"):
   if ret != 0:
     raise Exception("Command failed: "+ command)
 
-def do_polaroid_and_random_composite(target_filename, target, image):
-  image = do_polaroid(image, None, background="transparent", suffix=".png")
+def do_polaroid_and_random_composite(target_filename, target, image, filename):
+  
+  image = do_polaroid(image, filename, background="transparent", suffix=".png")
 
   tmp = tempfile.NamedTemporaryFile(delete=False, suffix=IMG_FORMAT_SUFFIX)
   image.save(filename=tmp.name)
@@ -180,7 +184,6 @@ def do_polaroid_and_random_composite(target_filename, target, image):
 
   
   command = "composite -geometry %s  -compose Over -gravity center %s %s %s" % (geometry, tmp.name, target_filename, target_filename)
-  print command
   ret = os.system(command)
   os.unlink(tmp.name)
   
@@ -248,8 +251,7 @@ def photowall(name):
 	  clone.crop(0, 0, width=will_fit, height=LINE_HEIGHT)
 	
 	if DO_POLAROID:
-	  details = get_file_details(filename)
-	  clone = do_polaroid(clone, details)
+	  clone = do_polaroid(clone, filename)
 	
 	tmp = tempfile.NamedTemporaryFile(delete=False, suffix=IMG_FORMAT_SUFFIX)
 	tmp.close()
@@ -285,7 +287,7 @@ def photowall_all_themes():
 def random_wall(name):
   target_filename = tempfile.gettempdir()+"/"+name+"2.png"
   real_target_filename = tempfile.gettempdir()+"/"+name+".png"
-  
+  print "Target file is %s" % real_target_filename 
   target = None
   if mime is not None:
     try:
@@ -311,12 +313,12 @@ def random_wall(name):
       factor = float(LINE_HEIGHT)/clone.height
       clone.resize(width=int(clone.width*factor), height=int(clone.height*factor))
                      
-      do_polaroid_and_random_composite(target_filename, target, clone)
+      do_polaroid_and_random_composite(target_filename, target, clone, filename)
 
       os.system("cp %s %s" % (target_filename, real_target_filename))
-    
-    #time.sleep(SLEEP_TIME)
-
+    print "Tick"
+    time.sleep(SLEEP_TIME)
+    print "Tack"
     
 if __name__=="__main__":
   if DO_WALL:
