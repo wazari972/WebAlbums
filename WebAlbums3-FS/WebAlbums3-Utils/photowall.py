@@ -3,6 +3,8 @@ import os
 import tempfile
 import pipes
 import subprocess
+import time
+import random
 
 try:
   from wand.image import Image
@@ -25,8 +27,8 @@ PATH="/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test/Root/Random/"
 
 
 #define the size of the picture
-WIDTH=10000
-HEIGHT=5000
+WIDTH=2048
+HEIGHT=1560
 
 #define how many lines do we want
 LINES=20
@@ -34,6 +36,9 @@ LINES=20
 #minimum width of cropped image. Below that, we black it out
 #only for POLAROID
 MIN_CROP=100
+
+
+IMG_FORMAT_SUFFIX=".png"
 
 # False if PATH is a normal directory, True if it is WebAlbums-FS
 USE_VFS=True
@@ -44,7 +49,8 @@ DO_POLAROID=True
 # True if want caption
 WANT_CAPTION=True
 
-IMG_FORMAT_SUFFIX=".jpg"
+# False if we want to add pictures randomly
+DO_WALL=False
 
 ### VFS options ###
 DO_ALL_THEMES=False
@@ -54,6 +60,10 @@ MOUNT_PATH="/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test/"
 
 # False if we pick directory images sequentially, false if we take them randomly
 PICK_RANDOM=False #not implemented yet
+
+
+## Random wall options ##
+SLEEP_TIME=1
 
 ###########################################
 ###########################################
@@ -124,8 +134,10 @@ def do_append(first, second, underneath=False):
   if ret != 0:
     raise Exception("Command failed: ", command)
 
-def do_polaroid (image, details):
-  tmp = tempfile.NamedTemporaryFile(delete=False, suffix=IMG_FORMAT_SUFFIX)
+def do_polaroid (image, details, background="black", suffix=None):
+  if suffix is None:
+    suffix = IMG_FORMAT_SUFFIX
+  tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
   tmp.close()
   image.save(filename=tmp.name)
   
@@ -134,7 +146,7 @@ def do_polaroid (image, details):
   else:
     caption = ""
     
-  command = "convert -bordercolor snow -background black -gravity center %(caption)s +polaroid %(name)s %(name)s" % {"name":tmp.name, "caption":caption}
+  command = "convert -bordercolor snow -background %(bg)s -gravity center %(caption)s +polaroid %(name)s %(name)s" % {"bg" : background, "name":tmp.name, "caption":caption}
   ret = subprocess.call(command, shell=True)
   if ret != 0:
     raise Exception("Command failed: "+ command)
@@ -147,6 +159,34 @@ def do_polaroid (image, details):
   
   return img
 
+def do_blank_image(height, width, filename, color="blue"):
+  command = "convert -size %dx%d xc:%s %s" % (width, height, color, filename)
+
+  ret = subprocess.call(command, shell=True)
+
+  if ret != 0:
+    raise Exception("Command failed: "+ command)
+
+def do_polaroid_and_random_composite(target_filename, target, image):
+  image = do_polaroid(image, None, background="transparent", suffix=".png")
+
+  tmp = tempfile.NamedTemporaryFile(delete=False, suffix=IMG_FORMAT_SUFFIX)
+  image.save(filename=tmp.name)
+
+  height = random.randint(0, target.height) - target.height/2
+  width = random.randint(0, target.width) - target.width/2
+
+  geometry = ("+" if height >= 0 else "") + str(height) + ("+" if width >= 0 else "") + str(width)
+
+  
+  command = "composite -geometry %s  -compose Over -gravity center %s %s %s" % (geometry, tmp.name, target_filename, target_filename)
+  print command
+  ret = os.system(command)
+  os.unlink(tmp.name)
+  
+  if ret != 0:
+    raise object("failed")
+  
 #compute the size of a line
 LINE_HEIGHT=int(HEIGHT/LINES)
 
@@ -242,10 +282,50 @@ def photowall_all_themes():
     print "==>", name
     ret = subprocess.call("eog %s &" % name, shell=True)
     
+def random_wall(name):
+  target_filename = tempfile.gettempdir()+"/"+name+"2.png"
+  real_target_filename = tempfile.gettempdir()+"/"+name+".png"
+  
+  target = None
+  if mime is not None:
+    try:
+      mimetype = mime.from_file(target_filename)
+      if "symbolic link" in mimetype:
+        filename = os.readlink(target_filename)
+        mimetype = mime.from_file(target_filename)
+	
+      if "image" in mimetype:
+        target = Image(filename=target_filename)
+      
+    except IOError:
+      pass
+
+  if target is None:
+    do_blank_image(HEIGHT, WIDTH, target_filename)
+    target = Image(filename=target_filename)
+    
+  while True:
+    filename = get_next_file()
+    img = Image(filename=filename)
+    with img.clone() as clone:
+      factor = float(LINE_HEIGHT)/clone.height
+      clone.resize(width=int(clone.width*factor), height=int(clone.height*factor))
+                     
+      do_polaroid_and_random_composite(target_filename, target, clone)
+
+      os.system("cp %s %s" % (target_filename, real_target_filename))
+    
+    #time.sleep(SLEEP_TIME)
+
+    
 if __name__=="__main__":
-  if USE_VFS and DO_ALL_THEMES:
-    photowall_all_themes()
+  if DO_WALL:
+	  if USE_VFS and DO_ALL_THEMES:
+		photowall_all_themes()
+	  else:
+		name = photowall("final")
+		print "==>", name
+		os.system("eog %s &" % name)
   else:
-    name = photowall("final")
-    print "==>", name
-    os.system("eog %s &" % name)
+    random_wall("final")
+
