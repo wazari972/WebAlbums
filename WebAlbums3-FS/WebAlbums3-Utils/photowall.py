@@ -54,7 +54,7 @@ DO_RESIZE=False
 
 ### VFS options ###
 DO_ALL_THEMES=False
-MOUNT_PATH="/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test/"
+MOUNT_PATH="/home/kevin/WebAlbums/WebAlbums3/WebAlbums3-FS/"
 
 SWITCH_TO_MINI=True
 
@@ -65,7 +65,7 @@ PICK_RANDOM=False #not implemented yet
 
 
 ## Random wall options ##
-SLEEP_TIME=0
+SLEEP_TIME=1
 
 ###########################################
 
