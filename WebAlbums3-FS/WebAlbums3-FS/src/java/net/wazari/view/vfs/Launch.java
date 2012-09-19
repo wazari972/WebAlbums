@@ -48,18 +48,23 @@ public class Launch extends HttpServlet {
             } catch (ServletException e) {
                 
             }
-            out.println("<h1> Logged in " + System.getProperty("java.library.path") + "</h1>");
+            out.flush();
+            
+            String path = request.getParameter("path");
+            
+            if (path == null) {
+                path = "./WebAlbums3-FS";
+            }
             
             try {
                 Root root = new Root(this);
                 net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
-                com.jnetfs.core.JnetFS.main(new String[]{"./WebAlbums3-FS"});
+                com.jnetfs.core.JnetFS.do_mount(new String[]{path});
             } catch (Exception e) {
                  out.println("<h1> JNetFSException" + e + "</h1>");
-                  e.printStackTrace();
+                 e.printStackTrace();
             }
-            out.println("<h1> Logged in " + request.getUserPrincipal().getName() + "</h1>");
-            out.println("<h1>Servlet Launch at " + request.getContextPath() + "</h1>");
+
             out.println("</body>");
             out.println("</html>");
         } finally {            

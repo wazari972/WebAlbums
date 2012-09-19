@@ -21,7 +21,7 @@ import net.wazari.libvfs.vfs.LibVFS;
  * @author jacky
  */
 public final class JnetFS implements Code {
-    private JnetFSAdapter adapter = new LibVFS() ;
+    private static JnetFSAdapter adapter = new LibVFS() ;
 
     /**
      * init file system
@@ -226,14 +226,11 @@ public final class JnetFS implements Code {
      *
      * @param args string[]
      */
-    public static void main(String[] args) {
-        String licence =
-                "JavaNET FileSystem 1.0 Copyright (C) 2009 - " + Calendar.getInstance().get(Calendar.YEAR) + " Jacky WU (hongzhi_wu@hotmail.com)\n"
-                + "This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.\n"
-                + "This is free software, and you are welcome to redistribute it\n"
-                + "under certain conditions.\n"
-                + "see <http://www.gnu.org/licenses/>";
-        System.out.println(licence);
+    private static JnetFS jnet = null;
+    public static void do_mount(String[] args) {
+        if (jnet != null) {
+            return;
+        }
         //setup parameter for java(fuse)
         List<String> fuseArgs = new ArrayList<String>();
         String mpoint = null;
@@ -265,16 +262,17 @@ public final class JnetFS implements Code {
         if (fuseArgs.indexOf("-f") == -1) {
             fuseArgs.add("-f");
         }
+        
         String[] fargv = fuseArgs.toArray(new String[fuseArgs.size()]);
         try {
             //setup shutdown hook/unmount JnetFS
             final String mountPoint = mpoint;
-            final JnetFS jnet = new JnetFS();
+            jnet = new JnetFS();
             Runtime.getRuntime().addShutdownHook(new Thread() {
 
                 @Override
                 public void run() {
-                    System.out.println("Bye!");
+                    System.out.println("Byebye!");
                     jnet.umount(mountPoint);
                 }
             });
@@ -282,6 +280,14 @@ public final class JnetFS implements Code {
         } catch (Throwable ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public static void do_umount(String path) {
+        if (jnet == null) {
+            System.out.println("Nothing mount ...");
+        }
+        System.out.println("Bye "+path);
+        jnet.umount(path);
     }
 
     /**
