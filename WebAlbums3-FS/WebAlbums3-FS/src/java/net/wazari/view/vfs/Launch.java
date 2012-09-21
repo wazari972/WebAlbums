@@ -51,15 +51,20 @@ public class Launch extends HttpServlet {
             out.flush();
             
             String path = request.getParameter("path");
+            String umount = request.getParameter("umount");
             
             if (path == null) {
                 path = "./WebAlbums3-FS";
             }
             
             try {
-                Root root = new Root(this);
-                net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
-                com.jnetfs.core.JnetFS.do_mount(new String[]{path});
+                if (umount == null) {
+                    Root root = new Root(this);
+                    net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
+                    com.jnetfs.core.JnetFS.do_mount(new String[]{path});
+                } else {
+                    com.jnetfs.core.JnetFS.do_umount(path);
+                }
             } catch (Exception e) {
                  out.println("<h1> JNetFSException" + e + "</h1>");
                  e.printStackTrace();

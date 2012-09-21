@@ -40,6 +40,8 @@ import org.slf4j.LoggerFactory;
  * @author pk033
  */
 public class GF {
+    private static final Logger log = LoggerFactory.getLogger(GF.class.getName());
+    
     public static final String DEFAULT_CONFIG_PATH = "conf/config.xml";
     private static final String SHUTDOWN_PORT_PPT = "SHUTDOWN_PORT";
 
@@ -60,8 +62,9 @@ public class GF {
 
     static {
         try {
+            log.info("Load configuration from '"+DEFAULT_CONFIG_PATH+"'.");
             cfg = Config.load(DEFAULT_CONFIG_PATH);
-        } catch (JAXBException ex) {
+        } catch (Exception ex) {
             throw new RuntimeException("Couldn't load the configuration file: " + ex.getMessage());
         }
     }
@@ -74,7 +77,7 @@ public class GF {
         long timeStart = System.currentTimeMillis();
         log.warn("Starting WebAlbums GF bootstrap");
 
-        log.info(Config.print(cfg));
+        log.info(cfg.print());
 
         if (keyfile.exists()) {
             log.warn("delete ./keyfile ");
@@ -120,7 +123,7 @@ public class GF {
         appName = deployer.deploy(new File(cfg.webAlbumsEAR));
         if (appName == null) {
             log.info("Couldn't deploy ...");
-            return;
+            throw new GlassFishException("Couldn't deploy ...");
         }
         log.info("Deployed {}", appName);
 
@@ -223,12 +226,11 @@ public class GF {
         params.add("", path);
         asAdmin(server, "add-resources", params);
     }
-    private static final Logger log = LoggerFactory.getLogger(GF.class.getName());
 
     @XmlRootElement
     static class Config {
 
-        public static Config loadDefault(String cfgFilePath) throws JAXBException {
+        public static Config loadDefault(String cfgFilePath) throws Exception {
             Config cfg = new Config();
             cfg.sunResourcesXML = "./conf/sun-resources.xml";
             cfg.libJnetFs = "./lib/libJnetFS.so";
@@ -250,9 +252,10 @@ public class GF {
             return cfg;
         }
 
-        public static Config load(String path) throws JAXBException {
+        public static Config load(String path) throws Exception {
             File file = new File(path);
             if (!file.isFile()) {
+                log.info("Path '"+file.getCanonicalPath()+"' is not a file ...");
                 return loadDefault(path);
             }
 
@@ -264,7 +267,7 @@ public class GF {
             return cfg;
         }
 
-        public static <T> String print(T xml) throws JAXBException {
+        public String print() throws JAXBException {
             //Create JAXB Context
             JAXBContext jc = JAXBContext.newInstance(Config.class);
 
@@ -273,12 +276,12 @@ public class GF {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             StringWriter writer = new StringWriter();
-            marshaller.marshal(xml, writer);
+            marshaller.marshal(this, writer);
 
             return writer.toString();
         }
 
-        public void save(String path) throws JAXBException {
+        public void save(String path) throws Exception {
             //Create JAXB Context
             JAXBContext jc = JAXBContext.newInstance(Config.class);
             //Create marshaller
@@ -288,6 +291,7 @@ public class GF {
             File file = new File(path);
             file.getParentFile().mkdirs();
             marshaller.marshal(this, file);
+            log.info("Configuration saved into '"+file.getCanonicalPath()+"'.");
         }
         
         @XmlAttribute
