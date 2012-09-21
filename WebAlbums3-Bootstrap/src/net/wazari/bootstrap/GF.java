@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class GF {
 
     static {
         try {
-            log.info("Load configuration from '"+DEFAULT_CONFIG_PATH+"'.");
+            log.debug("Load configuration from '"+DEFAULT_CONFIG_PATH+"'.");
             cfg = Config.load(DEFAULT_CONFIG_PATH);
         } catch (Exception ex) {
             throw new RuntimeException("Couldn't load the configuration file: " + ex.getMessage());
@@ -118,8 +119,13 @@ public class GF {
 
         deployer = server.getDeployer();
 
+        log.info("Setting root path: {}", cfg.root_path);
+        System.setProperty("root.path", cfg.root_path);
+        
+        log.info("Setting java library path: {}", cfg.libJnetFs);
+        addToJavaLibraryPath(new File(cfg.libJnetFs));
+        
         log.info("Deploying EAR: {}", cfg.webAlbumsEAR);
-
         appName = deployer.deploy(new File(cfg.webAlbumsEAR));
         if (appName == null) {
             log.info("Couldn't deploy ...");
@@ -162,7 +168,7 @@ public class GF {
          */
         GlassFishProperties gfProps = new GlassFishProperties();
         gfProps.setPort("http-listener", port); // refer JavaDocs for the details of this API.
-        System.setProperty("java.library.path", "/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/lib");
+        
         System.setProperty("java.security.auth.login.config",
                 glassfishDIR + "/config/login.conf");
         GlassFish glassfish = GlassFishRuntime.bootstrap().newGlassFish(gfProps);
@@ -319,4 +325,45 @@ public class GF {
             String groups;
         }
     }
+    
+    /**
+    * Ajoute un nouveau répertoire dans le java.library.path.
+    * @param dir Le nouveau répertoire à ajouter.
+    */
+    public static void addToJavaLibraryPath(File dir) {
+            final String LIBRARY_PATH = "java.library.path";
+            if (!dir.isDirectory()) {
+                    throw new IllegalArgumentException(dir + " is not a directory.");
+            }
+            String javaLibraryPath = System.getProperty(LIBRARY_PATH);
+            System.setProperty(LIBRARY_PATH, javaLibraryPath + File.pathSeparatorChar + dir.getAbsolutePath());
+
+            resetJavaLibraryPath();
+    }
+    
+    
+/**
+ * Supprime le cache du "java.library.path".
+ * Cela forcera le classloader à revérifier sa valeur lors du prochaine chargement de librairie.
+ * 
+ * Attention : ceci est spécifique à la JVM de Sun et pourrait ne pas fonctionner
+ * sur une autre JVM...
+ */
+    public static void resetJavaLibraryPath() {
+	synchronized(Runtime.getRuntime()) {
+		try {
+			Field field = ClassLoader.class.getDeclaredField("usr_paths");
+			field.setAccessible(true);
+			field.set(null, null);
+			
+			field = ClassLoader.class.getDeclaredField("sys_paths");
+			field.setAccessible(true);
+			field.set(null, null);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+    }   
 }

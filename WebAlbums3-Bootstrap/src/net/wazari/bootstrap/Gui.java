@@ -3,17 +3,11 @@
  * and open the template in the editor.
  */
 package net.wazari.bootstrap;
-import javax.swing.jtray.*;
 
-import java.awt.AWTException;
-import java.awt.CheckboxMenuItem;
+import edu.stanford.ejalbert.BrowserLauncher;
 import java.awt.Desktop;
 import java.awt.Image;
-import java.awt.Menu;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
 import java.awt.SystemTray;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -22,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -34,33 +30,31 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.jtray.*;
 import org.glassfish.embeddable.GlassFishException;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
- * 
- * @TODO: 
- *   - VFS: add PATH to URL params
- *   - VFS: ensure that we can change the java.library.path at runtime
- *   - root path: force root path from bootloader
- * 
- *   - test all this :)
  */
+
 public class Gui extends JFrame {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(GF.class.getName());
+    
     private static final boolean WANT_SYSTRAY = true;
     
     public static String config_path = GF.DEFAULT_CONFIG_PATH;
     
     private static GF glassfish = new GF();
     
-    public static void main(String args[]) throws Throwable {
+    public static void main(final String args[]) throws Throwable {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Gui gui = new Gui();
+                    Gui gui = new Gui(args);
                 } catch (Throwable ex) {
-                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                    log.error("New GUI error:", ex);
                 }
             }
         });
@@ -75,6 +69,7 @@ public class Gui extends JFrame {
     GlassfishState gfState ;
     
     final JMenu mWebAlbums;
+    final JMenuItem miState;
     final JMenuItem miStart;
     final JMenuItem miQuit;
     final JMenuItem miShutdown;
@@ -86,11 +81,13 @@ public class Gui extends JFrame {
     final JMenuItem miOpen;
     
     final JMenu mConfig;
-    final JMenuItem miCfgRootpath;
-    final JMenuItem miCfgFSPath;
-    final JMenuItem miCfgLibFSPath;
+    final JMenu mConfigPath;
+    final JMenuItem miCfgPathRoot;
+    final JMenuItem miCfgPathFS;
+    final JMenuItem miCfgPathLibFS;
     final JMenuItem miCfgLoad;
     final JMenuItem miCfgSave;
+    final JMenuItem miCfgVerify;
     
     JTrayIcon icon = null;
     
@@ -106,11 +103,13 @@ public class Gui extends JFrame {
         }
     }
     //mi.setIcon(new ImageIcon(getClass().getResource("/testswing/icone.gif")));
-    public Gui() throws Throwable {
+    public Gui(String args[]) throws Throwable {
         String title = "WebAlbums3.5-dev GUI Bootloader";
-
+        boolean systrayed = false;
+        
         ToAddTo toAddTo;
         if (WANT_SYSTRAY && SystemTray.isSupported()) {
+            systrayed = true;
             final JPopupMenu jpop = new JPopupMenu();
 
             JTrayIcon.initSystemTray();
@@ -120,9 +119,15 @@ public class Gui extends JFrame {
             
             toAddTo = new ToAddTo() {
                 public void add(JMenuItem item) {
-                    jpop.add(item);
+                    if (item != null) {
+                        jpop.add(item);
+                    } else {
+                        jpop.addSeparator();
+                    }
                 }
             };
+            
+            
         } else {
             this.setTitle(title);
             this.setLocationRelativeTo(null);
@@ -133,37 +138,65 @@ public class Gui extends JFrame {
             
             toAddTo = new ToAddTo() {
                 public void add(JMenuItem item) {
-                    mb.add(item);
+                    if (item != null) {
+                        mb.add(item);
+                    }
                 }
             };
         }
         
-        mWebAlbums = new JMenu();
-        mWebAlbums.setText("WebAlbums");
-        toAddTo.add(mWebAlbums);
-
+        ToAddTo toAddToWebAlbums;
+        if (!systrayed) {
+            mWebAlbums = new JMenu();
+            mWebAlbums.setText("WebAlbums");
+            toAddTo.add(mWebAlbums);
+            
+            toAddToWebAlbums = new ToAddTo() {
+                public void add(JMenuItem item) {
+                    if (item != null) {
+                        mWebAlbums.add(item);
+                    }
+                }
+            };
+            
+        } else {
+            mWebAlbums = null;
+            toAddToWebAlbums = toAddTo;
+        }
+        
+        miState = new JMenuItem();
+        toAddToWebAlbums.add(miState);
+        
+        toAddToWebAlbums.add(null);
+        toAddToWebAlbums.add(null);
+        
         miStart = new JMenuItem();
-        mWebAlbums.add(miStart);
+        toAddToWebAlbums.add(miStart);
         miStart.addActionListener(new StartActionListener());
         miStart.setText("Start");
         
-        mWebAlbums.addSeparator();
+        toAddToWebAlbums.add(null);
         
         miLaunch = new JMenuItem();
-        mWebAlbums.add(miLaunch);
-        miLaunch.addActionListener(new LaunchActionListener());
-        miLaunch.setText("Launch");
-        
-        mWebAlbums.addSeparator();
+        if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            toAddToWebAlbums.add(miLaunch);
+            miLaunch.addActionListener(new LaunchActionListener());
+            miLaunch.setText("Launch");
+
+            toAddToWebAlbums.add(null);
+        }
         
         miShutdown = new JMenuItem();
-        mWebAlbums.add(miShutdown);
+        toAddToWebAlbums.add(miShutdown);
         miShutdown.addActionListener(new QuitActionListener(false));
         miShutdown.setText("Shutdown");
         
         miQuit = new JMenuItem();
-        mWebAlbums.add(miQuit);
+        toAddToWebAlbums.add(miQuit);
         miQuit.addActionListener(new QuitActionListener(true));
+        
+        toAddTo.add(null);
+        toAddTo.add(null);
         
         mWebAlbumsFS = new JMenu();
         mWebAlbumsFS.setText("Filesystem");
@@ -172,32 +205,37 @@ public class Gui extends JFrame {
         miMount = new JMenuItem();
         miMount.setText("Mount"); 
         mWebAlbumsFS.add(miMount);
-        miMount.addActionListener(new MountActionListener());
+        miMount.addActionListener(new MountActionListener(true));
         
         mWebAlbumsFS.addSeparator();
         
         miOpen = new JMenuItem();
-        miOpen.setText("Open"); 
-        mWebAlbumsFS.add(miOpen);
-        miOpen.addActionListener(new OpenActionListener());
-        
-        mWebAlbumsFS.addSeparator();
+        if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+            miOpen.setText("Open"); 
+            mWebAlbumsFS.add(miOpen);
+            miOpen.addActionListener(new OpenActionListener());
+
+            mWebAlbumsFS.addSeparator();
+        }
         
         miUmount = new JMenuItem();
         miUmount.setText("Unmount"); mWebAlbumsFS.add(miUmount);
-        miUmount.addActionListener(new MountActionListener());
+        miUmount.addActionListener(new MountActionListener(false));
         
         mConfig = new JMenu();
         mConfig.setText("Configuration");
         toAddTo.add(mConfig);
         
-        miCfgRootpath = new JMenuItem();
-        miCfgRootpath.setText("WebAlbums root path"); 
-        mConfig.add(miCfgRootpath);
-        miCfgRootpath.addActionListener(new PathActionListener(new StringPointer() {
+        mConfigPath = new JMenu();
+        mConfigPath.setText("Paths");
+        mConfig.add(mConfigPath);
+        
+        miCfgPathRoot = new JMenuItem();
+        miCfgPathRoot.setText("WebAlbums root"); 
+        mConfigPath.add(miCfgPathRoot);
+        miCfgPathRoot.addActionListener(new PathActionListener(new StringPointer() {
 
             public void setString(String str) {
-                Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, "Root path was "+GF.cfg.root_path);
                 GF.cfg.root_path = str;
             }
 
@@ -206,13 +244,12 @@ public class Gui extends JFrame {
             }
         }, true, null));
         
-        miCfgFSPath = new JMenuItem();
-        miCfgFSPath.setText("Filesystem mount path");
-        mConfig.add(miCfgFSPath);
-        miCfgFSPath.addActionListener(new PathActionListener(new StringPointer() {
+        miCfgPathFS = new JMenuItem();
+        miCfgPathFS.setText("Filesystem mount");
+        mConfigPath.add(miCfgPathFS);
+        miCfgPathFS.addActionListener(new PathActionListener(new StringPointer() {
 
             public void setString(String str) {
-                Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, "webAlbumsFS was "+GF.cfg.webAlbumsFS);
                 GF.cfg.webAlbumsFS = str;
             }
 
@@ -223,14 +260,13 @@ public class Gui extends JFrame {
         
         mConfig.addSeparator();
         
-        miCfgLibFSPath = new JMenuItem();
-        miCfgLibFSPath.setText("Library libjnetfs.so path");
-        mConfig.add(miCfgLibFSPath);
-        miCfgLibFSPath.addActionListener(new PathActionListener(new StringPointer() {
+        miCfgPathLibFS = new JMenuItem();
+        miCfgPathLibFS.setText("libjnetfs.so");
+        mConfigPath.add(miCfgPathLibFS);
+        miCfgPathLibFS.addActionListener(new PathActionListener(new StringPointer() {
 
             public void setString(String str) {
-                Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, "libJnetFs was "+GF.cfg.libJnetFs);
-                GF.cfg.libJnetFs = str;
+                GF.cfg.libJnetFs = new File(str).getParent();
             }
 
             public String getString() {
@@ -241,7 +277,7 @@ public class Gui extends JFrame {
         mConfig.addSeparator();
         
         miCfgLoad = new JMenuItem();
-        miCfgLoad.setText("Load configuration"); 
+        miCfgLoad.setText("Load"); 
         mConfig.add(miCfgLoad);
         miCfgLoad.addActionListener(new PathActionListener(new StringPointer() {
 
@@ -250,7 +286,7 @@ public class Gui extends JFrame {
                 try {
                     GF.Config.load(Gui.config_path);
                 } catch (Exception ex) {
-                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                    log.error("Load config error: {}", ex);
                 }
             }
 
@@ -262,7 +298,7 @@ public class Gui extends JFrame {
         mConfig.addSeparator();
         
         miCfgSave = new JMenuItem();
-        miCfgSave.setText("Save configuration");
+        miCfgSave.setText("Save");
         mConfig.add(miCfgSave);
         miCfgSave.addActionListener(new PathActionListener(new StringPointer() {
 
@@ -271,7 +307,7 @@ public class Gui extends JFrame {
                 try {
                     GF.cfg.save(Gui.config_path);
                 } catch (Exception ex) {
-                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                    log.error("Save config error: {}", ex);
                 }
             }
 
@@ -280,33 +316,66 @@ public class Gui extends JFrame {
             }
         }, false, ".xml"));
         
+        mConfig.addSeparator();
+        
+        miCfgVerify = new JMenuItem();
+        miCfgVerify.setText("Verify");
+        mConfig.add(miCfgVerify);
+        miCfgVerify.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                Map<String, Boolean> checkpoints = new HashMap<String, Boolean>();
+                
+                checkpoints.put("Root path is directory", new File(GF.cfg.root_path).isDirectory());
+                checkpoints.put("FS path is directory", new File(GF.cfg.webAlbumsFS).isDirectory());
+                checkpoints.put("EAR file exists", new File(GF.cfg.webAlbumsEAR).isFile());
+                checkpoints.put("FS library file exists", new File(GF.cfg.libJnetFs).isFile());
+                checkpoints.put("Database configuration file exists", new File(GF.cfg.sunResourcesXML).isFile());
+                
+                //GF.cfg.port is free
+                
+                StringBuilder res = new StringBuilder();
+                for (String key : checkpoints.keySet()) {
+                    res.append(key).append(" : ").append(checkpoints.get(key)).append("\n");
+                }
+                
+                JOptionPane.showMessageDialog(Gui.this, res.toString());
+            }
+        });
+                
         glassfishStopped();
         
-        if (SystemTray.isSupported()) {
-            
-        } else {
+        if (!SystemTray.isSupported()) {
             this.setVisible(true);
+        }
+        
+        for (String arg : args) {
+            if ("--start".equals(arg) || "-s".equals(arg)) {
+                miStart.doClick();
+            }
         }
     }
 
     private void glassfishStarting() {
-        miCfgRootpath.setEnabled(false);
+        miCfgPathRoot.setEnabled(false);
         miCfgLoad.setEnabled(false);
         miStart.setEnabled(false);
         miQuit.setText("Force quit");
-        miStart.setText("Starting ...");
+        miState.setText("Starting");
+        miCfgPathLibFS.setEnabled(false);
+        miCfgVerify.setEnabled(false);
         icon.setIcon(createImage("/images/favicon-orange.png", "WebAlbums Favicon"));
         gfState = GlassfishState.STARTING;
     }
     
     private void glassfishRunning() {
         gfState = GlassfishState.RUNNING;
-        miQuit.setText("Shutdown & quit");
+        miQuit.setText("Shutdown & Quit");
         miShutdown.setEnabled(true);
         miLaunch.setEnabled(true);
         mWebAlbumsFS.setEnabled(true);
         miMount.setEnabled(true);
-        miStart.setText("Running");
+        miState.setText("Running");
         if (icon != null) {
             icon.setIcon(createImage("/images/favicon.png", "WebAlbums Favicon"));
         }
@@ -314,23 +383,25 @@ public class Gui extends JFrame {
     
     private void glassfishStopped() {
         gfState = GlassfishState.STOPPED;
-         
+        
+        miState.setText("Stopped");
+        miCfgVerify.setEnabled(true);
         miStart.setEnabled(true);
         miLaunch.setEnabled(false);
         miShutdown.setEnabled(false);
         miQuit.setText("Quit");
         miQuit.setEnabled(true);
         
-        mWebAlbumsFS.setEnabled(false);
+        //mWebAlbumsFS.setEnabled(false);
         miMount.setEnabled(false);
         miOpen.setEnabled(false);
-        miUmount.setEnabled(false);
+        //miUmount.setEnabled(false);
         
         miCfgLoad.setEnabled(true); 
         miCfgSave.setEnabled(true);
-        miCfgLibFSPath.setEnabled(true);
-        miCfgFSPath.setEnabled(true);
-        miCfgRootpath.setEnabled(true); 
+        miCfgPathLibFS.setEnabled(true);
+        miCfgPathFS.setEnabled(true);
+        miCfgPathRoot.setEnabled(true); 
         
         if (icon != null) {
             icon.setIcon(createImage("/images/favicon-blue.png", "WebAlbums Favicon"));
@@ -338,6 +409,14 @@ public class Gui extends JFrame {
     }
     
     private void glassfishFailed() {
+        try {
+            Gui.glassfish.terminate();
+        } catch (GlassFishException ex) {
+            log.error("Stop glassfish error: {}", ex);
+        }
+        glassfishStopped();
+        miState.setText("Crashed");
+        
         gfState = GlassfishState.FAILED;
         if (icon != null) {
             icon.setIcon(createImage("/images/favicon-red.png", "WebAlbums Favicon"));
@@ -354,7 +433,7 @@ public class Gui extends JFrame {
                     glassfishRunning();
                 } catch (Throwable ex) {
                     glassfishFailed();
-                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                    log.error("Start glassfish error: {}", ex);
                 }
             }
         }).start();
@@ -374,7 +453,7 @@ public class Gui extends JFrame {
                     Gui.glassfish.terminate();
                     glassfishStopped();
                 } catch (GlassFishException ex) {
-                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                    log.error("Stop glassfish error: {}", ex);
                     glassfishFailed();
                 }
             }
@@ -447,9 +526,9 @@ public class Gui extends JFrame {
         public void actionPerformed(ActionEvent event) {
             if (gfState == GlassfishState.RUNNING) {
                 try {
-                    Desktop.getDesktop().browse(new URL("http://localhost:"+GF.cfg.port+"/WebAlbums3.5-dev").toURI());    
+                    new BrowserLauncher().openURLinBrowser("http://localhost:"+GF.cfg.port+"/WebAlbums3.5-dev");
                 } catch (Exception ex) {
-                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                    log.error("Launch website error: {}", ex);
                 }
             }
        }
@@ -461,13 +540,17 @@ public class Gui extends JFrame {
                 try {
                     Desktop.getDesktop().open(new File("WebAlbums3-FS"));    
                 } catch (Exception ex) {
-                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                    log.error("Open FS error: {}", ex);
                 }
             }
        }
     }
     
     private class MountActionListener implements ActionListener {        
+        private final boolean do_mount;
+        MountActionListener(boolean do_mount) {
+            this.do_mount = do_mount;
+        }
         private boolean mounted = false;
         
         private synchronized boolean setMounted(Boolean mounted) {
@@ -476,9 +559,9 @@ public class Gui extends JFrame {
                 this.mounted = mounted;
                 Gui.this.miMount.setEnabled(!mounted);
                 
-                Gui.this.miUmount.setEnabled(mounted);
+                //Gui.this.miUmount.setEnabled(mounted);
                 Gui.this.miOpen.setEnabled(mounted);
-                Gui.this.miCfgFSPath.setEnabled(mounted);
+                Gui.this.miCfgPathFS.setEnabled(mounted);
             }
             return wasMounted;
         }
@@ -488,14 +571,36 @@ public class Gui extends JFrame {
         }
         
         public void actionPerformed(ActionEvent event) {
-            doTrigger(!isMounted(), GF.cfg.webAlbumsFS);
+            if (false) {
+                try {
+                    Process ps = Runtime.getRuntime().exec(new String[] {"sh", "-c", "/usr/local/bin/fusermount -u "+ GF.cfg.webAlbumsFS});
+                    String  str;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+
+                    while ((str = reader.readLine()) != null) {
+                        log.info( "err - {}", str);
+                    }
+                    reader = new BufferedReader(new InputStreamReader(ps.getInputStream()));
+                    
+                    while ((str = reader.readLine()) != null) {
+                        log.info( "err - {}", str);
+                    }
+                    
+                    int ret = ps.waitFor();
+                    log.info( "ret:{}", ret);
+                } catch (Exception ex) {
+                    log.error("Couldn't unmount {} : {}", GF.cfg.webAlbumsFS, ex);
+                }
+            } else {
+                doTrigger(do_mount, GF.cfg.webAlbumsFS);
+            }
             
         }
         
         public void doTrigger(final boolean mount, String mountPoint) {
             try {
                 mountPoint = mountPoint == null ? "" : mountPoint;
-                URL url = new URL("http://localhost:"+GF.cfg.port+"/WebAlbums3-FS/"+(mount ? "Launch" : "Unlaunch")+"?path="+mountPoint);
+                URL url = new URL("http://localhost:"+GF.cfg.port+"/WebAlbums3-FS/Launch?"+(mount ? "" : "umount=true")+"path="+mountPoint);
                 final URLConnection conn = url.openConnection();
 
                 new Thread (new Runnable() {
@@ -508,9 +613,7 @@ public class Gui extends JFrame {
                             // open the stream and put it into BufferedReader
                             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                             while ((br.readLine()) != null) ;
-                        } catch (IOException ex) {
-                            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        } catch (IOException ex) {}
                         //will be set by mount thread only
                         if (mount) {
                             setMounted(false);
@@ -519,7 +622,7 @@ public class Gui extends JFrame {
                 }).start();
                 
             } catch (IOException ex) {
-                Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                log.error("Mount FS error: {}", ex);
             }
        }
     }

@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<config port="9000">
-    <sunResourcesXML>conf/sun-resources.xml</sunResourcesXML>
-    <webAlbumsEAR>bin/WebAlbums3-ea.ear</webAlbumsEAR>
-    <glassfishDIR>./glassfish</glassfishDIR>
+<config port="8080">
+    <sunResourcesXML>./conf/sun-resources.xml</sunResourcesXML>
+    <webAlbumsEAR>./bin/WebAlbums3-ea.ear</webAlbumsEAR>
+    <webAlbumsFS>./WebAlbums3-FS</webAlbumsFS>
+    <libJnetFs>/home/kevin/WebAlbums/WebAlbums3/lib/</libJnetFs>
+    <root_path>/other/Web</root_path>
     <users>
         <user name="kevin" password="" groups="Admin:Manager"/>
-        <user name="Marine" password="" groups="Admin:Manager"/>
-        <user name="Joelle" password="" groups="Famille"/>
-        <user name="Nasham" password="" groups="Amis"/>
-        <user name="Machin" password="" groups="Autres"/>
     </users>
 </config>

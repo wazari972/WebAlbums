@@ -11,9 +11,11 @@ import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.JnetFSAdapter;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.wazari.libvfs.vfs.LibVFS;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bridge Fuse-J to jnetFS
@@ -21,6 +23,8 @@ import net.wazari.libvfs.vfs.LibVFS;
  * @author jacky
  */
 public final class JnetFS implements Code {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(JnetFS.class.getName());
+    
     private static JnetFSAdapter adapter = new LibVFS() ;
 
     /**
@@ -226,11 +230,22 @@ public final class JnetFS implements Code {
      *
      * @param args string[]
      */
-    private static JnetFS jnet = null;
+    private static Map<String, JnetFS> mountpoints = new HashMap<String, JnetFS>();
+    
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                for (String mntPt : mountpoints.keySet()) {
+                    System.out.println("Bye "+mntPt);
+                    mountpoints.get(mntPt).umount(mntPt);
+                }
+                System.out.println("Byebye!");
+            }
+        });
+    }
+    
     public static void do_mount(String[] args) {
-        if (jnet != null) {
-            return;
-        }
         //setup parameter for java(fuse)
         List<String> fuseArgs = new ArrayList<String>();
         String mpoint = null;
@@ -244,15 +259,12 @@ public final class JnetFS implements Code {
                     && !option) {
                 mpoint = args[i];
             }
+            
             fuseArgs.add(args[i]);
         }
         if (mpoint == null || fuseArgs.indexOf("-h") != -1) {
             printUsage();
-            if (mpoint == null) {
-                System.exit(-1);
-            } else {
-                System.exit(0);
-            }
+            return ;
         }
 
         //set java daemon
@@ -267,15 +279,16 @@ public final class JnetFS implements Code {
         try {
             //setup shutdown hook/unmount JnetFS
             final String mountPoint = mpoint;
-            jnet = new JnetFS();
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-
-                @Override
-                public void run() {
-                    System.out.println("Byebye!");
-                    jnet.umount(mountPoint);
-                }
-            });
+            
+            if (mountpoints.containsKey(mpoint)) {
+                log.info("Path {} is already connected", mpoint);
+                //jnet = mountpoints.get(mpoint);
+            } else {
+                //jnet = new JnetFS();
+            }
+            
+            mountpoints.put(mountPoint, jnet);
+            
             jnet.mount(fargv, false);
         } catch (Throwable ex) {
             ex.printStackTrace();
@@ -283,11 +296,17 @@ public final class JnetFS implements Code {
     }
     
     public static void do_umount(String path) {
-        if (jnet == null) {
-            System.out.println("Nothing mount ...");
+        if (!mountpoints.containsKey(path)) {
+            log.error("Nothing mounted on "+path+" ...");
+            new JnetFS().umount(path);
+            log.error("Forced umounted "+path+" ...");
+            
+            return;
         }
-        System.out.println("Bye "+path);
-        jnet.umount(path);
+        log.error("Bye "+path+", see you later!");
+        mountpoints.get(path).umount(path);
+        mountpoints.remove(path);
+        log.error("Bye "+path+" (done)");
     }
 
     /**
@@ -307,12 +326,14 @@ public final class JnetFS implements Code {
      */
     private native void umount(String path);
     
+    static final JnetFS jnet;
     static {
         try {
             System.loadLibrary("JnetFS");
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
         }
+        jnet = new JnetFS();
     }
     
 }
