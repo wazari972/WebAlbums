@@ -18,8 +18,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -267,7 +265,7 @@ public class Gui extends JFrame {
         mConfig.addSeparator();
         
         miCfgPathLibFS = new JMenuItem();
-        miCfgPathLibFS.setText("libjnetfs.so");
+        miCfgPathLibFS.setText("libJnetFS.so");
         mConfigPath.add(miCfgPathLibFS);
         miCfgPathLibFS.addActionListener(new PathActionListener(new StringPointer() {
 
@@ -284,12 +282,12 @@ public class Gui extends JFrame {
         if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             mConfigPath.addSeparator();
             
-            miOpenRoot.setText("Open root folder"); 
+            miOpenRoot.setText("Open image folder"); 
             mConfigPath.add(miOpenRoot);
             miOpenRoot.addActionListener(new OpenActionListener(new StringGetPointer() {
 
                 public String getString() {
-                    return GF.cfg.root_path + File.pathSeparator + "data";
+                    return GF.cfg.root_path + File.separator + "data" + File.separator + "images";
                 }
             }));
 
@@ -350,7 +348,7 @@ public class Gui extends JFrame {
                 checkpoints.put("Root path is directory", new File(GF.cfg.root_path).isDirectory());
                 checkpoints.put("FS path is directory", new File(GF.cfg.webAlbumsFS).isDirectory());
                 checkpoints.put("EAR file exists", new File(GF.cfg.webAlbumsEAR).isFile());
-                checkpoints.put("FS library file exists", new File(GF.cfg.libJnetFs).isFile());
+                checkpoints.put("FS library file exists", new File(GF.cfg.libJnetFs+File.separator+"libJnetFS.so").isFile());
                 checkpoints.put("Database configuration file exists", new File(GF.cfg.sunResourcesXML).isFile());
                 
                 //GF.cfg.port is free
@@ -573,11 +571,14 @@ public class Gui extends JFrame {
         }
     
         public void actionPerformed(ActionEvent event) {
-            if (gfState == GlassfishState.RUNNING) {
+            try {
+                Desktop.getDesktop().open(new File(ptr.getString()));    
+            } catch (Exception ex) {
                 try {
-                    Desktop.getDesktop().open(new File(ptr.getString()));    
-                } catch (Exception ex) {
-                    log.error("Open FS error: {}", ex);
+                    Runtime.getRuntime().exec("nautilus "+ptr.getString());
+                } catch (Exception e) {
+                    log.error("Open FS error: ", ex);
+                    log.error("Open FS-2 error: ", ex);
                 }
             }
        }
