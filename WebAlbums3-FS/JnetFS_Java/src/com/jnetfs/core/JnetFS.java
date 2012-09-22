@@ -9,11 +9,14 @@ package com.jnetfs.core;
 
 import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.JnetFSAdapter;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.vfs.LibVFS;
 import org.slf4j.LoggerFactory;
 
@@ -230,15 +233,14 @@ public final class JnetFS implements Code {
      *
      * @param args string[]
      */
-    private static Map<String, JnetFS> mountpoints = new HashMap<String, JnetFS>();
+    private static List<String> mountpoints = new LinkedList<String>();
     
     static {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                for (String mntPt : mountpoints.keySet()) {
-                    System.out.println("Bye "+mntPt);
-                    mountpoints.get(mntPt).umount(mntPt);
+                for (String mntPt : mountpoints) {
+                    do_umount(mntPt);
                 }
                 System.out.println("Byebye!");
             }
@@ -280,32 +282,33 @@ public final class JnetFS implements Code {
             //setup shutdown hook/unmount JnetFS
             final String mountPoint = mpoint;
             
-            if (mountpoints.containsKey(mpoint)) {
+            if (mountpoints.contains(mpoint)) {
                 log.info("Path {} is already connected", mpoint);
-                //jnet = mountpoints.get(mpoint);
-            } else {
-                //jnet = new JnetFS();
             }
             
-            mountpoints.put(mountPoint, jnet);
-            
+            mountpoints.add(mountPoint);
             jnet.mount(fargv, false);
+            try {
+                mountpoints.remove(mountPoint);
+            } catch(Exception e) {
+                //pass
+            }
         } catch (Throwable ex) {
             ex.printStackTrace();
         }
     }
     
     public static void do_umount(String path) {
-        if (!mountpoints.containsKey(path)) {
+        if (!mountpoints.contains(path)) {
             log.error("Nothing mounted on "+path+" ...");
-            new JnetFS().umount(path);
-            log.error("Forced umounted "+path+" ...");
-            
-            return;
         }
         log.error("Bye "+path+", see you later!");
-        mountpoints.get(path).umount(path);
-        mountpoints.remove(path);
+        try {
+            path = new java.io.File(path).getCanonicalPath();
+        } catch (IOException ex) {
+            log.error("Couldn't canonicalize "+path+": {}", ex);
+        }
+        jnet.umount(path);
         log.error("Bye "+path+" (done)");
     }
 

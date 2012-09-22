@@ -4,6 +4,8 @@
  */
 package net.wazari.libvfs.test;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
@@ -48,7 +50,7 @@ public class Root extends SDirectory implements ADirectory {
 
     @Override
     public void load() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
     
     public static class SubFolder implements ADirectory {
@@ -63,10 +65,28 @@ public class Root extends SDirectory implements ADirectory {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
+
     
     public static void main (String[] args) {
         Root root = new Root();
         net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
+        
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Sleep!!!");
+                    Thread.sleep(10000);
+                } catch (InterruptedException ex) {
+                    System.out.println("iiint!!!");
+                    Logger.getLogger(Root.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println("Bye!!!");
+                com.jnetfs.core.JnetFS.do_umount("/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test");
+            }
+        }).start();
+        
         com.jnetfs.core.JnetFS.do_mount(new String[]{"/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/test"});
     }
 }

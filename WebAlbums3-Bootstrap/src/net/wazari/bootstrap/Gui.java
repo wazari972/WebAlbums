@@ -85,6 +85,7 @@ public class Gui extends JFrame {
     final JMenuItem miCfgPathRoot;
     final JMenuItem miCfgPathFS;
     final JMenuItem miCfgPathLibFS;
+    final JMenuItem miOpenRoot;
     final JMenuItem miCfgLoad;
     final JMenuItem miCfgSave;
     final JMenuItem miCfgVerify;
@@ -102,7 +103,7 @@ public class Gui extends JFrame {
             return (new ImageIcon(imageURL, description)).getImage();
         }
     }
-    //mi.setIcon(new ImageIcon(getClass().getResource("/testswing/icone.gif")));
+    
     public Gui(String args[]) throws Throwable {
         String title = "WebAlbums3.5-dev GUI Bootloader";
         boolean systrayed = false;
@@ -213,7 +214,12 @@ public class Gui extends JFrame {
         if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
             miOpen.setText("Open"); 
             mWebAlbumsFS.add(miOpen);
-            miOpen.addActionListener(new OpenActionListener());
+            miOpen.addActionListener(new OpenActionListener(new StringGetPointer() {
+
+                public String getString() {
+                    return GF.cfg.webAlbumsFS;
+                }
+            }));
 
             mWebAlbumsFS.addSeparator();
         }
@@ -273,6 +279,21 @@ public class Gui extends JFrame {
                 return GF.cfg.libJnetFs;
             }
         }, false, "libJnetFS.so"));
+        
+        miOpenRoot = new JMenuItem();
+        if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+            mConfigPath.addSeparator();
+            
+            miOpenRoot.setText("Open root folder"); 
+            mConfigPath.add(miOpenRoot);
+            miOpenRoot.addActionListener(new OpenActionListener(new StringGetPointer() {
+
+                public String getString() {
+                    return GF.cfg.root_path + File.pathSeparator + "data";
+                }
+            }));
+
+        }
         
         mConfig.addSeparator();
         
@@ -392,10 +413,10 @@ public class Gui extends JFrame {
         miQuit.setText("Quit");
         miQuit.setEnabled(true);
         
-        //mWebAlbumsFS.setEnabled(false);
+        mWebAlbumsFS.setEnabled(false);
         miMount.setEnabled(false);
         miOpen.setEnabled(false);
-        //miUmount.setEnabled(false);
+        miUmount.setEnabled(false);
         
         miCfgLoad.setEnabled(true); 
         miCfgSave.setEnabled(true);
@@ -458,14 +479,18 @@ public class Gui extends JFrame {
                 }
             }
             if (this.quit) {
+                log.error("That's all, folks!");
                 System.exit(0);
             }
        }
     }
     
-    private interface StringPointer {
-        void setString(String str);
+    private interface StringGetPointer {
         String getString();
+    }
+    
+    private interface StringPointer extends StringGetPointer {
+        void setString(String str);
     }
     
     private class PathActionListener implements ActionListener {
@@ -535,10 +560,15 @@ public class Gui extends JFrame {
     }
     
     private class OpenActionListener implements ActionListener {
+        private final StringGetPointer ptr;
+        public OpenActionListener(StringGetPointer ptr) {
+            this.ptr = ptr;
+        }
+    
         public void actionPerformed(ActionEvent event) {
             if (gfState == GlassfishState.RUNNING) {
                 try {
-                    Desktop.getDesktop().open(new File("WebAlbums3-FS"));    
+                    Desktop.getDesktop().open(new File(ptr.getString()));    
                 } catch (Exception ex) {
                     log.error("Open FS error: {}", ex);
                 }
@@ -559,7 +589,7 @@ public class Gui extends JFrame {
                 this.mounted = mounted;
                 Gui.this.miMount.setEnabled(!mounted);
                 
-                //Gui.this.miUmount.setEnabled(mounted);
+                Gui.this.miUmount.setEnabled(mounted);
                 Gui.this.miOpen.setEnabled(mounted);
                 Gui.this.miCfgPathFS.setEnabled(mounted);
             }
@@ -571,30 +601,7 @@ public class Gui extends JFrame {
         }
         
         public void actionPerformed(ActionEvent event) {
-            if (false) {
-                try {
-                    Process ps = Runtime.getRuntime().exec(new String[] {"sh", "-c", "/usr/local/bin/fusermount -u "+ GF.cfg.webAlbumsFS});
-                    String  str;
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-
-                    while ((str = reader.readLine()) != null) {
-                        log.info( "err - {}", str);
-                    }
-                    reader = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-                    
-                    while ((str = reader.readLine()) != null) {
-                        log.info( "err - {}", str);
-                    }
-                    
-                    int ret = ps.waitFor();
-                    log.info( "ret:{}", ret);
-                } catch (Exception ex) {
-                    log.error("Couldn't unmount {} : {}", GF.cfg.webAlbumsFS, ex);
-                }
-            } else {
-                doTrigger(do_mount, GF.cfg.webAlbumsFS);
-            }
-            
+            doTrigger(do_mount, GF.cfg.webAlbumsFS);
         }
         
         public void doTrigger(final boolean mount, String mountPoint) {
