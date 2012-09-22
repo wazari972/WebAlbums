@@ -447,17 +447,17 @@ public class Gui extends JFrame {
     private class StartActionListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             new Thread(new Runnable() {
-            public void run() {
-                try {
-                    glassfishStarting();
-                    glassfish.start();
-                    glassfishRunning();
-                } catch (Throwable ex) {
-                    glassfishFailed();
-                    log.error("Start glassfish error: {}", ex);
+                public void run() {
+                    try {
+                        glassfishStarting();
+                        glassfish.start();
+                        glassfishRunning();
+                    } catch (Throwable ex) {
+                        glassfishFailed();
+                        log.error("Start glassfish error: {}", ex);
+                    }
                 }
-            }
-        }).start();
+            }).start();
        }
     }
     
@@ -470,15 +470,22 @@ public class Gui extends JFrame {
         
         public void actionPerformed(ActionEvent event) {
             if (gfState == GlassfishState.RUNNING) {
-                try {
-                    Gui.glassfish.terminate();
-                    glassfishStopped();
-                } catch (GlassFishException ex) {
-                    log.error("Stop glassfish error: {}", ex);
-                    glassfishFailed();
-                }
-            }
-            if (this.quit) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            Gui.glassfish.terminate();
+                            glassfishStopped();
+                            if (QuitActionListener.this.quit) {
+                                log.error("That's all, folks!");
+                                System.exit(0);
+                            }
+                        } catch (GlassFishException ex) {
+                            log.error("Stop glassfish error: {}", ex);
+                            glassfishFailed();
+                        }
+                    }
+                }).start();
+            } else if (this.quit) {
                 log.error("That's all, folks!");
                 System.exit(0);
             }
