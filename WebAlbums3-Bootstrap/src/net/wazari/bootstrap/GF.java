@@ -119,6 +119,9 @@ public class GF {
 
         deployer = server.getDeployer();
 
+        if (!cfg.root_path.endsWith("/")) {
+            cfg.root_path += "/" ;
+        }
         log.info("Setting root path: {}", cfg.root_path);
         System.setProperty("root.path", cfg.root_path);
         
