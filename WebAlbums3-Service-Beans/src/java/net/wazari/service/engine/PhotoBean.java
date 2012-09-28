@@ -394,8 +394,7 @@ public class PhotoBean implements PhotoLocal {
                                            ListOrder.DESC);
             }
         }        
-        log.warn("Load by tags: setSize{}", lstP.setSize);
-        log.warn("Load by tags: setSize{}", lstP.subset.size());
+        
         String degrees = "0";
         Integer[] tags = null;
         int countME = 0;

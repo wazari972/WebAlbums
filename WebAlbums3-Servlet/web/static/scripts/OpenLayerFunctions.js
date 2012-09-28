@@ -6,8 +6,9 @@ var mapCenter = {
 
 OL_GEOPORTAIL_VISIBILITY = false
 OL_GEOPORTAIL_KEYS = ['1454623408623333731', '1711091050407331029'/*192.*/]
-
+inited = true;
 function init_geoportail_EU_layer(map) {
+    alert("inited")
     var setGeoRM = function () {
         return Geoportal.GeoRMHandler.addKey(
             gGEOPORTALRIGHTSMANAGEMENT.apiKey,
@@ -59,19 +60,32 @@ function init_geoportail_base_layer() {
 }
 
 function add_geoportail_layer(map) {
-    return;
-    var ready = function () {
-        var geo_eu = init_geoportail_EU_layer(map)
-        map.addLayers([
-            //init_geoportail_base_layer(),
-            geo_eu
-            ])
-        map.setLayerIndex(geo_eu, 0)
-    }
+    var options = {
+        name: "Cartes IGN",
+        url: "http://gpp3-wxs.ign.fr/sg68l6zf6zemkg3cdr0bknay/wmts",
+        layer: "GEOGRAPHICALGRIDSYSTEMS.MAPS",
+        matrixSet: "PM",
+        style: "normal",
+        numZoomLevels: 19,
+	attribution: 'Map base: &copy;IGN <a href="http://www.geoportail.fr/" target="_blank"><img src="http://api.ign.fr/geoportail/api/js/2.0.0beta/theme/geoportal/img/logo_gp.gif"></a> <a href="http://www.geoportail.gouv.fr/depot/api/cgu/licAPI_CGUF.pdf" alt="TOS" title="TOS" target="_blank">Terms of Service</a>'
+    };
+    var cartes = new OpenLayers.Layer.WMTS(options);
     
-    Geoportal.GeoRMHandler.getConfig(['1711091050407331029'], null,null, {
-        onContractsComplete: ready
-    });
+    options.name = "Photos IGN";
+    options.layer = "ORTHOIMAGERY.ORTHOPHOTOS";
+    options.numZoomLevels = 20;
+    var photos = new OpenLayers.Layer.WMTS(options);                
+    
+    options.name = "Cassini";
+    options.layer = "GEOGRAPHICALGRIDSYSTEMS.CASSINI";
+    options.numZoomLevels = 16;
+    var cassini = new OpenLayers.Layer.WMTS(options);                
+    
+    options.name = "Etat Major";
+    options.layer = "GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40";
+    var major = new OpenLayers.Layer.WMTS(options);         
+    
+    map.addLayers([cartes, photos, cassini, major]);
 }
 
 function init_osm_box(divName) {
@@ -87,25 +101,14 @@ function init_osm_box(divName) {
         projection: new OpenLayers.Projection("EPSG:900913"),
         displayProjection: new OpenLayers.Projection("EPSG:4326")
     } );
-    
+
     map.addLayers([
-        //new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
-        /*new OpenLayers.Layer.Google( "Google Streets", {'sphericalMercator': true, numZoomLevels:18, displayInLayerSwitcher: true} ),
-        new OpenLayers.Layer.Google( "Google MapMaker", {type: G_MAPMAKER_NORMAL_MAP, 'sphericalMercator': true,  numZoomLevels:18} ),
-        new OpenLayers.Layer.Google( "Google Aerial", {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels:19} ),
-        new OpenLayers.Layer.Google( "Google Physical", {type: G_PHYSICAL_MAP, 'sphericalMercator': true, numZoomLevels:16} ),*/
+        new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
+        /*new OpenLayers.Layer.Google("Google Streets", {visibility: false}),*/
 
         new OpenLayers.Layer.OSM( "OSM Cycle Map", "http://tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
         { displayOutsideMaxExtent: true, 
             opacity: 0.5, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" } ),
-
-        new OpenLayers.Layer.OSM( "Hillshading", "http://toolserver.org/~cmarqu/hill/${z}/${x}/${y}.png",
-        { displayOutsideMaxExtent: true, 
-            opacity: 1, isBaseLayer: false, visibility: false, numZoomLevels:17, transparent: true, noOpaq: true, permalink: "hill" } ),
-
-        new OpenLayers.Layer.OSM( "Hiking Map", "http://tile.lonvia.de/hiking/${z}/${x}/${y}.png",
-        { displayOutsideMaxExtent: true, 
-            opacity: 1, isBaseLayer: false, visibility: false, numZoomLevels:19, transitionEffect: "null", noOpaq: true, permalink: "hiking" } ),
     ]);
     add_geoportail_layer(map)
     map.addControl(new OpenLayers.Control.LayerSwitcher());
@@ -113,7 +116,7 @@ function init_osm_box(divName) {
     map.setCenter(transformLonLat(new OpenLayers.LonLat(mapCenter.lon, mapCenter.lat)), mapCenter.zoom);
 
     map.div.style[OpenLayers.String.camelize('background-image')]= 'none';
-    
+   
     return map
 }
 
