@@ -20,11 +20,11 @@
       </head>
       <body>
         <script type="text/javascript"> var directAccess = false; <xsl:if test="/webAlbums/affichage/@directAccess"> directAccess = true; root_path = "<xsl:value-of select="$RootPath" />"; photo_folder = "<xsl:value-of select="/webAlbums/affichage/photo_folder" />"; mini_folder = "<xsl:value-of select="/webAlbums/affichage/mini_folder" />"; </xsl:if> var staticAccess = false; <xsl:if test="/webAlbums/affichage/@static"> staticAccess = true ;</xsl:if></script>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"/>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"/>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-chosen.js"/>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"/>
-        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.ezpz_tooltip.js"/>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-chosen.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-cookie.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.ezpz_tooltip.js"></script>
         
 	<div id="header"> 
 	  <div id="logo">
@@ -125,16 +125,15 @@
 		<xsl:apply-templates select="/webAlbums/*/page"/>
 		<xsl:call-template name="print_return_link" />
                 
-                <script type="text/javascript" src="static/scripts/tools.js"/>
+                <script type="text/javascript" src="static/scripts/tools.js"></script>
                 
                 <!--<xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix or webAlbums/config">-->
-                    <!--<script src="http://maps.google.com/maps/api/js?sensor=false"></script>-->
                     <!--<script src="http://api.ign.fr/geoportail/api/js/1.3.0/GeoportalMin.js" charset="utf-8" ></script>-->
                     <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
                     <script src="http://openlayers.org/dev/OpenLayers.js"></script>
                     <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
                     
-                    <script src="static/scripts/OpenLayerFunctions.js"/>
+                    <script src="static/scripts/OpenLayerFunctions.js"></script>
                     
                     <xsl:if test="/webAlbums/loginInfo/@latitude and /webAlbums/loginInfo/@longitude">
                         <script type="text/javascript"> mapCenter.lat = <xsl:value-of select="/webAlbums/loginInfo/@latitude" />; mapCenter.lon = <xsl:value-of select="/webAlbums/loginInfo/@longitude" /></script>
@@ -142,19 +141,19 @@
                 <!--</xsl:if>-->
                 
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
-                    <script type="text/javascript" src="static/scripts/Photos.js"/>
+                    <script type="text/javascript" src="static/scripts/Photos.js"></script>
                 </xsl:if>
                 <xsl:if test="/webAlbums/tags">
-                    <script type="text/javascript" src="static/scripts/Tags.js"/>
+                    <script type="text/javascript" src="static/scripts/Tags.js"></script>
                 </xsl:if>
                 <xsl:if test="/webAlbums/config">
-                    <script type="text/javascript" src="static/scripts/Config.js"/>
+                    <script type="text/javascript" src="static/scripts/Config.js"></script>
                 </xsl:if>
                 <xsl:if test="/webAlbums/choix">
                     <link   type="text/css" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" rel="stylesheet" media="screen"/>
-                    <script type="text/javascript" src="static/scripts/lib/raphael.js"/>
-                    <script type="text/javascript" src="static/scripts/lib/morris.js"/>
-                    <script type="text/javascript" src="static/scripts/Choix.js"/>
+                    <script type="text/javascript" src="static/scripts/lib/raphael.js"></script>
+                    <script type="text/javascript" src="static/scripts/lib/morris.js"></script>
+                    <script type="text/javascript" src="static/scripts/Choix.js"></script>
                 </xsl:if>
 	      </div>
 	      <div id="footer">
@@ -165,9 +164,9 @@
 	  </div>
 	</div>
         <xsl:if test="not(/webAlbums/affichage/@static)">
-            <script type="text/javascript" src="static/scripts/SinglePageInterface.js" />
+            <script type="text/javascript" src="static/scripts/SinglePageInterface.js"></script>
         </xsl:if>
-        <script type="text/javascript" src="static/scripts/Common.js"/>
+        <script type="text/javascript" src="static/scripts/Common.js"></script>
       </body>
     </html>
   </xsl:template>

@@ -4,11 +4,7 @@ function pointToContent(point) {
           +"  <center><img src='Miniature__"+point.picture+".png' /></center>\n"
           +"</div>"
 }
-/*
-AutoSizeFramedCloud = OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-    'autoSize': true
-});
-*/
+
 function populateMap(map) {    
     var markers = new OpenLayers.Layer.Markers("Geo Tags");
     map.addLayer(markers);
@@ -110,9 +106,9 @@ function init_loader() {
     }) ;
 
     $("#mapLoader").click(function () {
-        $("#mapLoader").fadeOut() ;
-        $("#mapChoix").addClass("mapChoix") ;
-        var map = loadMap("mapChoix");
+        $(this).fadeOut() ;
+        $("#theMapChoix").addClass("mapChoix") ;
+        var map = loadMap("theMapChoix");
         $("body").css("cursor", "wait");
         populateMap(map)
     }) ;

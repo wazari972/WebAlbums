@@ -1,65 +1,53 @@
+/* Might be overriden in Display.xsl */
 var mapCenter = {
     lon: 5.7779693603516,
     lat: 45.212268217196,
     zoom: 10
 }
 
-OL_GEOPORTAIL_VISIBILITY = false
-OL_GEOPORTAIL_KEYS = ['1454623408623333731', '1711091050407331029'/*192.*/]
-inited = true;
-function init_geoportail_EU_layer(map) {
-    alert("inited")
-    var setGeoRM = function () {
-        return Geoportal.GeoRMHandler.addKey(
-            gGEOPORTALRIGHTSMANAGEMENT.apiKey,
-            gGEOPORTALRIGHTSMANAGEMENT[gGEOPORTALRIGHTSMANAGEMENT.apiKey[0]].tokenServer.url,
-            gGEOPORTALRIGHTSMANAGEMENT[gGEOPORTALRIGHTSMANAGEMENT.apiKey[0]].tokenServer.ttl,
-            map);
-    }
+function add_osm_layers(map) {
+    map.addLayer(new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"));
+    
+    var openCycle = new OpenLayers.Layer.OSM( "OSM Cycle Map", "http://tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
+        {displayOutsideMaxExtent: true, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" })
         
-    var cat = new Geoportal.Catalogue(map, gGEOPORTALRIGHTSMANAGEMENT);
-    var zon = cat.getTerritory('EUE');
-    
-    // get Geoportail layer's parameters :
-    var europeanMapOpts = cat.getLayerParameters(zon, 'GEOGRAPHICALGRIDSYSTEMS.MAPS');
-    // overwrite some :
-    europeanMapOpts.options.opacity = 1.0;
-    // link with GeoRM :
-    europeanMapOpts.options["GeoRM"] = setGeoRM();
-    
-    // build map :
-    var europeanMap= new europeanMapOpts.classLayer(
-        "Geoportail",
-        europeanMapOpts.url,
-        europeanMapOpts.params,
-        europeanMapOpts.options);
-    // reproject maxExtent (Geoportal's API standard and extended do it automagically :
-    //europeanMapOpts.options.maxExtent.transform(europeanMapOpts.options.projection, map.getProjection(), true);
-    // add it to the map :
-    //europeanMap.isBaseLayer = true
-    europeanMap.visibility = OL_GEOPORTAIL_VISIBILITY
-    return europeanMap
+    map.addLayer(openCycle);
 }
 
-function init_geoportail_base_layer() {
-    var layer = new OpenLayers.Layer(
-        '__PlateCarre__',
-        {
-            isBaseLayer: true,
-            displayInLayerSwitcher: false,
-            projection: new OpenLayers.Projection('EPSG:4326'),
-            units: 'degrees',
-            maxResolution: 1.40625,
-            numZoomLevels: 21,
-            maxExtent: new OpenLayers.Bounds(-180, -90, 180, 90),
-            minZoomLevel:5,
-            maxZoomLevel:20,
-            territory:'EUE'
-        })
-    return layer;
+function add_google_layers(map) {
+    /**/
+    if (google.maps.MapTypeId == undefined) {
+        /* HUGLY hack, but Google Map script tries to 
+         * document.write to load its inner script, which
+         * is not allowed in XTHML/XSL. We just do it manually
+         * here :) 
+         * */
+        
+        var reload_google_layers = function() {
+            if (google.maps.MapTypeId == undefined) {
+                alert("Couldn't load Google maps ...")
+            } else {
+                add_google_layers(map)
+            }
+        }
+
+        $.getScript("http://maps.gstatic.com/intl/en_us/mapfiles/api-3/9/14/main.js", reload_google_layers)
+        
+        return
+    }
+    
+    var gphy = new OpenLayers.Layer.Google(
+        "Google Physical",
+        {type: google.maps.MapTypeId.TERRAIN}
+    );
+    map.addLayer(gphy)
+    
+    var gmap = new OpenLayers.Layer.Google("Google Streets", {visibility: false});
+    map.addLayer(gmap)
 }
 
-function add_geoportail_layer(map) {
+function add_geoportail_layers(map) {
+    return;
     var options = {
         name: "Cartes IGN",
         url: "http://gpp3-wxs.ign.fr/sg68l6zf6zemkg3cdr0bknay/wmts",
@@ -69,6 +57,7 @@ function add_geoportail_layer(map) {
         numZoomLevels: 19,
 	attribution: 'Map base: &copy;IGN <a href="http://www.geoportail.fr/" target="_blank"><img src="http://api.ign.fr/geoportail/api/js/2.0.0beta/theme/geoportal/img/logo_gp.gif"></a> <a href="http://www.geoportail.gouv.fr/depot/api/cgu/licAPI_CGUF.pdf" alt="TOS" title="TOS" target="_blank">Terms of Service</a>'
     };
+    
     var cartes = new OpenLayers.Layer.WMTS(options);
     
     options.name = "Photos IGN";
@@ -101,16 +90,11 @@ function init_osm_box(divName) {
         projection: new OpenLayers.Projection("EPSG:900913"),
         displayProjection: new OpenLayers.Projection("EPSG:4326")
     } );
-
-    map.addLayers([
-        new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"),
-        /*new OpenLayers.Layer.Google("Google Streets", {visibility: false}),*/
-
-        new OpenLayers.Layer.OSM( "OSM Cycle Map", "http://tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-        { displayOutsideMaxExtent: true, 
-            opacity: 0.5, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" } ),
-    ]);
-    add_geoportail_layer(map)
+    
+    add_osm_layers(map)
+    add_geoportail_layers(map)
+    add_google_layers(map)
+    
     map.addControl(new OpenLayers.Control.LayerSwitcher());
 
     map.setCenter(transformLonLat(new OpenLayers.LonLat(mapCenter.lon, mapCenter.lat)), mapCenter.zoom);
@@ -126,21 +110,14 @@ function init_gpx_layer(map, name, file_id, ready_callback) {
     
     // Add the Layer with the GPX Track
     var lgpx = new OpenLayers.Layer.Vector(name+" "+file_id, {
-                protocol: new OpenLayers.Protocol.HTTP({
-                    url: file,
-                    format: new OpenLayers.Format.GPX
-                }),
-                projection: new OpenLayers.Projection("EPSG:4326"),
-                style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 1},
-                strategies: [new OpenLayers.Strategy.Fixed()]
-            })
-    
-    /*
-    var lgpx = new OpenLayers.Layer.GML(name+" "+file_id, file, {
-            format: OpenLayers.Format.GPX,
-            style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 1},
-            projection: new OpenLayers.Projection("EPSG:4326")
-    });*/
+        protocol: new OpenLayers.Protocol.HTTP({
+            url: file,
+            format: new OpenLayers.Format.GPX
+        }),
+        projection: new OpenLayers.Projection("EPSG:4326"),
+        style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 1},
+        strategies: [new OpenLayers.Strategy.Fixed()]
+    })
 
     map.addLayer(lgpx);
     

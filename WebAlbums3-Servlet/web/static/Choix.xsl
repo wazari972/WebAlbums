@@ -135,7 +135,7 @@
 	<h1>Géolocalisations <input id="mapLoader" type="button" value="+"/></h1>
 	<div class="body">
 	  <center>
-	    <div id="mapChoix"/>
+	    <div id="theMapChoix"></div>
 	  </center>
 	</div>
       </div>
