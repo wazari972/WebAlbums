@@ -113,7 +113,7 @@ public class Gui extends JFrame {
 
             JTrayIcon.initSystemTray();
 
-            Image img = createImage("/images/favicon-orange.png", "WebAlbums Favicon");
+            Image img = createImage("/images/jonquille-busy.png", "WebAlbums");
             icon = new JTrayIcon(img, null, jpop);
             
             toAddTo = new ToAddTo() {
@@ -383,7 +383,7 @@ public class Gui extends JFrame {
         miState.setText("Starting");
         miCfgPathLibFS.setEnabled(false);
         miCfgVerify.setEnabled(false);
-        icon.setIcon(createImage("/images/favicon-orange.png", "WebAlbums Favicon"));
+        icon.setIcon(createImage("/images/jonquille-busy.png", "WebAlbums"));
         gfState = GlassfishState.STARTING;
     }
     
@@ -396,7 +396,7 @@ public class Gui extends JFrame {
         miMount.setEnabled(true);
         miState.setText("Running");
         if (icon != null) {
-            icon.setIcon(createImage("/images/favicon.png", "WebAlbums Favicon"));
+            icon.setIcon(createImage("/images/jonquille-ready.png", "WebAlbums"));
         }
     }
     
@@ -423,7 +423,7 @@ public class Gui extends JFrame {
         miCfgPathRoot.setEnabled(true); 
         
         if (icon != null) {
-            icon.setIcon(createImage("/images/favicon-blue.png", "WebAlbums Favicon"));
+            icon.setIcon(createImage("/images/jonquille-stop.png", "WebAlbums"));
         }
     }
     
@@ -438,7 +438,7 @@ public class Gui extends JFrame {
         
         gfState = GlassfishState.FAILED;
         if (icon != null) {
-            icon.setIcon(createImage("/images/favicon-red.png", "WebAlbums Favicon"));
+            icon.setIcon(createImage("/images/jonquille-crash.png", "WebAlbums"));
         }
     }
     
@@ -621,18 +621,12 @@ public class Gui extends JFrame {
                 new Thread (new Runnable() {
 
                     public void run() {
-                        if (mount) {
-                            setMounted(true);
-                        }
+                        setMounted(mount);
                         try {
                             // open the stream and put it into BufferedReader
                             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                             while ((br.readLine()) != null) ;
                         } catch (IOException ex) {}
-                        //will be set by mount thread only
-                        if (mount) {
-                            setMounted(false);
-                        }
                     }
                 }).start();
                 

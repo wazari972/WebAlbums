@@ -47,34 +47,23 @@ function add_google_layers(map) {
 }
 
 function add_geoportail_layers(map) {
-    return;
+    var apiKEYs = {
+        //'localhost:8080': 'r6muu3lqjvkg22q8dw893k7z'
+        "localhost:8080":"f4ezpirs8jd63cwbhkstbkqd"
+    };
+    var apiKEY = apiKEYs[window.location.host];
+    
     var options = {
         name: "Cartes IGN",
-        url: "http://gpp3-wxs.ign.fr/sg68l6zf6zemkg3cdr0bknay/wmts",
+        url: "http://gpp3-wxs.ign.fr/" + apiKEY + "/wmts",
         layer: "GEOGRAPHICALGRIDSYSTEMS.MAPS",
         matrixSet: "PM",
         style: "normal",
-        numZoomLevels: 19,
-	attribution: 'Map base: &copy;IGN <a href="http://www.geoportail.fr/" target="_blank"><img src="http://api.ign.fr/geoportail/api/js/2.0.0beta/theme/geoportal/img/logo_gp.gif"></a> <a href="http://www.geoportail.gouv.fr/depot/api/cgu/licAPI_CGUF.pdf" alt="TOS" title="TOS" target="_blank">Terms of Service</a>'
+        attribution: '&copy;IGN <a href="http://www.geoportail.fr/" target="_blank"><img src="http://api.ign.fr/geoportail/api/js/latest/theme/geoportal/img/logo_gp.gif"></a> <a href="http://www.geoportail.gouv.fr/depot/api/cgu/licAPI_CGUF.pdf" alt="TOS" title="TOS" target="_blank">Terms of Service</a>'
     };
+    var ign = new OpenLayers.Layer.WMTS(options)
     
-    var cartes = new OpenLayers.Layer.WMTS(options);
-    
-    options.name = "Photos IGN";
-    options.layer = "ORTHOIMAGERY.ORTHOPHOTOS";
-    options.numZoomLevels = 20;
-    var photos = new OpenLayers.Layer.WMTS(options);                
-    
-    options.name = "Cassini";
-    options.layer = "GEOGRAPHICALGRIDSYSTEMS.CASSINI";
-    options.numZoomLevels = 16;
-    var cassini = new OpenLayers.Layer.WMTS(options);                
-    
-    options.name = "Etat Major";
-    options.layer = "GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40";
-    var major = new OpenLayers.Layer.WMTS(options);         
-    
-    map.addLayers([cartes, photos, cassini, major]);
+    map.addLayer(ign)
 }
 
 function init_osm_box(divName) {
