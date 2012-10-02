@@ -145,10 +145,24 @@ function transformLonLat(lonlat) {
     }
 }
 
+function point_to_lonlat(point) {
+    return transformLonLat(new OpenLayers.LonLat(point.lng, point.lat))
+}
+
+function markerClick (evt) {
+    if (this.popup == null) {
+        alert("oups")
+    } else {
+        this.popup.toggle();
+        if (currentPopup != null)
+            currentPopup.hide()
+    }
+    currentPopup = this.popup;
+    OpenLayers.Event.stop(evt);
+}
+
 var currentPopup = null;
-function addMarker(map, markers, point, pointToContent_p) {
-    var lnglat = transformLonLat(new OpenLayers.LonLat(point.lng, point.lat))
-        
+function addMarker(map, markers, point, pointToContent_p, lnglat) {        
     var feature = new OpenLayers.Feature(markers, lnglat);      
     var marker = feature.createMarker();
     feature.closeBox = true;
@@ -160,17 +174,7 @@ function addMarker(map, markers, point, pointToContent_p) {
    
     marker = feature.createMarker();
  
-    markerClick = function (evt) {
-        if (this.popup == null) {
-            alert("oups")
-        } else {
-            this.popup.toggle();
-            if (currentPopup != null)
-                currentPopup.hide()
-        }
-        currentPopup = this.popup;
-        OpenLayers.Event.stop(evt);
-    };
+    
     marker.events.register("mousedown", feature, markerClick);
     markers.addMarker(marker);
 

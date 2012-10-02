@@ -6,17 +6,47 @@ function pointToContent(point) {
 }
 
 function populateMap(map) {    
+    if (typeof Heatmap != 'undefined') {
+        var heat = new Heatmap.Layer("Heatmap");
+        map.addLayer(heat);
+    }
+    
     var markers = new OpenLayers.Layer.Markers("Geo Tags");
     map.addLayer(markers);
     
+    var xmlCloud;
+                
+    $.ajax( {
+        async: false,
+        type: "GET",
+        url: "Tags?special=CLOUD",
+        dataType: "xml",
+        success: 
+          function(data) {
+            xmlCloud = $(data)
+        }});
+
     $.getJSON("Choix?special=MAP&type=JSON",
         function(data) {
             $.each(data, function(key, point) {
-                addMarker(map, markers, point, pointToContent)
-            })
+                var lonlat = point_to_lonlat(point)
+                
+                addMarker(map, markers, point, pointToContent, lonlat)
+                if (heat == undefined)
+                    return;
+                var src = new Heatmap.Source(lonlat);
+                heat.addSource(src);
+                
+                src.intensity = xmlCloud.find("tag[id=" +point.id+ "]").attr("nb")
+            });
 
             map.addControl(new OpenLayers.Control.LayerSwitcher());
-            map.zoomToExtent(markers.getDataExtent());
+            
+            if (heat == undefined)
+                map.zoomToExtent(markers.getDataExtent());
+            else
+                map.zoomToExtent(heat.getDataExtent());
+            
             $("body").css("cursor", "auto");
         }
     ).error(function(e, textStatus) { alert("error"+e+textStatus); $("body").css("cursor", "auto");});

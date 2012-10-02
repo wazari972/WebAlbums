@@ -45,10 +45,11 @@ public class Choix extends HttpServlet {
     
     public XmlWebAlbumsList displayChxJSON(ViewSession vSession) throws WebAlbumsServiceException {
         Special special = vSession.getSpecial();
-        if (special == Special.MAP)
+        if (special == Special.MAP) {
             return webPageService.displayMapInScript(vSession);
-        else
+        } else {
             return null;
+        }
     }
 
     public XmlChoix displayCHX(ViewSession vSession) throws WebAlbumsServiceException {

@@ -141,7 +141,8 @@ function init_tag_layer (map, do_zoom) {
             lng: $(this).attr('rel').split('/')[1],
             name: $(this).text()
         }
-        var marker = addMarker(map, markers, point, function(x){return x.name})
+        
+        var marker = addMarker(map, markers, point, function(x){return x.name}, point_to_lonlat(point))
         $(this).data("marker", marker)
     })
     

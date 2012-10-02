@@ -43,7 +43,6 @@ public class Tags extends HttpServlet {
         if (Special.CLOUD == special) {
             output.cloud = tagService.treatTagCloud(vSession) ;
             return output ;
-
         } else  if (Special.PERSONS == special) {
             output.persons = tagService.treatTagPersons(vSession) ;
             return output ;
