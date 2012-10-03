@@ -152,17 +152,19 @@ function point_to_lonlat(point) {
 function markerClick (evt) {
     if (this.popup == null) {
         alert("oups")
-    } else {
-        this.popup.toggle();
-        if (currentPopup != null)
-            currentPopup.hide()
+        return;
     }
+    
+    if (currentPopup != null)
+        currentPopup.hide()
+    
     currentPopup = this.popup;
+    currentPopup.show()
     OpenLayers.Event.stop(evt);
 }
 
 var currentPopup = null;
-function addMarker(map, markers, point, pointToContent_p, lnglat) {        
+function addMarker2(map, markers, point, pointToContent_p, lnglat) {
     var feature = new OpenLayers.Feature(markers, lnglat);      
     var marker = feature.createMarker();
     feature.closeBox = true;
@@ -173,8 +175,6 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
     feature.data.overflow = "hidden";
    
     marker = feature.createMarker();
- 
-    
     marker.events.register("mousedown", feature, markerClick);
     markers.addMarker(marker);
 
@@ -183,4 +183,26 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
     feature.popup.hide();
     
     return marker;
+}
+
+function addMarker(map, markers, point, pointToContent_p, lnglat) {
+    info = new OpenLayers.Control.WMSGetFeatureInfo({
+            url: 'http://demo.opengeo.org/geoserver/wms', 
+            title: 'Identify features by clicking',
+            queryVisible: true,
+            eventListeners: {
+                getfeatureinfo: function(event) {
+                    map.addPopup(new OpenLayers.Popup.FramedCloud(
+                        "chicken", 
+                        map.getLonLatFromPixel(event.xy),
+                        null,
+                        event.text,
+                        null,
+                        true
+                    ));
+                }
+            }
+        });
+        map.addControl(info);
+        info.activate();
 }

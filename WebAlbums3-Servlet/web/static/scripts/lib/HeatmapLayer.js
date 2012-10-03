@@ -1,7 +1,8 @@
 /*
  * Copyright (c) 2010 Bjoern Hoehrmann <http://bjoern.hoehrmann.de/>.
  * This module is licensed under the same terms as OpenLayers itself.
- *
+ * http://sloweb.org.uk/ollie/heatmap/
+ * http://www.websitedev.de/temp/openlayers-heatmap-layer.html
  */
 
 Heatmap = {};
