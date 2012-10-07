@@ -279,8 +279,8 @@ public class FilesFinder {
             enrPhoto = photoDAO.newPhoto();
             enrPhoto.setDescription("");
             enrPhoto.setPath(photoPath);
-
-            sysTools.retrieveMetadata(type, null, enrPhoto, photo.getAbsolutePath());
+            
+            sysTools.retrieveMetadata(type, ext, enrPhoto, photo.getAbsolutePath());
             enrPhoto.setAlbum(enrAlbum);
             enrPhoto.setType(type);
             log.info("### Album " + enrPhoto.getAlbum());

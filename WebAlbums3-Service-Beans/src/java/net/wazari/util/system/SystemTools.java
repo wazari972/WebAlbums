@@ -114,52 +114,6 @@ public class SystemTools {
         return dir;
     }
 
-    public boolean fullscreenMultiple(ViewSession vSession, PhotoRequest rq, Integer id, Integer page, String ... dirs) {
-        if (vSession.isRemoteAccess()) return false ;
-
-        int pageAsked = (page == null ? 0 : page);
-        if (plugins.getUsedSystem() == null) {
-            log.warn("No System plugin available ...");
-            return false;
-        }
-        Importer util = getWrapper("image", null, Importer.Capability.FULLSCREEN_MULTIPLE);
-        if (util == null) {
-            log.warn("No plugin available for capability FULLSCREEN_MULTIPLE ... ");
-            return false;
-        }
-        SubsetOf<Photo> lstPhoto;
-        if (rq.type == TypeRequest.PHOTO) {
-            lstPhoto = photoDAO.loadFromAlbum(vSession, rq.albumId, null, ListOrder.ASC);
-        } else {
-            lstPhoto = photoDAO.loadByTags(vSession, rq.listTagId, null, ListOrder.DESC);
-        }
-        File dir = null;
-        int i = 0;
-        boolean first = true;
-        log.warn( "Fullscreen multiple: page asked:{}", pageAsked);
-        for (Photo enrPhoto : lstPhoto.subset) {
-            if (first) {
-                dir = buildTempDir(vSession, id, dirs);
-                if (dir == null) {
-                    return false;
-                }
-            }
-
-            int currentPage = i / vSession.getPhotoAlbumSize();
-            log.info( "Fullscreen multiple: current page:{}", currentPage);
-            File fPhoto = new File(dir, "" + i + "-p" + currentPage + "-" + enrPhoto.getId() + "." + photoUtil.getExtention(vSession, enrPhoto));
-            plugins.getUsedSystem().link(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto.toString());
-
-            if (first && currentPage ==  pageAsked) {
-                util.fullscreenMultiple(cb, fPhoto.toString());
-                first = false;
-            }
-            fPhoto.deleteOnExit();
-            i++;
-        }
-        return true;
-    }
-
     public String shrink(ViewSession vSession, Photo enrPhoto, int width) {
         File dir = buildTempDir(vSession, null, "shrinked");
         if (dir == null) {
@@ -194,24 +148,6 @@ public class SystemTools {
         fPhoto.deleteOnExit();
 
         return fPhoto.toString();
-    }
-
-    public boolean fullscreenImage(ViewSession vSession, Photo enrPhoto) {
-        if (vSession.isRemoteAccess()) return false ;
-        
-        File dir = buildTempDir(vSession, null, "fullscreen");
-        if (dir == null) {
-            return false;
-        }
-        String ext = photoUtil.getExtention(vSession, enrPhoto);
-        Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.FULLSCREEN_SINGLE);
-        if (util == null) {
-            return false;
-        }
-
-        util.fullscreenFile(cb, photoUtil.getImagePath(vSession, enrPhoto));
-
-        return true ;
     }
 
     public boolean thumbnail(String type, String ext, String source, String dest, int height) {

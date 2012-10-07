@@ -13,12 +13,10 @@ public interface Importer {
     void addBorder(ProcessCallback cb, String imagePath, Integer borderWidth, String color);
 
     enum Capability {
-
-        SHRINK, THUMBNAIL, ROTATE, FULLSCREEN_SINGLE, FULLSCREEN_MULTIPLE, META_DATA
-    ,   ADD_BORDER}
+        SHRINK, THUMBNAIL, ROTATE, META_DATA, ADD_BORDER
+    }
 
     enum SanityStatus {
-
         FAIL, PASS
     }
 
@@ -39,10 +37,6 @@ public interface Importer {
     boolean thumbnail(ProcessCallback cb, String source, String dest, int height);
 
     boolean rotate(ProcessCallback cb, String degrees, String source, String dest);
-
-    void fullscreenMultiple(ProcessCallback cb, String path);
-
-    void fullscreenFile(ProcessCallback cb, String path);
 
     boolean setMetadata(Metadata data, String path);
 

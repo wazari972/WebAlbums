@@ -22,9 +22,6 @@ public interface ViewSessionAlbum extends ViewSession {
 
         boolean getSuppr() ;
         Integer getUserAllowed();
-        
-        String getGpxDescr(Integer id);
-        boolean getGpxSuppr(Integer id);
     }
 
     interface ViewSessionAlbumEdit extends ViewSessionAlbum {}

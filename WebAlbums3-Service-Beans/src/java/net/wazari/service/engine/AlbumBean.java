@@ -12,6 +12,7 @@ import javax.ejb.Stateless;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
+import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
@@ -84,17 +85,15 @@ public class AlbumBean implements AlbumLocal {
         
         output.album.albmDate = enrAlbum.getDate();
 
-        int count = 0;
         for (Photo enrGpx : enrAlbum.getGpxList()) {
             if (output.album.gpx == null) {
                 output.album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
             }
+            
             XmlGpx gpx = new XmlGpx();
             gpx.id = enrGpx.getId();
             gpx.description = enrGpx.getDescription();
-            if (gpx.description == null || gpx.description.isEmpty()) {
-                gpx.description = enrAlbum.getNom() + " " + count++ ;
-            }
+            
             output.album.gpx.add(gpx);
         }
         

@@ -124,24 +124,14 @@ function zoomTo(map, layer, closest) {
     map.zoomToExtent(layer.getDataExtent(), closest);
 }
 
-function get_mm_bikeTracks(bounds) {
-
-    llbounds = new OpenLayers.Bounds();
-    llbounds.extend(OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.left,bounds.bottom));
-    llbounds.extend(OpenLayers.Layer.SphericalMercator.inverseMercator(bounds.right,bounds.top));
-    url = "http://mm-lbserver.dnsalias.com/mm-mapserver_v2/wms/wms.php?REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1&LAYERS=MM_BIKETRACKS&STYLES=&FORMAT=image/png&BGCOLOR=0xFFFFFF&TRANSPARENT=TRUE&SRS=EPSG:4326&BBOX="
-    url = url + llbounds.toBBOX() + "&WIDTH=256&HEIGHT=256"
-    return url
-}
-
 function transformLonLat(lonlat) {
     if (!lonlat || !lonlat.transform)
         return lonlat
     else {
         return lonlat.transform(
-        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-        new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
-    );
+            new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+            new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
+        );
     }
 }
 
@@ -149,60 +139,35 @@ function point_to_lonlat(point) {
     return transformLonLat(new OpenLayers.LonLat(point.lng, point.lat))
 }
 
-function markerClick (evt) {
-    if (this.popup == null) {
-        alert("oups")
-        return;
-    }
-    
-    if (currentPopup != null)
-        currentPopup.hide()
-    
-    currentPopup = this.popup;
-    currentPopup.show()
-    OpenLayers.Event.stop(evt);
-}
-
 var currentPopup = null;
-function addMarker2(map, markers, point, pointToContent_p, lnglat) {
-    var feature = new OpenLayers.Feature(markers, lnglat);      
-    var marker = feature.createMarker();
+function addMarker(map, markers, point, pointToContent_p, lnglat) {
+    var feature = new OpenLayers.Feature(markers, lnglat);
     feature.closeBox = true;
-    feature.popupClass =  OpenLayers.Class(OpenLayers.Popup.FramedCloud, {
-        'autoSize': true
-    });
+    feature.popupClass = OpenLayers.Class(OpenLayers.Popup.AnchoredBubble, {minSize: new OpenLayers.Size(300, 180) } );
     feature.data.popupContentHTML = pointToContent_p(point);
     feature.data.overflow = "hidden";
-   
-    marker = feature.createMarker();
-    marker.events.register("mousedown", feature, markerClick);
-    markers.addMarker(marker);
 
-    feature.popup = feature.createPopup(feature.closeBox);
-    map.addPopup(feature.popup);
-    feature.popup.hide();
+    var marker = new OpenLayers.Marker(lnglat);
+    marker.feature = feature;
+
+    var markerClick = function(evt) {
+        if (this.popup == null) {
+            this.popup = this.createPopup(this.closeBox);
+            map.addPopup(this.popup);
+            this.popup.show();
+        } else {
+            this.popup.toggle();
+        }
+        
+        if (currentPopup != null)
+            currentPopup.hide()
     
-    return marker;
-}
+        currentPopup = this.popup;
+        currentPopup.show()
+        OpenLayers.Event.stop(evt);
+    };
+    
+    marker.events.register("mousedown", feature, markerClick);
 
-function addMarker(map, markers, point, pointToContent_p, lnglat) {
-    info = new OpenLayers.Control.WMSGetFeatureInfo({
-            url: 'http://demo.opengeo.org/geoserver/wms', 
-            title: 'Identify features by clicking',
-            queryVisible: true,
-            eventListeners: {
-                getfeatureinfo: function(event) {
-                    map.addPopup(new OpenLayers.Popup.FramedCloud(
-                        "chicken", 
-                        map.getLonLatFromPixel(event.xy),
-                        null,
-                        event.text,
-                        null,
-                        true
-                    ));
-                }
-            }
-        });
-        map.addControl(info);
-        info.activate();
+    markers.addMarker(marker);
 }

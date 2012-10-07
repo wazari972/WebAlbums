@@ -188,12 +188,6 @@ public class ImageBeaned implements ImageLocal {
                     return null ;
                 }
             } else {
-                if (mode == ImgMode.FULLSCREEN) {
-                     sysTools.fullscreenImage(vSession, enrPhoto);
-                     stopWatch.stop(stopWatch.getTag()+".fullscreen") ;
-                     return null ;
-                }
-
                 filepath = "file://" + filepath;
             }
 

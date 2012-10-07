@@ -297,9 +297,6 @@ public class PhotoBean implements PhotoLocal {
         thisPage.albmPage = albmPage ;
         
         PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, enrAlbum);
-        if (Special.FULLSCREEN == special) {
-            sysTools.fullscreenMultiple(vSession, rq, enrAlbum.getId(), page, "Albums");
-        }
         output.photoList = displayPhoto(rq, vSession, submit, thisPage);
         
         stopWatch.stop() ;

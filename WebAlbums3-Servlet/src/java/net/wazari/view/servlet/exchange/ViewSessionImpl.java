@@ -350,17 +350,6 @@ public class ViewSessionImpl implements
     public boolean getChk(Integer id) {
         return "modif".equals(getString("chk" + id));
     }
-    
-    @Override
-    public String getGpxDescr(Integer id) {
-        return getString("gpx_descr_" + id);
-    }
-    
-    @Override
-    public boolean getGpxSuppr(Integer id) {
-        String suppr = getString("suppr") ;
-        return "supprimer ce GPX".equals(suppr);
-    }
 
     @Override
     public Integer getRmTag() {
@@ -609,16 +598,16 @@ public class ViewSessionImpl implements
             } else if (type.isEnum()) {
                 ret = (T) Enum.valueOf((Class) type, val);
             } else {
-                log.info( "Unknown class {} for parameter {}", new Object[]{type, name});
+                log.warn( "Unknown class {} for parameter {}", new Object[]{type, name});
             }
         } catch (ClassCastException e) {
-            log.warn( "Can''t cast value {} into class {}", new Object[]{val, type});
+            log.info( "Can''t cast value {} into class {}", new Object[]{val, type});
         } catch (NullPointerException e) {
-            log.warn( "NullPointerException with {} for class {} ({})", new Object[]{val, type, name});
+            log.info( "NullPointerException with {} for class {} ({})", new Object[]{val, type, name});
         } catch (NumberFormatException e) {
-            log.warn( "NumberFormatException with  '{}' for class {} ({})", new Object[]{val, type, name});
+            log.info( "NumberFormatException with  '{}' for class {} ({})", new Object[]{val, type, name});
         } catch (IllegalArgumentException e) {
-            log.warn( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
+            log.info( "IllegalArgumentException with {} for class {}", new Object[]{val, type});
         }
         log.debug( "getObject param:{} type:{} returned {}", new Object[]{name, type, ret});
         return ret;

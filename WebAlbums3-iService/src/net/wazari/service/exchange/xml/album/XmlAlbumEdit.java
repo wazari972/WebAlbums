@@ -28,5 +28,4 @@ public class XmlAlbumEdit {
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_never;
     public XmlUserList rights;
-
 }

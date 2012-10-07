@@ -50,9 +50,11 @@ public class ExifReaderWrapper extends GenericImporter {
 
     @Override
     public boolean supports(String type, String ext, Capability cap) {
-        if ( type.contains("image"))
+        if ( type.contains("image")) {
             return Arrays.asList(supports()).contains(cap) ;
-        else return false ;
+        } else {
+            return false ;
+        }
     }
 
     @Override
@@ -82,8 +84,6 @@ public class ExifReaderWrapper extends GenericImporter {
 
                     if (!model && t.getTagName().equals("Model")) {
                         p.setModel(escapeBracket(t.toString()));
-
-                        model = true;
                     } else if (!date && t.getTagName().equals("Date/Time")) {
                         p.setDate(escapeBracket(t.toString()));
                         date = true;

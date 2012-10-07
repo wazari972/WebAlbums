@@ -78,19 +78,11 @@ public class TagBean implements TagLocal {
             thisPage.tagAsked = tagsAsked;
 
             output.title = new XmlTagTitle();
-            output.title.tagList = webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet),
-                    Box.NONE);
+            output.title.tagList = webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet), Box.NONE);
 
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet);
             Special special = vSession.getSpecial();
-            if (Special.FULLSCREEN == special) {
-                Integer page = vSession.getPage();
-                sysTools.fullscreenMultiple(vSession, rq, null, page, "Tags", tagsId.toString());
-                stopWatch.stop("Service.treatTagDISPLAY.FULLSCREEN");
-                return null;
-            } else {
-                output.photoList = photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay) vSession, submit, thisPage);
-            }
+            output.photoList = photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay) vSession, submit, thisPage);
         }
         stopWatch.stop();
         return output;
