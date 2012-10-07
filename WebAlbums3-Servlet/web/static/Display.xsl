@@ -132,7 +132,7 @@
                     <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
                     <script src="http://openlayers.org/dev/OpenLayers.js"></script>
                     <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
-                    
+                    <script src="static/scripts/lib/HeatmapLayer.js" type="text/javascript"></script>
                     <script src="static/scripts/OpenLayerFunctions.js"></script>
                     
                     <xsl:if test="/webAlbums/loginInfo/@latitude and /webAlbums/loginInfo/@longitude">

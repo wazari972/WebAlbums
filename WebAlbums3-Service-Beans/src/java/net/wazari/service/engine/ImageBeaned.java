@@ -223,7 +223,9 @@ public class ImageBeaned implements ImageLocal {
             int nbRead;
 
             uniq = true;
-            vSession.setContentDispositionFilename(new File(safeFilepath).getName());
+            String filename = new File(safeFilepath).getName();
+            vSession.setContentDispositionFilename(filename);
+            
             vSession.setContentLength(conn.getContentLength());
             vSession.setContentType(type);
             OutputStream out = vSession.getOutputStream();

@@ -393,7 +393,7 @@ public class ViewSessionImpl implements
 
     @Override
     public void setContentDispositionFilename(String name) {
-        response.addHeader("Content-Disposition", "filename="+name);
+        response.addHeader("Content-Disposition", "filename=\""+name+"\"");
     }
 
     @Override

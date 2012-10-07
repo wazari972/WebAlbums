@@ -97,7 +97,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
 
         List<JPAPhoto> subset = q
                     .setHint("org.hibernate.cacheable", true)
-                    .setHint("org.hibernate.readOnly", true)
+                    .setHint("org.hibernate.readOnly", !session.isSessionManager())
                     .getResultList() ;
         subset = webDAO.filterPhotosAllowed(subset, session);
         if (bornes == null || bornes.getFirstElement() == null)

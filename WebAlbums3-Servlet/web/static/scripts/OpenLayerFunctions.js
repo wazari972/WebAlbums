@@ -38,11 +38,11 @@ function add_google_layers(map) {
     
     var gphy = new OpenLayers.Layer.Google(
         "Google Physical",
-        {type: google.maps.MapTypeId.TERRAIN}
+        {type: google.maps.MapTypeId.TERRAIN, numZoomLevels: 20}
     );
     map.addLayer(gphy)
     
-    var gmap = new OpenLayers.Layer.Google("Google Streets", {visibility: false});
+    var gmap = new OpenLayers.Layer.Google("Google Plan", {visibility: false, numZoomLevels: 20});
     map.addLayer(gmap)
 }
 

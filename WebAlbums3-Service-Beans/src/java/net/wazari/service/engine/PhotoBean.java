@@ -103,7 +103,7 @@ public class PhotoBean implements PhotoLocal {
         enrPhoto.setDescription(StringEscapeUtils.escapeXml(desc));
 
         String user = vSession.getDroit();
-        if (user != null) {
+        if (user != null && !user.isEmpty()) {
             boolean valid = false;
             try {
                 Integer userId = null;
@@ -456,6 +456,7 @@ public class PhotoBean implements PhotoLocal {
                             verb = "added and tag " + rmTag + " removed";
                         } else if (turn == Turn.AUTHOR) {
                             enrPhoto.setTagAuthor(tagDAO.find(tags[0]));
+                            photoDAO.edit(enrPhoto);
                             verb = "set as author";
                         } else {
                             verb = "nothinged";
