@@ -38,10 +38,14 @@ and open the template in the editor.
         <script type="text/javascript" src="static/scripts/tools.js"></script>
         <script type="text/javascript" src="static/scripts/Choix.js"></script>
         <script src="static/scripts/OpenLayerFunctions.js"></script>
-        
+        <input id="search" type='text' size='20' maxlength='40' placeholder="Search ..."/>
+        <input id="btGoto" type="button" value="goto"/>
         <script type="text/javascript">
             $(function() {
                 $('#mapLoader').click()
+                $("#btGoto").click(function () {
+                    geocode($("#search").val(), map)
+                }) ;
             })
         </script>
     </body>

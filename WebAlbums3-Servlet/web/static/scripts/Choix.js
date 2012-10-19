@@ -87,6 +87,7 @@ function createGpxesMap() {
     })
 }
 
+var map;
 function init_loader() {
     $("#albumsLoader").click(function () {
         loadExernals('albumsLoader', 'Albums?special=TOP5', 'albums') ;
@@ -138,7 +139,7 @@ function init_loader() {
     $("#mapLoader").click(function () {
         $(this).fadeOut() ;
         $("#theMapChoix").addClass("mapChoix") ;
-        var map = loadMap("theMapChoix");
+        map = loadMap("theMapChoix");
         $("body").css("cursor", "wait");
         populateMap(map)
     }) ;

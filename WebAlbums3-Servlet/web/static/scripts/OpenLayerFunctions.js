@@ -171,3 +171,24 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
 
     markers.addMarker(marker);
 }
+
+function geocode(address, map) {
+    var geocoder = new google.maps.Geocoder();
+    
+    if (geocoder) {
+        geocoder.geocode({'address': address }, function (results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+             
+             
+             var longlat = new OpenLayers.LonLat(results[0].geometry.location.lng(), results[0].geometry.location.lat())
+             map.setCenter(transformLonLat(longlat), map.getZoom())
+
+          } else {
+             alert("Geocoding failed: " + status);
+          }
+
+       });
+    } else {
+        alert("No geocoder ...");
+    }
+}

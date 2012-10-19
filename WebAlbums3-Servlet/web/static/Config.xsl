@@ -43,6 +43,8 @@
 		<td>
 		  <input id="newTag" name="nom" type='text' size='20' maxlength='40'
                          placeholder="Nom du tag"/>
+                  &#160;
+                  <input id="btGoto" type="button" value="goto"/>
                 </td>
 	      </tr>
 	      <tr>
