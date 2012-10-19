@@ -61,14 +61,17 @@ function createGpxesMap() {
         var ready = function() {
             layer.setVisibility(false)
             this_trak.data("ready", true)
-            var text = this_trak.text()
-            this_trak.text(text.substring(0, text.length - 4))
+            //remove the tempory bits
+            this_trak.text(label)
             
         }
         var layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"), ready)
         $(this).data("layer", layer)
         $(this).data("ready", false)
-        this_trak.text(this_trak.text()+" ...")
+        var label = this_trak.text()
+        if (label == "")
+            label = "Track "+index
+        this_trak.text(label+" ...")
     })
 
     $(".gpxTrack").click(function() {

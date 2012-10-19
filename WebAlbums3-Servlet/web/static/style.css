@@ -5,6 +5,28 @@
 
 /** **** **/
 
+#wmd-preview ul {
+    list-style:square inside;
+}
+
+#wmd-preview p {
+    font-size: 1em;
+    line-height: 1.25em;
+    margin: 1.25em 0;
+    text-align: justify;
+}
+
+#carnet_text p {
+    font-size: 1em;
+    line-height: 1.25em;
+    margin: 1.25em 0;
+    text-align: justify;
+}
+
+#carnet_text ul {
+    list-style:square inside;
+}
+
 #massTagList {
     width: 200px
 }
