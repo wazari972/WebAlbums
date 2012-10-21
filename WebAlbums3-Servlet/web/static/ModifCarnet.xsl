@@ -63,10 +63,11 @@
             <br/><br/>
             <input type='submit' value='Valider' class="carnetSubmit"/> &#160; 
             <input type='button' value='Enregistrer' class="carnetSave"/> &#160; 
-            <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave1"/> <label for="carnetAutoSave1"> AutoSave</label>&#160; 
+            <input type='checkbox' class="carnetAutoSave" id="carnetAutoSave1"/> <label for="carnetAutoSave1"> AutoSave</label>&#160;
+            <input type='button' value='Side-by-side' class="btSide"/> &#160;<input type='button' value='+' class="btSizeUp" style="display:none"/> &#160;<input type='button' value='-' class="btSizeDown" style="display:none"/> &#160;
             <div class="localsave_info">Saved locally at: <span class="localsave_ts">not saved</span></div>
-            <div class="wmd-panel">
-                <div id="wmd-button-bar"></div>
+            <div id="wmd-button-bar"></div>
+            <div class="wmd-panel carnet_panel">
                 <textarea class="wmd-input" id="wmd-input" name="carnetText">
                     <xsl:value-of select="text" />
                 </textarea>

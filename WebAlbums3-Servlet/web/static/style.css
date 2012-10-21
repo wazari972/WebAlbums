@@ -212,9 +212,18 @@
     /*display:none;*/
 }
 
-.carnet_toc li {
-    background-color: #58ACFA;
+.carnet_toc {
+    clear:left
 }
+
+.carnet_toc ol li {
+    list-style-position:inside;
+}
+
+.carnet_toc ol li.all {
+    list-style:inside square;
+}
+
 .carnet_toc li.current {
     background-color: #00ACFA;
 }

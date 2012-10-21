@@ -25,7 +25,7 @@ function init_markdown() {
     });
     converter.hooks.chain("convertImage", convertImage);
     converter.hooks.chain("convertLink", convertLink);
-    converted = converter.makeHtml($("#carnet_text").text())
+    var converted = converter.makeHtml($("#carnet_text").text())
     
     converted = converted.replace("Image##", "Image__")
     converted = converted.replace("Miniature##", "Miniature__")
@@ -33,7 +33,7 @@ function init_markdown() {
     //TODO: rewrite with JQuery
     document.getElementById("carnet_text").innerHTML = converted
     $("#carnet_text a").each(function() {
-        href = $(this).attr("href")
+        var href = $(this).attr("href")
         if (href.indexOf("Photos") == -1) {
             if (!directAccess)
             $(this).attr("href", "Images__"+href)
@@ -43,7 +43,7 @@ function init_markdown() {
     })
     
     $("#carnet_text img").each(function() {
-        src = $(this).attr("src")
+        var src = $(this).attr("src")
         if (!directAccess)
             $(this).attr("src", "Miniature__"+src+".png")
         else
@@ -52,30 +52,77 @@ function init_markdown() {
 }
 
 function init_toc() {
-    toc = $(".carnet_toc")
+    var toc = $(".carnet_toc")
+    //create the list holder in all the carnet_toc divs
     toc.each(function() {
         $(this).append(document.createElement('ol'))
     })
+    //mark the first one as special: we don't want to scroll to top from first
     toc.children("ol:eq(0)").addClass("first")
-    ol = toc.children("ol")
-    $("#carnet_text").children("h1").each(function() {
-        var title = $(this)
-        ol.each(function() {
+    var ol = toc.children("ol")
+    
+    //for all the toc lists
+    ol.each(function() {
+        var thisOl = $(this)
+        
+        //create an item and add it to the list
+        var toutLI = $(document.createElement('li'))
+        toutLI.text("Tout")
+        thisOl.append(toutLI)
+        toutLI.addClass("all")
+        
+        toutLI.click(function() {
+            ol.each(function() {
+                $(this).children().removeClass("current")
+            })
+            $("#carnet_text").children().show()
+            //if we're at the bottom of the chapter, scroll to the top'
+            if (!$(this).parent().hasClass("first"))
+                window.scrollTo(0, $("#carnet_head").offset().top)
+        })
+        
+        //create an item and add it to the list
+        var debutLI = $(document.createElement('li'))
+        debutLI.text("Début")
+        thisOl.append(debutLI)
+        
+        var from = $("#carnet_text").children().first();
+        debutLI.click(function() {
+            //on click, change the class to "current"
+            var idx = debutLI.index()
+            ol.each(function() {
+                $(this).children().removeClass("current")
+                $(this).children("li:eq("+idx+")").addClass("current")
+            })
+            from.nextAll().hide()
+            from.nextUntil("h1").show()
+            //if we're at the bottom of the chapter, scroll to the top'
+            if (!$(this).parent().hasClass("first"))
+                window.scrollTo(0, $("#carnet_head").offset().top)
+        })
+        
+        //take all the headers,
+        $("#carnet_text").children("h1").each(function() {
+            var title = $(this)
+        
+            //create an item and add it to the list
             var li = $(document.createElement('li'))
             li.text(title.text())
-            $(this).append(li)
+            thisOl.append(li)
         
             li.click(function() {
-                idx = li.index()
+                //on click, change the class to "current"
+                var idx = li.index()
                 ol.each(function() {
                     $(this).children().removeClass("current")
                     $(this).children("li:eq("+idx+")").addClass("current")
                 })
+                //and hide all the irrelevant chapters
                 title.prevAll().hide()
                 title.show()
                 title.nextAll().hide()
                 title.nextUntil("h1").show()
-                
+                //if we're at the bottom of the chapter, scroll to the top'
                 if (!$(this).parent().hasClass("first"))
                     window.scrollTo(0, $("#carnet_head").offset().top)
             })

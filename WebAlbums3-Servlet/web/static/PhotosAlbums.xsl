@@ -29,9 +29,7 @@
         <xsl:if test="../exif">
             <span class="exif_container">
                 <span class="exif_tooltip">
-                    <xsl:attribute name="id">exif-content-
-                        <xsl:value-of select="photoId/@id" />
-                    </xsl:attribute>
+                    <xsl:attribute name="id">exif-content-<xsl:value-of select="photoId/@id" /></xsl:attribute>
                     <xsl:apply-templates select="../exif" />
                 </span>
             </span>
@@ -55,13 +53,7 @@
                         <xsl:attribute name="href">Photos__<xsl:value-of select="../@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" /></xsl:if>__<xsl:value-of select="../title" /></xsl:attribute>
                     </xsl:if>
                     <xsl:if test="/webAlbums/carnets">
-                        <xsl:attribute name="href">Carnet__
-                            <xsl:value-of select="../@id" />
-                            <xsl:if test="not(/webAlbums/affichage/@static)">_pc
-                                <xsl:value-of select="/webAlbums/carnets/display/page/@current" />
-                            </xsl:if>__
-                            <xsl:value-of select="../name" />
-                        </xsl:attribute>
+                        <xsl:attribute name="href">Carnet__<xsl:value-of select="../@id" /><xsl:if test="not(/webAlbums/affichage/@static)">_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" /></xsl:if>__<xsl:value-of select="../name" /></xsl:attribute>
                     </xsl:if>
                     <img class="photo">
                         <xsl:attribute name="alt">

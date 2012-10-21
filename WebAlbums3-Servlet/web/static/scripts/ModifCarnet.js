@@ -87,6 +87,45 @@ function init_buttons() {
     $("#carnetRepr").change(function () {
         $("#carnetReprImg").attr("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");
     }) ;
+    
+    $(".btSide").click(function() {
+        $("#cloud").hide()
+        
+        $('.carnet_panel').css( {
+            'background': '#b2c01d',
+            'position': 'absolute',
+            'left': "0px",
+            'width':$(document).width()/2+'px',
+            'height' : $('.carnet_text').height()+"px",
+            'top': $('.carnet_panel').offset().top+"px"
+        });
+        $('.wmd-input').css({
+            'height':"100%"
+        }) 
+        $('.carnet_text').css( {
+            'background': '#b2c01d',
+            'position': 'absolute',
+            'right': "0px",
+            'width':$(document).width()/2+'px',
+            'top': $('.carnet_panel').offset().top+"px"
+        })
+        $(this).hide()
+        $(".btSizeUp").show()
+        $(".btSizeDown").show()
+        
+        var INCR = 10
+        var sizeChange = function (doInc) {
+            var factor = 1;
+            if (!doInc) {
+                factor = -1;
+            }
+            $('.carnet_text').height($('.carnet_text').height() + INCR*factor)
+            $('.carnet_panel').height($('.carnet_panel').height() + INCR*factor)
+        }
+        
+        $(".btSizeUp").click(function(){sizeChange(true)})
+        $(".btSizeDown").click(function(){sizeChange(false)})
+    })
 }
 
 function beginConvert() {
