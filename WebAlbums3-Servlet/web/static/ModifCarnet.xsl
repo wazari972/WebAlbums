@@ -97,5 +97,6 @@
       </div>
     </div>
     <script type="text/javascript" src="static/scripts/ModifCarnet.js"/>
+    <script type="text/javascript" src="static/scripts/Carnet.js"/>
   </xsl:template>
 </xsl:stylesheet>

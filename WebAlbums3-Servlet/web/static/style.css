@@ -5,28 +5,6 @@
 
 /** **** **/
 
-#wmd-preview ul {
-    list-style:square inside;
-}
-
-#wmd-preview p {
-    font-size: 1em;
-    line-height: 1.25em;
-    margin: 1.25em 0;
-    text-align: justify;
-}
-
-#carnet_text p {
-    font-size: 1em;
-    line-height: 1.25em;
-    margin: 1.25em 0;
-    text-align: justify;
-}
-
-#carnet_text ul {
-    list-style:square inside;
-}
-
 #massTagList {
     width: 200px
 }
@@ -216,14 +194,31 @@
     clear:left
 }
 
-.carnet_toc ol li {
-    list-style-position:inside;
-}
-
 .carnet_toc ol li.all {
     list-style:inside square;
 }
 
+.carnet_toc ol li.toc {
+    list-style:inside none;
+}
+
 .carnet_toc li.current {
     background-color: #00ACFA;
+}
+
+.carnet_text img {
+    max-width:95%;
+    max-height:200px;
+    vertical-align:middle;
+}
+
+.carnet_text p {
+    font-size: 1em;
+    line-height: 1.25em;
+    margin: 1.25em 0;
+    text-align: justify;
+}
+
+.carnet_text ul {
+    list-style:square inside;
 }

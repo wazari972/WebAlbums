@@ -2,9 +2,9 @@ function convertImage(id, url, alt_text, title) {
     // __ in this function messes up the markdown generation
     // ## will be converted later
     
-    return '<br/><center><a href="'+url+'" title="' + alt_text + '">'
-         + '<img src="'+ url + '" alt="' + alt_text + '" />'
-         + '</a></center><br/>';
+    return '<center><a href="Image##'+url+'" title="' + alt_text + '">'
+         + '<img class="photo" src="Miniature##'+ url + '.png" alt="' + alt_text + '" />'
+         + '</a></center>';
 }
 function convertLink(id, url, title, link_text) {
     var result = "<a href=\"Photos__" + url + "_p0_pa__\"";
@@ -13,6 +13,14 @@ function convertLink(id, url, title, link_text) {
     result += ">" + link_text + "</a>";
     
     return result
+}
+
+function finishConvert(converted) {
+    
+    converted = converted.replace(/Image##/g, "Image__")
+    converted = converted.replace(/Miniature##/g, "Miniature__")
+    
+    return converted
 }
 
 function init_markdown() {
@@ -25,30 +33,23 @@ function init_markdown() {
     });
     converter.hooks.chain("convertImage", convertImage);
     converter.hooks.chain("convertLink", convertLink);
-    var converted = converter.makeHtml($("#carnet_text").text())
+    converter.hooks.chain("postConversion", finishConvert);
     
-    converted = converted.replace("Image##", "Image__")
-    converted = converted.replace("Miniature##", "Miniature__")
+    var converted = converter.makeHtml($("#carnet_text").text())
     
     //TODO: rewrite with JQuery
     document.getElementById("carnet_text").innerHTML = converted
-    $("#carnet_text a").each(function() {
-        var href = $(this).attr("href")
-        if (href.indexOf("Photos") == -1) {
-            if (!directAccess)
-            $(this).attr("href", "Images__"+href)
-        else
+    if (directAccess) {
+        $("#carnet_text a").each(function() {
+            var href = $(this).attr("href")
             $(this).attr("href", root_path+photo_folder+carnet_static_lookup[href])
-        }
-    })
-    
-    $("#carnet_text img").each(function() {
-        var src = $(this).attr("src")
-        if (!directAccess)
-            $(this).attr("src", "Miniature__"+src+".png")
-        else
+            
+        })
+        $("#carnet_text img").each(function() {
+            var src = $(this).attr("src")
             $(this).attr("src", root_path+mini_folder+carnet_static_lookup[src]+".png")
-    })
+        })   
+    }
 }
 
 function init_toc() {
@@ -64,6 +65,11 @@ function init_toc() {
     //for all the toc lists
     ol.each(function() {
         var thisOl = $(this)
+        
+        var sommLI = $(document.createElement('li'))
+        sommLI.text("Table of Content")
+        thisOl.append(sommLI)
+        sommLI.addClass("toc")
         
         //create an item and add it to the list
         var toutLI = $(document.createElement('li'))
@@ -130,15 +136,30 @@ function init_toc() {
     })    
 }
 
+function init_buttons() {
+    $(".fullscreen").click(function() {
+        $(".item").css({
+            'position': 'absolute',
+            'left': "0px",
+            'top': "0px",
+            'background': '#b2c01d',
+            'width':$(document).width()+'px'
+        })
+        
+    })
+}
+
 function init_page() {
     init_markdown()
     init_toc()
+    init_buttons()
 }
 
 $(function() {
-    if (get_data_page("carcnet_inited"))
+    if (get_data_page("carnet_inited")) {
         return
-    save_data_page("carcnet_inited", true)
+    }
+    save_data_page("carnet_inited", true)
     
     init_page()
     add_callback("SinglePage", init_page)

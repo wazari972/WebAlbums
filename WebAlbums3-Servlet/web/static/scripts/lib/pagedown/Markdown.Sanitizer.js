@@ -10,7 +10,7 @@
         
     output.getSanitizingConverter = function () {
         var converter = new Converter();
-        converter.hooks.chain("postConversion", sanitizeHtml);
+        //converter.hooks.chain("postConversion", sanitizeHtml);
         converter.hooks.chain("postConversion", balanceTags);
         return converter;
     }
