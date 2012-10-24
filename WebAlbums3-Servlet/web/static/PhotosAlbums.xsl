@@ -228,7 +228,9 @@
                                 </a>
                             </xsl:if>
                             <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets or /webAlbums/photos/random)">
-                                <span class="exif"><xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>EXIF</span>
+                                <span class="exif"><xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                    <img src="static/images/info.png" width="30px"/>
+                                </span>
                             </xsl:if>
                         </xsl:if>
                         <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">

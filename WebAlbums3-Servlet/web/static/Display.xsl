@@ -47,7 +47,7 @@
 	      <div id="right">
 		<h3>Affichage</h3>
 		<ul>
-		  <li>Exif: <a id="mode_details" title="">not set</a></li>
+		  <li>Exif <img src="static/images/info.png" width="20px"/>: <a id="mode_details" title="">not set</a></li>
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                         <li>Mode: <a id="mode_edition" title="">not set</a></li>
                     </xsl:if>

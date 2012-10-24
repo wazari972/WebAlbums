@@ -195,6 +195,7 @@ body {
 /* item */
 .item {
     clear: left;
+    overflow: auto;
 }
 .item .date {
     background: url(images/bgdate.gif) no-repeat;

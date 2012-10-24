@@ -103,7 +103,7 @@ function body_mouseleave() {
 }
 
 function do_init_mouse_hover() {
-    $(".details").hover(body_mouseenter, body_mouseleave)
+    $(".item").hover(body_mouseenter, body_mouseleave)
     var value = get_editionMode()
     if (value != 'INTENSIVE EDIT') {
         $(".edit").hide()
