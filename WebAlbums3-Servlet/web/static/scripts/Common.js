@@ -58,6 +58,7 @@ function refresh_editionMode() {
     if (value == 'VISITE') {
         $(".edit").hide()
         $(".edit_visible").hide()
+        callURL("Photos?special=FASTEDIT")
     } else if (value == 'EDITION') {
         //nothing to do
     } else if (value == 'INTENSIVE EDIT') {

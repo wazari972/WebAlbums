@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
-import net.wazari.service.exchange.ViewSession.Action;
+import net.wazari.service.exchange.*;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
@@ -34,7 +34,6 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.View
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
-import net.wazari.service.exchange.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,6 +215,15 @@ public class ViewSessionImpl implements
     }
 
     /** ** **/
+    
+    @Override
+    public Boolean getwantManager() {
+        Boolean want = getBoolean("wantManager")  ;
+        if (want == null)
+            want = false;
+        return want;
+    }
+    
     @Override
     public boolean isRootSession() {
         Boolean val = getSessionObject("rootSession", Boolean.class);
@@ -238,11 +246,6 @@ public class ViewSessionImpl implements
             ret = false;
         }
         return ret;
-    }
-    
-    @Override
-    public boolean isAdminSession() {
-        return this.getUser() != null && this.getUser().getId() == 1 ;
     }
 
     @Override

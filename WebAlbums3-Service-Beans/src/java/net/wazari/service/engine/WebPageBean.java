@@ -158,7 +158,7 @@ public class WebPageBean implements WebPageLocal {
         if (vSession.isSessionManager() && !vSession.getStatic()) {
             login.admin = true ;
         }
-        log.debug( "logged as admin? {}", vSession.isAdminSession());
+        
         log.debug( "logged as root? {}", vSession.isRootSession());
         if (vSession.isRootSession()) {
             login.root = true ;

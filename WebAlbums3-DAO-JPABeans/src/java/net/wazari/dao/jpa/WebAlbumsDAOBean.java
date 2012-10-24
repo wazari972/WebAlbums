@@ -123,12 +123,12 @@ public class WebAlbumsDAOBean {
     }
     
     private boolean mustFilter(ServiceSession session, Utilisateur user) {
-        return session != null && !session.isAdminSession() && session.getUser() != null &&
+        return session != null && !session.isSessionManager() && session.getUser() != null &&
                 user != null && user.getId() < session.getUser().getId();
     }
     
     private boolean mustFilter(ServiceSession session, Integer userId) {
-        return session != null && !session.isAdminSession() && session.getUser() != null
+        return session != null && !session.isSessionManager() && session.getUser() != null
             && userId != null &&
             userId < session.getUser().getId();
     }
