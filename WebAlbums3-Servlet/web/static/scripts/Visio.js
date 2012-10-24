@@ -97,7 +97,6 @@ function init_visio () {
     jwerty.key('p/←/↑', function () {nextprev(true); nextprev(true, true)});
     
     jwerty.key('f', function(){toggleFullScreen()})
-    toggleFullScreen()
 }
 
 $(function() {
