@@ -202,9 +202,6 @@
                         </xsl:if>
                     </div>
                     <span class="optional">
-                        <xsl:if test="/webAlbums/carnets">
-                            <img alt="Photo en plein-ecran" class="fullscreen" src="static/images/out.png" width="30px"/>
-                        </xsl:if>
                         <xsl:if test="not(/webAlbums/carnets or /webAlbums/photos/random)">
                             <a rel="singlepage[no]" target="_blank" title="Visionneuse">
                                 <xsl:if test="/webAlbums/albums">
@@ -231,14 +228,6 @@
                                 <span class="exif"><xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>
                                     <img src="static/images/info.png" width="30px"/>
                                 </span>
-                            </xsl:if>
-                        </xsl:if>
-                        <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
-                            <xsl:if test="/webAlbums/affichage/remote or /webAblums/affichage/@static">
-                                <img alt="Photo en plein-ecran" class="fullscreen" src="static/images/out.png" width="30px">
-                                 <!-- no url rewritting -->
-                                    <xsl:attribute name="rel">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=FULLSCREEN</xsl:attribute>
-                                </img>
                             </xsl:if>
                         </xsl:if>
                         <xsl:if test="/webAlbums/loginInfo/@admin">

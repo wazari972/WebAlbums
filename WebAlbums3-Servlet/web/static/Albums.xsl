@@ -43,15 +43,6 @@
                             <img src="static/images/slide.png" height="30px"/>
                         </a>
                     </xsl:if>
-                    <xsl:if test="not(/webAlbums/affichage/remote or /webAblums/affichage/@static)">
-                        <span>&#160;</span>
-                        <img src="static/images/out.png" height="30px"
-                          class='fullscreen'>
-                          <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
-                          <!-- no url rewritting -->
-                          <xsl:attribute name="rel">Photos?album=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../photoList/page/@current" />&amp;special=FULLSCREEN</xsl:attribute>                          
-                        </img>
-                    </xsl:if>
                     <xsl:if test="/webAlbums/photos/display/album/details/tagList/where">
                         <a rel="singlepage[no]" id="showTagMap">
                             <xsl:attribute name="title">Afficher la carte des tags.</xsl:attribute>
