@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="static/scripts/lib/jquery/css/jquery.jOrgChart.css"/>
+    </head>
+    <body>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.jOrgChart.js"></script>
+        
+        <script type="text/javascript" src="static/scripts/tools.js"></script>
+        
+        <div id="tagTree" style="display:none"></div>
+        
+        <div id="chart" class="orgChart"></div>
+        
+        <script type="text/javascript">
+            function loaded() {
+                $("#tagTree").hide()
+                
+                var ul = $('<ul>')
+                var li = $('<li>')
+                li.html("WebAlbums<ul>"+$("#cloudTree").html()+"</ul>")
+                
+                ul.append(li)
+                
+                ul.jOrgChart({
+                    chartElement : '#chart'
+                });
+            }
+            $(function() {
+                loadExernals(null, 'Tags__Cloud', 'tagTree', loaded) ;
+            })
+        </script>
+    </body>
+</html>
