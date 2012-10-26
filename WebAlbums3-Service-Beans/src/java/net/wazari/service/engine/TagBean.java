@@ -5,6 +5,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.entity.Geolocalisation;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.service.PhotoLocal;
@@ -66,7 +67,7 @@ public class TagBean implements TagLocal {
                     log.warn("Tag {} cannot be looked up", tagId);
                 }
             }
-            log.warn("DISPLAY TAGS FROM {}", tagSet);
+            
             XmlFrom thisPage = new XmlFrom();
             thisPage.name = "Tags";
             List<Integer> tagsAsked = new ArrayList<Integer>(tagSet.size());
@@ -81,7 +82,7 @@ public class TagBean implements TagLocal {
             output.title.tagList = webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet), Box.NONE);
 
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet);
-            Special special = vSession.getSpecial();
+            
             output.photoList = photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay) vSession, submit, thisPage);
         }
         stopWatch.stop();
@@ -97,20 +98,11 @@ public class TagBean implements TagLocal {
         about.tag = new XmlTag();
         about.tag.name = enrTag.getNom();
         about.tag.id = enrTag.getId();
-        List<TagTheme> lstTT = enrTag.getTagThemeList();
-        Random rand = new Random();
-        //pick up a RANDOM valid picture visible from this theme
-        while (!lstTT.isEmpty()) {
-            int i = rand.nextInt(lstTT.size());
-            TagTheme enrTT = lstTT.get(i);
-            if (enrTT.getPhoto() != null
-                    && (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
-                about.tag.picture = new XmlPhotoId(enrTT.getPhoto().getId());
-                about.tag.picture.path = enrTT.getPhoto().getPath(true);
-                break;
-            } else {
-                lstTT.remove(i);
-            }
+        
+        Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession, enrTag);
+        if (enrTagThemePhoto != null) {
+            about.tag.picture = new XmlPhotoId(enrTagThemePhoto.getId());
+            about.tag.picture.path = enrTagThemePhoto.getPath(true);
         }
 
         return about ;
@@ -261,21 +253,12 @@ public class TagBean implements TagLocal {
                 tag.setGeo(geo.getLatitude(), geo.getLongitude());
             }
             
-            List<TagTheme> lstTT = enrTag.getTagThemeList();
-            Random rand = new Random();
-            //pick up a RANDOM valid picture visible from this theme
-            while (!lstTT.isEmpty()) {
-                int i = rand.nextInt(lstTT.size());
-                TagTheme enrTT = lstTT.get(i);
-                if (enrTT.getPhoto() != null
-                        && (vSession.isRootSession() || vSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
-                    tag.picture = new XmlPhotoId(enrTT.getPhoto().getId());
-                    tag.picture.path = enrTT.getPhoto().getPath(true);
-                    break;
-                } else {
-                    lstTT.remove(i);
-                }
+            Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession, enrTag);
+            if (enrTagThemePhoto != null) {
+                tag.picture = new XmlPhotoId(enrTagThemePhoto.getId());
+                tag.picture.path = enrTagThemePhoto.getPath(true);
             }
+            
             output.tagList.add(tag);
         }
         stopWatch.stop();

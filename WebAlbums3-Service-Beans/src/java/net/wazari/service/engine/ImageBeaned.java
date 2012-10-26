@@ -92,16 +92,29 @@ public class ImageBeaned implements ImageLocal {
         String type;
         Theme enrThemeForBackground = vSession.getTheme() ;
         try {
-            if (mode == ImgMode.RANDOM_TAG) {
-                if (tagDAO.find(imgId) != null) {
-                    Collection<Tag> tagLst = Arrays.asList(new Tag[]{tagDAO.find(imgId)});
-                    SubsetOf<Photo> photos = photoDAO.loadByTags(vSession, tagLst, new Bornes(1), ListOrder.RANDOM);
-                    if (!photos.subset.isEmpty()) {
-                        imgId = photos.subset.get(0).getId() ;
-                        mode = ImgMode.GRAND ;
-                    } else {
-                        log.warn("No photo in tag: {}",imgId);
-                        imgId = null ;
+            if (mode == ImgMode.RANDOM_TAG || mode == ImgMode.REPRESENT_TAG) {
+                Tag enrTag = tagDAO.find(imgId);
+                if (enrTag != null) {
+                    if (mode == ImgMode.RANDOM_TAG) {
+                        SubsetOf<Photo> photos = photoDAO.loadByTags(vSession, 
+                                Arrays.asList(new Tag[]{enrTag}),
+                                new Bornes(1), ListOrder.RANDOM);
+                        
+                        if (!photos.subset.isEmpty()) {
+                            imgId = photos.subset.get(0).getId() ;
+                            mode = ImgMode.GRAND ;
+                        } else {
+                            log.warn("No photo in tag: {}",imgId);
+                            imgId = null ;
+                        }
+                    } else /* REPRESENT_TAG */{
+                        mode = ImgMode.MINI ;
+                        Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession, enrTag);
+                        if (enrTagThemePhoto != null) {
+                            imgId = enrTagThemePhoto.getId();
+                        } else {
+                            imgId = null;
+                        }
                     }
                 } else {
                     log.warn("No such tag: {}",imgId);

@@ -209,7 +209,7 @@
             <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
         </span>
         <xsl:if test="children/tag">
-	    <ul rel="close">
+	    <ul>
               <xsl:apply-templates select="children/tag"/>
             </ul>
         </xsl:if>

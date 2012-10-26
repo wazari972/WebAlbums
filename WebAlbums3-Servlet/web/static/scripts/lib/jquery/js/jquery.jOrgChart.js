@@ -42,8 +42,20 @@
             stack       : 'div.node'
         });
         
+        var accept;
+        if (true || opts.dropCallback == undefined) {
+            accept = '.node'
+        } else {
+            accept = function(item) {
+                if (!item.hasClass("node"))
+                    return false
+                
+                return opts.dropCallback(item);
+            }
+        }
+        
         $('div.node').droppable({
-            accept      : '.node',          
+            accept      : accept,          
             activeClass : 'drag-active',
             hoverClass  : 'drop-hover'
         });
@@ -99,7 +111,8 @@
     chartElement : 'body',
     depth      : -1,
     chartClass : "jOrgChart",
-    dragAndDrop: false
+    dragAndDrop: false,
+    dropCallback: undefined
   };
   
   var nodeCount = 0;

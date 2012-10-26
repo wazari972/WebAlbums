@@ -204,11 +204,6 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     }
 
     @Override
-    public boolean isAdminSession() {
-        return true;
-    }
-
-    @Override
     public boolean isRootSession() {
         return theme.getId() == 1;
     }

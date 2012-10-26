@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.exchange.ServiceSession;
 
@@ -56,4 +57,7 @@ public interface TagFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Set<Tag> getChildren(Tag tag);
+
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    Photo getTagThemePhoto(ServiceSession sSession,Tag enrTag);
 }
