@@ -4,6 +4,35 @@
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="static/scripts/lib/jquery/css/jquery.jOrgChart.css"/>
+        <style type="text/css">
+            body,html{
+                background-color: #FDF;
+             }
+            img.miniOrg {
+                max-width:100px;
+                max-height:100px;
+                vertical-align:middle;
+                clear:both;
+            }
+            
+            .node a {
+                font-family: tahoma;
+                font-size: 10px;
+                line-height: 11px;
+                padding: 2px;
+            }
+            
+            .jOrgChart .node {
+                background-color: #35363B;
+                border: 5px solid white;
+                border-radius: 8px 8px 8px 8px;
+                color: #F38630;
+                font-size: 14px;
+                overflow: hidden;
+                height:auto;
+                width:auto;
+            }
+            </style>
     </head>
     <body>
         <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
@@ -17,7 +46,21 @@
         
         <script type="text/javascript">
             function loaded() {
+                document.title = 'Preprocessing elements ...';
                 $("#tagTree").hide()
+                
+                
+                $("#cloudTree li").removeClass("submenu")
+                $("#cloudTree a").removeClass("cloud-tag_used")
+                                 .css({ 'font-size': "100%" })
+                                 .each(function() {
+                                     var id = $(this).attr("id").split("-")[2]
+                                     var img = new Image()
+                                     img.src = "Miniature__"+id+".png"
+                                     $(img).addClass("miniOrg")
+                                     $(this).parent().append(img)
+                                 })
+                $("#cloudTree span").remove()
                 
                 var ul = $('<ul>')
                 var li = $('<li>')
@@ -25,11 +68,14 @@
                 
                 ul.append(li)
                 
+                document.title = 'jOrgCharting the graph ...';
                 ul.jOrgChart({
                     chartElement : '#chart'
                 });
+                document.title = 'WebAlbums Tags chart';
             }
             $(function() {
+                document.title = 'Loading cloud tag ...';
                 loadExernals(null, 'Tags__Cloud', 'tagTree', loaded) ;
             })
         </script>
