@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+ "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+   <!-- See http://developer.yahoo.com/yui/grids/ for info on the grid layout -->
+   <title>Local Timeline Example</title>
+   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+   <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
+
+   <script src="static/scripts/lib/timeline_2.3.0/timeline_ajax/simile-ajax-api.js?bundle=true" type="text/javascript"></script>
+   <script src="static/scripts/lib/timeline_2.3.0/timeline_js/timeline-api.js?bundle=true" type="text/javascript"></script>
+ 
+   <style type="text/css">
+        html  {background-color: #003366;}
+
+        h1 {color: #834c24;}
+        p {margin-top: .5em;}
+   </style>
+
+   <script  type="text/javascript">
+       var timeline_data = {  // save as a global variable
+            'dateTimeFormat': 'iso8601',
+            'events' : []
+        }
+
+        var tl;
+        $(function() {
+            $.get('Albums?special=SELECT', function(data) {
+                xmlData = $(data)
+                xmlData.find("album").each(function() {
+                    
+                    timeline_data.events.push({
+                        "start" : $(this).find("albmDate").text(),
+                        "title" : $(this).find("name").text(),
+                        "description" : $(this).find("description").text(),
+                        "image" : "Miniature__"+$(this).find("picture").attr("id")+".png",
+                        "link" : "Photo__"+$(this).attr("id")+"__"+$(this).find("name").text()
+                    })
+                })
+                createTimeline(timeline_data)
+            });
+        })
+        
+        function createTimeline(tl_data) {
+            var eventSource = new Timeline.DefaultEventSource();
+            
+            var theme = Timeline.ClassicTheme.create();
+            theme.autoWidth = true;
+            
+            var startParts = tl_data.events[tl_data.events.length-1].start.split("-")
+            var stopParts = tl_data.events[0].start.split("-")
+            
+            theme.timeline_start = new Date(startParts[0], (startParts[1] - 1), startParts[2]);
+            theme.timeline_stop  = new Date(stopParts[0], (stopParts[1] - 1), stopParts[2]);
+            
+            var bandInfos = [
+                Timeline.createBandInfo({
+                    width:          200, // set to a minimum, autoWidth will then adjust
+                    intervalUnit:   Timeline.DateTime.MONTH, 
+                    intervalPixels: 300,
+                    eventSource:    eventSource,
+                    date:           theme.timeline_stop,
+                    theme:          theme,
+                    layout:         'original'  // original, overview, detailed
+                })
+            ];
+                                                            
+            // create the Timeline
+            tl = Timeline.create(document.getElementById("timeline"), bandInfos, Timeline.HORIZONTAL);
+            eventSource.loadJSON(tl_data, ".");
+            tl.layout(); // display the Timeline
+        }
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    tl.layout();
+                }, 500);
+            }
+        }
+   </script>
+
+    </head>
+    <body>
+        <div id='timeline'></div>
+    </body>
+</html>
+
+
