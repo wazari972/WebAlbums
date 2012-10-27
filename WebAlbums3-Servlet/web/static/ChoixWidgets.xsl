@@ -174,29 +174,43 @@
   </xsl:template>
   
   <xsl:template match="cloud">
-      <h3>Nuage de tags </h3>
+      <h3>Nuage de tags</h3>
       <span class="tree-opt"><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></span>
       <hr/>
       <ul id="cloudTree" class="treeview">
-        <li class="not-real-tag">
-            <a>Who<hr/></a>
-            <xsl:apply-templates select="tag[@type = 'who']"/>
-        </li>
+        <xsl:if test="tag[@type = 'who']">
+            <li class="not-real-tag" rel="open">
+                <a>Who<hr/></a>
+                <ul>
+                    <xsl:apply-templates select="tag[@type = 'who']"/>
+                </ul>
+            </li>
+        </xsl:if>
         
-        <li class="not-real-tag">
-            <a><hr/>What<hr/></a>
-            <xsl:apply-templates select="tag[@type = 'what']"/>
-        </li>
+        <xsl:if test="tag[@type = 'what']">
+            <li class="not-real-tag" rel="open">
+                <a><hr/>What<hr/></a>
+                <ul>
+                    <xsl:apply-templates select="tag[@type = 'what']"/>
+                </ul>
+            </li>
+        </xsl:if>
         
-        <li class="not-real-tag">
-            <a><hr/>Where<hr/></a>
-            <xsl:apply-templates select="tag[@type = 'where']"/>
-        </li>
+        <xsl:if test="tag[@type = 'where']">
+            <li class="not-real-tag" rel="open">
+                <a><hr/>Where<hr/></a>
+                <ul>
+                    <xsl:apply-templates select="tag[@type = 'where']"/>
+                </ul>
+            </li>
+        </xsl:if>
         
         <xsl:if test="../tag_never">
-            <li class="not-real-tag">
+            <li class="not-real-tag" rel="open">
                 <a><hr/>Tags never ever used</a>
-                <xsl:apply-templates select="../tag_never"/>
+                <ul>
+                    <xsl:apply-templates select="../tag_never"/>
+                </ul>
             </li>
         </xsl:if>
       </ul>

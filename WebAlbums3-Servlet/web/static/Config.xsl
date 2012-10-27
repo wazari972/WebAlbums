@@ -239,7 +239,9 @@
 	<span>*</span>
       </div>
       <div class="content">
-	<h1>Parenté des tags</h1>
+	<h1>Parenté des tags
+            <a href="sort.html" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">^</a>
+        </h1>
 	<div class="body">
 	  <form action='#linkTag' method='POST' >
 	    <xsl:apply-templates select="linktag"/>

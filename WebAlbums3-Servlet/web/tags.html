@@ -24,7 +24,7 @@
                 clear:left;
                 color: #E05E00;	
                 text-decoration: none;
-}
+            }
 
             .node a:hover{
                     text-decoration: underline;
@@ -63,12 +63,15 @@
                 $("#cloudTree a").removeClass("cloud-tag_used")
                                  .css({ 'font-size': "100%" })
                                  .each(function() {
+                                     if (!$(this).attr("id"))
+                                         return
                                      var id = $(this).attr("id").split("-")[2]
                                      var img = new Image()
                                      img.src = "Images?mode=REPRESENT_TAG&id="+id
                                      $(img).addClass("miniOrg")
                                      $(this).parent().append($('<br/>')).append(img)
                                  })
+                                 .attr("target", "_blank")
                 $("#cloudTree span").remove()
                 
                 var ul = $('<ul>')
@@ -80,7 +83,7 @@
                 document.title = 'jOrgCharting the graph ...';
                 
                 ul.jOrgChart({
-                    chartElement : '#chart',
+                    chartElement : '#chart'
                 });
                 document.title = 'WebAlbums Tags chart';
             }

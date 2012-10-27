@@ -15,8 +15,9 @@ function init_tree() {
 
 $(function() {
     try {
-        if (dontinittree)
-            return;
+        if (dontinittree){
+    //        return;
+        }
     } catch(e){}
     
     init_tree()
