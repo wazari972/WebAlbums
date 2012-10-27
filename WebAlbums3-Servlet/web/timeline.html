@@ -9,12 +9,17 @@
 
    <script src="static/scripts/lib/timeline_2.3.0/timeline_ajax/simile-ajax-api.js?bundle=true" type="text/javascript"></script>
    <script src="static/scripts/lib/timeline_2.3.0/timeline_js/timeline-api.js?bundle=true" type="text/javascript"></script>
- 
+   
+   
    <style type="text/css">
         html  {background-color: #003366;}
 
         h1 {color: #834c24;}
         p {margin-top: .5em;}
+        
+        #timeline {
+            height : 400px;
+        }
    </style>
 
    <script  type="text/javascript">
@@ -34,7 +39,8 @@
                         "title" : $(this).find("name").text(),
                         "description" : $(this).find("description").text(),
                         "image" : "Miniature__"+$(this).find("picture").attr("id")+".png",
-                        "link" : "Photo__"+$(this).attr("id")+"__"+$(this).find("name").text()
+                        "link" : "Photo__"+$(this).attr("id")+"__"+$(this).find("name").text(),
+                        "color": "#00AA00"
                     })
                 })
                 createTimeline(timeline_data)
@@ -45,7 +51,6 @@
             var eventSource = new Timeline.DefaultEventSource();
             
             var theme = Timeline.ClassicTheme.create();
-            theme.autoWidth = true;
             
             var startParts = tl_data.events[tl_data.events.length-1].start.split("-")
             var stopParts = tl_data.events[0].start.split("-")
@@ -55,16 +60,29 @@
             
             var bandInfos = [
                 Timeline.createBandInfo({
-                    width:          200, // set to a minimum, autoWidth will then adjust
+                    width:          "90%",
                     intervalUnit:   Timeline.DateTime.MONTH, 
                     intervalPixels: 300,
                     eventSource:    eventSource,
                     date:           theme.timeline_stop,
                     theme:          theme,
                     layout:         'original'  // original, overview, detailed
+                }),
+                Timeline.createHotZoneBandInfo({
+                    width:          "10%", 
+                    intervalUnit:   Timeline.DateTime.YEAR, 
+                    intervalPixels: 200,
+                    eventSource:    eventSource,
+                    date:           theme.timeline_stop, 
+                    //timeZone:       -6,
+                    overview:       true,
+                    theme:          theme,
+                    zones : []
                 })
             ];
-                                                            
+            bandInfos[1].syncWith = 0;
+            bandInfos[1].highlight = true;
+            
             // create the Timeline
             tl = Timeline.create(document.getElementById("timeline"), bandInfos, Timeline.HORIZONTAL);
             eventSource.loadJSON(tl_data, ".");
