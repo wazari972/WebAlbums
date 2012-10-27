@@ -15,4 +15,6 @@ public interface ViewSessionTag extends ViewSessionPhoto, ViewSessionAlbum {
 
     boolean getWantTagChildren();
 
+    boolean getWantUnusedTags();
+
 }

@@ -173,15 +173,34 @@
     </td>
   </xsl:template>
   
-  
   <xsl:template match="cloud">
       <h3>Nuage de tags </h3>
-      <!--<a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a>-->
+      <span class="tree-opt"><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></span>
       <hr/>
       <ul id="cloudTree" class="treeview">
-        <xsl:apply-templates select="tag"/>
+        <li class="not-real-tag">
+            <a>Who<hr/></a>
+            <xsl:apply-templates select="tag[@type = 'who']"/>
+        </li>
+        
+        <li class="not-real-tag">
+            <a><hr/>What<hr/></a>
+            <xsl:apply-templates select="tag[@type = 'what']"/>
+        </li>
+        
+        <li class="not-real-tag">
+            <a><hr/>Where<hr/></a>
+            <xsl:apply-templates select="tag[@type = 'where']"/>
+        </li>
+        
+        <xsl:if test="../tag_never">
+            <li class="not-real-tag">
+                <a><hr/>Tags never ever used</a>
+                <xsl:apply-templates select="../tag_never"/>
+            </li>
+        </xsl:if>
       </ul>
-      <!--
+      
       <script type="text/javascript" src="static/scripts/Empty.js"/>
       <link rel="stylesheet" type="text/css" href="static/scripts/lib/treemenu/simpletree.css" />
       <script type="text/javascript" src="static/scripts/lib/treemenu/simpletreemenu.js">
@@ -191,10 +210,10 @@
             * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
             * (http://www.dynamicdrive.com/dynamicindex1/navigate1.htm)
             ***********************************************/
-      </script>-->
+      </script>
   </xsl:template>
 
-  <xsl:template match="cloud/tag|children/tag">
+  <xsl:template match="cloud/tag|children/tag|tag_never/where|tag_never/what|tag_never/who">
       <li>
         <a class="cloud-tag_used">
           <xsl:attribute name="id">cloud-target-<xsl:value-of select="@id"/></xsl:attribute>
@@ -214,7 +233,7 @@
         </xsl:if>
     </li>
   </xsl:template>
-  
+    
   <xsl:template match="/webAlbums/albums/gpxes">
       <xsl:if test="/webAlbums/albums/gpxes/gpx">
         <div>

@@ -75,7 +75,7 @@
         <script type="text/javascript">
             function loaded() {
                 document.title = 'nestedSortableing the graph ...';
-                
+                $(".tree-opt").remove()
                 $("#cloudTree a").removeClass("cloud-tag_used")
                                  .css({ 'font-size': "100%" })
                                  .click(function(event){event.preventDefault();})
@@ -98,6 +98,11 @@
                         var target = ui.item.children("a").first()
                         var parent = ui.item.parent().parent().children("a").first()
                         
+                        if(ui.item.parent().hasClass("not-real-tag")) {
+                            alert("Cannot drop a tag in here ...")
+                            return false;
+                        }
+                        
                         if (!confirm("'"+parent.text()+"' est parent de '"+target.text()+"' ?")) {
                             return false;
                         }
@@ -115,9 +120,10 @@
 
                 document.title = 'WebAlbums Tags ready to be sorted';
             }
+            var dontinittree = true;
             $(function() {
                 document.title = 'Loading cloud tag ...';
-                loadExernals(null, 'Tags__Cloud', 'tagTree', loaded) ;
+                loadExernals(null, 'Tags?special=CLOUD&wantUnusedTags=true', 'tagTree', loaded) ;
             })
         </script>
     </body>

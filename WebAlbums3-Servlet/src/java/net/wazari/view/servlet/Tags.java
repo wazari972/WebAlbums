@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.TagLocal;
+import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
@@ -36,12 +38,18 @@ public class Tags extends HttpServlet {
     private TagLocal tagService;
     @EJB
     private PhotoLocal photoService;
-
+    @EJB
+    private WebPageLocal webPageService ;
+    
     public XmlTags treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
         XmlTags output = new XmlTags();
         Special special = vSession.getSpecial();
         if (Special.CLOUD == special) {
             output.cloud = tagService.treatTagCloud(vSession) ;
+            if (vSession.getWantUnusedTags()) {
+                output.tag_never = webPageService.displayListLB(ViewSession.Mode.TAG_NEVER_EVER, vSession, null,
+                        ViewSession.Box.MULTIPLE);
+            }
             return output ;
         } else  if (Special.PERSONS == special) {
             output.persons = tagService.treatTagPersons(vSession) ;

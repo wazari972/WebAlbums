@@ -85,10 +85,8 @@ public class ConfigBean implements ConfigLocal {
             output.newMinor = isMinor != null && isMinor;
         }
         
-        
         tagDAO.edit(enrTag);
         
-
         return output ;
     }
 

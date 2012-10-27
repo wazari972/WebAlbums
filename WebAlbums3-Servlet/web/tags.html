@@ -79,15 +79,8 @@
                 
                 document.title = 'jOrgCharting the graph ...';
                 
-                var accept = function(item) {
-                    alert(item.attr("class"))
-                    return false
-                }
-                
                 ul.jOrgChart({
                     chartElement : '#chart',
-                    dragAndDrop  : true,
-                    dropCallback : accept
                 });
                 document.title = 'WebAlbums Tags chart';
             }

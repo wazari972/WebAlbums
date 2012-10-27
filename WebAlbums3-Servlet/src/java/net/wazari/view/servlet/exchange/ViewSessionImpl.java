@@ -385,6 +385,11 @@ public class ViewSessionImpl implements
     }
 
     @Override
+    public boolean getWantUnusedTags() {
+        return getString("wantUnusedTags") != null;
+    }
+    
+    @Override
     public ImgMode getImgMode() {
         return getEnum("mode", ImgMode.class);
     }

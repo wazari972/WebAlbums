@@ -47,6 +47,11 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     public ViewSession.Action getAction() {
         return null;
     }
+    
+    @Override
+    public boolean getWantUnusedTags() {
+        return false;
+    }
 
     @Override
     public Utilisateur getUser() {

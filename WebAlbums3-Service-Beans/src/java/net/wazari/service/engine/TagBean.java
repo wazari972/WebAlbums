@@ -177,6 +177,13 @@ public class TagBean implements TagLocal {
                 pair.xml.nb = nbElts;
                 pair.xml.id = pair.tag.getId();
                 pair.xml.name = pair.tag.getNom();
+                
+                switch(pair.tag.getTagType()) {
+                    case 1: pair.xml.type = "who"; break;
+                    case 2: pair.xml.type = "what"; break;
+                    case 3: pair.xml.type = "where"; break;
+                }
+                
                 if (pair.tag.getGeolocalisation() != null) {
                     Geolocalisation geo = pair.tag.getGeolocalisation();
                     pair.xml.setGeo(geo.getLatitude(), geo.getLongitude());
