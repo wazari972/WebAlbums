@@ -376,8 +376,9 @@ public class ConfigBean implements ConfigLocal {
 
         for (Integer sonId : sonIds) {
             Tag enrSonTag = tagDAO.find(sonId);
-            if (enrParentTag == null)
+            if (enrParentTag == null) {
                 enrSonTag.setParent(null);
+            }
             else if(isParentalityAllowed(enrParentTag, enrSonTag)) {
                 enrSonTag.setParent(enrParentTag);
             }

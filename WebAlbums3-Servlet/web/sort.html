@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" media="screen" type="text/css"/>
+        <style type="text/css">
+            body,html{
+                background-color: #FDF;
+             }
+             
+             .placeholder {
+			border: 1px dashed #4183C4;
+			-webkit-border-radius: 3px;
+			-moz-border-radius: 3px;
+			border-radius: 3px;
+		}
+
+		.mjs-nestedSortable-error {
+			background: #fbe3e4;
+			border-color: transparent;
+		}
+
+		ul {
+			margin: 0;
+			padding: 0;
+			padding-left: 30px;
+		}
+
+		ul.sortable, ul.sortable ul {
+			margin: 0 0 0 25px;
+			padding: 0;
+			list-style-type: none;
+		}
+
+		ul.sortable {
+			margin: 4em 0;
+		}
+
+		.sortable li {
+			margin: 5px 0 0 0;
+			padding: 0;
+		}
+
+		.sortable li div  {
+			border: 1px solid #d4d4d4;
+			-webkit-border-radius: 3px;
+			-moz-border-radius: 3px;
+			border-radius: 3px;
+			border-color: #D4D4D4 #D4D4D4 #BCBCBC;
+			padding: 6px;
+			margin: 0;
+			cursor: move;
+			background: #f6f6f6;
+			background: -moz-linear-gradient(top,  #ffffff 0%, #f6f6f6 47%, #ededed 100%);
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed));
+			background: -webkit-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);
+			background: -o-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);
+			background: -ms-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);
+			background: linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%);
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 );
+
+		}
+            </style>
+    </head>
+    <body>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.mjs.nestedSortable.js"></script>
+        
+        <script type="text/javascript" src="static/scripts/tools.js"></script>
+        
+        <div id="tagTree"></div>
+        
+        <script type="text/javascript">
+            function loaded() {
+                document.title = 'nestedSortableing the graph ...';
+                
+                $("#cloudTree a").removeClass("cloud-tag_used")
+                                 .css({ 'font-size': "100%" })
+                                 .click(function(event){event.preventDefault();})
+                
+                $("#cloudTree").nestedSortable({
+                    handle: 'a',
+                    items: 'li',
+                    toleranceElement: '> a',
+                    listType: "ul",
+                    forcePlaceholderSize: true,
+                    helper:	'clone',
+                    opacity: .6,
+                    placeholder: 'placeholder',
+                    revert: 250,
+                    tabSize: 25,
+                    tolerance: 'pointer'
+                });
+                $("#cloudTree").sortable({
+                    update: function(event,ui) {
+                        var target = ui.item.children("a").first()
+                        var parent = ui.item.parent().parent().children("a").first()
+                        
+                        if (!confirm("'"+parent.text()+"' est parent de '"+target.text()+"' ?")) {
+                            return false;
+                        }
+                        
+                        var parentId = (parent.attr("id") ? parent.attr("id").split("-")[2] : "-1")
+                        var targetId = target.attr("id").split("-")[2]
+                        
+                        var url = "Config?action=LINKTAG&parentTag="+parentId+"&sonTag="+targetId
+                                              
+                        $.get(url).error(function(data) {
+                            alert('Something went wrong ...');
+                          });
+                    }
+                });
+
+                document.title = 'WebAlbums Tags ready to be sorted';
+            }
+            $(function() {
+                document.title = 'Loading cloud tag ...';
+                loadExernals(null, 'Tags__Cloud', 'tagTree', loaded) ;
+            })
+        </script>
+    </body>
+</html>

@@ -78,7 +78,7 @@ try {
 function add_callback (hook, func) {
     var original = callbacks[hook]
     if (!original)
-        original = function(){}
+        original = function(){;}
     
     callbacks[hook] = function (x) { return func(original(x)) }
 }

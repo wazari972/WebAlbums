@@ -187,7 +187,6 @@ public class PhotoBean implements PhotoLocal {
             }
 
             if (enrTagTh == null) {
-                log.warn("CREATE TAG");
                 //creer un tagTheme pour cette photo/tag/theme
                 enrTagTh = tagThemeDAO.newTagTheme();
 
@@ -197,8 +196,6 @@ public class PhotoBean implements PhotoLocal {
                 enrTagTh.setVisible(true);
 
                 tagThemeDAO.create(enrTagTh);
-            } else {
-                log.warn("EDIT TAG");
             }
             //changer la photo representant ce tag/theme
             enrTagTh.setPhoto(enrPhoto);

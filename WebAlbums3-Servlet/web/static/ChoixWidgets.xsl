@@ -175,16 +175,15 @@
   
   
   <xsl:template match="cloud">
-      <link rel="stylesheet" type="text/css" href="static/scripts/lib/treemenu/simpletree.css" />
       <h3>Nuage de tags </h3>
-      <ul>
-          <li><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></li>
-          <li><hl/></li>
-          <ul id="cloudTree" class="treeview">
-              <xsl:apply-templates select="tag"/>
-          </ul>
+      <!--<a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a>-->
+      <hr/>
+      <ul id="cloudTree" class="treeview">
+        <xsl:apply-templates select="tag"/>
       </ul>
+      <!--
       <script type="text/javascript" src="static/scripts/Empty.js"/>
+      <link rel="stylesheet" type="text/css" href="static/scripts/lib/treemenu/simpletree.css" />
       <script type="text/javascript" src="static/scripts/lib/treemenu/simpletreemenu.js">
             /***********************************************
             * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -192,7 +191,7 @@
             * Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
             * (http://www.dynamicdrive.com/dynamicindex1/navigate1.htm)
             ***********************************************/
-      </script>
+      </script>-->
   </xsl:template>
 
   <xsl:template match="cloud/tag|children/tag">
@@ -209,7 +208,7 @@
             <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
         </span>
         <xsl:if test="children/tag">
-	    <ul>
+	    <ul rel="open">
               <xsl:apply-templates select="children/tag"/>
             </ul>
         </xsl:if>
