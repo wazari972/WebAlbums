@@ -20,6 +20,11 @@
         #timeline {
             height : 400px;
         }
+        /*
+        #albums img {
+            max-height:  100px;
+            max-width:  200px;
+        }*/
    </style>
 
    <script  type="text/javascript">
@@ -27,24 +32,28 @@
             'dateTimeFormat': 'iso8601',
             'events' : []
         }
-
+        var NB_LINES = 2;
         var tl;
         $(function() {
             $.get('Albums?special=SELECT', function(data) {
                 xmlData = $(data)
                 xmlData.find("album").each(function() {
-                    
                     timeline_data.events.push({
                         "start" : $(this).find("albmDate").text(),
                         "title" : $(this).find("name").text(),
                         "description" : $(this).find("description").text(),
                         "image" : "Miniature__"+$(this).find("picture").attr("id")+".png",
                         "link" : "Photo__"+$(this).attr("id")+"__"+$(this).find("name").text(),
-                        "color": "#00AA00"
-                        //"test" : "titi"
+                        "color": "#00AA00",
+                        "albumid": $(this).attr("id")
                     })
                 })
-                createTimeline(timeline_data)
+                
+                if (timeline_data.events.length != 0) {
+                    createTimeline(timeline_data)
+                } else {
+                    alert("No data found")
+                }
             });
         })
         
@@ -56,6 +65,13 @@
             return Math.abs(minDisplayed.getTime() - date.getTime()) > 1000*60*60*24*30;
         }
         
+        function isGoingBack(date) {
+            if (minDisplayed == null)
+                return false
+            
+            return minDisplayed.getTime() > date.getTime()
+        }
+        
         function scroll() {
             var band = tl.getBand(0)
             var min = band.getMinVisibleDate()
@@ -63,31 +79,45 @@
             
             if (!oneDaySince(min))
                 return
-            minDisplayed = min;
             
-            $("#mindate").text(""+min)
-            $("#maxdate").html(""+max)
+            var goingBack =  isGoingBack(min)
+            
+            minDisplayed = min;
             
             var evtSrc = band.getEventSource()
             
-            var txt = "";
-            var count = evtSrc.getCount()
-            txt += ""+count+"<br/><hr/>"
-            for (var i = 0; i < count; i++) {
+            var totalCount = evtSrc.getCount()
+            
+            var visibleCount = 0
+            for (var i = 0; i < totalCount; i++) {
                 var evt = evtSrc.getEvent("e"+(i+1))
-                
+                try {
                 if (!evt)
                     continue
+                } catch(e) {continue}
+                var id = evt.getProperty("albumid")
                 
-                //evt.getProperty("test") ==> titi
-                
-                if (evt.getEarliestEnd() < min || evt.getLatestStart() > max)
-                    continue
-                var name = evt ? evt.getText() : "undef"
-                txt += name+"<br/>"
+                if (evt.getEarliestEnd() < min || evt.getLatestStart() > max) {
+                    $("#album"+id).hide()
+                } else {
+                    visibleCount++
+                    if ($("#album"+id).length != 0) {
+                        $("#album"+id).show()
+                    } else {
+                        var img = new Image()
+                        img.id = "album"+id
+                        img.src = evt.getProperty("image")
+                        img.title = evt.getProperty("title")
+                        if (goingBack) {
+                            $("#albums").prepend(img)
+                        } else {
+                            $("#albums").append(img)
+                        }
+                    }
+                }
             }
-            
-            $("#events").html(txt)
+            var width = (Math.floor(NB_LINES*100/visibleCount)) + "%"
+            $("#albums img").css({"max-width" : width})
         }
         
         function createTimeline(tl_data) {
@@ -149,7 +179,7 @@
     </head>
     <body>
         <div id='timeline'></div>
-        <div id='mindate'>hello</div><div id='maxdate'>helli</div><div id='events'>hellou</div>
+        <div id='albums'></div>
     </body>
 </html>
 
