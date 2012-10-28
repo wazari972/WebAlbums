@@ -41,11 +41,54 @@
                         "image" : "Miniature__"+$(this).find("picture").attr("id")+".png",
                         "link" : "Photo__"+$(this).attr("id")+"__"+$(this).find("name").text(),
                         "color": "#00AA00"
+                        //"test" : "titi"
                     })
                 })
                 createTimeline(timeline_data)
             });
         })
+        
+        var minDisplayed = null;
+        function oneDaySince(date) {
+            if (minDisplayed == null)
+                return true;
+            
+            return Math.abs(minDisplayed.getTime() - date.getTime()) > 1000*60*60*24*30;
+        }
+        
+        function scroll() {
+            var band = tl.getBand(0)
+            var min = band.getMinVisibleDate()
+            var max = band.getMaxVisibleDate()
+            
+            if (!oneDaySince(min))
+                return
+            minDisplayed = min;
+            
+            $("#mindate").text(""+min)
+            $("#maxdate").html(""+max)
+            
+            var evtSrc = band.getEventSource()
+            
+            var txt = "";
+            var count = evtSrc.getCount()
+            txt += ""+count+"<br/><hr/>"
+            for (var i = 0; i < count; i++) {
+                var evt = evtSrc.getEvent("e"+(i+1))
+                
+                if (!evt)
+                    continue
+                
+                //evt.getProperty("test") ==> titi
+                
+                if (evt.getEarliestEnd() < min || evt.getLatestStart() > max)
+                    continue
+                var name = evt ? evt.getText() : "undef"
+                txt += name+"<br/>"
+            }
+            
+            $("#events").html(txt)
+        }
         
         function createTimeline(tl_data) {
             var eventSource = new Timeline.DefaultEventSource();
@@ -87,6 +130,9 @@
             tl = Timeline.create(document.getElementById("timeline"), bandInfos, Timeline.HORIZONTAL);
             eventSource.loadJSON(tl_data, ".");
             tl.layout(); // display the Timeline
+            
+            tl.getBand(0).addOnScrollListener(scroll); 
+            scroll()
         }
         
         var resizeTimerID = null;
@@ -103,6 +149,7 @@
     </head>
     <body>
         <div id='timeline'></div>
+        <div id='mindate'>hello</div><div id='maxdate'>helli</div><div id='events'>hellou</div>
     </body>
 </html>
 
