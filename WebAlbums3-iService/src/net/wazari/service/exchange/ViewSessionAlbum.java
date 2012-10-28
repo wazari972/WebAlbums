@@ -33,4 +33,6 @@ public interface ViewSessionAlbum extends ViewSession {
     void setPhotoAlbumSize(int size);
     
     Integer[] getTagAsked() ;
+    
+    boolean getWantTags();
 }

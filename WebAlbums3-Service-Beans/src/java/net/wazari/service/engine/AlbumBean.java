@@ -12,7 +12,6 @@ import javax.ejb.Stateless;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
-import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
@@ -81,7 +80,6 @@ public class AlbumBean implements AlbumLocal {
         output.album.name = enrAlbum.getNom();
         output.album.id = enrAlbum.getId();
         output.album.details.description = enrAlbum.getDescription();
-        
         
         output.album.albmDate = enrAlbum.getDate();
 
@@ -269,7 +267,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
-    public XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession) {
+    public XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
         XmlAlbumGraph graph = new XmlAlbumGraph();
         
         graph.album.addAll(treatSELECT(vSession).album);
@@ -278,12 +276,14 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
-    public XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession) {
+    public XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumSelect select = new XmlAlbumSelect();
 
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
                                     Restriction.THEME_ONLY, TopFirst.ALL, null);
+        
+        boolean wantTags = vSession.getWantTags();
         
         List<Tag> tagList = new LinkedList<Tag>();
         for (int tagId : vSession.getTagAsked()) {
@@ -337,6 +337,10 @@ public class AlbumBean implements AlbumLocal {
                 gpx.description = enrGpx.getDescription();
                 
                 album.gpx.add(gpx);
+            }
+            
+            if (wantTags) {
+                album.details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE) ;
             }
             
             select.album.add(album);

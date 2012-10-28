@@ -170,8 +170,9 @@ public class ViewSessionImpl implements
     @Override
     public boolean directFileAccess() {
         String direct = getString("directFileAccess");
-        if (direct == null)
+        if (direct == null) {
             direct = getSessionObject("directFileAccess", String.class);
+        }
         return "y".equals(direct);
     }
     
@@ -219,8 +220,9 @@ public class ViewSessionImpl implements
     @Override
     public Boolean getwantManager() {
         Boolean want = getBoolean("wantManager")  ;
-        if (want == null)
+        if (want == null) {
             want = false;
+        }
         return want;
     }
     
@@ -430,8 +432,9 @@ public class ViewSessionImpl implements
     }
     
     private Set<Integer> splitInt(String in)  {
-        if (in == null || in.length() == 1)
+        if (in == null || in.length() == 1) {
             return new HashSet<Integer>();
+        }
         
         Set<Integer> out = new HashSet<Integer>();
         for (String str : in.split("-")) {
@@ -554,10 +557,12 @@ public class ViewSessionImpl implements
     public int getPhotoAlbumSize() {
         Integer size = getInteger("photoAlbumSize");
         
-        if (size == null)
+        if (size == null) {
             size = getSessionObject("photoAlbumSize", Integer.class);
-        if (size == null)
+        }
+        if (size == null) {
             size = DEFAULT_PHOTOALBUM_SIZE;
+        }
         
         return size;
     }
@@ -652,6 +657,11 @@ public class ViewSessionImpl implements
         } catch (IOException ex) {
             log.error("IOException", ex);
         }
+    }
+
+    @Override
+    public boolean getWantTags() {
+        return getObject("wantTags", String.class) != null;
     }
 
     public static class ViewSessionLoginImpl implements ViewSessionSession {

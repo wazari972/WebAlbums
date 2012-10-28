@@ -376,5 +376,10 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     public Integer getStars() {
         return null;
     }
+
+    @Override
+    public boolean getWantTags() {
+        return false;
+    }
 }
 
