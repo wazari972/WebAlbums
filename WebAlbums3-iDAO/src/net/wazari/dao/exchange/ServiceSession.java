@@ -21,8 +21,6 @@ public interface ServiceSession {
     Theme getTheme();
 
     Utilisateur getUser();
-
-    boolean isAdminSession();
     
     boolean isRootSession();
 

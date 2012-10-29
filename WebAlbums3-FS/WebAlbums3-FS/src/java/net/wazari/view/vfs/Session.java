@@ -47,6 +47,11 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     public ViewSession.Action getAction() {
         return null;
     }
+    
+    @Override
+    public boolean getWantUnusedTags() {
+        return false;
+    }
 
     @Override
     public Utilisateur getUser() {
@@ -201,11 +206,6 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     @Override
     public net.wazari.dao.entity.Theme getTheme() {
         return theme;
-    }
-
-    @Override
-    public boolean isAdminSession() {
-        return true;
     }
 
     @Override
@@ -375,6 +375,11 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     @Override
     public Integer getStars() {
         return null;
+    }
+
+    @Override
+    public boolean getWantTags() {
+        return false;
     }
 }
 

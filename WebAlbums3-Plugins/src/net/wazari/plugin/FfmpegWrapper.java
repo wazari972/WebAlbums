@@ -25,10 +25,12 @@ public class FfmpegWrapper  extends GenericImporter {
         return "1" ;
     }
 
+    @Override
     public String getTargetSystem() {
         return "various" ;
     }
 
+    @Override
     public String getSupportedFilesDesc() {
         return "videos" ;
     }
@@ -38,11 +40,14 @@ public class FfmpegWrapper  extends GenericImporter {
     }
 
     public boolean supports(String type, String ext, Capability cap) {
-        if (type.contains("video"))
+        if (type.contains("video")) {
             return Arrays.asList(supports()).contains(cap) ;
-        else return false ;
+        } else {
+            return false ;
+        }
     }
 
+    @Override
     public boolean thumbnail(ProcessCallback cb, String source, String dest, int height) {
         int width = (int)(height*16.)/9 ;
         return 0 == cb.execWaitFor(new String[]{"ffmpeg", "-i", source,

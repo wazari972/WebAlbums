@@ -81,20 +81,17 @@ public class AlbumBean implements AlbumLocal {
         output.album.id = enrAlbum.getId();
         output.album.details.description = enrAlbum.getDescription();
         
-        
         output.album.albmDate = enrAlbum.getDate();
 
-        int count = 0;
         for (Photo enrGpx : enrAlbum.getGpxList()) {
             if (output.album.gpx == null) {
                 output.album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
             }
+            
             XmlGpx gpx = new XmlGpx();
             gpx.id = enrGpx.getId();
             gpx.description = enrGpx.getDescription();
-            if (gpx.description == null || gpx.description.isEmpty()) {
-                gpx.description = enrAlbum.getNom() + " " + count++ ;
-            }
+            
             output.album.gpx.add(gpx);
         }
         
@@ -270,7 +267,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
-    public XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession) {
+    public XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
         XmlAlbumGraph graph = new XmlAlbumGraph();
         
         graph.album.addAll(treatSELECT(vSession).album);
@@ -279,12 +276,14 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
-    public XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession) {
+    public XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumSelect select = new XmlAlbumSelect();
 
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
                                     Restriction.THEME_ONLY, TopFirst.ALL, null);
+        
+        boolean wantTags = vSession.getWantTags();
         
         List<Tag> tagList = new LinkedList<Tag>();
         for (int tagId : vSession.getTagAsked()) {
@@ -338,6 +337,10 @@ public class AlbumBean implements AlbumLocal {
                 gpx.description = enrGpx.getDescription();
                 
                 album.gpx.add(gpx);
+            }
+            
+            if (wantTags) {
+                album.details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE) ;
             }
             
             select.album.add(album);

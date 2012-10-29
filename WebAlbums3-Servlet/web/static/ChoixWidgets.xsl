@@ -173,18 +173,50 @@
     </td>
   </xsl:template>
   
-  
   <xsl:template match="cloud">
-      <link rel="stylesheet" type="text/css" href="static/scripts/lib/treemenu/simpletree.css" />
-      <h3>Nuage de tags </h3>
-      <ul>
-          <li><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></li>
-          <li><hl/></li>
-          <ul id="cloudTree" class="treeview">
-            <xsl:apply-templates select="tag"/>
-          </ul>
+      <h3>Nuage de tags</h3>
+      <span class="tree-opt"><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></span>
+      <hr/>
+      <ul id="cloudTree" class="treeview">
+        <xsl:if test="tag[@type = 'who']">
+            <li class="not-real-tag" rel="open">
+                <a>Who<hr/></a>
+                <ul>
+                    <xsl:apply-templates select="tag[@type = 'who']"/>
+                </ul>
+            </li>
+        </xsl:if>
+        
+        <xsl:if test="tag[@type = 'what']">
+            <li class="not-real-tag" rel="open">
+                <a><hr/>What<hr/></a>
+                <ul>
+                    <xsl:apply-templates select="tag[@type = 'what']"/>
+                </ul>
+            </li>
+        </xsl:if>
+        
+        <xsl:if test="tag[@type = 'where']">
+            <li class="not-real-tag" rel="open">
+                <a><hr/>Where<hr/></a>
+                <ul>
+                    <xsl:apply-templates select="tag[@type = 'where']"/>
+                </ul>
+            </li>
+        </xsl:if>
+        
+        <xsl:if test="../tag_never">
+            <li class="not-real-tag" rel="open">
+                <a><hr/>Tags never ever used</a>
+                <ul>
+                    <xsl:apply-templates select="../tag_never"/>
+                </ul>
+            </li>
+        </xsl:if>
       </ul>
+      
       <script type="text/javascript" src="static/scripts/Empty.js"/>
+      <link rel="stylesheet" type="text/css" href="static/scripts/lib/treemenu/simpletree.css" />
       <script type="text/javascript" src="static/scripts/lib/treemenu/simpletreemenu.js">
             /***********************************************
             * Simple Tree Menu- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
@@ -195,7 +227,7 @@
       </script>
   </xsl:template>
 
-  <xsl:template match="cloud/tag|children/tag">
+  <xsl:template match="cloud/tag|children/tag|tag_never/where|tag_never/what|tag_never/who">
       <li>
         <a class="cloud-tag_used">
           <xsl:attribute name="id">cloud-target-<xsl:value-of select="@id"/></xsl:attribute>
@@ -215,7 +247,7 @@
         </xsl:if>
     </li>
   </xsl:template>
-  
+    
   <xsl:template match="/webAlbums/albums/gpxes">
       <xsl:if test="/webAlbums/albums/gpxes/gpx">
         <div>

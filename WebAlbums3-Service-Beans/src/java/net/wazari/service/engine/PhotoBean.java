@@ -103,7 +103,7 @@ public class PhotoBean implements PhotoLocal {
         enrPhoto.setDescription(StringEscapeUtils.escapeXml(desc));
 
         String user = vSession.getDroit();
-        if (user != null) {
+        if (user != null && !user.isEmpty()) {
             boolean valid = false;
             try {
                 Integer userId = null;
@@ -187,7 +187,6 @@ public class PhotoBean implements PhotoLocal {
             }
 
             if (enrTagTh == null) {
-                log.warn("CREATE TAG");
                 //creer un tagTheme pour cette photo/tag/theme
                 enrTagTh = tagThemeDAO.newTagTheme();
 
@@ -197,8 +196,6 @@ public class PhotoBean implements PhotoLocal {
                 enrTagTh.setVisible(true);
 
                 tagThemeDAO.create(enrTagTh);
-            } else {
-                log.warn("EDIT TAG");
             }
             //changer la photo representant ce tag/theme
             enrTagTh.setPhoto(enrPhoto);
@@ -297,9 +294,6 @@ public class PhotoBean implements PhotoLocal {
         thisPage.albmPage = albmPage ;
         
         PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, enrAlbum);
-        if (Special.FULLSCREEN == special) {
-            sysTools.fullscreenMultiple(vSession, rq, enrAlbum.getId(), page, "Albums");
-        }
         output.photoList = displayPhoto(rq, vSession, submit, thisPage);
         
         stopWatch.stop() ;
@@ -394,8 +388,7 @@ public class PhotoBean implements PhotoLocal {
                                            ListOrder.DESC);
             }
         }        
-        log.warn("Load by tags: setSize{}", lstP.setSize);
-        log.warn("Load by tags: setSize{}", lstP.subset.size());
+        
         String degrees = "0";
         Integer[] tags = null;
         int countME = 0;
@@ -460,6 +453,7 @@ public class PhotoBean implements PhotoLocal {
                             verb = "added and tag " + rmTag + " removed";
                         } else if (turn == Turn.AUTHOR) {
                             enrPhoto.setTagAuthor(tagDAO.find(tags[0]));
+                            photoDAO.edit(enrPhoto);
                             verb = "set as author";
                         } else {
                             verb = "nothinged";

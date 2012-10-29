@@ -39,7 +39,6 @@ public class MapPoint {
 
   
   public String getJSon() {
-
     StringBuilder str = new StringBuilder(150) ;
 
     str.append("[\n");
@@ -53,10 +52,11 @@ public class MapPoint {
         str.append(" \"picture\":\"").append(p.photoId).append("\",");
         str.append(" \"picturePath\":\"").append(p.photoPath).append("\"}");
         i--;
-        if (i != 0)
-            str.append(",\n");    
-        else
-            str.append("\n");        
+        if (i != 0) {
+            str.append(",\n");
+        } else {
+            str.append("\n");
+        }        
     }
     str.append("]\n");
         

@@ -6,6 +6,7 @@
 package net.wazari.view.servlet.exchange.xml;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.photo.XmlPhotoEdit;
 import net.wazari.service.exchange.xml.tag.XmlTagAbout;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud;
@@ -26,5 +27,5 @@ public class XmlTags {
     public XmlPhotoEdit edit;
     public XmlTagDisplay display;
     public XmlReturnTo return_to;
-
+    public XmlWebAlbumsList tag_never;
 }

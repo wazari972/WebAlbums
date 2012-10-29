@@ -87,32 +87,64 @@ function init_buttons() {
     $("#carnetRepr").change(function () {
         $("#carnetReprImg").attr("src", "Images?id="+$(this).val()+"&amp;mode=PETIT)");
     }) ;
+    
+    $(".btSide").click(function() {
+        $("#cloud").hide()
+        
+        $('.carnet_panel').css( {
+            'background': '#b2c01d',
+            'position': 'absolute',
+            'left': "0px",
+            'width':$(document).width()/2+'px',
+            'height' : $('.carnet_text').height()+"px",
+            'top': $('.carnet_panel').offset().top+"px"
+        });
+        $('.wmd-input').css({
+            'height':"100%"
+        }) 
+        $('.carnet_text').css( {
+            'background': '#b2c01d',
+            'position': 'absolute',
+            'right': "0px",
+            'width':$(document).width()/2+'px',
+            'top': $('.carnet_panel').offset().top+"px"
+        })
+        $(this).hide()
+        $(".btSizeUp").show()
+        $(".btSizeDown").show()
+        
+        var INCR = 10
+        var sizeChange = function (doInc) {
+            var factor = 1;
+            if (!doInc) {
+                factor = -1;
+            }
+            $('.carnet_text').height($('.carnet_text').height() + INCR*factor)
+            $('.carnet_panel').height($('.carnet_panel').height() + INCR*factor)
+        }
+        
+        $(".btSizeUp").click(function(){sizeChange(true)})
+        $(".btSizeDown").click(function(){sizeChange(false)})
+    })
 }
 
 function beginConvert() {
     $("#carnetPhoto").val("")
 }
-function convertImage(id, url, alt_text, title) {
-    
+
+function convertImageModif(id, url, alt_text, title) {
     if (isNaN(url))
         return "<strong>Image #"+id+" is invalide Image id (not a number)</strong>"
     $("#carnetPhoto").val($("#carnetPhoto").val()+"-"+url)
     
-    return "<br/><center><a href=\"Images?id="+url+"&amp;mode=GRAND\" title=\"" + alt_text + "\">"
-         + "<img src=\"Images?id=" + url + "&amp;mode=PETIT\" alt=\"" + alt_text + "\""
-         + "></a></center><br/>";
+    return convertImage(id, url, alt_text, title) 
 }
 
-function convertLink(id, url, title, link_text) {
+function convertLinkModif(id, url, title, link_text) {
     if (isNaN(url))
         return "<strong>Link #"+id+" is not a valide Album id (not a number)</strong>"
     
-    var result = "<a href=\"Photos?album=" + url + "\"";
-    if (title != "")
-        result += " title=\"" + title + "\"";
-    result += ">" + link_text + "</a>";
-    
-    return result
+    return convertLink(id, url, title, link_text)
 }
 
 function init_markdown_edit() {
@@ -159,20 +191,22 @@ ou du `code en ligne` ou en block:\n\
         return "This is a link to " + url.replace(/^https?:\/\//, "");
     });
 
-    converter.hooks.chain("convertImage", convertImage);
+    converter.hooks.chain("convertImage", convertImageModif);
 
-    converter.hooks.chain("convertLink", convertLink);
+    converter.hooks.chain("convertLink", convertLinkModif);
 
     converter.hooks.chain("beginConvert", beginConvert);
+    converter.hooks.chain("postConversion", finishConvert);
     
     var editor = new Markdown.Editor(converter, "", {handler: help});
     editor.run();
 }
 
 $(function() {
+    save_data_page("carnet_inited", true)
     init_buttons()
     init_markdown_edit()
-    setInterval(autoSaveLocal, 10*1000)
+    //setInterval(autoSaveLocal, 10*1000)
     checkAutoSaveLocal()
 })
 

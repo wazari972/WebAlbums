@@ -14,6 +14,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
+import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.xml.config.XmlConfig;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -43,10 +44,15 @@ public class Config extends HttpServlet {
         if (!vSession.isSessionManager())
             return null;
         
+        Special special = vSession.getSpecial();
+        
         XmlConfig output = new XmlConfig();
 
         Action action = vSession.getAction();
-        if (action == null) action = Action.DEFAULT;
+        if (action == null) {
+            action = Action.DEFAULT;
+        }
+        
         switch(action) {
             case IMPORT:
                 output.irnport = configService.treatIMPORT(vSession);
@@ -85,17 +91,19 @@ public class Config extends HttpServlet {
                 break;
         }
 
-        if (System.getProperty(SHUTDOWN_PORT_PPT) != null)
+        if (System.getProperty(SHUTDOWN_PORT_PPT) != null) {
             output.shutdown = System.getProperty(SHUTDOWN_PORT_PPT);
-
-
-        output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
-                Box.MULTIPLE);
-        output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
-                Box.MULTIPLE);
-        output.tag_geo = webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
-                Box.MULTIPLE);
-
+        }
+        
+        if (special != Special.ONLY) {
+            output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
+                    Box.MULTIPLE);
+            output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
+                    Box.MULTIPLE);
+            output.tag_geo = webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
+                    Box.MULTIPLE);
+        }
+        
         return output ;
     }
 

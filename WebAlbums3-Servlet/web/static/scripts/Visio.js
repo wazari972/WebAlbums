@@ -1,7 +1,10 @@
-current = null
-function nextprev(do_prev) {
+var current = null
+function nextprev(do_prev, preload) {
     if (do_prev == undefined)
         do_prev = false
+    
+    var img_lnk;
+    var id;
     //page just get loaded
     if (current == null) {
         if (window.location.hash == "") {
@@ -17,10 +20,10 @@ function nextprev(do_prev) {
                 img_lnk = $(".visio_img[rel = '"+id+"']")
         }
     } else {
-        found = false
-        found_on_prev = false
-        img_next = undefined
-        img_prev = undefined
+        var found = false
+        var found_on_prev = false
+        var img_next = undefined
+        var img_prev = undefined
         $(".visio_img").each(function() {
             if (found_on_prev) {
                 img_next = $(this)
@@ -39,11 +42,10 @@ function nextprev(do_prev) {
         img_lnk = do_prev ? img_prev : img_next
         
         if (img_lnk == undefined) {
+            if (preload)
+                return
             
-            if (do_prev)
-                img_lnk = $(".page_previ")
-            else
-                img_lnk = $(".page_nexti")
+            img_lnk = do_prev ? $(".page_previ") : $(".page_nexti")
             
             if (img_lnk.attr("href") == undefined)
                 alert("no more page!")
@@ -54,11 +56,22 @@ function nextprev(do_prev) {
         }
     }
     
-    img_lnk.first().click()
-    current = img_lnk
+    var target = img_lnk.first()
+    
+    if (!preload) {
+        target.click()
+        current = img_lnk
+    } else {
+        doPreload(target.prop("href"))
+    }
 }
- 
- 
+
+function doPreload(href) {
+    var img = new Image()
+    img.src = href
+    //alert("preload "+href)
+}
+
 function updateFullImage(href, id) {
     $("body").css("cursor", "wait");
     
@@ -80,8 +93,10 @@ function init_visio () {
     document.body.style.overflow = 'hidden';
     nextprev()
     
-    jwerty.key('s/n/→/↓', function () { nextprev()});
-    jwerty.key('p/←/↑', function () {nextprev(true)});
+    jwerty.key('s/n/→/↓', function () {nextprev(false); nextprev(false, true);});
+    jwerty.key('p/←/↑', function () {nextprev(true); nextprev(true, true)});
+    
+    jwerty.key('f', function(){toggleFullScreen()})
 }
 
 $(function() {

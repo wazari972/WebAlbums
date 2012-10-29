@@ -15,7 +15,9 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
+import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.jpa.entity.*;
 import org.slf4j.Logger;
@@ -200,5 +202,29 @@ public class TagFacade implements TagFacadeLocal {
     @Override
     public Tag newTag() {
         return new JPATag() ;
+    }
+
+    @Override
+    public Photo getTagThemePhoto(ServiceSession sSession, Tag enrTag) {
+        List<TagTheme> lstTT = enrTag.getTagThemeList();
+        Random rand = new Random();
+        //pick up a RANDOM valid picture visible from this theme
+        TagTheme enrTT = null ;
+        
+        while (!lstTT.isEmpty()) {
+            int i = rand.nextInt(lstTT.size());
+            enrTT = lstTT.get(i);
+            if (enrTT.getPhoto() != null
+                    && (sSession.isRootSession() || sSession.getTheme().getId().equals(enrTT.getTheme().getId()))) {
+                break;
+            } else {
+                lstTT.remove(i);
+            }
+        }
+        if (enrTT == null) {
+            return null;
+        } else {
+            return enrTT.getPhoto();
+        }
     }
 }

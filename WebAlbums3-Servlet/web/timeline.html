@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+ "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+   <title>WebAlbums Timeline</title>
+   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+   <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
+
+   <script src="static/scripts/lib/timeline_2.3.0/timeline_ajax/simile-ajax-api.js?bundle=true" type="text/javascript"></script>
+   <script src="static/scripts/lib/timeline_2.3.0/timeline_js/timeline-api.js?bundle=true" type="text/javascript"></script>
+   <style type="text/css">
+        html  {background-color: #003366;}
+
+        h1 {color: #834c24;}
+        p {margin-top: .5em;}
+        
+        #timeline {
+            height : 200px;
+        }
+        
+        #albums {
+            height: 200px;
+            overflow: scroll;
+        }
+        
+        #albums img {
+            max-height:  100%;
+        }
+        
+        #whereTags {
+            height: 200px;
+            overflow: scroll;
+        }
+        
+        #whereTags img {
+            max-height:  100%;
+        }
+   </style>
+
+   <script  type="text/javascript">
+       var timeline_data = {  // save as a global variable
+            'dateTimeFormat': 'iso8601',
+            'events' : []
+        }
+        var NB_LINES = 2;
+        var tl;
+        $(function() {
+            window.albumEvents = {}
+            
+            $.get('Albums?special=SELECT', function(data) {
+                var xmlData = $(data)
+                xmlData.find("album").each(function() {
+                    var albumId = $(this).attr("id")
+                    var albumEvent = {
+                        "start" : $(this).find("albmDate").text(),
+                        "title" : $(this).find("name").text(),
+                        "description" : $(this).find("description").text(),
+                        "image" : "Miniature__"+$(this).find("picture").attr("id")+".png",
+                        "link" : "Photo__"+albumId+"_p0___"+$(this).find("name").text(),
+                        "color": "#00AA00",
+                        "albumid": albumId
+                    }
+                    timeline_data.events.push(albumEvent)
+                })
+                
+                if (timeline_data.events.length != 0) {
+                    createTimeline(timeline_data)
+                } else {
+                    alert("No data found")
+                }
+            });
+            
+            addTagInfo()
+        })
+        
+        var SEC = 1000;
+        var MIN = SEC*60
+        var HR = MIN*60
+        var DAY = HR*24
+        var WEEK = DAY*7
+        var MONTH = WEEK*30.5
+        
+        var minDisplayed = null;
+        function oneDaySince(date) {
+            if (minDisplayed == null)
+                return true;
+            
+            return Math.abs(minDisplayed.getTime() - date.getTime()) > 1*WEEK;
+        }
+        
+        function isGoingBack(date) {
+            if (minDisplayed == null)
+                return false
+            
+            return minDisplayed.getTime() > date.getTime()
+        }
+        
+        var tagDataReceived = false;
+        function scroll() {
+            var band = tl.getBand(0)
+            var min = band.getMinVisibleDate()
+            var max = band.getMaxVisibleDate()
+            
+            var first = minDisplayed == null
+            
+            if (!oneDaySince(min))
+                return
+            
+            var goingBack =  isGoingBack(min)
+            
+            minDisplayed = min;
+            
+            var evtSrc = band.getEventSource()
+            var totalCount = evtSrc.getCount()
+            var visibleWhereTags = {}
+            
+            for (var i = 0; i < totalCount; i++) {
+                var evt = evtSrc.getEvent("e"+(i+1))
+                try {
+                    if (!evt)
+                        continue
+                } catch(e) {continue}
+                
+                var id = evt.getProperty("albumid")
+                var albumImg = $("#album"+id)
+                
+                //if out of the visible scope, hide and continue
+                if (evt.getEnd() < min || evt.getStart() > max) {
+                    albumImg.hide();
+                    continue
+                }
+                
+                //if already visible, continue
+                if (albumImg.is(":visible")) {
+                    continue
+                }
+                
+                if (albumImg.length != 0) {
+                    albumImg.show()
+                } else {
+                    var img = new Image()
+                    img.id = "album"+id
+                    img.src = evt.getProperty("image")
+                    img.title = evt.getProperty("title")
+                    if (goingBack || first) {
+                        $("#albums").prepend(img)
+                    } else {
+                        $("#albums").append(img)
+                    }
+                }
+                
+                if (!tagDataReceived) {
+                    continue;
+                }
+                window.albumEvents[id].find("where").each(function() {
+                    visibleWhereTags[$(this).attr("id")] = $(this)
+                })
+            }
+            
+            $(".where-tag").hide()
+            $.each(visibleWhereTags, function(tagId, tag) {
+                var tagImg = $("#tag"+tagId)
+                if (tagImg.length != 0) {
+                    tagImg.show()
+                } else {
+                    var img = new Image()
+                    
+                    img.id = "tag"+tagId
+                    img.src = "Images?mode=REPRESENT_TAG&id="+tagId
+                    img.title = tag.find("name").text()
+                    $("#whereTags").append(img)
+                    $(img).addClass("where-tag")
+                }
+            })
+        }
+        
+        function createTimeline(tl_data) {
+            var eventSource = new Timeline.DefaultEventSource();
+            
+            var theme = Timeline.ClassicTheme.create();
+            
+            var startParts = tl_data.events[tl_data.events.length-1].start.split("-")
+            var stopParts = tl_data.events[0].start.split("-")
+            
+            theme.timeline_start = new Date(startParts[0], (startParts[1] - 1), startParts[2]);
+            theme.timeline_stop  = new Date(stopParts[0], (stopParts[1] - 1), stopParts[2]);
+            
+            var bandInfos = [
+                Timeline.createBandInfo({
+                    width:          "70%",
+                    intervalUnit:   Timeline.DateTime.WEEK, 
+                    intervalPixels: 300,
+                    eventSource:    eventSource,
+                    date:           theme.timeline_stop,
+                    theme:          theme,
+                    layout:         'original'  // original, overview, detailed
+                }),
+                Timeline.createHotZoneBandInfo({
+                    width:          "30%", 
+                    intervalUnit:   Timeline.DateTime.YEAR, 
+                    intervalPixels: 200,
+                    eventSource:    eventSource,
+                    date:           theme.timeline_stop, 
+                    //timeZone:       -6,
+                    overview:       true,
+                    theme:          theme,
+                    zones : []
+                })
+            ];
+            bandInfos[1].syncWith = 0;
+            bandInfos[1].highlight = true;
+            
+            // create the Timeline
+            tl = Timeline.create(document.getElementById("timeline"), bandInfos, Timeline.HORIZONTAL);
+            eventSource.loadJSON(tl_data, ".");
+            tl.layout(); // display the Timeline
+            
+            tl.getBand(0).addOnScrollListener(scroll); 
+            scroll()
+        }
+        
+        function addTagInfo() {
+            $.get('Albums?special=SELECT&wantTags=true', function(data) {
+                var xmlData = $(data)
+                tagDataReceived = true;
+                xmlData.find("album").each(function() {
+                    var albumId = $(this).attr("id")
+                    
+                    window.albumEvents[albumId] = $(this)
+                })
+                //tagDataReceived = true;
+            })
+        }
+        
+        var resizeTimerID = null;
+        function onResize() {
+            if (resizeTimerID == null) {
+                resizeTimerID = window.setTimeout(function() {
+                    resizeTimerID = null;
+                    tl.layout();
+                }, 500);
+            }
+        }
+   </script>
+
+    </head>
+    <body>
+        <div id='timeline'></div>
+        <div id='albums'></div>
+        <div id='whereTags'></div>
+    </body>
+</html>
+
+

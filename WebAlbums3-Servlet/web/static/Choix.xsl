@@ -132,10 +132,13 @@
 	<span></span>
       </div>
       <div class="content">
-	<h1>Géolocalisations <input id="mapLoader" type="button" value="+"/></h1>
+	<h1>Géolocalisations &#160;
+            <input id="mapLoader" type="button" value="+"/>
+            <a href="map.html" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">^</a>
+        </h1>
 	<div class="body">
 	  <center>
-	    <div id="mapChoix"/>
+	    <div id="theMapChoix"></div>
 	  </center>
 	</div>
       </div>
@@ -159,7 +162,7 @@
       </div>
       <div class="content">
 	<form action="Tags">
-	  <h1>Choix par Tags <input id="tagGraphLoader" type="button" value="Graph it!"/> <input type="submit" value="Search"/></h1>
+	  <h1>Choix par Tags <input id="tagGraphLoader" type="button" value="Graph it!"/> <input type="submit" value="Search"/>&#160;<a href="tags.html" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">Tree</a></h1>
 	  <div class="body">
               <div id="tags">
                 <center>

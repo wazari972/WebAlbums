@@ -31,7 +31,7 @@ public class TotemWrapper extends GenericImporter {
 
     @Override
     public Capability[] supports() {
-        return new Capability[] {Capability.THUMBNAIL, Capability.FULLSCREEN_SINGLE} ;
+        return new Capability[] {Capability.THUMBNAIL} ;
     }
 
     @Override
@@ -39,19 +39,6 @@ public class TotemWrapper extends GenericImporter {
         if (supports(type, ext))
             return Arrays.asList(supports()).contains(cap) ;
         else return false ;
-    }
-
-    @Override
-    public boolean thumbnail(ProcessCallback cb, String source, String dest, int height) {
-        return 0 == cb.execWaitFor(new String[]{"totem-video-thumbnailer", "-s", "" + height, source, dest});
-    }
-
-    @Override
-    public void fullscreenFile(ProcessCallback cb, String path) {
-        if (path == null) {
-            return;
-        }
-        cb.exec(new String[]{"totem", path});
     }
 
     @Override

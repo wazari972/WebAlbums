@@ -20,7 +20,8 @@ public class XmlTagCloud {
     public List<XmlTagCloudEntry> parentList = new LinkedList<XmlTagCloudEntry>();
 
     public static class XmlTagCloudEntry extends XmlTag{
-        
+        @XmlAttribute
+        public String type = null;
         @XmlAttribute
         public int size;
         @XmlAttribute

@@ -54,8 +54,9 @@
   <xsl:template match="message">
     <i><xsl:value-of select="."/></i><br/>
   </xsl:template>
-   <xsl:template match="text">
-       <br/>
+  
+  <xsl:template match="text">
+       <br/>&#160;
        <hr id="carnet_head"/>
        <xsl:if test="/webAlbums/affichage/@directAccess">
         <script type="text/javascript">

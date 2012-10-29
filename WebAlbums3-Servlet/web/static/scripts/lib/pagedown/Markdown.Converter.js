@@ -435,7 +435,7 @@ else
 
             // Do hard breaks:
             text = text.replace(/  +\n/g, " <br>\n");
-
+            
             return text;
         }
 

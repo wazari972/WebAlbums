@@ -33,4 +33,6 @@ public interface ViewSessionLogin extends ViewSession {
     String getUserPass();
 
     Boolean dontRedirect();
+    
+    Boolean getwantManager();
 }

@@ -69,11 +69,16 @@ function init_buttons() {
         $(this).val("Dead!").prop('disabled', 'disabled');
         callURL("http://"+window.location.hostname+$(this).prop('rel')) ;
     }) ;
+    
+    $("#btGoto").click(function () {
+        geocode($("#newTag").val(), map)
+    }) ;
 }
 
 var last_point = null;
+var map = null;
 function init_map() {
-    var map = loadMap("map_search")
+    map = loadMap("map_search")
     
     var markers = new OpenLayers.Layer.Markers("Tags");
     map.addLayer(markers);

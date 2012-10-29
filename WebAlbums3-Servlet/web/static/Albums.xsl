@@ -43,15 +43,6 @@
                             <img src="static/images/slide.png" height="30px"/>
                         </a>
                     </xsl:if>
-                    <xsl:if test="not(/webAlbums/affichage/remote or /webAblums/affichage/@static)">
-                        <span>&#160;</span>
-                        <img src="static/images/out.png" height="30px"
-                          class='fullscreen'>
-                          <xsl:attribute name="title"><xsl:value-of select="title" /> en plein-écran</xsl:attribute>
-                          <!-- no url rewritting -->
-                          <xsl:attribute name="rel">Photos?album=<xsl:value-of select="@id" />&amp;page=<xsl:value-of select="../photoList/page/@current" />&amp;special=FULLSCREEN</xsl:attribute>                          
-                        </img>
-                    </xsl:if>
                     <xsl:if test="/webAlbums/photos/display/album/details/tagList/where">
                         <a rel="singlepage[no]" id="showTagMap">
                             <xsl:attribute name="title">Afficher la carte des tags.</xsl:attribute>
@@ -140,7 +131,12 @@
         <small>
             <a class="gpx_visu">
                 <xsl:attribute name="rel"><xsl:value-of select="@id" /></xsl:attribute>
-                <xsl:value-of select="description" />
+                <xsl:if test="description = ''">
+                    Trace GPS <xsl:value-of select="position()"/>
+                </xsl:if>    
+                <xsl:if test="description != ''">
+                    <xsl:value-of select="position()"/>. <xsl:value-of select="description" /> 
+                </xsl:if> 
             </a>
             &#160;(<a target="_blank" rel="singlepage[no]">
                 <xsl:attribute name="href">GPX__<xsl:value-of select="@id" />.gpx</xsl:attribute>

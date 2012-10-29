@@ -29,9 +29,7 @@
         <xsl:if test="../exif">
             <span class="exif_container">
                 <span class="exif_tooltip">
-                    <xsl:attribute name="id">exif-content-
-                        <xsl:value-of select="photoId/@id" />
-                    </xsl:attribute>
+                    <xsl:attribute name="id">exif-content-<xsl:value-of select="photoId/@id" /></xsl:attribute>
                     <xsl:apply-templates select="../exif" />
                 </span>
             </span>
@@ -55,13 +53,7 @@
                         <xsl:attribute name="href">Photos__<xsl:value-of select="../@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" /></xsl:if>__<xsl:value-of select="../title" /></xsl:attribute>
                     </xsl:if>
                     <xsl:if test="/webAlbums/carnets">
-                        <xsl:attribute name="href">Carnet__
-                            <xsl:value-of select="../@id" />
-                            <xsl:if test="not(/webAlbums/affichage/@static)">_pc
-                                <xsl:value-of select="/webAlbums/carnets/display/page/@current" />
-                            </xsl:if>__
-                            <xsl:value-of select="../name" />
-                        </xsl:attribute>
+                        <xsl:attribute name="href">Carnet__<xsl:value-of select="../@id" /><xsl:if test="not(/webAlbums/affichage/@static)">_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" /></xsl:if>__<xsl:value-of select="../name" /></xsl:attribute>
                     </xsl:if>
                     <img class="photo">
                         <xsl:attribute name="alt">
@@ -233,17 +225,9 @@
                                 </a>
                             </xsl:if>
                             <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets or /webAlbums/photos/random)">
-                                <span class="exif"><xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>EXIF</span>
-                            </xsl:if>
-                        </xsl:if>
-                        <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
-                            <xsl:if test="/webAlbums/affichage/remote or /webAblums/affichage/@static">
-                                <img alt="Photo en plein-ecran"
-                                 class="fullscreen"
-                                 src="static/images/out.png" width="30px">
-                                 <!-- no url rewritting -->
-                                    <xsl:attribute name="rel">Images?id=<xsl:value-of select="photoId/@id" />&amp;mode=FULLSCREEN</xsl:attribute>
-                                </img>
+                                <span class="exif"><xsl:attribute name="id">exif-target-<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                    <img src="static/images/info.png" width="30px"/>
+                                </span>
                             </xsl:if>
                         </xsl:if>
                         <xsl:if test="/webAlbums/loginInfo/@admin">

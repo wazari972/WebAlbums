@@ -43,6 +43,8 @@
 		<td>
 		  <input id="newTag" name="nom" type='text' size='20' maxlength='40'
                          placeholder="Nom du tag"/>
+                  &#160;
+                  <input id="btGoto" type="button" value="goto"/>
                 </td>
 	      </tr>
 	      <tr>
@@ -237,7 +239,9 @@
 	<span>*</span>
       </div>
       <div class="content">
-	<h1>Parenté des tags</h1>
+	<h1>Parenté des tags
+            <a href="sort.html" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">^</a>
+        </h1>
 	<div class="body">
 	  <form action='#linkTag' method='POST' >
 	    <xsl:apply-templates select="linktag"/>

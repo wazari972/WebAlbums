@@ -156,8 +156,9 @@ public class DispatcherBean {
                         case CHOIX:
                             if ("JSON".equals(type)) {
                                 XmlWebAlbumsList ret = choixServlet.displayChxJSON(vSession);
-                                if (ret != null)
+                                if (ret != null) {
                                     output.blob = ret.blob;
+                                }
                                 response.setContentType("text/javascript;charset=UTF-8");
                                 output.isBlob = true;
                                 output.isComplete = true;   

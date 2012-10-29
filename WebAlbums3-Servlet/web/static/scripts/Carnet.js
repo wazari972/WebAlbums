@@ -2,9 +2,9 @@ function convertImage(id, url, alt_text, title) {
     // __ in this function messes up the markdown generation
     // ## will be converted later
     
-    return '<br/><center><a href="'+url+'" title="' + alt_text + '">'
-         + '<img src="'+ url + '" alt="' + alt_text + '" />'
-         + '</a></center><br/>';
+    return '<center><a href="Image##'+url+'" title="' + alt_text + '">'
+         + '<img class="photo" src="Miniature##'+ url + '.png" alt="' + alt_text + '" />'
+         + '</a></center>';
 }
 function convertLink(id, url, title, link_text) {
     var result = "<a href=\"Photos__" + url + "_p0_pa__\"";
@@ -13,6 +13,14 @@ function convertLink(id, url, title, link_text) {
     result += ">" + link_text + "</a>";
     
     return result
+}
+
+function finishConvert(converted) {
+    
+    converted = converted.replace(/Image##/g, "Image__")
+    converted = converted.replace(/Miniature##/g, "Miniature__")
+    
+    return converted
 }
 
 function init_markdown() {
@@ -25,57 +33,102 @@ function init_markdown() {
     });
     converter.hooks.chain("convertImage", convertImage);
     converter.hooks.chain("convertLink", convertLink);
-    converted = converter.makeHtml($("#carnet_text").text())
+    converter.hooks.chain("postConversion", finishConvert);
     
-    converted = converted.replace("Image##", "Image__")
-    converted = converted.replace("Miniature##", "Miniature__")
+    var converted = converter.makeHtml($("#carnet_text").text())
     
     //TODO: rewrite with JQuery
     document.getElementById("carnet_text").innerHTML = converted
-    $("#carnet_text a").each(function() {
-        href = $(this).attr("href")
-        if (href.indexOf("Photos") == -1) {
-            if (!directAccess)
-            $(this).attr("href", "Images__"+href)
-        else
+    if (directAccess) {
+        $("#carnet_text a").each(function() {
+            var href = $(this).attr("href")
             $(this).attr("href", root_path+photo_folder+carnet_static_lookup[href])
-        }
-    })
-    
-    $("#carnet_text img").each(function() {
-        src = $(this).attr("src")
-        if (!directAccess)
-            $(this).attr("src", "Miniature__"+src+".png")
-        else
+            
+        })
+        $("#carnet_text img").each(function() {
+            var src = $(this).attr("src")
             $(this).attr("src", root_path+mini_folder+carnet_static_lookup[src]+".png")
-    })
+        })   
+    }
 }
 
 function init_toc() {
-    toc = $(".carnet_toc")
+    var toc = $(".carnet_toc")
+    //create the list holder in all the carnet_toc divs
     toc.each(function() {
         $(this).append(document.createElement('ol'))
     })
+    //mark the first one as special: we don't want to scroll to top from first
     toc.children("ol:eq(0)").addClass("first")
-    ol = toc.children("ol")
-    $("#carnet_text").children("h1").each(function() {
-        var title = $(this)
-        ol.each(function() {
+    var ol = toc.children("ol")
+    
+    //for all the toc lists
+    ol.each(function() {
+        var thisOl = $(this)
+        
+        var sommLI = $(document.createElement('li'))
+        sommLI.text("Table of Content")
+        thisOl.append(sommLI)
+        sommLI.addClass("toc")
+        
+        //create an item and add it to the list
+        var toutLI = $(document.createElement('li'))
+        toutLI.text("Tout")
+        thisOl.append(toutLI)
+        toutLI.addClass("all")
+        
+        toutLI.click(function() {
+            ol.each(function() {
+                $(this).children().removeClass("current")
+            })
+            $("#carnet_text").children().show()
+            //if we're at the bottom of the chapter, scroll to the top'
+            if (!$(this).parent().hasClass("first"))
+                window.scrollTo(0, $("#carnet_head").offset().top)
+        })
+        
+        //create an item and add it to the list
+        var debutLI = $(document.createElement('li'))
+        debutLI.text("Début")
+        thisOl.append(debutLI)
+        
+        var from = $("#carnet_text").children().first();
+        debutLI.click(function() {
+            //on click, change the class to "current"
+            var idx = debutLI.index()
+            ol.each(function() {
+                $(this).children().removeClass("current")
+                $(this).children("li:eq("+idx+")").addClass("current")
+            })
+            from.nextAll().hide()
+            from.nextUntil("h1").show()
+            //if we're at the bottom of the chapter, scroll to the top'
+            if (!$(this).parent().hasClass("first"))
+                window.scrollTo(0, $("#carnet_head").offset().top)
+        })
+        
+        //take all the headers,
+        $("#carnet_text").children("h1").each(function() {
+            var title = $(this)
+        
+            //create an item and add it to the list
             var li = $(document.createElement('li'))
             li.text(title.text())
-            $(this).append(li)
+            thisOl.append(li)
         
             li.click(function() {
-                idx = li.index()
+                //on click, change the class to "current"
+                var idx = li.index()
                 ol.each(function() {
                     $(this).children().removeClass("current")
                     $(this).children("li:eq("+idx+")").addClass("current")
                 })
+                //and hide all the irrelevant chapters
                 title.prevAll().hide()
                 title.show()
                 title.nextAll().hide()
                 title.nextUntil("h1").show()
-                
+                //if we're at the bottom of the chapter, scroll to the top'
                 if (!$(this).parent().hasClass("first"))
                     window.scrollTo(0, $("#carnet_head").offset().top)
             })
@@ -83,15 +136,30 @@ function init_toc() {
     })    
 }
 
+function init_buttons() {
+    $(".fullscreen").click(function() {
+        $(".item").css({
+            'position': 'absolute',
+            'left': "0px",
+            'top': "0px",
+            'background': '#b2c01d',
+            'width':$(document).width()+'px'
+        })
+        
+    })
+}
+
 function init_page() {
     init_markdown()
     init_toc()
+    init_buttons()
 }
 
 $(function() {
-    if (get_data_page("carcnet_inited"))
+    if (get_data_page("carnet_inited")) {
         return
-    save_data_page("carcnet_inited", true)
+    }
+    save_data_page("carnet_inited", true)
     
     init_page()
     add_callback("SinglePage", init_page)

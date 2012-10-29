@@ -64,7 +64,14 @@ public class PluginManager implements PluginManagerLocal {
             try {
                 Importer current = itImg.next();
                 log.info( "+++ Adding \"{}\"", current.getClass().getCanonicalName());
-                if (current.sanityCheck(SystemTools.cb) == Importer.SanityStatus.PASS) {
+                boolean pass ;
+                try {
+                    pass = current.sanityCheck(SystemTools.cb) == Importer.SanityStatus.PASS;
+                } catch (UnsupportedOperationException e) {
+                    pass = false;
+                }
+                
+                if (pass) {
                     validWrappers.add(current);
                 } else {
                     invalidWrappers.add(current);
@@ -77,8 +84,11 @@ public class PluginManager implements PluginManagerLocal {
         Collections.sort(validWrappers, new Comparator<Importer>() {
 
             public int compare(Importer o1, Importer o2) {
-
-                return o2.getPriority() - o1.getPriority();
+                try {
+                    return o2.getPriority() - o1.getPriority();
+                } catch (UnsupportedOperationException e) {
+                    return 0;
+                }
             }
         });
 

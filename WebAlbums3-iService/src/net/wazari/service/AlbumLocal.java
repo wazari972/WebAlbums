@@ -42,14 +42,14 @@ public interface AlbumLocal {
     XmlAlbumYears treatYEARS(ViewSessionAlbum vSession);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession);
+    XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession);
+    XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumAbout treatABOUT(ViewSessionAlbum vSession) throws WebAlbumsServiceException ;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumGpx treatGPX(ViewSessionAlbum vSession);
+    XmlAlbumGpx treatGPX(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
 }

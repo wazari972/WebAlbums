@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="static/scripts/lib/jquery/css/jquery.jOrgChart.css" type="text/css"/>
+        <link rel="stylesheet" href="static/scripts/lib/jquery/css/smoothness/jquery-ui.css" media="screen" type="text/css"/>
+        <style type="text/css">
+            body,html{
+                background-color: #FDF;
+             }
+            img.miniOrg {
+                max-width:100px;
+                max-height:100px;
+                vertical-align:middle;
+                clear:both;
+            }
+            
+            .node a {
+                font-family: tahoma;
+                font-size: 10px;
+                line-height: 11px;
+                padding: 2px;
+                clear:left;
+                color: #E05E00;	
+                text-decoration: none;
+            }
+
+            .node a:hover{
+                    text-decoration: underline;
+            }
+            
+            .jOrgChart .node {
+                background-color: #35363B;
+                border: 5px solid white;
+                border-radius: 8px 8px 8px 8px;
+                color: #F38630;
+                font-size: 14px;
+                overflow: hidden;
+                height:auto;
+                width:auto;
+            }
+            </style>
+    </head>
+    <body>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.jOrgChart.js"></script>
+        
+        <script type="text/javascript" src="static/scripts/tools.js"></script>
+        
+        <div id="tagTree" style="display:none"></div>
+        
+        <div id="chart" class="orgChart"></div>
+        
+        <script type="text/javascript">
+            function loaded() {
+                document.title = 'Preprocessing elements ...';
+                $("#tagTree").hide()
+                
+                
+                $("#cloudTree li").removeClass("submenu")
+                $("#cloudTree a").removeClass("cloud-tag_used")
+                                 .css({ 'font-size': "100%" })
+                                 .each(function() {
+                                     if (!$(this).attr("id"))
+                                         return
+                                     var id = $(this).attr("id").split("-")[2]
+                                     var img = new Image()
+                                     img.src = "Images?mode=REPRESENT_TAG&id="+id
+                                     $(img).addClass("miniOrg")
+                                     $(this).parent().append($('<br/>')).append(img)
+                                 })
+                                 .attr("target", "_blank")
+                $("#cloudTree span").remove()
+                
+                var ul = $('<ul>')
+                var li = $('<li>')
+                li.html("WebAlbums<ul>"+$("#cloudTree").html()+"</ul>")
+                
+                ul.append(li)
+                
+                document.title = 'jOrgCharting the graph ...';
+                
+                ul.jOrgChart({
+                    chartElement : '#chart'
+                });
+                document.title = 'WebAlbums Tags chart';
+            }
+            $(function() {
+                document.title = 'Loading cloud tag ...';
+                loadExernals(null, 'Tags__Cloud', 'tagTree', loaded) ;
+            })
+        </script>
+    </body>
+</html>
