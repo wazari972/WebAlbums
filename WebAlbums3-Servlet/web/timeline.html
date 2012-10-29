@@ -16,39 +16,45 @@
         
         #timeline {
             height : 200px;
-        }
+        }        
         
-        #albums {
-            height: 200px;
+        .photo-list {
+            height: 140px;
             overflow: scroll;
         }
         
-        #albums img {
-            max-height:  100%;
+        .data-not-ready {
+            background-color: #FDF;
         }
         
-        #whereTags {
-            height: 200px;
-            overflow: scroll;
-        }
-        
-        #whereTags img {
+        .photo-list img {
             max-height:  100%;
         }
    </style>
 
    <script  type="text/javascript">
-       var timeline_data = {  // save as a global variable
-            'dateTimeFormat': 'iso8601',
-            'events' : []
-        }
         var NB_LINES = 2;
-        var tl;
+        
         $(function() {
             window.albumEvents = {}
-            
+            window.tagDataReceived = false;
+            window.visibleWhereTags = {}
+            window.visibleWhoTags = {}
+            window.tl = null;
+            addAlbums()
+            addTagInfo()
+            addTagMap()
+        })
+        
+        function addAlbums() {
             $.get('Albums?special=SELECT', function(data) {
                 var xmlData = $(data)
+                
+                var timeline_data = {  // save as a global variable
+                    'dateTimeFormat': 'iso8601',
+                    'events' : []
+                }
+                
                 xmlData.find("album").each(function() {
                     var albumId = $(this).attr("id")
                     var albumEvent = {
@@ -56,7 +62,7 @@
                         "title" : $(this).find("name").text(),
                         "description" : $(this).find("description").text(),
                         "image" : "Miniature__"+$(this).find("picture").attr("id")+".png",
-                        "link" : "Photo__"+albumId+"_p0___"+$(this).find("name").text(),
+                        "link" : "Photos__"+albumId+"_p0___"+$(this).find("name").text(),
                         "color": "#00AA00",
                         "albumid": albumId
                     }
@@ -65,13 +71,12 @@
                 
                 if (timeline_data.events.length != 0) {
                     createTimeline(timeline_data)
+                    $("#albums").removeClass("data-not-ready")
                 } else {
                     alert("No data found")
                 }
             });
-            
-            addTagInfo()
-        })
+        }
         
         var SEC = 1000;
         var MIN = SEC*60
@@ -95,9 +100,8 @@
             return minDisplayed.getTime() > date.getTime()
         }
         
-        var tagDataReceived = false;
         function scroll() {
-            var band = tl.getBand(0)
+            var band = window.tl.getBand(0)
             var min = band.getMinVisibleDate()
             var max = band.getMaxVisibleDate()
             
@@ -112,7 +116,14 @@
             
             var evtSrc = band.getEventSource()
             var totalCount = evtSrc.getCount()
-            var visibleWhereTags = {}
+            
+            $.each(window.visibleWhereTags, function(id, val) {
+                window.visibleWhereTags[id] = false;
+            })
+
+            $.each(window.visibleWhoTags, function(id, val) {
+                window.visibleWhoTags[id] = false;
+            })
             
             for (var i = 0; i < totalCount; i++) {
                 var evt = evtSrc.getEvent("e"+(i+1))
@@ -127,39 +138,47 @@
                 //if out of the visible scope, hide and continue
                 if (evt.getEnd() < min || evt.getStart() > max) {
                     albumImg.hide();
+                    
                     continue
                 }
                 
                 //if already visible, continue
-                if (albumImg.is(":visible")) {
-                    continue
-                }
-                
-                if (albumImg.length != 0) {
-                    albumImg.show()
-                } else {
-                    var img = new Image()
-                    img.id = "album"+id
-                    img.src = evt.getProperty("image")
-                    img.title = evt.getProperty("title")
-                    if (goingBack || first) {
-                        $("#albums").prepend(img)
+                if (!albumImg.is(":visible")) {
+                    if (albumImg.length != 0) {
+                        albumImg.show()
                     } else {
-                        $("#albums").append(img)
+                        var img = new Image()
+                        img.id = "album"+id
+                        img.src = evt.getProperty("image")
+                        img.title = evt.getProperty("title")
+                        if (goingBack || first) {
+                            $("#albums").prepend(img)
+                        } else {
+                            $("#albums").append(img)
+                        }
                     }
                 }
                 
-                if (!tagDataReceived) {
+                if (!window.tagDataReceived) {
                     continue;
                 }
                 window.albumEvents[id].find("where").each(function() {
-                    visibleWhereTags[$(this).attr("id")] = $(this)
+                    window.visibleWhereTags[$(this).attr("id")] = $(this)
+                })
+                
+                window.albumEvents[id].find("who").each(function() {
+                    window.visibleWhoTags[$(this).attr("id")] = $(this)
                 })
             }
             
-            $(".where-tag").hide()
-            $.each(visibleWhereTags, function(tagId, tag) {
+            var treatTag = function(tagId, tag, tagDiv, className) {
                 var tagImg = $("#tag"+tagId)
+                
+                if (!tag) {
+                    tagImg.hide()
+                    return
+                }
+                
                 if (tagImg.length != 0) {
                     tagImg.show()
                 } else {
@@ -168,9 +187,17 @@
                     img.id = "tag"+tagId
                     img.src = "Images?mode=REPRESENT_TAG&id="+tagId
                     img.title = tag.find("name").text()
-                    $("#whereTags").append(img)
-                    $(img).addClass("where-tag")
+                    
+                    tagDiv.append(img)
+                    $(img).addClass(className)
                 }
+            }
+            
+            $.each(window.visibleWhereTags, function(tagId, tag) {
+                treatTag(tagId, tag, $("#whereTags"), "where-tag")
+            })
+            $.each(window.visibleWhoTags, function(tagId, tag) {
+                treatTag(tagId, tag, $("#whoTags"), "who-tag")
             })
         }
         
@@ -211,24 +238,41 @@
             bandInfos[1].highlight = true;
             
             // create the Timeline
-            tl = Timeline.create(document.getElementById("timeline"), bandInfos, Timeline.HORIZONTAL);
+            window.tl = Timeline.create(document.getElementById("timeline"), bandInfos, Timeline.HORIZONTAL);
             eventSource.loadJSON(tl_data, ".");
-            tl.layout(); // display the Timeline
+            window.tl.layout(); // display the Timeline
             
-            tl.getBand(0).addOnScrollListener(scroll); 
+            window.tl.getBand(0).addOnScrollListener(scroll); 
             scroll()
         }
         
         function addTagInfo() {
             $.get('Albums?special=SELECT&wantTags=true', function(data) {
                 var xmlData = $(data)
-                tagDataReceived = true;
+                //window.tagDataReceived = true;
+                
+                $("#whereTags").removeClass("data-not-ready")
+                $("#whoTags").removeClass("data-not-ready")
+                
                 xmlData.find("album").each(function() {
                     var albumId = $(this).attr("id")
                     
                     window.albumEvents[albumId] = $(this)
                 })
-                //tagDataReceived = true;
+                tagDataReceived = true;
+            })
+        }
+        
+        function addTagMap() {
+            $.getJSON("Choix?special=MAP&type=JSON",
+            function(data) {
+                window.geoTags = {};
+                
+                $.each(data, function(id, tag) {
+                    window.geoTags[tag.id] = tag
+                })
+                
+                $("#mapTags").removeClass("data-not-ready")
             })
         }
         
@@ -237,7 +281,7 @@
             if (resizeTimerID == null) {
                 resizeTimerID = window.setTimeout(function() {
                     resizeTimerID = null;
-                    tl.layout();
+                    window.tl.layout();
                 }, 500);
             }
         }
@@ -246,8 +290,10 @@
     </head>
     <body>
         <div id='timeline'></div>
-        <div id='albums'></div>
-        <div id='whereTags'></div>
+        <div id='albums' class="photo-list data-not-ready"></div>
+        <div id='whereTags' class="photo-list data-not-ready"></div>
+        <div id='whoTags' class="photo-list data-not-ready"></div>
+        <div id='mapTags' class="data-not-ready">(map)</div>
     </body>
 </html>
 
