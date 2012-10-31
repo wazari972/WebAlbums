@@ -5,6 +5,17 @@ var mapCenter = {
     zoom: 10
 }
 
+function add_stamen_layers(map) {
+    var toner = new OpenLayers.Layer.Stamen("toner")
+    toner.setName("Stamen Toner")
+    var water = new OpenLayers.Layer.Stamen("watercolor")
+    water.setName("Stamen Watercolor")
+    //var terrain = new OpenLayers.Layer.Stamen("terrain")
+    //terrain.setName("Stamen Terrain")
+    
+    map.addLayers([toner, water]);
+}
+
 function add_osm_layers(map) {
     map.addLayer(new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"));
     
@@ -63,6 +74,7 @@ function add_geoportail_layers(map) {
     };
     var ign = new OpenLayers.Layer.WMTS(options)
     
+    ign.setName("Geoportail IGN")
     map.addLayer(ign)
 }
 
@@ -80,12 +92,16 @@ function init_osm_box(divName) {
         displayProjection: new OpenLayers.Projection("EPSG:4326")
     } );
     
-    add_osm_layers(map)
-    add_geoportail_layers(map)
-    add_google_layers(map)
+    var layers = [add_osm_layers, add_geoportail_layers, add_google_layers, add_stamen_layers]
+    for (var i = 0; i < layers.length; i++) {
+        try {
+            layers[i](map)
+        } catch(e) {
+            alert(e)
+        }
+    }
     
     map.addControl(new OpenLayers.Control.LayerSwitcher());
-
     map.setCenter(transformLonLat(new OpenLayers.LonLat(mapCenter.lon, mapCenter.lat)), mapCenter.zoom);
 
     map.div.style[OpenLayers.String.camelize('background-image')]= 'none';
