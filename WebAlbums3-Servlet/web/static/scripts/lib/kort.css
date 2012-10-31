@@ -1,0 +1,79 @@
+/**
+ * Kort styles start here, everything above is demo-page 
+ * specific.
+ */
+
+.kort {
+	-webkit-perspective: 1200px;
+	   -moz-perspective: 1200px;
+	     -o-perspective: 1200px;
+	        perspective: 1200px;
+
+	-webkit-perspective-origin: 50% 50%;
+	   -moz-perspective-origin: 50% 50%;
+	     -o-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+}
+
+.kort img {
+	-webkit-transition: all 0.3s ease;
+	   -moz-transition: all 0.3s ease;
+	     -o-transition: all 0.3s ease;
+	        transition: all 0.3s ease;
+}
+
+/* DEFAULT TRANSITION */
+.kort:hover img,
+.kort.touching img  {
+	-webkit-transform: translateX( -60% ) rotateY( 60deg ) translateZ(-80px);
+	   -moz-transform: translateX( -60% ) rotateY( 60deg ) translateZ(-80px);
+	     -o-transform: translateX( -60% ) rotateY( 60deg ) translateZ(-80px);
+	        transform: translateX( -60% ) rotateY( 60deg ) translateZ(-80px);
+}
+
+.kort:hover img.present ~ img,
+.kort.touching img.present ~ img {
+	-webkit-transform: translateX( 82% ) rotateY( 50deg );
+	   -moz-transform: translateX( 82% ) rotateY( 50deg );
+	     -o-transform: translateX( 82% ) rotateY( 50deg );
+	        transform: translateX( 82% ) rotateY( 50deg );
+}
+
+/* CONCAVE TRANSITION */
+.kort.concave:hover img.present ~ img,
+.kort.concave.touching img.present ~ img {
+	-webkit-transform: translateX( 60% ) rotateY( -60deg ) translateZ(-80px);
+	   -moz-transform: translateX( 60% ) rotateY( -60deg ) translateZ(-80px);
+	     -o-transform: translateX( 60% ) rotateY( -60deg ) translateZ(-80px);
+	        transform: translateX( 60% ) rotateY( -60deg ) translateZ(-80px);
+}
+
+/* STACK TRANSITION */
+.kort.stack:hover img,
+.kort.stack.touching img  {
+	-webkit-transform: translateZ(-180px) rotateY( -60deg );
+	   -moz-transform: translateZ(-180px) rotateY( -60deg );
+	     -o-transform: translateZ(-180px) rotateY( -60deg );
+	        transform: translateZ(-180px) rotateY( -60deg );
+}
+
+.kort.stack:hover img.present ~ img,
+.kort.stack.touching img.present ~ img {
+	-webkit-transform: translateX( 82% ) rotateY( 50deg );
+	   -moz-transform: translateX( 82% ) rotateY( 50deg );
+	     -o-transform: translateX( 82% ) rotateY( 50deg );
+	        transform: translateX( 82% ) rotateY( 50deg );
+}
+
+.kort:hover img.present,
+.kort.touching img.present  {
+	-webkit-transform: none;
+	   -moz-transform: none;
+	     -o-transform: none;
+	        transform: none;
+
+	margin: 0!important;
+}
