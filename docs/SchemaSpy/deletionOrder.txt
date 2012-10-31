@@ -1,0 +1,12 @@
+TagTheme
+CarnetAlbum
+TagPhoto
+CarnetPhoto
+Person
+Geolocalisation
+Carnet
+Album
+Theme
+Photo
+Tag
+Utilisateur

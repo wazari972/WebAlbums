@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="WebAlbums" type="MySQL - 5.5.28-log">
+   <tables>
+      <table name="Album" numRows="719" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT">
+            <child column="Album" foreignKey="FKD9777286C797130A" implied="false" onDeleteCascade="false" table="CarnetAlbum"/>
+            <child column="Album" foreignKey="FK4984E12C797130A" implied="false" onDeleteCascade="false" table="Photo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="Nom" nullable="false" remarks="" size="100" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="Description" nullable="true" remarks="" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="Theme" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK3C68E4FC9AB01BE" implied="false" onDeleteCascade="false" table="Theme"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="AlbumDate" nullable="false" remarks="" size="10" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="Picture" nullable="true" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK3C68E4FA06FB15C" implied="false" onDeleteCascade="false" table="Photo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="6" name="Droit" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK3C68E4FCFAA73B" implied="false" onDeleteCascade="false" table="Utilisateur"/>
+         </column>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="droitAlbm" unique="false">
+            <column ascending="true" name="Droit"/>
+         </index>
+         <index name="FK3C68E4FA06FB15C" unique="false">
+            <column ascending="true" name="Picture"/>
+         </index>
+         <index name="theme" unique="false">
+            <column ascending="true" name="Theme"/>
+         </index>
+      </table>
+      <table name="Carnet" numRows="2" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT">
+            <child column="Carnet" foreignKey="FKD977728630F701E6" implied="false" onDeleteCascade="false" table="CarnetAlbum"/>
+            <child column="Carnet" foreignKey="FKDA49324930F701E6" implied="false" onDeleteCascade="false" table="CarnetPhoto"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="CarnetDate" nullable="false" remarks="" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="Description" nullable="true" remarks="" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="Nom" nullable="false" remarks="" size="100" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="Picture" nullable="true" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK77E11569A06FB15C" implied="false" onDeleteCascade="false" table="Photo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="5" name="Texte" nullable="true" remarks="" size="2147483647" type="LONGTEXT"/>
+         <column autoUpdated="false" digits="0" id="6" name="Droit" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK77E11569CFAA73B" implied="false" onDeleteCascade="false" table="Utilisateur"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="7" name="Theme" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK77E11569C9AB01BE" implied="false" onDeleteCascade="false" table="Theme"/>
+         </column>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="FK77E11569A06FB15C" unique="false">
+            <column ascending="true" name="Picture"/>
+         </index>
+         <index name="FK77E11569C9AB01BE" unique="false">
+            <column ascending="true" name="Theme"/>
+         </index>
+         <index name="FK77E11569CFAA73B" unique="false">
+            <column ascending="true" name="Droit"/>
+         </index>
+      </table>
+      <table name="CarnetAlbum" numRows="17" remarks="" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="Carnet" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKD977728630F701E6" implied="false" onDeleteCascade="false" table="Carnet"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="Album" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKD9777286C797130A" implied="false" onDeleteCascade="false" table="Album"/>
+         </column>
+         <primaryKey column="Album" sequenceNumberInPK="1"/>
+         <primaryKey column="Carnet" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="Carnet"/>
+            <column ascending="true" name="Album"/>
+         </index>
+         <index name="FKD9777286C868D2CD" unique="false">
+            <column ascending="true" name="Album"/>
+         </index>
+      </table>
+      <table name="CarnetPhoto" numRows="95" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="19" type="BIGINT"/>
+         <column autoUpdated="false" digits="0" id="1" name="Carnet" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKDA49324930F701E6" implied="false" onDeleteCascade="false" table="Carnet"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="Photo" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKDA493249C93A9290" implied="false" onDeleteCascade="false" table="Photo"/>
+         </column>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="Carnet" unique="true">
+            <column ascending="true" name="Carnet"/>
+            <column ascending="true" name="Photo"/>
+         </index>
+         <index name="FKDA49324930F701E6" unique="false">
+            <column ascending="true" name="Carnet"/>
+         </index>
+         <index name="FKDA493249C93A9290" unique="false">
+            <column ascending="true" name="Photo"/>
+         </index>
+      </table>
+      <table name="Geolocalisation" numRows="277" remarks="" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="Tag" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK36D2AFF138AF3060" implied="false" onDeleteCascade="false" table="Tag"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="Lat" nullable="false" remarks="" size="20" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="Longitude" nullable="false" remarks="" size="20" type="CHAR"/>
+         <primaryKey column="Tag" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="Tag"/>
+         </index>
+      </table>
+      <table name="Person" numRows="9" remarks="" type="TABLE">
+         <column autoUpdated="false" digits="0" id="0" name="Tag" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK8E48877538AF3060" implied="false" onDeleteCascade="false" table="Tag"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="Birthdate" nullable="true" remarks="" size="10" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="Contact" nullable="true" remarks="" size="100" type="VARCHAR"/>
+         <primaryKey column="Tag" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="Tag"/>
+         </index>
+      </table>
+      <table name="Photo" numRows="8145" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT">
+            <child column="Picture" foreignKey="FK3C68E4FA06FB15C" implied="false" onDeleteCascade="false" table="Album"/>
+            <child column="Picture" foreignKey="FK77E11569A06FB15C" implied="false" onDeleteCascade="false" table="Carnet"/>
+            <child column="Photo" foreignKey="FKDA493249C93A9290" implied="false" onDeleteCascade="false" table="CarnetPhoto"/>
+            <child column="Photo" foreignKey="FKD57AA2D8C93A9290" implied="false" onDeleteCascade="false" table="TagPhoto"/>
+            <child column="Photo" foreignKey="FKD5B2DA6FC93A9290" implied="false" onDeleteCascade="false" table="TagTheme"/>
+            <child column="Background" foreignKey="FK4D085A97377A98C" implied="false" onDeleteCascade="false" table="Theme"/>
+            <child column="Picture" foreignKey="FK4D085A9A06FB15C" implied="false" onDeleteCascade="false" table="Theme"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="Album" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK4984E12C797130A" implied="false" onDeleteCascade="false" table="Album"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="PhotoPath" nullable="false" remarks="" size="100" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="Description" nullable="true" remarks="" size="200" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="Model" nullable="true" remarks="" size="100" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="DateMeta" nullable="true" remarks="" size="50" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="6" name="Iso" nullable="true" remarks="" size="50" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="7" name="Exposure" nullable="true" remarks="" size="50" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="8" name="Focal" nullable="true" remarks="" size="50" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="9" name="Flash" nullable="true" remarks="" size="150" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="10" name="Height" nullable="true" remarks="" size="50" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="11" name="Width" nullable="true" remarks="" size="50" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="12" name="Type" nullable="true" remarks="" size="50" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="13" name="Droit" nullable="true" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="14" name="Stars" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="15" name="TagAuthor" nullable="true" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK4984E12B8D0B66B" implied="false" onDeleteCascade="false" table="Tag"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="16" name="isGpx" nullable="true" remarks="" size="0" type="BIT"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="album" unique="false">
+            <column ascending="true" name="Album"/>
+         </index>
+         <index name="droitPhoto" unique="false">
+            <column ascending="true" name="Droit"/>
+         </index>
+         <index name="FK4984E12B8D0B66B" unique="false">
+            <column ascending="true" name="TagAuthor"/>
+         </index>
+         <index name="path" unique="false">
+            <column ascending="true" name="PhotoPath"/>
+         </index>
+         <index name="type" unique="false">
+            <column ascending="true" name="Type"/>
+         </index>
+      </table>
+      <table name="Tag" numRows="530" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT">
+            <child column="Tag" foreignKey="FK36D2AFF138AF3060" implied="false" onDeleteCascade="false" table="Geolocalisation"/>
+            <child column="Tag" foreignKey="FK8E48877538AF3060" implied="false" onDeleteCascade="false" table="Person"/>
+            <child column="TagAuthor" foreignKey="FK4984E12B8D0B66B" implied="false" onDeleteCascade="false" table="Photo"/>
+            <child column="Parent" foreignKey="FK1477AFD587970" implied="false" onDeleteCascade="false" table="Tag"/>
+            <child column="Tag" foreignKey="FKD57AA2D838AF3060" implied="false" onDeleteCascade="false" table="TagPhoto"/>
+            <child column="Tag" foreignKey="FKD5B2DA6F38AF3060" implied="false" onDeleteCascade="false" table="TagTheme"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="Nom" nullable="false" remarks="" size="100" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="TagType" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="3" name="Parent" nullable="true" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK1477AFD587970" implied="false" onDeleteCascade="false" table="Tag"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="IsMinor" nullable="true" remarks="" size="0" type="BIT"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="FK1477AFD587970" unique="false">
+            <column ascending="true" name="Parent"/>
+         </index>
+         <index name="tagtype" unique="false">
+            <column ascending="true" name="TagType"/>
+         </index>
+      </table>
+      <table name="TagPhoto" numRows="14682" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="Photo" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKD57AA2D8C93A9290" implied="false" onDeleteCascade="false" table="Photo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="Tag" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKD57AA2D838AF3060" implied="false" onDeleteCascade="false" table="Tag"/>
+         </column>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="TPphoto" unique="false">
+            <column ascending="true" name="Photo"/>
+         </index>
+         <index name="TPtag" unique="false">
+            <column ascending="true" name="Tag"/>
+         </index>
+      </table>
+      <table name="TagTheme" numRows="891" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="Tag" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKD5B2DA6F38AF3060" implied="false" onDeleteCascade="false" table="Tag"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="2" name="Theme" nullable="false" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKD5B2DA6FC9AB01BE" implied="false" onDeleteCascade="false" table="Theme"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="Photo" nullable="true" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FKD5B2DA6FC93A9290" implied="false" onDeleteCascade="false" table="Photo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="isVisible" nullable="true" remarks="" size="0" type="BIT"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="TTPhoto" unique="false">
+            <column ascending="true" name="Photo"/>
+         </index>
+         <index name="TTTag" unique="false">
+            <column ascending="true" name="Tag"/>
+         </index>
+         <index name="TTTheme" unique="false">
+            <column ascending="true" name="Theme"/>
+         </index>
+      </table>
+      <table name="Theme" numRows="9" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT">
+            <child column="Theme" foreignKey="FK3C68E4FC9AB01BE" implied="false" onDeleteCascade="false" table="Album"/>
+            <child column="Theme" foreignKey="FK77E11569C9AB01BE" implied="false" onDeleteCascade="false" table="Carnet"/>
+            <child column="Theme" foreignKey="FKD5B2DA6FC9AB01BE" implied="false" onDeleteCascade="false" table="TagTheme"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="Nom" nullable="false" remarks="" size="100" type="CHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="Picture" nullable="true" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK4D085A9A06FB15C" implied="false" onDeleteCascade="false" table="Photo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="Background" nullable="true" remarks="" size="10" type="INT">
+            <parent column="ID" foreignKey="FK4D085A97377A98C" implied="false" onDeleteCascade="false" table="Photo"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="4" name="Lat" nullable="true" remarks="" size="20" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="Longitude" nullable="true" remarks="" size="20" type="VARCHAR"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="FK4D085A97377A98C" unique="false">
+            <column ascending="true" name="Background"/>
+         </index>
+         <index name="FK4D085A9A06FB15C" unique="false">
+            <column ascending="true" name="Picture"/>
+         </index>
+      </table>
+      <table name="Utilisateur" numRows="4" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT">
+            <child column="Droit" foreignKey="FK3C68E4FCFAA73B" implied="false" onDeleteCascade="false" table="Album"/>
+            <child column="Droit" foreignKey="FK77E11569CFAA73B" implied="false" onDeleteCascade="false" table="Carnet"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="Nom" nullable="false" remarks="" size="100" type="CHAR"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+      </table>
+   </tables>
+</database>
