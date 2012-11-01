@@ -127,19 +127,18 @@
                 
                 <script type="text/javascript" src="static/scripts/tools.js"></script>
                 
-                <!--<xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix or webAlbums/config">-->
-                    <!--<script src="http://api.ign.fr/geoportail/api/js/1.3.0/GeoportalMin.js" charset="utf-8" ></script>-->
-                    <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
-                    <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.0"></script>
+                <xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix or webAlbums/config">
                     <script src="http://openlayers.org/dev/OpenLayers.js"></script>
+                    <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
                     <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
+                    <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.0"></script>
                     <script src="static/scripts/lib/HeatmapLayer.js" type="text/javascript"></script>
                     <script src="static/scripts/OpenLayerFunctions.js"></script>
                     
                     <xsl:if test="/webAlbums/loginInfo/@latitude and /webAlbums/loginInfo/@longitude">
                         <script type="text/javascript"> mapCenter.lat = <xsl:value-of select="/webAlbums/loginInfo/@latitude" />; mapCenter.lon = <xsl:value-of select="/webAlbums/loginInfo/@longitude" /></script>
                     </xsl:if>
-                <!--</xsl:if>-->
+                </xsl:if>
                 
                 <xsl:if test="/webAlbums/photos or /webAlbums/tags">
                     <script type="text/javascript" src="static/scripts/Photos.js"></script>
