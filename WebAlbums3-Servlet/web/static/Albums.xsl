@@ -73,6 +73,10 @@
             </xsl:if>
 	  </h2>
           <hr/>
+          <xsl:if test="details/description and details/description != ''">
+            <span><xsl:value-of select="details/description" /></span>
+            <hr/>
+          </xsl:if>
 	</xsl:if>
         <xsl:if test="not(/webAlbums/photos or /webAlbums/tags)">
             <div class="body">

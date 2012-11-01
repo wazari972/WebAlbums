@@ -77,6 +77,7 @@
                         </xsl:if>
                     </img>
                 </a>
+                <span style="visibility:hidden">(that just an invisible text to have a new line, shame on me :-$ )</span>
             </div>
             <div class="info">
                 <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">

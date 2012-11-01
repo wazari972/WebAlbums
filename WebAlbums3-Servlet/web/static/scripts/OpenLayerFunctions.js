@@ -97,7 +97,7 @@ function init_osm_box(divName) {
         try {
             layers[i](map)
         } catch(e) {
-            alert(e)
+            window.console.log(e)
         }
     }
     
