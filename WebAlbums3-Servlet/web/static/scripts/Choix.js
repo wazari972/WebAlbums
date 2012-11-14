@@ -5,14 +5,20 @@ function pointToContent(point) {
           +"</div>"
 }
 
+
+function point_to_lonlat(point) {
+    return lng_lat_to_lonlat(point.lng, point.lat)
+}
+
 function populateMap(map) {    
-    if (typeof Heatmap != 'undefined') {
-        var heat = new Heatmap.Layer("Heatmap");
-        map.addLayer(heat);
+    var heat;
+    if (have_heatmap()) {
+        heat = add_heatmap_layer(map, "Heatmap")
+    } else {
+         heat = null
     }
     
-    var markers = new OpenLayers.Layer.Markers("Geo Tags");
-    map.addLayer(markers);
+    var markers = add_marker_layer(map, "Geo Tags")
     
     var xmlCloud;
                 
@@ -34,18 +40,13 @@ function populateMap(map) {
                 addMarker(map, markers, point, pointToContent, lonlat)
                 if (heat == undefined)
                     return;
-                var src = new Heatmap.Source(lonlat);
-                heat.addSource(src);
                 
-                src.intensity = xmlCloud.find("tag[id=" +point.id+ "]").attr("nb")
+                var intensity = xmlCloud.find("tag[id=" +point.id+ "]").attr("nb")
+                heat_add_src(lonlat, intensity)
             });
-
-            map.addControl(new OpenLayers.Control.LayerSwitcher());
             
-            if (heat == undefined)
-                map.zoomToExtent(markers.getDataExtent());
-            else
-                map.zoomToExtent(heat.getDataExtent());
+            
+            zoom_to_layer (heat != undefined ? heat : marker)
             
             $("body").css("cursor", "auto");
         }

@@ -78,6 +78,39 @@ function add_geoportail_layers(map) {
     map.addLayer(ign)
 }
 
+function add_heatmap_layer(map, name) {
+    if (!have_heatmap())
+        return null;
+    
+    var heat = new Heatmap.Layer(name);
+    map.addLayer(heat);
+    
+    return heat;
+}
+
+function head_add_src(latlng, intensity) {
+    if (!have_heatmap())
+        return;
+    
+    var src = new Heatmap.Source();
+    heat.addSource(src);
+    
+    if (intensity != undefined) {
+        src.intensity = intensity
+    }
+}
+
+function have_heatmap() {
+    return (typeof Heatmap != 'undefined')
+}
+
+function add_marker_layer(map, name) {
+    var markers = new OpenLayers.Layer.Markers(name);
+    map.addLayer(markers);
+    
+    return markers
+}
+
 function init_osm_box(divName) {
     var map = new OpenLayers.Map (divName, {
         controls:[
@@ -140,6 +173,10 @@ function zoomTo(map, layer, closest) {
     map.zoomToExtent(layer.getDataExtent(), closest);
 }
 
+function zoom_to_layer(map, layer) {
+    map.zoomToExtent(layer.getDataExtent());
+}
+
 function transformLonLat(lonlat) {
     if (!lonlat || !lonlat.transform)
         return lonlat
@@ -151,8 +188,8 @@ function transformLonLat(lonlat) {
     }
 }
 
-function point_to_lonlat(point) {
-    return transformLonLat(new OpenLayers.LonLat(point.lng, point.lat))
+function lng_lat_to_lonlat(lng, lat) {
+    return transformLonLat(new OpenLayers.LonLat(lng, lat))
 }
 
 var currentPopup = null;
@@ -186,6 +223,8 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
     marker.events.register("mousedown", feature, markerClick);
 
     markers.addMarker(marker);
+    
+    return marker
 }
 
 function geocode(address, map) {
@@ -194,7 +233,6 @@ function geocode(address, map) {
     if (geocoder) {
         geocoder.geocode({'address': address }, function (results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
-             
              
              var longlat = new OpenLayers.LonLat(results[0].geometry.location.lng(), results[0].geometry.location.lat())
              map.setCenter(transformLonLat(longlat), map.getZoom())
