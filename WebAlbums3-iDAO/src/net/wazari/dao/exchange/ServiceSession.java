@@ -27,4 +27,6 @@ public interface ServiceSession {
     boolean isSessionManager();
 
     int getPhotoAlbumSize() ;
+    
+    Integer getStarLevel();
 }

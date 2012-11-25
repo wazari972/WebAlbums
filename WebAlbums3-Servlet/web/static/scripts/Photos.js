@@ -32,7 +32,7 @@ function set_tags(photoid) {
     
     $.post("Photos?special=FASTEDIT&tagAction=SET&"+tags.serialize(), 
         {id : photoid},
-        function(data) {
+        function() {
             // need to ensure that it's OK ...
             var newHtml = ""
             $("#fastedit_tag_"+photoid+" option:selected").each(function() {

@@ -52,7 +52,17 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     public boolean getWantUnusedTags() {
         return false;
     }
-
+    
+    @Override
+    public Integer getNewStarLevel() {
+        return null;
+    }
+    
+    @Override
+    public Integer getStarLevel() {
+        return null;
+    }
+    
     @Override
     public Utilisateur getUser() {
         return new Utilisateur() {
@@ -380,6 +390,11 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     @Override
     public boolean getWantTags() {
         return false;
+    }
+
+    @Override
+    public void setStarLevel(Integer starLevel) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

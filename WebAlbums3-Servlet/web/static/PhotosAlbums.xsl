@@ -98,22 +98,20 @@
                 <div class="options">
                     <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
                         <div>
-                            <p>
-                                <xsl:value-of select="albumDate"/>&#160;
-                                <a class="albumTT">
-                                    <xsl:attribute name="title">
-                                        <xsl:value-of select="albumName"/>
-                                    </xsl:attribute>
-                                    <xsl:attribute name="id">album-target-<xsl:value-of select="@albumId"/></xsl:attribute>
-                                    <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
+                            <xsl:value-of select="albumDate"/>&#160;
+                            <a class="albumTT">
+                                <xsl:attribute name="title">
                                     <xsl:value-of select="albumName"/>
-                                </a>
-                            </p>
+                                </xsl:attribute>
+                                <xsl:attribute name="id">album-target-<xsl:value-of select="photoId/@id"/></xsl:attribute>
+                                <xsl:attribute name="href">Photos__<xsl:value-of select="@albumId" />_p0__<xsl:value-of select="albumName" /></xsl:attribute>
+                                <xsl:value-of select="albumName"/>
+                            </a>
                         </div>
                         <span class="album_tooltip">
-                            <xsl:attribute name="id">album-content-<xsl:value-of select="@albumId"/>
-                            </xsl:attribute>
+                            <xsl:attribute name="id">album-content-<xsl:value-of select="photoId/@id"/></xsl:attribute>
                             <xsl:attribute name="rel"><xsl:value-of select="@albumId"/></xsl:attribute>
+                            hello
                         </span>
                     </xsl:if>
                     <xsl:apply-templates select="tagList">

@@ -277,6 +277,28 @@ public class ViewSessionImpl implements
     }
     
     @Override
+    public Integer getNewStarLevel() {
+        return getInteger("newStarLevel");
+    }
+    
+    @Override
+    public Integer getStarLevel() {
+        Integer ret = getSessionObject("starLevel", Integer.class);
+        
+        if (ret == null) {
+            ret = 1;
+        }
+        
+        return ret;
+    }
+    
+    @Override
+    public void setStarLevel(Integer starLevel) {
+        setSessionObject("starLevel", starLevel);
+    }
+
+    
+    @Override
     public Integer getStars() {
         return getInteger("stars");
     }

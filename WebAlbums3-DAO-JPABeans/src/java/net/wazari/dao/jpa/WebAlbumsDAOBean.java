@@ -71,7 +71,9 @@ public class WebAlbumsDAOBean {
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public void setOrder(CriteriaQuery<?> cq, CriteriaBuilder cb,
             ListOrder order, Expression<?> field) {
-        if (order == null) return ;
+        if (order == null) {
+            return ;
+        }
 
         Order orderBy ;
         switch(order) {
@@ -88,8 +90,9 @@ public class WebAlbumsDAOBean {
     public List<JPAAlbum> filterAlbumsAllowed(List<JPAAlbum> albums, ServiceSession session) {
         Iterator<JPAAlbum> itA = albums.iterator();
         while (itA.hasNext()) { 
-            if (filter(itA.next(), session) == null)
+            if (filter(itA.next(), session) == null) {
                 itA.remove();
+            }
         }
         return albums;
     }
@@ -98,8 +101,9 @@ public class WebAlbumsDAOBean {
     public List<JPAPhoto> filterPhotosAllowed(List<JPAPhoto> photos, ServiceSession session) {
         Iterator<JPAPhoto> itP = photos.iterator();
         while (itP.hasNext()) { 
-            if (filter(itP.next(), session) == null)
+            if (filter(itP.next(), session) == null) {
                 itP.remove();
+            }
         }
         return photos;
     }
@@ -108,18 +112,33 @@ public class WebAlbumsDAOBean {
     public JPAPhoto filter(JPAPhoto photo, ServiceSession session) {
         if (mustFilter(session, photo.getDroit())) {
             return null;
-        } else {
-            return photo;
         }
+        log.warn("stars level "+session.getStarLevel());
+        log.warn("stars "+photo.getStars());
+        log.warn("id "+photo.getId());
+        if (session != null && session.getStarLevel() != null) {
+            Integer starLevel = session.getStarLevel();
+            
+            //anything above STARLEVEL
+            if (starLevel > 0 && photo.getStars() < starLevel) {
+                return null;
+            }
+            
+            //just STARLEVEL
+            if (starLevel < 0 && photo.getStars() != starLevel) {
+                return null;
+            }
+        }
+        
+        return photo;
     }
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Album filter(JPAAlbum album, ServiceSession session) {
         if (mustFilter(session, album.getDroit())) {
             return null;
-        } else {
-            return album;
         }
+        return album;
     }
     
     private boolean mustFilter(ServiceSession session, Utilisateur user) {
@@ -128,8 +147,10 @@ public class WebAlbumsDAOBean {
     }
     
     private boolean mustFilter(ServiceSession session, Integer userId) {
-        return session != null && !session.isSessionManager() && session.getUser() != null
-            && userId != null &&
-            userId < session.getUser().getId();
+        return session != null 
+             && !session.isSessionManager() 
+             && session.getUser() != null
+             && userId != null
+             && userId < session.getUser().getId();
     }
 }

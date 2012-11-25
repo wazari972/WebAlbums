@@ -172,6 +172,10 @@ function activate_qosStars_only() {
 
 function set_qosStars(value) {
     $.cookie('QOS_STARS', value, {path: '/'});
+    
+    var starlevel = (get_qos_Stars_only() ? "-":"")+value
+    
+    $.post("Photos?special=FASTEDIT&newStarLevel="+starlevel)
 }
 
 function get_qosStars() {
@@ -190,6 +194,7 @@ function refresh_qos_stars() {
             $("#qos_stars_"+i).attr("src", "static/images/star.off.png")
     }
     $(".photo_item").each(function(){
+        return
         c_stars = parseInt($(this).attr("rel"))
         if ((!only && c_stars >= stars)
             ||only && c_stars == stars)

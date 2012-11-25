@@ -31,6 +31,8 @@ public interface ViewSession extends ServiceSession{
         TAG_USED, TAG_NUSED, TAG_ALL, TAG_NEVER, TAG_NEVER_EVER, TAG_GEO
     }
 
+    Integer getStarLevel();
+    
     boolean getCompleteChoix();
 
     Special getSpecial();

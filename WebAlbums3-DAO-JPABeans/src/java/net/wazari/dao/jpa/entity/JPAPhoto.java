@@ -14,6 +14,7 @@ import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
+    @Index(name="Idx_path")
     @Basic(optional = false)
     @Column(name = "PhotoPath", nullable = false, length = 100)
     private String path;
@@ -48,6 +50,7 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "Description", length = 200)
     private String description;
 
+    @Index(name="Idx_stars")
     @Column(name = "Stars", length = 2, nullable = false)
     private Integer stars = 3;
     
@@ -84,6 +87,7 @@ public class JPAPhoto implements Photo, Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "photo", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
+    @Index(name="Idx_album")
     @JoinColumn(name = "Album", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAAlbum album;

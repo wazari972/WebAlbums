@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import net.wazari.dao.entity.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Where;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class JPAAlbum implements Album, Serializable {
 
     @Basic(optional = false)
     @Column(name = "Nom", nullable = false, length = 100)
+    @Index(name="Idx_name")
     private String nom;
 
     @Column(name = "Description", length = 255)
@@ -46,6 +48,7 @@ public class JPAAlbum implements Album, Serializable {
 
     @Basic(optional = false)
     @Column(name = "AlbumDate", nullable = false, length = 10)
+    @Index(name="Idx_date")
     private String date;
     
     @JoinColumn(name = "Picture", referencedColumnName = "ID", nullable = true)

@@ -99,11 +99,14 @@ public class PhotoFacade implements PhotoFacadeLocal {
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", !session.isSessionManager())
                     .getResultList() ;
+        //oh no, why is the filter done on the JAVA side ... ?
+        //because the SQL request was too complex ? well maybe ...
         subset = webDAO.filterPhotosAllowed(subset, session);
-        if (bornes == null || bornes.getFirstElement() == null)
+        if (bornes == null || bornes.getFirstElement() == null) {
             return new SubsetOf(subset) ;
-        else
+        } else {
             return new SubsetOf(bornes, subset, (long) size);
+        }
 
     }
 
