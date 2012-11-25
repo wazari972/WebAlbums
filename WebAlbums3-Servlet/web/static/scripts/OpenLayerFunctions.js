@@ -82,18 +82,18 @@ function add_heatmap_layer(map, name) {
     if (!have_heatmap())
         return null;
     
-    var heat = new Heatmap.Layer(name);
-    map.addLayer(heat);
+    var heatmap = new Heatmap.Layer(name);
+    map.addLayer(heatmap);
     
-    return heat;
+    return heatmap;
 }
 
-function head_add_src(latlng, intensity) {
+function heat_add_src(heatmap, latlng, intensity) {
     if (!have_heatmap())
         return;
     
-    var src = new Heatmap.Source();
-    heat.addSource(src);
+    var src = new Heatmap.Source(latlng);
+    heatmap.addSource(src);
     
     if (intensity != undefined) {
         src.intensity = intensity

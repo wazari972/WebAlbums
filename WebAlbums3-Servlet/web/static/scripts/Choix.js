@@ -11,11 +11,11 @@ function point_to_lonlat(point) {
 }
 
 function populateMap(map) {    
-    var heat;
+    var heatmap;
     if (have_heatmap()) {
-        heat = add_heatmap_layer(map, "Heatmap")
+        heatmap = add_heatmap_layer(map, "Heatmap")
     } else {
-         heat = null
+        heatmap = null
     }
     
     var markers = add_marker_layer(map, "Geo Tags")
@@ -38,15 +38,15 @@ function populateMap(map) {
                 var lonlat = point_to_lonlat(point)
                 
                 addMarker(map, markers, point, pointToContent, lonlat)
-                if (heat == undefined)
+                if (heatmap == undefined)
                     return;
                 
                 var intensity = xmlCloud.find("tag[id=" +point.id+ "]").attr("nb")
-                heat_add_src(lonlat, intensity)
+                heat_add_src(heatmap, lonlat, intensity)
             });
             
             
-            zoom_to_layer (heat != undefined ? heat : marker)
+            zoom_to_layer (heatmap != undefined ? heatmap : marker)
             
             $("body").css("cursor", "auto");
         }
