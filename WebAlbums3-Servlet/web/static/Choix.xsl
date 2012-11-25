@@ -149,6 +149,21 @@
 	<span></span>
       </div>
       <div class="content">
+	<h1><a href="timeline.html" target="_blank" rel="singlepage[no]" title="Timeline view">Timeline ^</a>
+        </h1>
+	<div class="body">
+	  <center>
+	    <div id="theMapChoix"></div>
+	  </center>
+	</div>
+      </div>
+    </div>
+    
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
+      <div class="content">
 	<h1>Traces Gpx <input id="gpsLoader" type="button" value="+"/></h1>
 	<div class="body">
             <div id="gpsChoix"/>
@@ -162,7 +177,7 @@
       </div>
       <div class="content">
 	<form action="Tags">
-	  <h1>Choix par Tags <input id="tagGraphLoader" type="button" value="Graph it!"/> <input type="submit" value="Search"/>&#160;<a href="tags.html" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">Tree</a></h1>
+	  <h1>Choix par Tags <input id="tagGraphLoader" type="button" value="Graph it!"/> <input type="submit" value="Search"/>&#160;</h1>
 	  <div class="body">
               <div id="tags">
                 <center>

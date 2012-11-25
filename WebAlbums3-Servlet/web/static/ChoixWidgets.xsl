@@ -158,7 +158,7 @@
   
   <xsl:template match="cloud">
       <h3>Nuage de tags</h3>
-      <span class="tree-opt"><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></span>
+      <span class="tree-opt"><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></span> | <a href="tags.html" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">Tree</a>
       <hr/>
       <ul id="cloudTree" class="treeview">
         <xsl:if test="tag[@type = 'who']">
