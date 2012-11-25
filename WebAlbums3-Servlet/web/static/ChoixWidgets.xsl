@@ -2,19 +2,8 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html"/>
   <xsl:template match="albums/select|choix/select">
-    <p>
-        <label for="fromDate">Albums datés entre le </label>
-        <span id="fromDate" style="font-weight:bold;" />
-
-        <label for="toDate"> et le </label>
-        <span id="toDate" style="font-weight:bold;">
-            <xsl:attribute name="rel"></xsl:attribute>
-        </span>
-    </p>
+    <p><label for="albmName">Nom : </label> <input type="text" id="albmName"/></p>
     <br/>
-    <div id="slider-range"></div>
-    <br/>
-    <p><label for="albmName"> et ayant pour nom </label> <input type="text" id="albmName"/></p>
     <div style="overflow: auto; height: 400px">
         <ul>
         <xsl:for-each select="album">
@@ -39,13 +28,7 @@
         </ul>
     </div>
     <script>
-       data = {fromDate:<xsl:value-of select="album[last()]/@time"/>,
-               toDate  :<xsl:value-of select="album/@time"/>}
-             
-       function init_slider() {
-           do_init_slider(data)
-       }
-       $(init_slider)
+       $(init_selecter)
     </script>
   </xsl:template>
   
