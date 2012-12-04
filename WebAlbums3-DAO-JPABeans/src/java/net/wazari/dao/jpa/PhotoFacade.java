@@ -71,7 +71,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
                     .setHint("org.hibernate.readOnly", false)
                     .getSingleResult();
             
-            return webDAO.filter(photo, session);
+            return webDAO.filter(photo, session, false);
         } catch (NoResultException e) {
             return null;
         }
@@ -201,7 +201,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
                     .setFirstResult(0)
                     .setMaxResults(1)
                     .getSingleResult();
-            return webDAO.filter(photo, session);
+            return webDAO.filter(photo, session, false);
         } catch (NoResultException e) {
             return null ;
         }

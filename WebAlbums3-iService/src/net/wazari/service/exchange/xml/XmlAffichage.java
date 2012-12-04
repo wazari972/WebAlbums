@@ -25,6 +25,8 @@ public class XmlAffichage {
     public Boolean statik;
     @XmlAttribute
     public Boolean direct_access;
+    @XmlAttribute
+    public Integer starlevel;
     public String mini_folder;
     public String photo_folder;
 }

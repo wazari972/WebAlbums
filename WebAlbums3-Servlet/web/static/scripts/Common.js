@@ -153,21 +153,22 @@ function init_edition() {
 
 /******************************************/
 
+function activate_qosStars_only() {
+    $("#qos_stars_only").click(function(){
+        set_qosStars_only($(this).prop("checked"))
+        refresh_qos_stars()
+    })
+    
+    $("#qos_stars_only").prop("checked", $.cookie('QOS_STARS_ONLY') == "yes")
+}
+
 function get_qos_Stars_only() {
     return $.cookie('QOS_STARS_ONLY') == "yes"
 }
 
-function activate_qosStars_only() {
-    $("#qos_stars_only").click(function(){
-        if ($(this).prop("checked"))
-            $.cookie('QOS_STARS_ONLY', "yes")
-        else
-            $.cookie('QOS_STARS_ONLY', null)
-        refresh_qos_stars()
-    })
-    if ($.cookie('QOS_STARS_ONLY') == null)
-        return
-    $("#qos_stars_only").prop("checked", true)
+function set_qosStars_only(only) {
+    $.cookie('QOS_STARS_ONLY', only ? "yes" : null)
+    set_qosStars(get_qosStars())
 }
 
 function set_qosStars(value) {
@@ -175,27 +176,29 @@ function set_qosStars(value) {
     
     var starlevel = (get_qos_Stars_only() ? "-":"")+value
     
-    $.post("Photos?special=FASTEDIT&newStarLevel="+starlevel)
+    $.post("Photos?special=FASTEDIT&newStarLevel="+starlevel, null, function() {
+        loadSinglePage(getCurrentPage(), true, true)
+    })
 }
 
 function get_qosStars() {
-    if ($.cookie('QOS_STARS') == null)
-       set_qosStars(1)
     return parseInt($.cookie('QOS_STARS'));
 }
 
 function refresh_qos_stars() {
-    stars = get_qosStars()
-    only = get_qos_Stars_only()
+    var stars = get_qosStars()
+    var only = get_qos_Stars_only()
+    
     for(var i=1; i<=5; i++) {
         if (i <= stars)
             $("#qos_stars_"+i).attr("src", "static/images/star.on.png")
         else
             $("#qos_stars_"+i).attr("src", "static/images/star.off.png")
     }
+    
     $(".photo_item").each(function(){
         return
-        c_stars = parseInt($(this).attr("rel"))
+        var c_stars = parseInt($(this).attr("rel"))
         if ((!only && c_stars >= stars)
             ||only && c_stars == stars)
         {
@@ -207,7 +210,6 @@ function refresh_qos_stars() {
 }
 
 function prepare_qos_stars() {
-    stars = get_qosStars()
     for(var i = 1; i <= 5; i++) {
         $("#qos_stars").append("<img rel='"+i+"'id='qos_stars_"+i+"'src='static/images/star.off.png'/>")
 
@@ -216,10 +218,17 @@ function prepare_qos_stars() {
             refresh_qos_stars()
         })
     }
+
+    var stars = parseInt($("#qos_stars").attr("rel"))
+    var only = stars < 0
+
+    set_qosStars_only(only)
+    set_qosStars(only ? -stars : stars)
+    activate_qosStars_only()
     refresh_qos_stars()
 }
 
-function init_qos_starts() {
+function init_qos_stars() {
     prepare_qos_stars()
     add_callback("SinglePage", refresh_qos_stars)
 }
@@ -279,7 +288,6 @@ $(function () {
     init_common()
     init_edition()
     init_mouse_hover()
-    activate_qosStars_only()
-    init_qos_starts()
+    init_qos_stars()
     init_details()
 })

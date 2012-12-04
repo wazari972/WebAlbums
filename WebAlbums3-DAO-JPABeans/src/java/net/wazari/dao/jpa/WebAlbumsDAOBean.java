@@ -101,7 +101,7 @@ public class WebAlbumsDAOBean {
     public List<JPAPhoto> filterPhotosAllowed(List<JPAPhoto> photos, ServiceSession session) {
         Iterator<JPAPhoto> itP = photos.iterator();
         while (itP.hasNext()) { 
-            if (filter(itP.next(), session) == null) {
+            if (filter(itP.next(), session, true) == null) {
                 itP.remove();
             }
         }
@@ -109,14 +109,12 @@ public class WebAlbumsDAOBean {
     }
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public JPAPhoto filter(JPAPhoto photo, ServiceSession session) {
+    public JPAPhoto filter(JPAPhoto photo, ServiceSession session, boolean starfilter) {
         if (mustFilter(session, photo.getDroit())) {
             return null;
         }
-        log.warn("stars level "+session.getStarLevel());
-        log.warn("stars "+photo.getStars());
-        log.warn("id "+photo.getId());
-        if (session != null && session.getStarLevel() != null) {
+        
+        if (session != null && session.getStarLevel() != null && starfilter) {
             Integer starLevel = session.getStarLevel();
             
             //anything above STARLEVEL
@@ -124,8 +122,8 @@ public class WebAlbumsDAOBean {
                 return null;
             }
             
-            //just STARLEVEL
-            if (starLevel < 0 && photo.getStars() != starLevel) {
+            //just -STARLEVEL
+            if (starLevel < 0 && -photo.getStars() != starLevel) {
                 return null;
             }
         }

@@ -52,9 +52,13 @@
                         <li>Mode: <a id="mode_edition" title="">not set</a></li>
                     </xsl:if>
                     <li>&#160;</li>
-                  <li><h>Qualité: </h>
+                  <li><h>Qualité:</h>
                   <ul>
-                  <li><span id="qos_stars"/></li>
+                      <li>
+                          <span id="qos_stars">
+                              <xsl:attribute name="rel"><xsl:value-of select="/webAlbums/affichage/@starlevel" /></xsl:attribute>
+                          </span>
+                      </li>
                   <li>Only ? <input id="qos_stars_only" value="1" type="checkbox"/></li>
                   </ul> </li>
                   <xsl:if test="not(/webAlbums/affichage/@static)">

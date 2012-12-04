@@ -606,10 +606,8 @@ public class PhotoBean implements PhotoLocal {
         output.desc_status = null;
         output.tag_status = null;
         
-        log.warn("treatFASTEDIT "+vSession.getNewStarLevel());
         Integer starLevel = vSession.getNewStarLevel();
         if (starLevel != null) {
-            log.warn("new star level: "+starLevel);
             vSession.setStarLevel(starLevel);
             
             return output;

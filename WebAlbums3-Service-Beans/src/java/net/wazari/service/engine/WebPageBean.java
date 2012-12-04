@@ -181,9 +181,12 @@ public class WebPageBean implements WebPageLocal {
             vSession.getTheme() != null && vSession.getTheme().getBackground() != null)) {
             affichage.background = true  ;
         }
-        if (vSession.isRemoteAccess()) affichage.remote = true ;
+        if (vSession.isRemoteAccess()) {
+            affichage.remote = true ;
+        }
         
         affichage.photoAlbumSize = vSession.getPhotoAlbumSize();
+        affichage.starlevel = vSession.getStarLevel();
         affichage.statik = vSession.getStatic() ? true : null;
         affichage.direct_access = vSession.directFileAccess() ? true : null;
         if (affichage.direct_access != null && affichage.direct_access) {
@@ -511,8 +514,9 @@ public class WebPageBean implements WebPageLocal {
                     Date birth = inputDate.parse(person.birthdate);
                     dob.setTime(birth);
                     age = getday.get(Calendar.YEAR) - dob.get(Calendar.YEAR);  
-                    if (getday.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR))  
+                    if (getday.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
                         age--;
+                    }
                     person.birthdate = Integer.toString(age);
                 } catch (ParseException ex) {
                     log.warn("Invalid birth date for tag {}: {}", person.name, person.birthdate);
