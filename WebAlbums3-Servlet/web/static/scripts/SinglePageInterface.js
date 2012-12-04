@@ -94,8 +94,8 @@ function loadSinglePage(url, dont_scroll, force, async) {
         },
         complete:function() {$("body").css("cursor", "auto")},
         statusCode: {
-                500: function() {alert('Glassfish error ...');},
-		404: function() {alert('page not found');}
+                500: function() {alert('Glassfish error 500 ...');},
+		404: function() {alert('Page not found 404 ...');}
         },
         async:async
     });
@@ -114,11 +114,11 @@ function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {
     
     $(newDocument).ready(function() {    
         var newLeft = $(Node_getElementById(newDocument, "left"))
-        
+        left.hide()
         left.after(newLeft)
-        
+        left.hide()
         left.remove()
-        newLeft.show()
+        //newLeft.show()
         left = newLeft ;
 
         $("#gen_time").text(($(xml_doc).find("time").text()))
