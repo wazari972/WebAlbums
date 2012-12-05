@@ -10,7 +10,7 @@ import net.wazari.libvfs.annotation.ADirectory;
  *
  * @author kevin
  */
-public class Config implements ADirectory {
+public class ThemeConfig implements ADirectory {
 
     @Override
     public void load() throws Exception {

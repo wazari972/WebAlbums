@@ -236,7 +236,7 @@ public class JnetDBFS extends JnetFSAdapter {
             long offset = JnetWrite.getOffset(jniEnv);
             VStream vs = (VStream) vf;
             vs.seek((int) offset);
-            vs.write(JnetWrite.getDate(jniEnv));
+            vs.write(JnetWrite.getData(jniEnv));
         } catch (IOException ex) {
             debug("Access " + path + " error.");
             return EACCES;

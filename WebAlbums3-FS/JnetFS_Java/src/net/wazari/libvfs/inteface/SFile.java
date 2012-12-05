@@ -12,7 +12,8 @@ import net.wazari.libvfs.annotation.File.Access;
  * @author kevin
  */
 public class SFile implements IFile {
-    public int reference = 0;    
+    public String myName = "generic_file";
+    public int reference = 0;
     protected String content = "Generic content";
     protected IDirectory parent = null;
     
@@ -79,7 +80,7 @@ public class SFile implements IFile {
         if (name != null) {
             return name;
         } else {
-            return "generic_file";
+            return myName;
         }
     }
 
@@ -108,5 +109,15 @@ public class SFile implements IFile {
 
     @Override
     public void touch() {
+    }
+    
+    @Override
+    public void write(String new_content) {
+        this.content = new_content;
+    }
+
+    @Override
+    public void truncate() {
+        this.content = "";
     }
 }

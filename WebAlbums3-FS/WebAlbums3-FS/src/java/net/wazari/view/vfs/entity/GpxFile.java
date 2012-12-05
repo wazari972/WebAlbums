@@ -5,8 +5,6 @@
 package net.wazari.view.vfs.entity;
 
 import java.io.StringWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;

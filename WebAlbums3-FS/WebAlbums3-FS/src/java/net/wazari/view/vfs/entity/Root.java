@@ -7,6 +7,7 @@ package net.wazari.view.vfs.entity;
 import java.util.LinkedList;
 import java.util.List;
 import net.wazari.libvfs.annotation.ADirectory;
+import net.wazari.libvfs.annotation.CanChange;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
@@ -22,12 +23,16 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @File
-public class Root extends SDirectory implements ADirectory {
+public class Root extends SDirectory implements ADirectory, CanChange{
     private static final Logger log = LoggerFactory.getLogger(Root.class.getCanonicalName()) ;
     
     @File
     @Directory
-    public List<Theme> themes = new LinkedList<Theme>();
+    public List<Theme> themes ;
+    
+    @Directory
+    @File(name="config")
+    public Configuration config = new Configuration(this);
     
     @Directory
     @File
@@ -41,6 +46,7 @@ public class Root extends SDirectory implements ADirectory {
 
     @Override
     public void load() throws Exception {
+        themes = new LinkedList<Theme>();
         log.warn("LOAD ROOT");
         for (XmlTheme theme : aThis.themeService.getThemeList(new Session(null)).theme) {
             log.warn("LOAD ROOT {}", theme.name);
@@ -50,8 +56,21 @@ public class Root extends SDirectory implements ADirectory {
     
     @Override
     public void mkdir(String name) {
+        log.warn("mkdir "+name);
         if (name.startsWith(".Trash")) {
             trashes.add(new SDirectory());
         }
     }
+
+    @Override
+    public void contentRead() {
+        changed = false;
+    }
+
+    @Override
+    public boolean contentChanged() {
+        return changed;
+    }
+    
+    public boolean changed = true;
 }

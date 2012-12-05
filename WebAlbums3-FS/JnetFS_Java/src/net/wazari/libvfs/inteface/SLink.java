@@ -19,4 +19,9 @@ public class SLink extends SFile implements ILink {
     public boolean forceFile() {
         return false;
     }
+
+    @Override
+    public void truncate() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -4,6 +4,7 @@ import com.jnetfs.core.Code;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.*;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
@@ -336,11 +337,41 @@ public class LibVFS extends JnetFSAdapter {
         
         debug("WRITE\t" + path);
         IFile file = resolver.getFile(path) ;
+        
         if (file == null) {
             return ENOENT;
         }
         
-        return ENOSYS;
+        long SIZE = JnetWrite.getSize(jniEnv);
+        long OFFSET = JnetWrite.getOffset(jniEnv);
+        byte[] DATA = JnetWrite.getData(jniEnv);
+        
+        log.warn("SIZE "+SIZE);
+        log.warn("OFFSET "+SIZE);
+        log.warn("DATA "+new String(DATA));
+        log.warn("buffer "+file.getContent());
+        
+        byte[] buffer = file.getContent().getBytes();
+        
+        byte[] target;
+        //if target array is too short
+        if (OFFSET + SIZE > buffer.length) {
+            //create target as a larger copy
+            target = new byte[(int) (OFFSET + SIZE)];
+            for (int i = 0; i < buffer.length; i++) {
+                target[i] = buffer[i];
+            }
+        } else {
+            target = buffer;
+        }
+
+        for (int i = 0; i < SIZE; i++) {
+            target[(int)(i + OFFSET)] = DATA[i];
+        }
+        log.warn("wrte "+new String(target));
+        file.write(new String(target));
+        
+        return (int) SIZE;
     }
     
     @Override
@@ -570,7 +601,7 @@ public class LibVFS extends JnetFSAdapter {
         
         try {
             debug("TRUNCATE\t do truncate");
-            /***/
+            file.truncate();
             return ESUCCESS;
         } catch (Exception e) {
             debug("TRUNCATE\t failed "+e);

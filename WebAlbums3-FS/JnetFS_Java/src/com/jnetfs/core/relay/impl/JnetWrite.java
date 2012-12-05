@@ -12,7 +12,7 @@ import com.jnetfs.core.relay.JnetJNIConnector;
 
 public class JnetWrite {
     
-    public static byte[] getDate(JnetJNIConnector conn) throws JnetException {
+    public static byte[] getData(JnetJNIConnector conn) throws JnetException {
         return conn.getBytes("buffer");
     }
 

@@ -139,4 +139,14 @@ public class SDirectory implements IDirectory {
     @Override
     public void touch() {
     }
+
+    @Override
+    public void truncate() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void write(String new_content) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

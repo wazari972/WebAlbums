@@ -36,4 +36,7 @@ public interface IFile {
     void rename(IDirectory targetDir, String filename) throws Exception ;
 
     void touch();
+    void truncate();
+
+    void write(String new_content);
 }

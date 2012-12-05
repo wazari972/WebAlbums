@@ -7,16 +7,6 @@
  */
 package com.jnetfs.vfs.jfs;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.JnetAttributes;
@@ -32,8 +22,21 @@ import com.jnetfs.core.relay.impl.JnetStatfs;
 import com.jnetfs.core.relay.impl.JnetTouch;
 import com.jnetfs.core.relay.impl.JnetTruncate;
 import com.jnetfs.core.relay.impl.JnetWrite;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+import net.wazari.libvfs.inteface.SFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JnetJavaFS extends JnetFSAdapter {
+    private static final Logger log = LoggerFactory.getLogger(SFile.class.getCanonicalName()) ;
 
     private static String SOFTLINK_SUFFIX = ".slink";
     private static boolean JDK_1_6 = System.getProperty("java.version").startsWith("1.6");
@@ -109,10 +112,10 @@ public class JnetJavaFS extends JnetFSAdapter {
         if (file != null && !file.exists()) {
             return ENOENT;
         }
-        int st_mode = 0;
+        int st_mode;
         long st_nlink = 1;
-        long st_mtim = 0;
-        long st_size = 0;
+        long st_mtim;
+        long st_size;
         if (file == null) {
             st_mode = S_IFDIR | 0755;
             st_mtim = System.currentTimeMillis() / 1000l;
@@ -147,7 +150,7 @@ public class JnetJavaFS extends JnetFSAdapter {
         if (file != null && !file.exists()) {
             return ENOENT;
         }
-        File[] files = null;
+        File[] files;
         if (file == null) {
             files = File.listRoots();
         } else {
@@ -308,7 +311,7 @@ public class JnetJavaFS extends JnetFSAdapter {
         long offset = JnetWrite.getOffset(jniEnv);
         try {
             info.file.seek(offset);
-            info.file.write(JnetWrite.getDate(jniEnv));
+            info.file.write(JnetWrite.getData(jniEnv));
         } catch (IOException ex) {
             return EIO;
         }

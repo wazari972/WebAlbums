@@ -25,6 +25,8 @@ import net.wazari.service.exchange.ViewSessionTag;
  * @author kevin
  */
 public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, ViewSessionPhotoDisplay, ViewSessionPhoto, ViewSessionImages, ViewSessionPhotoFastEdit {
+    public static int stars = 1;
+    
     public Theme theme;
     public Integer[] tagAsked = new Integer[0];
     private Integer[] tagSet;
@@ -60,7 +62,7 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     
     @Override
     public Integer getStarLevel() {
-        return null;
+        return stars;
     }
     
     @Override
