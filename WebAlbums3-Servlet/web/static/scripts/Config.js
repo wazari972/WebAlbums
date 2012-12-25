@@ -24,7 +24,7 @@ function pleaseConfirm(form) {
 }
 
 function init_buttons() {
-    $(".map_latlng").attr('readonly', 'readonly')
+    //$(".map_latlng").attr('readonly', 'readonly')
     
     $("#lstModGeo").change(function () {
         checkValidity("lstModGeo", "valModGeo")

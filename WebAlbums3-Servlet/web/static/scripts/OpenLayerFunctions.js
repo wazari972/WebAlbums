@@ -110,8 +110,19 @@ function add_marker_layer(map, name) {
     
     return markers
 }
+function have_google() {
+    return (typeof google != 'undefined')
+}
+
+function have_osm() {
+    return (typeof OpenLayers != 'undefined')
+}
 
 function init_osm_box(divName) {
+    if (!have_heatmap()) {
+        return null;
+    }
+    
     var map = new OpenLayers.Map (divName, {
         controls:[
             new OpenLayers.Control.Navigation(),
@@ -170,10 +181,16 @@ function init_gpx_layer(map, name, file_id, ready_callback) {
 }
 
 function zoomTo(map, layer, closest) {
+    if (map == null) {
+        return;
+    }
     map.zoomToExtent(layer.getDataExtent(), closest);
 }
 
 function zoom_to_layer(map, layer) {
+    if (map == null) {
+        return;
+    }
     map.zoomToExtent(layer.getDataExtent());
 }
 
@@ -181,6 +198,9 @@ function transformLonLat(lonlat) {
     if (!lonlat || !lonlat.transform)
         return lonlat
     else {
+        if (!have_osm()) {
+            return null;
+        }
         return lonlat.transform(
             new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
             new OpenLayers.Projection("EPSG:900913") // to Spherical Mercator Projection
@@ -189,11 +209,18 @@ function transformLonLat(lonlat) {
 }
 
 function lng_lat_to_lonlat(lng, lat) {
+    if (!have_osm()) {
+        return null;
+    }
     return transformLonLat(new OpenLayers.LonLat(lng, lat))
 }
 
 var currentPopup = null;
 function addMarker(map, markers, point, pointToContent_p, lnglat) {
+    if (!have_osm()) {
+        return null;
+    }
+    
     var feature = new OpenLayers.Feature(markers, lnglat);
     feature.closeBox = true;
     feature.popupClass = OpenLayers.Class(OpenLayers.Popup.AnchoredBubble, {minSize: new OpenLayers.Size(300, 180) } );
@@ -228,6 +255,10 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
 }
 
 function geocode(address, map) {
+    if (!have_google()) {
+        return null;
+    }
+    
     var geocoder = new google.maps.Geocoder();
     
     if (geocoder) {

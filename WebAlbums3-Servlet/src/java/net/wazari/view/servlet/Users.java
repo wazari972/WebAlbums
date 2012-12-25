@@ -32,7 +32,6 @@ public class Users extends HttpServlet {
             Action action = vSession.getAction();
             log.info("Action: {}", action);
             if (Action.LOGIN == action) {
-
                 String userName = vSession.getUserName();
                 
                 if (userName == null) {
@@ -46,18 +45,20 @@ public class Users extends HttpServlet {
                 Principal pr = request.getUserPrincipal();
                 if (pr != null) {
                     log.info("already logged in: {}", pr.getName());
-                    if (pr.getName().equals(userName))
+                    if (pr.getName().equals(userName)) {
                         return null;
-                    else
+                    } else {
                         request.logout();
+                    }
                 }
                 log.info("try to login: {}", userName);
                 request.login(userName, pass);
                 output.valid = true ;
                 Boolean dontRedirect = vSession.dontRedirect();
                 log.info("authentication valid {}",dontRedirect);
-                if (dontRedirect == null || !dontRedirect)
+                if (dontRedirect == null || !dontRedirect) {
                     response.sendRedirect("Index");
+                }
                 
                 return null ;
             } else if (Action.CHANGE_IS_MANAGER == action) {
