@@ -30,7 +30,7 @@
             </web-module-additional-libraries>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
-            <definitions>/home/kevin/WebAlbums/WebAlbums-libs/nblibraries.properties</definitions>
+            <definitions>../WebAlbums-libs/nblibraries.properties</definitions>
         </libraries>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>

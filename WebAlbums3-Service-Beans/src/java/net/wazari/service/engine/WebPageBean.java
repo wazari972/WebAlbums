@@ -576,6 +576,9 @@ public class WebPageBean implements WebPageLocal {
 
     public XmlDate xmlDate(String strDate) {
         XmlDate date = new XmlDate();
+        if (strDate.contains(".")) {
+            strDate = strDate.substring(0, strDate.indexOf("."));
+        }
         Date newDate ;
         try {
             newDate = inputDate.parse(strDate);

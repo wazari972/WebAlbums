@@ -35,7 +35,7 @@ is divided into following sections:
         <property file="nbproject/private/private.properties"/>
     </target>
     <target name="-pre-init-libraries">
-        <property location="/home/kevin/WebAlbums/WebAlbums-libs/nblibraries.properties" name="libraries.path"/>
+        <property location="../WebAlbums-libs/nblibraries.properties" name="libraries.path"/>
         <dirname file="${libraries.path}" property="libraries.dir.nativedirsep"/>
         <pathconvert dirsep="/" property="libraries.dir">
             <path path="${libraries.dir.nativedirsep}"/>
