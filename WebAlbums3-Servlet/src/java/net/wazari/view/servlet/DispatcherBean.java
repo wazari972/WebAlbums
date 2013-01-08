@@ -84,7 +84,7 @@ public class DispatcherBean {
             userService.cleanUpSession((ViewSessionLogin) vSession);
         }
         if (page != Page.USER) {
-            log.info("Authenticate the session");
+            log.debug("Authenticate the session");
             //request.authenticate(response);
             
             /* TO BE REMOVED ... one day */
@@ -95,7 +95,7 @@ public class DispatcherBean {
             }
         }
         
-        log.info("============= <{}> =============", page);
+        log.debug("============= <{}> =============", page);
         
         response.setContentType("text/xml");
 
@@ -212,7 +212,7 @@ public class DispatcherBean {
             doWrite(response, output);
         }
 
-        log.info("============= <{}/>: {} =============", new Object[]{page, strTime});
+        log.debug("============= <{}/>: {} =============", new Object[]{page, strTime});
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -31,8 +31,8 @@ import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.util.system.SystemTools;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
+//import org.perf4j.StopWatch;
+//import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +82,7 @@ public class ImageBeaned implements ImageLocal {
         ImgMode mode = vSession.getImgMode();
         mode = (mode == null ? ImgMode.MINI : mode) ;
 
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
+        //StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
         XmlImage output = new XmlImage();
         Integer imgId = vSession.getId();
@@ -196,20 +196,20 @@ public class ImageBeaned implements ImageLocal {
             if (vSession.getConfiguration().isPathURL()) {
                 if (false) {
                     vSession.redirect(filepath) ;
-                    stopWatch.stop(stopWatch.getTag()+".redirect") ;
+                    //stopWatch.stop(stopWatch.getTag()+".redirect") ;
                     return null ;
                 }
             } else {
                 filepath = "file://" + filepath;
             }
 
-            stopWatch.lap("Service.treatIMG."+mode) ;
+            //stopWatch.lap("Service.treatIMG."+mode) ;
             //null = correct, true = incorrect, but contentType already set
             Boolean correct = sendFile(vSession, filepath, type, output);
             if (correct == null || correct) {
                 output = null;
             }
-            stopWatch.stop("Service.treatIMG."+mode+".sendFile") ;
+            //stopWatch.stop("Service.treatIMG."+mode+".sendFile") ;
         } catch (Exception e) {
             log.warn ("{}: {} ", e.getClass().getSimpleName(), e) ;
             output.exception = e.getMessage();
