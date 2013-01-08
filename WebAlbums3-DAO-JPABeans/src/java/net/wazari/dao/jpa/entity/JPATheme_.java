@@ -15,5 +15,7 @@ public abstract class JPATheme_ {
     public static volatile SingularAttribute<JPATheme, Integer> picture;
     public static volatile SingularAttribute<JPATheme, Integer> background;
     public static volatile ListAttribute<JPATheme, JPACarnet> jPACarnetList;
+    public static volatile SingularAttribute<JPATheme, String> longitude;
+    public static volatile SingularAttribute<JPATheme, String> lat;
 }
 

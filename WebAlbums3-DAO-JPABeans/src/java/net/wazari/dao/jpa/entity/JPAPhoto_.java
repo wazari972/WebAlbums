@@ -26,5 +26,6 @@ public abstract class JPAPhoto_ {
     public static volatile SingularAttribute<JPAPhoto, String> path;
     public static volatile SingularAttribute<JPAPhoto, Tag> tagAuthor;
     public static volatile ListAttribute<JPAPhoto, JPACarnet> jPACarnetList;
+    public static volatile SingularAttribute<JPAPhoto, Boolean> isGpx;
 }
 
