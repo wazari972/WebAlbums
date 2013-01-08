@@ -35,10 +35,10 @@ function add_google_layers(map) {
          * */
         
         var reload_google_layers = function() {
-            if (google.maps.MapTypeId == undefined) {
-                alert("Couldn't load Google maps ...")
-            } else {
+            if (have_google()) {
                 add_google_layers(map)
+            } else {
+                alert("Couldn't load Google maps ...")
             }
         }
 
@@ -111,7 +111,7 @@ function add_marker_layer(map, name) {
     return markers
 }
 function have_google() {
-    return (typeof google != 'undefined')
+    return (typeof google != 'undefined' && google.maps.MapTypeId == undefined)
 }
 
 function have_osm() {

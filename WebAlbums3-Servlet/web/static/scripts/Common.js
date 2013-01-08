@@ -26,13 +26,17 @@ function init_photoalbum_size() {
         $.post("Albums?special=PHOTOALBUM_SIZE", 
             {photoAlbumSize : $(this).val()},
             function(data) {
-                if (loadSinglePage != undefined) {
-                    loadSinglePage(getCurrentPage(), true, true)
-                } else
-                    alert("Please reload the page to refresh")
+                pleaseReload()
             }
          );
     })
+}
+
+function pleaseReload() {
+    if (typeof reloadSinglePage != 'undefined') {
+        reloadSinglePage()
+    } else
+        alert("Please reload the page to refresh")
 }
 
 function init_fullscreen() {
@@ -155,7 +159,7 @@ function init_edition() {
 
 function activate_qosStars_only() {
     $("#qos_stars_only").click(function(){
-        set_qosStars_only($(this).prop("checked"))
+        set_qosStars_only($(this).prop("checked"), false)
         refresh_qos_stars()
     })
     
@@ -166,19 +170,24 @@ function get_qos_Stars_only() {
     return $.cookie('QOS_STARS_ONLY') == "yes"
 }
 
-function set_qosStars_only(only) {
+function set_qosStars_only(only, front_only) {
     $.cookie('QOS_STARS_ONLY', only ? "yes" : null)
-    set_qosStars(get_qosStars())
+    
+    if (!front_only) {
+        set_qosStars(get_qosStars())
+    }
 }
 
-function set_qosStars(value) {
+function set_qosStars(value, front_only) {
     $.cookie('QOS_STARS', value, {path: '/'});
     
-    var starlevel = (get_qos_Stars_only() ? "-":"")+value
-    
-    $.post("Photos?special=FASTEDIT&newStarLevel="+starlevel, null, function() {
-        loadSinglePage(getCurrentPage(), true, true)
-    })
+    if (!front_only) {
+        var starlevel = (get_qos_Stars_only() ? "-":"")+value
+
+        $.post("Photos?special=FASTEDIT&newStarLevel="+starlevel, null, function() {
+            pleaseReload()
+        })
+    }
 }
 
 function get_qosStars() {
@@ -214,7 +223,7 @@ function prepare_qos_stars() {
         $("#qos_stars").append("<img rel='"+i+"'id='qos_stars_"+i+"'src='static/images/star.off.png'/>")
 
         $("#qos_stars_"+i).click(function(){
-            set_qosStars($(this).attr("rel"))
+            set_qosStars($(this).attr("rel"), false)
             refresh_qos_stars()
         })
     }
@@ -222,8 +231,8 @@ function prepare_qos_stars() {
     var stars = parseInt($("#qos_stars").attr("rel"))
     var only = stars < 0
 
-    set_qosStars_only(only)
-    set_qosStars(only ? -stars : stars)
+    set_qosStars_only(only, true)
+    set_qosStars(only ? -stars : stars, true)
     activate_qosStars_only()
     refresh_qos_stars()
 }

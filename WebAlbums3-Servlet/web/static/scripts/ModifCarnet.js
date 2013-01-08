@@ -79,7 +79,7 @@ function toggleAutoSaveCarnet() {
     }
 }
 
-function init_buttons() {
+function init_carnet_buttons() {
     $(".carnetAutoSave").click(toggleAutoSaveCarnet)
     
     $(".carnetSave").click(saveCarnet) ;
@@ -204,7 +204,8 @@ ou du `code en ligne` ou en block:\n\
 
 $(function() {
     save_data_page("carnet_inited", true)
-    init_buttons()
+    init_carnet_buttons()
+    
     init_markdown_edit()
     //setInterval(autoSaveLocal, 10*1000)
     checkAutoSaveLocal()

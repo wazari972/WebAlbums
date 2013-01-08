@@ -39,10 +39,12 @@ var cached = {}
 var counter = 0
 function reloadSinglePage(event) {
     var data, left
-    if (event.state != null)
-        data = cached[event.state]
-    else
-        data = cached["first"]
+    if (event != undefined) {
+        if (event.state != null)
+            data = cached[event.state]
+        else
+            data = cached["first"]
+    }
     
     if (data != undefined) {
         left = $("#left")
@@ -50,7 +52,7 @@ function reloadSinglePage(event) {
         left.remove()
         $(window).scrollTop(0) ;
     } else {
-        loadSinglePage(""+window.location+"")
+        loadSinglePage(getCurrentPage(), true, true)
     }
 }
 
@@ -89,7 +91,6 @@ function loadSinglePage(url, dont_scroll, force, async) {
     $.ajax({
         url:url,
         success:function(data){
-            //$("body").css("cursor", "auto");
             loadSinglePageBottomEnd(data, dont_scroll, url) ;
         },
         complete:function() {$("body").css("cursor", "auto")},
@@ -103,7 +104,6 @@ function loadSinglePage(url, dont_scroll, force, async) {
 
 function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {    
     var left = $("#left");
-    
     if (counter == 0) {
         cached["first"] = $("#left")
     }
@@ -122,7 +122,7 @@ function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {
         left = newLeft ;
 
         $("#gen_time").text(($(xml_doc).find("time").text()))
-
+        
         enableSinglePage() ;
         inPlaceSinglePage_lock = null ;
 
@@ -168,12 +168,14 @@ function enableSinglePage() {
                 return ;
             }
         }
-        
+
         $(this).click(function() {
             var url = jQuery.trim($(this).attr("href")) ;
+            
             loadSinglePage(url) ;
             return false ;
         }) ;
+        
     });
 }
 function init_singlepage() {
@@ -184,7 +186,7 @@ function init_singlepage() {
 $(function(){
     // Revert to a previously saved state
     window.addEventListener('popstate', function(event) {
-      reloadSinglePage(event)
+        reloadSinglePage(event)
     });
     init_singlepage()
 });
