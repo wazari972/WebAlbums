@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import javax.xml.bind.annotation.*;
 import net.wazari.common.util.XmlUtils;
 import net.wazari.common.util.XmlUtils;
@@ -24,64 +25,69 @@ import org.slf4j.LoggerFactory;
 public class ConfigurationXML implements Configuration {
     private static final Logger log = LoggerFactory.getLogger(ConfigurationXML.class.getName());
 
-    private static final String SEP = File.separator;
+    private static final String SEP ;
     private static final String rootPath  ;
     private static final boolean isPathURL ;
+    
     static {
-        String path = null ;
+        LinkedList<String> paths = new LinkedList<String>() ;
+        
+        String prop = System.getProperty("root.path") ;
+        if (prop != null) {
+            log.info("Property 'root.path'  found, '{}' added on top of the list...", prop); 
+            paths.addFirst(prop) ;
+        }
+            
         try {
-            String prop = System.getProperty("root.path") ;
-            if (prop != null) path = prop ;
-            else {
-                log.warn("No 'root.path' property found, trying local RootPath.conf ...") ;
-                InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-                String line = reader.readLine();
-                if (line != null) path = line ;
-                else {
-                    log.error( "Could not read RootPath from file: empty");
-                    throw new IllegalArgumentException("Could not read Rootpath from "+path+": empty") ;
-                }
+            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            String line = reader.readLine();
+
+            while (line != null) {
+                log.info("Path '{}' found in classpath://RootPath.conf", line);
+                paths.addLast(line) ;
+                line = reader.readLine();
             }
         } catch (IOException ex) {
             log.error( "Could not read RootPath from file: {}", ex.getMessage());
         }
 
-        if (path == null) {
-            throw new IllegalArgumentException("Could not work out a valid root path ...") ;
-        }
-        if (!path.startsWith("http://")) {
-            isPathURL = false ;
-            File rootDirFile = new File (path) ;
-            if (!rootDirFile.exists()) {
-                log.error("Rootpath doesn't exists ...");
-                throw new IllegalArgumentException("Rootpath "+path+" doesn't exists ...") ;
+        String thePath = null;
+        for (String path : paths) {
+            if (!path.startsWith("http://")) {
+                File rootDirFile = new File (path) ;
+                
+                if (!rootDirFile.exists()) {
+                    log.error("Rootpath '{}' doesn't exists ...", path);
+                    continue;
+                } else if (!rootDirFile.isDirectory()) {
+                    log.error("Rootpath '{}' is not a directory ...");
+                    continue;                    
+                }
 
-            } else if (!rootDirFile.isDirectory()) {
-                log.error("Rootpath is not a directory ...");
-                throw new IllegalArgumentException("Rootpath "+path+" is not a directory ...") ;
-
-            }
-
-            if (!rootDirFile.isAbsolute()) {
-                try {
-                    path = rootDirFile.getAbsoluteFile().getCanonicalPath();
-                } catch (IOException ex) {
-                    log.warn( "Couldn''t unrelativize the path:{}", ex.getMessage());
+                if (!rootDirFile.isAbsolute()) {
+                    try {
+                        path = rootDirFile.getAbsoluteFile().getCanonicalPath();
+                    } catch (IOException ex) {
+                        log.warn( "Couldn''t unrelativize the path:{}", ex.getMessage());
+                        continue;
+                    }
                 }
             }
-            if (!path.endsWith(SEP)) {
-                path += SEP ;
-            }
-        } else {
-            isPathURL = true ;
-            if (!path.endsWith("/")) {
-                path += "/" ;
-            }
-        }
-
+            thePath = path;
+            break;
             
-        rootPath = path ;
+        }
+        if (thePath == null) {
+            throw new IllegalArgumentException("Could not work out a valid root path ...") ;
+        }
+        
+        isPathURL = thePath.startsWith("http://");
+        SEP = isPathURL ? "/" : File.separator;
+        if (!thePath.endsWith(SEP)) {
+            thePath += SEP ;
+        }
+        rootPath = thePath;
         log.warn( "Root path retrieved: {}", rootPath);
     }
     
