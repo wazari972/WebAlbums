@@ -256,15 +256,16 @@ public class DispatcherBean {
                             + "<!ENTITY laquo  \"&#171;\" >"
                             + "<!ENTITY raquo  \"&#187;\" >"
                             + "]>");
-                    if (output.xslFile != null)
+                    if (output.xslFile != null) {
                         sortie.println("<?xml-stylesheet type=\"text/xsl\" href=\"" + output.xslFile + "\"?>");
+                    }
                 }
                 //Create JAXB Context
                 JAXBContext jc = JAXBContext.newInstance(XmlWebAlbums.class);
                 
                 //Create marshaller
                 Marshaller marshaller = jc.createMarshaller();
-                //marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                 StringWriter writer = new StringWriter() ;
                 marshaller.marshal(output, writer);
