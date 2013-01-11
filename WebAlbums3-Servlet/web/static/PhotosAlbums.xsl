@@ -111,7 +111,7 @@
                         <span class="album_tooltip">
                             <xsl:attribute name="id">album-content-<xsl:value-of select="photoId/@id"/></xsl:attribute>
                             <xsl:attribute name="rel"><xsl:value-of select="@albumId"/></xsl:attribute>
-                            hello
+							(doesn't work yet...)
                         </span>
                     </xsl:if>
                     <xsl:apply-templates select="tagList">
