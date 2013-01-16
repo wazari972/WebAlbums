@@ -40,17 +40,27 @@ var counter = 0
 function reloadSinglePage(event) {
     var data, left
     if (event != undefined) {
-        if (event.state != null)
+        if (event.state != null) {
             data = cached[event.state]
-        else
+        } else {
             data = cached["first"]
+        }
     }
     
     if (data != undefined) {
+        $(window).scrollTop(0) ;
+        
         left = $("#left")
+        
         left.after(data)
         left.remove()
-        $(window).scrollTop(0) ;
+        data.show()
+        
+        data.find('a').each(function() {
+            $(this).removeAttr("SinglePaged") ;
+        })
+        
+        enableSinglePage()
     } else {
         loadSinglePage(getCurrentPage(), true, true)
     }
@@ -85,7 +95,6 @@ function loadSinglePage(url, dont_scroll, force, async) {
     }
 
     inPlaceSinglePage = $.trim(url) ;
-
     
     $("body").css("cursor", "wait");
     $.ajax({
@@ -146,12 +155,16 @@ function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {
 }
 
 function enableSinglePage() {
-    $('a').each(function(index) {
+    $('a').each(function() {
+        if ($(this).attr("SinglePaged")) {
+            return ;
+        }
         
-        if ($(this).attr("SinglePaged")) return ;
         $(this).attr("SinglePaged", true) ;
 
-        if ($(this).attr("href") == undefined) return ;
+        if ($(this).attr("href") == undefined) {
+            return ;
+        }
 
         var parents = $(this).parent("div") ;
         for (var i = -1; i < parents.length; i++) {
