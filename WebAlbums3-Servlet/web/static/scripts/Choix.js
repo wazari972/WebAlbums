@@ -1,6 +1,6 @@
 function pointToContent(point) {
     return "<div class='map_content'>"
-          +"  <h1><a href='Tag__"+point.id+"__"+"point.name"+"'>"+point.name+"</a></h1>\n"
+          +"  <h1><a href='Tag__"+point.id+"__"+point.name+"'>"+point.name+"</a></h1>\n"
           +"  <center><img src='Miniature__"+point.picture+".png' /></center>\n"
           +"</div>"
 }

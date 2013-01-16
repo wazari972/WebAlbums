@@ -111,7 +111,7 @@ function add_marker_layer(map, name) {
     return markers
 }
 function have_google() {
-    return (typeof google != 'undefined' && google.maps.MapTypeId == undefined)
+    return (typeof google != 'undefined' && google.maps.MapTypeId != undefined)
 }
 
 function have_osm() {
