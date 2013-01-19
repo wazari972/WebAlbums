@@ -629,7 +629,6 @@ public class WebPageBean implements WebPageLocal {
                 
                 if (first) {
                     olderParent = wTag;
-                    log.warn("older is "+wTag.name);
                 }
                 
                 if (offspring != null) {
@@ -643,8 +642,7 @@ public class WebPageBean implements WebPageLocal {
             first = false;
         }
         
-        while (olderParent.children.size() == 1) {
-            log.warn("older is not "+olderParent.name);
+        while (olderParent != null && olderParent.children.size() == 1) {
             olderParent = olderParent.children.get(0);
         }
         

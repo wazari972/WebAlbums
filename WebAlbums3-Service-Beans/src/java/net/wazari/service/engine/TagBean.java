@@ -111,12 +111,15 @@ public class TagBean implements TagLocal {
 
         Tag tag;
         XmlTagCloudEntry xml;
-        List<XmlTag> parentList;
+        List<XmlTagCloudEntry> parentList;
         
         public PairTagXmlBuilder(Tag tag, XmlTagCloudEntry xml, 
-                                 List<XmlTag> parentList) {
+                                 List<XmlTagCloudEntry> parentList) {
             this.tag = tag;
             this.xml = xml;
+            if (xml.children == null) {
+                xml.children = new LinkedList<XmlTagCloudEntry>() ;
+            }
             this.parentList = parentList;
         }
     }
@@ -170,7 +173,7 @@ public class TagBean implements TagLocal {
                 }
                 
                 int size = (int)(SIZE_MIN + ((double) nbElts/max) * SIZE_SCALE);
-
+                
                 pair.parentList.add(pair.xml);
                 pair.xml.size = size;
                 pair.xml.nb = nbElts;
@@ -195,8 +198,8 @@ public class TagBean implements TagLocal {
             enrCurrentTag = null;
         }
         
-        for (XmlTag tag : output.parentList) {
-            updateParentTagCloud((XmlTagCloudEntry) tag);
+        for (XmlTagCloudEntry tag : output.parentList) {
+            updateParentTagCloud(tag);
         }
         
         stopWatch.stop();
@@ -210,9 +213,9 @@ public class TagBean implements TagLocal {
             return sonCount;
         }
         
-        List<XmlTag> toRemove = new LinkedList<XmlTag>();
-        for (XmlTag son : tag.children) {
-            long count = updateParentTagCloud((XmlTagCloudEntry) son);
+        List<XmlTagCloudEntry> toRemove = new LinkedList<XmlTagCloudEntry>();
+        for (XmlTagCloudEntry son : tag.children) {
+            long count = updateParentTagCloud(son);
             
             sonCount += count;
             
@@ -221,7 +224,7 @@ public class TagBean implements TagLocal {
             }
         }
         
-        for (XmlTag rm : toRemove) {
+        for (XmlTagCloudEntry rm : toRemove) {
             tag.children.remove(rm);
         }
         
