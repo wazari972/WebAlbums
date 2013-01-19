@@ -22,6 +22,7 @@ import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlPage;
 import net.wazari.service.exchange.xml.common.*;
+import net.wazari.service.exchange.xml.tag.XmlTag;
 
 /**
  *
@@ -74,4 +75,7 @@ public interface WebPageLocal {
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     void populateEntities();
+
+    @PermitAll
+    XmlTag tagListToTagTree(XmlWebAlbumsList tag_used);
 }

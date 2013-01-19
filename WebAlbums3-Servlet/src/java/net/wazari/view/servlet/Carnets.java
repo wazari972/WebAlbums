@@ -52,15 +52,17 @@ public class Carnets extends HttpServlet{
             if (action == Action.SUBMIT || action == Action.SAVE) {
                 submit = carnetService.treatSUBMIT((ViewSessionCarnetSubmit) vSession);
                 if (action == Action.SAVE) {
-                    if (!submit.valid)
+                    if (!submit.valid) {
                         output.exception = submit.exception ;
-                    else
+                    } else {
                         output.message = submit.carnet.getId().toString() ;
+                    }
                     
                     return output;
                     
-                } else if (submit != null && !submit.valid)
+                } else if (submit != null && !submit.valid) {
                     action = Action.EDIT;
+                }
             }
 
             if (action == Action.EDIT) {

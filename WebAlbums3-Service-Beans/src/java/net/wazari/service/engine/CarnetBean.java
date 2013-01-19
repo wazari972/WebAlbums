@@ -99,8 +99,9 @@ public class CarnetBean implements CarnetLocal {
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Carnets" ;
         thisPage.carnetsPage = vSession.getCarnetsPage() ;
-        if (thisPage.carnetsPage == null)
+        if (thisPage.carnetsPage == null) {
             thisPage.carnetsPage = 0;
+        }
         Integer page = vSession.getPage();
 
         List<Carnet> carnets = null;
@@ -139,8 +140,9 @@ public class CarnetBean implements CarnetLocal {
                 for (Photo p : enrCarnet.getPhotoList()) {
                     XmlPhotoId photo = new XmlPhotoId(p.getId());
                     carnet.photo.add(photo);
-                    if (vSession.directFileAccess())
+                    if (vSession.directFileAccess()) {
                         photo.path = p.getPath(true);
+                    }
                 }
             }
             XmlDetails details = new XmlDetails();
@@ -156,6 +158,8 @@ public class CarnetBean implements CarnetLocal {
 
             //tags du carnet
             details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrCarnet, Box.NONE) ;
+            details.tagTree = webPageService.tagListToTagTree(details.tag_used);
+            
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
             if (vSession.isSessionManager()) {

@@ -10,7 +10,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.*;
@@ -594,4 +597,57 @@ public class WebPageBean implements WebPageLocal {
         return date;
     }
     
+    public XmlTag tagListToTagTree(XmlWebAlbumsList tag_used) {        
+        Map<Integer, XmlTag> map = new HashMap<Integer, XmlTag>();
+        XmlTag olderParent = null;
+        boolean first = true;
+        
+        for (XmlWebAlbumsTagWhere tagWhere : tag_used.where) {
+            //start from the top of the list
+            Tag currentTag = tagDAO.find(tagWhere.id);
+            XmlTag offspring = null ;
+            
+            while (currentTag != null) {
+                //if we already encouterd this tag,
+                if (map.containsKey(currentTag.getId())) {
+                    //save parentality
+                    if (offspring != null) {
+                        XmlTag wParent = map.get(currentTag.getId());
+                        wParent.addChildren(offspring);
+                    }
+                    
+                    //we're done with this branch
+                    break;
+                }
+                //otherwise, save if
+                
+                XmlTag wTag = new XmlTag();
+                wTag.name = currentTag.getNom();
+                wTag.id = currentTag.getId();
+                
+                map.put(wTag.id, wTag);
+                
+                if (first) {
+                    olderParent = wTag;
+                    log.warn("older is "+wTag.name);
+                }
+                
+                if (offspring != null) {
+                    wTag.addChildren(offspring);
+                }
+                
+                //and go one level above
+                offspring = wTag;
+                currentTag = currentTag.getParent();
+            }
+            first = false;
+        }
+        
+        while (olderParent.children.size() == 1) {
+            log.warn("older is not "+olderParent.name);
+            olderParent = olderParent.children.get(0);
+        }
+        
+        return olderParent;
+    }
 }

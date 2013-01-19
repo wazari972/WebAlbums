@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
+import net.wazari.service.exchange.xml.tag.XmlTag;
 
 /**
  *
@@ -30,6 +31,8 @@ public class XmlDetails {
     public XmlPhotoAlbumUser user;
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
+    @XmlElement
+    public XmlTag tagTree;
     @XmlAttribute
     public Integer stars;
 }

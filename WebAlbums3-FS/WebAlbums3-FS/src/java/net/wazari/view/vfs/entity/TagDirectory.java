@@ -35,7 +35,7 @@ public class TagDirectory extends SDirectory implements ADirectory {
     private final Theme theme;
     private final Launch aThis;
     private List<XmlTag> tagList = null;
-    private List<XmlTagCloudEntry> tagCloud = null;
+    private List<XmlTag> tagCloud = null;
     protected final Integer tagId;
     
     public TagDirectory(XmlTag tag, net.wazari.dao.entity.Theme theme, Launch aThis) {
@@ -75,7 +75,7 @@ public class TagDirectory extends SDirectory implements ADirectory {
         
     }
 
-    public TagDirectory(XmlTag tag, List<XmlTagCloudEntry> tagCloud, Theme theme, Launch aThis) {
+    public TagDirectory(XmlTag tag, List<XmlTag> tagCloud, Theme theme, Launch aThis) {
         this(tag, theme, aThis);
         this.tagCloud = tagCloud;
     }
@@ -88,9 +88,9 @@ public class TagDirectory extends SDirectory implements ADirectory {
                 tagFiles.add(new Tag(tag, theme, aThis)) ;
             }
         } else if (tagCloud != null) {
-            for (XmlTagCloudEntry tag : tagCloud) {
-                tag.name = tag.nb + " " + tag.name;
-                tagFiles.add(new Tag(tag.tag, tag, theme, aThis)) ;
+            for (XmlTag tag : tagCloud) {
+                tag.name = ((XmlTagCloudEntry) tag).nb + " " + tag.name;
+                tagFiles.add(new Tag(tag.children, tag, theme, aThis)) ;
             }
         }
     }

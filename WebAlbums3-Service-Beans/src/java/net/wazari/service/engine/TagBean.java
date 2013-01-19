@@ -7,7 +7,6 @@ import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.entity.Geolocalisation;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
-import net.wazari.dao.entity.TagTheme;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.PhotoLocal.PhotoRequest;
 import net.wazari.service.PhotoLocal.TypeRequest;
@@ -112,10 +111,10 @@ public class TagBean implements TagLocal {
 
         Tag tag;
         XmlTagCloudEntry xml;
-        List<XmlTagCloudEntry> parentList;
+        List<XmlTag> parentList;
         
         public PairTagXmlBuilder(Tag tag, XmlTagCloudEntry xml, 
-                                 List<XmlTagCloudEntry> parentList) {
+                                 List<XmlTag> parentList) {
             this.tag = tag;
             this.xml = xml;
             this.parentList = parentList;
@@ -190,14 +189,14 @@ public class TagBean implements TagLocal {
                 }
                 for (Tag enrSon : pair.tag.getSonList()) {
                     XmlTagCloudEntry xmlSon = new XmlTagCloudEntry();
-                    enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon, pair.xml.tag));
+                    enrSonStack.push(new PairTagXmlBuilder(enrSon, xmlSon, pair.xml.children));
                 }
             }
             enrCurrentTag = null;
         }
         
-        for (XmlTagCloudEntry tag : output.parentList) {
-            updateParentTagCloud(tag);
+        for (XmlTag tag : output.parentList) {
+            updateParentTagCloud((XmlTagCloudEntry) tag);
         }
         
         stopWatch.stop();
@@ -206,9 +205,14 @@ public class TagBean implements TagLocal {
     
     private long updateParentTagCloud(XmlTagCloudEntry tag) {
         long sonCount = tag.nb;
-        List<XmlTagCloudEntry> toRemove = new LinkedList<XmlTagCloudEntry>();
-        for (XmlTagCloudEntry son : tag.tag) {
-            long count = updateParentTagCloud(son);
+        
+        if (tag.children == null) {
+            return sonCount;
+        }
+        
+        List<XmlTag> toRemove = new LinkedList<XmlTag>();
+        for (XmlTag son : tag.children) {
+            long count = updateParentTagCloud((XmlTagCloudEntry) son);
             
             sonCount += count;
             
@@ -217,8 +221,8 @@ public class TagBean implements TagLocal {
             }
         }
         
-        for (XmlTagCloudEntry rm : toRemove) {
-            tag.tag.remove(rm);
+        for (XmlTag rm : toRemove) {
+            tag.children.remove(rm);
         }
         
         tag.nb = sonCount;
