@@ -60,10 +60,10 @@
     background-color: #58ACFA;
 }
 
- .mapChoix {
+.mapChoix {
     height: 400px;
     width: 400px;
-  }
+}
 
 .map_content h1 {
     width: 200px;
@@ -75,6 +75,7 @@
     height:200px;
 
 }
+
 .map_content img {
     max-width:100%;
     max-height:100%;
@@ -95,6 +96,10 @@
 
 .choix_img {
     max-height:150px;
+}
+
+.tag_link img {
+    max-height:50px;
 }
 
 #randPict {

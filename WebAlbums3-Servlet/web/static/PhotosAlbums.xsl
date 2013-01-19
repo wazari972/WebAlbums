@@ -89,16 +89,15 @@
                             <xsl:with-param name="photoId" select="photoId/@id" />
                         </xsl:call-template>
                         <span>
-                            <xsl:attribute name="id">stars_
-                                <xsl:value-of select="photoId/@id" />_message
-                            </xsl:attribute>
+                            <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" />_message</xsl:attribute>
                         </span>
                     </div>
                 </xsl:if>
                 <div class="options">
                     <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
                         <div>
-                            <xsl:value-of select="albumDate"/>&#160;
+                            <xsl:value-of select="albumDate"/>
+                            <span>&#160;</span>
                             <a class="albumTT">
                                 <xsl:attribute name="title">
                                     <xsl:value-of select="albumName"/>
@@ -111,13 +110,15 @@
                         <span class="album_tooltip">
                             <xsl:attribute name="id">album-content-<xsl:value-of select="photoId/@id"/></xsl:attribute>
                             <xsl:attribute name="rel"><xsl:value-of select="@albumId"/></xsl:attribute>
-							(doesn't work yet...)
+			    (doesn't work yet...)
                         </span>
                     </xsl:if>
                     <xsl:apply-templates select="tagList">
-                        <xsl:with-param name="style">none</xsl:with-param>
                         <xsl:with-param name="mode">TAG_USED</xsl:with-param>
-                        <xsl:with-param name="box">NONE</xsl:with-param>
+                        <xsl:with-param name="style">
+                            <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">none</xsl:if>
+                            <xsl:if test="/webAlbums/albums or /webAlbums/carnets">enhanced</xsl:if>
+                        </xsl:with-param>
                         <xsl:with-param name="incMinor">true</xsl:with-param>
                         <xsl:with-param name="setRel">true</xsl:with-param>
                     </xsl:apply-templates>
@@ -165,7 +166,7 @@
                     </xsl:if>
                     <xsl:if test="../author">
                         <div class="author_opt">
-                            By: 
+                            <span>By:</span>
                             <a>
                                 <xsl:attribute name="href">Tag__<xsl:value-of select="../author/@id"/>__<xsl:value-of select="../author/name"/></xsl:attribute>
                                 <xsl:if test="../author/contact">
@@ -249,12 +250,12 @@
                             <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
                                 <div class="fastedit_bt fastedit_desc_bt edit">
                                     <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
-                                    Descr
+                                    <span>Descr</span>
                                 </div>
                                 <div class="fastedit_bt edit">&#160;||&#160;</div>
                                 <div class="fastedit_bt fastedit_tag_bt edit">
                                     <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
-                                    Tags
+                                    <span>Tags</span>
                                 </div>
                             </xsl:if>
                         </xsl:if>

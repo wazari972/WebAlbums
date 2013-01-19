@@ -53,6 +53,10 @@
         <to>Images?id=$1&amp;mode=GPX</to>
     </rule>
     <rule>
+        <from>^/Tag__.*__([0-9]+)\.png$</from>
+        <to>Images?id=$1&amp;mode=REPRESENT_TAG</to>
+    </rule>
+    <rule>
         <from>^/background.*$</from>
         <to>Images?mode=BACKGROUND</to>
     </rule>

@@ -56,22 +56,16 @@
   </xsl:template>
   
   <xsl:template match="text">
-       <br/>&#160;
+       <br/><span>&#160;</span>
        <hr id="carnet_head"/>
        <xsl:if test="/webAlbums/affichage/@directAccess">
         <script type="text/javascript">
-            carnet_static_lookup = {
-                <xsl:for-each select="../photo">
-                    <xsl:value-of select="@id"/>:"<xsl:value-of select="."/>",
-                </xsl:for-each>
-            }
+            carnet_static_lookup = { <xsl:for-each select="../photo"><xsl:value-of select="@id"/>:"<xsl:value-of select="."/>",</xsl:for-each>}
         </script>
        </xsl:if>
        <div class="carnet_toc"/>
        <br/>
-        <div id="carnet_text" class="carnet_text">
-            <xsl:value-of select="."/>
-        </div>
+        <div id="carnet_text" class="carnet_text"><xsl:value-of select="."/></div>
         <div class="carnet_toc"/>
   </xsl:template>
 </xsl:stylesheet>

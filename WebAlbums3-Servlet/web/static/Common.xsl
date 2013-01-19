@@ -8,12 +8,10 @@
     <xsl:param name="mode2">NONE</xsl:param>
     <xsl:param name="type">all</xsl:param>
     <xsl:param name="incMinor">false</xsl:param>
-    <xsl:param name="box">MULTIPLE</xsl:param>
     <xsl:param name="onChange"></xsl:param>
     <xsl:param name="id"></xsl:param>
     <xsl:param name="class"></xsl:param>
     <xsl:param name="setRel">false</xsl:param>
-    <xsl:if test="not(@box) or @box = $box">
     <xsl:if test="not(@mode) or @mode = $mode">
       <xsl:if test="who|what|where">            
 	<xsl:if test="$style = 'list' or $style = 'multiple'">
@@ -102,7 +100,6 @@
 	</xsl:if>     
       </xsl:if>     
     </xsl:if>
-    </xsl:if>
   </xsl:template>
     
   <xsl:template match="where|what|who|author">
@@ -119,7 +116,7 @@
             <xsl:if test="@checked = 'true'">
               <xsl:attribute name="selected">selected</xsl:attribute>	  
             </xsl:if>
-            <!--[<xsl:value-of select="name(.)"/>]--><xsl:if test="@minor">(</xsl:if><xsl:value-of select="name"/><xsl:if test="@minor">)</xsl:if>
+            <xsl:if test="@minor">(</xsl:if><xsl:value-of select="name"/><xsl:if test="@minor">)</xsl:if>
           </option>    
         </xsl:if>      
         <xsl:if test="not($style = 'list' or $style = 'multiple')">
@@ -128,14 +125,31 @@
                 <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
             </xsl:if>
             <xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>__<xsl:value-of select="name"/></xsl:attribute>
-            <xsl:if test="birthdate">
-                <xsl:attribute name="title"><xsl:value-of select="birthdate"/> ans</xsl:attribute>
-            </xsl:if>
-            <xsl:if test="@minor">(</xsl:if>
+            <xsl:if test="birthdate and not($style = 'enhanced')"><xsl:attribute name="title"><xsl:value-of select="birthdate"/> ans</xsl:attribute></xsl:if>
+            <xsl:if test="$style = 'enhanced'"><xsl:attribute name="title"><xsl:value-of select="name"/></xsl:attribute></xsl:if> 
+            <xsl:if test="not($style = 'enhanced' and name(.) = 'who')"> 
+                <xsl:if test="@minor">
+                    <span>(</span>
+                </xsl:if>
                 <xsl:value-of select="name"/>
-            <xsl:if test="@minor">)</xsl:if>
+                <xsl:if test="@minor"><span>)</span></xsl:if>
+            </xsl:if>
+            <xsl:if test="$style = 'enhanced' and name(.) = 'who'">
+                <img>
+                    <xsl:attribute name="alt"><xsl:value-of select="name"/></xsl:attribute>
+                    <xsl:attribute name="src">Tag__<xsl:value-of select="name"/>__<xsl:value-of select="@id"/>.png</xsl:attribute>
+                </img>
+            </xsl:if>    
           </a>
-          <xsl:if test="position() != last()">, </xsl:if><xsl:if test="position() = last() and name(.) = 'who' and (count(../what)!= 0 or count(../where) != 0)">, </xsl:if><xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">,  </xsl:if>      
+          <xsl:if test="position() != last() and not($style = 'enhanced' and name(.) = 'who') ">
+              <span>, </span> 
+          </xsl:if>
+          <xsl:if test="position() = last() and name(.) = 'who' and (count(../what)!= 0 or count(../where) != 0)">
+              <br/>
+          </xsl:if>
+          <xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">
+              <br/>
+          </xsl:if>      
         </xsl:if>
         </xsl:if>
     </xsl:if>
