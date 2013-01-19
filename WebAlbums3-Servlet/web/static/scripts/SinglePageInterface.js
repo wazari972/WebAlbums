@@ -135,10 +135,6 @@ function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {
         enableSinglePage() ;
         inPlaceSinglePage_lock = null ;
 
-        cached[counter] = left
-        history.pushState(counter, /*title*/ null, url);
-        counter += 1
-
         if (dont_scroll) {
             //nothing to do
         } else if (url.indexOf("#") > -1) {
@@ -149,8 +145,13 @@ function loadSinglePageBottomEnd(xml_doc, dont_scroll, url) {
             $(window).scrollTop(0) ;
         }
 
-        if (callbacks["SinglePage"] != undefined)
+        if (callbacks["SinglePage"] != undefined) {
             callbacks["SinglePage"]()
+        }
+        
+        cached[counter] = left;
+        history.pushState(counter, /*title*/ null, url);
+        counter += 1;
     })
 }
 
