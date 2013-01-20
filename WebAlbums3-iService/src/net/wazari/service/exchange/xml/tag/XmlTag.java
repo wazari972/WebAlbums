@@ -38,20 +38,13 @@ public class XmlTag {
         children.add(tag);
     }
     
-    @XmlTransient
-    public GeoLoc loc = null ;
+    @XmlAttribute
+    public String lat = null;
+    @XmlAttribute
+    public String lng = null;
     
-    public static class GeoLoc{
-        public String lat;
-        public String longit;
-    }
-    
-    public void setGeo(String latitude, String longitude) {
-        if (loc == null) {
-            loc = new GeoLoc();
-        }
-        
-        loc.lat = latitude;
-        loc.longit = longitude;
+    public void setGeo(String latitude, String longitude) {        
+        lat = latitude;
+        lng = longitude;
     }
 }

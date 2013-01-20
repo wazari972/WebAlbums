@@ -57,6 +57,7 @@
   
   <xsl:template match="text">
        <br/><span>&#160;</span>
+       
        <hr id="carnet_head"/>
        <xsl:if test="/webAlbums/affichage/@directAccess">
         <script type="text/javascript">

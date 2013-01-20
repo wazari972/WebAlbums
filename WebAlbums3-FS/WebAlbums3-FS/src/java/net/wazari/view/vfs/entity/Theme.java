@@ -88,8 +88,8 @@ public class Theme extends SDirectory implements ADirectory {
         
         XmlTagPersonsPlaces lst = aThis.tagService.treatTagPlaces(session);
         for (XmlTag tag : lst.tagList) {
-            if (tag.loc != null) {
-                loc.addPoint(tag.name, tag.loc.lat, tag.loc.longit);
+            if (tag.lat != null && tag.lng != null) {
+                loc.addPoint(tag.name, tag.lat, tag.lng);
             }
         }
         location = new GpxFile(loc);

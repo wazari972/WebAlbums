@@ -59,13 +59,10 @@ public class TagDirectory extends SDirectory implements ADirectory {
             }
         }
         
-        if (tag != null && tag.loc != null) {
-            log.warn("===> try new LOCATION 2"+tag.loc.lat +"/" +tag.loc.longit);
-            if (tag.loc.lat != null && tag.loc.longit != null) {
-                GpxPoints loc = new GpxPoints(tag.name, tag.loc.lat, tag.loc.longit);
-                location = new GpxFile(loc);
-                log.warn("===> NEW LOCATION 2"+tag.loc.lat +"/" +tag.loc.longit);
-            }
+        if (tag != null && tag.lat != null && tag.lng != null) {
+            GpxPoints loc = new GpxPoints(tag.name, tag.lat, tag.lng);
+            location = new GpxFile(loc);
+            log.warn("===> NEW LOCATION 2"+tag.lat +"/" +tag.lng);
         }
     }
     

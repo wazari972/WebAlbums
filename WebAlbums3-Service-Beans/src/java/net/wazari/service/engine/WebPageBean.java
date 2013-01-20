@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
@@ -624,6 +623,11 @@ public class WebPageBean implements WebPageLocal {
                 XmlTag wTag = new XmlTag();
                 wTag.name = currentTag.getNom();
                 wTag.id = currentTag.getId();
+                
+                if (currentTag.getGeolocalisation() != null) {
+                    Geolocalisation loc = currentTag.getGeolocalisation();
+                    wTag.setGeo(loc.getLatitude(), loc.getLongitude());
+                }
                 
                 map.put(wTag.id, wTag);
                 
