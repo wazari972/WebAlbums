@@ -60,23 +60,23 @@ function refresh_editionMode() {
     set_editionMode(value)
     $("#mode_edition").text(value)
     if (value == 'VISITE') {
-        $(".edit").hide()
-        $(".edit_visible").hide()
+        $(".edit").css('visibility', 'hidden')
+        $(".edit_visible").css('visibility', 'hidden')
         callURL("Photos?special=FASTEDIT")
     } else if (value == 'EDITION') {
         //nothing to do
     } else if (value == 'INTENSIVE EDIT') {
-        $(".edit").show()
-        $(".edit_visible").show()
-        $(".optional").show()
+        $(".edit").css('visibility', 'visible')
+        $(".edit_visible").css('visibility', 'visible')
+        $(".optional").css('visibility', 'visible')
     } else
         alert('unknown edition mode value: '+value)
 }
 
 function body_mouseenter() {
     if (get_editionMode() == 'EDITION')
-        $(this).find(".edit").show()
-    $(this).find(".optional").show()
+        $(this).find(".edit").css('visibility', 'visible')
+    $(this).find(".optional").css('visibility', 'visible')
 }
 
 function body_mouseleave() {
@@ -98,23 +98,23 @@ function body_mouseleave() {
         alert(e)
     }
     
-    $(this).find(".edit").hide()
+    $(this).find(".edit").css('visibility', 'hidden')
     //this is a bug I can't understand today,
     //if we click on the 'tag select' and try to go down,
     //this one will make the list disappear!
     if (!limited)
-        $(this).find(".optional").hide()
-    $(this).find(".edit_visible").show()
+        $(this).find(".optional").css('visibility', 'hidden')
+    $(this).find(".edit_visible").css('visibility', 'visible')
 }
 
 function do_init_mouse_hover() {
     $(".item").hover(body_mouseenter, body_mouseleave)
     var value = get_editionMode()
     if (value != 'INTENSIVE EDIT') {
-        $(".edit").hide()
-        $(".optional").hide()
+        $(".edit").css('visibility', 'hidden')
+        $(".optional").css('visibility', 'hidden')
     }
-    $(".edit_visible").show()
+    $(".edit_visible").css('visibility', 'visible')
 }
 
 function init_mouse_hover() {
