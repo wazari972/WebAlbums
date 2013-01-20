@@ -161,29 +161,29 @@
       <span class="tree-opt"><a id="tree_expand">Expand All</a> | <a id="tree_contract">Contract All</a></span> | <a href="tags.html" target="_blank" rel="singlepage[no]" title="Ouvrir dans une nouvelle page">Tree</a>
       <hr/>
       <ul id="cloudTree" class="treeview">
-        <xsl:if test="tag[@type = 'who']">
+        <xsl:if test="tagInfo[@type = 'who']">
             <li class="not-real-tag" rel="open">
                 <a>Who<hr/></a>
                 <ul>
-                    <xsl:apply-templates select="tag[@type = 'who']"/>
+                    <xsl:apply-templates select="tagInfo[@type = 'who']"/>
                 </ul>
             </li>
         </xsl:if>
         
-        <xsl:if test="tag[@type = 'what']">
+        <xsl:if test="tagInfo[@type = 'what']">
             <li class="not-real-tag" rel="open">
                 <a><hr/>What<hr/></a>
                 <ul>
-                    <xsl:apply-templates select="tag[@type = 'what']"/>
+                    <xsl:apply-templates select="tagInfo[@type = 'what']"/>
                 </ul>
             </li>
         </xsl:if>
         
-        <xsl:if test="tag[@type = 'where']">
+        <xsl:if test="tagInfo[@type = 'where']">
             <li class="not-real-tag" rel="open">
                 <a><hr/>Where<hr/></a>
                 <ul>
-                    <xsl:apply-templates select="tag[@type = 'where']"/>
+                    <xsl:apply-templates select="tagInfo[@type = 'where']"/>
                 </ul>
             </li>
         </xsl:if>
@@ -210,22 +210,22 @@
       </script>
   </xsl:template>
 
-  <xsl:template match="cloud/tag|children/tag|tag_never/where|tag_never/what|tag_never/who">
+  <xsl:template match="cloud/tagInfo|children/tagInfo|tag_never/where|tag_never/what|tag_never/who">
       <li>
         <a class="cloud-tag_used">
-          <xsl:attribute name="id">cloud-target-<xsl:value-of select="@id"/></xsl:attribute>
+          <xsl:attribute name="id">cloud-target-<xsl:value-of select="tag/@id"/></xsl:attribute>
           <xsl:attribute name="style">font-size: <xsl:value-of select="@size"/>%;</xsl:attribute>
-          <xsl:attribute name="href">Tag__<xsl:value-of select="@id"/>x__<xsl:value-of select="name"/></xsl:attribute>
+          <xsl:attribute name="href">Tag__<xsl:value-of select="tag/@id"/>x__<xsl:value-of select="tag/name"/></xsl:attribute>
           <xsl:attribute name="title"><xsl:value-of select="@nb"/> photos</xsl:attribute>
-          <xsl:value-of select="name" />
+          <xsl:value-of select="tag/name" />
         </a>
         <span class="cloud_tooltip_not_used">
-            <xsl:attribute name="id">cloud-content-<xsl:value-of select="@id"/></xsl:attribute>
-            <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
+            <xsl:attribute name="id">cloud-content-<xsl:value-of select="tag/@id"/></xsl:attribute>
+            <xsl:attribute name="rel"><xsl:value-of select="tag/@id"/></xsl:attribute>
         </span>
-        <xsl:if test="children/tag">
+        <xsl:if test="children/tagInfo">
 	    <ul rel="open">
-              <xsl:apply-templates select="children/tag"/>
+              <xsl:apply-templates select="children/tagInfo"/>
             </ul>
         </xsl:if>
     </li>

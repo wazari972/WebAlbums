@@ -16,6 +16,7 @@ import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import net.wazari.service.exchange.xml.tag.XmlTag;
+import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
@@ -40,7 +41,7 @@ public class Tag extends TagDirectory {
         this(null, tag, theme, aThis);
     }
     
-    public Tag(List<XmlTag> tagInside, XmlTag tag, Theme theme, Launch aThis) {
+    public Tag(List<XmlTagCloudEntry> tagInside, XmlTag tag, Theme theme, Launch aThis) {
         super(tag, tagInside, theme, aThis);
         this.name = tag.name;
         this.theme = theme;

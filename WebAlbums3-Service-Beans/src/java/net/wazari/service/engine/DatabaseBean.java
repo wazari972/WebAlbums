@@ -28,6 +28,7 @@ import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.database.*;
 import net.wazari.service.exchange.xml.database.XmlDatabaseStats.XmlDatabaseStatsTheme;
+import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,7 +231,8 @@ public class DatabaseBean implements DatabaseLocal {
                 List<XmlTagCloudEntry> lst = new ArrayList<XmlTagCloudEntry>(map.size());
                 for (Tag enrTag : map.keySet()) {
                     XmlTagCloudEntry xmlCloudEntry = new XmlTagCloudEntry();
-                    xmlCloudEntry.name = enrTag.getNom();
+                    xmlCloudEntry.tag = new XmlTag();
+                    xmlCloudEntry.tag.name  = enrTag.getNom();
                     xmlCloudEntry.nb = map.get(enrTag);
                     lst.add(xmlCloudEntry);
                 }

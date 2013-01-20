@@ -177,8 +177,9 @@ public class TagBean implements TagLocal {
                 pair.parentList.add(pair.xml);
                 pair.xml.size = size;
                 pair.xml.nb = nbElts;
-                pair.xml.id = pair.tag.getId();
-                pair.xml.name = pair.tag.getNom();
+                pair.xml.tag = new XmlTag();
+                pair.xml.tag.id = pair.tag.getId();
+                pair.xml.tag.name = pair.tag.getNom();
                 
                 switch(pair.tag.getTagType()) {
                     case 1: pair.xml.type = "who"; break;
@@ -188,7 +189,7 @@ public class TagBean implements TagLocal {
                 
                 if (pair.tag.getGeolocalisation() != null) {
                     Geolocalisation geo = pair.tag.getGeolocalisation();
-                    pair.xml.setGeo(geo.getLatitude(), geo.getLongitude());
+                    pair.xml.tag.setGeo(geo.getLatitude(), geo.getLongitude());
                 }
                 for (Tag enrSon : pair.tag.getSonList()) {
                     XmlTagCloudEntry xmlSon = new XmlTagCloudEntry();
