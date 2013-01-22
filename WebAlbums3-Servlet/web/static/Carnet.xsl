@@ -19,6 +19,7 @@
     </xsl:if>
     <xsl:apply-templates select="carnet"/>
     <xsl:apply-templates select="page"/>
+    <script type="text/javascript" src="static/scripts/OpenLayerFunctions.js"/>
     <script type="text/javascript" src="static/scripts/Carnet.js"/>
   </xsl:template>
 

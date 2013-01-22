@@ -60,6 +60,11 @@
     background-color: #58ACFA;
 }
 
+.mapCarnet {
+    height: 200px;
+    width: 400px;
+}
+
 .mapChoix {
     height: 400px;
     width: 400px;

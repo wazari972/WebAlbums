@@ -191,6 +191,7 @@ function zoom_to_layer(map, layer) {
     if (map == null) {
         return;
     }
+    
     map.zoomToExtent(layer.getDataExtent());
 }
 
@@ -256,7 +257,7 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
 
 function geocode(address, map) {
     if (!have_google()) {
-        return null;
+        return;
     }
     
     var geocoder = new google.maps.Geocoder();
@@ -276,4 +277,48 @@ function geocode(address, map) {
     } else {
         alert("No geocoder ...");
     }
+}
+
+function json_pointToContent(point) {
+    return "<div class='map_content'>"
+          +"  <h1><a href='Tag__"+point.id+"__"+point.name+"'>"+point.name+"</a></h1>\n"
+          +"  <center><img src='Miniature__"+point.picture+".png' /></center>\n"
+          +"</div>"
+}
+
+
+function json_point_to_lonlat(point) {
+    return lng_lat_to_lonlat(point.lng, point.lat)
+}
+
+function populateMapFromJSON(url, map, headCloud) {
+    var heatmap = null;
+    if (headCloud && have_heatmap()) {
+        heatmap = add_heatmap_layer(map, "Heatmap")
+    }
+    
+    var markers = add_marker_layer(map, "Geo Tags")
+    
+    $.getJSON(url,
+        function(data) {
+            var hasData = false;
+            $.each(data, function(key, point) {
+                var lonlat = json_point_to_lonlat(point)
+                
+                addMarker(map, markers, point, json_pointToContent, lonlat)
+                hasData = true;
+                if (heatmap == null) {
+                    return;
+                }
+                var intensity = headCloud.find("tag[id=" +point.id+ "]").attr("nb")
+                heat_add_src(heatmap, lonlat, intensity)
+            });
+            
+            if (hasData) {
+                zoom_to_layer (map, heatmap != null ? heatmap : markers)
+            }
+            
+            $("body").css("cursor", "auto");
+        }
+    ).error(function(e, textStatus) { alert("error"+e+textStatus); $("body").css("cursor", "auto");});
 }

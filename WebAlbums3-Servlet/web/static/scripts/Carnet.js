@@ -149,10 +149,19 @@ function init_buttons() {
     })
 }
 
+function init_map() {
+    var mapDiv = $("#carnet_map")
+    var carnetId = mapDiv.attr("rel")
+    mapDiv.addClass("mapCarnet") ;
+    
+    populateMapFromJSON("Carnet__"+carnetId+"_map.json", loadMap("carnet_map"))
+}
+
 function init_page() {
     init_markdown()
     init_toc()
     init_buttons()
+    init_map()
 }
 
 $(function() {

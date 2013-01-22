@@ -72,18 +72,6 @@
 	</xsl:if>
 	<xsl:if test="not($style = 'list' or $style = 'multiple')">
 	  <div class="tags">
-	    <xsl:apply-templates select="who">
-                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
-	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
-                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
-                <xsl:with-param name="setRel"><xsl:value-of select="$setRel" /></xsl:with-param>
-	    </xsl:apply-templates>
-            <xsl:apply-templates select="author">
-                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
-	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
-                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
-                <xsl:with-param name="setRel"><xsl:value-of select="$setRel" /></xsl:with-param>
-	    </xsl:apply-templates>
 	    <xsl:apply-templates select="what">
                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
 	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
@@ -91,6 +79,18 @@
                 <xsl:with-param name="setRel"><xsl:value-of select="$setRel" /></xsl:with-param>
 	    </xsl:apply-templates>
 	    <xsl:apply-templates select="where">
+                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
+                <xsl:with-param name="setRel"><xsl:value-of select="$setRel" /></xsl:with-param>
+	    </xsl:apply-templates>
+            <xsl:apply-templates select="who">
+                <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
+	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
+                <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>
+                <xsl:with-param name="setRel"><xsl:value-of select="$setRel" /></xsl:with-param>
+	    </xsl:apply-templates>
+            <xsl:apply-templates select="author">
                 <xsl:with-param name="type"><xsl:value-of select="$type" /></xsl:with-param>
 	        <xsl:with-param name="style"><xsl:value-of select="$style" /></xsl:with-param>
                 <xsl:with-param name="incMinor"><xsl:value-of select="$incMinor" /></xsl:with-param>

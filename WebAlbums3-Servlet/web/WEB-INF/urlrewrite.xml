@@ -15,6 +15,10 @@
         <from>^/Choix_plus_([0-9]+)__.*$</from>
         <to>Choix?themeId=$1&amp;complete=y</to>
     </rule>
+    <rule>
+        <from>^/Choix_map.json$</from>
+        <to>Choix?special=MAP&amp;type=JSON</to>
+    </rule>
     <!--  ALBUMS -->
     <rule>
         <from>^/Albums__p([0-9]*)$</from>

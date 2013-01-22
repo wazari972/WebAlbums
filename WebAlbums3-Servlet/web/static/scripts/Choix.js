@@ -1,25 +1,4 @@
-function pointToContent(point) {
-    return "<div class='map_content'>"
-          +"  <h1><a href='Tag__"+point.id+"__"+point.name+"'>"+point.name+"</a></h1>\n"
-          +"  <center><img src='Miniature__"+point.picture+".png' /></center>\n"
-          +"</div>"
-}
-
-
-function point_to_lonlat(point) {
-    return lng_lat_to_lonlat(point.lng, point.lat)
-}
-
-function populateMap(map) {    
-    var heatmap;
-    if (have_heatmap()) {
-        heatmap = add_heatmap_layer(map, "Heatmap")
-    } else {
-        heatmap = null
-    }
-    
-    var markers = add_marker_layer(map, "Geo Tags")
-    
+function populateChoixMap(map) {        
     var xmlCloud;
                 
     $.ajax( {
@@ -31,26 +10,9 @@ function populateMap(map) {
           function(data) {
             xmlCloud = $(data)
         }});
-
-    $.getJSON("Choix?special=MAP&type=JSON",
-        function(data) {
-            $.each(data, function(key, point) {
-                var lonlat = point_to_lonlat(point)
-                
-                addMarker(map, markers, point, pointToContent, lonlat)
-                if (heatmap == undefined)
-                    return;
-                
-                var intensity = xmlCloud.find("tag[id=" +point.id+ "]").attr("nb")
-                heat_add_src(heatmap, lonlat, intensity)
-            });
-            
-            
-            zoom_to_layer (heatmap != undefined ? heatmap : marker)
-            
-            $("body").css("cursor", "auto");
-        }
-    ).error(function(e, textStatus) { alert("error"+e+textStatus); $("body").css("cursor", "auto");});
+    
+    populateMapFromJSON("Choix_map.json", map, xmlCloud)
+    
 }
 
 function createGpxesMap() {
@@ -136,16 +98,16 @@ function init_loader() {
     }) ;
     
     $("#tagGraphLoader").click(function () {
-        data = $("#tagChoix").serialize()
+        var data = $("#tagChoix").serialize()
         loadExernals(null, 'Albums?special=GRAPH&'+data, 'tagGraph', draw_graph, true, data) ;
     }) ;
 
     $("#mapLoader").click(function () {
         $(this).fadeOut() ;
         $("#theMapChoix").addClass("mapChoix") ;
-        map = loadMap("theMapChoix");
+        var map = loadMap("theMapChoix");
         $("body").css("cursor", "wait");
-        populateMap(map)
+        populateChoixMap(map)
     }) ;
 }
 
@@ -178,7 +140,7 @@ function init_selecter() {
 }
 
 function save_theme() {
-    themeId = getParameterByName("themeId")
+    var themeId = getParameterByName("themeId")
     if (themeId == "") 
         return
     

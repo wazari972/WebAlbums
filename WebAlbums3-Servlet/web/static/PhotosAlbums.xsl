@@ -186,7 +186,10 @@
                             <xsl:apply-templates select="../gpx"/>
                         </div>
                     </xsl:if>
-                    <xsl:apply-templates select="tagTree"/>                    
+                    <xsl:apply-templates select="tagTree"/>
+                    <div id="carnet_map">
+                        <xsl:attribute name="rel"><xsl:value-of select="../@id"/></xsl:attribute>
+                    </div>
                     <div>
                         <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
                             <span class="massedit_chk edit">
@@ -274,8 +277,8 @@
   
     <xsl:template match="tagTree">
         <p>
-            <b>Region:</b><span>&#160;<xsl:value-of select="name" /></span>
-            <xsl:apply-templates select="children/tag"/>
+            <b>---------</b><span>&#160;<xsl:value-of select="name" /></span><b>------------</b>
+            <!--<xsl:apply-templates select="children/tag"/>-->
         </p>
     </xsl:template>
   
