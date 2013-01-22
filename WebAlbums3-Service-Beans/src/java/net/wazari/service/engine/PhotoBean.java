@@ -225,7 +225,7 @@ public class PhotoBean implements PhotoLocal {
 
         Integer albumId = vSession.getAlbum();
         if (albumId == null) {
-            output.exception = "No album asked ... (id=null)" ;
+            output.exception = "No album asked ... (album=null)" ;
             return output ;
         }
 
@@ -535,10 +535,8 @@ public class PhotoBean implements PhotoLocal {
 
         if (vSession.isSessionManager()) {
             XmlPhotoMassEdit massEdit = new XmlPhotoMassEdit();
-            massEdit.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession,
-                    Box.LIST, "newTag");
-            massEdit.tag_never = webPageService.displayListBN(Mode.TAG_NEVER_EVER, vSession,
-                    Box.LIST, "newTag");
+            massEdit.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession, Box.LIST);
+            massEdit.tag_never = webPageService.displayListBN(Mode.TAG_NEVER_EVER, vSession, Box.LIST);
             if (massEditParam) {
                 String msg;
                 if (countME == 0 || Turn.NOTHING == turn) {

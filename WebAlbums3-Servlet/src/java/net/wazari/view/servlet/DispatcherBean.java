@@ -154,7 +154,9 @@ public class DispatcherBean {
                     log.debug("{} {}page", page, special != null ? special : "");
                     switch(page) {
                         case CHOIX:
-                            if ("JSON".equals(type)) {
+                            if (!"JSON".equals(type)) {
+                                output.choix = choixServlet.displayCHX(vSession);
+                            } else {
                                 XmlWebAlbumsList ret = choixServlet.displayChxJSON(vSession);
                                 if (ret != null) {
                                     output.blob = ret.blob;
@@ -162,15 +164,23 @@ public class DispatcherBean {
                                 response.setContentType("text/javascript;charset=UTF-8");
                                 output.isBlob = true;
                                 output.isComplete = true;   
-                            } else {
-                                output.choix = choixServlet.displayCHX(vSession);
                             }
                             break;
                         case ALBUM:
                             output.albums = albumServlet.treatALBM((ViewSessionAlbum) vSession);
                             break;
                         case PHOTO:
-                            output.photos = photoServlet.treatPHOTO((ViewSessionPhoto) vSession);
+                            if (!"JSON".equals(type)) {
+                                output.photos = photoServlet.treatPHOTO((ViewSessionPhoto) vSession);
+                            } else {
+                                XmlWebAlbumsList ret = photoServlet.treatJsonPHOTO(vSession);
+                                if (ret != null) {
+                                    output.blob = ret.blob;
+                                }
+                                response.setContentType("text/javascript;charset=UTF-8");
+                                output.isBlob = true;
+                                output.isComplete = true;   
+                            }
                             break;
                         case CONFIG:
                             output.config = configServlet.treatCONFIG((ViewSessionConfig) vSession);

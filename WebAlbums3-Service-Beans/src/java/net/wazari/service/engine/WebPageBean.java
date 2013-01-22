@@ -28,6 +28,7 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlPage;
 import net.wazari.service.exchange.xml.common.*;
@@ -55,7 +56,9 @@ public class WebPageBean implements WebPageLocal {
     private TagFacadeLocal tagDAO;
     @EJB
     private ThemeFacadeLocal themeDAO;
-
+    @EJB
+    private AlbumFacadeLocal albumDAO;
+    
     private static final SimpleDateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
     
     private static final long serialVersionUID = -8157612278920872716L;
@@ -209,8 +212,7 @@ public class WebPageBean implements WebPageLocal {
     public XmlWebAlbumsList displayListIBTN(Mode mode,
             ViewSession vSession,
             EntityWithId entity,
-            Box box,
-            String name)
+            Box box)
             throws WebAlbumsServiceException
     {
 
@@ -230,7 +232,7 @@ public class WebPageBean implements WebPageLocal {
         for (TagPhoto enrTagPhoto : list) {
             tags.add(enrTagPhoto.getTag());
         }
-        XmlWebAlbumsList output = displayListLBN(mode, vSession, tags, box, name) ;
+        XmlWebAlbumsList output = displayListLBN(mode, vSession, tags, box) ;
 
         output.box = box ;
         output.type = type ;
@@ -252,8 +254,7 @@ public class WebPageBean implements WebPageLocal {
     public XmlWebAlbumsList displayListLBN(Mode mode,
             ViewSession vSession,
             List<Tag> ids,
-            Box box,
-            String name)
+            Box box)
             throws WebAlbumsServiceException 
     {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
@@ -455,9 +456,25 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
+    public XmlWebAlbumsList displayAlbumGeolocations(ViewSessionPhoto vSession)
+            throws WebAlbumsServiceException {
+        Integer albumId = vSession.getAlbum();
+        if (albumId == null) {
+            return null;
+        }
+        
+        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
+        if (enrAlbum == null) {
+            return null;
+        }
+        
+        return displayListIBTN(Mode.TAG_GEO, vSession, enrAlbum, Box.MAP_SCRIPT);
+    }
+    
+    @Override
     public XmlWebAlbumsList displayMapInScript(ViewSession vSession)
             throws WebAlbumsServiceException {
-        return displayListLBN(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT, null);
+        return displayListLBN(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT);
     }
 
     //display a list into STR
@@ -468,10 +485,9 @@ public class WebPageBean implements WebPageLocal {
     @Override
     public XmlWebAlbumsList displayListBN(Mode mode,
             ViewSession vSession,
-            Box box,
-            String name)
+            Box box)
             throws WebAlbumsServiceException {
-        return displayListLBN(mode, vSession, null, box, name);
+        return displayListLBN(mode, vSession, null, box);
     }
     //display a list into STR
     //according to the MODE
@@ -484,7 +500,7 @@ public class WebPageBean implements WebPageLocal {
             ViewSession vSession,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListLBN(mode, vSession, null, box, "tags");
+        return displayListLBN(mode, vSession, null, box);
     }
 
     @Override
@@ -493,7 +509,7 @@ public class WebPageBean implements WebPageLocal {
             EntityWithId entity,
             Box box, String date)
             throws WebAlbumsServiceException {
-        XmlWebAlbumsList lst = displayListIBTN(mode, vSession, entity, box, null);
+        XmlWebAlbumsList lst = displayListIBTN(mode, vSession, entity, box);
         
         Date ref;
         try {
@@ -543,7 +559,7 @@ public class WebPageBean implements WebPageLocal {
             EntityWithId entity,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListIBTN(mode, vSession, entity, box, null);
+        return displayListIBTN(mode, vSession, entity, box);
     }
     
     //display a list into STR
@@ -557,7 +573,7 @@ public class WebPageBean implements WebPageLocal {
             List<Tag> ids,
             Box box)
             throws WebAlbumsServiceException {
-        return displayListLBN(mode, vSession, ids, box, "tags");
+        return displayListLBN(mode, vSession, ids, box);
     }
 
     @Override
@@ -623,11 +639,6 @@ public class WebPageBean implements WebPageLocal {
                 XmlTag wTag = new XmlTag();
                 wTag.name = currentTag.getNom();
                 wTag.id = currentTag.getId();
-                
-                if (currentTag.getGeolocalisation() != null) {
-                    Geolocalisation loc = currentTag.getGeolocalisation();
-                    wTag.setGeo(loc.getLatitude(), loc.getLongitude());
-                }
                 
                 map.put(wTag.id, wTag);
                 

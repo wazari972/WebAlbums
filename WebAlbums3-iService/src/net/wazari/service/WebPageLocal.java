@@ -19,6 +19,7 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlPage;
 import net.wazari.service.exchange.xml.common.*;
@@ -38,7 +39,7 @@ public interface WebPageLocal {
     XmlWebAlbumsList displayListB(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListBN(Mode mode, ViewSession vSession, Box box, String name) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListBN(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlUserList displayListDroit(Utilisateur right, Integer albmRight) throws WebAlbumsServiceException;
@@ -50,13 +51,13 @@ public interface WebPageLocal {
     XmlWebAlbumsList displayListIBT(Mode mode, ViewSession vSession, EntityWithId entity, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListIBTN(Mode mode, ViewSession vSession, EntityWithId entity, Box box, String name) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListIBTN(Mode mode, ViewSession vSession, EntityWithId entity, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlWebAlbumsList displayListLB(Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListLBN(Mode mode, ViewSession vSession, List<Tag> ids, Box box, String name) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListLBN(Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlWebAlbumsList displayMapInScript(ViewSession vSession) throws WebAlbumsServiceException;
@@ -78,4 +79,7 @@ public interface WebPageLocal {
 
     @PermitAll
     XmlTag tagListToTagTree(XmlWebAlbumsList tag_used);
+
+    @PermitAll
+    XmlWebAlbumsList displayAlbumGeolocations(ViewSessionPhoto vSession) throws WebAlbumsServiceException;
 }

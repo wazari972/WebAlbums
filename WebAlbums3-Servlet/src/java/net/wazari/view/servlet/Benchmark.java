@@ -40,8 +40,7 @@ public class Benchmark extends HttpServlet{
         if (action == BenchAction.TAGS) {
             Mode mode = vSession.getMode();
             
-            output.tag_used = webPageService.displayListBN(mode, vSession,
-                                                           Box.LIST, "newTag");   
+            output.tag_used = webPageService.displayListBN(mode, vSession, Box.LIST);   
         }
         
         return output ;

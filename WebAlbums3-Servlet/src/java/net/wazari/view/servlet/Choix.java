@@ -58,8 +58,7 @@ public class Choix extends HttpServlet {
         
         if (special == Special.JUST_THEME) {
         } else {
-            choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession,
-                    Box.MULTIPLE, "tagAsked");
+            choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession, Box.MULTIPLE);
         }
         
         if (vSession.getCompleteChoix() || vSession.getStatic()) {

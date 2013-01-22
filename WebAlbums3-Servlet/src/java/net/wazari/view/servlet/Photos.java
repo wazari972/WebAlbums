@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.PhotoLocal;
+import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto;
@@ -17,6 +19,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlPhotos;
@@ -35,8 +38,8 @@ public class Photos extends HttpServlet {
 
     @EJB private DispatcherBean dispatcher ;
 
-    @EJB
-    private PhotoLocal photoService;
+    @EJB private PhotoLocal photoService;
+    @EJB private WebPageLocal webPageService;
 
     public XmlPhotos treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
         Action action = vSession.getAction();
@@ -77,9 +80,12 @@ public class Photos extends HttpServlet {
         } else {
             output.display = photoService.treatPhotoDISPLAY((ViewSessionPhotoDisplay) vSession,submit);
         }
-
-
+        
         return output;
+    }
+    
+    public XmlWebAlbumsList treatJsonPHOTO(ViewSession vSession) throws WebAlbumsServiceException {
+        return webPageService.displayAlbumGeolocations((ViewSessionPhoto) vSession);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
