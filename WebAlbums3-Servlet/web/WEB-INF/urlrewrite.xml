@@ -96,7 +96,10 @@
         <from>^/Carnets__p([0-9]*)$</from>
         <to >Carnets?page=$1</to>
     </rule>
-    
+    <rule>
+        <from>^/Carnet__([0-9]+)_map\.json$</from>
+        <to >Carnets?id=$1&amp;type=JSON&amp;special=MAP</to>
+    </rule>
     <!--  INDEX -->
     <rule>
         <from>^/Index\..*</from>

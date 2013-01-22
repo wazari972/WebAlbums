@@ -9,14 +9,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.CarnetLocal;
+import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
+import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlCarnets;
 import org.slf4j.Logger;
@@ -33,7 +37,9 @@ public class Carnets extends HttpServlet{
     
     @EJB
     private CarnetLocal carnetService;
-
+    @EJB 
+    private WebPageLocal webPageService;
+    
     public XmlCarnets treatCARNETS(ViewSessionCarnet vSession)
             throws WebAlbumsServiceException {
         XmlCarnets output = new XmlCarnets() ;
@@ -76,6 +82,10 @@ public class Carnets extends HttpServlet{
         }
 
         return output ;
+    }
+    
+    public XmlWebAlbumsList treatJsonCARNET(ViewSession vSession) throws WebAlbumsServiceException {
+        return webPageService.displayCarnetGeolocations((ViewSessionCarnet) vSession);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

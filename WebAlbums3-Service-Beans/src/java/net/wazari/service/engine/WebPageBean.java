@@ -27,6 +27,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
+import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.XmlAffichage;
@@ -58,6 +59,8 @@ public class WebPageBean implements WebPageLocal {
     private ThemeFacadeLocal themeDAO;
     @EJB
     private AlbumFacadeLocal albumDAO;
+    @EJB
+    private CarnetFacadeLocal carnetDAO;
     
     private static final SimpleDateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
     
@@ -469,6 +472,22 @@ public class WebPageBean implements WebPageLocal {
         }
         
         return displayListIBTN(Mode.TAG_GEO, vSession, enrAlbum, Box.MAP_SCRIPT);
+    }
+    
+    @Override
+    public XmlWebAlbumsList displayCarnetGeolocations(ViewSessionCarnet vSession)
+            throws WebAlbumsServiceException {
+        Integer carnetId = vSession.getId();
+        if (carnetId == null) {
+            return null;
+        }
+        
+        Carnet enrCarnet = carnetDAO.loadIfAllowed(vSession, carnetId);
+        if (enrCarnet == null) {
+            return null;
+        }
+        
+        return displayListIBTN(Mode.TAG_GEO, vSession, enrCarnet, Box.MAP_SCRIPT);
     }
     
     @Override

@@ -179,7 +179,7 @@ public class DispatcherBean {
                                 }
                                 response.setContentType("text/javascript;charset=UTF-8");
                                 output.isBlob = true;
-                                output.isComplete = true;   
+                                output.isComplete = true;
                             }
                             break;
                         case CONFIG:
@@ -189,7 +189,17 @@ public class DispatcherBean {
                             output.tags = tagServlet.treatTAGS((ViewSessionTag) vSession);
                             break;
                         case CARNET:
-                            output.carnets = carnetServlet.treatCARNETS((ViewSessionCarnet) vSession);
+                            if (!"JSON".equals(type)) {
+                                output.carnets = carnetServlet.treatCARNETS((ViewSessionCarnet) vSession);
+                            } else {
+                                XmlWebAlbumsList ret = carnetServlet.treatJsonCARNET(vSession);
+                                if (ret != null) {
+                                    output.blob = ret.blob;
+                                }
+                                response.setContentType("text/javascript;charset=UTF-8");
+                                output.isBlob = true;
+                                output.isComplete = true;
+                            }
                             break;
                         case DATABASE:
                             output.database = databaseServlet.treatDATABASE((ViewSessionDatabase) vSession);

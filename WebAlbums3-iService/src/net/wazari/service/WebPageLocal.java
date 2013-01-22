@@ -18,6 +18,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
+import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.XmlAffichage;
@@ -77,9 +78,12 @@ public interface WebPageLocal {
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     void populateEntities();
 
-    @PermitAll
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlTag tagListToTagTree(XmlWebAlbumsList tag_used);
 
-    @PermitAll
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlWebAlbumsList displayAlbumGeolocations(ViewSessionPhoto vSession) throws WebAlbumsServiceException;
+
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    XmlWebAlbumsList displayCarnetGeolocations(ViewSessionCarnet vSession) throws WebAlbumsServiceException;
 }
