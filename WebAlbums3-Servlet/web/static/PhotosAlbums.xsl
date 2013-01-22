@@ -77,9 +77,7 @@
                         </xsl:if>
                     </img>
                 </a>
-                <span style="visibility:hidden">(that just an invisible text to have a new line, shame on me :-$ )</span>
             </div>
-            <div class="info">
                 <xsl:if test="not(/webAlbums/albums or /webAlbums/carnets)">
                     <div class="stars">
                         <xsl:attribute name="id">stars_<xsl:value-of select="photoId/@id" /></xsl:attribute>
@@ -266,7 +264,7 @@
                     </span>
                 </div>
             </div>
-        </div>
+        
     </xsl:template>
   
     <xsl:template match="tagTree//tag">
@@ -277,7 +275,7 @@
   
     <xsl:template match="tagTree">
         <p>
-            <b>---------</b><span>&#160;<xsl:value-of select="name" /></span><b>------------</b>
+            <div id="carnetRegion">&#160;<xsl:value-of select="name" /></div>
             <!--<xsl:apply-templates select="children/tag"/>-->
         </p>
     </xsl:template>

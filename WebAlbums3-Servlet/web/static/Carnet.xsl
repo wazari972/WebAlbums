@@ -45,7 +45,6 @@
 	<div class="body">
             <xsl:apply-templates select="message"/>
             <xsl:apply-templates select="details"/>
-            <br/>
             <xsl:apply-templates select="text"/>
 	</div>
       </div>
@@ -57,8 +56,6 @@
   </xsl:template>
   
   <xsl:template match="text">
-       <br/><span>&#160;</span>
-       
        <hr id="carnet_head"/>
        <xsl:if test="/webAlbums/affichage/@directAccess">
         <script type="text/javascript">
