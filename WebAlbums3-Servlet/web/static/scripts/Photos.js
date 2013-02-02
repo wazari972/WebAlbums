@@ -24,8 +24,8 @@ function reload_page_cb(data, photoid, cb) {
 
 function set_tags(photoid) {
     var tags = $("#fastedit_tag_"+photoid)
-    var target = tags.parents(".info").find("div .tags")
-    var to_click = tags.parents(".info").find(".fastedit_tag_bt")
+    var target = tags.parents(".options").find(".tags")
+    var to_click = tags.parents(".options").find(".fastedit_tag_bt")
     
     var index = $('.fastedit_tag_bt').index(to_click);
     var to_click_2nd = $('.fastedit_tag_bt').slice(index+1,index+2);
@@ -41,8 +41,9 @@ function set_tags(photoid) {
             target.html(newHtml)
             to_click.click()
             
-            if (get_editionMode() == 'INTENSIVE EDIT')
-                to_click_2nd.click()       
+            if (get_editionMode() == 'INTENSIVE EDIT') {
+                to_click_2nd.click()
+            }
         }
      );
 }
@@ -88,6 +89,7 @@ function init_fastedit() {
 
     $(".fastedit_settags").click(function () {
         var photoid = $(this).attr('rel');
+        
         set_tags(photoid)
     })
 
@@ -95,8 +97,9 @@ function init_fastedit() {
         var photoid = $(this).attr('rel');
         var desc = $("#fastedit_desc_"+photoid)
         var photodesc = desc.val()
-        var target = desc.parents(".info").find("div .description")
-        var to_click = desc.parents(".info").find(".fastedit_desc_bt")
+        var target = desc.parents(".options").find(".description")
+        var to_click = desc.parents(".options").find(".fastedit_desc_bt")
+        
         $.post("Photos?special=FASTEDIT", 
             {id : photoid, desc:photodesc},
             function(data) {

@@ -8,10 +8,11 @@
     <xsl:param name="mode2">NONE</xsl:param>
     <xsl:param name="type">all</xsl:param>
     <xsl:param name="incMinor">false</xsl:param>
-    <xsl:param name="onChange"></xsl:param>
+    <xsl:param name="box">NONE</xsl:param>
     <xsl:param name="id"></xsl:param>
     <xsl:param name="class"></xsl:param>
     <xsl:param name="setRel">false</xsl:param>
+    <xsl:if test="not(@box) or @box = $box">
     <xsl:if test="not(@mode) or @mode = $mode">
       <xsl:if test="who|what|where">            
 	<xsl:if test="$style = 'list' or $style = 'multiple'">
@@ -19,9 +20,6 @@
 	    <xsl:if test="$style = 'multiple'">
 	      <xsl:attribute name="multiple">yes</xsl:attribute>
 	      <xsl:attribute name="size"><xsl:value-of select="$size" /></xsl:attribute>
-	    </xsl:if>
-	    <xsl:if test="not($onChange = '')">
-	      <xsl:attribute name="onChange"><xsl:value-of select="$onChange" /></xsl:attribute>
 	    </xsl:if>
 	    <xsl:if test="not($id = '')">
 	      <xsl:attribute name="id"><xsl:value-of select="$id" /></xsl:attribute>
@@ -100,6 +98,7 @@
 	</xsl:if>     
       </xsl:if>     
     </xsl:if>
+    </xsl:if>
   </xsl:template>
     
   <xsl:template match="where|what|who|author">
@@ -141,10 +140,12 @@
                 </img>
             </xsl:if>    
           </a>
+          
           <xsl:if test="position() != last() and not($style = 'enhanced' and name(.) = 'who') ">
               <span>, </span> 
           </xsl:if>
-          <xsl:if test="position() = last() and name(.) = 'who' and (count(../what)!= 0 or count(../where) != 0)">
+          
+          <xsl:if test="position() = last() and name(.) = 'where' and (count(../what) != 0 or count(../who) != 0)">
               <br/>
           </xsl:if>
           <xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">

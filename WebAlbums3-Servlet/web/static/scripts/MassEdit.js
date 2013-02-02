@@ -36,26 +36,26 @@ function validMass() {
 }
 
 function check_massedit() {
-    checked = false
+    var checked = false
     $(".massedit_chkbox").each(function () {
-        if (!checked && $(this).prop("checked"))
+        if (!checked && $(this).prop("checked")) {
             checked = true
+        }
     })
     if (checked) {
-        $(".massedit_box").show()
-        $(".massedit_chk").removeClass("edit")
-        $(".massedit_chk").show()
+        $(".massedit_box").css('visibility', 'visible')
+        $(".massedit_chk").removeClass("edit").css('visibility', 'visible')
     } else {
-        $(".massedit_box").hide()
-        $(".massedit_chk").hide()
-        $(".massedit_chk").addClass("edit")
-        $(this).parent().show()
+        $(".massedit_box").css('visibility', 'hidden')
+        $(".massedit_chk").css('visibility', 'hidden').addClass("edit")
+        $(this).parent().css('visibility', 'visibility')
+        $(this).css('visibility', 'visible')
     }
 }
 
 function init_mass() {
     $(".massedit_valid").click(validMass)
-    $(".massedit_box").hide()
+    $(".massedit_box").css('visibility', 'hidden')
     $(".massedit_selectall").click(selectAll)
     $(".massedit_chkbox").change(check_massedit)
 }
