@@ -154,7 +154,8 @@ public class CarnetBean implements CarnetLocal {
                 }
             }
             
-            details.description = enrCarnet.getDescription();
+            
+            details.setDescription(enrCarnet.getDescription());
 
             //tags du carnet
             details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrCarnet, Box.NONE) ;
@@ -266,15 +267,18 @@ public class CarnetBean implements CarnetLocal {
             }
         }
         
-        if (!enrPhotos.isEmpty())
+        if (!enrPhotos.isEmpty()) {
             enrCarnet.setPhotoList(new ArrayList(enrPhotos));
+        }
         
-        if (!enrAlbums.isEmpty())
+        if (!enrAlbums.isEmpty()) {
             enrCarnet.setAlbumList(new ArrayList(enrAlbums));
+        }
         
         try {
-            if (carnetId == null)
+            if (carnetId == null) {
                 carnetDAO.create(enrCarnet);
+            }
 
             carnetDAO.edit(enrCarnet);
             output.message = "Carnet (" + enrCarnet.getId() + ") correctement mise à jour !";

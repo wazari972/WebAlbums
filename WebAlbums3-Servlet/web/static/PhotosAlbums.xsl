@@ -144,7 +144,7 @@
                     </xsl:if>
                     <div class="description">
                         <xsl:attribute name="id">desc_<xsl:value-of select="photoId/@id" /></xsl:attribute>
-                        <xsl:value-of select="description" />
+                        <xsl:for-each select="description/line"><p><xsl:value-of select="." /></p></xsl:for-each>
                     </div>
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                         <span class="edit">
@@ -153,7 +153,7 @@
                                 <p>
                                     <textarea cols="30" >
                                         <xsl:attribute name="id">fastedit_desc_<xsl:value-of select="photoId/@id" /></xsl:attribute>
-                                        <xsl:value-of select="description" />
+                                        <xsl:for-each select="description/line"><xsl:value-of select="." /><xsl:text>&#10;</xsl:text></xsl:for-each>
                                     </textarea>
                                     <input value="edit" type="button" class="fastedit_desc">
                                         <xsl:attribute name="rel"><xsl:value-of select="photoId/@id" /></xsl:attribute>
@@ -179,30 +179,38 @@
                             <xsl:apply-templates select="../carnet"/>
                         </div>
                     </xsl:if>
-                    <xsl:if test="../gpx">
-                        <div class="gpx_opt">
-                            <xsl:apply-templates select="../gpx"/>
+                    <xsl:apply-templates select="tagTree"/>
+                    <xsl:if test="../carnet">
+                        <div id="carnet_map">
+                            <xsl:attribute name="rel"><xsl:value-of select="../@id"/></xsl:attribute>
                         </div>
                     </xsl:if>
-                    <xsl:apply-templates select="tagTree"/>
-                    <div id="carnet_map">
-                        <xsl:attribute name="rel"><xsl:value-of select="../@id"/></xsl:attribute>
-                    </div>
                     <div>
-                        <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
-                            <span class="massedit_chk edit">
-                                <input type="checkbox" class="massedit_chkbox" value="modif">
+                        <span class="edit">
+                            <xsl:if test="/webAlbums/loginInfo/@admin and not(/webAlbums/albums or /webAlbums/photos/random or /webAlbums/carnets)">
+                                <input type="checkbox" class="massedit_chk massedit_chkbox" value="modif">
                                     <xsl:attribute name="name">chk<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                    <xsl:attribute name="id">chk<xsl:value-of select="photoId/@id" /></xsl:attribute>
                                 </input>
-                            </span>
-                        </xsl:if>
-                        <xsl:if test="/webAlbums/loginInfo/@admin">
-                            <span class="edit">&#160;<xsl:if test="/webAlbums/albums/about"><xsl:value-of select="../@id" /></xsl:if><xsl:if test="not(/webAlbums/albums/about)"><xsl:value-of select="photoId/@id" /></xsl:if></span>
-                        </xsl:if>
+                            </xsl:if>
+                            <label>
+                                <xsl:attribute name="for">chk<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                <span>@</span>
+                                <xsl:if test="/webAlbums/albums">
+                                    <xsl:value-of select="../@id" />
+                                </xsl:if>
+                                <xsl:if test="not(/webAlbums/albums)">
+                                    <xsl:value-of select="photoId/@id" />
+                                </xsl:if>
+                            </label>
+                        </span>
                         <xsl:if test="/webAlbums/loginInfo/@admin">
                             <xsl:apply-templates select="user" />
                         </xsl:if>
                     </div>
+                    <xsl:if test="../gpx">
+                        <img src="static/images/map.png" height="30px" title="Trace GPX"/>
+                    </xsl:if>
                     <span class="optional">
                         <xsl:if test="not(/webAlbums/carnets or /webAlbums/photos/random)">
                             <a rel="singlepage[no]" target="_blank" title="Visionneuse">

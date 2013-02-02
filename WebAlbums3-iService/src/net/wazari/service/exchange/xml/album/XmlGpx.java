@@ -4,8 +4,11 @@
  */
 package net.wazari.service.exchange.xml.album;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -20,8 +23,17 @@ public class XmlGpx {
     public Integer albumId;
     @XmlElement
     public String albumName;
-    @XmlElement
-    public String description;
+    @XmlElementWrapper
+    @XmlElement(name="line")
+    public List<String> description;
     @XmlElement
     public String path;
+    
+    public void setDescription(String description) {
+        if (description == null || description.isEmpty()) {
+            return;
+        }
+        
+        this.description = Arrays.asList(description.split("\n")) ;
+    }
 }

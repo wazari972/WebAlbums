@@ -102,8 +102,14 @@ function init_fastedit() {
         
         $.post("Photos?special=FASTEDIT", 
             {id : photoid, desc:photodesc},
-            function(data) {
-                target.text(photodesc)
+            function() {
+                var lines  = photodesc.split("\n")
+                var i;
+                
+                target.text("")
+                for (i = 0; i < lines.length; ++i) {
+                    target.append("<p>"+lines[i]+"</p>")
+                }                
                 to_click.click()
             }
          );
@@ -116,8 +122,7 @@ function init_fastedit() {
     })
     $(".fastedit_tag").chosen();
 
-    $("#massTagList").chosen();
-    
+    $("#massTagList").chosen();   
 }
 
 function init_tooltip() {
@@ -145,7 +150,8 @@ function init_tag_layer (map, do_zoom) {
             name: $(this).text()
         }
         
-        var marker = addMarker(map, markers, point, function(x){return x.name}, point_to_lonlat(point))
+        var marker = addMarker(map, markers, point, function(x){return x.name}, 
+                                                    json_point_to_lonlat(point))
         $(this).data("marker", marker)
     })
     

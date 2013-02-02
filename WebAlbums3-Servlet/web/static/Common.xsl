@@ -144,13 +144,13 @@
           <xsl:if test="position() != last() and not($style = 'enhanced' and name(.) = 'who') ">
               <span>, </span> 
           </xsl:if>
-          
-          <xsl:if test="position() = last() and name(.) = 'where' and (count(../what) != 0 or count(../who) != 0)">
+          <!-- WHAT WHERE WHO -->
+          <xsl:if test="position() = last() and name(.) = 'what' and (count(../where) != 0 or count(../who) != 0)">
               <br/>
           </xsl:if>
-          <xsl:if test="position() = last() and name(.) = 'what' and count(../where) != 0">
+          <xsl:if test="position() = last() and name(.) = 'where' and (count(../who) != 0)">
               <br/>
-          </xsl:if>      
+          </xsl:if>
         </xsl:if>
         </xsl:if>
     </xsl:if>

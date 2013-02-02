@@ -79,7 +79,7 @@ public class AlbumBean implements AlbumLocal {
         }
         output.album.name = enrAlbum.getNom();
         output.album.id = enrAlbum.getId();
-        output.album.details.description = enrAlbum.getDescription();
+        output.album.details.setDescription(enrAlbum.getDescription());
         
         output.album.albmDate = enrAlbum.getDate();
 
@@ -90,7 +90,7 @@ public class AlbumBean implements AlbumLocal {
             
             XmlGpx gpx = new XmlGpx();
             gpx.id = enrGpx.getId();
-            gpx.description = enrGpx.getDescription();
+            gpx.setDescription(enrGpx.getDescription());
             
             output.album.gpx.add(gpx);
         }
@@ -184,7 +184,7 @@ public class AlbumBean implements AlbumLocal {
                 }
                 album.carnet.add(carnet);
             }
-            album.details.description = enrAlbum.getDescription();
+            album.details.setDescription(enrAlbum.getDescription());
             
             for (Photo enrGpx : enrAlbum.getGpxList()) {
                 if (album.gpx == null) {
@@ -192,7 +192,7 @@ public class AlbumBean implements AlbumLocal {
                 }
                 XmlGpx gpx = new XmlGpx();
                 gpx.id = enrGpx.getId();
-                gpx.description = enrGpx.getDescription();
+                gpx.setDescription(enrGpx.getDescription());
                 
                 album.gpx.add(gpx);
             }
@@ -230,7 +230,7 @@ public class AlbumBean implements AlbumLocal {
             for (Photo enrGpx : enrAlbum.getGpxList()) {
                 XmlGpx gpx = new XmlGpx();
                 
-                gpx.description = enrGpx.getDescription();
+                gpx.setDescription(enrGpx.getDescription());
                 gpx.id = enrGpx.getId();
                 gpx.albumId = enrGpx.getAlbum().getId();
                 gpx.albumName = enrGpx.getAlbum().getNom();
@@ -334,7 +334,7 @@ public class AlbumBean implements AlbumLocal {
                 }
                 XmlGpx gpx = new XmlGpx();
                 gpx.id = enrGpx.getId();
-                gpx.description = enrGpx.getDescription();
+                gpx.setDescription(enrGpx.getDescription());
                 
                 album.gpx.add(gpx);
             }
@@ -488,7 +488,7 @@ public class AlbumBean implements AlbumLocal {
             }
         }
 
-        about.album.details.description = enrAlbum.getDescription();
+        about.album.details.setDescription(enrAlbum.getDescription());
 
         //tags de l'album
         about.album.details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrAlbum, Box.NONE) ;

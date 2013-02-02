@@ -73,15 +73,17 @@
             </xsl:if>
 	  </h2>
           <hr/>
-          <xsl:if test="details/description and details/description != ''">
-            <span><xsl:value-of select="details/description" /></span>
-            <hr/>
+          <xsl:if test="details/description and details/description/line != ''">
+              <span>
+                  <xsl:for-each select="details/description/line"><p><xsl:value-of select="." /></p></xsl:for-each>
+              </span>
+              <hr/>
           </xsl:if>
 	</xsl:if>
         <xsl:if test="not(/webAlbums/photos or /webAlbums/tags)">
             <div class="body">
               <xsl:if test="/webAlbums/photos">
-               <h2><div class="description"><xsl:value-of select="details/description" /></div></h2>
+               <h2><div class="description"><xsl:for-each select="description/line"><p><xsl:value-of select="." /></p></xsl:for-each></div></h2>
                <xsl:apply-templates select="user" />
               </xsl:if> 
               <xsl:if test="/webAlbums/albums">
@@ -135,11 +137,11 @@
         <small>
             <a class="gpx_visu">
                 <xsl:attribute name="rel"><xsl:value-of select="@id" /></xsl:attribute>
-                <xsl:if test="description = ''">
+                <xsl:if test="not(description)">
                     Trace GPS <xsl:value-of select="position()"/>
-                </xsl:if>    
-                <xsl:if test="description != ''">
-                    <xsl:value-of select="position()"/>. <xsl:value-of select="description" /> 
+               </xsl:if>    
+                <xsl:if test="description">
+                    <xsl:value-of select="position()"/>. <xsl:value-of select="description/line" /> 
                 </xsl:if> 
             </a>
             &#160;(<a target="_blank" rel="singlepage[no]">

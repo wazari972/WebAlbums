@@ -5,9 +5,11 @@
 
 package net.wazari.service.exchange.xml.common;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.service.exchange.xml.tag.XmlTag;
@@ -23,7 +25,9 @@ public class XmlDetails {
     public Boolean isGpx;
     public XmlPhotoId photoId;
     public List<String> userInside;
-    public String description;
+    @XmlElementWrapper(name="description")
+    @XmlElement(name="line")
+    public List<String> description;
     @XmlAttribute
     public Integer albumId;
     public String albumName;
@@ -35,4 +39,12 @@ public class XmlDetails {
     public XmlTag tagTree;
     @XmlAttribute
     public Integer stars;
+
+    public void setDescription(String description) {
+        if (description == null || description.isEmpty()) {
+            return;
+        }
+        
+        this.description = Arrays.asList(description.split("\n")) ;
+    }
 }

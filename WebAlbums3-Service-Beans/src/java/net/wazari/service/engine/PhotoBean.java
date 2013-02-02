@@ -2,6 +2,7 @@ package net.wazari.service.engine;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -275,12 +276,11 @@ public class PhotoBean implements PhotoLocal {
             if (vSession.directFileAccess()) {
                 gpx.path = enrGpx.getPath(true);
             }
-            gpx.description = enrGpx.getDescription();
-
+            gpx.setDescription(enrGpx.getDescription());
             album.gpx.add(gpx);
         }
         
-        album.details.description = enrAlbum.getDescription() ;
+        album.details.setDescription(enrAlbum.getDescription());
         
         if (enrAlbum.getPicture() != null) {
             album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
@@ -488,7 +488,8 @@ public class PhotoBean implements PhotoLocal {
             
             photo.details.isGpx = enrPhoto.isGpx() != null && enrPhoto.isGpx(); //keep null if false
             
-            photo.details.description = enrPhoto.getDescription();
+            photo.details.setDescription(enrPhoto.getDescription());
+            
             //tags de cette photo
             photo.details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
                     Box.NONE, enrPhoto.getAlbum().getDate());
@@ -574,9 +575,10 @@ public class PhotoBean implements PhotoLocal {
     private XmlDetails transformToDetails(ViewSession vSession, Photo enrPhoto) throws WebAlbumsServiceException {
         XmlDetails details = new XmlDetails();
         details.photoId = new XmlPhotoId(enrPhoto.getId());
-        if (vSession.directFileAccess())
+        if (vSession.directFileAccess()) {
             details.photoId.path = enrPhoto.getPath(true) ;
-        details.description = enrPhoto.getDescription();
+        }
+        details.setDescription(enrPhoto.getDescription());
         details.albumName = enrPhoto.getAlbum().getNom();
         details.albumDate = enrPhoto.getAlbum().getDate();
         //tags de cette photo

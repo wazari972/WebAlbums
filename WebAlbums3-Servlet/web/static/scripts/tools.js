@@ -30,7 +30,6 @@ function prepareEmptyXSL() {
       success:function(html){emptyXsl = html},
       async:false
      })
-
 }
 
 function loadExernalsBottomEnd(data, divId, callback) {

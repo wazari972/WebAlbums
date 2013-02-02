@@ -36,12 +36,20 @@ function validMass() {
 }
 
 function check_massedit() {
+    var mode = get_editionMode() 
     var checked = false
+    
+    if (mode == 'INTENSIVE EDIT') {
+        $(".massedit_chk").addClass("edit")
+        return;
+    }
+        
     $(".massedit_chkbox").each(function () {
         if (!checked && $(this).prop("checked")) {
             checked = true
         }
     })
+    
     if (checked) {
         $(".massedit_box").css('visibility', 'visible')
         $(".massedit_chk").removeClass("edit").css('visibility', 'visible')

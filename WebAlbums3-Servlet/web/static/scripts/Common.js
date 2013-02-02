@@ -59,18 +59,17 @@ function refresh_editionMode() {
     var value = get_editionMode()
     set_editionMode(value)
     $("#mode_edition").text(value)
-    if (value == 'VISITE') {
+    if (value == 'VISITE' || value == 'EDITION') {
         $(".edit").css('visibility', 'hidden')
         $(".edit_visible").css('visibility', 'hidden')
-        callURL("Photos?special=FASTEDIT")
-    } else if (value == 'EDITION') {
-        //nothing to do
+        $(".optional").css('visibility', 'hidden')        
     } else if (value == 'INTENSIVE EDIT') {
         $(".edit").css('visibility', 'visible')
         $(".edit_visible").css('visibility', 'visible')
         $(".optional").css('visibility', 'visible')
-    } else
+    } else {
         alert('unknown edition mode value: '+value)
+    }
 }
 
 function body_mouseenter() {
