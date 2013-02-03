@@ -137,6 +137,16 @@
      font-weight:bold;
 }
 
+.carnet_text p a img {
+    display: block;
+    margin: 0 auto;
+}
+
+.carnet_text li a img {
+    display: block;
+    margin: 0 auto;
+}
+
 .cloud_tooltip {
     display: none;        /* required */
     position: absolute;   /* required */

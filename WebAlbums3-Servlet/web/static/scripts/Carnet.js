@@ -2,9 +2,9 @@ function convertImage(id, url, alt_text, title) {
     // __ in this function messes up the markdown generation
     // ## will be converted later
     
-    return '<center><a href="Image##'+url+'" title="' + alt_text + '">'
+    return '<a href="Image##'+url+'" title="' + alt_text + '">'
          + '<img class="photo" src="Miniature##'+ url + '.png" alt="' + alt_text + '" />'
-         + '</a></center>';
+         + '</a>';
 }
 function convertLink(id, url, title, link_text) {
     var result = "<a href=\"Photos__" + url + "_p0_pa__\"";
@@ -16,7 +16,6 @@ function convertLink(id, url, title, link_text) {
 }
 
 function finishConvert(converted) {
-    
     converted = converted.replace(/Image##/g, "Image__")
     converted = converted.replace(/Miniature##/g, "Miniature__")
     
@@ -24,8 +23,9 @@ function finishConvert(converted) {
 }
 
 function init_markdown() {
-    if (document.getElementById("carnet_text") == null)
+    if (document.getElementById("carnet_text") == null) {
         return
+    }
     
     var converter = Markdown.getSanitizingConverter();
     converter.hooks.chain("plainLinkText", function (url) {
@@ -35,7 +35,11 @@ function init_markdown() {
     converter.hooks.chain("convertLink", convertLink);
     converter.hooks.chain("postConversion", finishConvert);
     
-    var converted = converter.makeHtml($("#carnet_text").text())
+    var text = ""
+    $("#carnet_text p").each(function() {
+        text += $(this).text() + "\n"
+    })
+    var converted = converter.makeHtml(text)
     
     //TODO: rewrite with JQuery
     document.getElementById("carnet_text").innerHTML = converted
@@ -53,12 +57,15 @@ function init_markdown() {
 }
 
 function init_toc() {
+    if ($(".item h1").size() < 2) {
+        return;
+    }
+    
     var toc = $(".carnet_toc")
     
     var titlePAR = $(document.createElement('p'))
     titlePAR.text($(".item h1:first").text())
     titlePAR.addClass("all")
-    toc.append(titlePAR)
     
     titlePAR.click(function() {
         ol.each(function() {
@@ -70,14 +77,18 @@ function init_toc() {
             window.scrollTo(0, $("#carnet_head").offset().top)
     })
     
+    toc.append(titlePAR)
+    
     //create the list holder in all the carnet_toc divs
     toc.each(function() {
         $(this).append(document.createElement('ol'))
-        $(this).append(document.createElement('hr'))
     })
     
     //mark the first one as special: we don't want to scroll to top from first
     toc.children("ol:eq(0)").addClass("first")
+    $(".carnet_toc:first").append(document.createElement('hr')).append(document.createElement('hr'))
+    $(".carnet_toc:last").prepend(document.createElement('hr')).prepend(document.createElement('hr'))
+    
     var ol = toc.children("ol")
 
     var set = false;

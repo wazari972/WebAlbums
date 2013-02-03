@@ -25,7 +25,7 @@ public class XmlDetails {
     public Boolean isGpx;
     public XmlPhotoId photoId;
     public List<String> userInside;
-    @XmlElementWrapper(name="description")
+    @XmlElementWrapper
     @XmlElement(name="line")
     public List<String> description;
     @XmlAttribute

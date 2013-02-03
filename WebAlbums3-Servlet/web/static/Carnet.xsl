@@ -63,8 +63,11 @@
         </script>
        </xsl:if>
        <div class="carnet_toc"/>
-       <br/>
-        <div id="carnet_text" class="carnet_text"><xsl:value-of select="."/></div>
+        <div id="carnet_text" class="carnet_text">
+            <xsl:for-each select="line">
+                <p><xsl:value-of select="."/></p>
+            </xsl:for-each>
+        </div>
         <div class="carnet_toc"/>
   </xsl:template>
 </xsl:stylesheet>

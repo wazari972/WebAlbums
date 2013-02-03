@@ -133,7 +133,7 @@ public class CarnetBean implements CarnetLocal {
             carnet.carnetsPage = page;
             carnet.name = enrCarnet.getNom();
             if (carnetId != null) {
-                carnet.text = StringUtil.escapeXML(enrCarnet.getText());
+                carnet.setText(enrCarnet.getText());
             }
             if (enrCarnet.getPhotoList() != null) {
                 carnet.photo = new ArrayList<XmlPhotoId>(enrCarnet.getPhotoList().size());
