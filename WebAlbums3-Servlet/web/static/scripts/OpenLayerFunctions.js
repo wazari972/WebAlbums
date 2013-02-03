@@ -317,8 +317,9 @@ function populateMapFromJSON(url, map, headCloud) {
             if (hasData) {
                 zoom_to_layer (map, heatmap != null ? heatmap : markers)
             }
-            
             $("body").css("cursor", "auto");
+            /* BUG: this div blocks my TOC in Carnet page ... so I get rid of it here !*/
+            $(".olForeignContainer").remove()
         }
-    ).error(function(e, textStatus) { alert("error"+e+textStatus); $("body").css("cursor", "auto");});
+    ).error(function(e, textStatus) { alert("populateMapFromJSON FAILED --"+url+" -- "+e +" -- "+textStatus); $("body").css("cursor", "auto");});
 }

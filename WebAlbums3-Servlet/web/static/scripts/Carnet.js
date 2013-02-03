@@ -54,38 +54,36 @@ function init_markdown() {
 
 function init_toc() {
     var toc = $(".carnet_toc")
+    
+    var titlePAR = $(document.createElement('p'))
+    titlePAR.text($(".item h1:first").text())
+    titlePAR.addClass("all")
+    toc.append(titlePAR)
+    
+    titlePAR.click(function() {
+        ol.each(function() {
+            $(this).children().removeClass("current")
+        })
+        $("#carnet_text").children().show()
+        //if we're at the bottom of the chapter, scroll to the top'
+        if (!$(this).parent().hasClass("first"))
+            window.scrollTo(0, $("#carnet_head").offset().top)
+    })
+    
     //create the list holder in all the carnet_toc divs
     toc.each(function() {
         $(this).append(document.createElement('ol'))
+        $(this).append(document.createElement('hr'))
     })
+    
     //mark the first one as special: we don't want to scroll to top from first
     toc.children("ol:eq(0)").addClass("first")
     var ol = toc.children("ol")
-    
+
+    var set = false;
     //for all the toc lists
     ol.each(function() {
-        var thisOl = $(this)
-        
-        var sommLI = $(document.createElement('li'))
-        sommLI.text("Table of Content")
-        thisOl.append(sommLI)
-        sommLI.addClass("toc")
-        
-        //create an item and add it to the list
-        var toutLI = $(document.createElement('li'))
-        toutLI.text("Tout")
-        thisOl.append(toutLI)
-        toutLI.addClass("all")
-        
-        toutLI.click(function() {
-            ol.each(function() {
-                $(this).children().removeClass("current")
-            })
-            $("#carnet_text").children().show()
-            //if we're at the bottom of the chapter, scroll to the top'
-            if (!$(this).parent().hasClass("first"))
-                window.scrollTo(0, $("#carnet_head").offset().top)
-        })
+        var thisOl = $(this)        
         
         //create an item and add it to the list
         var debutLI = $(document.createElement('li'))
@@ -94,6 +92,7 @@ function init_toc() {
         
         var from = $("#carnet_text").children().first();
         debutLI.click(function() {
+            
             //on click, change the class to "current"
             var idx = debutLI.index()
             ol.each(function() {
@@ -110,7 +109,7 @@ function init_toc() {
         //take all the headers,
         $("#carnet_text").children("h1").each(function() {
             var title = $(this)
-        
+            
             //create an item and add it to the list
             var li = $(document.createElement('li'))
             li.text(title.text())
@@ -152,8 +151,13 @@ function init_buttons() {
 function init_map() {
     var mapDiv = $("#carnet_map")
     var carnetId = mapDiv.attr("rel")
-    mapDiv.addClass("mapCarnet") ;
     
+    if (carnetId === undefined) {
+        mapDiv.text("Cannot find the carned ID ...")
+        return
+    }
+    
+    mapDiv.addClass("mapCarnet") ;
     populateMapFromJSON("Carnet__"+carnetId+"_map.json", loadMap("carnet_map"))
 }
 

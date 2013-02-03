@@ -179,8 +179,9 @@
                             <xsl:apply-templates select="../carnet"/>
                         </div>
                     </xsl:if>
-                    <xsl:apply-templates select="tagTree"/>
-                    <xsl:if test="../carnet">
+                    <xsl:if test="../../carnet">
+                        <hr/>
+                        <xsl:apply-templates select="tagTree"/>
                         <div id="carnet_map">
                             <xsl:attribute name="rel"><xsl:value-of select="../@id"/></xsl:attribute>
                         </div>

@@ -132,6 +132,11 @@
      font-weight:bold;
 }
 
+.carnet_toc p {
+     text-align: center ; 
+     font-weight:bold;
+}
+
 .cloud_tooltip {
     display: none;        /* required */
     position: absolute;   /* required */
