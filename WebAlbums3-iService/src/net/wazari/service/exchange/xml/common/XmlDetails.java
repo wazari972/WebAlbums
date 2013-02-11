@@ -22,7 +22,7 @@ import net.wazari.service.exchange.xml.tag.XmlTag;
 @XmlRootElement
 public class XmlDetails {
     @XmlAttribute
-    public Boolean isGpx;
+    public Boolean isGpx = null;
     public XmlPhotoId photoId;
     public List<String> userInside;
     @XmlElementWrapper

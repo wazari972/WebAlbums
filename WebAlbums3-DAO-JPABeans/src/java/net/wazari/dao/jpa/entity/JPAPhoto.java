@@ -127,8 +127,8 @@ public class JPAPhoto implements Photo, Serializable {
     
     @XmlAttribute
     @Override
-    public Boolean isGpx() {
-        return isGpx;
+    public boolean isGpx() {
+        return isGpx != null && isGpx;
     }
 
     @Override

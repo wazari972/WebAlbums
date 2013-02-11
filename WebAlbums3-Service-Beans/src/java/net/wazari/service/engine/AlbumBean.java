@@ -165,7 +165,10 @@ public class AlbumBean implements AlbumLocal {
                     album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
                 }
                 
-                album.details.isGpx = enrAlbum.getPicture().isGpx() != null && enrAlbum.getPicture().isGpx(); //keep null if false
+                if (enrAlbum.getPicture().isGpx()) {
+                    //keep null if false
+                    album.details.isGpx = true;
+                }
             }
             for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
                 if (album.carnet == null) {

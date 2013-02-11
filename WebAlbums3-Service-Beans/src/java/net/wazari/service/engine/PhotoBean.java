@@ -486,7 +486,10 @@ public class PhotoBean implements PhotoLocal {
                 photo.details.photoId.path = enrPhoto.getPath(true) ;
             }
             
-            photo.details.isGpx = enrPhoto.isGpx() != null && enrPhoto.isGpx(); //keep null if false
+            if (enrPhoto.isGpx()) {
+                //keep null if false
+                photo.details.isGpx =  true; 
+            }
             
             photo.details.setDescription(enrPhoto.getDescription());
             
@@ -562,9 +565,17 @@ public class PhotoBean implements PhotoLocal {
 
     @Override
     public XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException {
-        Photo enrPhoto = photoDAO.loadRandom(vSession);
-        if (enrPhoto == null) {
-            return null ;
+        Photo enrPhoto = null;
+        while (true) {
+            enrPhoto = photoDAO.loadRandom(vSession);
+            if (enrPhoto == null) {
+                //this means there is NO photo at all, get out of here!
+                return null ;
+            }
+            // wait for a valid photo // what about videos ... ?
+            if (!enrPhoto.isGpx()) {
+                break;
+            }
         }
         XmlPhotoRandom output = new XmlPhotoRandom() ;
         

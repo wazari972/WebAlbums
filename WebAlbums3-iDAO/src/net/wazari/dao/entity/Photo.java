@@ -36,7 +36,7 @@ public interface Photo extends Serializable, EntityWithId, Metadata {
  
     Tag getTagAuthor();
  
-    Boolean isGpx();
+    boolean isGpx();
     
     void setIsGpx(Boolean isGPX);
     
