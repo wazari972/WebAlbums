@@ -2,7 +2,6 @@ package net.wazari.service.engine;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -37,7 +36,6 @@ import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.photo.*;
 import net.wazari.util.system.FilesFinder;
-import net.wazari.util.system.SystemTools;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -68,7 +66,7 @@ public class PhotoBean implements PhotoLocal {
     @EJB
     private FilesFinder finder;
     @EJB
-    private SystemTools sysTools;
+    private DaoToXmlBean daoToXml;
 
     @Override
     public XmlPhotoSubmit treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,
@@ -100,8 +98,7 @@ public class PhotoBean implements PhotoLocal {
         }
 
         //mise à jour des tag/description
-        String desc = vSession.getDesc();
-        enrPhoto.setDescription(StringEscapeUtils.escapeXml(desc));
+        enrPhoto.setDescription(StringEscapeUtils.escapeXml(vSession.getDesc()));
 
         String user = vSession.getDroit();
         if (user != null && !user.isEmpty()) {
@@ -154,8 +151,10 @@ public class PhotoBean implements PhotoLocal {
             log.warn("Assign theme background {}",enrPhoto) ;
             themeDAO.setBackground(enrTheme, enrPhoto);
             vSession.getTheme().setBackground(enrPhoto);
+            
             File backgroundDir = new File(vSession.getConfiguration()
                     .getTempPath()+vSession.getTheme().getNom()) ;
+            
             log.info("Delete and create background dir: {}", backgroundDir) ;
             if (backgroundDir.listFiles() != null) {
                 for (File child : backgroundDir.listFiles()) {
@@ -219,10 +218,7 @@ public class PhotoBean implements PhotoLocal {
         XmlPhotoDisplay output = new XmlPhotoDisplay();
         //afficher les photos
         //afficher la liste des albums de cet theme
-        Integer page = vSession.getPage();
         Integer albmPage = vSession.getAlbmPage();
-        Special special = vSession.getSpecial();
-        page = (page == null ? 0 : page);
 
         Integer albumId = vSession.getAlbum();
         if (albumId == null) {
@@ -236,58 +232,30 @@ public class PhotoBean implements PhotoLocal {
                     + "ou n'est pas accessible..." ;
             return output ;
         }
-        XmlAlbum album = new XmlAlbum();
-        output.album = album ;
-
-        album.id = enrAlbum.getId();
-        album.title = enrAlbum.getNom();
-        album.droit = enrAlbum.getDroit().getNom();
-        album.date = webPageService.xmlDate(enrAlbum.getDate());
+        XmlAlbum album = output.album = new XmlAlbum();
         
+        daoToXml.convertAlbum(vSession, enrAlbum, album);
+
         for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
             if (album.carnet == null) {
                 album.carnet = new ArrayList(enrAlbum.getCarnetList().size()) ;
             }
-
+            
             XmlCarnet carnet = new XmlCarnet();
-            carnet.date = webPageService.xmlDate(enrCarnet.getDate());
-            carnet.id = enrCarnet.getId();
-            carnet.name = enrCarnet.getNom();
-            if (enrCarnet.getPicture() != null) {
-                carnet.picture = new XmlPhotoId(enrCarnet.getPicture().getId());
-                if (vSession.directFileAccess()) {
-                    carnet.picture.path = enrCarnet.getPicture().getPath(true);
-                }
-            }
-
+            daoToXml.convertCarnet(vSession, enrCarnet, carnet);
             album.carnet.add(carnet);
         }
-        
-        //tags de l'album
-        album.details.tag_used = webPageService.displayListIBTD(Mode.TAG_GEO, 
-                            vSession, enrAlbum, Box.NONE, enrAlbum.getDate());
         
         for (Photo enrGpx : enrAlbum.getGpxList()) {
             if (album.gpx == null) {
                 album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
             }
+            
             XmlGpx gpx = new XmlGpx();
-            gpx.id = enrGpx.getId();
-            if (vSession.directFileAccess()) {
-                gpx.path = enrGpx.getPath(true);
-            }
-            gpx.setDescription(enrGpx.getDescription());
+            daoToXml.convertGpx(vSession, enrGpx, gpx);
             album.gpx.add(gpx);
         }
         
-        album.details.setDescription(enrAlbum.getDescription());
-        
-        if (enrAlbum.getPicture() != null) {
-            album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId()) ;
-            if (vSession.directFileAccess()) {
-                album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
-            }
-        }
         XmlFrom thisPage = new XmlFrom();
         thisPage.name = "Photos";
         thisPage.album = albumId ;
@@ -308,7 +276,6 @@ public class PhotoBean implements PhotoLocal {
         }
 
         Integer photoID = vSession.getId();
-
         Photo enrPhoto = photoDAO.find(photoID);
 
         if (enrPhoto == null) {
@@ -317,9 +284,8 @@ public class PhotoBean implements PhotoLocal {
         }
         Album enrAlbum = enrPhoto.getAlbum();
 
-        output.id = enrPhoto.getId() ;
-        output.album = enrPhoto.getAlbum().getId() ;
-        output.description = enrPhoto.getDescription();
+        daoToXml.convertPhotoDetails(vSession, enrPhoto, output.details, false);
+                
         output.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
                 Box.MULTIPLE);
 
@@ -331,6 +297,7 @@ public class PhotoBean implements PhotoLocal {
 
         output.tag_used_lst = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
                 Box.LIST);
+        
         Utilisateur enrUtil = userDAO.find(enrPhoto.getDroit());
         output.rights = webPageService.displayListDroit(enrUtil, enrAlbum.getDroit().getId());
 
@@ -481,53 +448,15 @@ public class PhotoBean implements PhotoLocal {
                 }
             }
             
-            photo.details.photoId = new XmlPhotoId(enrPhoto.getId());
-            if (vSession.directFileAccess()) {
-                photo.details.photoId.path = enrPhoto.getPath(true) ;
-            }
+            daoToXml.convertPhotoDetails(vSession, enrPhoto, photo.details, rq.type == TypeRequest.TAG);
             
-            if (enrPhoto.isGpx()) {
-                //keep null if false
-                photo.details.isGpx =  true; 
-            }
-            
-            photo.details.setDescription(enrPhoto.getDescription());
-            
-            //tags de cette photo
-            photo.details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, enrPhoto,
-                    Box.NONE, enrPhoto.getAlbum().getDate());
-            
-            photo.details.albumId = enrPhoto.getAlbum().getId();
-            if (rq.type == TypeRequest.TAG) {
-                photo.details.albumName = enrPhoto.getAlbum().getNom();
-                photo.details.albumDate = enrPhoto.getAlbum().getDate();
-            }
-            photo.details.stars = enrPhoto.getStars();
             //liste des utilisateurs pouvant voir cette photo
             if (vSession.isSessionManager()) {
-                String name;
-                boolean outside;
-                Utilisateur enrUser = userDAO.find(enrPhoto.getDroit());
-                if (enrUser != null) {
-                    name = enrUser.getNom();
-                    outside = false;
-                } else {
-                    name = userDAO.loadUserOutside(enrPhoto.getAlbum().getId()).getNom();
-                    outside = true;
-                }
-                photo.details.user = new XmlPhotoAlbumUser(name, outside);
+                daoToXml.addUserOutside(vSession, enrPhoto, photo.details);
             }
-             
-            if (enrPhoto.getTagAuthor() != null) {
-                Tag enrAuthor = enrPhoto.getTagAuthor();
-                photo.author = new XmlWebAlbumsTagWho();
-                photo.author.name = enrAuthor.getNom();
-                photo.author.id = enrAuthor.getId();
-                if (enrAuthor.getPerson() != null) {
-                    photo.author.contact = enrAuthor.getPerson().getContact();
-                }
-            }
-            photo.exif = photoUtil.getXmlExif(enrPhoto) ;
+            
+            daoToXml.addAuthorDetails(vSession, enrPhoto, photo);
+            daoToXml.addExifDetails(vSession, enrPhoto, photo);
             
             output.photo.add(photo);
             current = false;
@@ -577,27 +506,11 @@ public class PhotoBean implements PhotoLocal {
                 break;
             }
         }
-        XmlPhotoRandom output = new XmlPhotoRandom() ;
         
-        output.details = transformToDetails(vSession, enrPhoto) ;
+        XmlPhotoRandom output = new XmlPhotoRandom() ;
+        daoToXml.convertPhotoDetails(vSession, enrPhoto, output.details, true);
+        
         return output ;
-    }
-
-    private XmlDetails transformToDetails(ViewSession vSession, Photo enrPhoto) throws WebAlbumsServiceException {
-        XmlDetails details = new XmlDetails();
-        details.photoId = new XmlPhotoId(enrPhoto.getId());
-        if (vSession.directFileAccess()) {
-            details.photoId.path = enrPhoto.getPath(true) ;
-        }
-        details.setDescription(enrPhoto.getDescription());
-        details.albumName = enrPhoto.getAlbum().getNom();
-        details.albumDate = enrPhoto.getAlbum().getDate();
-        //tags de cette photo
-        details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, vSession, 
-                             enrPhoto, Box.NONE, enrPhoto.getAlbum().getDate());
-        details.albumId = enrPhoto.getAlbum().getId();
-        details.stars = enrPhoto.getStars();
-        return details ;
     }
 
     public XmlPhotoAbout treatABOUT(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
@@ -607,7 +520,7 @@ public class PhotoBean implements PhotoLocal {
         }
 
         XmlPhotoAbout output = new XmlPhotoAbout() ;
-        output.details = transformToDetails(vSession, enrPhoto) ;
+        daoToXml.convertPhotoDetails(vSession, enrPhoto, output.details, true);
         
         return output ;
     }

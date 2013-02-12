@@ -23,26 +23,35 @@
 	    </xsl:attribute>
 	    <input type='hidden' name='action' value='SUBMIT' />
 	    <label for="desc">Description:</label>
+            
 	    <textarea id="desc" name='desc' rows='5' cols='60'
                       placeholder="Description ...">
-	      <xsl:value-of select="description" />
+              <xsl:for-each select="description/line">
+                  <xsl:value-of select="." disable-output-escaping="yes"/>
+                  <xsl:text>&#10;</xsl:text>
+              </xsl:for-each>
 	    </textarea>
-	    <br/>
+	    <br/>Tags used in this theme:<br/>
 	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_USED</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
+              <xsl:with-param name="box">MULTIPLE</xsl:with-param>
               <xsl:with-param name="incMinor">true</xsl:with-param>
 	    </xsl:apply-templates>
+            <br/>Tags not used in this theme:<br/>
 	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_NUSED</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
+              <xsl:with-param name="box">MULTIPLE</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
               <xsl:with-param name="incMinor">true</xsl:with-param>
 	    </xsl:apply-templates>
+            <br/>Tags never used:<br/>
 	    <xsl:apply-templates select="tagList">
 	      <xsl:with-param name="mode">TAG_NEVER</xsl:with-param>
 	      <xsl:with-param name="style">multiple</xsl:with-param>
+              <xsl:with-param name="box">MULTIPLE</xsl:with-param>
 	      <xsl:with-param name="name">newTag</xsl:with-param>
               <xsl:with-param name="incMinor">true</xsl:with-param>
 	    </xsl:apply-templates>

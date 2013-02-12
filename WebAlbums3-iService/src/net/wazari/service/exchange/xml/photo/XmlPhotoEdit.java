@@ -5,9 +5,13 @@
 
 package net.wazari.service.exchange.xml.photo;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlInfoException;
 import net.wazari.service.exchange.xml.common.XmlUserList;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
@@ -19,10 +23,10 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 @XmlRootElement
 public class XmlPhotoEdit extends XmlInfoException {
     public XmlPhotoSubmit submit;
-    @XmlAttribute
-    public Integer id;
-    public String description;
+    public XmlDetails details = new XmlDetails();
+    
     public XmlUserList rights;
+    
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used_lst;
     @XmlElement(name = "tagList")
@@ -30,8 +34,5 @@ public class XmlPhotoEdit extends XmlInfoException {
     @XmlElement(name = "tagList")
     public XmlWebAlbumsList tag_used;
     @XmlElement(name = "tagList")
-    public XmlWebAlbumsList tag_nused;
-    @XmlAttribute
-    public Integer album;
-  
+    public XmlWebAlbumsList tag_nused;  
 }
