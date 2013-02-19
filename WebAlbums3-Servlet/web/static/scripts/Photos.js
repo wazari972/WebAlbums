@@ -67,6 +67,7 @@ function init_fastedit() {
         var id = $(this).attr('rel');
         var div_fast_tag = $("#fastedit_div_tag_"+id)
         div_fast_tag.toggle("fast")
+        div_fast_tag.parents(".options").children(".tags").toggle("fast")
         div_fast_tag.parents(".edit").toggleClass("edit_visible")
         div_fast_tag.find("input").focus()
         

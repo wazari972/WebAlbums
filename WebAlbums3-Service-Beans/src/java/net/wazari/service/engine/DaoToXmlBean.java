@@ -5,6 +5,7 @@
 package net.wazari.service.engine;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
@@ -29,6 +30,7 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoId;
  *
  * @author kevin
  */
+@Stateless
 public class DaoToXmlBean {
     @EJB
     private UtilisateurFacadeLocal userDAO;
@@ -93,11 +95,11 @@ public class DaoToXmlBean {
             }
     }
 
-    void addExifDetails(ViewSessionPhotoDisplay vSession, Photo enrPhoto, XmlPhoto photo) {
+    public void addExifDetails(ViewSessionPhotoDisplay vSession, Photo enrPhoto, XmlPhoto photo) {
         photo.exif = photoUtil.getXmlExif(enrPhoto) ;
     }
 
-    void convertAlbum(ViewSession vSession, Album enrAlbum, XmlAlbum album) throws WebAlbumsServiceException {
+    public void convertAlbum(ViewSession vSession, Album enrAlbum, XmlAlbum album) throws WebAlbumsServiceException {
         album.id = enrAlbum.getId();
         album.title = enrAlbum.getNom();
         album.droit = enrAlbum.getDroit().getNom();
@@ -116,7 +118,7 @@ public class DaoToXmlBean {
         }
     }
 
-    void convertCarnet(ViewSession vSession, Carnet enrCarnet, XmlCarnet carnet) {
+    public void convertCarnet(ViewSession vSession, Carnet enrCarnet, XmlCarnet carnet) {
         carnet.date = webPageService.xmlDate(enrCarnet.getDate());
         carnet.id = enrCarnet.getId();
         carnet.name = enrCarnet.getNom();
@@ -128,7 +130,7 @@ public class DaoToXmlBean {
         }
     }
 
-    void convertGpx(ViewSessionPhotoDisplay vSession, Photo enrGpx, XmlGpx gpx) {
+    public void convertGpx(ViewSessionPhotoDisplay vSession, Photo enrGpx, XmlGpx gpx) {
         gpx.id = enrGpx.getId();
         if (vSession.directFileAccess()) {
             gpx.path = enrGpx.getPath(true);

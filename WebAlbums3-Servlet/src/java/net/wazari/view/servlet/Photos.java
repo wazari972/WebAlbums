@@ -72,7 +72,7 @@ public class Photos extends HttpServlet {
             if (vSession.getAlbum() != null) {
                 return_to.album = vSession.getAlbum();
             } else {
-                return_to.album = output.edit.album;
+                return_to.album = output.edit.details.albumId;
             }
             
             return_to.albmPage = vSession.getAlbmPage();

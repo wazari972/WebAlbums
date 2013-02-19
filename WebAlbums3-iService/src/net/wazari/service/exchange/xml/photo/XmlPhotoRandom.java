@@ -14,6 +14,6 @@ import net.wazari.service.exchange.xml.common.XmlDetails;
  */
 @XmlRootElement
 public class XmlPhotoRandom {
-    public XmlDetails details;
+    public XmlDetails details = new XmlDetails();
 
 }

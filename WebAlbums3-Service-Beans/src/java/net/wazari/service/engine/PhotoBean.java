@@ -19,7 +19,6 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
@@ -30,10 +29,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlGpx;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
-import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
-import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
-import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.photo.*;
 import net.wazari.util.system.FilesFinder;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -98,7 +94,7 @@ public class PhotoBean implements PhotoLocal {
         }
 
         //mise à jour des tag/description
-        enrPhoto.setDescription(StringEscapeUtils.escapeXml(vSession.getDesc()));
+        enrPhoto.setDescription(vSession.getDesc());
 
         String user = vSession.getDroit();
         if (user != null && !user.isEmpty()) {
@@ -520,7 +516,7 @@ public class PhotoBean implements PhotoLocal {
         }
 
         XmlPhotoAbout output = new XmlPhotoAbout() ;
-        daoToXml.convertPhotoDetails(vSession, enrPhoto, output.details, true);
+        daoToXml.convertPhotoDetails(vSession, enrPhoto, output.details, true); 
         
         return output ;
     }

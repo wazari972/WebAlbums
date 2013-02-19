@@ -10,7 +10,7 @@
 	<div class="body">
 	  <center>
 	    <img>
-	      <xsl:attribute name="src">Miniature__<xsl:value-of select="@id" />.png</xsl:attribute>
+	      <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
 	    </img>
 	  </center>
 	</div>
@@ -26,7 +26,7 @@
             
 	    <textarea id="desc" name='desc' rows='5' cols='60'
                       placeholder="Description ...">
-              <xsl:for-each select="description/line">
+              <xsl:for-each select="details/description/line">
                   <xsl:value-of select="." disable-output-escaping="yes"/>
                   <xsl:text>&#10;</xsl:text>
               </xsl:for-each>
@@ -74,11 +74,10 @@
             <label for="bg">Theme picture ? </label><input id="bg" type='checkbox' name='themePicture' value='y' />
             <br/>
             <label for="bg">Theme background ? </label><input id="bg" type='checkbox' name='themeBackground' value='y' />
-            <input type="button" value="Try it!">
-                <xsl:attribute name="onclick">
-                  updateBackground(<xsl:value-of select="@id" />) ;
-                </xsl:attribute>
+            <input type="button" value="Try it!" class="tryit">
+                <xsl:attribute name="rel"><xsl:value-of select="details/photoId/@id" /></xsl:attribute>
             </input><br />
+            <script type="text/javascript">$(".tryit").click(function(){updateBackground($(this).attr("rel"))})</script>
 	    <label>Droits de visibilité : </label><xsl:apply-templates select="rights"/>
 	    <br/>
 	    <br/>
