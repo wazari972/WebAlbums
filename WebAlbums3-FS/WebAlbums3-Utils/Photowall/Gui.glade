@@ -1,6 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <!-- interface-requires gtk+ 3.0 -->
+  <object class="GtkAdjustment" id="adjLineHeight">
+    <property name="upper">1000</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjLines">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjMinCrop">
+    <property name="upper">1000</property>
+    <property name="step_increment">5</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjSleep">
+    <property name="upper">10000</property>
+    <property name="step_increment">10</property>
+    <property name="page_increment">100</property>
+  </object>
+  <object class="GtkAdjustment" id="adjWidth">
+    <property name="upper">10000</property>
+    <property name="step_increment">100</property>
+    <property name="page_increment">1000</property>
+  </object>
+  <object class="GtkFileChooserDialog" id="fileSaverDialog">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="role">GtkFileChooserDialog</property>
+    <property name="modal">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="action">save</property>
+    <property name="create_folders">False</property>
+    <property name="do_overwrite_confirmation">True</property>
+    <property name="use_preview_label">False</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="filechooserdialog-vbox2">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="filechooserdialog-action_area2">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="btCancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="clicked" handler="onSaverCancel" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button1">
+                <property name="label">gtk-ok</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="clicked" handler="onSaverOk" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">btCancel</action-widget>
+      <action-widget response="0">button1</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkImage" id="imgOpen">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-save-as</property>
+  </object>
+  <object class="GtkImage" id="imgPause">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-pause</property>
+  </object>
+  <object class="GtkImage" id="imgPlay">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-play</property>
+  </object>
+  <object class="GtkImage" id="imgReset">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-delete</property>
+  </object>
   <object class="GtkWindow" id="main">
     <property name="can_focus">False</property>
     <signal name="destroy" handler="onDestroy" swapped="no"/>
@@ -28,7 +139,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Width</property>
+                        <property name="label" translatable="yes">Width (px)</property>
                         <property name="justify">right</property>
                       </object>
                       <packing>
@@ -42,8 +153,9 @@
                       <object class="GtkSpinButton" id="txtWidth">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="max_length">4</property>
-                        <property name="invisible_char">●</property>
+                        <property name="max_length">5</property>
+                        <property name="input_purpose">digits</property>
+                        <property name="adjustment">adjWidth</property>
                         <property name="climb_rate">1</property>
                         <property name="numeric">True</property>
                       </object>
@@ -84,12 +196,8 @@
                     <child>
                       <object class="GtkSpinButton" id="txtLines">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="max_length">2</property>
-                        <property name="invisible_char">●</property>
-                        <property name="progress_fraction">1</property>
-                        <property name="progress_pulse_step">1</property>
-                        <property name="climb_rate">1</property>
+                        <property name="can_focus">False</property>
+                        <property name="adjustment">adjLines</property>
                         <property name="numeric">True</property>
                       </object>
                       <packing>
@@ -108,24 +216,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="ckWebAlbumFS">
-                    <property name="label" translatable="yes">WebAlbum Filesystem</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkGrid" id="grid4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -134,7 +224,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Sleep time</property>
+                        <property name="label" translatable="yes">Sleep time (ms)</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -147,8 +237,9 @@
                       <object class="GtkSpinButton" id="txtSleep">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="max_length">3</property>
+                        <property name="max_length">5</property>
                         <property name="invisible_char">●</property>
+                        <property name="adjustment">adjSleep</property>
                         <property name="climb_rate">1</property>
                         <property name="numeric">True</property>
                       </object>
@@ -176,7 +267,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Line height</property>
+                        <property name="label" translatable="yes">Line height (px)</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -188,10 +279,8 @@
                     <child>
                       <object class="GtkSpinButton" id="txtLineHeight">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="max_length">3</property>
-                        <property name="invisible_char">●</property>
-                        <property name="climb_rate">1</property>
+                        <property name="can_focus">False</property>
+                        <property name="adjustment">adjLineHeight</property>
                         <property name="numeric">True</property>
                       </object>
                       <packing>
@@ -205,19 +294,6 @@
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="top_attach">7</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkFileChooserButton" id="fileTarget">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="orientation">vertical</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">5</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -264,11 +340,9 @@
                 <child>
                   <object class="GtkCheckButton" id="ckRandom">
                     <property name="label" translatable="yes">Random order ?</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -284,12 +358,10 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkSpinButton" id="spinbutton2">
+                      <object class="GtkSpinButton" id="txtMinCrop">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="max_length">3</property>
-                        <property name="invisible_char">●</property>
-                        <property name="climb_rate">1</property>
+                        <property name="can_focus">False</property>
+                        <property name="adjustment">adjMinCrop</property>
                         <property name="numeric">True</property>
                       </object>
                       <packing>
@@ -300,11 +372,11 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label1">
+                      <object class="GtkLabel" id="lblMinCrop">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="hexpand">True</property>
-                        <property name="label" translatable="yes">Min. crop</property>
+                        <property name="label" translatable="yes">Min. crop (px)</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -324,11 +396,9 @@
                 <child>
                   <object class="GtkCheckButton" id="ckMini">
                     <property name="label" translatable="yes">Switch to mini ?</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -340,13 +410,77 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="ckWrap">
-                    <property name="label" translatable="yes">Wrap ?</property>
-                    <property name="use_action_appearance">False</property>
+                  <object class="GtkCheckButton" id="ckPolaroid">
+                    <property name="label" translatable="yes">Polaroid mode</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="tooltip_text" translatable="yes">Images with polaroid-like white border</property>
+                    <property name="xalign">0</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onPolaroid" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btSelectTarget">
+                    <property name="label" translatable="yes">Open</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="image">imgOpen</property>
+                    <signal name="clicked" handler="onSelectTarget" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">5</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="ckWebAlbumFS">
+                    <property name="label" translatable="yes">WebAlbum Filesystem</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
+                    <property name="xalign">0</property>
+                    <property name="draw_indicator">True</property>
+                    <signal name="clicked" handler="onWebAlbmFS" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="ckResize">
+                    <property name="label" translatable="yes">Resize ?</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="xalign">0</property>
+                    <property name="draw_indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="ckWrap">
+                    <property name="label" translatable="yes">Wrap ?</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -358,55 +492,17 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="ckResize">
-                    <property name="label" translatable="yes">Resize ?</property>
-                    <property name="use_action_appearance">False</property>
+                  <object class="GtkCheckButton" id="ckCaption">
+                    <property name="label" translatable="yes">Caption ?</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="xalign">0</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">2</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="ckCaption">
-                    <property name="label" translatable="yes">Caption ?</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="ckPolaroid">
-                    <property name="label" translatable="yes">Polaroid mode</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
-                    <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
-                    <signal name="toggled" handler="onPolaroid" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">0</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -419,13 +515,42 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleButton" id="btGo">
-                <property name="label" translatable="yes">Start</property>
-                <property name="use_action_appearance">False</property>
+              <object class="GtkGrid" id="grid8">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkButton" id="btStop">
+                    <property name="label">gtk-stop</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="clicked" handler="onResetButton" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="btGo">
+                    <property name="label" translatable="yes">Start</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="image">imgPlay</property>
+                    <signal name="toggled" handler="onStartButton" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -441,13 +566,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkImage" id="image2">
+          <object class="GtkImage" id="imgPreview">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="margin_top">53</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
-            <property name="stock">gtk-cancel</property>
+            <property name="stock">gtk-missing-image</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -461,13 +586,12 @@
             <property name="can_focus">False</property>
             <child>
               <object class="GtkButton" id="btQuit">
-                <property name="label" translatable="yes">Quit</property>
-                <property name="use_action_appearance">False</property>
+                <property name="label">gtk-quit</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="hexpand">True</property>
-                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
                 <signal name="clicked" handler="onDeleteWindow" swapped="no"/>
               </object>
               <packing>
@@ -480,11 +604,11 @@
             <child>
               <object class="GtkButton" id="btReset">
                 <property name="label" translatable="yes">Reset</property>
-                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
+                <property name="image">imgReset</property>
+                <signal name="clicked" handler="onResetButton" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">0</property>

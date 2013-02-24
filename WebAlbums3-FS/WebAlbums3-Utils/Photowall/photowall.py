@@ -14,6 +14,7 @@ try:
 except ImportError as e:
   print "Couldn't import Wand package."
   print "Please refer to #http://dahlia.kr/wand/ to install it."
+  import traceback; traceback.print_exc()
   raise e
 
 try:
@@ -117,7 +118,8 @@ PARAMS = {
 "HELP": False
 }
 
-DEFAULTS = dict([(KEY_TO_OPT[key][0], value) for key, value in PARAMS.items()])
+DEFAULTS = dict([(key, value) for key, value in PARAMS.items()])
+DEFAULTS_docstr = dict([(KEY_TO_OPT[key][0], value) for key, value in PARAMS.items()])
 
 usage = """Photo Wall for WebAlbums 3.
 
@@ -148,32 +150,34 @@ Filesystem options:
   --force-no-vfs          Treat <path> as a normal filesystem. [default: %(--force-no-vfs)s]
   --no-switch-to-mini     If VFS, don't switch from the normal image to the miniature. [default: %(--no-switch-to-mini)s]
   --pick-random           If not VFS, pick images randomly in the <path> folder. [default: %(--pick-random)s]
-""" % DEFAULTS
+  """ % DEFAULTS_docstr
 
-arguments = docopt(usage, version="3.5-dev")
 
-if arguments["--help"]:
-  print usage
-  exit()
+if __name__ == "__main__":
+    arguments = docopt(usage, version="3.5-dev")
 
-param_args = dict([(OPT_TO_KEY[opt][0], OPT_TO_KEY[opt][1](value)) for opt, value in arguments.items()])
+    if arguments["--help"]:
+        print usage
+        exit()
 
-PARAMS = dict(PARAMS, **param_args)
+    param_args = dict([(OPT_TO_KEY[opt][0], OPT_TO_KEY[opt][1](value)) for opt, value in arguments.items()])
 
-###########################################
+    PARAMS = dict(PARAMS, **param_args)
 
-if PARAMS["PATH"][-1] != "/":
-  PARAMS["PATH"] += "/"
+    ###########################################
 
-if PARAMS["FORCE_NO_VFS"]:
-  PARAMS["USE_VFS"]
-elif PARAMS["FORCE_NO_VFS"]:
-  PARAMS["USE_VFS"]
-else:
-  #check if PATH is VFS or not
-  df_output_lines = os.popen("df -Ph '%s'" % PARAMS["PATH"]).read().splitlines()
+    if PARAMS["PATH"][-1] != "/":
+        PARAMS["PATH"] += "/"
 
-  PARAMS["USE_VFS"] = "JnetFS" in df_output_lines[1]
+    if PARAMS["FORCE_NO_VFS"]:
+        PARAMS["USE_VFS"]
+    elif PARAMS["FORCE_NO_VFS"]:
+        PARAMS["USE_VFS"]
+    else:
+        #check if PATH is VFS or not
+        df_output_lines = os.popen("df -Ph '%s'" % PARAMS["PATH"]).read().splitlines()
+
+        PARAMS["USE_VFS"] = "JnetFS" in df_output_lines[1]
 
 ###########################################
 
@@ -218,16 +222,17 @@ def get_file_details(filename):
 ###########################################
 ###########################################
 
-if PARAMS["USE_VFS"]:
-  files = os.listdir(PARAMS["PATH"])
-  idx = 0
-  
-  if PARAMS["PICK_RANDOM"]:
-    random.shuffle(files)
+if __name__ == "__main__":
+    if PARAMS["USE_VFS"]:
+        files = os.listdir(PARAMS["PATH"])
+        idx = 0
+        
+        if PARAMS["PICK_RANDOM"]:
+            random.shuffle(files)
 
-  get_next_file = get_next_file_dir
-else:
-  get_next_file = get_next_file_vfs
+        get_next_file = get_next_file_dir
+    else:
+        get_next_file = get_next_file_vfs
 
 ###########################################
 
@@ -438,7 +443,7 @@ def random_wall(real_target_filename):
     time.sleep(PARAMS["SLEEP_TIME"])
     print "Tack"
     
-if __name__=="__main__":
+if __name__== "__main__":
   target = PARAMS["TARGET"]
   if not(PARAMS["PUT_RANDOM"]):
     name = photowall(target)
