@@ -153,6 +153,24 @@ Filesystem options:
   """ % DEFAULTS_docstr
 
 
+class UpdateCallback:
+  def newExec(self):
+    pass
+  
+  def newImage(self, row, col, filename):
+    print "%d.%d > %s" % (row, col, filename)
+    
+  def updLine(self, row, tmpLine):
+    print "--- %d ---" % row
+      
+  def newFinal(self, name):
+    pass
+  
+  def finished(self, name):
+    print "=========="
+
+updateCB = UpdateCallback()
+
 if __name__ == "__main__":
     arguments = docopt(usage, version="3.5-dev")
 
@@ -164,20 +182,7 @@ if __name__ == "__main__":
 
     PARAMS = dict(PARAMS, **param_args)
 
-    ###########################################
-
-    if PARAMS["PATH"][-1] != "/":
-        PARAMS["PATH"] += "/"
-
-    if PARAMS["FORCE_NO_VFS"]:
-        PARAMS["USE_VFS"]
-    elif PARAMS["FORCE_NO_VFS"]:
-        PARAMS["USE_VFS"]
-    else:
-        #check if PATH is VFS or not
-        df_output_lines = os.popen("df -Ph '%s'" % PARAMS["PATH"]).read().splitlines()
-
-        PARAMS["USE_VFS"] = "JnetFS" in df_output_lines[1]
+###########################################
 
 ###########################################
 
@@ -220,31 +225,21 @@ def get_file_details(filename):
     return get_file_details_dir(filename)
 
 ###########################################
-###########################################
 
-if __name__ == "__main__":
-    if PARAMS["USE_VFS"]:
-        files = os.listdir(PARAMS["PATH"])
-        idx = 0
-        
-        if PARAMS["PICK_RANDOM"]:
-            random.shuffle(files)
-
-        get_next_file = get_next_file_dir
-    else:
-        get_next_file = get_next_file_vfs
-
-###########################################
-
-def get_next_file_dir():
-  global idx
-  
-  to_return = files[idx]
-  
-  idx += 1 
-  idx %= len(files) 
-  
-  return PATH+to_return
+class GetFileDir:
+  def __init__(self, random):
+    self.idx = 0
+    self.files = os.listdir(PARAMS["PATH"])
+    if random:
+      random.shuffle(self.files)
+    
+  def get_next_file():  
+    to_return = self.files[self.idx]
+    
+    self.idx += 1 
+    self.idx %= len(self.files) 
+    
+    return PARAMS["PATH"]+to_return
   
 def get_file_details_dir(filename):
   return filename[filename.rindex("/")+1:]
@@ -309,7 +304,6 @@ def do_polaroid_and_random_composite(target_filename, target, image, filename):
 
   geometry = ("+" if height >= 0 else "") + str(height) + ("+" if width >= 0 else "") + str(width)
 
-  
   command = "composite -geometry %s  -compose Over -gravity center %s %s %s" % (geometry, tmp.name, target_filename, target_filename)
   ret = os.system(command)
   os.unlink(tmp.name)
@@ -318,21 +312,23 @@ def do_polaroid_and_random_composite(target_filename, target, image, filename):
     raise object("failed")
 
 def photowall(name):
+  updateCB.newExec()
   output_final = None
 
   previous_filename = None
   #for all the rows, 
-  for row in xrange(PARAMS["LINES"]):
-    print "Row ", row
+  for row in xrange(PARAMS["LINES"]):    
     output_row = None
     row_width = 0
     #concatenate until the image width is reached
     img_count = 0
     while row_width < PARAMS["WIDTH"]:
+      # get a new file, or the end of the previous one, if it was split
       filename = get_next_file() if previous_filename is None else previous_filename
+      mimetype = None
       previous_filename = None
       
-      print img_count,
+      # get a real image
       if mime is not None:
         mimetype = mime.from_file(filename)
         if "symbolic link" in mimetype:
@@ -341,16 +337,15 @@ def photowall(name):
         
         if not "image" in mimetype:
           continue
-        
-        print "%s: %s" % (filename, mimetype)
-        
       else:
         try:
           print os.readlink(filename)
         except OSError:
           print filename
-          
+      
+      updateCB.newImage(row, img_count, filename)  
       img_count += 1
+      # resize the image
       image = Image(filename=filename)
       with image.clone() as clone:
         factor = float(PARAMS["LINE_HEIGHT"])/clone.height
@@ -388,18 +383,20 @@ def photowall(name):
         else:
           output_row = tmp
         
+        updateCB.updLine(row, output_row.name)
+        
     if output_final is not None:
       do_append(output_final.name, output_row.name, underneath=True)
       os.unlink(output_row.name)
     else:
       output_final = output_row
+    updateCB.newFinal(output_final.name)
   
   shutil.move(output_final.name, name)
-  
+  updateCB.finished(name)
   return name 
     
 def random_wall(real_target_filename):
-
   name = real_target_filename
   filename = name[name.rindex("/"):]
   name = filename[:filename.index(".")]
@@ -443,12 +440,37 @@ def random_wall(real_target_filename):
     time.sleep(PARAMS["SLEEP_TIME"])
     print "Tack"
     
-if __name__== "__main__":
+get_next_file = None
+
+def fix_args():
+  global get_next_file
+  
+  if PARAMS["PATH"][-1] != "/":
+    PARAMS["PATH"] += "/"  
+  
+  if PARAMS["FORCE_NO_VFS"]:
+    PARAMS["USE_VFS"]
+  elif PARAMS["FORCE_NO_VFS"]:
+    PARAMS["USE_VFS"]
+  else:
+    #check if PATH is VFS or not
+    df_output_lines = os.popen("df -Ph '%s'" % PARAMS["PATH"]).read().splitlines()
+    PARAMS["USE_VFS"] = "JnetFS" in df_output_lines[1]
+
+  if not PARAMS["USE_VFS"]:    
+    get_next_file = GetFileDir(PARAMS["PICK_RANDOM"]).get_next_file
+  else:
+    get_next_file = get_next_file_vfs
+
+def do_main():
+  print "hllo"
+  fix_args()
+  
   target = PARAMS["TARGET"]
   if not(PARAMS["PUT_RANDOM"]):
-    name = photowall(target)
-    print "==>", name
-    os.system("eog %s &" % name)
+    photowall(target)
   else:
     random_wall(target)
 
+if __name__== "__main__":
+    do_main()

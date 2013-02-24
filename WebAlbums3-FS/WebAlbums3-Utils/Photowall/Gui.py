@@ -1,6 +1,65 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf, GObject
 
-from photowall import DEFAULTS, PARAMS
+GObject.threads_init()
+
+from photowall import DEFAULTS, PARAMS, do_main
+import photowall
+import threading
+
+def updateImage(filename, imgName):
+  i = builder.get_object(imgName)
+  if filename is None:
+    i.clear()
+    i.set_visible(False)
+    return
+  
+  pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
+    
+  img_width = pixbuf.get_width()
+  img_height = pixbuf.get_height()
+  
+  ratio = (img_width+0.0)/img_height
+  
+  box_width = i.get_allocation().width
+  box_height = i.get_allocation().height
+  
+  if img_height*(box_width+0.0)/img_width <= box_height:
+    width = box_width
+    height = img_height*(box_width+0.0)/img_width
+  else:
+    width = img_width*(box_height+0.0)/img_height
+    height = box_height
+ 
+  
+  pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+  i.set_from_pixbuf(pixbuf)
+  
+  i.set_visible(True)
+  
+  
+class UpdateCallback:
+  def __init__(self, builder):
+    self.builder = builder
+    
+  def newExec(self):
+    updateImage(None, 'imgPreview')
+    updateImage(None, 'imgPreview2')
+  
+  def newImage(self, row, col, filename):
+    i = self.builder.get_object('lblInfo')
+    i.set_text("#%d#%d %s" % (row, col, filename))
+    
+  def updLine(self, row, name):
+    updateImage(name, 'imgPreview')
+      
+  def newFinal(self, name):
+    updateImage(None, 'imgPreview')
+    updateImage(name, 'imgPreview2')
+    
+  def finished(self, name):
+    updateImage(None, 'imgPreview')
+    i = self.builder.get_object('lblInfo')
+    i.set_text("Finished: %s" % name)
 
 class Handler:
     def __init__(self, builder):
@@ -54,6 +113,9 @@ class Handler:
         
         ## Random wall options ##
         self.builder.get_object('txtSleep').set_value(DEFAULTS["SLEEP_TIME"])
+        
+        updateImage(None, 'imgPreview')
+        updateImage(None, 'imgPreview2')
     
     def onSelectTarget(self, *args):
         saver = self.builder.get_object('fileSaverDialog')
@@ -79,7 +141,6 @@ class Handler:
         if callable(self.saver_cb):
             self.saver_cb(saver.get_filename())
         
-    
     def onDeleteWindow(self, *args):
         print "bye"
         Gtk.main_quit(*args)
@@ -105,8 +166,9 @@ class Handler:
         self.builder.get_object('ckCaption').set_sensitive(do_pol and use_fs)
         
         self.builder.get_object('ckWrap').set_sensitive(not do_pol)
+        self.builder.get_object('ckRandom').set_sensitive(do_pol)
     
-    def onResetButton(self, *args):
+    def onResetButton(self, *args):        
         self.onStopButton(args)
         self.init()
     
@@ -133,6 +195,9 @@ class Handler:
             
         bt.set_active(self.running)
     
+    def doFinished(self):
+        self.onStopButton(None)
+    
     def doStop(self):
         pass
         
@@ -140,16 +205,16 @@ class Handler:
         PARAMS["PATH"] = self.builder.get_object('fileSource').get_filename()
         PARAMS["TARGET"] =  self.builder.get_object('btSelectTarget').get_label()
         #define the size of the picture
-        PARAMS["WIDTH"] = self.builder.get_object('txtWidth').get_value()
+        PARAMS["WIDTH"] = int(self.builder.get_object('txtWidth').get_value())
             
         #define how many lines do we want
-        PARAMS["LINES"] = self.builder.get_object('txtLines').get_value()
+        PARAMS["LINES"] = int(self.builder.get_object('txtLines').get_value())
             
-        PARAMS["LINE_HEIGHT"] = self.builder.get_object('txtLineHeight').get_value()
+        PARAMS["LINE_HEIGHT"] = int(self.builder.get_object('txtLineHeight').get_value())
             
         # minimum width of cropped image. Below that, we black it out
         # only for POLAROID
-        PARAMS["CROP_SIZE"] = self.builder.get_object('txtMinCrop').get_value()
+        PARAMS["CROP_SIZE"] = int(self.builder.get_object('txtMinCrop').get_value())
             
         PARAMS["IMG_FORMAT_SUFFIX"] = ".png"
             
@@ -181,6 +246,15 @@ class Handler:
             
         ## Random wall options ##
         PARAMS["SLEEP_TIME"] = self.builder.get_object('txtSleep').get_value()
+        
+        photowall.updateCB = UpdateCallback(self.builder)
+        
+        
+        def run_main():
+          do_main()
+          self.doFinished()
+          
+        thr = threading.Thread(target=run_main).start()
         
         return True
         
