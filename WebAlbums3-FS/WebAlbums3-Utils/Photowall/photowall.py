@@ -169,6 +169,12 @@ class UpdateCallback:
   def finished(self, name):
     print "=========="
 
+  def stopRequested(self):
+    return False
+  
+  def checkPause(self):
+    pass
+
 updateCB = UpdateCallback()
 
 if __name__ == "__main__":
@@ -384,6 +390,10 @@ def photowall(name):
           output_row = tmp
         
         updateCB.updLine(row, output_row.name)
+        updateCB.checkPause()
+        
+        if updateCB.stopRequested():
+          break
         
     if output_final is not None:
       do_append(output_final.name, output_row.name, underneath=True)
