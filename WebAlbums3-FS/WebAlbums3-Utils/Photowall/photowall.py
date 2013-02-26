@@ -157,7 +157,7 @@ class UpdateCallback:
   def newExec(self):
     pass
   
-  def newImage(self, row, col, filename):
+  def newImage(self, row=0, col=0, filename=""):
     print "%d.%d > %s" % (row, col, filename)
     
   def updLine(self, row, tmpLine):
@@ -318,7 +318,6 @@ def do_polaroid_and_random_composite(target_filename, target, image, filename):
     raise object("failed")
 
 def photowall(name):
-  updateCB.newExec()
   output_final = None
 
   previous_filename = None
@@ -345,11 +344,11 @@ def photowall(name):
           continue
       else:
         try:
-          print os.readlink(filename)
+          filename = os.readlink(filename)
         except OSError:
-          print filename
+          pass
       
-      updateCB.newImage(row, img_count, filename)  
+      updateCB.newImage(row, img_count, filename)
       img_count += 1
       # resize the image
       image = Image(filename=filename)
@@ -394,16 +393,20 @@ def photowall(name):
         
         if updateCB.stopRequested():
           break
-        
-    if output_final is not None:
-      do_append(output_final.name, output_row.name, underneath=True)
-      os.unlink(output_row.name)
     else:
-      output_final = output_row
-    updateCB.newFinal(output_final.name)
+      if output_final is not None:
+        do_append(output_final.name, output_row.name, underneath=True)
+        os.unlink(output_row.name)
+      else:
+        output_final = output_row
+      updateCB.newFinal(output_final.name)
   
-  shutil.move(output_final.name, name)
-  updateCB.finished(name)
+  if output_final is not None:
+    shutil.move(output_final.name, name)
+    updateCB.finished(name)
+  else:
+    updateCB.finished(None)
+    
   return name 
     
 def random_wall(real_target_filename):
@@ -432,11 +435,12 @@ def random_wall(real_target_filename):
     height = PARAMS["LINES"] * PARAMS["LINE_HEIGHT"]
     do_blank_image(height, PARAMS["WIDTH"], target_filename)
     target = Image(filename=target_filename)
-    
-  os.system("eog %s &" % real_target_filename)
+  
+  cnt = 0
   while True:
     filename = get_next_file()
     print filename
+    
     img = Image(filename=filename)
     with img.clone() as clone:
       if PARAMS["DO_RESIZE"]:
@@ -444,12 +448,16 @@ def random_wall(real_target_filename):
         clone.resize(width=int(clone.width*factor), height=int(clone.height*factor))
                      
       do_polaroid_and_random_composite(target_filename, target, clone, filename)
-
+      updateCB.newImage(row=cnt, filename=filename)
+      updateCB.newFinal(target_filename)
       os.system("cp %s %s" % (target_filename, real_target_filename))
-    print "Tick"
+      cnt += 1
+      
     time.sleep(PARAMS["SLEEP_TIME"])
-    print "Tack"
-    
+    updateCB.checkPause()
+    if updateCB.stopRequested():
+      break
+      
 get_next_file = None
 
 def fix_args():
@@ -473,9 +481,9 @@ def fix_args():
     get_next_file = get_next_file_vfs
 
 def do_main():
-  print "hllo"
   fix_args()
   
+  updateCB.newExec()
   target = PARAMS["TARGET"]
   if not(PARAMS["PUT_RANDOM"]):
     photowall(target)

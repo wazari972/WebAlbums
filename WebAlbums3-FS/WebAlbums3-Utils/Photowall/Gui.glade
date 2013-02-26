@@ -379,7 +379,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
+                    <property name="draw_indicator">False</property>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -451,7 +451,7 @@
                     <property name="receives_default">False</property>
                     <property name="tooltip_text" translatable="yes">Images with polaroid-like white border</property>
                     <property name="xalign">0</property>
-                    <property name="draw_indicator">True</property>
+                    <property name="draw_indicator">False</property>
                     <signal name="clicked" handler="onPolaroid" swapped="no"/>
                   </object>
                   <packing>
@@ -554,22 +554,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkButton" id="btStop">
-                    <property name="label">gtk-stop</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                    <signal name="clicked" handler="onResetButton" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkToggleButton" id="btGo">
                     <property name="label" translatable="yes">Start</property>
                     <property name="visible">True</property>
@@ -580,23 +564,23 @@
                     <signal name="toggled" handler="onStartButton" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btInfo">
-                    <property name="label">gtk-dialog-info</property>
+                  <object class="GtkButton" id="btFullscreen">
+                    <property name="label">gtk-fullscreen</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
-                    <signal name="clicked" handler="onInfoButton" swapped="no"/>
+                    <signal name="clicked" handler="onBtFullscreen" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">1</property>
                     <property name="top_attach">0</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
@@ -617,7 +601,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="box2">
+          <object class="GtkBox" id="boxPreview">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
@@ -644,7 +628,7 @@
                 <property name="stock">gtk-missing-image</property>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
@@ -671,7 +655,23 @@
                 <signal name="clicked" handler="onDeleteWindow" swapped="no"/>
               </object>
               <packing>
-                <property name="left_attach">1</property>
+                <property name="left_attach">2</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btStop">
+                <property name="label">gtk-stop</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="clicked" handler="onStopButton" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
                 <property name="top_attach">0</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
@@ -687,7 +687,7 @@
                 <signal name="clicked" handler="onResetButton" swapped="no"/>
               </object>
               <packing>
-                <property name="left_attach">0</property>
+                <property name="left_attach">1</property>
                 <property name="top_attach">0</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
@@ -728,6 +728,9 @@
                 <property name="position">0</property>
               </packing>
             </child>
+            <action-widgets>
+              <action-widget response="0">btInfo</action-widget>
+            </action-widgets>
             <child internal-child="action_area">
               <object class="GtkButtonBox" id="infobar-action_area1">
                 <property name="can_focus">False</property>
@@ -735,7 +738,19 @@
                 <property name="orientation">vertical</property>
                 <property name="layout_style">end</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkButton" id="btInfo">
+                    <property name="label">gtk-dialog-info</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="clicked" handler="onInfoButton" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -744,11 +759,50 @@
                 <property name="position">1</property>
               </packing>
             </child>
+            <action-widgets>
+              <action-widget response="0">btInfo</action-widget>
+            </action-widgets>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="winFullscreen">
+    <property name="can_focus">False</property>
+    <signal name="delete-event" handler="onFullscreenDeleteEvent" swapped="no"/>
+    <child>
+      <object class="GtkBox" id="box8">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage" id="imgPreview2Full">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="xpad">4</property>
+            <property name="stock">gtk-missing-image</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="imgPreviewFull">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="stock">gtk-missing-image</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

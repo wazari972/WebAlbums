@@ -1,4 +1,4 @@
-from gi.repository import Gtk, GdkPixbuf, GObject
+from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
 
 GObject.threads_init()
 
@@ -7,61 +7,47 @@ import photowall
 import threading
 import time
 
-def updateImage(filename, imgName):
-  i = builder.get_object(imgName)
-  if filename is None:
-    i.clear()
-    return
-  
-  pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
-    
-  img_width = pixbuf.get_width()
-  img_height = pixbuf.get_height()
-  
-  ratio = (img_width+0.0)/img_height
-  
-  box_width = i.get_allocation().width
-  box_height = i.get_allocation().height
-  
-  if img_height*(box_width+0.0)/img_width <= box_height:
-    width = box_width
-    height = img_height*(box_width+0.0)/img_width
-  else:
-    width = img_width*(box_height+0.0)/img_height
-    height = box_height
- 
-  
-  pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-  i.set_from_pixbuf(pixbuf)
-  
-  i.set_visible(True)
+def long_substr(data):
+  substr = ''
+  if len(data) > 1 and len(data[0]) > 0:
+    for i in range(len(data[0])):
+      for j in range(len(data[0])-i+1):
+        if j > len(substr) and all(data[0][i:i+j] in x for x in data):
+          substr = data[0][i:i+j]
+  return substr
   
   
 class UpdateCallback:
-  def __init__(self, builder):
+  def __init__(self, builder, handler):
     self.builder = builder
+    self.handler = handler
+    
     self.paused = False
     self.stopped = False
     
+    self.log = []
+    
   def newExec(self):
-    updateImage(None, 'imgPreview')
-    updateImage(None, 'imgPreview2')
+    self.handler.updateImage(None, 'imgPreview')
+    self.handler.updateImage(None, 'imgPreview2')
     img = self.builder.get_object('imgPreview')
     img.set_visible(True)
   
-  def newImage(self, row, col, filename):
-    i = self.builder.get_object('lblInfo')
-    i.set_text("#%d#%d %s" % (row, col, filename))
+  def newImage(self, row=0, col=0, filename=""):
+    msg = "#%d#%d %s" % (row, col, filename)
+    
+    self.builder.get_object('lblInfo').set_text(msg)
+    self.log.append((row, col, filename))
     
   def updLine(self, row, name):
-    updateImage(name, 'imgPreview')
+    self.handler.updateImage(name, 'imgPreview')
       
   def newFinal(self, name):
-    updateImage(None, 'imgPreview')
-    updateImage(name, 'imgPreview2')
+    self.handler.updateImage(None, 'imgPreview')
+    self.handler.updateImage(name, 'imgPreview2')
     
   def finished(self, name):
-    updateImage(None, 'imgPreview')
+    self.handler.updateImage(None, 'imgPreview')
     lbl = self.builder.get_object('lblInfo')
     lbl.set_text("Finished: %s" % name)
     
@@ -74,20 +60,28 @@ class UpdateCallback:
   def checkPause(self):
     while self.paused:
       time.sleep(1)
-  
+      if self.stopped:
+        break
+    
 class Handler:
   def __init__(self, builder):
     self.builder = builder
+    
+    self.saver_cb = None
+    self.running = None
+    
+    self.wasRunning = False
+    self.is_fullscreen = False
     
     self.init()
     
     self.onWebAlbmFS()
     self.onPolaroid()
     
-    self.saver_cb = None
-    self.running = None
-      
   def init(self):
+    for imgName in ('imgPreview', 'imgPreview2', 'imgPreviewFull', 'imgPreview2Full'):
+      self.builder.get_object(imgName).modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('black'))
+    
     self.builder.get_object('fileSource').set_filename(DEFAULTS["PATH"])
     self.builder.get_object('btSelectTarget').set_label(DEFAULTS["TARGET"])
     #define the size of the picture
@@ -110,7 +104,7 @@ class Handler:
     # True if we want a black background and white frame, plus details
     self.builder.get_object('ckPolaroid').set_active(DEFAULTS["DO_POLAROID"])
     
-    self.builder.get_object('ckCaption').set_active(DEFAULTS["WANT_NO_CAPTION"])
+    self.builder.get_object('ckCaption').set_active(not DEFAULTS["WANT_NO_CAPTION"])
     
     # False if we want to add pictures randomly
     self.builder.get_object('ckRandom').set_active(DEFAULTS["PUT_RANDOM"])
@@ -128,8 +122,8 @@ class Handler:
     ## Random wall options ##
     self.builder.get_object('txtSleep').set_value(DEFAULTS["SLEEP_TIME"])
     
-    updateImage(None, 'imgPreview')
-    updateImage(None, 'imgPreview2')
+    self.updateImage(None, 'imgPreview')
+    self.updateImage(None, 'imgPreview2')
   
   def onSelectTarget(self, *args):
     saver = self.builder.get_object('fileSaverDialog')
@@ -166,9 +160,20 @@ class Handler:
   def doQuit(self):
     if photowall.updateCB is not None:
       photowall.updateCB.stopped = True
-      photowall.updateCB.paused = False
       
     print "bye"
+  
+  def onBtFullscreen(self, *args):
+    fullscreen = self.builder.get_object('winFullscreen')
+    
+    self.is_fullscreen = not self.is_fullscreen
+    fullscreen.set_visible(self.is_fullscreen)
+    
+  def onFullscreenDeleteEvent(self, *args):
+    fullscreen = self.builder.get_object('winFullscreen')
+    fullscreen.set_visible(False)
+    self.is_fullscreen = False
+    return Gtk.false
   
   def onWebAlbmFS(self, *args):
     use_fs = self.builder.get_object('ckWebAlbumFS').get_active()
@@ -199,6 +204,9 @@ class Handler:
     bt.set_label("Start")
     bt.set_image(self.builder.get_object('imgPlay'))
     self.running = None
+    
+    if photowall.updateCB is not None:
+      photowall.updateCB.stopped = True
   
   def onStartButton(self, *args):
     bt = self.builder.get_object('btGo')
@@ -223,11 +231,24 @@ class Handler:
     bt.set_active(self.running)
   
   def onInfoButton(self, *args):
+    self.wasRunning = False
+    if self.running:
+      self.onStartButton()
+      self.wasRunning = True
+    
     inf = self.builder.get_object('infoGrid')
     inf.set_visible(True)
-    inf.set_markup("hello\nthere")
-    inf.format_secondary_text("hello\nthere")
     inf.set_title("Grid information")
+    
+    if photowall.updateCB and photowall.updateCB.log:
+      # get the length of the longest common substring
+      substr_len = len(long_substr([s[2] for s in photowall.updateCB.log]))
+      # decrease the prefix to the last /
+      substr_len = photowall.updateCB.log[0][2][:substr_len].rindex("/") + 1
+      txt = ["(%d, %d) %s" % (r, c, f[substr_len:]) for r, c, f in photowall.updateCB.log]
+      
+      inf.set_markup("\n".join(txt))
+    
     
   def onInfoGridDeleteEvent(self, *args):
     self.onInfoGridClose(args)
@@ -236,6 +257,8 @@ class Handler:
   def onInfoGridClose(self, *args):
     inf = self.builder.get_object('infoGrid')
     inf.set_visible(False)
+    if self.wasRunning:
+      self.onStartButton()
   
   def doFinished(self):
     self.onStopButton(None)
@@ -247,7 +270,47 @@ class Handler:
   
   def doStop(self):
     photowall.updateCB.stopped = True
+  
+  def updateImage(self, filename, imgName):    
+    if filename is None:
+      i = builder.get_object(imgName)
+      i.clear()
       
+      if self.is_fullscreen:
+        i = builder.get_object(imgName+"Full")
+        i.clear()
+      
+      return
+    
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
+      
+    img_width = pixbuf.get_width()
+    img_height = pixbuf.get_height()
+    
+    ratio = (img_width+0.0)/img_height
+    
+    def set_image(name):
+      i = builder.get_object(name)
+      box_width = i.get_allocation().width
+      box_height = i.get_allocation().height
+      
+      if img_height*(box_width+0.0)/img_width <= box_height:
+        width = box_width
+        height = img_height*(box_width+0.0)/img_width
+      else:
+        width = img_width*(box_height+0.0)/img_height
+        height = box_height
+    
+      
+      pixbuf_scaled = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+      i.set_from_pixbuf(pixbuf_scaled)
+      
+      i.set_visible(True)
+      
+    set_image(imgName)
+    if self.is_fullscreen:
+      set_image(imgName+"Full")
+    
   def doStart(self):
     PARAMS["PATH"] = self.builder.get_object('fileSource').get_filename()
     PARAMS["TARGET"] =  self.builder.get_object('btSelectTarget').get_label()
@@ -275,7 +338,7 @@ class Handler:
     # True if we want a black background and white frame, plus details
     PARAMS["DO_POLAROID"] = self.builder.get_object('ckPolaroid').get_active()
         
-    PARAMS["WANT_NO_CAPTION"] = self.builder.get_object('ckCaption').get_active()
+    PARAMS["WANT_NO_CAPTION"] = not self.builder.get_object('ckCaption').get_active()
         
     # False if we want to add pictures randomly
     PARAMS["PUT_RANDOM"] = self.builder.get_object('ckRandom').get_active()
@@ -294,7 +357,10 @@ class Handler:
     ## Random wall options ##
     PARAMS["SLEEP_TIME"] = self.builder.get_object('txtSleep').get_value()
     
-    photowall.updateCB = UpdateCallback(self.builder)  
+    if photowall.updateCB is not None:
+      photowall.updateCB.stopped = True
+      
+    photowall.updateCB = UpdateCallback(self.builder, self)  
       
     def run_main():
       do_main()
