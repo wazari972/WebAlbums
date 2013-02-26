@@ -113,7 +113,7 @@ PARAMS = {
 "PICK_RANDOM": False, #not implemented yet
 
 ## Random wall options ##
-"SLEEP_TIME": 1,
+"SLEEP_TIME": 0,
 
 "HELP": False
 }

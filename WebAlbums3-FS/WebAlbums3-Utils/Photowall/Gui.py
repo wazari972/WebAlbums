@@ -194,20 +194,29 @@ class Handler:
     self.builder.get_object('ckWrap').set_sensitive(not do_pol)
     self.builder.get_object('ckRandom').set_sensitive(do_pol)
   
+  def onRandom(self, *args):
+    do_rand = self.builder.get_object('ckRandom').get_active()
+    
+    self.builder.get_object('ckWrap').set_sensitive(not do_rand)
+    self.builder.get_object('ckLoop').set_sensitive(not do_rand)
+    
+    self.builder.get_object('lblMinCrop').set_sensitive(not do_rand)
+    self.builder.get_object('txtMinCrop').set_sensitive(not do_rand)
+  
   def onResetButton(self, *args):        
     self.onStopButton(args)
     self.init()
   
   def onStopButton(self, *args):
-    bt = self.builder.get_object('btGo')
-    bt.set_active(False)
-    bt.set_label("Start")
-    bt.set_image(self.builder.get_object('imgPlay'))
+    go = self.builder.get_object('btGo')
+    go.set_active(False)
+    go.set_label("Start")
+    go.set_image(self.builder.get_object('imgPlay'))
     self.running = None
     
     if photowall.updateCB is not None:
       photowall.updateCB.stopped = True
-  
+      
   def onStartButton(self, *args):
     bt = self.builder.get_object('btGo')
     
@@ -262,6 +271,11 @@ class Handler:
   
   def doFinished(self):
     self.onStopButton(None)
+    
+    loop = self.builder.get_object('ckLoop')
+    if loop.get_active():
+      time.sleep(1)
+      self.builder.get_object('btGo').set_active(True)
   
   def doContinue(self):
     photowall.updateCB.paused = False
