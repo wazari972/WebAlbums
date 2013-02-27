@@ -1,5 +1,9 @@
 #!/usr/bin/env python2
 
+
+"""
+   ADD SOME CONTROL BUTTONS IN FULLSCREEN MODE
+"""
 import os
 import tempfile
 import pipes
@@ -196,7 +200,10 @@ previous = None
 def get_next_file_vfs():
   global previous
   if previous is not None:
-    os.unlink(previous)
+    try:
+      os.unlink(previous)
+    except:
+      pass
     
   files = os.listdir(PARAMS["PATH"])
   for filename in files:

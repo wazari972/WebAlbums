@@ -6,6 +6,7 @@ from photowall import DEFAULTS, PARAMS, do_main
 import photowall
 import threading
 import time
+import os
 
 def long_substr(data):
   substr = ''
@@ -28,8 +29,7 @@ class UpdateCallback:
     self.log = []
     
   def newExec(self):
-    self.handler.updateImage(None, 'imgPreview')
-    self.handler.updateImage(None, 'imgPreview2')
+    self.handler.updateImage()
     img = self.builder.get_object('imgPreview')
     img.set_visible(True)
   
@@ -40,14 +40,14 @@ class UpdateCallback:
     self.log.append((row, col, filename))
     
   def updLine(self, row, name):
-    self.handler.updateImage(name, 'imgPreview')
+    self.handler.updateImage(name, major=False)
       
   def newFinal(self, name):
-    self.handler.updateImage(None, 'imgPreview')
-    self.handler.updateImage(name, 'imgPreview2')
+    self.handler.updateImage(major=False)
+    self.handler.updateImage(name, major=True, alone=True)
     
   def finished(self, name):
-    self.handler.updateImage(None, 'imgPreview')
+    self.handler.updateImage(major=False)
     lbl = self.builder.get_object('lblInfo')
     lbl.set_text("Finished: %s" % name)
     
@@ -73,15 +73,19 @@ class Handler:
     self.wasRunning = False
     self.is_fullscreen = False
     
+    self.thr = None
+    
     self.init()
     
     self.onWebAlbmFS()
     self.onPolaroid()
+    self.onRandom()
     
   def init(self):
     for imgName in ('imgPreview', 'imgPreview2', 'imgPreviewFull', 'imgPreview2Full'):
       self.builder.get_object(imgName).modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('black'))
-    
+      self.builder.get_object('imgPreview').set_valign(Gtk.Align.FILL)
+      
     self.builder.get_object('fileSource').set_filename(DEFAULTS["PATH"])
     self.builder.get_object('btSelectTarget').set_label(DEFAULTS["TARGET"])
     #define the size of the picture
@@ -122,8 +126,11 @@ class Handler:
     ## Random wall options ##
     self.builder.get_object('txtSleep').set_value(DEFAULTS["SLEEP_TIME"])
     
-    self.updateImage(None, 'imgPreview')
-    self.updateImage(None, 'imgPreview2')
+    self.updateImage()
+    
+    self.onWebAlbmFS()
+    self.onPolaroid()
+    self.onRandom()
   
   def onSelectTarget(self, *args):
     saver = self.builder.get_object('fileSaverDialog')
@@ -167,7 +174,12 @@ class Handler:
     fullscreen = self.builder.get_object('winFullscreen')
     
     self.is_fullscreen = not self.is_fullscreen
+    
     fullscreen.set_visible(self.is_fullscreen)
+    if self.is_fullscreen:
+      fullscreen.fullscreen()
+    else:
+      fullscreen.unfullscreen()
     
   def onFullscreenDeleteEvent(self, *args):
     fullscreen = self.builder.get_object('winFullscreen')
@@ -199,6 +211,7 @@ class Handler:
     
     self.builder.get_object('ckWrap').set_sensitive(not do_rand)
     self.builder.get_object('ckLoop').set_sensitive(not do_rand)
+    self.builder.get_object('ckRemove').set_sensitive(do_rand)
     
     self.builder.get_object('lblMinCrop').set_sensitive(not do_rand)
     self.builder.get_object('txtMinCrop').set_sensitive(not do_rand)
@@ -270,13 +283,14 @@ class Handler:
       self.onStartButton()
   
   def doFinished(self):
-    self.onStopButton(None)
-    
     loop = self.builder.get_object('ckLoop')
     if loop.get_active():
       time.sleep(1)
-      self.builder.get_object('btGo').set_active(True)
-  
+      
+      self.doStart()
+    else:
+      self.onStopButton(None)
+      
   def doContinue(self):
     photowall.updateCB.paused = False
     
@@ -285,14 +299,20 @@ class Handler:
   def doStop(self):
     photowall.updateCB.stopped = True
   
-  def updateImage(self, filename, imgName):    
+  def updateImage(self, filename=None, major=None, alone=False):
     if filename is None:
-      i = builder.get_object(imgName)
-      i.clear()
-      
-      if self.is_fullscreen:
-        i = builder.get_object(imgName+"Full")
+      def do_clear(imgName):
+        i = self.builder.get_object(imgName)
         i.clear()
+        
+        if self.is_fullscreen:
+          i = self.builder.get_object(imgName+"Full")
+          i.clear()
+          
+      if major is None or major:
+        do_clear("imgPreview2")
+      if major is None or not major:
+        do_clear("imgPreview")
       
       return
     
@@ -303,27 +323,40 @@ class Handler:
     
     ratio = (img_width+0.0)/img_height
     
-    def set_image(name):
-      i = builder.get_object(name)
-      box_width = i.get_allocation().width
-      box_height = i.get_allocation().height
+    def set_image(name, full=False):
+      i = self.builder.get_object(name+("Full" if full else ""))
       
-      if img_height*(box_width+0.0)/img_width <= box_height:
+      # use NB_LINE to compute the right size
+      # major is max NB_LINE,
+      # minor is max 1 line
+      box_preview = builder.get_object("boxPreview"+("Full" if full else ""))
+      box_width = box_preview.get_allocation().width
+      box_height = box_preview.get_allocation().height
+      
+      if alone:
+        allowed_height = box_height
+      elif major:
+        allowed_height = box_height * (PARAMS["LINES"]-1.0)/PARAMS["LINES"]
+      else:
+        allowed_height = box_height * 1.0/PARAMS["LINES"]
+      
+      if img_height*(box_width+0.0)/img_width <= allowed_height:
         width = box_width
         height = img_height*(box_width+0.0)/img_width
       else:
-        width = img_width*(box_height+0.0)/img_height
-        height = box_height
-    
+        width = img_width*(allowed_height+0.0)/img_height
+        height = allowed_height
+        
       
       pixbuf_scaled = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
       i.set_from_pixbuf(pixbuf_scaled)
-      
       i.set_visible(True)
-      
+    
+    imgName = "imgPreview%s" % ("2" if major else "")
+    
     set_image(imgName)
     if self.is_fullscreen:
-      set_image(imgName+"Full")
+      set_image(imgName, full=True)
     
   def doStart(self):
     PARAMS["PATH"] = self.builder.get_object('fileSource').get_filename()
@@ -373,14 +406,22 @@ class Handler:
     
     if photowall.updateCB is not None:
       photowall.updateCB.stopped = True
-      
+    
+    if self.builder.get_object('ckRemove').get_active():
+      try:
+        os.unlink(PARAMS["TARGET"])
+      except:
+        pass
+    
+    
     photowall.updateCB = UpdateCallback(self.builder, self)  
       
     def run_main():
       do_main()
       self.doFinished()
       
-    thr = threading.Thread(target=run_main).start()
+    self.thr = threading.Thread(target=run_main)
+    self.thr.start()
     
     return True
       
