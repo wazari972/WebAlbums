@@ -283,12 +283,12 @@ def do_polaroid (image, filename=None, background="black", suffix=None):
   else:
     caption = ""
     
-  command = "convert -bordercolor snow -background %(bg)s -flatten -gravity center %(caption)s +polaroid %(name)s %(name)s" % {"bg" : background, "name":tmp.name, "caption":caption}
-
+  command = "convert -bordercolor snow -background %(bg)s -gravity center %(caption)s +polaroid %(name)s %(name)s" % {"bg" : background, "name":tmp.name, "caption":caption}
+    
   ret = subprocess.call(command, shell=True)
   if ret != 0:
     raise Exception("Command failed: "+ command)
-    
+  
   img = Image(filename=tmp.name).clone()
   
   os.unlink(tmp.name)
@@ -306,14 +306,15 @@ def do_blank_image(height, width, filename, color="black"):
     raise Exception("Command failed: "+ command)
 
 def do_polaroid_and_random_composite(target_filename, target, image, filename):
+  PERCENT_IN = 100
   
   image = do_polaroid(image, filename, background="transparent", suffix=".png")
 
   tmp = tempfile.NamedTemporaryFile(delete=False, suffix=PARAMS["IMG_FORMAT_SUFFIX"])
   image.save(filename=tmp.name)
 
-  height = random.randint(0, target.height) - target.height/2
-  width = random.randint(0, target.width) - target.width/2
+  height = random.randint(0, target.height - image.height) - target.height/2
+  width = random.randint(0, target.width - image.width) - target.width/2
 
   geometry = ("+" if height >= 0 else "") + str(height) + ("+" if width >= 0 else "") + str(width)
 
@@ -422,6 +423,18 @@ def random_wall(real_target_filename):
   name = filename[:filename.index(".")]
   ext = filename[filename.index("."):]
   target_filename = tempfile.gettempdir()+"/"+name+".2"+ext
+  
+  try:
+    #remove any existing tmp file
+    os.unlink(target_filename)
+  except:
+    pass
+  
+  try:
+    #if source already exist, build up on it
+    os.system("cp %s %s" % (target_filename, real_target_filename))
+  except:
+    pass
   
   print "Target file is %s" % real_target_filename 
   target = None

@@ -409,6 +409,7 @@ class Handler:
     
     if self.builder.get_object('ckRemove').get_active():
       try:
+        print "remove",PARAMS["TARGET"]
         os.unlink(PARAMS["TARGET"])
       except:
         pass
