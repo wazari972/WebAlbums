@@ -92,6 +92,16 @@
       <action-widget response="0">button1</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkImage" id="imgEog">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-redo</property>
+  </object>
+  <object class="GtkImage" id="imgFullscreen">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-fullscreen</property>
+  </object>
   <object class="GtkImage" id="imgOpen">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -102,7 +112,17 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-media-pause</property>
   </object>
+  <object class="GtkImage" id="imgPause1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-pause</property>
+  </object>
   <object class="GtkImage" id="imgPlay">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-media-play</property>
+  </object>
+  <object class="GtkImage" id="imgPlay1">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-media-play</property>
@@ -647,14 +667,14 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkToggleButton" id="btGo">
+                  <object class="GtkButton" id="btGo">
                     <property name="label" translatable="yes">Start</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="hexpand">True</property>
                     <property name="image">imgPlay</property>
-                    <signal name="toggled" handler="onStartButton" swapped="no"/>
+                    <signal name="clicked" handler="onStartButton" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -664,16 +684,32 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btFullscreen">
-                    <property name="label">gtk-fullscreen</property>
+                  <object class="GtkButton" id="btStop">
+                    <property name="label">gtk-stop</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
-                    <signal name="clicked" handler="onBtFullscreen" swapped="no"/>
+                    <signal name="clicked" handler="onStopButton" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btExtern">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Open target file with Eye-of-Gnome</property>
+                    <property name="image">imgEog</property>
+                    <signal name="clicked" handler="onExternalButton" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">0</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
@@ -737,39 +773,7 @@
           <object class="GtkGrid" id="grid7">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <child>
-              <object class="GtkButton" id="btQuit">
-                <property name="label">gtk-quit</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="hexpand">True</property>
-                <property name="use_stock">True</property>
-                <signal name="clicked" handler="onDeleteWindow" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">2</property>
-                <property name="top_attach">0</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btStop">
-                <property name="label">gtk-stop</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-                <signal name="clicked" handler="onStopButton" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">0</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
+            <property name="column_homogeneous">True</property>
             <child>
               <object class="GtkButton" id="btReset">
                 <property name="label" translatable="yes">Reset</property>
@@ -780,7 +784,55 @@
                 <signal name="clicked" handler="onResetButton" swapped="no"/>
               </object>
               <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btInfo">
+                <property name="label">gtk-dialog-info</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="clicked" handler="onInfoButton" swapped="no"/>
+              </object>
+              <packing>
                 <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btFullscreen">
+                <property name="label">gtk-fullscreen</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="clicked" handler="onBtFullscreen" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btQuit">
+                <property name="label">gtk-quit</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <signal name="clicked" handler="onDeleteWindow" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">3</property>
                 <property name="top_attach">0</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
@@ -799,14 +851,13 @@
             <property name="app_paintable">True</property>
             <property name="can_focus">False</property>
             <child internal-child="content_area">
-              <object class="GtkBox" id="infobar-content_area1">
+              <object class="GtkBox" id="infobar-content_area">
                 <property name="can_focus">False</property>
-                <property name="border_width">8</property>
-                <property name="spacing">16</property>
                 <child>
                   <object class="GtkLabel" id="lblInfo">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="hexpand">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -821,30 +872,9 @@
                 <property name="position">0</property>
               </packing>
             </child>
-            <action-widgets>
-              <action-widget response="0">btInfo</action-widget>
-            </action-widgets>
             <child internal-child="action_area">
-              <object class="GtkButtonBox" id="infobar-action_area1">
+              <object class="GtkButtonBox" id="infobar-action_area">
                 <property name="can_focus">False</property>
-                <property name="border_width">5</property>
-                <property name="orientation">vertical</property>
-                <property name="layout_style">end</property>
-                <child>
-                  <object class="GtkButton" id="btInfo">
-                    <property name="label">gtk-dialog-info</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                    <signal name="clicked" handler="onInfoButton" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -852,9 +882,6 @@
                 <property name="position">1</property>
               </packing>
             </child>
-            <action-widgets>
-              <action-widget response="0">btInfo</action-widget>
-            </action-widgets>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -878,7 +905,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="xpad">4</property>
-            <property name="stock">gtk-missing-image</property>
+            <property name="stock">gtk-discard</property>
           </object>
           <packing>
             <property name="expand">True</property>
@@ -890,12 +917,70 @@
           <object class="GtkImage" id="imgPreviewFull">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="stock">gtk-missing-image</property>
+            <property name="stock">gtk-discard</property>
           </object>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="grid9">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkButton" id="btFullscreen1">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">imgFullscreen</property>
+                <signal name="clicked" handler="onBtFullscreen" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btGo1">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">imgPlay1</property>
+                <signal name="clicked" handler="onStartButton" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lblInfo1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="hexpand">True</property>
+                <attributes>
+                  <attribute name="font-desc" value="&lt;Enter Value&gt; 10"/>
+                  <attribute name="foreground" value="#ededd4d40000"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>

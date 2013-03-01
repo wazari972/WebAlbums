@@ -37,6 +37,7 @@ class UpdateCallback:
     msg = "#%d#%d %s" % (row, col, filename)
     
     self.builder.get_object('lblInfo').set_text(msg)
+    self.builder.get_object('lblInfo1').set_text(msg)
     self.log.append((row, col, filename))
     
   def updLine(self, row, name):
@@ -48,8 +49,8 @@ class UpdateCallback:
     
   def finished(self, name):
     self.handler.updateImage(major=False)
-    lbl = self.builder.get_object('lblInfo')
-    lbl.set_text("Finished: %s" % name)
+    self.builder.get_object('lblInfo').set_text("Finished: %s" % name)
+    self.builder.get_object('lblInfo1').set_text("Finished: %s" % name)
     
     img = self.builder.get_object('imgPreview')
     img.set_visible(False)
@@ -82,6 +83,7 @@ class Handler:
     self.onRandom()
     
   def init(self):
+    self.builder.get_object("winFullscreen").modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('black'))
     for imgName in ('imgPreview', 'imgPreview2', 'imgPreviewFull', 'imgPreview2Full'):
       self.builder.get_object(imgName).modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse('black'))
       self.builder.get_object('imgPreview').set_valign(Gtk.Align.FILL)
@@ -131,6 +133,9 @@ class Handler:
     self.onWebAlbmFS()
     self.onPolaroid()
     self.onRandom()
+  
+  def onExternalButton(self, *args):
+    os.system("eog %s &" % self.builder.get_object('btSelectTarget').get_label())
   
   def onSelectTarget(self, *args):
     saver = self.builder.get_object('fileSaverDialog')
@@ -221,37 +226,37 @@ class Handler:
     self.init()
   
   def onStopButton(self, *args):
-    go = self.builder.get_object('btGo')
-    go.set_active(False)
+    go = self.builder.get_object("btGo")
     go.set_label("Start")
     go.set_image(self.builder.get_object('imgPlay'))
+    self.builder.get_object("btGo1").set_image(self.builder.get_object('imgPlay1'))
     self.running = None
     
     if photowall.updateCB is not None:
       photowall.updateCB.stopped = True
       
   def onStartButton(self, *args):
-    bt = self.builder.get_object('btGo')
-    
     if self.running is None:
       correct = self.doStart()
     elif self.running:
       correct = self.doPause()
     else:
       correct = self.doContinue()
+    
+    for num in ('', '1'):
+      bt = self.builder.get_object("btGo"+num)
+      if correct:
+        if self.running is None or not self.running:
+          if num != '1': bt.set_label("Pause")
+          bt.set_image(self.builder.get_object('imgPause'+num))
+        else:
+          if num != '1': bt.set_label("Continue")
+          bt.set_image(self.builder.get_object('imgPlay'+num))
+          
+    # switch and get rid of None
+    self.running = True if not self.running else False 
+    
       
-    if correct:
-      if self.running is None or not self.running:
-        bt.set_label("Pause")
-        bt.set_image(self.builder.get_object('imgPause'))
-        self.running = True
-      else:
-        bt.set_label("Continue")
-        bt.set_image(self.builder.get_object('imgPlay'))
-        self.running = False
-        
-    bt.set_active(self.running)
-  
   def onInfoButton(self, *args):
     self.wasRunning = False
     if self.running:
@@ -270,7 +275,6 @@ class Handler:
       txt = ["(%d, %d) %s" % (r, c, f[substr_len:]) for r, c, f in photowall.updateCB.log]
       
       inf.set_markup("\n".join(txt))
-    
     
   def onInfoGridDeleteEvent(self, *args):
     self.onInfoGridClose(args)
@@ -397,7 +401,7 @@ class Handler:
     PARAMS["NO_SWITCH_TO_MINI"] = not self.builder.get_object('ckMini').get_active()
         
     ### Directory options ###
-        
+    
     # False if we pick directory images sequentially, false if we take them randomly
     PARAMS["PICK_RANDOM"] = False #not implemented yet
         
@@ -409,7 +413,6 @@ class Handler:
     
     if self.builder.get_object('ckRemove').get_active():
       try:
-        print "remove",PARAMS["TARGET"]
         os.unlink(PARAMS["TARGET"])
       except:
         pass
@@ -427,6 +430,7 @@ class Handler:
     return True
       
   def doPause(self):
+    print "do pause"
     photowall.updateCB.paused = True
     
     return True

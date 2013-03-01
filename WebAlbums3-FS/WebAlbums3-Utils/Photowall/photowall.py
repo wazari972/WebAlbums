@@ -1,9 +1,5 @@
 #!/usr/bin/env python2
 
-
-"""
-   ADD SOME CONTROL BUTTONS IN FULLSCREEN MODE
-"""
 import os
 import tempfile
 import pipes
@@ -458,6 +454,10 @@ def random_wall(real_target_filename):
   
   cnt = 0
   while True:
+    updateCB.checkPause()
+    if updateCB.stopRequested():
+      break
+      
     filename = get_next_file()
     print filename
     
@@ -468,11 +468,17 @@ def random_wall(real_target_filename):
         clone.resize(width=int(clone.width*factor), height=int(clone.height*factor))
                      
       do_polaroid_and_random_composite(target_filename, target, clone, filename)
+      updateCB.checkPause()
+      if updateCB.stopRequested():
+        break
       updateCB.newImage(row=cnt, filename=filename)
       updateCB.newFinal(target_filename)
       os.system("cp %s %s" % (target_filename, real_target_filename))
       cnt += 1
       
+    updateCB.checkPause()
+    if updateCB.stopRequested():
+      break  
     time.sleep(PARAMS["SLEEP_TIME"])
     updateCB.checkPause()
     if updateCB.stopRequested():
