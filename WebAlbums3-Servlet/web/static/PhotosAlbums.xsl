@@ -48,7 +48,11 @@
                             <xsl:attribute name="href">Image__<xsl:value-of select="photoId/@id" /></xsl:attribute>
                         </xsl:if>
                     </xsl:if>
-              
+                    
+                    <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
+                        <xsl:attribute name="title"><xsl:value-of select="albumDate" />&#160;<xsl:value-of select="albumName" /></xsl:attribute>
+                    </xsl:if>
+                    
                     <xsl:if test="/webAlbums/albums">
                         <xsl:attribute name="href">Photos__<xsl:value-of select="../@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" /></xsl:if>__<xsl:value-of select="../title" /></xsl:attribute>
                     </xsl:if>

@@ -1,0 +1,105 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-ui.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js/jquery-chosen.js"></script>
+        <script type="text/javascript" src="static/scripts/lib/jquery/js//jquery.fullscreenslides.js"></script>
+        <script type="text/javascript" src="static/scripts/tools.js"></script>
+        <link href="static/scripts/lib/jquery/css/fullscreenstyle.css" type="text/css" rel="stylesheet"></link>
+        <script id="sample">
+$(function(){
+  var do_init = function(refreshid) {
+    // All events are bound to this container element
+    var $container = $('#fullscreenSlideshowContainer');
+
+    $container
+      //This is triggered once:
+      .bind("init", function() {
+        // The slideshow does not provide its own UI, so add your own
+        // check the fullscreenstyle.css for corresponding styles
+        $container
+          .append('<div class="ui" id="fs-close">&times;</div>')
+          .append('<div class="ui" id="fs-loader">Loading...</div>')
+          .append('<div class="ui" id="fs-prev">&lt;</div>')
+          .append('<div class="ui" id="fs-next">&gt;</div>')
+          .append('<div class="ui" id="fs-caption"><span></span></div>');
+
+        // Bind to the ui elements and trigger slideshow events
+        $('#fs-prev').click(function(){
+          // You can trigger the transition to the previous slide
+          $container.trigger("prevSlide");
+        });
+        $('#fs-next').click(function(){
+          // You can trigger the transition to the next slide
+          $container.trigger("nextSlide");
+        });
+        $('#fs-close').click(function(){
+          // You can close the slide show like this:
+          $container.trigger("close");
+          clearInterval(refreshid);
+        });
+
+      })
+      // When a slide starts to load this is called
+      .bind("startLoading", function() {
+        // show spinner
+        $('#fs-loader').show();
+      })
+      // When a slide stops to load this is called:
+      .bind("stopLoading", function() {
+        // hide spinner
+        $('#fs-loader').hide();
+      })
+      // When a slide is shown this is called.
+      // The "loading" events are triggered only once per slide.
+      // The "start" and "end" events are called every time.
+      // Notice the "slide" argument:
+      .bind("startOfSlide", function(event, slide) {
+        // set and show caption
+        $('#fs-caption span').text(slide.title);
+        $('#fs-caption').show();
+      })
+      // before a slide is hidden this is called:
+      .bind("endOfSlide", function(event, slide) {
+        $('#fs-caption').hide();
+      });
+  }
+  
+  // initialize the slideshow
+  var addLink = $('#none').fullscreenslides({"useFullScreen":false});
+  
+  var do_load = function() {
+    var finished = function() {
+        addLink($("#randPict a")[0])
+        $('#fullscreenSlideshowContainer').trigger("nextSlide");
+        // js.shift the slideshow array
+    }
+
+    loadExernals(null, 'Photos?special=RANDOM', 'randPict', finished) ;
+  }
+  do_load()
+  var refreshid = window.setInterval(do_load, 3000)
+  
+  do_init(refreshid)
+  
+  $("#btStartStop").click(function() {
+      //allow restarting
+      clearInterval(refreshid)
+  })
+  
+});
+        </script>
+        <input type="button" id="btStartStop" value="stop"/>
+        <div id="randPict"></div>
+        
+    </body>
+</html>
