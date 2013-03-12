@@ -17,7 +17,9 @@ and open the template in the editor.
         <link href="static/scripts/lib/jquery/css/fullscreenstyle.css" type="text/css" rel="stylesheet"></link>
         <script id="sample">
 $(function(){
-  var do_init = function(refreshid) {
+    var stooped = false;
+    var refreshid;
+  var do_init = function() {
     // All events are bound to this container element
     var $container = $('#fullscreenSlideshowContainer');
 
@@ -45,7 +47,6 @@ $(function(){
         $('#fs-close').click(function(){
           // You can close the slide show like this:
           $container.trigger("close");
-          clearInterval(refreshid);
         });
 
       })
@@ -67,39 +68,128 @@ $(function(){
         // set and show caption
         $('#fs-caption span').text(slide.title);
         $('#fs-caption').show();
+        var parent = $("#randPict").parent()
+        $("#randPict").remove()
+        parent.append(slide["html"].clone(true))
       })
       // before a slide is hidden this is called:
       .bind("endOfSlide", function(event, slide) {
         $('#fs-caption').hide();
+      })
+      .bind("endofSlideshow", function(event) {
+        clearInterval(refreshid);
+        stooped = true
+        $('.to_show').show()
       });
   }
-  
+  var current;
+  var links = []
   // initialize the slideshow
-  var addLink = $('#none').fullscreenslides({"useFullScreen":false});
+  var addLink = $('#none').fullscreenslides({"useFullScreen":true});
   
   var do_load = function() {
     var finished = function() {
-        addLink($("#randPict a")[0])
-        $('#fullscreenSlideshowContainer').trigger("nextSlide");
-        // js.shift the slideshow array
+        var link = $("#randPict ")
+        var slide = addLink(link[0])
+        current = slide
+        links.push(slide)
+        slide["html"] = $("#randPict").clone(true)
+        var $container = $('#fullscreenSlideshowContainer')
+        
+        //keep only the last 5 slides
+        if ($container.data("slideshows")["__all__"].length > 5) {
+            $container.data("slideshows")["__all__"].shift()
+            
+            var last = links.shift()
+            if ("$img" in last) {
+                last.$img.remove()
+            }
+            if ("$img2" in last) {
+                last.$img2.remove()
+            }
+            
+            slide["html"].remove()
+        }
+        
+        slide.$imgd = $('<img class="slide">')
+            .hide()
+            // on load get the images dimensions and show it
+            .load(function(){
+              if (!stooped) {
+                    $(link).click()
+              }
+            })
+            .attr("src", slide.image);
+        
     }
 
     loadExernals(null, 'Photos?special=RANDOM', 'randPict', finished) ;
   }
   do_load()
-  var refreshid = window.setInterval(do_load, 3000)
+  refreshid = window.setInterval(do_load, 3000)
+  do_init()
   
-  do_init(refreshid)
-  
-  $("#btStartStop").click(function() {
+  $("#btStart").click(function() {
       //allow restarting
       clearInterval(refreshid)
+      do_load()
+      refreshid = window.setInterval(do_load, 3000)
+      stooped = false
   })
   
+  $("#btStop").click(function() {
+      //allow restarting
+      clearInterval(refreshid)
+      stooped = true
+  })
+  
+  function doPrevNext (do_next) {
+      if (!current) {
+          return;
+      }
+      var parent = $("#randPict").parent()
+      $("#randPict").remove()
+        
+      var curr_id = $.inArray(current, links)
+      if (do_next) {
+          curr_id++;
+      } else {
+          curr_id--;
+      }
+      var next_id = (curr_id + links.length) % links.length
+      parent.append(links[next_id]["html"].clone(true))
+      current = links[next_id]
+  }
+  
+  $("#btNext").click(function() {
+      doPrevNext(true)
+  })
+  $("#btPrev").click(function() {
+      doPrevNext(false)
+  })
+  $("#btTest").click(function() {
+      var tried = function() {
+          var i = $('<img class="slide">')
+            .show()
+            // on load get the images dimensions and show it
+            .load(function(){
+              $("#randPict").append(i)
+              $("#btTest").click()
+            })
+            .attr("src", $("#randPict a").attr("href"));
+      }
+      loadExernals(null, 'Photos?special=RANDOM', 'randPict', tried)
+  })
 });
         </script>
-        <input type="button" id="btStartStop" value="stop"/>
-        <div id="randPict"></div>
+        <span class="to_show">
+            <input type="button" id="btPrev" value="prev"/>
+        <input type="button" id="btStop" value="stop"/>
+        <input type="button" id="btStart" value="start"/>
+        <input type="button" id="btNext" value="next"/>
+        <input type="button" id="btTest" value="test"/>
+        </span>
         
+        <div id="randPict"></div>
     </body>
 </html>

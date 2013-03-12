@@ -114,6 +114,8 @@
       }
     }
     
+    $container.data("updateSlideSize", updateSlideSize)
+    
     $(window).bind("resize", function(){
       //todo: throttle
       $container.trigger("updateSize");
@@ -125,6 +127,7 @@
       if (!isLoading) {
         var oldSlide = $container.data("currentSlide");
         // if it is not loaded yet then initialize the dom object and load it
+        
         if (!("$img" in newSlide)) {
           isLoading = true;
           $container.trigger("startLoading");
@@ -228,7 +231,8 @@
       }
       $container
         .removeData("currentSlide slides width height originalScrollTop hiddenElements")
-        .hide();
+        .hide()
+        .trigger("endofSlideshow");
     });
     
     // When ESC is pressed in full screen mode, the keypressed event is not
