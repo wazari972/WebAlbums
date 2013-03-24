@@ -96,6 +96,11 @@ public class ViewSessionImpl implements
     }
 
     @Override
+    public int getNewTheme() {
+        return getInteger("newTheme");
+    }
+    
+    @Override
     public Integer[] getTags() {
         return getIntArray("tags");
     }

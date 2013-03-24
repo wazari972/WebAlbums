@@ -628,6 +628,8 @@ public class WebPageBean implements WebPageLocal {
         date.month = month.format(newDate);
         date.day = day.format(newDate);
         
+        date.date = strDate;
+        
         return date;
     }
     

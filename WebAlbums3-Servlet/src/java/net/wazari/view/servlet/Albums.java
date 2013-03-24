@@ -9,13 +9,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.AlbumLocal;
+import net.wazari.service.ThemeLocal;
+import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
 import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlAlbums;
@@ -31,10 +35,13 @@ import org.slf4j.LoggerFactory;
 public class Albums extends HttpServlet{
     @EJB private DispatcherBean dispatcher ;
     private static final long serialVersionUID = 1L;
-
     @EJB
     private AlbumLocal albumService;
-
+    @EJB
+    private WebPageLocal webPageService;    
+    @EJB
+    private ThemeLocal themeService;
+    
     public XmlAlbums treatALBM(ViewSessionAlbum vSession)
             throws WebAlbumsServiceException {
 
@@ -73,7 +80,22 @@ public class Albums extends HttpServlet{
             }
 
             if (action == Action.EDIT) {
-                output.edit = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession, submit);
+                output.edit = new XmlAlbumEdit();
+                output.edit.album  = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession);
+                
+                if (submit != null) {
+                    output.edit.submit = submit ;
+                }
+                
+                output.edit.tag_used = webPageService.displayListLB(ViewSession.Mode.TAG_USED, vSession, null,
+                        ViewSession.Box.MULTIPLE);
+                output.edit.tag_nused = webPageService.displayListLB(ViewSession.Mode.TAG_NUSED, vSession, null,
+                        ViewSession.Box.MULTIPLE);
+                output.edit.tag_never = webPageService.displayListLB(ViewSession.Mode.TAG_NEVER, vSession, null,
+                        ViewSession.Box.MULTIPLE);
+
+                output.edit.themes = themeService.getThemeList(vSession);
+                
                 XmlReturnTo returnTo = new XmlReturnTo();
                 returnTo.page = vSession.getPage();
 

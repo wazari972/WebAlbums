@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlValue;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.common.XmlDetails;
+import net.wazari.service.exchange.xml.common.XmlUserList;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 
 /**
@@ -24,10 +25,9 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 public class XmlAlbum {
     @XmlAttribute
     public Integer id;
-    public String title;
+    public String name;
     public XmlAlbumSubmit submit;
     public XmlDetails details = new XmlDetails();
-    public String name;
     public XmlPhotoId picture;
     public XmlDate date;
     @XmlAttribute
@@ -36,6 +36,8 @@ public class XmlAlbum {
     public String albmDate;
     public List<XmlGpx> gpx;
     public List<XmlCarnet> carnet;
+    public XmlUserList rights;
+    
     @XmlRootElement
     public static class Counter {
         public Counter(int count) {

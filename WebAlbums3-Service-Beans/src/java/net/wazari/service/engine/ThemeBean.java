@@ -13,9 +13,7 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.xml.XmlTheme;
 import net.wazari.service.exchange.xml.XmlThemeList;
-import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,29 +29,21 @@ public class ThemeBean implements ThemeLocal {
     private ThemeFacadeLocal themeDAO;
     @EJB
     private WebPageLocal webService ;
-
+    @EJB
+    private DaoToXmlBean daoToXmlService;
+    
     @Override
     public XmlThemeList getThemeList(ViewSession vSession) {
         XmlThemeList output = new XmlThemeList();
-        //afficher la liste des themes
 
         List<Theme> lst = themeDAO.findAll();
         if (lst.isEmpty()) {
             webService.populateEntities() ;
             lst = themeDAO.findAll();
         }
+        
         Collections.reverse(lst);
-        for (Theme enrTheme : lst) {
-            XmlTheme theme = new XmlTheme() ;
-            theme.id = enrTheme.getId() ;
-            theme.name = enrTheme.getNom() ;
-            if (enrTheme.getPicture() != null) {
-                theme.picture = new XmlPhotoId(enrTheme.getPicture().getId());
-                if (vSession.directFileAccess())
-                    theme.picture.path = enrTheme.getPicture().getPath(true);
-            }
-            output.theme.add(theme);
-        }
+        daoToXmlService.convertThemes(vSession, lst, output);
 
         return output;
     }

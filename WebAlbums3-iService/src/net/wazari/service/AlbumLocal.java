@@ -30,7 +30,7 @@ public interface AlbumLocal {
     XmlAlbumDisplay treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
-    XmlAlbumEdit treatAlbmEDIT(ViewSessionAlbumEdit vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
+    XmlAlbum treatAlbmEDIT(ViewSessionAlbumEdit vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;

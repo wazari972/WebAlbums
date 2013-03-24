@@ -4,6 +4,7 @@
  */
 package net.wazari.service.engine;
 
+import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.UtilisateurFacadeLocal;
@@ -11,12 +12,15 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
+import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
+import net.wazari.service.exchange.xml.XmlTheme;
+import net.wazari.service.exchange.xml.XmlThemeList;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlGpx;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
@@ -101,7 +105,7 @@ public class DaoToXmlBean {
 
     public void convertAlbum(ViewSession vSession, Album enrAlbum, XmlAlbum album) throws WebAlbumsServiceException {
         album.id = enrAlbum.getId();
-        album.title = enrAlbum.getNom();
+        album.name = enrAlbum.getNom();
         album.droit = enrAlbum.getDroit().getNom();
         album.date = webPageService.xmlDate(enrAlbum.getDate());
         
@@ -116,6 +120,10 @@ public class DaoToXmlBean {
                 album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
             }
         }
+    }
+    
+    public void addAlbumRight(ViewSession vSession, Album enrAlbum, XmlAlbum album) throws WebAlbumsServiceException {
+        album.rights = webPageService.displayListDroit(enrAlbum.getDroit(), null);
     }
 
     public void convertCarnet(ViewSession vSession, Carnet enrCarnet, XmlCarnet carnet) {
@@ -136,5 +144,23 @@ public class DaoToXmlBean {
             gpx.path = enrGpx.getPath(true);
         }
         gpx.setDescription(enrGpx.getDescription());
+    }
+    
+    public void convertTheme(ViewSession vSession, Theme enrTheme, XmlTheme theme) {
+        theme.id = enrTheme.getId() ;
+        theme.name = enrTheme.getNom() ;
+        if (enrTheme.getPicture() != null) {
+            theme.picture = new XmlPhotoId(enrTheme.getPicture().getId());
+            if (vSession.directFileAccess())
+                theme.picture.path = enrTheme.getPicture().getPath(true);
+        }
+    }
+    
+    public void convertThemes(ViewSession vSession, List<Theme> lstThemes, XmlThemeList themes) {
+        for (Theme enrTheme : lstThemes) {
+            XmlTheme theme = new XmlTheme() ;
+            convertTheme(vSession, enrTheme, theme);
+            themes.theme.add(theme);
+        }
     }
 }

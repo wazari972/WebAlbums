@@ -50,18 +50,18 @@
                     </xsl:if>
                     
                     <xsl:if test="/webAlbums/tags or /webAlbums/photos/random">
-                        <xsl:attribute name="title"><xsl:value-of select="albumDate" />&#160;<xsl:value-of select="albumName" /></xsl:attribute>
+                        <xsl:attribute name="title"><xsl:value-of select="date/@date" />&#160;<xsl:value-of select="albumName" /></xsl:attribute>
                     </xsl:if>
                     
                     <xsl:if test="/webAlbums/albums">
-                        <xsl:attribute name="href">Photos__<xsl:value-of select="../@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" /></xsl:if>__<xsl:value-of select="../title" /></xsl:attribute>
+                        <xsl:attribute name="href">Photos__<xsl:value-of select="../@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" /></xsl:if>__<xsl:value-of select="../name" /></xsl:attribute>
                     </xsl:if>
                     <xsl:if test="/webAlbums/carnets">
                         <xsl:attribute name="href">Carnet__<xsl:value-of select="../@id" /><xsl:if test="not(/webAlbums/affichage/@static)">_pc<xsl:value-of select="/webAlbums/carnets/display/page/@current" /></xsl:if>__<xsl:value-of select="../name" /></xsl:attribute>
                     </xsl:if>
                     <img class="photo">
                         <xsl:attribute name="alt">
-                            <xsl:value-of select="title" />
+                            <xsl:value-of select="name" />
                         </xsl:attribute>
                         <xsl:if test="@isGpx = 'true'">
                             <xsl:attribute name="src">static/images/gps.png</xsl:attribute>
@@ -220,10 +220,10 @@
                         <xsl:if test="not(/webAlbums/carnets or /webAlbums/photos/random)">
                             <a rel="singlepage[no]" target="_blank" title="Visionneuse">
                                 <xsl:if test="/webAlbums/albums">
-                                    <xsl:attribute name="href">Visio__<xsl:value-of select="../@id" />_p0__<xsl:value-of select="../title" /></xsl:attribute>
+                                    <xsl:attribute name="href">Visio__<xsl:value-of select="../@id" />_p0__<xsl:value-of select="../name" /></xsl:attribute>
                                 </xsl:if>
                                 <xsl:if test="/webAlbums/photos">
-                                    <xsl:attribute name="href">Visio__<xsl:value-of select="../../../album/@id" />_p<xsl:value-of select="/webAlbums/photos/display/photoList/page/@current" /><xsl:if test="not(/webAlbums/affichage/@static)">_pa</xsl:if>__<xsl:value-of select="../../../album/title" />#<xsl:value-of select="photoId/@id" /></xsl:attribute>
+                                    <xsl:attribute name="href">Visio__<xsl:value-of select="../../../album/@id" />_p<xsl:value-of select="/webAlbums/photos/display/photoList/page/@current" /><xsl:if test="not(/webAlbums/affichage/@static)">_pa</xsl:if>__<xsl:value-of select="../../../album/name" />#<xsl:value-of select="photoId/@id" /></xsl:attribute>
                                 </xsl:if>
                                 <xsl:if test="/webAlbums/tags">
                                     <xsl:attribute name="href">Tags?<xsl:for-each select="/webAlbums/tags/display/title/tagList/*">&amp;tagAsked=<xsl:value-of select="@id" /></xsl:for-each>&amp;page=<xsl:value-of select="/webAlbums/tags/display/photoList/page/@current"/>&amp;special=VISIONNEUSE#<xsl:value-of select="photoId/@id" /></xsl:attribute>

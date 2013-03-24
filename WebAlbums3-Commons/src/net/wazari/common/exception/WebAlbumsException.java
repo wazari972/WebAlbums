@@ -13,7 +13,8 @@ public class WebAlbumsException extends Exception {
     public enum ErrorType {
         JDBCException,
         AuthenticationException,
-        DatabaseException
+        DatabaseException,
+        ServiceException
     }
     public static final ErrorType JDBCException = ErrorType.JDBCException;
 

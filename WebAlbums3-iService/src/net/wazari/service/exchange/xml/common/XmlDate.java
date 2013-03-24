@@ -5,6 +5,7 @@
 
 package net.wazari.service.exchange.xml.common;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -14,6 +15,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class XmlDate {
+    @XmlAttribute
+    public String date;
     public String year;
     public String month;
     public String day;

@@ -22,6 +22,8 @@ public interface ViewSessionAlbum extends ViewSession {
 
         boolean getSuppr() ;
         Integer getUserAllowed();
+        
+        int getNewTheme();
     }
 
     interface ViewSessionAlbumEdit extends ViewSessionAlbum {}

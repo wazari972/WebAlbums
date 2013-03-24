@@ -24,12 +24,12 @@
 	<h1>
 	  <a>
 	    <xsl:if test="/webAlbums/albums">
-	      <xsl:attribute name="href">Photos__<xsl:value-of select="@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" /></xsl:if>__<xsl:value-of select="title" /></xsl:attribute>
+	      <xsl:attribute name="href">Photos__<xsl:value-of select="@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/albums/display/albumList/page/@current" /></xsl:if>__<xsl:value-of select="name" /></xsl:attribute>
 	    </xsl:if> 
 	    <xsl:if test="/webAlbums/photos">
 	      <xsl:attribute name="href">Albums__p<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" />#<xsl:value-of select="@id" /></xsl:attribute>
 	    </xsl:if> 
-	    <xsl:value-of select="title" />
+	    <xsl:value-of select="name" />
 	  </a>
 	</h1>
 	<xsl:if test="/webAlbums/photos or /webAlbums/tags">
@@ -38,8 +38,8 @@
                 <div class="album_opt">
                     <xsl:if test="not(/webAlbums/affichage/@static)">
                         <a rel="singlepage[no]">
-                            <xsl:attribute name="title"><xsl:value-of select="title" /> en visionneuse</xsl:attribute>
-                            <xsl:attribute name="href">Visio__<xsl:value-of select="@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" /></xsl:if>__<xsl:value-of select="title" /></xsl:attribute>
+                            <xsl:attribute name="title"><xsl:value-of select="name" /> en visionneuse</xsl:attribute>
+                            <xsl:attribute name="href">Visio__<xsl:value-of select="@id" />_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa<xsl:value-of select="/webAlbums/photos/display/photoList/page/url/albmPage" /></xsl:if>__<xsl:value-of select="name" /></xsl:attribute>
                             <img src="static/images/slide.png" height="30px"/>
                         </a>
                     </xsl:if>

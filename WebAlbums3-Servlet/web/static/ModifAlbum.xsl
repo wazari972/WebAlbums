@@ -33,7 +33,7 @@
             <label for="date">Date:</label> 
 	    <input id="date" type='date' size='10' name='date' maxlength='10' 
                    placeholder="YYYY-MM-DD" required="true">
-	      <xsl:attribute name="VALUE"><xsl:value-of select="albmDate" /></xsl:attribute>
+	      <xsl:attribute name="VALUE"><xsl:value-of select="date/@date" /></xsl:attribute>
 	    </input>
 	    <br/>
             <label for="desc">Description:</label>
@@ -56,6 +56,23 @@
 	      <xsl:with-param name="style">multiple</xsl:with-param>
 	      <xsl:with-param name="name">tags</xsl:with-param>
 	    </xsl:apply-templates>
+            <xsl:if test="not(/webAlbums/loginInfo/root)">
+                <br/>
+                <label for="chTheme">Changer de theme:</label>
+                <select name="newTheme">
+                    <xsl:for-each select="/webAlbums/albums/edit/themes/theme">
+                        <xsl:if test="not(@id = 1)">
+                            <option>
+                                <xsl:attribute name="value"><xsl:value-of select="@id"/></xsl:attribute>
+                                <xsl:if test="/webAlbums/loginInfo/themeid = @id">
+                                    <xsl:attribute name="selected">true</xsl:attribute>    
+                                </xsl:if>
+                                <xsl:value-of select="@name" /><xsl:if test="/webAlbums/loginInfo/themeid = @id">*</xsl:if>
+                            </option>
+                        </xsl:if>
+                    </xsl:for-each>
+                </select>
+            </xsl:if>
 	    <br/>
 	    <label for="uniq">Uniquement?</label><input id="uniq" type='checkbox' name='force' value='yes' />
 	    <br/>
@@ -63,7 +80,7 @@
 	    <input id="sure" type='text' autocomplete='off' name='suppr' size='31' maxlength='31'
                    placeholder="Oui je veux supprimer cet album"/>
 	    <br/>
-	    Droits de visibilité : <xsl:apply-templates select="../rights"/>
+	    Droits de visibilité : <xsl:apply-templates select="rights"/>
 	    <br/>
 	    <input type='submit' value='Valider'/>
 	  </form>

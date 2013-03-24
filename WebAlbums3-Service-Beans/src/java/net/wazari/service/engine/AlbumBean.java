@@ -9,10 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import net.wazari.common.exception.WebAlbumsException;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 import net.wazari.dao.TagFacadeLocal;
+import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.*;
 import net.wazari.dao.entity.facades.SubsetOf;
@@ -50,60 +52,24 @@ public class AlbumBean implements AlbumLocal {
     @EJB private WebPageLocal webPageService;
     @EJB private FilesFinder finder;
     @EJB private TagFacadeLocal tagDAO;
+    @EJB private ThemeFacadeLocal themeDAO;
+    @EJB private DaoToXmlBean daoToXmlService;
     
     @Override
-    public XmlAlbumEdit treatAlbmEDIT(ViewSessionAlbumEdit vSession,
-            XmlAlbumSubmit submit)
+    public XmlAlbum treatAlbmEDIT(ViewSessionAlbumEdit vSession)
             throws WebAlbumsServiceException {
-
-        XmlAlbumEdit output = new XmlAlbumEdit();
-
-        if (submit != null) {
-            output.submit = submit ;
-        }
-
         Integer albumId = vSession.getId();
-
+        
         Album enrAlbum = albumDAO.find(albumId);
-
         if (enrAlbum == null) {
-            output.exception = "Impossible de trouver l'album (" + albumId + ")";
-            return output ;
-        }
-
-        if (enrAlbum.getPicture() != null) {
-            output.album.picture = new XmlPhotoId(enrAlbum.getPicture().getId());
-            if (vSession.directFileAccess()) {
-                output.album.picture.path = enrAlbum.getPicture().getPath(true);
-            }
-        }
-        output.album.name = enrAlbum.getNom();
-        output.album.id = enrAlbum.getId();
-        output.album.details.setDescription(enrAlbum.getDescription());
-        
-        output.album.albmDate = enrAlbum.getDate();
-
-        for (Photo enrGpx : enrAlbum.getGpxList()) {
-            if (output.album.gpx == null) {
-                output.album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
-            }
-            
-            XmlGpx gpx = new XmlGpx();
-            gpx.id = enrGpx.getId();
-            gpx.setDescription(enrGpx.getDescription());
-            
-            output.album.gpx.add(gpx);
+            throw new WebAlbumsServiceException(WebAlbumsException.ErrorType.ServiceException, 
+                                                "Impossible de trouver l'album (" + albumId + ")");
         }
         
-        output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
-                Box.MULTIPLE);
-        output.tag_nused = webPageService.displayListLB(Mode.TAG_NUSED, vSession, null,
-                Box.MULTIPLE);
-        output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
-                Box.MULTIPLE);
-        output.rights = webPageService.displayListDroit(enrAlbum.getDroit(), null);
-
-        return output;
+        XmlAlbum album = new XmlAlbum();
+        daoToXmlService.convertAlbum(vSession, enrAlbum, album);
+        daoToXmlService.addAlbumRight(vSession, enrAlbum, album);
+        return album;
     }
 
     @Override
@@ -157,7 +123,7 @@ public class AlbumBean implements AlbumLocal {
 
             album.date = webPageService.xmlDate(enrAlbum.getDate());
             album.id = enrAlbum.getId();
-            album.title = enrAlbum.getNom();
+            album.name = enrAlbum.getNom();
 
             if (enrAlbum.getPicture() != null) {
                 album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId());
@@ -411,7 +377,6 @@ public class AlbumBean implements AlbumLocal {
         XmlAlbumSubmit output = new XmlAlbumSubmit();
         Integer albumId = vSession.getId();
 
-
         Album enrAlbum = albumDAO.find(albumId);
         if (enrAlbum == null) {
             return null;
@@ -450,6 +415,12 @@ public class AlbumBean implements AlbumLocal {
         
         albumDAO.edit(enrAlbum);
 
+        int newThemeId = vSession.getNewTheme();
+        if (newThemeId != enrAlbum.getTheme().getId()) {
+            Theme enrNewTheme = themeDAO.find(newThemeId);
+            finder.moveAlbum(enrAlbum, enrNewTheme, vSession.getConfiguration());
+        }
+        
         output.message = "Album (" + enrAlbum.getId() + ") correctement mise à jour !";
         stopWatch.stop("Service.treatSUBMIT") ;
         return output ;
@@ -481,7 +452,7 @@ public class AlbumBean implements AlbumLocal {
         XmlAlbumAbout about = new XmlAlbumAbout() ;
         about.album = new XmlAlbum() ;
         about.album.id = enrAlbum.getId() ;
-        about.album.title = enrAlbum.getNom() ;
+        about.album.name = enrAlbum.getNom() ;
         about.album.date = webPageService.xmlDate(enrAlbum.getDate());
         
         if (enrAlbum.getPicture() != null) {

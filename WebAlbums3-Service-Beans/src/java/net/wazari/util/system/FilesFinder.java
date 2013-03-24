@@ -378,4 +378,8 @@ public class FilesFinder {
         
         return true ;
     }
+
+    public void moveAlbum(Album enrAlbum, Theme enrTheme, Configuration configuration) {
+        log.warn("Move album {} to theme {}", enrAlbum.getNom(), enrTheme.getNom());
+    }
 }

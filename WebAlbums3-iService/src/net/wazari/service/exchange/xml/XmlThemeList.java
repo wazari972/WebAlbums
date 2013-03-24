@@ -16,5 +16,4 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlThemeList {
     public final List<XmlTheme> theme = new LinkedList<XmlTheme>();
-
 }
