@@ -18,6 +18,8 @@ import net.wazari.service.exchange.xml.XmlThemeList;
 @Local
 @DeclareRoles({UserLocal.VIEWER_ROLE})
 public interface ThemeLocal {
+    enum Sort {NOPE, REVERSE, ALBUM_AGE}
+    
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlThemeList getThemeList(ViewSession vSession) ;
+    XmlThemeList getThemeList(ViewSession vSession, Sort order) ;
 }

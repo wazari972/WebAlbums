@@ -216,7 +216,7 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     }
 
     @Override
-    public net.wazari.dao.entity.Theme getTheme() {
+    public Theme getTheme() {
         return theme;
     }
 

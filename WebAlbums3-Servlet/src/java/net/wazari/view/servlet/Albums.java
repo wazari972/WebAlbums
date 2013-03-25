@@ -94,7 +94,7 @@ public class Albums extends HttpServlet{
                 output.edit.tag_never = webPageService.displayListLB(ViewSession.Mode.TAG_NEVER, vSession, null,
                         ViewSession.Box.MULTIPLE);
 
-                output.edit.themes = themeService.getThemeList(vSession);
+                output.edit.themes = themeService.getThemeList(vSession, ThemeLocal.Sort.NOPE);
                 
                 XmlReturnTo returnTo = new XmlReturnTo();
                 returnTo.page = vSession.getPage();

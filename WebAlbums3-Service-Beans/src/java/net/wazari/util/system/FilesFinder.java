@@ -379,7 +379,38 @@ public class FilesFinder {
         return true ;
     }
 
-    public void moveAlbum(Album enrAlbum, Theme enrTheme, Configuration configuration) {
+    public void moveAlbum(Album enrAlbum, Theme enrTheme, Configuration conf) {
         log.warn("Move album {} to theme {}", enrAlbum.getNom(), enrTheme.getNom());
+        if (enrAlbum.getTheme().equals(enrTheme)) {
+            return;
+        }
+        String albumPathSuffix = enrAlbum.getPhotoList().get(0).getPath(false);
+        albumPathSuffix = SEP + albumPathSuffix.substring(0, albumPathSuffix.lastIndexOf(SEP));
+        
+        File sourceAlbumImage = new File(conf.getImagesPath(true)+enrAlbum.getTheme().getNom()+albumPathSuffix);
+        File targetAlbumImage = new File(conf.getImagesPath(true)+enrTheme.getNom()+albumPathSuffix);
+        
+        targetAlbumImage.getParentFile().mkdirs();
+        
+        log.warn("{} renameTo {}", sourceAlbumImage, targetAlbumImage);
+        if (!sourceAlbumImage.renameTo(targetAlbumImage)) {
+            log.error("Couldn't rename {} to {}", sourceAlbumImage, targetAlbumImage);
+            return;
+        }
+        sourceAlbumImage.getParentFile().delete();
+        
+        File sourceAlbumMini = new File(conf.getMiniPath(true)+enrAlbum.getTheme().getNom()+albumPathSuffix);
+        File targetAlbumMini = new File(conf.getMiniPath(true)+enrTheme.getNom()+albumPathSuffix);
+                
+        targetAlbumMini.getParentFile().mkdirs();
+        
+        log.warn("{} renameTo {}", sourceAlbumMini, targetAlbumMini);
+        if (!sourceAlbumMini.renameTo(targetAlbumMini)) {
+            log.error("Couldn't rename {} to {}", sourceAlbumImage, targetAlbumImage);
+            return;
+        }
+        sourceAlbumMini.getParentFile().delete();
+        
+        enrAlbum.setTheme(enrTheme);
     }
 }

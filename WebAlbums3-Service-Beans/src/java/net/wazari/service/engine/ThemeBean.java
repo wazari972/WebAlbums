@@ -5,14 +5,21 @@
 package net.wazari.service.engine;
 
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
+import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.service.exchange.ViewSessionLogin.ViewSessionTempTheme;
 import net.wazari.service.exchange.xml.XmlThemeList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +38,38 @@ public class ThemeBean implements ThemeLocal {
     private WebPageLocal webService ;
     @EJB
     private DaoToXmlBean daoToXmlService;
+    @EJB
+    private AlbumFacadeLocal albumDAO;
+    
+    private void sortAlbumAge(ViewSessionTempTheme vSession, List<Theme> themes) {
+        ViewSessionLogin vLoginSession = (ViewSessionLogin) vSession;
+        Theme origTheme = vLoginSession.getTheme();
+        final Map<Theme, String> themeDates = new HashMap<Theme, String>();
+        for (Theme enrTheme : themes) {
+            //race condition possible here
+            vLoginSession.setTheme(enrTheme);
+            Album enrAlbum = albumDAO.loadLastAlbum(vSession, AlbumFacadeLocal.Restriction.THEME_ONLY);
+            
+            if (enrAlbum != null) {
+                themeDates.put(enrTheme, enrAlbum.getDate());
+            } else {
+                themeDates.put(enrTheme, "0000-00-00");
+            }
+        }
+        vLoginSession.setTheme(origTheme);
+        
+        Collections.sort(themes, new Comparator<Theme>() {
+            public int compare(Theme t, Theme t1) {
+                String tStr = themeDates.get(t);
+                String t1Str = themeDates.get(t1);
+                return tStr.compareTo(t1Str);
+            }
+        });
+        Collections.reverse(themes);
+    }
     
     @Override
-    public XmlThemeList getThemeList(ViewSession vSession) {
+    public XmlThemeList getThemeList(ViewSession vSession, Sort order) {
         XmlThemeList output = new XmlThemeList();
 
         List<Theme> lst = themeDAO.findAll();
@@ -42,7 +78,18 @@ public class ThemeBean implements ThemeLocal {
             lst = themeDAO.findAll();
         }
         
-        Collections.reverse(lst);
+        switch(order) {
+            case ALBUM_AGE:
+                sortAlbumAge((ViewSessionTempTheme) vSession, lst);
+                break;
+            case REVERSE:
+                Collections.reverse(lst);
+                break;
+            case NOPE:
+            default: 
+        }
+        
+        
         daoToXmlService.convertThemes(vSession, lst, output);
 
         return output;

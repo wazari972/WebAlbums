@@ -62,8 +62,7 @@ public class WebAlbumsDAOBean {
         if (session.isRootSession()) {
             return TRUE ;
         } else {
-            return cb.equal(theme.get(JPATheme_.id),
-                            session.getTheme().getId()) ;
+            return cb.equal(theme.get(JPATheme_.id), session.getTheme().getId()) ;
         }
 
     }

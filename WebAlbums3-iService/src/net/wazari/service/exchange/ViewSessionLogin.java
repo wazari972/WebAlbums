@@ -35,4 +35,8 @@ public interface ViewSessionLogin extends ViewSession {
     Boolean dontRedirect();
     
     Boolean getwantManager();
+    
+    interface ViewSessionTempTheme extends ViewSessionLogin {
+        void setTempTheme(Theme enrTheme);
+    }
 }

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.ThemeLocal;
+import net.wazari.service.ThemeLocal.Sort;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.xml.XmlThemes;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -47,7 +48,7 @@ public class Index extends HttpServlet {
             vSession.setDirectFileAccess(vSession.directFileAccess());
         }
 
-        output.themeList = themeService.getThemeList(vSession) ;
+        output.themeList = themeService.getThemeList(vSession, Sort.ALBUM_AGE) ;
         
         return output ;
     }

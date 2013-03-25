@@ -28,6 +28,7 @@ import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
+import net.wazari.service.exchange.ViewSessionLogin.ViewSessionTempTheme;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ViewSessionImpl implements
         ServiceSession,
-        ViewSessionLogin,
+        ViewSessionLogin, ViewSessionTempTheme,
         ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumEdit, ViewSessionAlbumSubmit,
         ViewSessionConfig,
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit,
@@ -59,6 +60,7 @@ public class ViewSessionImpl implements
     private HttpServletResponse response;
     
     private Integer DEFAULT_PHOTOALBUM_SIZE = 15;
+    private Theme tempTheme = null;
     
     public ViewSessionImpl(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
         this.request = request;
@@ -198,7 +200,15 @@ public class ViewSessionImpl implements
     }
 
     @Override
+    public void setTempTheme(Theme enrTheme) {
+        this.tempTheme = enrTheme;
+    }
+    
+    @Override
     public Theme getTheme() {
+        if (this.tempTheme != null) {
+            return this.tempTheme;
+        }
         return getSessionObject("theme", Theme.class);
     }
 
