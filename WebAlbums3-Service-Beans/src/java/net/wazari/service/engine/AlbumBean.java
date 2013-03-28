@@ -1,9 +1,9 @@
 package net.wazari.service.engine;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +26,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
@@ -370,6 +371,32 @@ public class AlbumBean implements AlbumLocal {
         return years ;
     }
 
+    @Override
+    public XmlAlbumAgo treatAGO(ViewSessionAlbumAgo vSession) throws WebAlbumsServiceException {
+        StopWatch stopWatch = new Slf4JStopWatch(log) ;
+        XmlAlbumAgo ago = new XmlAlbumAgo();
+        
+        Integer year = vSession.getYear();
+        Integer month = vSession.getMonth();
+        Integer day = vSession.getDay();
+        
+        if (year == null && month == null && day == null) {
+            //Note that Calendar.MONTH is for no apparent reasons ZERO based
+            month = Calendar.getInstance().get(Calendar.MONTH)+1;
+            day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        }
+        
+        List<Album> albums = albumDAO.loadTimesAgoAlbums(vSession, year, month, day);
+        for (Album enrAlbum : albums) {
+            XmlAlbum album = new XmlAlbum();
+            daoToXmlService.convertAlbum(vSession, enrAlbum, album);
+            ago.album.add(album);
+        }
+        
+        stopWatch.stop("Service.treatAGO") ;
+        return ago;
+    }
+    
     @Override
     public XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession)
             throws WebAlbumsServiceException {

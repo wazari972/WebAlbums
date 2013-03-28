@@ -8,6 +8,7 @@ package net.wazari.service.exchange.xml;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.album.XmlAlbumAgo;
 import net.wazari.service.exchange.xml.album.XmlAlbumGraph;
 import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
 import net.wazari.service.exchange.xml.album.XmlAlbumTop;
@@ -36,4 +37,5 @@ public class XmlChoix {
     @XmlAttribute
     public Boolean complete;
     public String map;
+    public XmlAlbumAgo times_ago;
 }

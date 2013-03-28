@@ -17,7 +17,8 @@
     <xsl:apply-templates select="/webAlbums/albums/select" />
     <xsl:apply-templates select="/webAlbums/albums/about" />
     <xsl:apply-templates select="/webAlbums/albums/gpxes" />
-
+    <xsl:apply-templates select="/webAlbums/albums/times_ago" />
+    
     <xsl:apply-templates select="/webAlbums/photos/random" />
     <xsl:apply-templates select="/webAlbums/photos/display" />
     <xsl:apply-templates select="/webAlbums/photos/about" />

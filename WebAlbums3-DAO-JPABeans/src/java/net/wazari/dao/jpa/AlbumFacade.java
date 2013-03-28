@@ -25,6 +25,7 @@ import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author kevin
@@ -222,6 +223,21 @@ public class AlbumFacade implements AlbumFacadeLocal {
                 .setHint("org.hibernate.cacheable", true)
                 .setHint("org.hibernate.readOnly", true)
                 .getResultList();
+    }
 
+    @Override
+    public List<Album> loadTimesAgoAlbums(ServiceSession session, Integer year, Integer month, Integer day) {
+        String dateTempl = (year != null ? String.format("%04d", year) : "%%%%") + "-" +
+                           (month != null ? String.format("%02d", month) : "%%") + "-" +
+                           (day != null ? String.format("%02d", day) : "%%") ;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
+        Root<JPAAlbum> albm = cq.from(JPAAlbum.class) ;
+        cq.where(cb.like(albm.get(JPAAlbum_.date), dateTempl));
+        cq.orderBy(cb.desc(albm.get(JPAAlbum_.date))) ;
+        return (List) em.createQuery(cq)
+                .setHint("org.hibernate.cacheable", true)
+                .setHint("org.hibernate.readOnly", true)
+                .getResultList();
     }
 }

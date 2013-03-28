@@ -58,12 +58,15 @@ public interface AlbumFacadeLocal {
 
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Album loadFirstAlbum(ServiceSession session, Restriction restrict) ;
-
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Album loadLastAlbum(ServiceSession session, Restriction restrict) ;
+    
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Album loadIfAllowed(ServiceSession session, int id) ;
 
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Album loadByNameDate(String name, String date) ;
+    
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    List<Album> loadTimesAgoAlbums(ServiceSession session, Integer year, Integer month, Integer day) ;
 }

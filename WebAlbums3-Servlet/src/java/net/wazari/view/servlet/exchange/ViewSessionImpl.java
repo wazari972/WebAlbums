@@ -22,6 +22,7 @@ import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.service.exchange.*;
 import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class ViewSessionImpl implements
         ServiceSession,
         ViewSessionLogin, ViewSessionTempTheme,
-        ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumEdit, ViewSessionAlbumSubmit,
+        ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumEdit, ViewSessionAlbumSubmit, ViewSessionAlbumAgo,
         ViewSessionConfig,
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit,
         ViewSessionTag,
@@ -502,7 +503,7 @@ public class ViewSessionImpl implements
 
     @Override
     public Integer getBorderWidth() {
-        return getInteger("borderWidth") ;
+        return getInteger("borderWidth");
     }
 
     @Override
@@ -699,6 +700,21 @@ public class ViewSessionImpl implements
     @Override
     public boolean getWantTags() {
         return getObject("wantTags", String.class) != null;
+    }
+
+    @Override
+    public Integer getYear() {
+        return getInteger("year");
+    }
+
+    @Override
+    public Integer getMonth() {
+        return getInteger("month");
+    }
+
+    @Override
+    public Integer getDay() {
+        return getInteger("day");
     }
 
     public static class ViewSessionLoginImpl implements ViewSessionSession {

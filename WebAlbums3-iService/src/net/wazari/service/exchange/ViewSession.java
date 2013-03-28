@@ -15,7 +15,7 @@ import net.wazari.dao.exchange.ServiceSession;
 public interface ViewSession extends ServiceSession{
     enum Special {
         TOP5, VISIONNEUSE, CLOUD, PERSONS, PLACES, UPDATE, YEARS, PHOTOALBUM_SIZE,
-        SELECT, RANDOM, ABOUT, FASTEDIT, JUST_THEME, MAP, GRAPH, GPX, ONLY}
+        SELECT, RANDOM, ABOUT, FASTEDIT, JUST_THEME, MAP, GRAPH, GPX, ONLY, AGO}
 
     enum Action {
         DEFAULT,

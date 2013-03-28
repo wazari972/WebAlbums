@@ -18,6 +18,7 @@ import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.xml.XmlChoix;
@@ -71,6 +72,7 @@ public class Choix extends HttpServlet {
             choix.years = albumService.treatYEARS(vSessionAlbum);
             choix.select = albumService.treatSELECT(vSessionAlbum);
             choix.graph = albumService.treatGRAPH(vSessionAlbum);
+            choix.times_ago = albumService.treatAGO((ViewSessionAlbumAgo) vSessionAlbum);
             
             choix.cloud = tagService.treatTagCloud(vSessionTag) ;
             choix.persons = tagService.treatTagPersons(vSessionTag) ;

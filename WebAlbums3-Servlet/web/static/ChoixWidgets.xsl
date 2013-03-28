@@ -76,6 +76,10 @@
     </td>
   </xsl:template>
 
+<xsl:template match="/webAlbums/albums/times_ago">
+   <xsl:apply-templates select="album" />
+ </xsl:template>
+
 <xsl:template match="/webAlbums/albums/years">
    <xsl:apply-templates select="year" />
  </xsl:template>

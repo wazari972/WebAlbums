@@ -10,6 +10,11 @@ package net.wazari.service.exchange;
  * @author kevin
  */
 public interface ViewSessionAlbum extends ViewSession {
+    interface ViewSessionAlbumAgo extends ViewSessionAlbum {
+        Integer getYear();
+        Integer getMonth();
+        Integer getDay();
+    }
     interface ViewSessionAlbumSubmit extends ViewSessionAlbum {
         String getDesc();
 

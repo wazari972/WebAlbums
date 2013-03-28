@@ -21,5 +21,6 @@ public class XmlAlbums {
     public XmlAlbumDisplay display;
     public XmlAlbumAbout about;
     public XmlAlbumGpx gpxes;
+    public XmlAlbumAgo times_ago;
     public XmlAlbums(){}
 }
