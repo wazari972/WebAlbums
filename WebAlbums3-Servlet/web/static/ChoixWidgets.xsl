@@ -89,7 +89,7 @@
         <b><xsl:value-of select="year"/></b>
         <table>
             <tr>
-            <xsl:apply-templates select="album" />
+                <xsl:apply-templates select="album" />
             </tr>
         </table>
      </div>
@@ -114,30 +114,40 @@
     </td>
  </xsl:template>
 
- <xsl:template match="topAlbums/album|topCarnets/carnet">
+ <xsl:template match="topAlbums/album|topCarnets/carnet|times_ago/album">
    <td>
       <table>
+          <xsl:if test="name(..) = 'times_ago'">
+              <tr>
+                <td>
+                  <center>
+                    <a target="_top">
+                        <xsl:attribute name="href">Photos__<xsl:value-of select="@id"/>_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
+                        <xsl:value-of select="date/@date"/>
+                    </a>
+                  </center>
+                </td>
+              </tr>
+          </xsl:if>
 	<tr>
 	  <td>
 	    <center>
-	      <xsl:if test="picture">
 		<a target="_top">
-                    <xsl:if test="name(..) = 'topAlbums'">
+                    <xsl:if test="name(..) = 'topAlbums' or name(..) = 'times_ago'">
                         <xsl:attribute name="href">Photos__<xsl:value-of select="@id"/>_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
                     </xsl:if>
                     <xsl:if test="name(..) = 'topCarnets'">
-                        <xsl:attribute name="href">Carnet__<xsl:value-of select="@id"/><xsl:if test="not(/webAlbums/affichage/@static)">_pc0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
+                        <xsl:attribute name="href">Carnet__<xsl:value-of select="photoId/@id"/><xsl:if test="not(/webAlbums/affichage/@static)">_pc0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
                     </xsl:if>
                     <img class="choix_img">
-                      <xsl:if test="/webAlbums/affichage/@directAccess">
+                        <xsl:if test="/webAlbums/affichage/@directAccess">
                           <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png</xsl:attribute>
                         </xsl:if>
                         <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                          <xsl:attribute name="src">Miniature__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
+                          <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
                         </xsl:if>
                     </img>
 		</a>
-	      </xsl:if>
 	    </center>
 	  </td>
 	</tr>
@@ -145,7 +155,7 @@
 	  <td>
 	    <center>
 	      <a target="_top">
-                <xsl:if test="name(..) = 'topAlbums'">
+                <xsl:if test="name(..) = 'topAlbums' or name(..) = 'times_ago'">
         		<xsl:attribute name="href">Photos__<xsl:value-of select="@id"/>_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
                   </xsl:if>
                   <xsl:if test="name(..) = 'topCarnets'">

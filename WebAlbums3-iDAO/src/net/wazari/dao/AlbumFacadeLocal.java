@@ -68,5 +68,5 @@ public interface AlbumFacadeLocal {
     Album loadByNameDate(String name, String date) ;
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    List<Album> loadTimesAgoAlbums(ServiceSession session, Integer year, Integer month, Integer day) ;
+    List<Album> loadTimesAgoAlbums(ServiceSession session, Integer year, Integer month, Integer day, Restriction restrict) ;
 }

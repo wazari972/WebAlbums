@@ -226,14 +226,19 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
-    public List<Album> loadTimesAgoAlbums(ServiceSession session, Integer year, Integer month, Integer day) {
+    public List<Album> loadTimesAgoAlbums(ServiceSession session, 
+                                          Integer year, Integer month, Integer day,
+                                          Restriction restrict) {
         String dateTempl = (year != null ? String.format("%04d", year) : "%%%%") + "-" +
                            (month != null ? String.format("%02d", month) : "%%") + "-" +
                            (day != null ? String.format("%02d", day) : "%%") ;
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
         Root<JPAAlbum> albm = cq.from(JPAAlbum.class) ;
-        cq.where(cb.like(albm.get(JPAAlbum_.date), dateTempl));
+        cq.where(cb.and(
+                    cb.like(albm.get(JPAAlbum_.date), dateTempl),
+                    webDAO.getRestrictionToCurrentTheme(session, 
+                    albm.get(JPAAlbum_.theme), restrict))) ;
         cq.orderBy(cb.desc(albm.get(JPAAlbum_.date))) ;
         return (List) em.createQuery(cq)
                 .setHint("org.hibernate.cacheable", true)

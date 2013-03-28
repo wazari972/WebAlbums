@@ -230,7 +230,7 @@ public class PhotoBean implements PhotoLocal {
         }
         XmlAlbum album = output.album = new XmlAlbum();
         
-        daoToXml.convertAlbum(vSession, enrAlbum, album);
+        daoToXml.convertAlbum(vSession, enrAlbum, album, true);
 
         for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
             if (album.carnet == null) {

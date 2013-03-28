@@ -14,6 +14,7 @@ public interface ViewSessionAlbum extends ViewSession {
         Integer getYear();
         Integer getMonth();
         Integer getDay();
+        boolean getAll();
     }
     interface ViewSessionAlbumSubmit extends ViewSessionAlbum {
         String getDesc();

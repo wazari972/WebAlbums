@@ -58,6 +58,25 @@
 	<span></span>
       </div>
       <div class="content">
+	<h1>Years Ago
+            <xsl:if test="not(/webAlbums/albums/times_ago)">
+                <input id="timeagoLoader" type="button" value="this"/>
+                <input id="alltimeagoLoader" type="button" value="all"/>
+            </xsl:if>
+        </h1>
+	<div class="body">
+	  <div id="timesago" style="overflow:auto">
+            <xsl:apply-templates select="/webAlbums/albums/times_ago" />    
+          </div>
+	</div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="date">
+	<span></span>
+      </div>
+      <div class="content">
 	<h1>
            <span>Places of the World</span>
         <xsl:if test="not(/webAlbums/choix/places)">

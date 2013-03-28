@@ -71,6 +71,14 @@ function init_loader() {
     $("#placesLoader").click(function () {
         loadExernals('placesLoader', 'Tags?special=PLACES', 'places') ;
     }) ;
+    
+    $("#timeagoLoader").click(function () {
+        loadExernals('timeagoLoader', 'Albums?special=AGO', 'timesago') ;
+    }) ;
+    $("#alltimeagoLoader").click(function () {
+        loadExernals('alltimeagoLoader', 'Albums?special=AGO&all=y', 'timesago') ;
+        $("#timeagoLoader").hide()
+    }) ;
 
     $("#tagShower").click(function () {
         $("#tagShower").fadeOut() ;

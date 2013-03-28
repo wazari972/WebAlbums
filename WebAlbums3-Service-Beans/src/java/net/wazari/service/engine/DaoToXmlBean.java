@@ -4,6 +4,7 @@
  */
 package net.wazari.service.engine;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -103,15 +104,17 @@ public class DaoToXmlBean {
         photo.exif = photoUtil.getXmlExif(enrPhoto) ;
     }
 
-    public void convertAlbum(ViewSession vSession, Album enrAlbum, XmlAlbum album) throws WebAlbumsServiceException {
+    public void convertAlbum(ViewSession vSession, Album enrAlbum, XmlAlbum album, boolean withTags) throws WebAlbumsServiceException {
         album.id = enrAlbum.getId();
         album.name = enrAlbum.getNom();
         album.droit = enrAlbum.getDroit().getNom();
         album.date = webPageService.xmlDate(enrAlbum.getDate());
         
         //tags de l'album
-        album.details.tag_used = webPageService.displayListIBTD(ViewSession.Mode.TAG_GEO, 
-                            vSession, enrAlbum, ViewSession.Box.NONE, enrAlbum.getDate());
+        if (withTags) {
+            album.details.tag_used = webPageService.displayListIBTD(ViewSession.Mode.TAG_GEO, 
+                                      vSession, enrAlbum, ViewSession.Box.NONE, enrAlbum.getDate());
+        }
         album.details.setDescription(enrAlbum.getDescription());
         
         if (enrAlbum.getPicture() != null) {
@@ -124,6 +127,17 @@ public class DaoToXmlBean {
     
     public void addAlbumRight(ViewSession vSession, Album enrAlbum, XmlAlbum album) throws WebAlbumsServiceException {
         album.rights = webPageService.displayListDroit(enrAlbum.getDroit(), null);
+    }
+    
+    public void addAlbumGpx(ViewSession vSession, Album enrAlbum, XmlAlbum album) throws WebAlbumsServiceException {
+        for (Photo enrGpx : enrAlbum.getGpxList()) {
+            if (album.gpx == null) {
+                album.gpx = new ArrayList(enrAlbum.getGpxList().size()) ;
+            }
+            XmlGpx gpx = new XmlGpx();
+            convertGpx(vSession, enrGpx, gpx);
+            album.gpx.add(gpx);
+        }
     }
 
     public void convertCarnet(ViewSession vSession, Carnet enrCarnet, XmlCarnet carnet) {
@@ -138,7 +152,7 @@ public class DaoToXmlBean {
         }
     }
 
-    public void convertGpx(ViewSessionPhotoDisplay vSession, Photo enrGpx, XmlGpx gpx) {
+    public void convertGpx(ViewSession vSession, Photo enrGpx, XmlGpx gpx) {
         gpx.id = enrGpx.getId();
         if (vSession.directFileAccess()) {
             gpx.path = enrGpx.getPath(true);

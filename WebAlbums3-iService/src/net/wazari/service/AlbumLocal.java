@@ -37,10 +37,10 @@ public interface AlbumLocal {
     XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumTop treatTOP(ViewSessionAlbum vSession);
+    XmlAlbumTop treatTOP(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumYears treatYEARS(ViewSessionAlbum vSession);
+    XmlAlbumYears treatYEARS(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession) throws WebAlbumsServiceException;

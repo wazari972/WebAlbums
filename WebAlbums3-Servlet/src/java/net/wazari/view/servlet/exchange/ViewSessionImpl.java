@@ -717,6 +717,11 @@ public class ViewSessionImpl implements
         return getInteger("day");
     }
 
+    @Override
+    public boolean getAll() {
+        return getString("all") != null && "y".equals(getString("all"));
+    }
+
     public static class ViewSessionLoginImpl implements ViewSessionSession {
         private HttpSession session ;
         public ViewSessionLoginImpl (HttpSession session) {

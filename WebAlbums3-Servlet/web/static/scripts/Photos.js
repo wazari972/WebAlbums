@@ -206,4 +206,9 @@ $(function() {
     init_massedit()
     init_fastedit()
     init_gpx()
+    
+    $("#showYearsAgo").click(function () {
+        var date = $(this).attr("rel")
+        loadExernals('timeagoLoader', 'Albums?special=AGO', 'timesago') ;
+    }) ;
 })
