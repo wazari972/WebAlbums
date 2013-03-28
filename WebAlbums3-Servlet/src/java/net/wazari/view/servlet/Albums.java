@@ -48,7 +48,6 @@ public class Albums extends HttpServlet{
         XmlAlbums output = new XmlAlbums() ;
 
         Special special = vSession.getSpecial();
-        log.warn("special is "+special);
         if (special == Special.TOP5) {
             output.topAlbums = albumService.treatTOP(vSession);
             return output ;
@@ -68,7 +67,6 @@ public class Albums extends HttpServlet{
             output.gpxes = albumService.treatGPX(vSession);
             return output ;
         } else if (special == Special.AGO) {
-            log.warn("coucou");
             output.times_ago = albumService.treatAGO((ViewSessionAlbum.ViewSessionAlbumAgo) vSession);
             return output ;
         } else if (special == Special.PHOTOALBUM_SIZE) {
