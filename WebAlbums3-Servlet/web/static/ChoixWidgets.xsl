@@ -10,7 +10,7 @@
             <xsl:sort select="count(ancestor::*)" order="descending"/>
             <li class="selectAlbum">
                 <xsl:attribute name="rel"><xsl:value-of select="@time"/></xsl:attribute>
-                <label><xsl:value-of select="albmDate"/></label> &#160;
+                <label><xsl:value-of select="date/@date"/></label> &#160;
                 <a>
                     <xsl:if test="not(/webAlbums/affichage/@static)"><xsl:attribute name="class">albumTT</xsl:attribute></xsl:if>
                     <xsl:attribute name="id">album-target-<xsl:value-of select="@id"/></xsl:attribute>
@@ -137,14 +137,19 @@
                         <xsl:attribute name="href">Photos__<xsl:value-of select="@id"/>_p0<xsl:if test="not(/webAlbums/affichage/@static)">_pa0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
                     </xsl:if>
                     <xsl:if test="name(..) = 'topCarnets'">
-                        <xsl:attribute name="href">Carnet__<xsl:value-of select="photoId/@id"/><xsl:if test="not(/webAlbums/affichage/@static)">_pc0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
+                        <xsl:attribute name="href">Carnet__<xsl:value-of select="@id"/><xsl:if test="not(/webAlbums/affichage/@static)">_pc0</xsl:if>__<xsl:value-of select="name"/></xsl:attribute>
                     </xsl:if>
                     <img class="choix_img">
                         <xsl:if test="/webAlbums/affichage/@directAccess">
                           <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png</xsl:attribute>
                         </xsl:if>
                         <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                          <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
+                            <xsl:if test="name(..) = 'topCarnets'">
+                                <xsl:attribute name="src">Miniature__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="name(..) != 'topCarnets'">
+                                <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
+                            </xsl:if>
                         </xsl:if>
                     </img>
 		</a>

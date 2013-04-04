@@ -207,8 +207,17 @@ $(function() {
     init_fastedit()
     init_gpx()
     
+    $("#showYearsAgo").data("all", false)
     $("#showYearsAgo").click(function () {
         var date = $(this).attr("rel")
-        loadExernals('timeagoLoader', 'Albums?special=AGO', 'timesago') ;
+        var dateArgs = "&month="+date.substring(5,5+2)
+        dateArgs += "&day="+date.substring(8)
+        var all = false;
+        if ($("#showYearsAgo").data("all")) {
+            all = true;
+            dateArgs += "&all=y";
+        }
+        $("#showYearsAgo").data("all", !all)
+        loadExernals('timeagoLoader', 'Albums?special=AGO'+dateArgs, 'timesago') ;
     }) ;
 })

@@ -73,13 +73,14 @@
                 }
                 
                 xmlData.find("album").each(function() {
-                    var albumId = $(this).attr("id")
+                    var albumId = $(this).attr("id");
+                    var albumName = $(this).find("name").text();
                     var albumEvent = {
-                        "start" : $(this).find("albmDate").text(),
-                        "title" : $(this).find("name").text(),
+                        "start" : $(this).find("date").attr("date"),
+                        "title" : albumName,
                         "description" : $(this).find("description").text(),
-                        "image" : "Miniature__"+$(this).find("picture").attr("id")+".png",
-                        "link" : "Photos__"+albumId+"_p0___"+$(this).find("name").text(),
+                        "image" : "Miniature__"+$(this).find("details").find("photoId").attr("id")+".png",
+                        "link" : "Photos__"+albumId+"_p0___"+name,
                         "color": "#00AA00",
                         "albumid": albumId
                     }
@@ -194,8 +195,6 @@
                 if (!window.geoTagsReceived)
                     return
                 
-                var geoTag = window.geoTags[tagId]
-                
                 if (!tag) {
                     if (window.markers[tagId] != undefined)
                         window.markers[tagId].display(false)
@@ -203,8 +202,12 @@
                     if (window.markers[tagId] != undefined) {
                         window.markers[tagId].display(true)
                     } else {
-                        var lonlat = lng_lat_to_lonlat(geoTag.lng, geoTag.lat)
-                        window.markers[tagId] = addMarker(window.map, window.markersLayer, null, function(){}, lonlat)
+                        var geoTag = window.geoTags[tagId]
+                        
+                        if (geoTag != undefined) {
+                            var lonlat = lng_lat_to_lonlat(geoTag.lng, geoTag.lat)
+                            window.markers[tagId] = addMarker(window.map, window.markersLayer, null, function(){}, lonlat)
+                        }
                     }
                 }
             }

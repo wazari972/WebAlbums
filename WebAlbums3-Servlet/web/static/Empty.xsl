@@ -59,7 +59,7 @@
                   graphData = [
                 <xsl:for-each select="album">
                     {
-                     q: '<xsl:value-of select="albmDate"/>',
+                     q: '<xsl:value-of select="date/@date"/>',
                     <xsl:for-each select="photoCount/entry">
                       "<xsl:value-of select="key"/>": <xsl:value-of select="value"/>,
                     </xsl:for-each>

@@ -112,7 +112,7 @@ public class DaoToXmlBean {
         
         //tags de l'album
         if (withTags) {
-            album.details.tag_used = webPageService.displayListIBTD(ViewSession.Mode.TAG_GEO, 
+            album.details.tag_used = webPageService.displayListIBTD(ViewSession.Mode.TAG_USED, 
                                       vSession, enrAlbum, ViewSession.Box.NONE, enrAlbum.getDate());
         }
         album.details.setDescription(enrAlbum.getDescription());

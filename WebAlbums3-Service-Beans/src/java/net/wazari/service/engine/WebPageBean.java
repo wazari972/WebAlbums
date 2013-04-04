@@ -619,7 +619,7 @@ public class WebPageBean implements WebPageLocal {
         Date newDate ;
         try {
             newDate = inputDate.parse(strDate);
-        } catch(ParseException e) {
+        } catch(Exception e) {
             log.warn("Invalid date: {}", strDate);
             return null;
         }

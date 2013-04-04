@@ -50,9 +50,9 @@
                         </a>
                     </xsl:if>
                     <a rel="singlepage[no]" id="showYearsAgo">
-                        <xsl:attribute name="title">Show years ago.</xsl:attribute>
+                        <xsl:attribute name="title">Show albums shot at the same date, years ago (_this_ then _all_ themes).</xsl:attribute>
                         <xsl:attribute name="rel"><xsl:value-of select="date/@date" /></xsl:attribute>
-                        AGO
+                        <img src="static/images/button_blue_repeat.png" height="30px"/>
                     </a>
                     <xsl:if test="/webAlbums/loginInfo/@admin">
                           <span>&#160;</span>
@@ -77,8 +77,8 @@
                    <div id="gpx_box"></div>
                 </div>
             </xsl:if>
-            <div id="timesago" style="overflow:auto"></div>
 	  </h2>
+          <div id="timesago" style="overflow:auto"></div>
           <hr/>
           <xsl:if test="details/description and details/description/line != ''">
               <span>
