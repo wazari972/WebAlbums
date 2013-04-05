@@ -130,6 +130,9 @@ class Handler:
     
     self.updateImage()
     
+    self.is_jnetFS = False
+    self.checkJnetFS()
+    
     self.onWebAlbmFS()
     self.onPolaroid()
     self.onRandom()
@@ -143,6 +146,8 @@ class Handler:
     def selectTarget_cb(target_filename):
         if target_filename is not None:
             self.builder.get_object("btSelectTarget").set_label(target_filename)
+            
+        self.checkJnetFS()
         
     self.saver_cb = selectTarget_cb
     
@@ -160,7 +165,15 @@ class Handler:
     saver.set_visible(False)
     if callable(self.saver_cb):
         self.saver_cb(saver.get_filename())
-      
+  
+  def checkJnetFS(self):
+    path = self.builder.get_object('btSelectTarget').get_label()
+    self.onJnetFS(photowall.path_is_jnetfs(path))
+  
+  def onJnetFS(self, is_jnet):
+    self.builder.get_object('ckWebAlbumFS').set_active(is_jnet)
+    self.is_jnetFS = is_jnet
+    
   def onDeleteWindow(self, *args):
     self.doQuit()
     Gtk.main_quit(*args)
@@ -198,7 +211,13 @@ class Handler:
     
     self.builder.get_object('ckCaption').set_sensitive(do_pol and use_fs)
     self.builder.get_object('ckMini').set_sensitive(use_fs)
-  
+    self.builder.get_object('ckPickRandom').set_sensitive(not use_fs)
+    print "use", use_fs
+    print "is", self.is_jnetFS
+    color = None if self.is_jnetFS == use_fs else Gdk.color_parse("red")
+    self.builder.get_object('ckWebAlbumFS').modify_bg(Gtk.StateType.NORMAL, color)
+    
+    
   def onPolaroid(self, *args):
     do_pol = self.builder.get_object('ckPolaroid').get_active()
     use_fs = self.builder.get_object('ckWebAlbumFS').get_active()
@@ -403,10 +422,11 @@ class Handler:
     ### Directory options ###
     
     # False if we pick directory images sequentially, false if we take them randomly
-    PARAMS["PICK_RANDOM"] = False #not implemented yet
-        
+    PARAMS["PICK_RANDOM"] = self.builder.get_object('ckPickRandom').get_sensitive()
+    
     ## Random wall options ##
     PARAMS["SLEEP_TIME"] = self.builder.get_object('txtSleep').get_value()
+    
     
     if photowall.updateCB is not None:
       photowall.updateCB.stopped = True

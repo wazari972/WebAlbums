@@ -95,7 +95,7 @@
   <object class="GtkImage" id="imgEog">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="stock">gtk-redo</property>
+    <property name="stock">gtk-orientation-portrait</property>
   </object>
   <object class="GtkImage" id="imgFullscreen">
     <property name="visible">True</property>
@@ -404,44 +404,16 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="box2">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkCheckButton" id="ckPolaroid">
-                            <property name="label" translatable="yes">Polaroid mode</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="has_tooltip">True</property>
-                            <property name="tooltip_markup" translatable="yes">Images with polaroid-like white border</property>
-                            <property name="tooltip_text" translatable="yes">Images with polaroid-like white border</property>
-                            <property name="xalign">0</property>
-                            <property name="draw_indicator">False</property>
-                            <signal name="clicked" handler="onPolaroid" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="ckRandom">
-                            <property name="label" translatable="yes">Random order</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="xalign">0</property>
-                            <property name="draw_indicator">False</property>
-                            <signal name="toggled" handler="onRandom" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
+                      <object class="GtkCheckButton" id="ckPolaroid">
+                        <property name="label" translatable="yes">Polaroid mode</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup" translatable="yes">Images with polaroid-like white border</property>
+                        <property name="tooltip_text" translatable="yes">Images with polaroid-like white border</property>
+                        <property name="xalign">0</property>
+                        <property name="draw_indicator">False</property>
+                        <signal name="clicked" handler="onPolaroid" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -567,6 +539,38 @@
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="ckRandom">
+                        <property name="label" translatable="yes">Put images side-by-side</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="xalign">0</property>
+                        <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="onRandom" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">7</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="ckPickRandom">
+                        <property name="label" translatable="yes">Pick images randomly</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="xalign">0</property>
+                        <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="onRandom" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">8</property>
                       </packing>
                     </child>
                   </object>

@@ -12,6 +12,8 @@ try:
   from wand.image import Image
   from wand.display import display
 except ImportError as e:
+  # cd /usr/lib/
+  # ln -s libMagickWand-6.Q16.so libMagickWand.so
   print "Couldn't import Wand package."
   print "Please refer to #http://dahlia.kr/wand/ to install it."
   import traceback; traceback.print_exc()
@@ -236,13 +238,17 @@ def get_file_details(filename):
 ###########################################
 
 class GetFileDir:
-  def __init__(self, random):
+  def __init__(self, randomize):
     self.idx = 0
     self.files = os.listdir(PARAMS["PATH"])
-    if random:
-      random.shuffle(self.files)
     
-  def get_next_file():  
+    if len(self.files) == 0:
+      raise EnvironmentError("No file available")
+    
+    if randomize:
+      random.shuffle(self.files)
+  
+  def get_next_file(self):
     to_return = self.files[self.idx]
     
     self.idx += 1 
@@ -486,6 +492,11 @@ def random_wall(real_target_filename):
       
 get_next_file = None
 
+def path_is_jnetfs(path):
+  #check if PATH is VFS or not
+  df_output_lines = os.popen("df -Ph '%s'" % path).read().splitlines()
+  return "JnetFS" in df_output_lines[1]
+
 def fix_args():
   global get_next_file
   
@@ -497,9 +508,7 @@ def fix_args():
   elif PARAMS["FORCE_NO_VFS"]:
     PARAMS["USE_VFS"]
   else:
-    #check if PATH is VFS or not
-    df_output_lines = os.popen("df -Ph '%s'" % PARAMS["PATH"]).read().splitlines()
-    PARAMS["USE_VFS"] = "JnetFS" in df_output_lines[1]
+    PARAMS["USE_VFS"] = path_is_jnetfs(PARAMS["PATH"]) 
 
   if not PARAMS["USE_VFS"]:    
     get_next_file = GetFileDir(PARAMS["PICK_RANDOM"]).get_next_file
