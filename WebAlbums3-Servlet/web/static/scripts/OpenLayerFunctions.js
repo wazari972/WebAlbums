@@ -3,15 +3,15 @@ var mapCenter = {
     lon: 5.7779693603516,
     lat: 45.212268217196,
     zoom: 10
-}
+};
 
 function add_stamen_layers(map) {
-    var toner = new OpenLayers.Layer.Stamen("toner")
-    toner.setName("Stamen Toner")
-    var water = new OpenLayers.Layer.Stamen("watercolor")
-    water.setName("Stamen Watercolor")
-    //var terrain = new OpenLayers.Layer.Stamen("terrain")
-    //terrain.setName("Stamen Terrain")
+    var toner = new OpenLayers.Layer.Stamen("toner");
+    toner.setName("Stamen Toner");
+    var water = new OpenLayers.Layer.Stamen("watercolor");
+    water.setName("Stamen Watercolor");
+    //var terrain = new OpenLayers.Layer.Stamen("terrain");
+    //terrain.setName("Stamen Terrain");
     
     map.addLayers([toner, water]);
 }
@@ -20,14 +20,14 @@ function add_osm_layers(map) {
     map.addLayer(new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"));
     
     var openCycle = new OpenLayers.Layer.OSM( "OSM Cycle Map", "http://tile.opencyclemap.org/cycle/${z}/${x}/${y}.png",
-        {displayOutsideMaxExtent: true, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" })
+        {displayOutsideMaxExtent: true, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" });
         
     map.addLayer(openCycle);
 }
 
 function add_google_layers(map) {
     /**/
-    if (google.maps.MapTypeId == undefined) {
+    if (google.maps.MapTypeId === undefined) {
         /* HUGLY hack, but Google Map script tries to 
          * document.write to load its inner script, which
          * is not allowed in XTHML/XSL. We just do it manually
@@ -36,25 +36,25 @@ function add_google_layers(map) {
         
         var reload_google_layers = function() {
             if (have_google()) {
-                add_google_layers(map)
+                add_google_layers(map);
             } else {
-                alert("Couldn't load Google maps ...")
+                alert("Couldn't load Google maps ...");
             }
-        }
+        };
 
-        $.getScript("http://maps.gstatic.com/intl/en_us/mapfiles/api-3/9/14/main.js", reload_google_layers)
+        $.getScript("http://maps.gstatic.com/intl/en_us/mapfiles/api-3/9/14/main.js", reload_google_layers);
         
-        return
+        return;
     }
     
     var gphy = new OpenLayers.Layer.Google(
         "Google Physical",
         {type: google.maps.MapTypeId.TERRAIN, numZoomLevels: 20}
     );
-    map.addLayer(gphy)
+    map.addLayer(gphy);
     
     var gmap = new OpenLayers.Layer.Google("Google Plan", {visibility: false, numZoomLevels: 20});
-    map.addLayer(gmap)
+    map.addLayer(gmap);
 }
 
 function add_geoportail_layers(map) {
@@ -72,10 +72,10 @@ function add_geoportail_layers(map) {
         style: "normal",
         attribution: '&copy;IGN <a href="http://www.geoportail.fr/" target="_blank"><img src="http://api.ign.fr/geoportail/api/js/latest/theme/geoportal/img/logo_gp.gif"></a> <a href="http://www.geoportail.gouv.fr/depot/api/cgu/licAPI_CGUF.pdf" alt="TOS" title="TOS" target="_blank">Terms of Service</a>'
     };
-    var ign = new OpenLayers.Layer.WMTS(options)
+    var ign = new OpenLayers.Layer.WMTS(options);
     
-    ign.setName("Geoportail IGN")
-    map.addLayer(ign)
+    ign.setName("Geoportail IGN");
+    map.addLayer(ign);
 }
 
 function add_heatmap_layer(map, name) {
@@ -95,27 +95,27 @@ function heat_add_src(heatmap, latlng, intensity) {
     var src = new Heatmap.Source(latlng);
     heatmap.addSource(src);
     
-    if (intensity != undefined) {
-        src.intensity = intensity
+    if (intensity !== undefined) {
+        src.intensity = intensity;
     }
 }
 
 function have_heatmap() {
-    return (typeof Heatmap != 'undefined')
+    return (typeof Heatmap !== 'undefined');
 }
 
 function add_marker_layer(map, name) {
     var markers = new OpenLayers.Layer.Markers(name);
     map.addLayer(markers);
     
-    return markers
+    return markers;
 }
 function have_google() {
-    return (typeof google != 'undefined' && google.maps.MapTypeId != undefined)
+    return (typeof google !== 'undefined' && google.maps.MapTypeId !== undefined);
 }
 
 function have_osm() {
-    return (typeof OpenLayers != 'undefined')
+    return (typeof OpenLayers !== 'undefined');
 }
 
 function init_osm_box(divName) {
@@ -136,12 +136,12 @@ function init_osm_box(divName) {
         displayProjection: new OpenLayers.Projection("EPSG:4326")
     } );
     
-    var layers = [add_osm_layers, add_geoportail_layers, add_google_layers, add_stamen_layers]
+    var layers = [add_osm_layers, add_geoportail_layers, add_google_layers, add_stamen_layers];
     for (var i = 0; i < layers.length; i++) {
         try {
-            layers[i](map)
+            layers[i](map);
         } catch(e) {
-            window.console.log(e)
+            window.console.log(e);
         }
     }
     
@@ -150,12 +150,12 @@ function init_osm_box(divName) {
 
     map.div.style[OpenLayers.String.camelize('background-image')]= 'none';
    
-    return map
+    return map;
 }
 
 var gpx_layers = [];
 function init_gpx_layer(map, name, file_id, ready_callback) {
-    file = "GPX__"+file_id+".gpx"
+    file = "GPX__"+file_id+".gpx";
     
     // Add the Layer with the GPX Track
     var lgpx = new OpenLayers.Layer.Vector(name+" "+file_id, {
@@ -166,29 +166,29 @@ function init_gpx_layer(map, name, file_id, ready_callback) {
         projection: new OpenLayers.Projection("EPSG:4326"),
         style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 1},
         strategies: [new OpenLayers.Strategy.Fixed()]
-    })
+    });
 
     map.addLayer(lgpx);
     
     lgpx.events.register("loadend", lgpx , function (e) {
-        if (ready_callback == undefined)
-            zoomTo(map, lgpx, false)
+        if (ready_callback === undefined)
+            zoomTo(map, lgpx, false);
         else
-            ready_callback(map, lgpx)
+            ready_callback(map, lgpx);
     });
     
-    return lgpx
+    return lgpx;
 }
 
 function zoomTo(map, layer, closest) {
-    if (map == null) {
+    if (map === null) {
         return;
     }
     map.zoomToExtent(layer.getDataExtent(), closest);
 }
 
 function zoom_to_layer(map, layer) {
-    if (map == null) {
+    if (map === null) {
         return;
     }
     
@@ -197,7 +197,7 @@ function zoom_to_layer(map, layer) {
 
 function transformLonLat(lonlat) {
     if (!lonlat || !lonlat.transform)
-        return lonlat
+        return lonlat;
     else {
         if (!have_osm()) {
             return null;
@@ -213,7 +213,7 @@ function lng_lat_to_lonlat(lng, lat) {
     if (!have_osm()) {
         return null;
     }
-    return transformLonLat(new OpenLayers.LonLat(lng, lat))
+    return transformLonLat(new OpenLayers.LonLat(lng, lat));
 }
 
 var currentPopup = null;
@@ -232,7 +232,7 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
     marker.feature = feature;
 
     var markerClick = function(evt) {
-        if (this.popup == null) {
+        if (this.popup === null) {
             this.popup = this.createPopup(this.closeBox);
             map.addPopup(this.popup);
             this.popup.show();
@@ -240,11 +240,11 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
             this.popup.toggle();
         }
         
-        if (currentPopup != null)
-            currentPopup.hide()
+        if (currentPopup !== null)
+            currentPopup.hide();
     
         currentPopup = this.popup;
-        currentPopup.show()
+        currentPopup.show();
         OpenLayers.Event.stop(evt);
     };
     
@@ -252,7 +252,7 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
 
     markers.addMarker(marker);
     
-    return marker
+    return marker;
 }
 
 function geocode(address, map) {
@@ -264,10 +264,10 @@ function geocode(address, map) {
     
     if (geocoder) {
         geocoder.geocode({'address': address }, function (results, status) {
-          if (status == google.maps.GeocoderStatus.OK) {
+          if (status === google.maps.GeocoderStatus.OK) {
              
-             var longlat = new OpenLayers.LonLat(results[0].geometry.location.lng(), results[0].geometry.location.lat())
-             map.setCenter(transformLonLat(longlat), map.getZoom())
+             var longlat = new OpenLayers.LonLat(results[0].geometry.location.lng(), results[0].geometry.location.lat());
+             map.setCenter(transformLonLat(longlat), map.getZoom());
 
           } else {
              alert("Geocoding failed: " + status);
@@ -283,18 +283,18 @@ function json_pointToContent(point) {
     return "<div class='map_content'>"
           +"  <h1><a href='Tag__"+point.id+"__"+point.name+"'>"+point.name+"</a></h1>\n"
           +"  <center><img src='Miniature__"+point.picture+".png' /></center>\n"
-          +"</div>"
+          +"</div>";
 }
 
 
 function json_point_to_lonlat(point) {
-    return lng_lat_to_lonlat(point.lng, point.lat)
+    return lng_lat_to_lonlat(point.lng, point.lat);
 }
 
 function populateMapFromJSON(url, map, headCloud) {
     var heatmap = null;
     if (headCloud && have_heatmap()) {
-        heatmap = add_heatmap_layer(map, "Heatmap")
+        heatmap = add_heatmap_layer(map, "Heatmap");
     }
     
     var markers = add_marker_layer(map, "Geo Tags")
@@ -303,23 +303,23 @@ function populateMapFromJSON(url, map, headCloud) {
         function(data) {
             var hasData = false;
             $.each(data, function(key, point) {
-                var lonlat = json_point_to_lonlat(point)
+                var lonlat = json_point_to_lonlat(point);
                 
-                addMarker(map, markers, point, json_pointToContent, lonlat)
+                addMarker(map, markers, point, json_pointToContent, lonlat);
                 hasData = true;
-                if (heatmap == null) {
+                if (heatmap === null) {
                     return;
                 }
-                var intensity = headCloud.find("tag[id=" +point.id+ "]").attr("nb")
-                heat_add_src(heatmap, lonlat, intensity)
+                var intensity = headCloud.find("tag[id=" +point.id+ "]").attr("nb");
+                heat_add_src(heatmap, lonlat, intensity);
             });
             
             if (hasData) {
-                zoom_to_layer (map, heatmap != null ? heatmap : markers)
+                zoom_to_layer (map, heatmap !== null ? heatmap : markers);
             }
             $("body").css("cursor", "auto");
             /* BUG: this div blocks my TOC in Carnet page ... so I get rid of it here !*/
-            $(".olForeignContainer").remove()
+            $(".olForeignContainer").remove();
         }
     ).error(function(e, textStatus) { alert("populateMapFromJSON FAILED --"+url+" -- "+e +" -- "+textStatus); $("body").css("cursor", "auto");});
 }
