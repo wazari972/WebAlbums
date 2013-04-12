@@ -14,7 +14,7 @@
 	<div class="body">
 	  <center>
 	    <img>
-	      <xsl:attribute name="src">Miniature__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
+	      <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
 	    </img>
 	  </center>
 	</div>

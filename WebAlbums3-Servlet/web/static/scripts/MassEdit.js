@@ -4,7 +4,7 @@ function selectAll() {
         $(this).prop('checked', select); 
     });
     
-    var bt = $(this) ;
+    var bt = $(this);
     if (select) bt.attr('value',"Aucune");
     else bt.attr('value',"Toutes");
     select = !select ;
@@ -41,15 +41,14 @@ function check_massedit() {
     var checked = false;
     
     if (mode === 'INTENSIVE EDIT') {
-        $(".massedit_chk").addClass("edit");
-        return;
+        checked = true;
+    } else {
+        $(".massedit_chkbox").each(function () {
+            if (!checked && $(this).prop("checked")) {
+                checked = true;
+            }
+        });
     }
-    
-    $(".massedit_chkbox").each(function () {
-        if (!checked && $(this).prop("checked")) {
-            checked = true;
-        }
-    });
     
     if (checked) {
         $(".massedit_box").css('visibility', 'visible');
@@ -58,7 +57,7 @@ function check_massedit() {
         $(".massedit_box").css('visibility', 'hidden');
         $(".massedit_chk").css('visibility', 'hidden').addClass("edit");
         $(this).parent().css('visibility', 'visibility');
-        $(this).css('visibility', 'visible')
+        $(this).css('visibility', 'visible');
     }
 }
 
