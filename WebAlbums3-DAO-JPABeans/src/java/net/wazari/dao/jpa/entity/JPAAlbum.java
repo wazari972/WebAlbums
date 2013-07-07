@@ -55,7 +55,6 @@ public class JPAAlbum implements Album, Serializable {
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private JPAPhoto picture;
     
-    @Where(clause="isGpx is null or not(isGpx)")
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "album", fetch = FetchType.LAZY)
     private List<JPAPhoto> jPAPhotoList;
 
