@@ -4,7 +4,7 @@
     <webAlbumsEAR>./bin/WebAlbums3-ea.ear</webAlbumsEAR>
     <webAlbumsFS>./WebAlbums3-FS</webAlbumsFS>
     <libJnetFs>./lib</libJnetFs>
-    <root_path>/other/Web</root_path>
+    <root_path>/other/Webeee</root_path>
     <users>
         <user name="kevin" password="" groups="Admin:Manager"/>
     </users>
