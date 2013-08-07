@@ -1,0 +1,9 @@
+Sample data for WebAlbums Database
+==================================
+
+1. put `image` and `miniatures` directories in your `data` directory
+2. import WebAlbums.sql to an *empty* database:
+
+mysql -u wazari972 -p WebAlbums < ./WebAlbums.sql
+# default password is 'ijaheb'
+
