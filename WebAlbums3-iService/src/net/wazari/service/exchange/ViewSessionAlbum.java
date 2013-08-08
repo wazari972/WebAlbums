@@ -5,18 +5,28 @@
 
 package net.wazari.service.exchange;
 
+import net.wazari.service.exchange.ViewSession.Album_Action;
+import net.wazari.service.exchange.ViewSession.Album_Special;
+
 /**
  *
  * @author kevin
  */
-public interface ViewSessionAlbum extends ViewSession {
-    interface ViewSessionAlbumAgo extends ViewSessionAlbum {
+public interface ViewSessionAlbum {
+    interface ViewSessionAlbumAgo {
         Integer getYear();
         Integer getMonth();
         Integer getDay();
         boolean getAll();
+        ViewSession getVSession();
     }
-    interface ViewSessionAlbumSubmit extends ViewSessionAlbum {
+    
+    interface ViewSessionAlbumSimple {
+        Integer getId();
+        ViewSession getVSession();
+    }
+    
+    interface ViewSessionAlbumSubmit {
         String getDesc();
 
         String getNom();
@@ -30,12 +40,27 @@ public interface ViewSessionAlbum extends ViewSession {
         Integer getUserAllowed();
         
         int getNewTheme();
+        
+        Integer getId();
+        ViewSession getVSession();
     }
 
-    interface ViewSessionAlbumEdit extends ViewSessionAlbum {}
-    interface ViewSessionAlbumDisplay extends ViewSessionAlbum {}
-    Integer getId();
+    ViewSession getVSession();
+    
+    interface ViewSessionAlbumEdit {
+        ViewSession getVSession();
+        Integer getId();
+    }
+    interface ViewSessionAlbumDisplay {
+        ViewSession getVSession();
+        Integer getId();
+        Integer getPage() ;
+    }
+    
+    Album_Special getSpecial();
+    Album_Action getAction();
     Integer getPage() ;
+    
     Integer getAlbmPage();
     Integer getNbPerYear();
     void setPhotoAlbumSize(int size);

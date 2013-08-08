@@ -24,7 +24,7 @@ import net.wazari.service.DatabaseLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.Action;
+import net.wazari.service.exchange.ViewSession.Database_Action;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.xml.database.*;
 import net.wazari.service.exchange.xml.database.XmlDatabaseStats.XmlDatabaseStatsTheme;
@@ -49,10 +49,10 @@ public class DatabaseBean implements DatabaseLocal {
     @EJB private PhotoUtil photoUtil ;
     @EJB MaintFacadeLocal maintDAO;
     
-    public XmlDatabaseImport treatIMPORT(ViewSession vSession) {
+    public XmlDatabaseImport treatIMPORT(ViewSessionDatabase vSession) {
         XmlDatabaseImport output = new XmlDatabaseImport() ;
         try {
-            databaseDAO.treatImportXML(vSession.getConfiguration().wantsProtectDB(), getPath(vSession.getConfiguration()));
+            databaseDAO.treatImportXML(vSession.getVSession().getConfiguration().wantsProtectDB(), getPath(vSession.getVSession().getConfiguration()));
             output.message = "Import OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
@@ -61,10 +61,10 @@ public class DatabaseBean implements DatabaseLocal {
         return output;
     }
 
-    public XmlDatabaseExport treatEXPORT(ViewSession vSession) {
+    public XmlDatabaseExport treatEXPORT(ViewSessionDatabase vSession) {
         XmlDatabaseExport output = new XmlDatabaseExport() ;
         try {
-            databaseDAO.treatExportXML(getPath(vSession.getConfiguration()));
+            databaseDAO.treatExportXML(getPath(vSession.getVSession().getConfiguration()));
             output.message = "Export OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
@@ -73,24 +73,24 @@ public class DatabaseBean implements DatabaseLocal {
         return output;
     }
 
-    public XmlDatabaseCheck treatCHECK(ViewSession vSession) {
+    public XmlDatabaseCheck treatCHECK(ViewSessionDatabase vSession) {
         XmlDatabaseCheck output = new XmlDatabaseCheck() ;
         
-        Action action = vSession.getAction() ;
+        Database_Action action = vSession.getAction() ;
         if (action == null) {
             return output;
         }
         
         try {
-            Theme enrTheme = themeDAO.find(vSession.getTheme().getId());
+            Theme enrTheme = themeDAO.find(vSession.getVSession().getTheme().getId());
             if (enrTheme == null) {
                 throw new DatabaseFacadeLocalException("Theme not set");
             }
-            if (vSession.getConfiguration().isPathURL()) {
+            if (vSession.getVSession().getConfiguration().isPathURL()) {
                 throw new DatabaseFacadeLocalException("URL path checking not implemented yet");
             }
             List<Theme> themes = new LinkedList<Theme>();
-            if (vSession.isRootSession()) {
+            if (vSession.getVSession().isRootSession()) {
                 themes.addAll(themeDAO.findAll());
             }
             else {
@@ -105,12 +105,12 @@ public class DatabaseBean implements DatabaseLocal {
                 List<String> images = null;
                 List<String> mini = null;
                 
-                if (action == Action.CHECK_FS) {
+                if (action == Database_Action.CHECK_FS) {
                     images = new LinkedList<String>();
                     mini = new LinkedList<String>();
-                    String sep = vSession.getConfiguration().getSep() ;
+                    String sep = vSession.getVSession().getConfiguration().getSep() ;
                     List<String> current = images ;
-                    String pictpath = vSession.getConfiguration().getImagesPath(true) ;
+                    String pictpath = vSession.getVSession().getConfiguration().getImagesPath(true) ;
                     
                     while (current != null) {    
                         File themeDir = new File(pictpath + sep + curEnrTheme.getNom());
@@ -127,7 +127,7 @@ public class DatabaseBean implements DatabaseLocal {
                         
                         if (current == images) {
                             current = mini; 
-                            pictpath = vSession.getConfiguration().getMiniPath(true) ;
+                            pictpath = vSession.getVSession().getConfiguration().getMiniPath(true) ;
                         } else {
                             current = null;
                         }
@@ -138,15 +138,16 @@ public class DatabaseBean implements DatabaseLocal {
                     for (Photo enrPhoto : enrAlbum.getPhotoList()) {
                         count++;
                         List<String> current = images ;
-                        for (String filepath : new String[]{photoUtil.getImagePath(vSession, enrPhoto), photoUtil.getMiniPath(vSession, enrPhoto)}) {
-                            if (action == Action.CHECK_DB) {
+                        for (String filepath : new String[]{photoUtil.getImagePath(vSession.getVSession(), enrPhoto), 
+                                                            photoUtil.getMiniPath(vSession.getVSession(), enrPhoto)}) {
+                            if (action == Database_Action.CHECK_DB) {
                                 File f = new File(filepath);
                                 if (!f.exists()) {
                                     output.files.add(filepath+": missing");
                                 } else if (!f.canRead()) {
                                     output.files.add(filepath+": not readable");
                                 }
-                            } else if (action == Action.CHECK_FS) {
+                            } else if (action == Database_Action.CHECK_FS) {
                                 
                                 boolean removed = current.remove(filepath);
                                 log.info("checking: {}", filepath);
@@ -156,7 +157,7 @@ public class DatabaseBean implements DatabaseLocal {
                         }
                     }
                 }
-                if (action == Action.CHECK_FS) {
+                if (action == Database_Action.CHECK_FS) {
                     output.files.addAll(images);
                     output.files.addAll(mini);
                 }
@@ -171,10 +172,10 @@ public class DatabaseBean implements DatabaseLocal {
         return output;
     }
 
-    public XmlDatabaseTrunk treatTRUNK(ViewSession vSession) {
+    public XmlDatabaseTrunk treatTRUNK(ViewSessionDatabase vSession) {
         XmlDatabaseTrunk output = new XmlDatabaseTrunk() ;
         try {
-            databaseDAO.treatTruncateDB(vSession.getConfiguration().wantsProtectDB());
+            databaseDAO.treatTruncateDB(vSession.getVSession().getConfiguration().wantsProtectDB());
             output.message = "Trunk OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
@@ -185,14 +186,14 @@ public class DatabaseBean implements DatabaseLocal {
 
     public XmlDatabaseStats treatSTATS(ViewSessionDatabase vSession) {
         XmlDatabaseStats output = new XmlDatabaseStats() ;
-        Theme enrTheme = vSession.getTheme();
+        Theme enrTheme = vSession.getVSession().getTheme();
         if (enrTheme == null) {
             output.exception = "theme not set";
             return output;
         }
         List<Theme> themes = new LinkedList<Theme>();
         XmlDatabaseStatsTheme xmlRootTheme = null;
-        if (!vSession.isRootSession()) {
+        if (!vSession.getVSession().isRootSession()) {
             //Hibernate exception if direct
             themes.add(themeDAO.find(enrTheme.getId()));
         } else {
@@ -220,14 +221,14 @@ public class DatabaseBean implements DatabaseLocal {
                 vSession.setTheme(curEnrTheme);
             }
             
-            xmlTheme.tags = tagDAO.loadVisibleTags(vSession, false).size();
+            xmlTheme.tags = tagDAO.loadVisibleTags(vSession.getVSession(), false).size();
             if (xmlRootTheme != null) {
                 vSession.setRootSession(Boolean.TRUE);
                 vSession.setTheme(enrTheme);
             }
             
             if (xmlRootTheme == null || xmlRootTheme.tag == null) {
-                Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession);
+                Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession.getVSession());
                 List<XmlTagCloudEntry> lst = new ArrayList<XmlTagCloudEntry>(map.size());
                 for (Tag enrTag : map.keySet()) {
                     XmlTagCloudEntry xmlCloudEntry = new XmlTagCloudEntry();

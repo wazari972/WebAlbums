@@ -13,18 +13,63 @@ import net.wazari.dao.exchange.ServiceSession;
  * @author kevin
  */
 public interface ViewSession extends ServiceSession{
-    enum Special {
-        TOP5, VISIONNEUSE, CLOUD, PERSONS, PLACES, UPDATE, YEARS, PHOTOALBUM_SIZE,
-        SELECT, RANDOM, ABOUT, FASTEDIT, JUST_THEME, MAP, GRAPH, GPX, ONLY, AGO}
+    public interface ViewSessionChoix {
+        Choix_Special getSpecial();
+        ViewSession getVSession();
+    }
+    enum Old_Special {
+        UPDATE, RANDOM, ONLY, 
+    }
+    
+    enum Choix_Special {
+        MAP, JUST_THEME
+    }
+    
+    enum Carnet_Special {
+        TOP5
+    }
+    
+    enum Tag_Special {
+        CLOUD, PERSONS, PLACES
+    }
+    
+    enum Photo_Special {
+        VISIONNEUSE, FASTEDIT
+    }
+    
+    enum Album_Special {
+        AGO, YEARS, TOP5, SELECT, GRAPH, ABOUT, GPX, PHOTOALBUM_SIZE
+    }
 
-    enum Action {
-        DEFAULT,
-        SAVE, SUBMIT, EDIT, IMPORT, 
-        DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, MASSEDIT, LOGIN, CHANGE_IS_MANAGER, DELTHEME, LINKTAG, MODPERS,
-        TRUNK, EXPORT, CHECK_DB, CHECK_FS, STATS, UPDATE, UPDATE_DAO, PLUGINS, RELOAD_PLUGINS, CREATE_DIRS, SAVE_CONFIG, RELOAD_CONFIG, PRINT_CONFIG,   MODMINOR, SETHOME}
-
+    enum Action_Photo {
+        EDIT, SUBMIT, MASSEDIT
+    }
+    
+    enum Album_Action {
+        EDIT, SUBMIT
+    }
+    
+    enum Carnet_Action {
+        EDIT, SUBMIT, SAVE
+    }
+    
+    enum Old_Action {
+        LOGIN, CHANGE_IS_MANAGER, IMPORT, DEFAULT
+    }
+    
     enum Box {
-        NONE, MULTIPLE, LIST, MAP, MAP_SCRIPT
+        NONE, MULTIPLE, LIST, MAP_SCRIPT, MAP
+        
+    }
+    enum Config_Action {
+        DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, DELTHEME, LINKTAG, MODPERS, 
+        MODMINOR
+    }
+
+    enum Database_Action {
+        TRUNK, EXPORT, CHECK_DB, CHECK_FS, STATS, UPDATE, UPDATE_DAO, 
+        PLUGINS, RELOAD_PLUGINS, CREATE_DIRS, SAVE_CONFIG, RELOAD_CONFIG, 
+        PRINT_CONFIG, SETHOME
     }
 
     enum Mode {
@@ -35,9 +80,9 @@ public interface ViewSession extends ServiceSession{
     
     boolean getCompleteChoix();
 
-    Special getSpecial();
+    Old_Special getSpecial();
 
-    Action getAction();
+    Old_Action getAction();
 
     Utilisateur getUser();
 

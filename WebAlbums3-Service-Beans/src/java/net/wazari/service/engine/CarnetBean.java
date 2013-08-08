@@ -106,7 +106,7 @@ public class CarnetBean implements CarnetLocal {
         List<Carnet> carnets = null;
         Integer carnetId = vSession.getCarnet();
         if (carnetId != null) {
-            Carnet enrCarnet = carnetDAO.loadIfAllowed(vSession, carnetId);
+            Carnet enrCarnet = carnetDAO.loadIfAllowed(vSession.getVSession(), carnetId);
             if (enrCarnet != null) {
                 carnets = new ArrayList<Carnet>(1);
                 carnets.add(enrCarnet);
@@ -118,8 +118,8 @@ public class CarnetBean implements CarnetLocal {
         
         if (carnetId == null) {
             Bornes bornes = webPageService.calculBornes(page, 
-                                    vSession.getPhotoAlbumSize());
-            carnets = carnetDAO.queryCarnets(vSession, Restriction.THEME_ONLY, 
+                                    vSession.getVSession().getPhotoAlbumSize());
+            carnets = carnetDAO.queryCarnets(vSession.getVSession(), Restriction.THEME_ONLY, 
                                 AlbumFacadeLocal.TopFirst.FIRST, bornes).subset;
             output.page = webPageService.xmlPage(thisPage, bornes);
         }
@@ -139,7 +139,7 @@ public class CarnetBean implements CarnetLocal {
                 for (Photo p : enrCarnet.getPhotoList()) {
                     XmlPhotoId photo = new XmlPhotoId(p.getId());
                     carnet.photo.add(photo);
-                    if (vSession.directFileAccess()) {
+                    if (vSession.getVSession().directFileAccess()) {
                         photo.path = p.getPath(true);
                     }
                 }
@@ -148,7 +148,7 @@ public class CarnetBean implements CarnetLocal {
 
             if (enrCarnet.getPicture() != null) {
                 details.photoId = new XmlPhotoId(enrCarnet.getPicture().getId());
-                if (vSession.directFileAccess() && details.photoId != null) {
+                if (vSession.getVSession().directFileAccess() && details.photoId != null) {
                     details.photoId.path = enrCarnet.getPicture().getPath(true) ;
                 }
             }
@@ -157,12 +157,12 @@ public class CarnetBean implements CarnetLocal {
             details.setDescription(enrCarnet.getDescription());
 
             //tags du carnet
-            details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrCarnet, Box.NONE) ;
+            details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession.getVSession(), enrCarnet, Box.NONE) ;
             details.tagTree = webPageService.tagListToTagTree(details.tag_used);
             
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
-            if (vSession.isSessionManager()) {
+            if (vSession.getVSession().isSessionManager()) {
                 details.user = new XmlPhotoAlbumUser(enrCarnet.getDroit().getNom(), null);
             }
             carnet.details = details ;
@@ -187,7 +187,7 @@ public class CarnetBean implements CarnetLocal {
         Integer carnetId = vSession.getCarnet();
         if (carnetId == null) {
             enrCarnet = carnetDAO.newCarnet();
-            enrCarnet.setTheme(vSession.getTheme());
+            enrCarnet.setTheme(vSession.getVSession().getTheme());
         } else {
             enrCarnet = carnetDAO.find(carnetId);
         }
@@ -199,7 +199,7 @@ public class CarnetBean implements CarnetLocal {
         output.carnet = enrCarnet;
         Boolean supprParam = vSession.getSuppr();
         if (supprParam) {
-            if (finder.deleteCarnet(enrCarnet, vSession.getConfiguration())) {
+            if (finder.deleteCarnet(enrCarnet, vSession.getVSession().getConfiguration())) {
                 output.message = "Carnet correctement  supprimé !";
                 output.valid = true;
             } else {

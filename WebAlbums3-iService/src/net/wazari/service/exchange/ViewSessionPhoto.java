@@ -23,8 +23,13 @@ public interface ViewSessionPhoto extends ViewSession {
         
         Integer getNewStarLevel();
         void setStarLevel(Integer starLevel);
+        Integer getId();
     }
-    interface ViewSessionPhotoSubmit extends ViewSessionPhoto {
+    interface ViewSessionPhotoSimple {
+        Integer getId();
+        ViewSession getVSession();
+    }
+    interface ViewSessionPhotoSubmit {
 
         boolean getSuppr();
 
@@ -41,13 +46,22 @@ public interface ViewSessionPhoto extends ViewSession {
         boolean getThemeBackground();
 
         boolean getThemePicture();
+        Integer getId();
+        Integer getTagPhoto();
+        
+        ViewSession getVSession();
     }
-    interface ViewSessionPhotoEdit extends ViewSessionPhoto {
-
+    interface ViewSessionPhotoEdit {
+        Integer getId();
+        ViewSession getVSession();
     }
-    interface ViewSessionPhotoDisplay extends ViewSessionPhoto {
-
-        interface ViewSessionPhotoDisplayMassEdit extends ViewSessionPhotoDisplay {
+    
+    interface ViewSessionAnAlbum {
+        Integer getAlbum();
+        ViewSession getVSession();
+    }
+    interface ViewSessionPhotoDisplay {
+        interface ViewSessionPhotoDisplayMassEdit {
 
             enum Turn {
 
@@ -62,19 +76,14 @@ public interface ViewSessionPhoto extends ViewSession {
 
             Integer getRmTag();
         }
-
+        Action_Photo getAction();
         ViewSessionPhotoDisplayMassEdit getMassEdit();
-    }
-
-    Integer getId();
-
-    Integer getTagPhoto();
-
-    Mode getMode();
-
-    Integer getAlbum();
-
-    Integer getAlbmPage();
+        Integer getPage();
+        Integer getId();
+        Integer getAlbum();
+        Integer getAlbmPage();
     
-    Integer getPage();
+        ViewSession getVSession();
+    }
+    Mode getMode();    
 }

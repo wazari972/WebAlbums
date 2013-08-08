@@ -15,7 +15,7 @@ import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSession.Tag_Special;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.xml.common.XmlFrom;
@@ -78,7 +78,7 @@ public class TagBean implements TagLocal {
             thisPage.tagAsked = tagsAsked;
 
             output.title = new XmlTagTitle();
-            output.title.tagList = webService.displayListLB(Mode.TAG_USED, vSession, new ArrayList(tagSet), Box.NONE);
+            output.title.tagList = webService.displayListLB(Mode.TAG_USED, vSession.getVSession(), new ArrayList(tagSet), Box.NONE);
 
             PhotoRequest rq = new PhotoRequest(TypeRequest.TAG, tagSet);
             
@@ -98,7 +98,7 @@ public class TagBean implements TagLocal {
         about.tag.name = enrTag.getNom();
         about.tag.id = enrTag.getId();
         
-        Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession, enrTag);
+        Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession.getVSession(), enrTag);
         if (enrTagThemePhoto != null) {
             about.tag.picture = new XmlPhotoId(enrTagThemePhoto.getId());
             about.tag.picture.path = enrTagThemePhoto.getPath(true);
@@ -133,7 +133,7 @@ public class TagBean implements TagLocal {
 
         //what's the max number of pict per tag ?
         long max = 0;
-        Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession);
+        Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession.getVSession());
         for (long current : map.values()) {
             if (current > max) {
                 max = current;
@@ -236,28 +236,28 @@ public class TagBean implements TagLocal {
 
     @Override
     public XmlTagPersonsPlaces treatTagPersons(ViewSessionTag vSession) {
-        return treatTagPersonsPlaces(vSession, Special.PERSONS);
+        return treatTagPersonsPlaces(vSession, Tag_Special.PERSONS);
     }
     
     @Override
     public XmlTagPersonsPlaces treatTagPlaces(ViewSessionTag vSession) {
-        return treatTagPersonsPlaces(vSession, Special.PLACES);
+        return treatTagPersonsPlaces(vSession, Tag_Special.PLACES);
     }
     
     
-    private XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSessionTag vSession, Special special) {
+    private XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSessionTag vSession, Tag_Special special) {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagPersonsPlaces." + special, log);
 
         XmlTagPersonsPlaces output = new XmlTagPersonsPlaces();
 
         int type;
-        if (Special.PERSONS == special) {
+        if (Tag_Special.PERSONS == special) {
             type = 1;
         } else {
             type = 3;
         }
 
-        List<Tag> lstT = tagDAO.queryAllowedTagByType(vSession, type);
+        List<Tag> lstT = tagDAO.queryAllowedTagByType(vSession.getVSession(), type);
         for (Tag enrTag : lstT) {
             XmlTag tag = new XmlTag();
             tag.name = enrTag.getNom();
@@ -268,7 +268,7 @@ public class TagBean implements TagLocal {
                 tag.setGeo(geo.getLatitude(), geo.getLongitude());
             }
             
-            Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession, enrTag);
+            Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession.getVSession(), enrTag);
             if (enrTagThemePhoto != null) {
                 tag.picture = new XmlPhotoId(enrTagThemePhoto.getId());
                 tag.picture.path = enrTagThemePhoto.getPath(true);

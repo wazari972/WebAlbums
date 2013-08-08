@@ -23,12 +23,12 @@ import net.wazari.service.AlbumLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.AlbumUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSimple;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.service.exchange.xml.album.*;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
@@ -68,8 +68,8 @@ public class AlbumBean implements AlbumLocal {
         }
         
         XmlAlbum album = new XmlAlbum();
-        daoToXmlService.convertAlbum(vSession, enrAlbum, album, true);
-        daoToXmlService.addAlbumRight(vSession, enrAlbum, album);
+        daoToXmlService.convertAlbum(vSession.getVSession(), enrAlbum, album, true);
+        daoToXmlService.addAlbumRight(vSession.getVSession(), enrAlbum, album);
         return album;
     }
 
@@ -88,9 +88,9 @@ public class AlbumBean implements AlbumLocal {
             int ipage = 0;
             while (!found) {
                 log.info("check on page "+ipage);
-                bornes = webPageService.calculBornes(ipage, vSession.getPhotoAlbumSize());
+                bornes = webPageService.calculBornes(ipage, vSession.getVSession().getPhotoAlbumSize());
         
-                albums = albumDAO.queryAlbums(vSession, Restriction.THEME_ONLY,
+                albums = albumDAO.queryAlbums(vSession.getVSession(), Restriction.THEME_ONLY,
                                        AlbumFacadeLocal.TopFirst.FIRST, bornes);
                 for (Album enrAlbum : albums.subset) {
                     if (enrAlbum.getId() == albumId) {
@@ -108,9 +108,9 @@ public class AlbumBean implements AlbumLocal {
         } 
         
         if (!found) {
-            bornes = webPageService.calculBornes(page, vSession.getPhotoAlbumSize());
+            bornes = webPageService.calculBornes(page, vSession.getVSession().getPhotoAlbumSize());
         
-            albums = albumDAO.queryAlbums(vSession, 
+            albums = albumDAO.queryAlbums(vSession.getVSession(), 
                Restriction.THEME_ONLY, AlbumFacadeLocal.TopFirst.FIRST, bornes);
         }
         
@@ -128,7 +128,7 @@ public class AlbumBean implements AlbumLocal {
 
             if (enrAlbum.getPicture() != null) {
                 album.details.photoId = new XmlPhotoId(enrAlbum.getPicture().getId());
-                if (vSession.directFileAccess()) {
+                if (vSession.getVSession().directFileAccess()) {
                     album.details.photoId.path = enrAlbum.getPicture().getPath(true) ;
                 }
                 
@@ -148,7 +148,7 @@ public class AlbumBean implements AlbumLocal {
                 carnet.name = enrCarnet.getNom();
                 if (enrCarnet.getPicture() != null) {
                     carnet.picture = new XmlPhotoId(enrCarnet.getPicture().getId());
-                    if (vSession.directFileAccess()) {
+                    if (vSession.getVSession().directFileAccess()) {
                         carnet.picture.path = enrCarnet.getPicture().getPath(true);
                     }
                 }
@@ -168,10 +168,10 @@ public class AlbumBean implements AlbumLocal {
             }
             //tags de l'album
             album.details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, 
-                              vSession, enrAlbum, Box.NONE, enrAlbum.getDate());
+                              vSession.getVSession(), enrAlbum, null, enrAlbum.getDate());
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
-            if (vSession.isSessionManager()) {
+            if (vSession.getVSession().isSessionManager()) {
                 album.details.user = new XmlPhotoAlbumUser(enrAlbum.getDroit().getNom(), null);
                 album.details.userInside = new LinkedList<String>() ;
                 for (Utilisateur user : userDAO.loadUserInside(enrAlbum.getId())) {
@@ -194,7 +194,7 @@ public class AlbumBean implements AlbumLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumGpx gpxList = new XmlAlbumGpx();
         
-        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession.getVSession(), 
                          Restriction.THEME_ONLY, TopFirst.ALL, null);
         for (Album enrAlbum : albums.subset) {
             for (Photo enrGpx : enrAlbum.getGpxList()) {
@@ -218,11 +218,11 @@ public class AlbumBean implements AlbumLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumTop top5 = new XmlAlbumTop();
 
-        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession.getVSession(), 
                          Restriction.THEME_ONLY, TopFirst.TOP, new Bornes(TOP));
         for (Album enrAlbum : albums.subset) {
             XmlAlbum album = new XmlAlbum();
-            daoToXmlService.convertAlbum(vSession, enrAlbum, album, false);
+            daoToXmlService.convertAlbum(vSession.getVSession(), enrAlbum, album, false);
             
             top5.album.add(album);
         }
@@ -244,7 +244,7 @@ public class AlbumBean implements AlbumLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumSelect select = new XmlAlbumSelect();
 
-        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession.getVSession(), 
                                     Restriction.THEME_ONLY, TopFirst.ALL, null);
         
         boolean wantTags = vSession.getWantTags();
@@ -259,8 +259,8 @@ public class AlbumBean implements AlbumLocal {
         
         for (Album enrAlbum : albums.subset) {
             XmlAlbum album = new XmlAlbum();
-            daoToXmlService.convertAlbum(vSession, enrAlbum, album, wantTags);
-            daoToXmlService.addAlbumGpx(vSession, enrAlbum, album);
+            daoToXmlService.convertAlbum(vSession.getVSession(), enrAlbum, album, wantTags);
+            daoToXmlService.addAlbumGpx(vSession.getVSession(), enrAlbum, album);
             
             try {
                 album.time = new SimpleDateFormat("yyyy-MM-dd").parse(enrAlbum.getDate()).getTime();
@@ -298,8 +298,8 @@ public class AlbumBean implements AlbumLocal {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumYears years = new XmlAlbumYears();
 
-        Album enrFirstAlbum = albumDAO.loadFirstAlbum(vSession, Restriction.THEME_ONLY);
-        Album enrLastAlbum = albumDAO.loadLastAlbum(vSession, Restriction.THEME_ONLY);
+        Album enrFirstAlbum = albumDAO.loadFirstAlbum(vSession.getVSession(), Restriction.THEME_ONLY);
+        Album enrLastAlbum = albumDAO.loadLastAlbum(vSession.getVSession(), Restriction.THEME_ONLY);
 
         if (enrFirstAlbum == null || enrLastAlbum == null) {
             return years ;
@@ -321,11 +321,11 @@ public class AlbumBean implements AlbumLocal {
         for (Integer currentYear = lastYear; currentYear >= firstYear; currentYear--) {
             XmlAlbumYear year = new XmlAlbumYear() ;
             year.year = currentYear;
-            SubsetOf<Album> albums = albumDAO.queryRandomFromYear(vSession, Restriction.THEME_ONLY, 
+            SubsetOf<Album> albums = albumDAO.queryRandomFromYear(vSession.getVSession(), Restriction.THEME_ONLY, 
                     new Bornes(nbPerYear), currentYear.toString()) ;
             for (Album enrAlbum : albums.subset) {
                 XmlAlbum album = new XmlAlbum();
-                daoToXmlService.convertAlbum(vSession, enrAlbum, album, false);
+                daoToXmlService.convertAlbum(vSession.getVSession(), enrAlbum, album, false);
                 year.album.add(album) ;
             }
             years.year.add(year);
@@ -351,11 +351,11 @@ public class AlbumBean implements AlbumLocal {
             day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         }
         
-        List<Album> albums = albumDAO.loadTimesAgoAlbums(vSession, year, month, day,
+        List<Album> albums = albumDAO.loadTimesAgoAlbums(vSession.getVSession(), year, month, day,
                                                          (all ? Restriction.NONE : Restriction.THEME_ONLY));
         for (Album enrAlbum : albums) {
             XmlAlbum album = new XmlAlbum();
-            daoToXmlService.convertAlbum(vSession, enrAlbum, album, false);
+            daoToXmlService.convertAlbum(vSession.getVSession(), enrAlbum, album, false);
             ago.album.add(album);
         }
         
@@ -377,7 +377,7 @@ public class AlbumBean implements AlbumLocal {
 
         Boolean supprParam = vSession.getSuppr();
         if (supprParam) {
-            if (finder.deleteAlbum(enrAlbum, vSession.getConfiguration())) {
+            if (finder.deleteAlbum(enrAlbum, vSession.getVSession().getConfiguration())) {
                 output.message = "Album correctement  supprimé !";
             } else {
                 output.exception = "an error occured ...";
@@ -411,7 +411,7 @@ public class AlbumBean implements AlbumLocal {
         int newThemeId = vSession.getNewTheme();
         if (newThemeId != enrAlbum.getTheme().getId()) {
             Theme enrNewTheme = themeDAO.find(newThemeId);
-            finder.moveAlbum(enrAlbum, enrNewTheme, vSession.getConfiguration());
+            finder.moveAlbum(enrAlbum, enrNewTheme, vSession.getVSession().getConfiguration());
         }
         
         output.message = "Album (" + enrAlbum.getId() + ") correctement mise à jour !";
@@ -432,19 +432,19 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
-    public XmlAlbumAbout treatABOUT(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
+    public XmlAlbumAbout treatABOUT(ViewSessionAlbumSimple vSession) throws WebAlbumsServiceException {
         Integer albumId = vSession.getId() ;
         if (albumId == null) {
             return null;
         }
-        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
+        Album enrAlbum = albumDAO.loadIfAllowed(vSession.getVSession(), albumId);
         if (enrAlbum == null) {
             return null;
         }
 
         XmlAlbumAbout about = new XmlAlbumAbout() ;
         about.album = new XmlAlbum() ;
-        daoToXmlService.convertAlbum(vSession, enrAlbum, about.album, true);
+        daoToXmlService.convertAlbum(vSession.getVSession(), enrAlbum, about.album, true);
         
         return about ;
     }

@@ -13,6 +13,7 @@ import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSimple;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
 import net.wazari.service.exchange.xml.album.*;
 import net.wazari.service.exchange.xml.common.XmlFrom;
@@ -52,7 +53,7 @@ public interface AlbumLocal {
     XmlAlbumAgo treatAGO(ViewSessionAlbumAgo vSession) throws WebAlbumsServiceException;
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumAbout treatABOUT(ViewSessionAlbum vSession) throws WebAlbumsServiceException ;
+    XmlAlbumAbout treatABOUT(ViewSessionAlbumSimple vSession) throws WebAlbumsServiceException ;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumGpx treatGPX(ViewSessionAlbum vSession) throws WebAlbumsServiceException;

@@ -16,15 +16,15 @@ import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSessionPhoto;
+import net.wazari.service.exchange.ViewSession.Action_Photo;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSimple;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlGpx;
@@ -32,7 +32,6 @@ import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.*;
 import net.wazari.util.system.FilesFinder;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
@@ -75,17 +74,17 @@ public class PhotoBean implements PhotoLocal {
             output.exception = "Pas de photo demandé ... (id=null)" ;
             return output ;
         }
-        Photo enrPhoto = photoDAO.loadIfAllowed(vSession, photoID);
+        Photo enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), photoID);
 
         if (enrPhoto == null) {
             output.exception = "Impossible de trouver cette photo "
-                    + "(" + photoID + (vSession.isRootSession() ? "" : "/" + vSession.getTheme()) + ")" ;
+                    + "(" + photoID + (vSession.getVSession().isRootSession() ? "" : "/" + vSession.getVSession().getTheme()) + ")" ;
             return output ;
         }
 
         //supprimer ?
         if (vSession.getSuppr()) {
-            if (finder.deletePhoto(enrPhoto, vSession.getConfiguration())) {
+            if (finder.deletePhoto(enrPhoto, vSession.getVSession().getConfiguration())) {
                 output.message = "Photo correctement  supprimé !";
             } else {
                 output.exception = "Impossible de supprimer correctement la photo ...";
@@ -146,10 +145,10 @@ public class PhotoBean implements PhotoLocal {
             Theme enrTheme = enrPhoto.getAlbum().getTheme();
             log.warn("Assign theme background {}",enrPhoto) ;
             themeDAO.setBackground(enrTheme, enrPhoto);
-            vSession.getTheme().setBackground(enrPhoto);
+            vSession.getVSession().getTheme().setBackground(enrPhoto);
             
-            File backgroundDir = new File(vSession.getConfiguration()
-                    .getTempPath()+vSession.getTheme().getNom()) ;
+            File backgroundDir = new File(vSession.getVSession().getConfiguration()
+                    .getTempPath()+vSession.getVSession().getTheme().getNom()) ;
             
             log.info("Delete and create background dir: {}", backgroundDir) ;
             if (backgroundDir.listFiles() != null) {
@@ -166,7 +165,7 @@ public class PhotoBean implements PhotoLocal {
             Theme enrTheme = enrPhoto.getAlbum().getTheme();
             log.warn("Assign theme picture {}",enrPhoto) ;
             themeDAO.setPicture(enrTheme, enrPhoto);
-            vSession.getTheme().setPicture(enrPhoto);
+            vSession.getVSession().getTheme().setPicture(enrPhoto);
         }
 
         //utiliser cette photo pour representer le tag de ce theme
@@ -222,7 +221,7 @@ public class PhotoBean implements PhotoLocal {
             return output ;
         }
 
-        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
+        Album enrAlbum = albumDAO.loadIfAllowed(vSession.getVSession(), albumId);
         if (enrAlbum == null) {
             output.exception = "L'album (" + albumId + ") n'existe pas "
                     + "ou n'est pas accessible..." ;
@@ -230,7 +229,7 @@ public class PhotoBean implements PhotoLocal {
         }
         XmlAlbum album = output.album = new XmlAlbum();
         
-        daoToXml.convertAlbum(vSession, enrAlbum, album, true);
+        daoToXml.convertAlbum(vSession.getVSession(), enrAlbum, album, true);
 
         for (Carnet enrCarnet: enrAlbum.getCarnetList()) {
             if (album.carnet == null) {
@@ -238,7 +237,7 @@ public class PhotoBean implements PhotoLocal {
             }
             
             XmlCarnet carnet = new XmlCarnet();
-            daoToXml.convertCarnet(vSession, enrCarnet, carnet);
+            daoToXml.convertCarnet(vSession.getVSession(), enrCarnet, carnet);
             album.carnet.add(carnet);
         }
         
@@ -248,7 +247,7 @@ public class PhotoBean implements PhotoLocal {
             }
             
             XmlGpx gpx = new XmlGpx();
-            daoToXml.convertGpx(vSession, enrGpx, gpx);
+            daoToXml.convertGpx(vSession.getVSession(), enrGpx, gpx);
             album.gpx.add(gpx);
         }
         
@@ -280,18 +279,18 @@ public class PhotoBean implements PhotoLocal {
         }
         Album enrAlbum = enrPhoto.getAlbum();
 
-        daoToXml.convertPhotoDetails(vSession, enrPhoto, output.details, false);
+        daoToXml.convertPhotoDetails(vSession.getVSession(), enrPhoto, output.details, false);
                 
-        output.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
+        output.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession.getVSession(), enrPhoto,
                 Box.MULTIPLE);
 
-        output.tag_nused = webPageService.displayListIBT(Mode.TAG_NUSED, vSession, enrPhoto,
+        output.tag_nused = webPageService.displayListIBT(Mode.TAG_NUSED, vSession.getVSession(), enrPhoto,
                 Box.MULTIPLE);
 
-        output.tag_never = webPageService.displayListIBT(Mode.TAG_NEVER, vSession, enrPhoto,
+        output.tag_never = webPageService.displayListIBT(Mode.TAG_NEVER, vSession.getVSession(), enrPhoto,
                 Box.MULTIPLE);
 
-        output.tag_used_lst = webPageService.displayListIBT(Mode.TAG_USED, vSession, enrPhoto,
+        output.tag_used_lst = webPageService.displayListIBT(Mode.TAG_USED, vSession.getVSession(), enrPhoto,
                 Box.LIST);
         
         Utilisateur enrUtil = userDAO.find(enrPhoto.getDroit());
@@ -318,13 +317,13 @@ public class PhotoBean implements PhotoLocal {
         if (page == null && photoId != null) {
             int ipage = 0;
             while (!found) {
-                bornes = webPageService.calculBornes(ipage, vSession.getPhotoAlbumSize());
+                bornes = webPageService.calculBornes(ipage, vSession.getVSession().getPhotoAlbumSize());
         
                 if (rq.type == TypeRequest.PHOTO) {
-                    lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, 
+                    lstP = photoDAO.loadFromAlbum(vSession.getVSession(), rq.albumId, bornes, 
                                                   ListOrder.ASC);
                 } else {
-                    lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
+                    lstP = photoDAO.loadByTags(vSession.getVSession(), rq.listTagId, bornes, 
                                                ListOrder.DESC);
                 }
                 for (Photo enrPhoto : lstP.subset) {
@@ -341,13 +340,13 @@ public class PhotoBean implements PhotoLocal {
             }
         } 
         if (!found) {
-            bornes = webPageService.calculBornes(page, vSession.getPhotoAlbumSize());
+            bornes = webPageService.calculBornes(page, vSession.getVSession().getPhotoAlbumSize());
         
             if (rq.type == TypeRequest.PHOTO) {
-                lstP = photoDAO.loadFromAlbum(vSession, rq.albumId, bornes, 
+                lstP = photoDAO.loadFromAlbum(vSession.getVSession(), rq.albumId, bornes, 
                                           ListOrder.ASC);
             } else {
-                lstP = photoDAO.loadByTags(vSession, rq.listTagId, bornes, 
+                lstP = photoDAO.loadByTags(vSession.getVSession(), rq.listTagId, bornes, 
                                            ListOrder.DESC);
             }
         }        
@@ -361,9 +360,9 @@ public class PhotoBean implements PhotoLocal {
 
         XmlPhotoList output = new XmlPhotoList(lstP.subset.size()) ;
         Turn turn = null;
-        if (vSession.isSessionManager()) {
-            Action action = vSession.getAction();
-            if (Action.MASSEDIT == action) {
+        if (vSession.getVSession().isSessionManager()) {
+            Action_Photo action = vSession.getAction();
+            if (Action_Photo.MASSEDIT == action) {
                 turn = vSession.getMassEdit().getTurn();
                 stopWatch.setTag(stopWatch.getTag()+".MASSEDIT."+turn) ;
                 if (turn == Turn.LEFT) {
@@ -393,7 +392,7 @@ public class PhotoBean implements PhotoLocal {
                 if (chkbox) {
                     current = true;
                     if (turn == Turn.LEFT || turn == Turn.RIGHT) {
-                        if (!photoUtil.rotate(vSession, enrPhoto, degrees)) {
+                        if (!photoUtil.rotate(vSession.getVSession(), enrPhoto, degrees)) {
                             photo.exception = "Erreur dans le ConvertWrapper ...";
                             reSelectThis = true;
                         }
@@ -438,20 +437,20 @@ public class PhotoBean implements PhotoLocal {
                     submitted = true ;
                 }
             }
-            if (vSession.isSessionManager()) {
+            if (vSession.getVSession().isSessionManager()) {
                 if ((reSelect || reSelectThis) && current) {
                     photo.checked = true ;
                 }
             }
             
-            daoToXml.convertPhotoDetails(vSession, enrPhoto, photo.details, rq.type == TypeRequest.TAG);
+            daoToXml.convertPhotoDetails(vSession.getVSession(), enrPhoto, photo.details, rq.type == TypeRequest.TAG);
             
             //liste des utilisateurs pouvant voir cette photo
-            if (vSession.isSessionManager()) {
-                daoToXml.addUserOutside(vSession, enrPhoto, photo.details);
+            if (vSession.getVSession().isSessionManager()) {
+                daoToXml.addUserOutside(vSession.getVSession(), enrPhoto, photo.details);
             }
             
-            daoToXml.addAuthorDetails(vSession, enrPhoto, photo);
+            daoToXml.addAuthorDetails(vSession.getVSession(), enrPhoto, photo);
             daoToXml.addExifDetails(vSession, enrPhoto, photo);
             
             output.photo.add(photo);
@@ -462,10 +461,10 @@ public class PhotoBean implements PhotoLocal {
             output.submit = submit ;
         }
 
-        if (vSession.isSessionManager()) {
+        if (vSession.getVSession().isSessionManager()) {
             XmlPhotoMassEdit massEdit = new XmlPhotoMassEdit();
-            massEdit.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession, Box.LIST);
-            massEdit.tag_never = webPageService.displayListBN(Mode.TAG_NEVER_EVER, vSession, Box.LIST);
+            massEdit.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession.getVSession(), Box.LIST);
+            massEdit.tag_never = webPageService.displayListBN(Mode.TAG_NEVER_EVER, vSession.getVSession(), Box.LIST);
             if (massEditParam) {
                 String msg;
                 if (countME == 0 || Turn.NOTHING == turn) {
@@ -509,14 +508,14 @@ public class PhotoBean implements PhotoLocal {
         return output ;
     }
 
-    public XmlPhotoAbout treatABOUT(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
-        Photo enrPhoto = photoDAO.loadIfAllowed(vSession, vSession.getId());
+    public XmlPhotoAbout treatABOUT(ViewSessionPhotoSimple vSession) throws WebAlbumsServiceException {
+        Photo enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), vSession.getId());
         if(enrPhoto == null) {
             return null ;
         }
 
         XmlPhotoAbout output = new XmlPhotoAbout() ;
-        daoToXml.convertPhotoDetails(vSession, enrPhoto, output.details, true); 
+        daoToXml.convertPhotoDetails(vSession.getVSession(), enrPhoto, output.details, true); 
         
         return output ;
     }

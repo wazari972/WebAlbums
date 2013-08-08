@@ -9,12 +9,15 @@ package net.wazari.service.exchange;
  *
  * @author kevin
  */
-public interface ViewSessionTag extends ViewSessionPhoto, ViewSessionAlbum {
+public interface ViewSessionTag {
 
     Integer[] getTagAsked();
 
     boolean getWantTagChildren();
 
     boolean getWantUnusedTags();
+    
+    Integer getId();
+    ViewSession getVSession();
 
 }

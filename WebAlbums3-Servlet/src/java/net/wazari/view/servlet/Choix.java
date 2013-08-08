@@ -13,10 +13,10 @@ import net.wazari.service.CarnetLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
+import net.wazari.service.exchange.ViewSession.Choix_Special;
 import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSession.ViewSessionChoix;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionCarnet;
@@ -44,25 +44,25 @@ public class Choix extends HttpServlet {
     @EJB
     private CarnetLocal carnetService;
     
-    public XmlWebAlbumsList displayChxJSON(ViewSession vSession) throws WebAlbumsServiceException {
-        Special special = vSession.getSpecial();
-        if (special == Special.MAP) {
-            return webPageService.displayMapInScript(vSession);
+    public XmlWebAlbumsList displayChxJSON(ViewSessionChoix vSession) throws WebAlbumsServiceException {
+        Choix_Special special = vSession.getSpecial();
+        if (special == Choix_Special.MAP) {
+            return webPageService.displayMapInScript(vSession.getVSession());
         } else {
             return null;
         }
     }
 
-    public XmlChoix displayCHX(ViewSession vSession) throws WebAlbumsServiceException {
+    public XmlChoix displayCHX(ViewSessionChoix vSession) throws WebAlbumsServiceException {
         XmlChoix choix = new XmlChoix();
-        Special special = vSession.getSpecial();
+        Choix_Special special = vSession.getSpecial();
         
-        if (special == Special.JUST_THEME) {
+        if (special == Choix_Special.JUST_THEME) {
         } else {
-            choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession, Box.MULTIPLE);
+            choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession.getVSession(), Box.MULTIPLE);
         }
         
-        if (vSession.getCompleteChoix() || vSession.getStatic()) {
+        if (vSession.getVSession().getCompleteChoix() || vSession.getVSession().getStatic()) {
             ViewSessionAlbum vSessionAlbum = (ViewSessionAlbum) vSession;
             ViewSessionTag vSessionTag = (ViewSessionTag) vSession;
             ViewSessionCarnet vSessionCarnet = (ViewSessionCarnet) vSession;
@@ -77,7 +77,7 @@ public class Choix extends HttpServlet {
             choix.cloud = tagService.treatTagCloud(vSessionTag) ;
             choix.persons = tagService.treatTagPersons(vSessionTag) ;
             choix.places = tagService.treatTagPlaces(vSessionTag) ;
-            choix.map = webPageService.displayMapInScript(vSession).blob;
+            choix.map = webPageService.displayMapInScript(vSession.getVSession()).blob;
             
             choix.complete = true;
         }

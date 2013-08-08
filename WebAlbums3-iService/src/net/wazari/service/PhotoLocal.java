@@ -13,10 +13,10 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Tag;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSimple;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.*;
@@ -65,7 +65,7 @@ public interface PhotoLocal {
     XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException ;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlPhotoAbout treatABOUT(ViewSessionPhoto vSession) throws WebAlbumsServiceException ;
+    XmlPhotoAbout treatABOUT(ViewSessionPhotoSimple vSession) throws WebAlbumsServiceException ;
     
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlPhotoFastEdit treatFASTEDIT(ViewSessionPhotoFastEdit vSession) throws WebAlbumsServiceException ;

@@ -6,13 +6,15 @@
 package net.wazari.service.exchange;
 
 import java.util.Set;
+import net.wazari.service.exchange.ViewSession.Carnet_Action;
+import net.wazari.service.exchange.ViewSession.Carnet_Special;
 
 /**
  *
  * @author kevin
  */
-public interface ViewSessionCarnet extends ViewSession {
-    interface ViewSessionCarnetSubmit extends ViewSessionAlbum {
+public interface ViewSessionCarnet {
+    interface ViewSessionCarnetSubmit {
         Integer getCarnet();
         
         String getDesc();
@@ -36,15 +38,20 @@ public interface ViewSessionCarnet extends ViewSession {
         Set<Integer> getCarnetAlbum();
     }
 
-    interface ViewSessionCarnetEdit extends ViewSessionAlbum {
+    interface ViewSessionCarnetEdit {
         Integer getCarnetsPage();
         Integer getCarnet();
-
+        Integer getPage() ;
     }
-    interface ViewSessionCarnetDisplay extends ViewSessionAlbum {
+    interface ViewSessionCarnetDisplay {
         Integer getCarnet();
         Integer getCarnetsPage();
+        Integer getPage() ;
+        ViewSession getVSession();
     }
+    Carnet_Special getSpecial();
+    Carnet_Action getAction();
     Integer getId();
-    Integer getPage() ;
+    
+    ViewSession getVSession();
 }

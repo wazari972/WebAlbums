@@ -29,7 +29,7 @@ import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Mode;
 import net.wazari.service.exchange.ViewSessionCarnet;
 import net.wazari.service.exchange.ViewSessionLogin;
-import net.wazari.service.exchange.ViewSessionPhoto;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionAnAlbum;
 import net.wazari.service.exchange.xml.XmlAffichage;
 import net.wazari.service.exchange.xml.XmlPage;
 import net.wazari.service.exchange.xml.common.*;
@@ -459,19 +459,19 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
-    public XmlWebAlbumsList displayAlbumGeolocations(ViewSessionPhoto vSession)
+    public XmlWebAlbumsList displayAlbumGeolocations(ViewSessionAnAlbum vSession)
             throws WebAlbumsServiceException {
         Integer albumId = vSession.getAlbum();
         if (albumId == null) {
             return null;
         }
         
-        Album enrAlbum = albumDAO.loadIfAllowed(vSession, albumId);
+        Album enrAlbum = albumDAO.loadIfAllowed(vSession.getVSession(), albumId);
         if (enrAlbum == null) {
             return null;
         }
         
-        return displayListIBTN(Mode.TAG_GEO, vSession, enrAlbum, Box.MAP_SCRIPT);
+        return displayListIBTN(Mode.TAG_GEO, vSession.getVSession(), enrAlbum, Box.MAP_SCRIPT);
     }
     
     @Override

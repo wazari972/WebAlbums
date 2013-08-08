@@ -1,5 +1,6 @@
 package net.wazari.view.servlet;
 
+import java.awt.Desktop.Action;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -13,8 +14,8 @@ import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.Action;
-import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSession.Album_Action;
+import net.wazari.service.exchange.ViewSession.Album_Special;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
@@ -47,42 +48,47 @@ public class Albums extends HttpServlet{
 
         XmlAlbums output = new XmlAlbums() ;
 
-        Special special = vSession.getSpecial();
-        if (special == Special.TOP5) {
-            output.topAlbums = albumService.treatTOP(vSession);
-            return output ;
-        } else  if (special == Special.YEARS) {
-            output.years = albumService.treatYEARS(vSession);
-            return output ;
-        } else  if (special == Special.SELECT) {
-            output.select = albumService.treatSELECT(vSession);
-            return output ;
-        } else  if (special == Special.GRAPH) {
-            output.graph = albumService.treatGRAPH(vSession);
-            return output ;
-        } else if (special == Special.ABOUT) {
-            output.about = albumService.treatABOUT(vSession);
-            return output ;
-        } else if (special == Special.GPX) {
-            output.gpxes = albumService.treatGPX(vSession);
-            return output ;
-        } else if (special == Special.AGO) {
-            output.times_ago = albumService.treatAGO((ViewSessionAlbum.ViewSessionAlbumAgo) vSession);
-            return output ;
-        } else if (special == Special.PHOTOALBUM_SIZE) {
-            vSession.setPhotoAlbumSize(vSession.getPhotoAlbumSize());
-            return null;
+        Album_Special special = vSession.getSpecial();
+        
+        if (special != null) {
+            switch (special) {
+                case TOP5:
+                    output.topAlbums = albumService.treatTOP(vSession);
+                    break;
+                case YEARS:
+                    output.years = albumService.treatYEARS(vSession);
+                    break;
+                case SELECT:
+                    output.select = albumService.treatSELECT(vSession);
+                    break;
+                case GRAPH:
+                    output.graph = albumService.treatGRAPH(vSession);
+                    break;
+                case ABOUT:
+                    output.about = albumService.treatABOUT(vSession);
+                    break;
+                case GPX:
+                    output.gpxes = albumService.treatGPX(vSession);
+                    break;
+                case AGO:
+                    output.times_ago = albumService.treatAGO((ViewSessionAlbum.ViewSessionAlbumAgo) vSession);
+                    break;
+                case PHOTOALBUM_SIZE:
+                    vSession.setPhotoAlbumSize(vSession.getVSession().getPhotoAlbumSize());
+                    return null;    
+            }
+            return output;
         }
-
-        Action action = vSession.getAction();
+        
+        Album_Action action = vSession.getAction();
         XmlAlbumSubmit submit = null;
-        if(vSession.isSessionManager()) {
+        if(vSession.getVSession().isSessionManager()) {
             //prepare SUBMIT message
-            if (action == Action.SUBMIT) {
+            if (action == Album_Action.SUBMIT) {
                 submit = albumService.treatAlbmSUBMIT((ViewSessionAlbumSubmit) vSession);
             }
 
-            if (action == Action.EDIT) {
+            if (action == Album_Action.EDIT) {
                 output.edit = new XmlAlbumEdit();
                 output.edit.album  = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession);
                 
@@ -90,14 +96,14 @@ public class Albums extends HttpServlet{
                     output.edit.submit = submit ;
                 }
                 
-                output.edit.tag_used = webPageService.displayListLB(ViewSession.Mode.TAG_USED, vSession, null,
+                output.edit.tag_used = webPageService.displayListLB(ViewSession.Mode.TAG_USED, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
-                output.edit.tag_nused = webPageService.displayListLB(ViewSession.Mode.TAG_NUSED, vSession, null,
+                output.edit.tag_nused = webPageService.displayListLB(ViewSession.Mode.TAG_NUSED, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
-                output.edit.tag_never = webPageService.displayListLB(ViewSession.Mode.TAG_NEVER, vSession, null,
+                output.edit.tag_never = webPageService.displayListLB(ViewSession.Mode.TAG_NEVER, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
 
-                output.edit.themes = themeService.getThemeList(vSession, ThemeLocal.Sort.NOPE);
+                output.edit.themes = themeService.getThemeList(vSession.getVSession(), ThemeLocal.Sort.NOPE);
                 
                 XmlReturnTo returnTo = new XmlReturnTo();
                 returnTo.page = vSession.getPage();
@@ -106,7 +112,7 @@ public class Albums extends HttpServlet{
             }
         }
 
-        if (action != Action.EDIT) {
+        if (action != Album_Action.EDIT) {
             //afficher la liste des albums de ce theme
             output.display = albumService.treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit);
         }
