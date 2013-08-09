@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.ThemeLocal.Sort;
-import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSession.SessionConfig;
 import net.wazari.service.exchange.xml.XmlThemes;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import org.slf4j.Logger;
@@ -37,18 +37,18 @@ public class Index extends HttpServlet {
         super.init(config);
     }
     
-    public XmlThemes treatVOID(ViewSession vSession) {
+    public XmlThemes treatVOID(SessionConfig vSession) {
         XmlThemes output = new XmlThemes() ;
 
-        boolean statik = vSession.getStatic();
+        boolean statik = vSession.getVSession().getStatic();
         if (statik) {
             vSession.setStatic(true);
             vSession.setDirectFileAccess(true);
         } else {
-            vSession.setDirectFileAccess(vSession.directFileAccess());
+            vSession.setDirectFileAccess(vSession.getVSession().directFileAccess());
         }
 
-        output.themeList = themeService.getThemeList(vSession, Sort.ALBUM_AGE) ;
+        output.themeList = themeService.getThemeList(vSession.getVSession(), Sort.ALBUM_AGE) ;
         
         return output ;
     }

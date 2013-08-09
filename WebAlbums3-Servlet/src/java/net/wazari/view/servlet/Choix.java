@@ -13,14 +13,14 @@ import net.wazari.service.CarnetLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Choix_Special;
-import net.wazari.service.exchange.ViewSession.Mode;
+import net.wazari.service.exchange.ViewSession.Tag_Mode;
 import net.wazari.service.exchange.ViewSession.ViewSessionChoix;
-import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSession.ViewSessionChoix.Choix_Special;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
-import net.wazari.service.exchange.ViewSessionCarnet;
-import net.wazari.service.exchange.ViewSessionTag;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSelect;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumYear;
 import net.wazari.service.exchange.xml.XmlChoix;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -53,31 +53,84 @@ public class Choix extends HttpServlet {
         }
     }
 
-    public XmlChoix displayCHX(ViewSessionChoix vSession) throws WebAlbumsServiceException {
+    public XmlChoix displayCHX(ViewSessionChoix vSessionChoix) throws WebAlbumsServiceException {
         XmlChoix choix = new XmlChoix();
-        Choix_Special special = vSession.getSpecial();
+        Choix_Special special = vSessionChoix.getSpecial();
         
         if (special == Choix_Special.JUST_THEME) {
         } else {
-            choix.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession.getVSession(), Box.MULTIPLE);
+            choix.tag_used = webPageService.displayListBN(Tag_Mode.TAG_USED, vSessionChoix.getVSession(), Box.MULTIPLE);
         }
-        
-        if (vSession.getVSession().getCompleteChoix() || vSession.getVSession().getStatic()) {
-            ViewSessionAlbum vSessionAlbum = (ViewSessionAlbum) vSession;
-            ViewSessionTag vSessionTag = (ViewSessionTag) vSession;
-            ViewSessionCarnet vSessionCarnet = (ViewSessionCarnet) vSession;
+        final ViewSession vSession = vSessionChoix.getVSession();
+        if (vSessionChoix.getCompleteChoix() || vSession.getStatic()) {
             
-            choix.topCarnets = carnetService.treatTOP(vSessionCarnet);
-            choix.topAlbums = albumService.treatTOP(vSessionAlbum);
-            choix.years = albumService.treatYEARS(vSessionAlbum);
-            choix.select = albumService.treatSELECT(vSessionAlbum);
-            choix.graph = albumService.treatGRAPH(vSessionAlbum);
-            choix.times_ago = albumService.treatAGO((ViewSessionAlbumAgo) vSessionAlbum);
+            ViewSessionAlbumAgo vSessionAlbumAgo = new ViewSessionAlbumAgo() {
+
+                @Override
+                public Integer getYear() {
+                    return null;
+                }
+
+                @Override
+                public Integer getMonth() {
+                    return null;
+                }
+
+                @Override
+                public Integer getDay() {
+                    return null;
+                }
+
+                @Override
+                public boolean getAll() {
+                    return false;
+                }
+
+                @Override
+                public ViewSession getVSession() {
+                    return vSession;
+                }
+            };
+            ViewSessionAlbumSelect vSessionAlbumSelect = new ViewSessionAlbumSelect() {
+
+                @Override
+                public boolean getWantTags() {
+                    return false;
+                }
+
+                @Override
+                public Integer[] getTagAsked() {
+                    throw new UnsupportedOperationException("Not supported yet."); 
+                }
+
+                @Override
+                public ViewSession getVSession() {
+                    return vSession;
+                }
+            };
+            ViewSessionAlbumYear vSessionAlbumYear = new ViewSessionAlbumYear() {
+
+                @Override
+                public Integer getNbPerYear() {
+                    return 10;
+                }
+
+                @Override
+                public ViewSession getVSession() {
+                    return vSession;
+                }
+            };
+            choix.topCarnets = carnetService.treatTOP(vSession);
+            choix.topAlbums = albumService.treatTOP(vSession);
+            choix.years = albumService.treatYEARS(vSessionAlbumYear);
+            choix.select = albumService.treatSELECT(vSessionAlbumSelect);
+            choix.graph = albumService.treatGRAPH(vSessionAlbumSelect);
+            choix.times_ago = albumService.treatAGO(vSessionAlbumAgo);
             
-            choix.cloud = tagService.treatTagCloud(vSessionTag) ;
-            choix.persons = tagService.treatTagPersons(vSessionTag) ;
-            choix.places = tagService.treatTagPlaces(vSessionTag) ;
-            choix.map = webPageService.displayMapInScript(vSession.getVSession()).blob;
+            choix.cloud = tagService.treatTagCloud(vSession) ;
+            choix.persons = tagService.treatTagPersons(vSession) ;
+            choix.places = tagService.treatTagPlaces(vSession) ;
+            choix.map = webPageService.displayMapInScript(vSession).blob;
             
             choix.complete = true;
         }

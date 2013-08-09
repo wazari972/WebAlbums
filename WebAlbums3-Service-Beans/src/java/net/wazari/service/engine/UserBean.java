@@ -29,7 +29,7 @@ public class UserBean implements UserLocal {
     public boolean logon(ViewSessionLogin vSession, HttpServletRequest request) {
         StopWatch stopWatch = new Slf4JStopWatch("Service.logon", log) ;
         
-        Integer themeId = vSession.getThemeId();
+        Integer themeId = vSession.getVSession().getThemeId();
         Principal pr = vSession.getUserPrincipal();
         log.info( "Login with theme={}, principal={}", new Object[]{themeId, pr});
 
@@ -85,8 +85,8 @@ public class UserBean implements UserLocal {
 
         //no manager if not in admin group
         if (request.isUserInRole(UserLocal.MANAGER_ROLE) 
-                && !vSession.getConfiguration().isReadOnly()
-                && !vSession.getStatic()) {
+                && !vSession.getVSession().getConfiguration().isReadOnly()
+                && !vSession.getVSession().getStatic()) {
             asThemeManager = true;
         }
 

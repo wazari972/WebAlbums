@@ -10,7 +10,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Mode;
+import net.wazari.service.exchange.ViewSession.Tag_Mode;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 
 /**
@@ -22,7 +22,7 @@ public class XmlWebAlbumsList extends XmlInfoException {
     public enum ListType {UNKNOWN, PHOTO, ALBUM, CARNET} ;
     
     @XmlAttribute
-    public Mode mode;
+    public Tag_Mode mode;
 
     public String blob;
 

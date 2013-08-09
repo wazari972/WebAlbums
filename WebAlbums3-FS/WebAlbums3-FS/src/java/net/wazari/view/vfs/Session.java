@@ -35,100 +35,100 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
         this.theme = theme;
     }
     
-    @Override
+    //Override
     public boolean getCompleteChoix() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public ViewSession.Special getSpecial() {
+    //Override
+    /*public ViewSession.Special getSpecial() {
         return null;
     }
 
-    @Override
+    //Override
     public ViewSession.Action getAction() {
         return null;
-    }
+    }*/
     
-    @Override
+    //Override
     public boolean getWantUnusedTags() {
         return false;
     }
     
-    @Override
+    //Override
     public Integer getNewStarLevel() {
         return null;
     }
     
-    @Override
+    //Override
     public Integer getStarLevel() {
         return stars;
     }
     
-    @Override
+    //Override
     public Utilisateur getUser() {
         return new Utilisateur() {
 
-            @Override
+            //Override
             public List<Album> getAlbumList() {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
-            @Override
+            //Override
             public String getNom() {
                 return "kevin";
             }
 
-            @Override
+            //Override
             public void setAlbumList(List<Album> albumList) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
-            @Override
+            //Override
             public void setId(Integer id) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
-            @Override
+            //Override
             public void setNom(String nom) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
-            @Override
+            //Override
             public Integer getId() {
                 return 1;
             }
         };
     }
 
-    @Override
+    //Override
     public boolean isAuthenticated() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private File tmpdir = new File("/tmp");
-    @Override
+    //Override
     public java.io.File getTempDir() {
         return tmpdir;
     }
 
     private Configuration conf = null;
-    @Override
+    //Override
     public Configuration getConfiguration() {
         if (conf != null) return conf;
         conf = new Configuration() {
             private final String SEP = File.separator;
-            @Override
+            //Override
             public boolean isPathURL() {
                 return false;
             }
 
-            @Override
+            //Override
             public String getImagesPath(boolean withRoot) {
                 return getDataPath(withRoot) + "images" + SEP;
             }
 
-            @Override
+            //Override
             public String getFtpPath() {
                 return "ftp";
             }
@@ -137,47 +137,47 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
                 return (withRoot ? getRootPath() : "") + "data" + SEP;
             }
             
-            @Override
+            //Override
             public String getMiniPath(boolean withRoot) {
                 return getDataPath(withRoot) + "miniatures"+ SEP;
             }
 
-            @Override
+            //Override
             public String getRootPath() {
                 return "/home/kevin/vayrac/";
             }
 
-            @Override
+            //Override
             public String getBackupPath() {
                 return "backup";
             }
 
-            @Override
+            //Override
             public String getTempPath() {
                 return "tmp";
             }
 
-            @Override
+            //Override
             public String getConfigFilePath() {
                 return "/tmp/conf.xml";
             }
 
-            @Override
+            //Override
             public String getPluginsPath() {
                 return "plugins";
             }
 
-            @Override
+            //Override
             public boolean isReadOnly() {
                 return true;
             }
 
-            @Override
+            //Override
             public String getSep() {
                 return "/";
             }
 
-            @Override
+            //Override
             public boolean wantsProtectDB() {
                 return true;
             }
@@ -185,52 +185,52 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
         return conf;
     }
 
-    @Override
+    //Override
     public Integer getThemeId() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public boolean isRemoteAccess() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public boolean directFileAccess() {
         return true;
     }
 
-    @Override
+    //Override
     public void setDirectFileAccess(boolean access) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public void setStatic(boolean statik) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public boolean getStatic() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public Theme getTheme() {
         return theme;
     }
 
-    @Override
+    //Override
     public boolean isRootSession() {
         return theme.getId() == 1;
     }
 
-    @Override
+    //Override
     public boolean isSessionManager() {
         return false;
     }
 
-    @Override
+    //Override
     public int getPhotoAlbumSize() {
         return 150;
     }    
@@ -239,12 +239,12 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
         this.tagAsked = tagAsked;
     }
     
-    @Override
+    //Override
     public Integer[] getTagAsked() {
         return this.tagAsked;
     }
 
-    @Override
+    //Override
     public boolean getWantTagChildren() {
         return false;
     }
@@ -253,18 +253,18 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     public void setId(Integer id) {
         this.id = id;
     }
-    @Override
+    //Override
     public Integer getId() {
         return id;
     }
 
-    @Override
+    //Override
     public Integer getTagPhoto() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public Mode getMode() {
+    //Override
+    public Tag_Mode getMode() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -273,32 +273,32 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     }
     
     private Integer album = null;
-    @Override
+    //Override
     public Integer getAlbum() {
         return album;
     }
 
-    @Override
+    //Override
     public Integer getAlbmPage() {
         return null;
     }
 
-    @Override
+    //Override
     public Integer getPage() {
         return null;
     }
 
-    @Override
+    //Override
     public Integer getNbPerYear() {
         return 10;
     }
 
-    @Override
+    //Override
     public void setPhotoAlbumSize(int size) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public ViewSessionPhotoDisplayMassEdit getMassEdit() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -307,7 +307,7 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
         this.borderWidth = borderWidth;
     }
     private Integer borderWidth;
-    @Override
+    //Override
     public Integer getBorderWidth() {
         return borderWidth;
     }
@@ -316,7 +316,7 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
     public void setBorderColor(String color) {
         this.color = color;
     }
-    @Override
+    //Override
     public String getBorderColor() {
         return color;
     }
@@ -325,42 +325,42 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
         this.width = width;
     }
     private Integer width = 5;
-    @Override
+    //Override
     public Integer getWidth() {
         return width;
     }
 
-    @Override
+    //Override
     public ImgMode getImgMode() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public void setContentDispositionFilename(String string) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public void setContentLength(int contentLength) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public void setContentType(String type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public void redirect(String filepath) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public OutputStream getOutputStream() throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    //Override
     public String getDesc() {
         return null;
     }
@@ -369,13 +369,13 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
         this.tagSet = tagSet;
     }
     
-    @Override
+    //Override
     public Integer[] getTagSet() {
         return tagSet;
     }
 
     private TagAction tagAction = null;
-    @Override
+    //Override
     public TagAction getTagAction() {
         return tagAction;
     }
@@ -384,19 +384,125 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
         this.tagAction = action;
     }
 
-    @Override
+    //Override
     public Integer getStars() {
         return null;
     }
 
-    @Override
+    //Override
     public boolean getWantTags() {
         return false;
     }
 
-    @Override
+    //Override
     public void setStarLevel(Integer starLevel) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    public ViewSessionTag.Special getTagSpecial() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionTagCloud getSessionTagCloud() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionTagSimple getSessionTagSimple() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionTagEdit getSessionTagEdit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionTagDisplay getSessionTagDisplay() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSession getVSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionAlbumEdit getEditSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionAlbumSubmit getSubmitSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionAlbumSimple getSimpleSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionAlbumSelect getSelectSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionAlbumYear getYearSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionPhotoAlbumSize getPhotoAlbumSizeSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionPhotoEdit getSessionPhotoEdit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionPhotoDisplay getSessionPhotoDisplay() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionPhotoSubmit getSessionPhotoSubmit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionPhotoFastEdit getSessionPhotoFastEdit() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Edit_Action getEditAction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Action getAction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Action getPhotoAction() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionAlbum.Special getAlbumSpecial() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ViewSessionPhoto.Special getPhotoSpecial() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
 

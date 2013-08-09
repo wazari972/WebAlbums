@@ -21,7 +21,6 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.service.exchange.*;
-import net.wazari.service.exchange.ViewSession.Special;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
@@ -31,8 +30,8 @@ import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
 import net.wazari.service.exchange.ViewSessionLogin.ViewSessionTempTheme;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplayMassEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
@@ -43,8 +42,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author kevin
  */
-public class ViewSessionImpl implements
-        ServiceSession,
+public class ViewSessionImpl //implements
+        /*ServiceSession,
         ViewSessionLogin, ViewSessionTempTheme,
         ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumEdit, ViewSessionAlbumSubmit, ViewSessionAlbumAgo,
         ViewSessionConfig,
@@ -52,9 +51,8 @@ public class ViewSessionImpl implements
         ViewSessionTag,
         ViewSessionImages, ViewSessionPhotoDisplayMassEdit, ViewSessionPhotoFastEdit,
         ViewSessionCarnet, ViewSessionCarnetDisplay, ViewSessionCarnetEdit, ViewSessionCarnetSubmit,
-        ViewSessionDatabase, 
-        ViewSessionMaint, 
-        ViewSessionBenchmark{
+        ViewSessionDatabase, */
+        {
 
     private static final Logger log = LoggerFactory.getLogger(ViewSessionImpl.class.getCanonicalName());
     private HttpServletRequest request;
@@ -68,57 +66,57 @@ public class ViewSessionImpl implements
         this.response = response;
     }
 
-    @Override
+    //@Override
     public String getBirthdate() {
         return getString("birthdate");
     }
     
-    @Override
+    //@Override
     public String getContact() {
         return getString("contact");
     }
     
-    @Override
+    //@Override
     public String getDesc() {
         return getString("desc");
     }
     
-    @Override
+    //@Override
     public String getCarnetText() {
         return getString("carnetText");
     }
 
-    @Override
+    //@Override
     public String getNom() {
         return getString("nom");
     }
 
-    @Override
+    //@Override
     public String getDate() {
         return getString("date");
     }
 
-    @Override
+    //@Override
     public int getNewTheme() {
         return getInteger("newTheme");
     }
     
-    @Override
+    //@Override
     public Integer[] getTags() {
         return getIntArray("tags");
     }
 
-    @Override
+    //@Override
     public Integer[] getNewTag() {
         return getIntArray("newTag");
     }
 
-    @Override
+    //@Override
     public boolean getForce() {
         return "yes".equals(getString("force"));
     }
 
-    @Override
+    //@Override
     public boolean getSuppr() {
         String suppr = getString("suppr") ;
         return "Oui je veux supprimer cette photo".equals(suppr) ||
@@ -126,56 +124,56 @@ public class ViewSessionImpl implements
                "Oui je veux supprimer ce carnet".equals(suppr);
     }
 
-    @Override
+    //@Override
     public Integer getPage() {
         return getInteger("page");
     }
     
-    @Override
+    //@Override
     public Integer getNbPerYear() {
         return getInteger("nbPerYear");
     }
     
-    @Override
+    //@Override
     public Integer getUserAllowed() {
         return getInteger("user");
     }
 
-    @Override
-    public Special getSpecial() {
+    //@Override
+    /*public Special getSpecial() {
         return getEnum("special", Special.class);
-    }
+    }*/
 
-    @Override
-    public Action getAction() {
+    //@Override
+   /* public Action getAction() {
         return getEnum("action", Action.class);
     }
     
-    @Override
+    //@Override
     public BenchAction getBenchAction() {
         return getEnum("action", BenchAction.class);
     }
     
-    @Override
-    public Mode getMode() {
-        return getEnum("mode", Mode.class);
-    }
+    //@Override
+    public Tag_Mode getMode() {
+        return getEnum("mode", Tag_Mode.class);
+    }*/
 
-    @Override
+    //@Override
     public String getUserPass() {
         return getString("userPass");
     }
 
-    @Override
+    //@Override
     public String getUserName() {
         return getString("userName") ;
     }
     
-    @Override
+    //@Override
     public Boolean dontRedirect() {
         return getBoolean("dontRedirect") ;
     }
-    @Override
+    //@Override
     public boolean directFileAccess() {
         String direct = getString("directFileAccess");
         if (direct == null) {
@@ -184,28 +182,28 @@ public class ViewSessionImpl implements
         return "y".equals(direct);
     }
     
-    @Override
+    //@Override
     public void setDirectFileAccess(boolean access) {
         setSessionObject("directFileAccess", access ? "y" : "n");
     }
     
     /** ** **/
-    @Override
+    //@Override
     public Integer getThemeId() {
         return getInteger("themeId");
     }
 
-    @Override
+    //@Override
     public void setTheme(Theme enrTheme) {
         setSessionObject("theme", enrTheme);
     }
 
-    @Override
+    //@Override
     public void setTempTheme(Theme enrTheme) {
         this.tempTheme = enrTheme;
     }
     
-    @Override
+    //@Override
     public Theme getTheme() {
         if (this.tempTheme != null) {
             return this.tempTheme;
@@ -215,25 +213,25 @@ public class ViewSessionImpl implements
 
     /** ** **/
 
-    @Override
+    //@Override
     public File getTempDir() {
         return getSessionObject("tempDir", File.class);
     }
 
     /** ** **/
-    @Override
+    //@Override
     public Utilisateur getUser() {
         return getSessionObject("user", Utilisateur.class);
     }
     
-    @Override
+    //@Override
     public void setUser(Utilisateur enrUser) {
         setSessionObject("user", enrUser);
     }
 
     /** ** **/
     
-    @Override
+    //@Override
     public Boolean getwantManager() {
         Boolean want = getBoolean("wantManager")  ;
         if (want == null) {
@@ -242,7 +240,7 @@ public class ViewSessionImpl implements
         return want;
     }
     
-    @Override
+    //@Override
     public boolean isRootSession() {
         Boolean val = getSessionObject("rootSession", Boolean.class);
         if (val == null) {
@@ -251,13 +249,13 @@ public class ViewSessionImpl implements
         return val;
     }
 
-    @Override
+    //@Override
     public void setRootSession(Boolean rootSession) {
         setSessionObject("rootSession", rootSession);
     }
 
     /** ** **/
-    @Override
+    //@Override
     public boolean isSessionManager() {
         Boolean ret = getSessionObject("sessionManager", Boolean.class);
         if (ret == null) {
@@ -266,38 +264,38 @@ public class ViewSessionImpl implements
         return ret;
     }
 
-    @Override
+    //@Override
     public void setSessionManager(Boolean sessionManager) {
         setSessionObject("sessionManager", sessionManager);
     }
 
     /** ** **/
-    @Override
+    //@Override
     public Integer getId() {
         return getInteger("id");
     }
 
-    @Override
+    //@Override
     public Integer getCarnet() {
         return getInteger("carnet");
     }
     
-    @Override
+    //@Override
     public String getNouveau() {
         return getString("nouveau");
     }
 
-    @Override
+    //@Override
     public Integer getTag() {
         return getInteger("tag");
     }
     
-    @Override
+    //@Override
     public Integer getNewStarLevel() {
         return getInteger("newStarLevel");
     }
     
-    @Override
+    //@Override
     public Integer getStarLevel() {
         Integer ret = getSessionObject("starLevel", Integer.class);
         
@@ -308,163 +306,163 @@ public class ViewSessionImpl implements
         return ret;
     }
     
-    @Override
+    //@Override
     public void setStarLevel(Integer starLevel) {
         setSessionObject("starLevel", starLevel);
     }
 
     
-    @Override
+    //@Override
     public Integer getStars() {
         return getInteger("stars");
     }
 
-    @Override
+    //@Override
     public String getLng() {
         return getString("lng");
     }
 
-    @Override
+    //@Override
     public String getLat() {
         return getString("lat");
     }
     
-    @Override
+    //@Override
     public boolean getVisible() {
         return "y".equals(getString("visible"));
     }
     
-    @Override
+    //@Override
     public boolean getMinor() {
         return "y".equals(getString("minor"));
     }
     
-    @Override
+    //@Override
     public boolean getCompleteChoix() {
         return "y".equals(getString("complete"));
     }
 
-    @Override
+    //@Override
     public String getImportTheme() {
         return getString("importTheme");
     }
 
-    @Override
+    //@Override
     public Integer getType() {
         return getInteger("type");
     }
 
-    @Override
+    //@Override
     public Integer getWidth() {
         return getInteger("width");
     }
 
-    @Override
+    //@Override
     public boolean getRepresent() {
         return "y".equals(getString("represent"));
     }
 
-    @Override
+    //@Override
     public boolean getThemeBackground() {
         return "y".equals(getString("themeBackground"));
     }
     
-    @Override
+    //@Override
     public boolean getThemePicture() {
         return "y".equals(getString("themePicture"));
     }
 
-    @Override
+    //@Override
     public Integer getTagPhoto() {
         return getInteger("tagPhoto");
     }
 
-    @Override
+    //@Override
     public Turn getTurn() {
         return getEnum("turn", Turn.class);
     }
 
-    @Override
+    //@Override
     public Integer[] getAddTags() {
         return getIntArray("addTag");
     }
 
-    @Override
+    //@Override
     public boolean getChk(Integer id) {
         return "modif".equals(getString("chk" + id));
     }
 
-    @Override
+    //@Override
     public Integer getRmTag() {
         return getInteger("rmTag");
     }
 
-    @Override
+    //@Override
     public Integer getAlbum() {
         return getInteger("album");
     }
 
-    @Override
+    //@Override
     public Integer getAlbmPage() {
         return getInteger("albmPage");
     }
 
-    @Override
+    //@Override
     public Integer[] getTagSet() {
         return getIntArray("tagSet");
     }
     
-    @Override
+    //@Override
     public Integer[] getTagAsked() {
         return getIntArray("tagAsked");
     }
 
-    @Override
+    //@Override
     public boolean getWantTagChildren() {
         return getString("wantTagChildren") != null;
     }
 
-    @Override
+    //@Override
     public boolean getWantUnusedTags() {
         return getString("wantUnusedTags") != null;
     }
     
-    @Override
-    public ImgMode getImgMode() {
+    //@Override
+    /*public ImgMode getImgMode() {
         return getEnum("mode", ImgMode.class);
-    }
+    }*/
 
-    @Override
+    //@Override
     public Configuration getConfiguration() {
         return ConfigurationXML.getConf();
     }
 
-    @Override
+    //@Override
     public void setContentDispositionFilename(String name) {
         response.addHeader("Content-Disposition", "filename=\""+name+"\"");
     }
 
-    @Override
+    //@Override
     public void setContentLength(int contentLength) {
         response.setContentLength(contentLength);
     }
 
-    @Override
+    //@Override
     public void setContentType(String type) {
         response.setContentType(type);
     }
 
-    @Override
+    //@Override
     public OutputStream getOutputStream() throws IOException {
         return response.getOutputStream();
     }
 
-    @Override
+    //@Override
     public Integer getParentTag() {
         return getInteger("parentTag") ;
     }
 
-    @Override
+    //@Override
     public Integer[] getSonTags() {
         return getIntArray("sonTag") ;
     }
@@ -486,27 +484,27 @@ public class ViewSessionImpl implements
         return out ;
     }
     
-    @Override
+    //@Override
     public Set<Integer> getCarnetPhoto() {
         return splitInt(getString("carnetPhoto")) ;
     }
     
-    @Override
+    //@Override
     public Set<Integer> getCarnetAlbum() {
         return splitInt(getString("carnetAlbum")) ;
     }
     
-    @Override
+    //@Override
     public Integer getCarnetRepr() {
         return getInteger("carnetRepr") ;
     }
 
-    @Override
+    //@Override
     public Integer getBorderWidth() {
         return getInteger("borderWidth");
     }
 
-    @Override
+    //@Override
     public String getBorderColor() {
         return getString("borderColor") ;
     }
@@ -552,17 +550,17 @@ public class ViewSessionImpl implements
         return ret.toArray(new Integer[0]);
     }
 
-    @Override
+    //@Override
     public boolean isAuthenticated() {
         return getUserPrincipal() != null;
     }
 
-    @Override
+    //@Override
     public Principal getUserPrincipal() {
         return request.getUserPrincipal();
     }
 
-    @Override
+    //@Override
     public void login(String user, String passwd) {
         try {
             request.login(user, passwd);
@@ -571,27 +569,27 @@ public class ViewSessionImpl implements
         }
     }
 
-    @Override
+    //@Override
     public ViewSessionPhotoDisplayMassEdit getMassEdit() {
         return (ViewSessionPhotoDisplayMassEdit) this;
     }
 
-    @Override
-    public MaintAction getMaintAction() {
+    //@Override
+   /* public MaintAction getMaintAction() {
         return getObject("action", MaintAction.class);
     }
     
-    @Override
+    //@Override
     public TagAction getTagAction() {
         return getObject("tagAction", TagAction.class);
-    }
+    }*/
     
-    @Override
+    //@Override
     public Integer getCarnetsPage() {
         return getInteger("carnetsPage") ;
     }
 
-    @Override
+    //@Override
     public int getPhotoAlbumSize() {
         Integer size = getInteger("photoAlbumSize");
         
@@ -605,18 +603,18 @@ public class ViewSessionImpl implements
         return size;
     }
     
-    @Override
+    //@Override
     public void setPhotoAlbumSize(int size) {
         setSessionObject("photoAlbumSize", size);
     }
     
     
-    @Override
+    //@Override
     public boolean getStatic() {
         return "y".equals(getSessionObject("static", String.class));
     }
     
-    @Override
+    //@Override
     public void setStatic(boolean statik) {
         setSessionObject("static", statik ? "y" : "n");
     }
@@ -678,17 +676,17 @@ public class ViewSessionImpl implements
         session.setAttribute(key, val);
     }
 
-    @Override
+    //@Override
     public String getDroit() {
         return getString("user") ;
     }
 
-    @Override
+    //@Override
     public boolean isRemoteAccess() {
         return !request.getLocalAddr().equals(request.getRemoteHost()) ;
     }
 
-    @Override
+    //@Override
     public void redirect(String filepath) {
         try {
             response.sendRedirect(filepath);
@@ -697,27 +695,27 @@ public class ViewSessionImpl implements
         }
     }
 
-    @Override
+    //@Override
     public boolean getWantTags() {
         return getObject("wantTags", String.class) != null;
     }
 
-    @Override
+    //@Override
     public Integer getYear() {
         return getInteger("year");
     }
 
-    @Override
+    //@Override
     public Integer getMonth() {
         return getInteger("month");
     }
 
-    @Override
+    //@Override
     public Integer getDay() {
         return getInteger("day");
     }
 
-    @Override
+    //@Override
     public boolean getAll() {
         return getString("all") != null && "y".equals(getString("all"));
     }
@@ -727,16 +725,16 @@ public class ViewSessionImpl implements
         public ViewSessionLoginImpl (HttpSession session) {
             this.session = session ;
         }
-        @Override
+        //@Override
         public void setTempDir(File temp) {
             setSessionObject("tempDir", temp, session);
         }
-        @Override
+        //@Override
         public File getTempDir() {
             return ViewSessionImpl.getSessionObject("tempDir", File.class, session, null) ;
         }
 
-        @Override
+        //@Override
         public Configuration getConfiguration() {
             return ConfigurationXML.getConf() ;
         }

@@ -17,10 +17,10 @@ import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Action_Photo;
+import net.wazari.service.exchange.ViewSession.Tag_Mode;
+import net.wazari.service.exchange.ViewSessionPhoto.Action;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay.ViewSessionPhotoDisplayMassEdit.Turn;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
@@ -68,17 +68,18 @@ public class PhotoBean implements PhotoLocal {
             Boolean correct) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatPhotoSUBMIT", log) ;
         XmlPhotoSubmit output = new XmlPhotoSubmit();
-        Integer photoID = vSession.getId();
-
-        if (photoID == null) {
+        Integer photoId = vSession.getId();
+        output.photoId = photoId;
+        
+        if (photoId == null) {
             output.exception = "Pas de photo demandé ... (id=null)" ;
             return output ;
         }
-        Photo enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), photoID);
+        Photo enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), photoId);
 
         if (enrPhoto == null) {
             output.exception = "Impossible de trouver cette photo "
-                    + "(" + photoID + (vSession.getVSession().isRootSession() ? "" : "/" + vSession.getVSession().getTheme()) + ")" ;
+                    + "(" + photoId + (vSession.getVSession().isRootSession() ? "" : "/" + vSession.getVSession().getTheme()) + ")" ;
             return output ;
         }
 
@@ -281,16 +282,16 @@ public class PhotoBean implements PhotoLocal {
 
         daoToXml.convertPhotoDetails(vSession.getVSession(), enrPhoto, output.details, false);
                 
-        output.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession.getVSession(), enrPhoto,
+        output.tag_used = webPageService.displayListIBT(Tag_Mode.TAG_USED, vSession.getVSession(), enrPhoto,
                 Box.MULTIPLE);
 
-        output.tag_nused = webPageService.displayListIBT(Mode.TAG_NUSED, vSession.getVSession(), enrPhoto,
+        output.tag_nused = webPageService.displayListIBT(Tag_Mode.TAG_NUSED, vSession.getVSession(), enrPhoto,
                 Box.MULTIPLE);
 
-        output.tag_never = webPageService.displayListIBT(Mode.TAG_NEVER, vSession.getVSession(), enrPhoto,
+        output.tag_never = webPageService.displayListIBT(Tag_Mode.TAG_NEVER, vSession.getVSession(), enrPhoto,
                 Box.MULTIPLE);
 
-        output.tag_used_lst = webPageService.displayListIBT(Mode.TAG_USED, vSession.getVSession(), enrPhoto,
+        output.tag_used_lst = webPageService.displayListIBT(Tag_Mode.TAG_USED, vSession.getVSession(), enrPhoto,
                 Box.LIST);
         
         Utilisateur enrUtil = userDAO.find(enrPhoto.getDroit());
@@ -309,12 +310,13 @@ public class PhotoBean implements PhotoLocal {
         StopWatch stopWatch = new Slf4JStopWatch("Service.displayPhoto."+rq.type, log) ;
 
         Integer page = vSession.getPage();
-        Integer photoId = vSession.getId();
+        Integer photoId = null;
+        if (submit != null) photoId = submit.photoId;
         
         Bornes bornes = null;
         SubsetOf<Photo> lstP = null;
         boolean found = false;
-        if (page == null && photoId != null) {
+        if (page == null && submit != null) {
             int ipage = 0;
             while (!found) {
                 bornes = webPageService.calculBornes(ipage, vSession.getVSession().getPhotoAlbumSize());
@@ -361,8 +363,8 @@ public class PhotoBean implements PhotoLocal {
         XmlPhotoList output = new XmlPhotoList(lstP.subset.size()) ;
         Turn turn = null;
         if (vSession.getVSession().isSessionManager()) {
-            Action_Photo action = vSession.getAction();
-            if (Action_Photo.MASSEDIT == action) {
+            Action action = vSession.getAction();
+            if (Action.MASSEDIT == action) {
                 turn = vSession.getMassEdit().getTurn();
                 stopWatch.setTag(stopWatch.getTag()+".MASSEDIT."+turn) ;
                 if (turn == Turn.LEFT) {
@@ -463,8 +465,8 @@ public class PhotoBean implements PhotoLocal {
 
         if (vSession.getVSession().isSessionManager()) {
             XmlPhotoMassEdit massEdit = new XmlPhotoMassEdit();
-            massEdit.tag_used = webPageService.displayListBN(Mode.TAG_USED, vSession.getVSession(), Box.LIST);
-            massEdit.tag_never = webPageService.displayListBN(Mode.TAG_NEVER_EVER, vSession.getVSession(), Box.LIST);
+            massEdit.tag_used = webPageService.displayListBN(Tag_Mode.TAG_USED, vSession.getVSession(), Box.LIST);
+            massEdit.tag_never = webPageService.displayListBN(Tag_Mode.TAG_NEVER_EVER, vSession.getVSession(), Box.LIST);
             if (massEditParam) {
                 String msg;
                 if (countME == 0 || Turn.NOTHING == turn) {

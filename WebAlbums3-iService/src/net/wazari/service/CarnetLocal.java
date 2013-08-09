@@ -9,7 +9,7 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSessionCarnet;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
@@ -35,5 +35,5 @@ public interface CarnetLocal {
     XmlCarnetSubmit treatSUBMIT(ViewSessionCarnetSubmit vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlCarnetsTop treatTOP(ViewSessionCarnet vSession);
+    XmlCarnetsTop treatTOP(ViewSession vSession);
 }

@@ -50,14 +50,14 @@ public class ImageBeaned implements ImageLocal {
     @Override
     public String treatSHRINK(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
-        Photo enrPhoto = photoDAO.loadIfAllowed(vSession, vSession.getId());
+        Photo enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), vSession.getId());
         if (enrPhoto == null) {
             return"Cette photo (" + vSession.getId() + ") n'est pas accessible ou n'existe pas ..." ;
         }
         String filepath;
         try {
             Integer width = vSession.getWidth();
-            filepath = sysTools.shrink(vSession, enrPhoto, width);
+            filepath = sysTools.shrink(vSession.getVSession(), enrPhoto, width);
             log.warn("Shrinked filepath: {}", filepath) ;
         } catch (NumberFormatException e) {
             return "Impossible de parser la taille demandee" ;
@@ -67,7 +67,7 @@ public class ImageBeaned implements ImageLocal {
             Integer borderWidth = vSession.getBorderWidth();
             if (borderWidth != null) {
                 String color = vSession.getBorderColor() ;
-                sysTools.addBorder(vSession, enrPhoto, new Integer(borderWidth), color, filepath);
+                sysTools.addBorder(vSession.getVSession(), enrPhoto, new Integer(borderWidth), color, filepath);
                 log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
             }
         } catch (NumberFormatException e) {
@@ -89,13 +89,13 @@ public class ImageBeaned implements ImageLocal {
         Photo enrPhoto;
         String filepath;
         String type;
-        Theme enrThemeForBackground = vSession.getTheme() ;
+        Theme enrThemeForBackground = vSession.getVSession().getTheme() ;
         try {
             if (mode == ImgMode.RANDOM_TAG || mode == ImgMode.REPRESENT_TAG) {
                 Tag enrTag = tagDAO.find(imgId);
                 if (enrTag != null) {
                     if (mode == ImgMode.RANDOM_TAG) {
-                        SubsetOf<Photo> photos = photoDAO.loadByTags(vSession, 
+                        SubsetOf<Photo> photos = photoDAO.loadByTags(vSession.getVSession(), 
                                 Arrays.asList(new Tag[]{enrTag}),
                                 new Bornes(1), ListOrder.RANDOM);
                         
@@ -108,7 +108,7 @@ public class ImageBeaned implements ImageLocal {
                         }
                     } else /* REPRESENT_TAG */{
                         mode = ImgMode.MINI ;
-                        Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession, enrTag);
+                        Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession.getVSession(), enrTag);
                         if (enrTagThemePhoto != null) {
                             imgId = enrTagThemePhoto.getId();
                         } else {
@@ -120,7 +120,7 @@ public class ImageBeaned implements ImageLocal {
                     imgId = null ;
                 }
             } else if (mode == ImgMode.BACKGROUND) {
-                if (vSession.isRootSession()) {
+                if (vSession.getVSession().isRootSession()) {
                     List<Theme> lstThemes = themeDAO.findAll() ;
                     enrThemeForBackground = lstThemes.get(new Random().nextInt(lstThemes.size())) ;
                     log.info("Using Theme[{}] for root background picture", enrThemeForBackground);
@@ -137,7 +137,7 @@ public class ImageBeaned implements ImageLocal {
                 return output;
             }
 
-            enrPhoto = photoDAO.loadIfAllowed(vSession, imgId);
+            enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), imgId);
             if (enrPhoto == null) {
                 output.exception = "Cette photo (" + imgId + ") n'est pas accessible ou n'existe pas ..." ;
                 return output ;
@@ -152,7 +152,7 @@ public class ImageBeaned implements ImageLocal {
             if (mode == ImgMode.SHRINK) {
                 try {
                     Integer width = vSession.getWidth();
-                    filepath = sysTools.shrink(vSession, enrPhoto, width);
+                    filepath = sysTools.shrink(vSession.getVSession(), enrPhoto, width);
                     log.warn("Shrinked filepath: {}", filepath) ;
                 } catch (NumberFormatException e) {
                     output.exception = "Impossible de parser la taille demandee" ;
@@ -163,7 +163,7 @@ public class ImageBeaned implements ImageLocal {
                     Integer borderWidth = vSession.getBorderWidth();
                     if (borderWidth != null) {
                         String color = vSession.getBorderColor() ;
-                        sysTools.addBorder(vSession, enrPhoto, new Integer(borderWidth), color, filepath);
+                        sysTools.addBorder(vSession.getVSession(), enrPhoto, new Integer(borderWidth), color, filepath);
                         log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
                     }
                 } catch (NumberFormatException e) {
@@ -173,27 +173,27 @@ public class ImageBeaned implements ImageLocal {
             } else if (mode == ImgMode.BACKGROUND) {
                 final int SIZE = 1280 ;
 
-                String backgroundpath = vSession.getConfiguration()
+                String backgroundpath = vSession.getVSession().getConfiguration()
                         .getTempPath()+enrThemeForBackground.getNom()+File.separator+SIZE+".jpg" ;
-                if (vSession.getConfiguration().isPathURL()) {
-                    filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
+                if (vSession.getVSession().getConfiguration().isPathURL()) {
+                    filepath = photoUtil.getImagePath(vSession.getVSession(), enrPhoto) ;
                 } else if (!new File (backgroundpath).exists()) {
-                    filepath = sysTools.shrink(vSession, enrPhoto, SIZE, backgroundpath);
+                    filepath = sysTools.shrink(vSession.getVSession(), enrPhoto, SIZE, backgroundpath);
                 } else {
                     filepath = backgroundpath ;
                 }
 
             } else if (mode == ImgMode.GRAND) {
-                filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
+                filepath = photoUtil.getImagePath(vSession.getVSession(), enrPhoto) ;
             } else if (mode == ImgMode.GPX) {
-                filepath = photoUtil.getImagePath(vSession, enrPhoto) ;
+                filepath = photoUtil.getImagePath(vSession.getVSession(), enrPhoto) ;
             } else {
-                filepath = photoUtil.getMiniPath(vSession, enrPhoto);
+                filepath = photoUtil.getMiniPath(vSession.getVSession(), enrPhoto);
             }
             
 
             //redirect if the image can be accessed from HTTP
-            if (vSession.getConfiguration().isPathURL()) {
+            if (vSession.getVSession().getConfiguration().isPathURL()) {
                 if (false) {
                     vSession.redirect(filepath) ;
                     //stopWatch.stop(stopWatch.getTag()+".redirect") ;

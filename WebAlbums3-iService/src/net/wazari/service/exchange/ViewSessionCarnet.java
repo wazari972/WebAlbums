@@ -6,21 +6,22 @@
 package net.wazari.service.exchange;
 
 import java.util.Set;
-import net.wazari.service.exchange.ViewSession.Carnet_Action;
-import net.wazari.service.exchange.ViewSession.Carnet_Special;
+import net.wazari.service.exchange.ViewSession.VSession;
 
 /**
  *
  * @author kevin
  */
-public interface ViewSessionCarnet {
-    interface ViewSessionCarnetSubmit {
+public interface ViewSessionCarnet extends VSession {
+    enum Action {
+        EDIT, SUBMIT, SAVE
+    }
+    
+    interface ViewSessionCarnetSubmit extends VSession {
         Integer getCarnet();
         
         String getDesc();
-
         String getNom();
-
         String getDate();
 
         Integer[] getTags();
@@ -30,28 +31,30 @@ public interface ViewSessionCarnet {
         Integer getUserAllowed();
 
         String getCarnetText();
-
         Set<Integer> getCarnetPhoto();
-
         Integer getCarnetRepr();
-
         Set<Integer> getCarnetAlbum();
+        
     }
 
-    interface ViewSessionCarnetEdit {
+    interface ViewSessionCarnetSimple extends VSession {
+        Integer getId();
+    }
+    interface ViewSessionCarnetEdit extends VSession {
         Integer getCarnetsPage();
         Integer getCarnet();
         Integer getPage() ;
     }
-    interface ViewSessionCarnetDisplay {
+    interface ViewSessionCarnetDisplay extends VSession {
         Integer getCarnet();
         Integer getCarnetsPage();
         Integer getPage() ;
-        ViewSession getVSession();
     }
-    Carnet_Special getSpecial();
-    Carnet_Action getAction();
-    Integer getId();
     
-    ViewSession getVSession();
+    enum Special {
+        TOP5
+    }
+    
+    Special getCarnetSpecial();
+    Action getCarnetAction();
 }

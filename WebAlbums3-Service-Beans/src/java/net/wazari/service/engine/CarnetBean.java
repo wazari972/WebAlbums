@@ -23,9 +23,9 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.CarnetLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSessionCarnet;
+import net.wazari.service.exchange.ViewSession.Tag_Mode;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
@@ -157,7 +157,7 @@ public class CarnetBean implements CarnetLocal {
             details.setDescription(enrCarnet.getDescription());
 
             //tags du carnet
-            details.tag_used = webPageService.displayListIBT(Mode.TAG_USED, vSession.getVSession(), enrCarnet, Box.NONE) ;
+            details.tag_used = webPageService.displayListIBT(Tag_Mode.TAG_USED, vSession.getVSession(), enrCarnet, Box.NONE) ;
             details.tagTree = webPageService.tagListToTagTree(details.tag_used);
             
             //utilisateur ayant le droit à l'album
@@ -291,7 +291,7 @@ public class CarnetBean implements CarnetLocal {
     }
     
     @Override
-    public XmlCarnetsTop treatTOP(ViewSessionCarnet vSession) {
+    public XmlCarnetsTop treatTOP(ViewSession vSession) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlCarnetsTop top5 = new XmlCarnetsTop();
 

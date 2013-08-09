@@ -17,8 +17,8 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSessionCarnet;
+import net.wazari.service.exchange.ViewSession.Tag_Mode;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSimple;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionAnAlbum;
 import net.wazari.service.exchange.xml.XmlAffichage;
@@ -37,28 +37,28 @@ public interface WebPageLocal {
     Bornes calculBornes(Integer page, int taille);
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListB(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListB(Tag_Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListBN(Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListBN(Tag_Mode mode, ViewSession vSession, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlUserList displayListDroit(Utilisateur right, Integer albmRight) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListIBTD(Mode mode, ViewSession vSession, EntityWithId entity, Box box, String date) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListIBTD(Tag_Mode mode, ViewSession vSession, EntityWithId entity, Box box, String date) throws WebAlbumsServiceException;
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListIBT(Mode mode, ViewSession vSession, EntityWithId entity, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListIBT(Tag_Mode mode, ViewSession vSession, EntityWithId entity, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListIBTN(Mode mode, ViewSession vSession, EntityWithId entity, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListIBTN(Tag_Mode mode, ViewSession vSession, EntityWithId entity, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListLB(Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListLB(Tag_Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayListLBN(Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayListLBN(Tag_Mode mode, ViewSession vSession, List<Tag> ids, Box box) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlWebAlbumsList displayMapInScript(ViewSession vSession) throws WebAlbumsServiceException;
@@ -85,5 +85,5 @@ public interface WebPageLocal {
     XmlWebAlbumsList displayAlbumGeolocations(ViewSessionAnAlbum vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlWebAlbumsList displayCarnetGeolocations(ViewSessionCarnet vSession) throws WebAlbumsServiceException;
+    XmlWebAlbumsList displayCarnetGeolocations(ViewSessionCarnetSimple vSession) throws WebAlbumsServiceException;
 }

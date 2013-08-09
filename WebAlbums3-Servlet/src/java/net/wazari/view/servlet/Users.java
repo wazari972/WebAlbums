@@ -9,8 +9,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.service.exchange.ViewSessionLogin.Action;
 import net.wazari.service.exchange.xml.XmlLogin;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class Users extends HttpServlet {
     public XmlLogin treatLogin(ViewSessionLogin vSession, HttpServletRequest request, HttpServletResponse response) throws IOException {
         XmlLogin output = new XmlLogin();
         try {
-            Action action = vSession.getAction();
+            Action action = vSession.getLoginAction();
             log.info("Action: {}", action);
             if (Action.LOGIN == action) {
                 String userName = vSession.getUserName();

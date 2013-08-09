@@ -5,19 +5,41 @@
 
 package net.wazari.service.exchange;
 
+import net.wazari.service.exchange.ViewSession.Edit_Action;
+import net.wazari.service.exchange.ViewSession.VSession;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+
 /**
  *
  * @author kevin
  */
-public interface ViewSessionTag {
+public interface ViewSessionTag extends VSession {
+    enum Special {
+        CLOUD, PERSONS, PLACES, ABOUT
+    }
+    interface ViewSessionTagSimple extends VSession {
+        Integer getId();
+    }
+    interface ViewSessionTagCloud extends VSession {
+        boolean getWantUnusedTags();
+    }
+    interface ViewSessionTagEdit extends VSession {
+        Integer[] getTagAsked();
+        Integer getPage();
+        
+        ViewSessionPhotoEdit getSessionPhotoEdit();
+    }
+    interface ViewSessionTagDisplay extends VSession {
+        Integer[] getTagAsked();
+        Integer getPage();
+        boolean getWantTagChildren();
+    }
 
-    Integer[] getTagAsked();
-
-    boolean getWantTagChildren();
-
-    boolean getWantUnusedTags();
+    Special getTagSpecial();
+    Edit_Action getEditAction();
     
-    Integer getId();
-    ViewSession getVSession();
-
+    ViewSessionTagCloud getSessionTagCloud();
+    ViewSessionTagSimple getSessionTagSimple();
+    ViewSessionTagEdit getSessionTagEdit();
+    ViewSessionTagDisplay getSessionTagDisplay();
 }

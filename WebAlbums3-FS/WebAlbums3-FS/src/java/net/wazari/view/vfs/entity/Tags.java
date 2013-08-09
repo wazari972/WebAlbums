@@ -47,7 +47,7 @@ public class Tags implements ADirectory {
     @Override
     public void load() throws Exception {
         Session session = new Session(theme);
-        XmlWebAlbumsList entries = aThis.webPageService.displayListLB(ViewSession.Mode.TAG_USED, session, null,
+        XmlWebAlbumsList entries = aThis.webPageService.displayListLB(ViewSession.Tag_Mode.TAG_USED, session, null,
                 ViewSession.Box.MULTIPLE);
         
         who = new TagDirectory(null, theme, aThis, (List) entries.who);

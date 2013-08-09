@@ -11,11 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.ConfigLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSession.Special;
+import net.wazari.service.exchange.ViewSession.Tag_Mode;
 import net.wazari.service.exchange.ViewSessionConfig;
+import net.wazari.service.exchange.ViewSessionConfig.Action;
+import net.wazari.service.exchange.ViewSessionConfig.Special;
 import net.wazari.service.exchange.xml.config.XmlConfig;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class Config extends HttpServlet {
     public XmlConfig treatCONFIG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
 
-        if (!vSession.isSessionManager())
+        if (!vSession.getVSession().isSessionManager())
             return null;
         
         Special special = vSession.getSpecial();
@@ -96,11 +96,11 @@ public class Config extends HttpServlet {
         }
         
         if (special != Special.ONLY) {
-            output.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
+            output.tag_used = webPageService.displayListLB(Tag_Mode.TAG_USED, vSession.getVSession(), null,
                     Box.MULTIPLE);
-            output.tag_never = webPageService.displayListLB(Mode.TAG_NEVER, vSession, null,
+            output.tag_never = webPageService.displayListLB(Tag_Mode.TAG_NEVER, vSession.getVSession(), null,
                     Box.MULTIPLE);
-            output.tag_geo = webPageService.displayListLB(Mode.TAG_GEO, vSession, null,
+            output.tag_geo = webPageService.displayListLB(Tag_Mode.TAG_GEO, vSession.getVSession(), null,
                     Box.MULTIPLE);
         }
         

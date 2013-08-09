@@ -23,13 +23,15 @@ import net.wazari.service.AlbumLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.AlbumUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSession.Tag_Mode;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSelect;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSimple;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumYear;
 import net.wazari.service.exchange.xml.album.*;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlFrom;
@@ -167,7 +169,7 @@ public class AlbumBean implements AlbumLocal {
                 album.gpx.add(gpx);
             }
             //tags de l'album
-            album.details.tag_used = webPageService.displayListIBTD(Mode.TAG_USED, 
+            album.details.tag_used = webPageService.displayListIBTD(Tag_Mode.TAG_USED, 
                               vSession.getVSession(), enrAlbum, null, enrAlbum.getDate());
             //utilisateur ayant le droit à l'album
             //ou a l'une des photos qu'il contient
@@ -190,11 +192,11 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
-    public XmlAlbumGpx treatGPX(ViewSessionAlbum vSession) {
+    public XmlAlbumGpx treatGPX(ViewSession vSession) {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumGpx gpxList = new XmlAlbumGpx();
         
-        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession.getVSession(), 
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
                          Restriction.THEME_ONLY, TopFirst.ALL, null);
         for (Album enrAlbum : albums.subset) {
             for (Photo enrGpx : enrAlbum.getGpxList()) {
@@ -214,15 +216,15 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
-    public XmlAlbumTop treatTOP(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
+    public XmlAlbumTop treatTOP(ViewSession vSession) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumTop top5 = new XmlAlbumTop();
 
-        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession.getVSession(), 
+        SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
                          Restriction.THEME_ONLY, TopFirst.TOP, new Bornes(TOP));
         for (Album enrAlbum : albums.subset) {
             XmlAlbum album = new XmlAlbum();
-            daoToXmlService.convertAlbum(vSession.getVSession(), enrAlbum, album, false);
+            daoToXmlService.convertAlbum(vSession, enrAlbum, album, false);
             
             top5.album.add(album);
         }
@@ -231,7 +233,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
-    public XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
+    public XmlAlbumGraph treatGRAPH(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException {
         XmlAlbumGraph graph = new XmlAlbumGraph();
         
         graph.album.addAll(treatSELECT(vSession).album);
@@ -240,7 +242,7 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
-    public XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
+    public XmlAlbumSelect treatSELECT(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumSelect select = new XmlAlbumSelect();
 
@@ -294,7 +296,7 @@ public class AlbumBean implements AlbumLocal {
 
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy") ;
     @Override
-    public XmlAlbumYears treatYEARS(ViewSessionAlbum vSession) throws WebAlbumsServiceException {
+    public XmlAlbumYears treatYEARS(ViewSessionAlbumYear vSession) throws WebAlbumsServiceException {
         StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumYears years = new XmlAlbumYears();
 

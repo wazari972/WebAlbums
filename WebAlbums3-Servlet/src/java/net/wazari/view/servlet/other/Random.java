@@ -46,7 +46,7 @@ public class Random extends HttpServlet {
             } catch (ServletException e) {
                 log.info("Wasn't logged in");
             }
-            ViewSession vSession = new ViewSessionImpl(request, response, getServletContext());
+            ViewSession vSession = null; //TEMP new ViewSessionImpl(request, response, getServletContext());
             request.login(request.getParameter("login"), "");
             boolean loggedin = userService.logon((ViewSessionLogin) vSession, request);
             log.debug( "Logon result: {}", loggedin);

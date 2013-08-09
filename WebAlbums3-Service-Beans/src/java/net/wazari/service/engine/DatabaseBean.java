@@ -23,9 +23,8 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.service.DatabaseLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.Configuration;
-import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.Database_Action;
 import net.wazari.service.exchange.ViewSessionDatabase;
+import net.wazari.service.exchange.ViewSessionDatabase.Action;
 import net.wazari.service.exchange.xml.database.*;
 import net.wazari.service.exchange.xml.database.XmlDatabaseStats.XmlDatabaseStatsTheme;
 import net.wazari.service.exchange.xml.tag.XmlTag;
@@ -76,7 +75,7 @@ public class DatabaseBean implements DatabaseLocal {
     public XmlDatabaseCheck treatCHECK(ViewSessionDatabase vSession) {
         XmlDatabaseCheck output = new XmlDatabaseCheck() ;
         
-        Database_Action action = vSession.getAction() ;
+        Action action = vSession.getDatabaseAction() ;
         if (action == null) {
             return output;
         }
@@ -105,7 +104,7 @@ public class DatabaseBean implements DatabaseLocal {
                 List<String> images = null;
                 List<String> mini = null;
                 
-                if (action == Database_Action.CHECK_FS) {
+                if (action == Action.CHECK_FS) {
                     images = new LinkedList<String>();
                     mini = new LinkedList<String>();
                     String sep = vSession.getVSession().getConfiguration().getSep() ;
@@ -140,14 +139,14 @@ public class DatabaseBean implements DatabaseLocal {
                         List<String> current = images ;
                         for (String filepath : new String[]{photoUtil.getImagePath(vSession.getVSession(), enrPhoto), 
                                                             photoUtil.getMiniPath(vSession.getVSession(), enrPhoto)}) {
-                            if (action == Database_Action.CHECK_DB) {
+                            if (action == Action.CHECK_DB) {
                                 File f = new File(filepath);
                                 if (!f.exists()) {
                                     output.files.add(filepath+": missing");
                                 } else if (!f.canRead()) {
                                     output.files.add(filepath+": not readable");
                                 }
-                            } else if (action == Database_Action.CHECK_FS) {
+                            } else if (action == Action.CHECK_FS) {
                                 
                                 boolean removed = current.remove(filepath);
                                 log.info("checking: {}", filepath);
@@ -157,7 +156,7 @@ public class DatabaseBean implements DatabaseLocal {
                         }
                     }
                 }
-                if (action == Database_Action.CHECK_FS) {
+                if (action == Action.CHECK_FS) {
                     output.files.addAll(images);
                     output.files.addAll(mini);
                 }

@@ -59,7 +59,7 @@ public class DaoToXmlBean {
         details.setDescription(enrPhoto.getDescription());
 
         //tags de cette photo
-        details.tag_used = webPageService.displayListIBTD(ViewSession.Mode.TAG_USED, vSession, enrPhoto,
+        details.tag_used = webPageService.displayListIBTD(ViewSession.Tag_Mode.TAG_USED, vSession, enrPhoto,
                 ViewSession.Box.NONE, enrPhoto.getAlbum().getDate());
 
         details.albumId = enrPhoto.getAlbum().getId();
@@ -112,7 +112,7 @@ public class DaoToXmlBean {
         
         //tags de l'album
         if (withTags) {
-            album.details.tag_used = webPageService.displayListIBTD(ViewSession.Mode.TAG_USED, 
+            album.details.tag_used = webPageService.displayListIBTD(ViewSession.Tag_Mode.TAG_USED, 
                                       vSession, enrAlbum, ViewSession.Box.NONE, enrAlbum.getDate());
         }
         album.details.setDescription(enrAlbum.getDescription());

@@ -11,7 +11,7 @@ import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSelect;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
 import net.wazari.view.vfs.Launch;
@@ -36,7 +36,7 @@ public class Albums extends Listing implements ADirectory {
     @Override
     public void load() throws Exception {
         Session session = new Session(theme);
-        XmlAlbumSelect entries = aThis.albumService.treatSELECT((ViewSessionAlbum) session);
+        XmlAlbumSelect entries = aThis.albumService.treatSELECT((ViewSessionAlbumSelect) session);
         
         for (XmlAlbum album : entries.album) {
             albums.add(new Album(album.albmDate, album.name, album.id, theme, aThis)) ;

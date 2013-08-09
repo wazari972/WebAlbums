@@ -26,8 +26,8 @@ import net.wazari.service.entity.util.MapPoint.Point;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
-import net.wazari.service.exchange.ViewSession.Mode;
-import net.wazari.service.exchange.ViewSessionCarnet;
+import net.wazari.service.exchange.ViewSession.Tag_Mode;
+import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSimple;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionAnAlbum;
 import net.wazari.service.exchange.xml.XmlAffichage;
@@ -149,8 +149,8 @@ public class WebPageBean implements WebPageLocal {
     public XmlLoginInfo xmlLogin(ViewSessionLogin vSession) {
         XmlLoginInfo login = new XmlLoginInfo();
 
-        Theme enrTheme = vSession.getTheme();
-        Utilisateur enrUtil = vSession.getUser() ;
+        Theme enrTheme = vSession.getVSession().getTheme();
+        Utilisateur enrUtil = vSession.getVSession().getUser() ;
         Principal principal = vSession.getUserPrincipal() ;
         
         login.theme = (enrTheme == null ? null : enrTheme.getNom());
@@ -162,13 +162,13 @@ public class WebPageBean implements WebPageLocal {
         if (principal != null) {
             login.user = principal.getName();
         }
-        log.debug( "logged as manager? {}", vSession.isSessionManager());
-        if (vSession.isSessionManager() && !vSession.getStatic()) {
+        log.debug( "logged as manager? {}", vSession.getVSession().isSessionManager());
+        if (vSession.getVSession().isSessionManager() && !vSession.getVSession().getStatic()) {
             login.admin = true ;
         }
         
-        log.debug( "logged as root? {}", vSession.isRootSession());
-        if (vSession.isRootSession()) {
+        log.debug( "logged as root? {}", vSession.getVSession().isRootSession());
+        if (vSession.getVSession().isRootSession()) {
             login.root = true ;
         }
 
@@ -212,7 +212,7 @@ public class WebPageBean implements WebPageLocal {
     //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
     @Override
-    public XmlWebAlbumsList displayListIBTN(Mode mode,
+    public XmlWebAlbumsList displayListIBTN(Tag_Mode mode,
             ViewSession vSession,
             EntityWithId entity,
             Box box)
@@ -254,7 +254,7 @@ public class WebPageBean implements WebPageLocal {
     //Mode specific information can be provide throug info (null otherwise)
     //(used by Mode.MAP for the link to the relevant address)
     @Override
-    public XmlWebAlbumsList displayListLBN(Mode mode,
+    public XmlWebAlbumsList displayListLBN(Tag_Mode mode,
             ViewSession vSession,
             List<Tag> ids,
             Box box)
@@ -264,27 +264,27 @@ public class WebPageBean implements WebPageLocal {
         List<Tag> tags;
 
         XmlWebAlbumsList output = new XmlWebAlbumsList();
-        boolean geoOnly = mode == Mode.TAG_GEO;
+        boolean geoOnly = mode == Tag_Mode.TAG_GEO;
         //affichage de la liste des tags où il y aura des photos
         if (!vSession.isSessionManager()) {
-            if (mode != Mode.TAG_USED && mode != Mode.TAG_GEO) {
+            if (mode != Tag_Mode.TAG_USED && mode != Tag_Mode.TAG_GEO) {
                 throw new RuntimeException("Don't want to process mode " + mode + " when not logged at manager");
             }
             log.debug( "Load visible tags (only for geo?{})", geoOnly);
             tags = tagDAO.loadVisibleTags(vSession, geoOnly);
         } else /* current manager*/ {
 
-            if (mode == Mode.TAG_USED || mode == Mode.TAG_GEO) {
+            if (mode == Tag_Mode.TAG_USED || mode == Tag_Mode.TAG_GEO) {
                 log.debug( "Load visible tags (only for geo?{})", geoOnly);
                 tags = tagDAO.loadVisibleTags(vSession, geoOnly);
-            } else if (mode == Mode.TAG_ALL) {
+            } else if (mode == Tag_Mode.TAG_ALL) {
                 log.debug( "Load all tags");
                 //afficher tous les tags
                 tags = tagDAO.findAll();
-            } else if (mode == Mode.TAG_NUSED || mode == Mode.TAG_NEVER || mode == Mode.TAG_NEVER_EVER) {
+            } else if (mode == Tag_Mode.TAG_NUSED || mode == Tag_Mode.TAG_NEVER || mode == Tag_Mode.TAG_NEVER_EVER) {
                 List<Tag> notWantedTags;
                 //select the tags not used [in this theme]
-                if (mode == Mode.TAG_NEVER || mode == Mode.TAG_NEVER_EVER || vSession.isRootSession()) {
+                if (mode == Tag_Mode.TAG_NEVER || mode == Tag_Mode.TAG_NEVER_EVER || vSession.isRootSession()) {
                     //select all the tags used
                     log.debug( "Select disting tags");
                     notWantedTags = tagPhotoDAO.selectDistinctTags();
@@ -297,7 +297,7 @@ public class WebPageBean implements WebPageLocal {
                 log.debug( "Select no such tags");
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);
                 
-                if (mode == Mode.TAG_NEVER_EVER) {
+                if (mode == Tag_Mode.TAG_NEVER_EVER) {
                    List<Tag> never_ever = new ArrayList<Tag>(); 
                    for (Tag enrTag : tags) {
                         if (enrTag.getSonList().isEmpty()) {
@@ -371,7 +371,7 @@ public class WebPageBean implements WebPageLocal {
                     default: throw new RuntimeException("Unkown tag type "+enrTag.getNom()+"->"+enrTag.getTagType()) ;
                 }
                 
-                if (mode == Mode.TAG_GEO) {
+                if (mode == Tag_Mode.TAG_GEO) {
                     if (enrTag.getGeolocalisation() != null) {
                         XmlWebAlbumsTagWhere tagGeo = (XmlWebAlbumsTagWhere) tag;
                         tagGeo.longit = enrTag.getGeolocalisation().getLongitude();
@@ -471,29 +471,29 @@ public class WebPageBean implements WebPageLocal {
             return null;
         }
         
-        return displayListIBTN(Mode.TAG_GEO, vSession.getVSession(), enrAlbum, Box.MAP_SCRIPT);
+        return displayListIBTN(Tag_Mode.TAG_GEO, vSession.getVSession(), enrAlbum, Box.MAP_SCRIPT);
     }
     
     @Override
-    public XmlWebAlbumsList displayCarnetGeolocations(ViewSessionCarnet vSession)
+    public XmlWebAlbumsList displayCarnetGeolocations(ViewSessionCarnetSimple vSession)
             throws WebAlbumsServiceException {
         Integer carnetId = vSession.getId();
         if (carnetId == null) {
             return null;
         }
         
-        Carnet enrCarnet = carnetDAO.loadIfAllowed(vSession, carnetId);
+        Carnet enrCarnet = carnetDAO.loadIfAllowed(vSession.getVSession(), carnetId);
         if (enrCarnet == null) {
             return null;
         }
         
-        return displayListIBTN(Mode.TAG_GEO, vSession, enrCarnet, Box.MAP_SCRIPT);
+        return displayListIBTN(Tag_Mode.TAG_GEO, vSession.getVSession(), enrCarnet, Box.MAP_SCRIPT);
     }
     
     @Override
     public XmlWebAlbumsList displayMapInScript(ViewSession vSession)
             throws WebAlbumsServiceException {
-        return displayListLBN(Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT);
+        return displayListLBN(Tag_Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT);
     }
 
     //display a list into STR
@@ -502,7 +502,7 @@ public class WebPageBean implements WebPageLocal {
     //List made up of BOX items,
     //and is named NAME
     @Override
-    public XmlWebAlbumsList displayListBN(Mode mode,
+    public XmlWebAlbumsList displayListBN(Tag_Mode mode,
             ViewSession vSession,
             Box box)
             throws WebAlbumsServiceException {
@@ -515,7 +515,7 @@ public class WebPageBean implements WebPageLocal {
     //and is named with the default name for this MODE
 
     @Override
-    public XmlWebAlbumsList displayListB(Mode mode,
+    public XmlWebAlbumsList displayListB(Tag_Mode mode,
             ViewSession vSession,
             Box box)
             throws WebAlbumsServiceException {
@@ -523,7 +523,7 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
-    public XmlWebAlbumsList displayListIBTD(Mode mode,
+    public XmlWebAlbumsList displayListIBTD(Tag_Mode mode,
             ViewSession vSession,
             EntityWithId entity,
             Box box, String date)
@@ -573,7 +573,7 @@ public class WebPageBean implements WebPageLocal {
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
 
     @Override
-    public XmlWebAlbumsList displayListIBT(Mode mode,
+    public XmlWebAlbumsList displayListIBT(Tag_Mode mode,
             ViewSession vSession,
             EntityWithId entity,
             Box box)
@@ -587,7 +587,7 @@ public class WebPageBean implements WebPageLocal {
     //List is made up of BOX items
     //and is filled with the IDs
     @Override
-    public XmlWebAlbumsList displayListLB(Mode mode,
+    public XmlWebAlbumsList displayListLB(Tag_Mode mode,
             ViewSession vSession,
             List<Tag> ids,
             Box box)

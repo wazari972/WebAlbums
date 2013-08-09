@@ -14,11 +14,12 @@ import net.wazari.service.TagLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.Action;
-import net.wazari.service.exchange.ViewSession.Special;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+import net.wazari.service.exchange.ViewSession.Edit_Action;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
+import net.wazari.service.exchange.ViewSessionTag.Special;
+import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagCloud;
+import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.xml.XmlReturnTo;
@@ -43,39 +44,42 @@ public class Tags extends HttpServlet {
     
     public XmlTags treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
         XmlTags output = new XmlTags();
-        Special special = vSession.getSpecial();
+        Special special = vSession.getTagSpecial();
         if (Special.CLOUD == special) {
-            output.cloud = tagService.treatTagCloud(vSession) ;
-            if (vSession.getWantUnusedTags()) {
-                output.tag_never = webPageService.displayListLB(ViewSession.Mode.TAG_NEVER_EVER, vSession, null,
+            ViewSessionTagCloud vSessionCloud = vSession.getSessionTagCloud();
+            
+            output.cloud = tagService.treatTagCloud(vSession.getVSession()) ;
+            if (vSessionCloud.getWantUnusedTags()) {
+                output.tag_never = webPageService.displayListLB(ViewSession.Tag_Mode.TAG_NEVER_EVER, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
             }
             return output ;
         } else  if (Special.PERSONS == special) {
-            output.persons = tagService.treatTagPersons(vSession) ;
+            output.persons = tagService.treatTagPersons(vSession.getVSession()) ;
             return output ;
         } else  if (Special.PLACES == special) {
-            output.places = tagService.treatTagPlaces(vSession) ;
+            output.places = tagService.treatTagPlaces(vSession.getVSession()) ;
             return output ;
         } else  if (Special.ABOUT == special) {
-            output.about = tagService.treatABOUT(vSession) ;
+            output.about = tagService.treatABOUT(vSession.getSessionTagSimple()) ;
             return output ;
         }
 
-        Action action = vSession.getAction();
+        Edit_Action action = vSession.getEditAction();
         XmlPhotoSubmit submit = null;
         Boolean correct = true;
 
-        if (vSession.isSessionManager()) {
-            if (Action.SUBMIT == action) {
+        if (vSession.getVSession().isSessionManager()) {
+            if (Edit_Action.SUBMIT == action) {
                 submit = photoService.treatPhotoSUBMIT((ViewSessionPhotoSubmit)vSession, correct);
             }
 
-            if ((Action.EDIT == action || !correct)) {
-                Integer[] tags = vSession.getTagAsked();
-                Integer page = vSession.getPage();
+            if ((Edit_Action.EDIT == action || !correct)) {
+                ViewSessionTagEdit vSessionEdit = vSession.getSessionTagEdit();
+                Integer[] tags = vSessionEdit.getTagAsked();
+                Integer page = vSessionEdit.getPage();
 
-                output.edit = photoService.treatPhotoEDIT((ViewSessionPhotoEdit) vSession, submit);
+                output.edit = photoService.treatPhotoEDIT(vSessionEdit.getSessionPhotoEdit(), submit);
                 XmlReturnTo returnTo = new XmlReturnTo();
                 returnTo.name = "Tags" ;
                 returnTo.page = page;
@@ -86,7 +90,7 @@ public class Tags extends HttpServlet {
                 return output ;
             }
         }
-        output.display = tagService.treatTagDISPLAY(vSession, submit) ;
+        output.display = tagService.treatTagDISPLAY(vSession.getSessionTagDisplay(), submit) ;
         return output ;
     }
 

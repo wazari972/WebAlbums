@@ -43,12 +43,12 @@ public class ThemeBean implements ThemeLocal {
     
     private void sortAlbumAge(ViewSessionTempTheme vSession, List<Theme> themes) {
         ViewSessionLogin vLoginSession = (ViewSessionLogin) vSession;
-        Theme origTheme = vLoginSession.getTheme();
+        Theme origTheme = vLoginSession.getVSession().getTheme();
         final Map<Theme, String> themeDates = new HashMap<Theme, String>();
         for (Theme enrTheme : themes) {
             //race condition possible here
             vLoginSession.setTheme(enrTheme);
-            Album enrAlbum = albumDAO.loadLastAlbum(vSession, AlbumFacadeLocal.Restriction.THEME_ONLY);
+            Album enrAlbum = albumDAO.loadLastAlbum(vSession.getVSession(), AlbumFacadeLocal.Restriction.THEME_ONLY);
             
             if (enrAlbum != null) {
                 themeDates.put(enrTheme, enrAlbum.getDate());

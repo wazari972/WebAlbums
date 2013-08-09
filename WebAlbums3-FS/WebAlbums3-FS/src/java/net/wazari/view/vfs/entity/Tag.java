@@ -12,7 +12,7 @@ import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IntrosDirectory;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
-import net.wazari.service.exchange.ViewSessionTag;
+import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagDisplay;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import net.wazari.service.exchange.xml.tag.XmlTag;
@@ -58,7 +58,7 @@ public class Tag extends TagDirectory {
         log.warn("Load images from : {}", this);
         Session session = new Session(theme);
         session.setTagAsked(new Integer[]{tagId});
-        XmlTagDisplay tags = aThis.tagService.treatTagDISPLAY((ViewSessionTag) session, null);
+        XmlTagDisplay tags = aThis.tagService.treatTagDISPLAY((ViewSessionTagDisplay) session, null);
         log.warn("Load images from : {} == {} images", this, tags.photoList.photo.size());
         for (XmlPhoto photo : tags.photoList.photo) {
             photos.add(new TagPhoto(theme, aThis, photo.details, true));

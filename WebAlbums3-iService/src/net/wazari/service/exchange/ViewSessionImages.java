@@ -7,12 +7,13 @@ package net.wazari.service.exchange;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import net.wazari.service.exchange.ViewSession.VSession;
 
 /**
  *
  * @author kevin
  */
-public interface ViewSessionImages extends ViewSession {
+public interface ViewSessionImages extends VSession {
 
     Integer getBorderWidth();
 

@@ -5,28 +5,30 @@
 
 package net.wazari.service.exchange;
 
-import net.wazari.service.exchange.ViewSession.Album_Action;
-import net.wazari.service.exchange.ViewSession.Album_Special;
+import net.wazari.service.exchange.ViewSession.Edit_Action;
+import net.wazari.service.exchange.ViewSession.VSession;
 
 /**
  *
  * @author kevin
  */
-public interface ViewSessionAlbum {
-    interface ViewSessionAlbumAgo {
+public interface ViewSessionAlbum extends VSession {
+    enum Special {
+        AGO, YEARS, TOP5, SELECT, GRAPH, ABOUT, GPX, PHOTOALBUM_SIZE
+    }
+    
+    interface ViewSessionAlbumAgo extends VSession {
         Integer getYear();
         Integer getMonth();
         Integer getDay();
         boolean getAll();
-        ViewSession getVSession();
     }
     
-    interface ViewSessionAlbumSimple {
+    interface ViewSessionAlbumSimple extends VSession {
         Integer getId();
-        ViewSession getVSession();
     }
     
-    interface ViewSessionAlbumSubmit {
+    interface ViewSessionAlbumSubmit extends ViewSessionAlbumSimple {
         String getDesc();
 
         String getNom();
@@ -40,32 +42,37 @@ public interface ViewSessionAlbum {
         Integer getUserAllowed();
         
         int getNewTheme();
-        
-        Integer getId();
-        ViewSession getVSession();
     }
-
-    ViewSession getVSession();
     
-    interface ViewSessionAlbumEdit {
-        ViewSession getVSession();
-        Integer getId();
-    }
-    interface ViewSessionAlbumDisplay {
-        ViewSession getVSession();
-        Integer getId();
+    interface ViewSessionAlbumEdit extends ViewSessionAlbumSimple {
         Integer getPage() ;
     }
+    interface ViewSessionAlbumDisplay extends ViewSessionAlbumSimple {
+        Integer getPage() ;
+        Integer getAlbmPage();
+    }
     
-    Album_Special getSpecial();
-    Album_Action getAction();
-    Integer getPage() ;
+    interface ViewSessionAlbumYear extends VSession {
+        Integer getNbPerYear();
+    }
     
-    Integer getAlbmPage();
-    Integer getNbPerYear();
-    void setPhotoAlbumSize(int size);
+    interface ViewSessionAlbumSelect extends VSession {
+        boolean getWantTags();
+        Integer[] getTagAsked() ;
+    }
     
-    Integer[] getTagAsked() ;
+    interface ViewSessionPhotoAlbumSize extends VSession {
+        void setPhotoAlbumSize(int photoAlbumSize);
+        Integer getNewPhotoAlbumSize();
+    }
     
-    boolean getWantTags();
+    Special getAlbumSpecial();
+    Edit_Action getEditAction();
+    
+    ViewSessionAlbumEdit getEditSession();
+    ViewSessionAlbumSubmit getSubmitSession();
+    ViewSessionAlbumSimple getSimpleSession();
+    ViewSessionAlbumSelect getSelectSession();
+    ViewSessionAlbumYear getYearSession();
+    ViewSessionPhotoAlbumSize getPhotoAlbumSizeSession();
 }

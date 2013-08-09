@@ -38,7 +38,6 @@ public class XmlWebAlbums {
     public XmlTags tags;
     public XmlImage image;
     public XmlDatabase database;
-    public XmlBenchmark benchmark;
     /***/
     public XmlAffichage affichage;
     public XmlLoginInfo loginInfo;

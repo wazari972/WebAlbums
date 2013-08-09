@@ -4,13 +4,22 @@
  */
 package net.wazari.service.exchange;
 
+import net.wazari.service.exchange.ViewSession.VSession;
+
 /**
  *
  * @author kevin
  */
-public interface ViewSessionPhoto extends ViewSession {
-
-    interface ViewSessionPhotoFastEdit extends ViewSessionPhoto {
+public interface ViewSessionPhoto extends VSession {
+    enum Action {
+        MASSEDIT, EDIT, SUBMIT
+    }
+    
+    enum Special {
+        VISIONNEUSE, FASTEDIT, ABOUT, RANDOM
+    }
+    
+    interface ViewSessionPhotoFastEdit{
         enum TagAction {SET, ADD, RM}
         
         String getDesc();
@@ -22,14 +31,17 @@ public interface ViewSessionPhoto extends ViewSession {
         Integer getStars();
         
         Integer getNewStarLevel();
+        
+        Integer getId();
+        
         void setStarLevel(Integer starLevel);
-        Integer getId();
     }
-    interface ViewSessionPhotoSimple {
+    
+    interface ViewSessionPhotoSimple extends VSession {
         Integer getId();
-        ViewSession getVSession();
+        
     }
-    interface ViewSessionPhotoSubmit {
+    interface ViewSessionPhotoSubmit extends VSession {
 
         boolean getSuppr();
 
@@ -48,42 +60,41 @@ public interface ViewSessionPhoto extends ViewSession {
         boolean getThemePicture();
         Integer getId();
         Integer getTagPhoto();
-        
-        ViewSession getVSession();
     }
-    interface ViewSessionPhotoEdit {
+    interface ViewSessionPhotoEdit extends VSession {
         Integer getId();
-        ViewSession getVSession();
+        Integer getAlbum();
+        Integer getAlbmPage();
+        Integer getPage();
     }
     
-    interface ViewSessionAnAlbum {
+    interface ViewSessionAnAlbum extends VSession {
         Integer getAlbum();
-        ViewSession getVSession();
     }
-    interface ViewSessionPhotoDisplay {
-        interface ViewSessionPhotoDisplayMassEdit {
-
+    
+    interface ViewSessionPhotoDisplayMassEdit {
             enum Turn {
-
                 RIGHT, LEFT, TAG, UNTAG, MVTAG, NOTHING, AUTHOR
             }
 
             Turn getTurn();
-
             boolean getChk(Integer id);
 
             Integer[] getAddTags();
-
             Integer getRmTag();
-        }
-        Action_Photo getAction();
+    }
+    interface ViewSessionPhotoDisplay extends VSession {
+        Action getAction();
         ViewSessionPhotoDisplayMassEdit getMassEdit();
         Integer getPage();
-        Integer getId();
         Integer getAlbum();
         Integer getAlbmPage();
-    
-        ViewSession getVSession();
     }
-    Mode getMode();    
+    Action getPhotoAction();
+    Special getPhotoSpecial();
+    
+    ViewSessionPhotoEdit getSessionPhotoEdit();
+    ViewSessionPhotoDisplay getSessionPhotoDisplay();
+    ViewSessionPhotoSubmit getSessionPhotoSubmit();
+    ViewSessionPhotoFastEdit getSessionPhotoFastEdit();
 }

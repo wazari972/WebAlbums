@@ -9,12 +9,14 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
-import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSelect;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSimple;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumYear;
 import net.wazari.service.exchange.xml.album.*;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 
@@ -38,16 +40,16 @@ public interface AlbumLocal {
     XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumTop treatTOP(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
+    XmlAlbumTop treatTOP(ViewSession vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumYears treatYEARS(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
+    XmlAlbumYears treatYEARS(ViewSessionAlbumYear vSession) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumSelect treatSELECT(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
+    XmlAlbumSelect treatSELECT(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException;
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumGraph treatGRAPH(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
+    XmlAlbumGraph treatGRAPH(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException;
     
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumAgo treatAGO(ViewSessionAlbumAgo vSession) throws WebAlbumsServiceException;
@@ -56,5 +58,5 @@ public interface AlbumLocal {
     XmlAlbumAbout treatABOUT(ViewSessionAlbumSimple vSession) throws WebAlbumsServiceException ;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)
-    XmlAlbumGpx treatGPX(ViewSessionAlbum vSession) throws WebAlbumsServiceException;
+    XmlAlbumGpx treatGPX(ViewSession vSession) throws WebAlbumsServiceException;
 }

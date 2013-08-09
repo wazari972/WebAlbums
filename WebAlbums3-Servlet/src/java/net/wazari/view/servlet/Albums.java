@@ -1,6 +1,5 @@
 package net.wazari.view.servlet;
 
-import java.awt.Desktop.Action;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -14,12 +13,11 @@ import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSession.Album_Action;
-import net.wazari.service.exchange.ViewSession.Album_Special;
+import net.wazari.service.exchange.ViewSession.Edit_Action;
 import net.wazari.service.exchange.ViewSessionAlbum;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionPhotoAlbumSize;
 import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
 import net.wazari.service.exchange.xml.album.XmlAlbumSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -48,71 +46,73 @@ public class Albums extends HttpServlet{
 
         XmlAlbums output = new XmlAlbums() ;
 
-        Album_Special special = vSession.getSpecial();
+        ViewSessionAlbum.Special special = vSession.getAlbumSpecial();
         
         if (special != null) {
             switch (special) {
                 case TOP5:
-                    output.topAlbums = albumService.treatTOP(vSession);
+                    output.topAlbums = albumService.treatTOP(vSession.getVSession());
                     break;
                 case YEARS:
-                    output.years = albumService.treatYEARS(vSession);
+                    output.years = albumService.treatYEARS(vSession.getYearSession());
                     break;
                 case SELECT:
-                    output.select = albumService.treatSELECT(vSession);
+                    output.select = albumService.treatSELECT(vSession.getSelectSession());
                     break;
                 case GRAPH:
-                    output.graph = albumService.treatGRAPH(vSession);
+                    output.graph = albumService.treatGRAPH(vSession.getSelectSession());
                     break;
                 case ABOUT:
-                    output.about = albumService.treatABOUT(vSession);
+                    output.about = albumService.treatABOUT(vSession.getSimpleSession());
                     break;
                 case GPX:
-                    output.gpxes = albumService.treatGPX(vSession);
+                    output.gpxes = albumService.treatGPX(vSession.getVSession());
                     break;
                 case AGO:
                     output.times_ago = albumService.treatAGO((ViewSessionAlbum.ViewSessionAlbumAgo) vSession);
                     break;
                 case PHOTOALBUM_SIZE:
-                    vSession.setPhotoAlbumSize(vSession.getVSession().getPhotoAlbumSize());
+                    ViewSessionPhotoAlbumSize pasSession = vSession.getPhotoAlbumSizeSession();
+                    pasSession.setPhotoAlbumSize(pasSession.getNewPhotoAlbumSize());
                     return null;    
             }
             return output;
         }
         
-        Album_Action action = vSession.getAction();
+        Edit_Action action = vSession.getEditAction();
         XmlAlbumSubmit submit = null;
         if(vSession.getVSession().isSessionManager()) {
             //prepare SUBMIT message
-            if (action == Album_Action.SUBMIT) {
-                submit = albumService.treatAlbmSUBMIT((ViewSessionAlbumSubmit) vSession);
+            if (action == Edit_Action.SUBMIT) {
+                submit = albumService.treatAlbmSUBMIT(vSession.getSubmitSession());
             }
 
-            if (action == Album_Action.EDIT) {
+            if (action == Edit_Action.EDIT) {
+                ViewSessionAlbumEdit editSession = vSession.getEditSession();
                 output.edit = new XmlAlbumEdit();
-                output.edit.album  = albumService.treatAlbmEDIT((ViewSessionAlbumEdit) vSession);
+                output.edit.album  = albumService.treatAlbmEDIT(editSession);
                 
                 if (submit != null) {
                     output.edit.submit = submit ;
                 }
                 
-                output.edit.tag_used = webPageService.displayListLB(ViewSession.Mode.TAG_USED, vSession.getVSession(), null,
+                output.edit.tag_used = webPageService.displayListLB(ViewSession.Tag_Mode.TAG_USED, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
-                output.edit.tag_nused = webPageService.displayListLB(ViewSession.Mode.TAG_NUSED, vSession.getVSession(), null,
+                output.edit.tag_nused = webPageService.displayListLB(ViewSession.Tag_Mode.TAG_NUSED, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
-                output.edit.tag_never = webPageService.displayListLB(ViewSession.Mode.TAG_NEVER, vSession.getVSession(), null,
+                output.edit.tag_never = webPageService.displayListLB(ViewSession.Tag_Mode.TAG_NEVER, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
 
                 output.edit.themes = themeService.getThemeList(vSession.getVSession(), ThemeLocal.Sort.NOPE);
                 
                 XmlReturnTo returnTo = new XmlReturnTo();
-                returnTo.page = vSession.getPage();
+                returnTo.page = editSession.getPage();
 
                 output.return_to = returnTo ;
             }
         }
 
-        if (action != Album_Action.EDIT) {
+        if (action != Edit_Action.EDIT) {
             //afficher la liste des albums de ce theme
             output.display = albumService.treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit);
         }

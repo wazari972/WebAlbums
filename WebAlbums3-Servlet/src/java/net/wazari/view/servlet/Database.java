@@ -26,8 +26,8 @@ import net.wazari.service.PluginManagerLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.Configuration;
-import net.wazari.service.exchange.ViewSession.Action;
 import net.wazari.service.exchange.ViewSessionDatabase;
+import net.wazari.service.exchange.ViewSessionDatabase.Action;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.xml.XmlDatabase;
@@ -53,11 +53,11 @@ public class Database extends HttpServlet {
             throws WebAlbumsServiceException {
         XmlDatabase output = new XmlDatabase();
 
-        Action action = vSession.getAction();
+        Action action = vSession.getDatabaseAction();
         if (action == null)
             action = Action.DEFAULT;
         
-        if (vSession.isSessionManager()) {
+        if (vSession.getVSession().isSessionManager()) {
             output.default_ = databaseService.treatDEFAULT(vSession);
 //            output.default_.tag_used = webPageService.displayListLB(Mode.TAG_USED, vSession, null,
 //                                                           Box.MULTIPLE);

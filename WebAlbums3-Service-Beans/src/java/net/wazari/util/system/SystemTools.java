@@ -181,7 +181,7 @@ public class SystemTools {
         }
     }
 
-    public void addBorder(ViewSessionImages vSession, Photo enrPhoto, Integer borderWidth, String color, String filepath) {
+    public void addBorder(ViewSession vSession, Photo enrPhoto, Integer borderWidth, String color, String filepath) {
         String ext = photoUtil.getExtention(vSession, enrPhoto);
 
         Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.ADD_BORDER);

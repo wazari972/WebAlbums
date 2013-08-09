@@ -40,7 +40,7 @@ public class ConfigBean implements ConfigLocal {
         XmlConfigImport output = new XmlConfigImport();
         String theme = vSession.getImportTheme();
 
-        boolean correct = filesFinder.importAuthor(vSession, theme, vSession.getConfiguration());
+        boolean correct = filesFinder.importAuthor(vSession.getVSession(), theme, vSession.getVSession().getConfiguration());
 
         if (correct) {
             output.message = "Well done !" ;
@@ -103,7 +103,7 @@ public class ConfigBean implements ConfigLocal {
             return output;
         }
             
-        Theme enrTheme = vSession.getTheme();
+        Theme enrTheme = vSession.getVSession().getTheme();
         enrTheme.setLatitude(lat);
         enrTheme.setLongitude(lng);
         
@@ -238,7 +238,7 @@ public class ConfigBean implements ConfigLocal {
             throws WebAlbumsServiceException {
         XmlConfigModVis output = new XmlConfigModVis();
 
-        if (vSession.isRootSession()) {
+        if (vSession.getVSession().isRootSession()) {
             output.exception = "Impossible to change visibility on the root session" ;
             return output ;
         }
@@ -250,7 +250,7 @@ public class ConfigBean implements ConfigLocal {
             output.exception = "Pas de tag selectionné ...";
             return output ;
         }
-        TagTheme enrTagTheme = tagThemeDAO.loadByTagTheme(tag, vSession.getTheme().getId());
+        TagTheme enrTagTheme = tagThemeDAO.loadByTagTheme(tag, vSession.getVSession().getTheme().getId());
 
         if (enrTagTheme == null) {
 
@@ -260,7 +260,7 @@ public class ConfigBean implements ConfigLocal {
             }
 
             enrTagTheme = tagThemeDAO.newTagTheme();
-            enrTagTheme.setTheme(vSession.getTheme());
+            enrTagTheme.setTheme(vSession.getVSession().getTheme());
             enrTagTheme.setTag(tagDAO.find(tag));
 
             tagThemeDAO.create(enrTagTheme);
@@ -447,12 +447,12 @@ public class ConfigBean implements ConfigLocal {
     public XmlConfigDelTheme treatDELTHEME(ViewSessionConfig vSession) throws WebAlbumsServiceException {
         XmlConfigDelTheme output = new XmlConfigDelTheme() ;
         try {
-            if (vSession.isRootSession()) {
+            if (vSession.getVSession().isRootSession()) {
                 output.message = "Impossible de supprimer le theme Root" ;
                 return output ;
             }
 
-            themeDAO.remove(vSession.getTheme(), vSession.getConfiguration().wantsProtectDB());
+            themeDAO.remove(vSession.getVSession().getTheme(), vSession.getVSession().getConfiguration().wantsProtectDB());
             output.message = "Theme correctement supprimer" ;
             return output ;
         } catch (Exception e) {

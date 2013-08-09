@@ -12,6 +12,7 @@ import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumYear;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlAlbumYear;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
@@ -93,7 +94,7 @@ public class Random implements ADirectory {
         @Override
         public void load() throws Exception {
             Session session = new Session(theme);
-            XmlAlbumYears theYears = aThis.albumService.treatYEARS(session);
+            XmlAlbumYears theYears = aThis.albumService.treatYEARS((ViewSessionAlbumYear) session);
             
             for (XmlAlbumYear year : theYears.year) {
                 years.add(new RandYear(year.year, year.album, theme, aThis));

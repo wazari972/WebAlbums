@@ -62,7 +62,6 @@ public class DispatcherBean {
     @EJB private Config configServlet;
     @EJB private WebPageLocal webPageService;
     @EJB private UserLocal userService;
-    @EJB private Benchmark benchmarkServlet;
     
     public enum Page {
         PHOTO, IMAGE, USER, ALBUM, CONFIG, CHOIX, TAGS, VOID, PERIODE, 
@@ -77,7 +76,7 @@ public class DispatcherBean {
         StopWatch stopWatch = new Slf4JStopWatch(log);
         
         request.setCharacterEncoding("utf-8");
-        ViewSession vSession = new ViewSessionImpl(request, response, context);
+        ViewSessionDispatcher vSession = null; //TEMP new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
             request.logout();
@@ -106,16 +105,16 @@ public class DispatcherBean {
             output.xslFile = "static/Display.xsl";
             switch (page) {
                 case USER:
-                    output.login = userServlet.treatLogin((ViewSessionLogin) vSession, request, response);
+                    output.login = userServlet.treatLogin(vSession.getSessionLogin(), request, response);
                     if (output.login == null) {
                         return;
                     }
                 break;
             case VOID:
-                output.themes = indexServlet.treatVOID(vSession);
+                output.themes = indexServlet.treatVOID(vSession.getLocalSessionConfig());
                 break;
             case IMAGE:
-                XmlImage img = imageServlet.treatIMG((ViewSessionImages) vSession);
+                XmlImage img = imageServlet.treatIMG(vSession.getSessionImage());
                 if (img == null) {
                     isWritten = true;
                 } else {
@@ -136,7 +135,7 @@ public class DispatcherBean {
                 //try to logon and set the thlaiestloleme
                 if (vSession.getThemeId() != null) {
                     log.info("Try to logon");
-                    boolean ret = userService.logon((ViewSessionLogin) vSession, request);
+                    boolean ret = userService.logon(vSession.getSessionLogin(), request);
                     log.debug("Logon result: {}", ret);
                 }
                 //from here on, the theme must be saved
@@ -144,7 +143,7 @@ public class DispatcherBean {
                     actualPage = Page.VOID;
                     if (special == null) {
                         log.debug("Not logged in, not a special page, display VOID page");
-                        output.themes = indexServlet.treatVOID(vSession);
+                        output.themes = indexServlet.treatVOID(vSession.getLocalSessionConfig());
 
                     } else {
                         output.isComplete = true;
@@ -155,9 +154,9 @@ public class DispatcherBean {
                     switch(page) {
                         case CHOIX:
                             if (!"JSON".equals(type)) {
-                                output.choix = choixServlet.displayCHX(vSession);
+                                output.choix = choixServlet.displayCHX(vSession.getSessionChoix());
                             } else {
-                                XmlWebAlbumsList ret = choixServlet.displayChxJSON(vSession);
+                                XmlWebAlbumsList ret = choixServlet.displayChxJSON(vSession.getSessionChoix());
                                 if (ret != null) {
                                     output.blob = ret.blob;
                                 }
@@ -167,13 +166,13 @@ public class DispatcherBean {
                             }
                             break;
                         case ALBUM:
-                            output.albums = albumServlet.treatALBM((ViewSessionAlbum) vSession);
+                            output.albums = albumServlet.treatALBM(vSession.getSessionAlbum());
                             break;
                         case PHOTO:
                             if (!"JSON".equals(type)) {
-                                output.photos = photoServlet.treatPHOTO((ViewSessionPhoto) vSession);
+                                output.photos = photoServlet.treatPHOTO(vSession.getSessionPhoto());
                             } else {
-                                XmlWebAlbumsList ret = photoServlet.treatJsonPHOTO(vSession);
+                                XmlWebAlbumsList ret = photoServlet.treatJsonPHOTO(vSession.getSessionAnAlbum());
                                 if (ret != null) {
                                     output.blob = ret.blob;
                                 }
@@ -183,16 +182,16 @@ public class DispatcherBean {
                             }
                             break;
                         case CONFIG:
-                            output.config = configServlet.treatCONFIG((ViewSessionConfig) vSession);
+                            output.config = configServlet.treatCONFIG(vSession.getSessionConfig());
                             break;
                         case TAGS:
-                            output.tags = tagServlet.treatTAGS((ViewSessionTag) vSession);
+                            output.tags = tagServlet.treatTAGS(vSession.getSessionTag());
                             break;
                         case CARNET:
                             if (!"JSON".equals(type)) {
-                                output.carnets = carnetServlet.treatCARNETS((ViewSessionCarnet) vSession);
+                                output.carnets = carnetServlet.treatCARNETS(vSession.getSessionCarnet());
                             } else {
-                                XmlWebAlbumsList ret = carnetServlet.treatJsonCARNET(vSession);
+                                XmlWebAlbumsList ret = carnetServlet.treatJsonCARNET(vSession.getSessionCarnetSimple());
                                 if (ret != null) {
                                     output.blob = ret.blob;
                                 }
@@ -202,14 +201,10 @@ public class DispatcherBean {
                             }
                             break;
                         case DATABASE:
-                            output.database = databaseServlet.treatDATABASE((ViewSessionDatabase) vSession);
-                            break;
-                        case BENCHMARK:
-                            output.benchmark = benchmarkServlet.treatBENCHMARK((ViewSessionBenchmark) vSession);
-                            output.xslFile = null;
+                            output.database = databaseServlet.treatDATABASE(vSession.getSessionDatabase());
                             break;
                         default: 
-                            output.themes = indexServlet.treatVOID((ViewSession) vSession);
+                            output.themes = indexServlet.treatVOID(vSession.getLocalSessionConfig());
                             actualPage = Page.VOID;
                     }
                 }
@@ -219,7 +214,7 @@ public class DispatcherBean {
         }
         log.debug("============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, output.isComplete});
         Theme currentTheme = vSession.getTheme();
-        stopWatch.stop("View.dispatch." + actualPage + (vSession.getSpecial() != null ? "." + vSession.getSpecial() : "") + (currentTheme != null ? "." + currentTheme.getNom() : "NoTheme"));
+        stopWatch.stop("View.dispatch." + actualPage + (vSession.getRawSpecial() != null ? "." + vSession.getRawSpecial() : "") + (currentTheme != null ? "." + currentTheme.getNom() : "NoTheme"));
         String strTime = DurationFormatUtils.formatDuration(stopWatch.getElapsedTime(), "m'min' s's' S'ms'", false);
         if (!isWritten) {
             preventCaching(request, response);
@@ -235,6 +230,23 @@ public class DispatcherBean {
         log.debug("============= <{}/>: {} =============", new Object[]{page, strTime});
     }
 
+    
+    private interface ViewSessionDispatcher extends ViewSession {
+        String getRawSpecial();   
+        ViewSessionAlbum getSessionAlbum();
+        ViewSession.ViewSessionChoix getSessionChoix();
+        ViewSessionPhoto getSessionPhoto();
+        ViewSessionPhoto.ViewSessionAnAlbum getSessionAnAlbum();
+        ViewSessionCarnet.ViewSessionCarnetSimple getSessionCarnetSimple();
+        ViewSessionLogin getSessionLogin();
+        ViewSessionImages getSessionImage();
+        ViewSessionDatabase getSessionDatabase();
+        ViewSession.SessionConfig getLocalSessionConfig();
+        ViewSessionConfig getSessionConfig();
+        ViewSessionTag getSessionTag();
+        ViewSessionCarnet getSessionCarnet();
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     private static void doWrite(HttpServletResponse response, XmlWebAlbums output) {
         try {

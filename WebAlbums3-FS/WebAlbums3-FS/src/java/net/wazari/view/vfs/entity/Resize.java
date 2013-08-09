@@ -13,6 +13,7 @@ import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSimple;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class Resize extends SDirectory implements ADirectory, CanChange {
             }
             path = aThis.imageService.treatSHRINK(session);
         } else {
-            path = aThis.photoService.treatABOUT(session).details.photoId.path;
+            path = aThis.photoService.treatABOUT((ViewSessionPhotoSimple) session).details.photoId.path;
         }
         
         return path;

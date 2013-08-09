@@ -5,11 +5,25 @@
 
 package net.wazari.service.exchange;
 
+import net.wazari.service.exchange.ViewSession.VSession;
+
 /**
  *
  * @author kevin
  */
-public interface ViewSessionConfig extends ViewSession{
+public interface ViewSessionConfig extends VSession {
+    enum Special {
+        ONLY
+    }
+    
+    enum Action {
+        DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, DELTHEME, LINKTAG, MODPERS, 
+        MODMINOR, DEFAULT, IMPORT, SETHOME
+    }
+    
+    Special getSpecial();
+    Action getAction();
+    
     boolean getMinor();
     
     String getNouveau();
