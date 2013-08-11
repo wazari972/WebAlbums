@@ -57,4 +57,9 @@ public interface ViewSessionCarnet extends VSession {
     
     Special getCarnetSpecial();
     Action getCarnetAction();
+    
+    ViewSessionCarnetDisplay getDisplayCarnetSession();
+    ViewSessionCarnetEdit getEditCarnetSession();
+    ViewSessionCarnetSubmit getSubmitCarnetSession();
+    ViewSessionCarnetSimple getSimpleCarnetSession();
 }

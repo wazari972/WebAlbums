@@ -58,7 +58,7 @@ public class Tag extends TagDirectory {
         log.warn("Load images from : {}", this);
         Session session = new Session(theme);
         session.setTagAsked(new Integer[]{tagId});
-        XmlTagDisplay tags = aThis.tagService.treatTagDISPLAY((ViewSessionTagDisplay) session, null);
+        XmlTagDisplay tags = aThis.tagService.treatTagDISPLAY(session.getSessionTagDisplay(), null);
         log.warn("Load images from : {} == {} images", this, tags.photoList.photo.size());
         for (XmlPhoto photo : tags.photoList.photo) {
             photos.add(new TagPhoto(theme, aThis, photo.details, true));
@@ -100,7 +100,7 @@ public class Tag extends TagDirectory {
             session.setId(this.id);
             session.setTagAction(TagAction.RM);
             session.setTagSet(new Integer[]{aTagDir.tagId});
-            this.aThis.photoService.treatFASTEDIT(session);
+            this.aThis.photoService.treatFASTEDIT(session.getSessionPhotoFastEdit());
             
              ((IntrosDirectory) getParent()).rmFile(this);
             
@@ -127,7 +127,7 @@ public class Tag extends TagDirectory {
             session.setId(this.id);
             session.setTagAction(TagAction.ADD);
             session.setTagSet(new Integer[]{aTagDir.tagId});
-            this.aThis.photoService.treatFASTEDIT(session);
+            this.aThis.photoService.treatFASTEDIT(session.getSessionPhotoFastEdit());
             
             ((IntrosDirectory) targetDir).addFile(this);
             

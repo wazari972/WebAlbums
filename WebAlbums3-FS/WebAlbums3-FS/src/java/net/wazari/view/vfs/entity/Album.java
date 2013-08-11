@@ -10,7 +10,6 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
-import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.view.vfs.Launch;
@@ -47,7 +46,7 @@ public class Album extends SDirectory implements ADirectory {
         Session session = new Session(theme);
         session.setAlbum(albumId);
         
-        XmlPhotoDisplay photodisp = aThis.photoService.treatPhotoDISPLAY((ViewSessionPhoto.ViewSessionPhotoDisplay) session, null);
+        XmlPhotoDisplay photodisp = aThis.photoService.treatPhotoDISPLAY(session.getSessionPhotoDisplay(), null);
         for (XmlPhoto photo : photodisp.photoList.photo) {
             photos.add(new Photo(photo.details));
         }

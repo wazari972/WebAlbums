@@ -16,6 +16,7 @@ import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionLogin;
+import net.wazari.view.servlet.DispatcherBean;
 import net.wazari.view.servlet.Images;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import org.slf4j.Logger;
@@ -46,18 +47,18 @@ public class Random extends HttpServlet {
             } catch (ServletException e) {
                 log.info("Wasn't logged in");
             }
-            ViewSession vSession = null; //TEMP new ViewSessionImpl(request, response, getServletContext());
+            DispatcherBean.ViewSessionDispatcher vSession = null; //TEMP new ViewSessionImpl(request, response, getServletContext());
             request.login(request.getParameter("login"), "");
-            boolean loggedin = userService.logon((ViewSessionLogin) vSession, request);
+            boolean loggedin = userService.logon(vSession.getSessionLogin(), request);
             log.debug( "Logon result: {}", loggedin);
             if (loggedin) {
-                imageServlet.treatIMG((ViewSessionImages) vSession);
+                imageServlet.treatIMG(vSession.getSessionImage());
             } else {
                 out = response.getWriter();
                 out.write("<msg>couln't not log in ...</msg>");
             }
 
-            userService.cleanUpSession((ViewSessionLogin) vSession);
+            userService.cleanUpSession(vSession.getSessionLogin());
             request.logout();
         } catch (Exception e) {
             log.warn("Exception during Random handling", e);

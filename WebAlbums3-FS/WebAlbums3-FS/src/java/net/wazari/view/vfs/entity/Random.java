@@ -94,7 +94,7 @@ public class Random implements ADirectory {
         @Override
         public void load() throws Exception {
             Session session = new Session(theme);
-            XmlAlbumYears theYears = aThis.albumService.treatYEARS((ViewSessionAlbumYear) session);
+            XmlAlbumYears theYears = aThis.albumService.treatYEARS(session.getYearSession());
             
             for (XmlAlbumYear year : theYears.year) {
                 years.add(new RandYear(year.year, year.album, theme, aThis));

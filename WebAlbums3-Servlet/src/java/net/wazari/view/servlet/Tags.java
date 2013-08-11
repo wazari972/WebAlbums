@@ -15,7 +15,6 @@ import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Edit_Action;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
 import net.wazari.service.exchange.ViewSessionTag.Special;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagCloud;
@@ -71,7 +70,7 @@ public class Tags extends HttpServlet {
 
         if (vSession.getVSession().isSessionManager()) {
             if (Edit_Action.SUBMIT == action) {
-                submit = photoService.treatPhotoSUBMIT((ViewSessionPhotoSubmit)vSession, correct);
+                submit = photoService.treatPhotoSUBMIT(vSession.getSessionPhotoSubmit(), correct);
             }
 
             if ((Edit_Action.EDIT == action || !correct)) {

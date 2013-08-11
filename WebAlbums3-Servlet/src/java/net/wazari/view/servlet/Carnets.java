@@ -55,7 +55,7 @@ public class Carnets extends HttpServlet{
             //prepare SUBMIT messag
             log.info("treat Carnet/"+action);
             if (action == Action.SUBMIT || action == Action.SAVE) {
-                submit = carnetService.treatSUBMIT((ViewSessionCarnetSubmit) vSession);
+                submit = carnetService.treatSUBMIT(vSession.getSubmitCarnetSession());
                 if (action == Action.SAVE) {
                     if (!submit.valid) {
                         output.exception = submit.exception ;
@@ -71,13 +71,13 @@ public class Carnets extends HttpServlet{
             }
 
             if (action == Action.EDIT) {
-                output.edit = carnetService.treatEDIT((ViewSessionCarnetEdit) vSession, submit);
+                output.edit = carnetService.treatEDIT(vSession.getEditCarnetSession(), submit);
             }
         }
 
         if (action != Action.EDIT) {
             //afficher la liste des albums de ce theme
-            output.display = carnetService.treatDISPLAY((ViewSessionCarnetDisplay)vSession, submit);
+            output.display = carnetService.treatDISPLAY(vSession.getDisplayCarnetSession(), submit);
         }
 
         return output ;

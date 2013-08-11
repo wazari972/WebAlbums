@@ -36,7 +36,7 @@ public class Albums extends Listing implements ADirectory {
     @Override
     public void load() throws Exception {
         Session session = new Session(theme);
-        XmlAlbumSelect entries = aThis.albumService.treatSELECT((ViewSessionAlbumSelect) session);
+        XmlAlbumSelect entries = aThis.albumService.treatSELECT(session.getSessionAlbumSelect());
         
         for (XmlAlbum album : entries.album) {
             albums.add(new Album(album.albmDate, album.name, album.id, theme, aThis)) ;

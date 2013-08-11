@@ -15,7 +15,6 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Edit_Action;
 import net.wazari.service.exchange.ViewSessionAlbum;
-import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
 import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionPhotoAlbumSize;
 import net.wazari.service.exchange.xml.album.XmlAlbumEdit;
@@ -69,7 +68,7 @@ public class Albums extends HttpServlet{
                     output.gpxes = albumService.treatGPX(vSession.getVSession());
                     break;
                 case AGO:
-                    output.times_ago = albumService.treatAGO((ViewSessionAlbum.ViewSessionAlbumAgo) vSession);
+                    output.times_ago = albumService.treatAGO(vSession.getAgoSession());
                     break;
                 case PHOTOALBUM_SIZE:
                     ViewSessionPhotoAlbumSize pasSession = vSession.getPhotoAlbumSizeSession();
@@ -103,7 +102,7 @@ public class Albums extends HttpServlet{
                 output.edit.tag_never = webPageService.displayListLB(ViewSession.Tag_Mode.TAG_NEVER, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
 
-                output.edit.themes = themeService.getThemeList(vSession.getVSession(), ThemeLocal.Sort.NOPE);
+                output.edit.themes = themeService.getThemeList(vSession.getTempThemeSession(), ThemeLocal.Sort.NOPE);
                 
                 XmlReturnTo returnTo = new XmlReturnTo();
                 returnTo.page = editSession.getPage();
@@ -114,7 +113,7 @@ public class Albums extends HttpServlet{
 
         if (action != Edit_Action.EDIT) {
             //afficher la liste des albums de ce theme
-            output.display = albumService.treatAlbmDISPLAY((ViewSessionAlbumDisplay)vSession, submit);
+            output.display = albumService.treatAlbmDISPLAY(vSession.getDisplaySession(), submit);
         }
 
         return output ;

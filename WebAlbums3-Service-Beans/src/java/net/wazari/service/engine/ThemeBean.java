@@ -17,8 +17,6 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
-import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionLogin.ViewSessionTempTheme;
 import net.wazari.service.exchange.xml.XmlThemeList;
 import org.slf4j.Logger;
@@ -42,12 +40,11 @@ public class ThemeBean implements ThemeLocal {
     private AlbumFacadeLocal albumDAO;
     
     private void sortAlbumAge(ViewSessionTempTheme vSession, List<Theme> themes) {
-        ViewSessionLogin vLoginSession = (ViewSessionLogin) vSession;
-        Theme origTheme = vLoginSession.getVSession().getTheme();
+        Theme origTheme = vSession.getVSession().getTheme();
         final Map<Theme, String> themeDates = new HashMap<Theme, String>();
         for (Theme enrTheme : themes) {
             //race condition possible here
-            vLoginSession.setTheme(enrTheme);
+            vSession.setTempTheme(enrTheme);
             Album enrAlbum = albumDAO.loadLastAlbum(vSession.getVSession(), AlbumFacadeLocal.Restriction.THEME_ONLY);
             
             if (enrAlbum != null) {
@@ -56,7 +53,7 @@ public class ThemeBean implements ThemeLocal {
                 themeDates.put(enrTheme, "0000-00-00");
             }
         }
-        vLoginSession.setTheme(origTheme);
+        vSession.setTempTheme(origTheme);
         
         Collections.sort(themes, new Comparator<Theme>() {
             public int compare(Theme t, Theme t1) {
@@ -69,7 +66,7 @@ public class ThemeBean implements ThemeLocal {
     }
     
     @Override
-    public XmlThemeList getThemeList(ViewSession vSession, Sort order) {
+    public XmlThemeList getThemeList(ViewSessionTempTheme vSession, Sort order) {
         XmlThemeList output = new XmlThemeList();
 
         List<Theme> lst = themeDAO.findAll();
@@ -80,7 +77,7 @@ public class ThemeBean implements ThemeLocal {
         
         switch(order) {
             case ALBUM_AGE:
-                sortAlbumAge((ViewSessionTempTheme) vSession, lst);
+                sortAlbumAge(vSession, lst);
                 break;
             case REVERSE:
                 Collections.reverse(lst);
@@ -89,8 +86,7 @@ public class ThemeBean implements ThemeLocal {
             default: 
         }
         
-        
-        daoToXmlService.convertThemes(vSession, lst, output);
+        daoToXmlService.convertThemes(vSession.getVSession(), lst, output);
 
         return output;
     }

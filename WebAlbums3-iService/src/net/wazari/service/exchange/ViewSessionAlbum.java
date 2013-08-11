@@ -7,6 +7,7 @@ package net.wazari.service.exchange;
 
 import net.wazari.service.exchange.ViewSession.Edit_Action;
 import net.wazari.service.exchange.ViewSession.VSession;
+import net.wazari.service.exchange.ViewSessionLogin.ViewSessionTempTheme;
 
 /**
  *
@@ -73,6 +74,9 @@ public interface ViewSessionAlbum extends VSession {
     ViewSessionAlbumSubmit getSubmitSession();
     ViewSessionAlbumSimple getSimpleSession();
     ViewSessionAlbumSelect getSelectSession();
+    ViewSessionAlbumAgo getAgoSession();
+    ViewSessionAlbumDisplay getDisplaySession();
     ViewSessionAlbumYear getYearSession();
     ViewSessionPhotoAlbumSize getPhotoAlbumSizeSession();
+    ViewSessionTempTheme getTempThemeSession();
 }

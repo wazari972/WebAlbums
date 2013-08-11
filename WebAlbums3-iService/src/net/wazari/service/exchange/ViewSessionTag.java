@@ -8,6 +8,7 @@ package net.wazari.service.exchange;
 import net.wazari.service.exchange.ViewSession.Edit_Action;
 import net.wazari.service.exchange.ViewSession.VSession;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 
 /**
  *
@@ -41,5 +42,6 @@ public interface ViewSessionTag extends VSession {
     ViewSessionTagCloud getSessionTagCloud();
     ViewSessionTagSimple getSessionTagSimple();
     ViewSessionTagEdit getSessionTagEdit();
+    ViewSessionPhotoSubmit getSessionPhotoSubmit();
     ViewSessionTagDisplay getSessionTagDisplay();
 }

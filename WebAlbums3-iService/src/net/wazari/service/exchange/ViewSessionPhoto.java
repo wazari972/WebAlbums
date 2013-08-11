@@ -97,4 +97,5 @@ public interface ViewSessionPhoto extends VSession {
     ViewSessionPhotoDisplay getSessionPhotoDisplay();
     ViewSessionPhotoSubmit getSessionPhotoSubmit();
     ViewSessionPhotoFastEdit getSessionPhotoFastEdit();
+    ViewSessionPhotoEdit getSessionPhotoSimple();
 }

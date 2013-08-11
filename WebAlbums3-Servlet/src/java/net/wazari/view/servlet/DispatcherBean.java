@@ -80,7 +80,7 @@ public class DispatcherBean {
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
             request.logout();
-            userService.cleanUpSession((ViewSessionLogin) vSession);
+            userService.cleanUpSession(vSession.getSessionLogin());
         }
         if (page != Page.USER) {
             log.debug("Authenticate the session");
@@ -220,7 +220,7 @@ public class DispatcherBean {
             preventCaching(request, response);
 
             if (!output.isComplete) {
-                output.loginInfo = webPageService.xmlLogin((ViewSessionLogin) vSession);
+                output.loginInfo = webPageService.xmlLogin(vSession.getSessionLogin());
                 output.affichage = webPageService.xmlAffichage(vSession);
                 output.time = strTime;
             }
@@ -231,7 +231,7 @@ public class DispatcherBean {
     }
 
     
-    private interface ViewSessionDispatcher extends ViewSession {
+    public interface ViewSessionDispatcher extends ViewSession {
         String getRawSpecial();   
         ViewSessionAlbum getSessionAlbum();
         ViewSession.ViewSessionChoix getSessionChoix();

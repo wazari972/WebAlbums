@@ -7,6 +7,7 @@ package net.wazari.service.exchange;
 import java.io.File;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
+import net.wazari.service.exchange.ViewSessionLogin.ViewSessionTempTheme;
 
 /**
  *
@@ -36,6 +37,10 @@ public interface ViewSession extends ServiceSession {
 
         boolean getCompleteChoix();
         Choix_Special getSpecial();
+    }
+    
+    interface ViewSessionTheme extends VSession {
+        ViewSessionTempTheme getSessionTempTheme();
     }
     
     interface SessionConfig extends VSession {

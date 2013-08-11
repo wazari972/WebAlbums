@@ -14,17 +14,36 @@ import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSessionAlbum;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumAgo;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumDisplay;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumEdit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSelect;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSimple;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumSubmit;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionAlbumYear;
+import net.wazari.service.exchange.ViewSessionAlbum.ViewSessionPhotoAlbumSize;
 import net.wazari.service.exchange.ViewSessionImages;
+import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.service.exchange.ViewSessionPhoto;
+import net.wazari.service.exchange.ViewSessionPhoto.Action;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplayMassEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSimple;
+import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag;
+import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagCloud;
+import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagDisplay;
+import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagEdit;
+import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagSimple;
 
 /**
  *
  * @author kevin
  */
-public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, ViewSessionPhotoDisplay, ViewSessionPhoto, ViewSessionImages, ViewSessionPhotoFastEdit {
+public class Session implements ViewSession {
     public static int stars = 1;
     
     public Theme theme;
@@ -399,108 +418,130 @@ public class Session implements ViewSession, ViewSessionTag, ViewSessionAlbum, V
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    @Override
+    //@Override
     public ViewSessionTag.Special getTagSpecial() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionTagCloud getSessionTagCloud() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionTagSimple getSessionTagSimple() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionTagEdit getSessionTagEdit() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionTagDisplay getSessionTagDisplay() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSession getVSession() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionAlbumEdit getEditSession() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionAlbumSubmit getSubmitSession() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionAlbumSimple getSimpleSession() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionAlbumSelect getSelectSession() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionAlbumYear getYearSession() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionPhotoAlbumSize getPhotoAlbumSizeSession() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionPhotoEdit getSessionPhotoEdit() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionPhotoDisplay getSessionPhotoDisplay() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionPhotoSubmit getSessionPhotoSubmit() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionPhotoFastEdit getSessionPhotoFastEdit() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public Edit_Action getEditAction() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public Action getAction() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public Action getPhotoAction() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionAlbum.Special getAlbumSpecial() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
+    //@Override
     public ViewSessionPhoto.Special getPhotoSpecial() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    //@Override
+    public ViewSessionAlbumAgo getAgoSession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public ViewSessionImages getSessionImage() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    //@Override
+    public ViewSessionAlbumDisplay getDisplaySession() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    //@Override
+    public ViewSessionPhotoSimple getSessionPhotoSimple() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public ViewSessionAlbumSelect getSessionAlbumSelect() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
