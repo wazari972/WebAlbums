@@ -11,11 +11,11 @@ import net.wazari.service.exchange.ViewSession.VSession;
  * @author kevin
  */
 public interface ViewSessionPhoto extends VSession {
-    enum Action {
+    enum Photo_Action {
         MASSEDIT, EDIT, SUBMIT
     }
     
-    enum Special {
+    enum Photo_Special {
         VISIONNEUSE, FASTEDIT, ABOUT, RANDOM
     }
     
@@ -84,14 +84,14 @@ public interface ViewSessionPhoto extends VSession {
             Integer getRmTag();
     }
     interface ViewSessionPhotoDisplay extends VSession {
-        Action getAction();
+        Photo_Action getAction();
         ViewSessionPhotoDisplayMassEdit getMassEdit();
         Integer getPage();
         Integer getAlbum();
         Integer getAlbmPage();
     }
-    Action getPhotoAction();
-    Special getPhotoSpecial();
+    Photo_Action getPhotoAction();
+    Photo_Special getPhotoSpecial();
     
     ViewSessionPhotoEdit getSessionPhotoEdit();
     ViewSessionPhotoDisplay getSessionPhotoDisplay();

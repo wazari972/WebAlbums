@@ -12,13 +12,13 @@ import net.wazari.service.exchange.ViewSession.VSession;
  * @author kevin
  */
 public interface ViewSessionDatabase extends VSession {
-    enum Action {
+    enum Database_Action {
         TRUNK, EXPORT, CHECK_DB, CHECK_FS, STATS, UPDATE, UPDATE_DAO, 
         PLUGINS, RELOAD_PLUGINS, CREATE_DIRS, SAVE_CONFIG, RELOAD_CONFIG, 
         PRINT_CONFIG, DEFAULT, IMPORT
     }
     
-    Action getDatabaseAction();
+    Database_Action getDatabaseAction();
     
     void setRootSession(Boolean rootSession) ;
     void setTheme(Theme enrTheme);

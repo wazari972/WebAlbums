@@ -17,6 +17,8 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
+import net.wazari.service.exchange.ViewSession;
+import net.wazari.service.exchange.ViewSession.ViewSessionTheme;
 import net.wazari.service.exchange.ViewSessionLogin.ViewSessionTempTheme;
 import net.wazari.service.exchange.xml.XmlThemeList;
 import org.slf4j.Logger;
@@ -66,7 +68,15 @@ public class ThemeBean implements ThemeLocal {
     }
     
     @Override
-    public XmlThemeList getThemeList(ViewSessionTempTheme vSession, Sort order) {
+    public XmlThemeList getThemeListSimple(ViewSession vSession) {
+        XmlThemeList output = new XmlThemeList();
+
+        List<Theme> lst = themeDAO.findAll();
+        daoToXmlService.convertThemes(vSession, lst, output);
+
+        return output;
+    }
+    public XmlThemeList getThemeList(ViewSessionTheme vSession, Sort order) {
         XmlThemeList output = new XmlThemeList();
 
         List<Theme> lst = themeDAO.findAll();
@@ -77,7 +87,7 @@ public class ThemeBean implements ThemeLocal {
         
         switch(order) {
             case ALBUM_AGE:
-                sortAlbumAge(vSession, lst);
+                sortAlbumAge(vSession.getTempThemeSession(), lst);
                 break;
             case REVERSE:
                 Collections.reverse(lst);
@@ -85,7 +95,6 @@ public class ThemeBean implements ThemeLocal {
             case NOPE:
             default: 
         }
-        
         daoToXmlService.convertThemes(vSession.getVSession(), lst, output);
 
         return output;

@@ -14,7 +14,7 @@ import net.wazari.service.exchange.ViewSessionLogin.ViewSessionTempTheme;
  * @author kevin
  */
 public interface ViewSessionAlbum extends VSession {
-    enum Special {
+    enum Album_Special {
         AGO, YEARS, TOP5, SELECT, GRAPH, ABOUT, GPX, PHOTOALBUM_SIZE
     }
     
@@ -67,7 +67,7 @@ public interface ViewSessionAlbum extends VSession {
         Integer getNewPhotoAlbumSize();
     }
     
-    Special getAlbumSpecial();
+    Album_Special getAlbumSpecial();
     Edit_Action getEditAction();
     
     ViewSessionAlbumEdit getEditSession();

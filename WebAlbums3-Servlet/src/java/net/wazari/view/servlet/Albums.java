@@ -102,7 +102,7 @@ public class Albums extends HttpServlet{
                 output.edit.tag_never = webPageService.displayListLB(ViewSession.Tag_Mode.TAG_NEVER, vSession.getVSession(), null,
                         ViewSession.Box.MULTIPLE);
 
-                output.edit.themes = themeService.getThemeList(vSession.getTempThemeSession(), ThemeLocal.Sort.NOPE);
+                output.edit.themes = themeService.getThemeListSimple(vSession.getVSession());
                 
                 XmlReturnTo returnTo = new XmlReturnTo();
                 returnTo.page = editSession.getPage();

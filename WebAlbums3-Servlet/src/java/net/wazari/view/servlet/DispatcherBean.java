@@ -76,7 +76,7 @@ public class DispatcherBean {
         StopWatch stopWatch = new Slf4JStopWatch(log);
         
         request.setCharacterEncoding("utf-8");
-        ViewSessionDispatcher vSession = null; //TEMP new ViewSessionImpl(request, response, context);
+        ViewSessionDispatcher vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
             log.info("Logout and cleanup the session");
             request.logout();
@@ -111,7 +111,7 @@ public class DispatcherBean {
                     }
                 break;
             case VOID:
-                output.themes = indexServlet.treatVOID(vSession.getLocalSessionConfig());
+                output.themes = indexServlet.treatVOID(vSession.getSessionTheme());
                 break;
             case IMAGE:
                 XmlImage img = imageServlet.treatIMG(vSession.getSessionImage());
@@ -143,7 +143,7 @@ public class DispatcherBean {
                     actualPage = Page.VOID;
                     if (special == null) {
                         log.debug("Not logged in, not a special page, display VOID page");
-                        output.themes = indexServlet.treatVOID(vSession.getLocalSessionConfig());
+                        output.themes = indexServlet.treatVOID(vSession.getSessionTheme());
 
                     } else {
                         output.isComplete = true;
@@ -204,7 +204,7 @@ public class DispatcherBean {
                             output.database = databaseServlet.treatDATABASE(vSession.getSessionDatabase());
                             break;
                         default: 
-                            output.themes = indexServlet.treatVOID(vSession.getLocalSessionConfig());
+                            output.themes = indexServlet.treatVOID(vSession.getSessionTheme());
                             actualPage = Page.VOID;
                     }
                 }
@@ -240,6 +240,7 @@ public class DispatcherBean {
         ViewSessionCarnet.ViewSessionCarnetSimple getSessionCarnetSimple();
         ViewSessionLogin getSessionLogin();
         ViewSessionImages getSessionImage();
+        ViewSessionTheme getSessionTheme();
         ViewSessionDatabase getSessionDatabase();
         ViewSession.SessionConfig getLocalSessionConfig();
         ViewSessionConfig getSessionConfig();

@@ -48,8 +48,8 @@ public class Root extends SDirectory implements ADirectory, CanChange{
     @Override
     public void load() throws Exception {
         themes = new LinkedList<Theme>();
-        log.warn("LOAD ROOT");
-        for (XmlTheme theme : aThis.themeService.getThemeList(new Session(null), Sort.NOPE).theme) {
+        log.info("LOAD ROOT");
+        for (XmlTheme theme : aThis.themeService.getThemeListSimple(new Session(null)).theme) {
             log.warn("LOAD ROOT {}", theme.name);
             themes.add(new Theme(theme.id, theme.name, aThis));
         }

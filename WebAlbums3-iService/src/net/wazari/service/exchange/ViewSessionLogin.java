@@ -15,11 +15,11 @@ import net.wazari.service.exchange.ViewSession.VSession;
  * @author kevinpouget
  */
 public interface ViewSessionLogin extends VSession {
-    enum Action {
+    enum Login_Action {
         LOGIN, CHANGE_IS_MANAGER,
     }
     
-    Action getLoginAction();
+    Login_Action getLoginAction();
     
     void setTheme(Theme enrTheme);
 

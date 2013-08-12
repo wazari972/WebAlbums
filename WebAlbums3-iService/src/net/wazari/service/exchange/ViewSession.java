@@ -36,11 +36,12 @@ public interface ViewSession extends ServiceSession {
         }
 
         boolean getCompleteChoix();
-        Choix_Special getSpecial();
+        Choix_Special getChoixSpecial();
     }
     
     interface ViewSessionTheme extends VSession {
-        ViewSessionTempTheme getSessionTempTheme();
+        ViewSessionTempTheme getTempThemeSession();
+        SessionConfig getSessionConfig();
     }
     
     interface SessionConfig extends VSession {

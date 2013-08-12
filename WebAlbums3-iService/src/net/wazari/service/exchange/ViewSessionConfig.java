@@ -12,17 +12,17 @@ import net.wazari.service.exchange.ViewSession.VSession;
  * @author kevin
  */
 public interface ViewSessionConfig extends VSession {
-    enum Special {
+    enum Config_Special {
         ONLY
     }
     
-    enum Action {
+    enum Config_Action {
         DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, DELTHEME, LINKTAG, MODPERS, 
         MODMINOR, DEFAULT, IMPORT, SETHOME
     }
     
-    Special getSpecial();
-    Action getAction();
+    Config_Special getConfigSpecial();
+    Config_Action getConfigAction();
     
     boolean getMinor();
     
