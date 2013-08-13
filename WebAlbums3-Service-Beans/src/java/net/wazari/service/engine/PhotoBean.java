@@ -1,5 +1,6 @@
 package net.wazari.service.engine;
 
+import java.awt.Desktop.Action;
 import java.io.File;
 import java.util.ArrayList;
 import javax.annotation.security.RolesAllowed;
@@ -18,7 +19,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Tag_Mode;
-import net.wazari.service.exchange.ViewSessionPhoto.Action;
+import net.wazari.service.exchange.ViewSessionPhoto.Photo_Action;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
@@ -363,8 +364,7 @@ public class PhotoBean implements PhotoLocal {
         XmlPhotoList output = new XmlPhotoList(lstP.subset.size()) ;
         Turn turn = null;
         if (vSession.getVSession().isSessionManager()) {
-            Action action = vSession.getAction();
-            if (Action.MASSEDIT == action) {
+            if (vSession.getWantMassedit()) {
                 turn = vSession.getMassEdit().getTurn();
                 stopWatch.setTag(stopWatch.getTag()+".MASSEDIT."+turn) ;
                 if (turn == Turn.LEFT) {

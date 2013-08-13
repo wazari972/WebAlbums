@@ -49,6 +49,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSimple;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagCloud;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagDisplay;
+import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagEdit;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagSimple;
 import net.wazari.view.servlet.DispatcherBean;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class ViewSessionImpl implements
         ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumEdit, ViewSessionAlbumSubmit, ViewSessionAlbumAgo, ViewSessionAlbumSimple, ViewSessionAlbumYear, ViewSessionAlbumSelect, ViewSessionPhotoAlbumSize,
         ViewSessionConfig,
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoEdit, ViewSessionPhotoSubmit, ViewSessionPhotoDisplayMassEdit, ViewSessionPhotoFastEdit, ViewSessionPhotoSimple, ViewSessionAnAlbum,
-        ViewSessionTag, ViewSessionTagSimple, ViewSessionTagCloud, ViewSessionTagDisplay,
+        ViewSessionTag, ViewSessionTagSimple, ViewSessionTagCloud, ViewSessionTagDisplay, ViewSessionTagEdit,
         ViewSessionImages, 
         ViewSessionCarnet, ViewSessionCarnetDisplay, ViewSessionCarnetEdit, ViewSessionCarnetSubmit, ViewSessionCarnetSimple,
         ViewSessionDatabase, DispatcherBean.ViewSessionDispatcher, ViewSessionTheme, SessionConfig
@@ -714,257 +715,257 @@ public class ViewSessionImpl implements
 
     @Override
     public Login_Action getLoginAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("action", Login_Action.class);
     }
 
     @Override
     public ViewSession getVSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public Album_Special getAlbumSpecial() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("special", Album_Special.class);
     }
 
     @Override
     public Edit_Action getEditAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("action", Edit_Action.class);
     }
 
     @Override
     public ViewSessionAlbumEdit getEditSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionAlbumSubmit getSubmitSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionAlbumSimple getSimpleSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionAlbumSelect getSelectSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionAlbumAgo getAgoSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionAlbumDisplay getDisplaySession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionAlbumYear getYearSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionPhotoAlbumSize getPhotoAlbumSizeSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionTempTheme getTempThemeSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public Choix_Special getChoixSpecial() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("special", Choix_Special.class);
     }
 
     @Override
     public Photo_Action getPhotoAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("action", Photo_Action.class);
     }
 
     @Override
     public Photo_Special getPhotoSpecial() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("special", Photo_Special.class);
     }
 
     @Override
     public ViewSessionPhotoEdit getSessionPhotoEdit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionPhotoDisplay getSessionPhotoDisplay() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionPhotoSubmit getSessionPhotoSubmit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionPhotoFastEdit getSessionPhotoFastEdit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
-    public ViewSessionPhotoEdit getSessionPhotoSimple() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ViewSessionPhotoSimple getSessionPhotoSimple() {
+        return this;
     }
 
     @Override
     public Tag_Special getTagSpecial() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("special", Tag_Special.class);
     }
 
     @Override
     public ViewSessionTagCloud getSessionTagCloud() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionTagSimple getSessionTagSimple() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionTagEdit getSessionTagEdit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionTagDisplay getSessionTagDisplay() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
-    public ViewSessionCarnet.Special getCarnetSpecial() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Carnet_Special getCarnetSpecial() {
+        return getEnum("special", Carnet_Special.class);
     }
 
     @Override
-    public ViewSessionCarnet.Action getCarnetAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Carnet_Action getCarnetAction() {
+        return getEnum("action", Carnet_Action.class);
     }
 
     @Override
     public ViewSessionCarnetDisplay getDisplayCarnetSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionCarnetEdit getEditCarnetSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionCarnetSubmit getSubmitCarnetSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionCarnetSimple getSimpleCarnetSession() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public String getRawSpecial() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getString("special");
     }
 
     @Override
     public ViewSessionAlbum getSessionAlbum() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionChoix getSessionChoix() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionPhoto getSessionPhoto() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionAnAlbum getSessionAnAlbum() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionCarnetSimple getSessionCarnetSimple() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionLogin getSessionLogin() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionImages getSessionImage() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionTheme getSessionTheme() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionDatabase getSessionDatabase() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public SessionConfig getLocalSessionConfig() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionTag getSessionTag() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public ViewSessionCarnet getSessionCarnet() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public Integer getNewPhotoAlbumSize() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getInteger("photoAlbumSize");
     }
 
     @Override
     public Database_Action getDatabaseAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("action", Database_Action.class);
     }
     
     @Override
     public ViewSessionImpl getSessionConfig() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this;
     }
 
     @Override
     public Config_Special getConfigSpecial() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("special", Config_Special.class);
     }
 
     @Override
     public Config_Action getConfigAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getEnum("action", Config_Action.class);
     }
 
     @Override
-    public Photo_Action getAction() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean getWantMassedit() {
+        return getEnum("action", Photo_Action.class) == Photo_Action.MASSEDIT;
     }
 
     public static class ViewSessionLoginImpl implements ViewSessionSession {

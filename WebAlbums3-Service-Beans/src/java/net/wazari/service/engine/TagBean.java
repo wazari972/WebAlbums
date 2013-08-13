@@ -17,7 +17,7 @@ import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Tag_Mode;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
-import net.wazari.service.exchange.ViewSessionTag.Special;
+import net.wazari.service.exchange.ViewSessionTag.Tag_Special;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagDisplay;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagSimple;
 import net.wazari.service.exchange.xml.common.XmlFrom;
@@ -238,22 +238,22 @@ public class TagBean implements TagLocal {
 
     @Override
     public XmlTagPersonsPlaces treatTagPersons(ViewSession vSession) {
-        return treatTagPersonsPlaces(vSession, Special.PERSONS);
+        return treatTagPersonsPlaces(vSession, Tag_Special.PERSONS);
     }
     
     @Override
     public XmlTagPersonsPlaces treatTagPlaces(ViewSession vSession) {
-        return treatTagPersonsPlaces(vSession, Special.PLACES);
+        return treatTagPersonsPlaces(vSession, Tag_Special.PLACES);
     }
     
     
-    private XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSession vSession, Special special) {
+    private XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSession vSession, Tag_Special special) {
         StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagPersonsPlaces." + special, log);
 
         XmlTagPersonsPlaces output = new XmlTagPersonsPlaces();
 
         int type;
-        if (Special.PERSONS == special) {
+        if (Tag_Special.PERSONS == special) {
             type = 1;
         } else {
             type = 3;

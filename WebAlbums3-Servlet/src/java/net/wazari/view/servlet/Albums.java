@@ -45,7 +45,7 @@ public class Albums extends HttpServlet{
 
         XmlAlbums output = new XmlAlbums() ;
 
-        ViewSessionAlbum.Special special = vSession.getAlbumSpecial();
+        ViewSessionAlbum.Album_Special special = vSession.getAlbumSpecial();
         
         if (special != null) {
             switch (special) {

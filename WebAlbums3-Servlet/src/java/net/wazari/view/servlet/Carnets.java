@@ -12,12 +12,9 @@ import net.wazari.service.CarnetLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionCarnet;
-import net.wazari.service.exchange.ViewSessionCarnet.Action;
-import net.wazari.service.exchange.ViewSessionCarnet.Special;
-import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetDisplay;
-import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetEdit;
+import net.wazari.service.exchange.ViewSessionCarnet.Carnet_Action;
+import net.wazari.service.exchange.ViewSessionCarnet.Carnet_Special;
 import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSimple;
-import net.wazari.service.exchange.ViewSessionCarnet.ViewSessionCarnetSubmit;
 import net.wazari.service.exchange.xml.carnet.XmlCarnetSubmit;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -43,20 +40,20 @@ public class Carnets extends HttpServlet{
             throws WebAlbumsServiceException {
         XmlCarnets output = new XmlCarnets() ;
         
-        Special special = vSession.getCarnetSpecial();
-        if (special == Special.TOP5) {
+        Carnet_Special special = vSession.getCarnetSpecial();
+        if (special == Carnet_Special.TOP5) {
             output.topCarnets = carnetService.treatTOP(vSession.getVSession());
             return output ;
         }
         
-        Action action = vSession.getCarnetAction();
+        Carnet_Action action = vSession.getCarnetAction();
         XmlCarnetSubmit submit = null;
         if(vSession.getVSession().isSessionManager()) {
             //prepare SUBMIT messag
             log.info("treat Carnet/"+action);
-            if (action == Action.SUBMIT || action == Action.SAVE) {
+            if (action == Carnet_Action.SUBMIT || action == Carnet_Action.SAVE) {
                 submit = carnetService.treatSUBMIT(vSession.getSubmitCarnetSession());
-                if (action == Action.SAVE) {
+                if (action == Carnet_Action.SAVE) {
                     if (!submit.valid) {
                         output.exception = submit.exception ;
                     } else {
@@ -66,16 +63,16 @@ public class Carnets extends HttpServlet{
                     return output;
                     
                 } else if (submit != null && !submit.valid) {
-                    action = Action.EDIT;
+                    action = Carnet_Action.EDIT;
                 }
             }
 
-            if (action == Action.EDIT) {
+            if (action == Carnet_Action.EDIT) {
                 output.edit = carnetService.treatEDIT(vSession.getEditCarnetSession(), submit);
             }
         }
 
-        if (action != Action.EDIT) {
+        if (action != Carnet_Action.EDIT) {
             //afficher la liste des albums de ce theme
             output.display = carnetService.treatDISPLAY(vSession.getDisplayCarnetSession(), submit);
         }

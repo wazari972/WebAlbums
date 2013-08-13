@@ -13,7 +13,7 @@ import net.wazari.service.exchange.ViewSession.VSession;
  * @author kevin
  */
 public interface ViewSessionCarnet extends VSession {
-    enum Action {
+    enum Carnet_Action {
         EDIT, SUBMIT, SAVE
     }
     
@@ -51,12 +51,12 @@ public interface ViewSessionCarnet extends VSession {
         Integer getPage() ;
     }
     
-    enum Special {
+    enum Carnet_Special {
         TOP5
     }
     
-    Special getCarnetSpecial();
-    Action getCarnetAction();
+    Carnet_Special getCarnetSpecial();
+    Carnet_Action getCarnetAction();
     
     ViewSessionCarnetDisplay getDisplayCarnetSession();
     ViewSessionCarnetEdit getEditCarnetSession();

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.exchange.ViewSessionLogin;
-import net.wazari.service.exchange.ViewSessionLogin.Action;
+import net.wazari.service.exchange.ViewSessionLogin.Login_Action;
 import net.wazari.service.exchange.xml.XmlLogin;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import org.slf4j.Logger;
@@ -29,9 +29,9 @@ public class Users extends HttpServlet {
     public XmlLogin treatLogin(ViewSessionLogin vSession, HttpServletRequest request, HttpServletResponse response) throws IOException {
         XmlLogin output = new XmlLogin();
         try {
-            Action action = vSession.getLoginAction();
+            Login_Action action = vSession.getLoginAction();
             log.info("Action: {}", action);
-            if (Action.LOGIN == action) {
+            if (Login_Action.LOGIN == action) {
                 String userName = vSession.getUserName();
                 
                 if (userName == null) {
@@ -61,7 +61,7 @@ public class Users extends HttpServlet {
                 }
                 
                 return null ;
-            } else if (Action.CHANGE_IS_MANAGER == action) {
+            } else if (Login_Action.CHANGE_IS_MANAGER == action) {
                 boolean wantManager = vSession.getwantManager();
                 log.warn("set Session manager to "+wantManager);
                 vSession.setSessionManager(wantManager);

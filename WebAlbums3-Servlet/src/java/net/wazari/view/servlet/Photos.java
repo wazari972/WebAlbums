@@ -12,13 +12,10 @@ import net.wazari.service.PhotoLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionPhoto;
-import net.wazari.service.exchange.ViewSessionPhoto.Action;
-import net.wazari.service.exchange.ViewSessionPhoto.Special;
+import net.wazari.service.exchange.ViewSessionPhoto.Photo_Action;
+import net.wazari.service.exchange.ViewSessionPhoto.Photo_Special;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionAnAlbum;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
-import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -42,28 +39,28 @@ public class Photos extends HttpServlet {
     @EJB private WebPageLocal webPageService;
 
     public XmlPhotos treatPHOTO(ViewSessionPhoto vSession) throws WebAlbumsServiceException {
-        Action action = vSession.getPhotoAction();
+        Photo_Action action = vSession.getPhotoAction();
         XmlPhotos output = new XmlPhotos();
         XmlPhotoSubmit submit = null;
         Boolean correct = true;
 
-        Special special = vSession.getPhotoSpecial();
-        if (special == Special.RANDOM) {
+        Photo_Special special = vSession.getPhotoSpecial();
+        if (special == Photo_Special.RANDOM) {
             output.random = photoService.treatRANDOM(vSession.getVSession()) ;
             return output ;
-        } else if (special == Special.ABOUT) {
-//TEMP             output.about = photoService.treatABOUT(vSession.getVSession()) ;
+        } else if (special == Photo_Special.ABOUT) {
+            output.about = photoService.treatABOUT(vSession.getSessionPhotoSimple()) ;
             return output ;
-        } else if (special == Special.FASTEDIT) {
+        } else if (special == Photo_Special.FASTEDIT) {
             output.fastedit = photoService.treatFASTEDIT(vSession.getSessionPhotoFastEdit()) ;
             return output ;
         }
 
-        if (Action.SUBMIT == action && vSession.getVSession().isSessionManager()) {
+        if (Photo_Action.SUBMIT == action && vSession.getVSession().isSessionManager()) {
             submit = photoService.treatPhotoSUBMIT(vSession.getSessionPhotoSubmit(), correct);
         }
         
-        if ((Action.EDIT == action || !correct) && vSession.getVSession().isSessionManager()) {
+        if ((Photo_Action.EDIT == action || !correct) && vSession.getVSession().isSessionManager()) {
             ViewSessionPhotoEdit vSessionEdit = vSession.getSessionPhotoEdit();
             
             output.edit = photoService.treatPhotoEDIT(vSessionEdit, submit);

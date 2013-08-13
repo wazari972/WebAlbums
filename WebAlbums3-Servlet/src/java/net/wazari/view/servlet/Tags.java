@@ -16,8 +16,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Edit_Action;
 import net.wazari.service.exchange.ViewSessionTag;
-import net.wazari.service.exchange.ViewSessionTag.Special;
-import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagCloud;
+import net.wazari.service.exchange.ViewSessionTag.Tag_Special;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagEdit;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.view.servlet.DispatcherBean.Page;
@@ -43,24 +42,26 @@ public class Tags extends HttpServlet {
     
     public XmlTags treatTAGS(ViewSessionTag vSession) throws WebAlbumsServiceException {
         XmlTags output = new XmlTags();
-        Special special = vSession.getTagSpecial();
-        if (Special.CLOUD == special) {
-            ViewSessionTagCloud vSessionCloud = vSession.getSessionTagCloud();
-            
-            output.cloud = tagService.treatTagCloud(vSession.getVSession()) ;
-            if (vSessionCloud.getWantUnusedTags()) {
-                output.tag_never = webPageService.displayListLB(ViewSession.Tag_Mode.TAG_NEVER_EVER, vSession.getVSession(), null,
-                        ViewSession.Box.MULTIPLE);
+        Tag_Special special = vSession.getTagSpecial();
+        if (special != null) {
+            switch (special) {
+            case CLOUD:
+                output.cloud = tagService.treatTagCloud(vSession.getVSession()) ;
+                if (vSession.getSessionTagCloud().getWantUnusedTags()) {
+                    output.tag_never = webPageService.displayListLB(ViewSession.Tag_Mode.TAG_NEVER_EVER, vSession.getVSession(), null,
+                            ViewSession.Box.MULTIPLE);
+                }
+                break;
+            case PERSONS:
+                output.persons = tagService.treatTagPersons(vSession.getVSession()) ;
+                break;
+            case PLACES:
+                output.places = tagService.treatTagPlaces(vSession.getVSession()) ;
+                break;
+            case ABOUT:
+                output.about = tagService.treatABOUT(vSession.getSessionTagSimple()) ;
+                break;
             }
-            return output ;
-        } else  if (Special.PERSONS == special) {
-            output.persons = tagService.treatTagPersons(vSession.getVSession()) ;
-            return output ;
-        } else  if (Special.PLACES == special) {
-            output.places = tagService.treatTagPlaces(vSession.getVSession()) ;
-            return output ;
-        } else  if (Special.ABOUT == special) {
-            output.about = tagService.treatABOUT(vSession.getSessionTagSimple()) ;
             return output ;
         }
 

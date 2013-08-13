@@ -84,7 +84,7 @@ public interface ViewSessionPhoto extends VSession {
             Integer getRmTag();
     }
     interface ViewSessionPhotoDisplay extends VSession {
-        Photo_Action getAction();
+        boolean getWantMassedit();
         ViewSessionPhotoDisplayMassEdit getMassEdit();
         Integer getPage();
         Integer getAlbum();
@@ -97,5 +97,5 @@ public interface ViewSessionPhoto extends VSession {
     ViewSessionPhotoDisplay getSessionPhotoDisplay();
     ViewSessionPhotoSubmit getSessionPhotoSubmit();
     ViewSessionPhotoFastEdit getSessionPhotoFastEdit();
-    ViewSessionPhotoEdit getSessionPhotoSimple();
+    ViewSessionPhotoSimple getSessionPhotoSimple();
 }

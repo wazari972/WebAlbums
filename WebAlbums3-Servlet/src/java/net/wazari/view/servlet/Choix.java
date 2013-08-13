@@ -45,7 +45,7 @@ public class Choix extends HttpServlet {
     private CarnetLocal carnetService;
     
     public XmlWebAlbumsList displayChxJSON(ViewSessionChoix vSession) throws WebAlbumsServiceException {
-        Choix_Special special = vSession.getSpecial();
+        Choix_Special special = vSession.getChoixSpecial();
         if (special == Choix_Special.MAP) {
             return webPageService.displayMapInScript(vSession.getVSession());
         } else {
@@ -55,7 +55,7 @@ public class Choix extends HttpServlet {
 
     public XmlChoix displayCHX(ViewSessionChoix vSessionChoix) throws WebAlbumsServiceException {
         XmlChoix choix = new XmlChoix();
-        Choix_Special special = vSessionChoix.getSpecial();
+        Choix_Special special = vSessionChoix.getChoixSpecial();
         
         if (special == Choix_Special.JUST_THEME) {
         } else {

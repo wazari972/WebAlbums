@@ -4,6 +4,7 @@
  */
 package net.wazari.service.engine;
 
+import java.awt.Desktop.Action;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -24,9 +25,14 @@ import net.wazari.service.DatabaseLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSessionDatabase;
-import net.wazari.service.exchange.ViewSessionDatabase.Action;
-import net.wazari.service.exchange.xml.database.*;
+import net.wazari.service.exchange.ViewSessionDatabase.Database_Action;
+import net.wazari.service.exchange.xml.database.XmlDatabaseCheck;
+import net.wazari.service.exchange.xml.database.XmlDatabaseDefault;
+import net.wazari.service.exchange.xml.database.XmlDatabaseExport;
+import net.wazari.service.exchange.xml.database.XmlDatabaseImport;
+import net.wazari.service.exchange.xml.database.XmlDatabaseStats;
 import net.wazari.service.exchange.xml.database.XmlDatabaseStats.XmlDatabaseStatsTheme;
+import net.wazari.service.exchange.xml.database.XmlDatabaseTrunk;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import org.slf4j.Logger;
@@ -75,7 +81,7 @@ public class DatabaseBean implements DatabaseLocal {
     public XmlDatabaseCheck treatCHECK(ViewSessionDatabase vSession) {
         XmlDatabaseCheck output = new XmlDatabaseCheck() ;
         
-        Action action = vSession.getDatabaseAction() ;
+        Database_Action action = vSession.getDatabaseAction() ;
         if (action == null) {
             return output;
         }
@@ -104,7 +110,7 @@ public class DatabaseBean implements DatabaseLocal {
                 List<String> images = null;
                 List<String> mini = null;
                 
-                if (action == Action.CHECK_FS) {
+                if (action == Database_Action.CHECK_FS) {
                     images = new LinkedList<String>();
                     mini = new LinkedList<String>();
                     String sep = vSession.getVSession().getConfiguration().getSep() ;
@@ -139,14 +145,14 @@ public class DatabaseBean implements DatabaseLocal {
                         List<String> current = images ;
                         for (String filepath : new String[]{photoUtil.getImagePath(vSession.getVSession(), enrPhoto), 
                                                             photoUtil.getMiniPath(vSession.getVSession(), enrPhoto)}) {
-                            if (action == Action.CHECK_DB) {
+                            if (action == Database_Action.CHECK_DB) {
                                 File f = new File(filepath);
                                 if (!f.exists()) {
                                     output.files.add(filepath+": missing");
                                 } else if (!f.canRead()) {
                                     output.files.add(filepath+": not readable");
                                 }
-                            } else if (action == Action.CHECK_FS) {
+                            } else if (action == Database_Action.CHECK_FS) {
                                 
                                 boolean removed = current.remove(filepath);
                                 log.info("checking: {}", filepath);
@@ -156,7 +162,7 @@ public class DatabaseBean implements DatabaseLocal {
                         }
                     }
                 }
-                if (action == Action.CHECK_FS) {
+                if (action == Database_Action.CHECK_FS) {
                     output.files.addAll(images);
                     output.files.addAll(mini);
                 }

@@ -14,8 +14,8 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Tag_Mode;
 import net.wazari.service.exchange.ViewSessionConfig;
-import net.wazari.service.exchange.ViewSessionConfig.Action;
-import net.wazari.service.exchange.ViewSessionConfig.Special;
+import net.wazari.service.exchange.ViewSessionConfig.Config_Action;
+import net.wazari.service.exchange.ViewSessionConfig.Config_Special;
 import net.wazari.service.exchange.xml.config.XmlConfig;
 import net.wazari.view.servlet.DispatcherBean.Page;
 import org.slf4j.Logger;
@@ -44,13 +44,13 @@ public class Config extends HttpServlet {
         if (!vSession.getVSession().isSessionManager())
             return null;
         
-        Special special = vSession.getSpecial();
+        Config_Special special = vSession.getConfigSpecial();
         
         XmlConfig output = new XmlConfig();
 
-        Action action = vSession.getAction();
+        Config_Action action = vSession.getConfigAction();
         if (action == null) {
-            action = Action.DEFAULT;
+            action = Config_Action.DEFAULT;
         }
         
         switch(action) {
@@ -95,7 +95,7 @@ public class Config extends HttpServlet {
             output.shutdown = System.getProperty(SHUTDOWN_PORT_PPT);
         }
         
-        if (special != Special.ONLY) {
+        if (special != Config_Special.ONLY) {
             output.tag_used = webPageService.displayListLB(Tag_Mode.TAG_USED, vSession.getVSession(), null,
                     Box.MULTIPLE);
             output.tag_never = webPageService.displayListLB(Tag_Mode.TAG_NEVER, vSession.getVSession(), null,

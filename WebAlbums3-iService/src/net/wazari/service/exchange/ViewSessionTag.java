@@ -16,7 +16,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
  */
 public interface ViewSessionTag extends VSession {
     enum Tag_Special {
-        CLOUD, PERSONS, PLACES, ABOUT
+        CLOUD, PERSONS, PLACES, ABOUT, DEFAULT
     }
     interface ViewSessionTagSimple extends VSession {
         Integer getId();
