@@ -5,6 +5,7 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
+import javax.xml.bind.annotation.XmlElementWrapper;
 import net.wazari.service.exchange.xml.album.*;
 
 /**

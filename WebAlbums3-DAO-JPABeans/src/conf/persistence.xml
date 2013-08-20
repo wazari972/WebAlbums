@@ -16,9 +16,9 @@
       <property name="hibernate.hbm2ddl.auto" value="update"/>
     </properties>
   </persistence-unit>
-  <persistence-unit name="WebAlbums-MySQL-Test" transaction-type="JTA">
+  <persistence-unit name="WebAlbums-MySQL-New" transaction-type="JTA">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <jta-data-source>jdbc/mysqlWebAlbumsTest</jta-data-source>
+    <jta-data-source>jdbc/mysqlWebAlbumsNew</jta-data-source>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
@@ -62,8 +62,8 @@
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://127.0.0.1/WebAlbums"/>
       <property name="javax.persistence.jdbc.user" value="wazari972"/>
       <property name="javax.persistence.jdbc.password" value="ijaheb"/>
-      <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
       <!-- Hibernate specific properties -->
+      <property name="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
       <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
       <!--
       <property name="hibernate.show_sql" value="true"/>

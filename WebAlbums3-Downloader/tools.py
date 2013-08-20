@@ -226,7 +226,7 @@ def get_an_albumSet(page=0):
         
 def get_albums_of_albumSet(albumSet):
     for album in albumSet.find("albums").find("display").find("albumList").findall("album"):
-        get_all_photos_of_photoSet(album.get("id"), album.find("title").text)
+        get_all_photos_of_photoSet(album.get("id"), album.find("name").text)
 
 def get_all_albums():
     first = get_an_albumSet()

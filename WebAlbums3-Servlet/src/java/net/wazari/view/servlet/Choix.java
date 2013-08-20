@@ -100,7 +100,7 @@ public class Choix extends HttpServlet {
 
                 @Override
                 public Integer[] getTagAsked() {
-                    throw new UnsupportedOperationException("Not supported yet."); 
+                    return new Integer[]{};
                 }
 
                 @Override

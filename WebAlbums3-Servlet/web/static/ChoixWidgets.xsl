@@ -86,7 +86,7 @@
 
  <xsl:template match="year">
      <div style="overflow: auto;">
-        <b><xsl:value-of select="year"/></b>
+        <b><xsl:value-of select="@year"/></b>
         <table>
             <tr>
                 <xsl:apply-templates select="album" />
@@ -104,10 +104,10 @@
                       <xsl:attribute name="src"><xsl:value-of select="$RootPath" /><xsl:value-of select="/webAlbums/affichage/mini_folder" /><xsl:value-of select="picture/text()" />.png</xsl:attribute>
                 </xsl:if>
                 <xsl:if test="not(/webAlbums/affichage/@directAccess)">
-                      <xsl:attribute name="src">Miniature__<xsl:value-of select="picture/@id" />.png</xsl:attribute>
+                      <xsl:attribute name="src">Miniature__<xsl:value-of select="details/photoId/@id" />.png</xsl:attribute>
                 </xsl:if>
                 <xsl:attribute name="title">
-                    <xsl:value-of select="name"/>
+                    <xsl:value-of select="date/@date"/>&#160;<xsl:value-of select="name/text()"/>
                 </xsl:attribute>
             </img>
         </a>

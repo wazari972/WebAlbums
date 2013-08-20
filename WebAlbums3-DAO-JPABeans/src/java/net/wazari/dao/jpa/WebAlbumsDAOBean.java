@@ -31,17 +31,14 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class WebAlbumsDAOBean {
     private static final Logger log = LoggerFactory.getLogger(WebAlbumsDAOBean.class.getName());
-    
-    public static final String PERSISTENCE_UNIT_Derby = "WebAlbums-Derby" ;
 
     public static final String PERSISTENCE_UNIT_MySQL_Prod = "WebAlbums-MySQL" ;
-    public static final String PERSISTENCE_UNIT_MySQL_Simu = "WebAlbums-MySQL-Test" ;
+    public static final String PERSISTENCE_UNIT_MySQL_Simu = "WebAlbums-MySQL-New" ;
     public static final String PERSISTENCE_UNIT_MySQL_Test = "WebAlbums-MySQL-Test2" ;
-    public static final String PERSISTENCE_UNIT_MySQL_StandAlone = "WebAlbums-MySQL-StandAlone" ;
 
     public static final String PERSISTENCE_UNIT_Prod = PERSISTENCE_UNIT_MySQL_Prod ;
     
-    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_Prod ;
+    public static final String PERSISTENCE_UNIT = PERSISTENCE_UNIT_MySQL_Prod ;
 
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
