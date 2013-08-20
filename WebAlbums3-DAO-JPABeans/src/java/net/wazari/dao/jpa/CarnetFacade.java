@@ -23,8 +23,6 @@ import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.jpa.entity.JPACarnet;
 import net.wazari.dao.jpa.entity.JPACarnet_;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +90,6 @@ public class CarnetFacade implements CarnetFacadeLocal {
     @Override
     public SubsetOf<Carnet> queryCarnets(ServiceSession session,
             AlbumFacadeLocal.Restriction restrict, AlbumFacadeLocal.TopFirst topFirst, Bornes bornes) {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPACarnet> cq = cb.createQuery(JPACarnet.class) ;
@@ -114,7 +111,6 @@ public class CarnetFacade implements CarnetFacadeLocal {
         q.setHint("org.hibernate.readOnly", true) ;
 
         List<JPACarnet> lstCarnets = q.getResultList() ;
-        stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstCarnets.size()+" albums returned") ;
         return (SubsetOf) new SubsetOf<JPACarnet>(bornes, lstCarnets, (long) size);
     }
 

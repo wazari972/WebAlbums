@@ -10,8 +10,6 @@ import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +25,6 @@ public class UserBean implements UserLocal {
 
     @Override
     public boolean logon(ViewSessionLogin vSession, HttpServletRequest request) {
-        StopWatch stopWatch = new Slf4JStopWatch("Service.logon", log) ;
-        
         Integer themeId = vSession.getVSession().getThemeId();
         Principal pr = vSession.getUserPrincipal();
         log.info( "Login with theme={}, principal={}", new Object[]{themeId, pr});
@@ -101,7 +97,6 @@ public class UserBean implements UserLocal {
         log.info( "saveTheme ({})", enrTheme);
         vSession.setTheme(enrTheme);
 
-        stopWatch.stop() ;
         return true;
     }
 

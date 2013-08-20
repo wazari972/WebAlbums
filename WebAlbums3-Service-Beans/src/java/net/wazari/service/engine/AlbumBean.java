@@ -38,8 +38,6 @@ import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.util.system.FilesFinder;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +77,6 @@ public class AlbumBean implements AlbumLocal {
     public XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, 
                                         XmlAlbumSubmit submit, XmlFrom fromPage)
             throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
         Integer albumId = vSession.getId();
         Integer page = vSession.getPage();
@@ -187,13 +184,11 @@ public class AlbumBean implements AlbumLocal {
         }
 
         output.page = webPageService.xmlPage(fromPage, bornes);
-        stopWatch.stop("Service.displayAlbum") ;
         return output ;
     }
 
     @Override
     public XmlAlbumGpx treatGPX(ViewSession vSession) {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumGpx gpxList = new XmlAlbumGpx();
         
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
@@ -210,14 +205,11 @@ public class AlbumBean implements AlbumLocal {
                 gpxList.gpx.add(gpx);
             }
         }
-        
-        stopWatch.stop("Service.treatGPX") ;
         return gpxList;
     }
     
     @Override
     public XmlAlbumTop treatTOP(ViewSession vSession) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumTop top5 = new XmlAlbumTop();
 
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
@@ -228,7 +220,7 @@ public class AlbumBean implements AlbumLocal {
             
             top5.album.add(album);
         }
-        stopWatch.stop("Service.treatTOP") ;
+        
         return top5;
     }
 
@@ -243,7 +235,6 @@ public class AlbumBean implements AlbumLocal {
     
     @Override
     public XmlAlbumSelect treatSELECT(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumSelect select = new XmlAlbumSelect();
 
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession.getVSession(), 
@@ -290,14 +281,12 @@ public class AlbumBean implements AlbumLocal {
             select.album.add(album);
         }
 
-        stopWatch.stop("Service.treatSELECT") ;
         return select;
     }
 
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy") ;
     @Override
     public XmlAlbumYears treatYEARS(ViewSessionAlbumYear vSession) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumYears years = new XmlAlbumYears();
 
         Album enrFirstAlbum = albumDAO.loadFirstAlbum(vSession.getVSession(), Restriction.THEME_ONLY);
@@ -333,13 +322,11 @@ public class AlbumBean implements AlbumLocal {
             years.year.add(year);
         }
 
-        stopWatch.stop("Service.treatYEARS") ;
         return years ;
     }
 
     @Override
     public XmlAlbumAgo treatAGO(ViewSessionAlbumAgo vSession) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumAgo ago = new XmlAlbumAgo();
         
         Integer year = vSession.getYear();
@@ -361,14 +348,12 @@ public class AlbumBean implements AlbumLocal {
             ago.album.add(album);
         }
         
-        stopWatch.stop("Service.treatAGO") ;
         return ago;
     }
     
     @Override
     public XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession)
             throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlAlbumSubmit output = new XmlAlbumSubmit();
         Integer albumId = vSession.getId();
 
@@ -417,7 +402,6 @@ public class AlbumBean implements AlbumLocal {
         }
         
         output.message = "Album (" + enrAlbum.getId() + ") correctement mise à jour !";
-        stopWatch.stop("Service.treatSUBMIT") ;
         return output ;
     }
 

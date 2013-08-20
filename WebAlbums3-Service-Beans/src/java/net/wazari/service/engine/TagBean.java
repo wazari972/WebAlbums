@@ -26,10 +26,9 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.service.exchange.xml.tag.*;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.util.system.SystemTools;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.profiler.StopWatch;
 
 @Stateless
 public class TagBean implements TagLocal {
@@ -47,7 +46,6 @@ public class TagBean implements TagLocal {
 
     @Override
     public XmlTagDisplay treatTagDISPLAY(ViewSessionTagDisplay vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagDISPLAY", log);
         XmlTagDisplay output = new XmlTagDisplay();
         Integer[] tags = vSession.getTagAsked();
         
@@ -86,7 +84,7 @@ public class TagBean implements TagLocal {
             
             output.photoList = photoLocal.displayPhoto(rq, (ViewSessionPhotoDisplay) vSession, submit, thisPage);
         }
-        stopWatch.stop();
+        
         return output;
     }
 
@@ -130,7 +128,6 @@ public class TagBean implements TagLocal {
 
     @Override
     public XmlTagCloud treatTagCloud(ViewSession vSession) {
-        StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagCloud", log);
         XmlTagCloud output = new XmlTagCloud();
 
         //what's the max number of pict per tag ?
@@ -205,7 +202,6 @@ public class TagBean implements TagLocal {
             updateParentTagCloud(tag);
         }
         
-        stopWatch.stop();
         return output;
     }
     
@@ -248,8 +244,6 @@ public class TagBean implements TagLocal {
     
     
     private XmlTagPersonsPlaces treatTagPersonsPlaces(ViewSession vSession, Tag_Special special) {
-        StopWatch stopWatch = new Slf4JStopWatch("Service.treatTagPersonsPlaces." + special, log);
-
         XmlTagPersonsPlaces output = new XmlTagPersonsPlaces();
 
         int type;
@@ -278,7 +272,7 @@ public class TagBean implements TagLocal {
             
             output.tagList.add(tag);
         }
-        stopWatch.stop();
+        
         return output;
     }
 }

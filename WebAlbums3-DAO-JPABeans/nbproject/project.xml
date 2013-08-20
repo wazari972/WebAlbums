@@ -7,7 +7,6 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <included-library dirs="200">reference.WebAlbums3-iDAO.jar</included-library>
             <included-library dirs="200">reference.WebAlbums3-Commons.jar</included-library>
-            <included-library dirs="200">file.reference.CP-Perf-perf4j-0.9.13.jar</included-library>
             <included-library dirs="200">file.reference.CP-Apache-commons-lang.2.5.jar</included-library>
             <included-library dirs="200">file.reference.CP-Log-slf4j-api-1.6.0.jar</included-library>
             <included-library dirs="200">libs.javaee-api-6.0.classpath</included-library>

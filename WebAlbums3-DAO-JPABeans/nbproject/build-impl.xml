@@ -809,7 +809,6 @@ exists or setup the property manually. For example like this:
     <target if="is.jars.in.ejbjar" name="-library-inclusion-in-archive-by-user">
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${build.classes.dir}"/>
@@ -827,7 +826,6 @@ exists or setup the property manually. For example like this:
     <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
         <basename file="${reference.WebAlbums3-iDAO.jar}" property="manifest.reference.WebAlbums3-iDAO.jar"/>
         <basename file="${reference.WebAlbums3-Commons.jar}" property="manifest.reference.WebAlbums3-Commons.jar"/>
-        <basename file="${file.reference.CP-Perf-perf4j-0.9.13.jar}" property="manifest.file.reference.CP-Perf-perf4j-0.9.13.jar"/>
         <basename file="${file.reference.CP-Apache-commons-lang.2.5.jar}" property="manifest.file.reference.CP-Apache-commons-lang.2.5.jar"/>
         <basename file="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" property="manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar"/>
         <basename file="${libs.javaee-api-6.0.classpath}" property="manifest.libs.javaee-api-6.0.classpath"/>
@@ -842,29 +840,27 @@ exists or setup the property manually. For example like this:
         <basename file="${file.reference.jboss-logging-3.1.0.GA.jar}" property="manifest.file.reference.jboss-logging-3.1.0.GA.jar"/>
         <basename file="${file.reference.jboss-transaction-api_1.1_spec-1.0.1.Final.jar}" property="manifest.file.reference.jboss-transaction-api_1.1_spec-1.0.1.Final.jar"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 jar-12 jar-13 jar-14 jar-15 jar-16 "/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 jar-12 jar-13 jar-14 jar-15 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.reference.WebAlbums3-iDAO.jar}"/>
             <attribute name="jar-2-Extension-Name" value="${manifest.reference.WebAlbums3-Commons.jar}"/>
-            <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.CP-Perf-perf4j-0.9.13.jar}"/>
-            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.CP-Apache-commons-lang.2.5.jar}"/>
-            <attribute name="jar-5-Extension-Name" value="${manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar}"/>
-            <attribute name="jar-6-Extension-Name" value="${manifest.libs.javaee-api-6.0.classpath}"/>
-            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.cglib-nodep-2.2.3.jar}"/>
-            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.antlr-2.7.7.jar}"/>
-            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.dom4j-1.6.1.jar-1}"/>
-            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.hibernate-commons-annotations-4.0.2.Final.jar}"/>
-            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.hibernate-core-4.2.3.Final.jar}"/>
-            <attribute name="jar-12-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.2.3.Final.jar}"/>
-            <attribute name="jar-13-Extension-Name" value="${manifest.file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}"/>
-            <attribute name="jar-14-Extension-Name" value="${manifest.file.reference.javassist-3.15.0-GA.jar}"/>
-            <attribute name="jar-15-Extension-Name" value="${manifest.file.reference.jboss-logging-3.1.0.GA.jar}"/>
-            <attribute name="jar-16-Extension-Name" value="${manifest.file.reference.jboss-transaction-api_1.1_spec-1.0.1.Final.jar}"/>
+            <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.CP-Apache-commons-lang.2.5.jar}"/>
+            <attribute name="jar-4-Extension-Name" value="${manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar}"/>
+            <attribute name="jar-5-Extension-Name" value="${manifest.libs.javaee-api-6.0.classpath}"/>
+            <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.cglib-nodep-2.2.3.jar}"/>
+            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.antlr-2.7.7.jar}"/>
+            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.dom4j-1.6.1.jar-1}"/>
+            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.hibernate-commons-annotations-4.0.2.Final.jar}"/>
+            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.hibernate-core-4.2.3.Final.jar}"/>
+            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.2.3.Final.jar}"/>
+            <attribute name="jar-12-Extension-Name" value="${manifest.file.reference.hibernate-jpa-2.0-api-1.0.1.Final.jar}"/>
+            <attribute name="jar-13-Extension-Name" value="${manifest.file.reference.javassist-3.15.0-GA.jar}"/>
+            <attribute name="jar-14-Extension-Name" value="${manifest.file.reference.jboss-logging-3.1.0.GA.jar}"/>
+            <attribute name="jar-15-Extension-Name" value="${manifest.file.reference.jboss-transaction-api_1.1_spec-1.0.1.Final.jar}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.WebAlbums3-iDAO.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.WebAlbums3-Commons.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.CP-Perf-perf4j-0.9.13.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Apache-commons-lang.2.5.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.CP-Log-slf4j-api-1.6.0.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${dist.ear.dir}/lib"/>

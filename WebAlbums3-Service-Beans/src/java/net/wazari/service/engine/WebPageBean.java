@@ -39,10 +39,9 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWh
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.util.system.SystemTools;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.profiler.StopWatch;
 
 @Stateless
 public class WebPageBean implements WebPageLocal {
@@ -260,7 +259,6 @@ public class WebPageBean implements WebPageLocal {
             Box box)
             throws WebAlbumsServiceException 
     {
-        StopWatch stopWatch = new Slf4JStopWatch("Service.displayListLBNI", log) ;
         List<Tag> tags;
 
         XmlWebAlbumsList output = new XmlWebAlbumsList();
@@ -416,16 +414,12 @@ public class WebPageBean implements WebPageLocal {
             output.blob = map.getJSon();
         }
 
-        stopWatch.stop() ;
         return output ;
     }
 
     @Override
     public XmlUserList displayListDroit(Utilisateur right, Integer albmRight)
             throws WebAlbumsServiceException {
-
-        StopWatch stopWatch = new Slf4JStopWatch("Service.displayListDroit", log) ;
-
         XmlUserList output = new XmlUserList();
 
         List<Utilisateur> lstUsr = userDAO.findAll();
@@ -454,7 +448,7 @@ public class WebPageBean implements WebPageLocal {
             }
             output.user.add(user);
         }
-        stopWatch.stop();
+        
         return output ;
     }
 
@@ -633,6 +627,7 @@ public class WebPageBean implements WebPageLocal {
         return date;
     }
     
+    @Override
     public XmlTag tagListToTagTree(XmlWebAlbumsList tag_used) {        
         Map<Integer, XmlTag> map = new HashMap<Integer, XmlTag>();
         XmlTag olderParent = null;

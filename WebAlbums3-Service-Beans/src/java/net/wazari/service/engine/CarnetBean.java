@@ -35,8 +35,6 @@ import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.common.XmlPhotoAlbumUser;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.util.system.FilesFinder;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,9 +88,9 @@ public class CarnetBean implements CarnetLocal {
         return output;
     }
 
+    @Override
     public XmlCarnetsDisplay treatDISPLAY(ViewSessionCarnetDisplay vSession,
             XmlCarnetSubmit submit) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         
         XmlCarnetsDisplay output = new XmlCarnetsDisplay() ;
         XmlFrom thisPage = new XmlFrom();
@@ -170,15 +168,12 @@ public class CarnetBean implements CarnetLocal {
             output.carnet.add(carnet);
         }
 
-        
-        stopWatch.stop("Service.displayCarnet") ;
         return output ;
     }
 
     @Override
     public XmlCarnetSubmit treatSUBMIT(ViewSessionCarnetSubmit vSession)
             throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlCarnetSubmit output = new XmlCarnetSubmit();
         output.valid = false;
         
@@ -286,13 +281,12 @@ public class CarnetBean implements CarnetLocal {
             return output ;
         }
         output.valid = true;
-        stopWatch.stop("Service.treatSUBMIT") ;
+        
         return output ;   
     }
     
     @Override
     public XmlCarnetsTop treatTOP(ViewSession vSession) {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         XmlCarnetsTop top5 = new XmlCarnetsTop();
 
         SubsetOf<Carnet> carnets = carnetDAO.queryCarnets(vSession, 
@@ -311,7 +305,7 @@ public class CarnetBean implements CarnetLocal {
             top5.carnet.add(carnet);
             i++ ;
         }
-        stopWatch.stop("Service.treatTOP") ;
+        
         return top5;
     }
 }

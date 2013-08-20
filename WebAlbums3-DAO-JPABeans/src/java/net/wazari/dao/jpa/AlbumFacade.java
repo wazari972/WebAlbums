@@ -21,8 +21,6 @@ import net.wazari.dao.exchange.ServiceSession;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.dao.jpa.entity.JPAAlbum;
 import net.wazari.dao.jpa.entity.JPAAlbum_;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +56,6 @@ public class AlbumFacade implements AlbumFacadeLocal {
     @Override
     public SubsetOf<Album> queryAlbums(ServiceSession session,
             AlbumFacadeLocal.Restriction restrict, AlbumFacadeLocal.TopFirst topFirst, Bornes bornes) {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
@@ -84,14 +81,12 @@ public class AlbumFacade implements AlbumFacadeLocal {
         
         lstAlbums = webDAO.filterAlbumsAllowed(lstAlbums, session) ;
         
-        stopWatch.stop("DAO.queryAlbums."+session.getTheme().getNom(), ""+lstAlbums.size()+" albums returned") ;
         return (SubsetOf) new SubsetOf<JPAAlbum>(bornes, lstAlbums, (long) size);
     }
 
     @Override
     public SubsetOf<Album> queryRandomFromYear(ServiceSession session,
         Restriction restrict, Bornes bornes, String date) {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         
@@ -118,7 +113,6 @@ public class AlbumFacade implements AlbumFacadeLocal {
         
         lstAlbums = webDAO.filterAlbumsAllowed(lstAlbums, session) ;
         
-        stopWatch.stop("DAO.queryRandomFromYear."+session.getTheme().getNom(), ""+lstAlbums.size()+" albums returned") ;
         return (SubsetOf) new SubsetOf<JPAAlbum>(bornes,lstAlbums, size);
     }
 
@@ -136,7 +130,6 @@ public class AlbumFacade implements AlbumFacadeLocal {
 
     private Album loadFirstLastAlbum(ServiceSession session,
             Restriction restrict, ListOrder order) {
-        StopWatch stopWatch = new Slf4JStopWatch(log) ;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
@@ -155,8 +148,6 @@ public class AlbumFacade implements AlbumFacadeLocal {
             return webDAO.filter((JPAAlbum) q.getSingleResult(), session);
         } catch (NoResultException e) {
             return null ;
-        } finally {
-            stopWatch.stop("DAO.loadFirstLastAlbum."+session.getTheme().getNom()) ;
         }
     }
 

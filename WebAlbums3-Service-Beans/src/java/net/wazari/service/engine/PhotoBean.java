@@ -1,6 +1,5 @@
 package net.wazari.service.engine;
 
-import java.awt.Desktop.Action;
 import java.io.File;
 import java.util.ArrayList;
 import javax.annotation.security.RolesAllowed;
@@ -19,7 +18,6 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Tag_Mode;
-import net.wazari.service.exchange.ViewSessionPhoto.Photo_Action;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplay;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoDisplayMassEdit.Turn;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
@@ -33,10 +31,9 @@ import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.*;
 import net.wazari.util.system.FilesFinder;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.profiler.StopWatch;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -67,7 +64,6 @@ public class PhotoBean implements PhotoLocal {
     @Override
     public XmlPhotoSubmit treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,
             Boolean correct) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch("Service.treatPhotoSUBMIT", log) ;
         XmlPhotoSubmit output = new XmlPhotoSubmit();
         Integer photoId = vSession.getId();
         output.photoId = photoId;
@@ -204,14 +200,11 @@ public class PhotoBean implements PhotoLocal {
         output.message = " Photo (" + enrPhoto.getId() + ") "
                 + "correctement mise à jour !" ;
 
-        stopWatch.stop() ;
         return output ;
     }
 
     @Override
     public XmlPhotoDisplay treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch("Service.treatPhotoDISPLAY", log) ;
-
         XmlPhotoDisplay output = new XmlPhotoDisplay();
         //afficher les photos
         //afficher la liste des albums de cet theme
@@ -261,7 +254,6 @@ public class PhotoBean implements PhotoLocal {
         PhotoRequest rq = new PhotoRequest(TypeRequest.PHOTO, enrAlbum);
         output.photoList = displayPhoto(rq, vSession, submit, thisPage);
         
-        stopWatch.stop() ;
         return output ;
     }
 
@@ -308,7 +300,6 @@ public class PhotoBean implements PhotoLocal {
             XmlPhotoSubmit submit,
             XmlFrom thisPage)
             throws WebAlbumsServiceException {
-        StopWatch stopWatch = new Slf4JStopWatch("Service.displayPhoto."+rq.type, log) ;
 
         Integer page = vSession.getPage();
         Integer photoId = null;
@@ -366,7 +357,7 @@ public class PhotoBean implements PhotoLocal {
         if (vSession.getVSession().isSessionManager()) {
             if (vSession.getWantMassedit()) {
                 turn = vSession.getMassEdit().getTurn();
-                stopWatch.setTag(stopWatch.getTag()+".MASSEDIT."+turn) ;
+                
                 if (turn == Turn.LEFT) {
                     degrees = "270";
                 } else if (turn == Turn.RIGHT) {
@@ -480,12 +471,6 @@ public class PhotoBean implements PhotoLocal {
             output.massEdit = massEdit ;
         }
         output.page = webPageService.xmlPage(thisPage, bornes);
-        if (countME == 0) {
-            stopWatch.stop() ;
-        } else {
-            stopWatch.stop(stopWatch.getTag(), ""+countME+" photos modified") ;
-
-        }
         return output ;
     }
 
@@ -522,6 +507,7 @@ public class PhotoBean implements PhotoLocal {
         return output ;
     }
 
+    @Override
     public XmlPhotoFastEdit treatFASTEDIT(ViewSessionPhotoFastEdit vSession) {
         XmlPhotoFastEdit output = new XmlPhotoFastEdit();
         output.desc_status = null;

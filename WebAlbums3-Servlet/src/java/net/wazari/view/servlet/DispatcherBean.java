@@ -27,8 +27,7 @@ import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import net.wazari.view.servlet.exchange.xml.XmlWebAlbums;
 import org.apache.commons.lang.time.DurationFormatUtils;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
+import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,8 +71,8 @@ public class DispatcherBean {
             HttpServletRequest request,
             HttpServletResponse response)
             throws IOException, ServletException {
-        Page actualPage = page;
-        StopWatch stopWatch = new Slf4JStopWatch(log);
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         
         request.setCharacterEncoding("utf-8");
         ViewSessionDispatcher vSession = new ViewSessionImpl(request, response, context);
@@ -140,7 +139,6 @@ public class DispatcherBean {
                 }
                 //from here on, the theme must be saved
                 if (vSession.getTheme() == null) {
-                    actualPage = Page.VOID;
                     if (special == null) {
                         log.debug("Not logged in, not a special page, display VOID page");
                         output.themes = indexServlet.treatVOID(vSession.getSessionTheme());
@@ -205,7 +203,6 @@ public class DispatcherBean {
                             break;
                         default: 
                             output.themes = indexServlet.treatVOID(vSession.getSessionTheme());
-                            actualPage = Page.VOID;
                     }
                 }
             }
@@ -213,9 +210,9 @@ public class DispatcherBean {
             log.warn("WebAlbumsServiceException", e);
         }
         log.debug("============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, output.isComplete});
-        Theme currentTheme = vSession.getTheme();
-        stopWatch.stop("View.dispatch." + actualPage + (vSession.getRawSpecial() != null ? "." + vSession.getRawSpecial() : "") + (currentTheme != null ? "." + currentTheme.getNom() : "NoTheme"));
-        String strTime = DurationFormatUtils.formatDuration(stopWatch.getElapsedTime(), "m'min' s's' S'ms'", false);
+        
+        stopWatch.stop();
+        String strTime = DurationFormatUtils.formatDuration(stopWatch.getTime(), "m'min' s's' S'ms'", false);
         if (!isWritten) {
             preventCaching(request, response);
 
