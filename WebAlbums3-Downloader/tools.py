@@ -4,6 +4,7 @@ import os
 from lxml import etree
 import timeit
 from StringIO import StringIO
+from collections import defaultdict
 
 STATIC_FOLDER = "../WebAlbums3-Servlet/web/static"
 WA_URL = "http://127.0.0.1:8080/WebAlbums3.5-dev/"
@@ -255,12 +256,12 @@ def get_a_visioSet(albmId, page=0, name="", full=False):
 def get_a_photoSet(albmId, page=0, name="", full=False):
     return get_a_page("Photos__%s_p%s__" % (albmId, page), name, full=full)
     
-photos_already_dl = []
+photos_already_dl = defaultdict(list)
 def get_all_photos_of_photoSet(albumId, name="", full=False):
-    if albumId in photos_already_dl:
+    if albumId in photos_already_dl[theme]:
         return
     
-    photos_already_dl.append(albumId)
+    photos_already_dl[theme].append(albumId)
     first = get_a_photoSet(albumId, name=name, full=full)
     if first is None:
         print "Couldn't fetch photos from %s/%s" % (repr(name), albumId)
