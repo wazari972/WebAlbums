@@ -734,22 +734,22 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public ViewSessionAlbumEdit getEditSession() {
+    public ViewSessionAlbumEdit getSessionAlbumEdit() {
         return this;
     }
 
     @Override
-    public ViewSessionAlbumSubmit getSubmitSession() {
+    public ViewSessionAlbumSubmit getSessionAlbumSubmit() {
         return this;
     }
 
     @Override
-    public ViewSessionAlbumSimple getSimpleSession() {
+    public ViewSessionAlbumSimple getSessionAlbumSimple() {
         return this;
     }
 
     @Override
-    public ViewSessionAlbumSelect getSelectSession() {
+    public ViewSessionAlbumSelect getSessionAlbumSelect() {
         return this;
     }
 
@@ -759,12 +759,12 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public ViewSessionAlbumDisplay getDisplaySession() {
+    public ViewSessionAlbumDisplay getSessionAlbumDisplay() {
         return this;
     }
 
     @Override
-    public ViewSessionAlbumYear getYearSession() {
+    public ViewSessionAlbumYear getSessionAlbumYear() {
         return this;
     }
 
@@ -854,22 +854,22 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public ViewSessionCarnetDisplay getDisplayCarnetSession() {
+    public ViewSessionCarnetDisplay getSessionCarnetDisplay() {
         return this;
     }
 
     @Override
-    public ViewSessionCarnetEdit getEditCarnetSession() {
+    public ViewSessionCarnetEdit getSessionCarnetEdit() {
         return this;
     }
 
     @Override
-    public ViewSessionCarnetSubmit getSubmitCarnetSession() {
+    public ViewSessionCarnetSubmit getSessionCarnetSubmit() {
         return this;
     }
 
     @Override
-    public ViewSessionCarnetSimple getSimpleCarnetSession() {
+    public ViewSessionCarnetSimple getSessionCarnetSimple() {
         return this;
     }
 
@@ -895,11 +895,6 @@ public class ViewSessionImpl implements
 
     @Override
     public ViewSessionAnAlbum getSessionAnAlbum() {
-        return this;
-    }
-
-    @Override
-    public ViewSessionCarnetSimple getSessionCarnetSimple() {
         return this;
     }
 

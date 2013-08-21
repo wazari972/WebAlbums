@@ -17,7 +17,7 @@ OBJS += build/JnetFS.o
 #C_DEPS += build/JnetFS.d 
 
 
-LIBJVM_DIR=/usr/lib/jvm/java-6-openjdk/jre/lib/amd64/server/
+LIBJVM_DIR=/usr/lib/jvm/java-7-openjdk/jre/lib/amd64/server/
 INCJVM_DIR=${JVM_DIR}include/
 INCJVM_OS_DIR=${INCJVM_DIR}linux/
 

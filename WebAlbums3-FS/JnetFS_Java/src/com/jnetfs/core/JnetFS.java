@@ -9,14 +9,13 @@ package com.jnetfs.core;
 
 import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.JnetFSAdapter;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.vfs.LibVFS;
 import org.slf4j.LoggerFactory;
 
@@ -328,10 +327,37 @@ public final class JnetFS implements Code {
      * @param arg String
      */
     private native void umount(String path);
-    
+    public static void addToJavaLibraryPath(File dir) {
+            final String LIBRARY_PATH = "java.library.path";
+            if (!dir.isDirectory()) {
+                    throw new IllegalArgumentException(dir + " is not a directory.");
+            }
+            String javaLibraryPath = System.getProperty(LIBRARY_PATH);
+            System.setProperty(LIBRARY_PATH, javaLibraryPath + File.pathSeparatorChar + dir.getAbsolutePath());
+
+            resetJavaLibraryPath();
+    }
+    public static void resetJavaLibraryPath() {
+	synchronized(Runtime.getRuntime()) {
+		try {
+			Field field = ClassLoader.class.getDeclaredField("usr_paths");
+			field.setAccessible(true);
+			field.set(null, null);
+			
+			field = ClassLoader.class.getDeclaredField("sys_paths");
+			field.setAccessible(true);
+			field.set(null, null);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+    }   
     static final JnetFS jnet;
     static {
         try {
+            addToJavaLibraryPath(new File("/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/lib"));
             System.loadLibrary("JnetFS");
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();

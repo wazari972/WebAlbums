@@ -53,16 +53,16 @@ public class Albums extends HttpServlet{
                     output.topAlbums = albumService.treatTOP(vSession.getVSession());
                     break;
                 case YEARS:
-                    output.years = albumService.treatYEARS(vSession.getYearSession());
+                    output.years = albumService.treatYEARS(vSession.getSessionAlbumYear());
                     break;
                 case SELECT:
-                    output.select = albumService.treatSELECT(vSession.getSelectSession());
+                    output.select = albumService.treatSELECT(vSession.getSessionAlbumSelect());
                     break;
                 case GRAPH:
-                    output.graph = albumService.treatGRAPH(vSession.getSelectSession());
+                    output.graph = albumService.treatGRAPH(vSession.getSessionAlbumSelect());
                     break;
                 case ABOUT:
-                    output.about = albumService.treatABOUT(vSession.getSimpleSession());
+                    output.about = albumService.treatABOUT(vSession.getSessionAlbumSimple());
                     break;
                 case GPX:
                     output.gpxes = albumService.treatGPX(vSession.getVSession());
@@ -83,11 +83,11 @@ public class Albums extends HttpServlet{
         if(vSession.getVSession().isSessionManager()) {
             //prepare SUBMIT message
             if (action == Edit_Action.SUBMIT) {
-                submit = albumService.treatAlbmSUBMIT(vSession.getSubmitSession());
+                submit = albumService.treatAlbmSUBMIT(vSession.getSessionAlbumSubmit());
             }
 
             if (action == Edit_Action.EDIT) {
-                ViewSessionAlbumEdit editSession = vSession.getEditSession();
+                ViewSessionAlbumEdit editSession = vSession.getSessionAlbumEdit();
                 output.edit = new XmlAlbumEdit();
                 output.edit.album  = albumService.treatAlbmEDIT(editSession);
                 
@@ -113,7 +113,7 @@ public class Albums extends HttpServlet{
 
         if (action != Edit_Action.EDIT) {
             //afficher la liste des albums de ce theme
-            output.display = albumService.treatAlbmDISPLAY(vSession.getDisplaySession(), submit);
+            output.display = albumService.treatAlbmDISPLAY(vSession.getSessionAlbumDisplay(), submit);
         }
 
         return output ;

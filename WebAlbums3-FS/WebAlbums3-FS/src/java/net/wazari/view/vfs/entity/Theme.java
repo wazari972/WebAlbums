@@ -43,10 +43,6 @@ public class Theme extends SDirectory implements ADirectory {
     @Directory
     @File(name="Random")
     public Random random;
-
-    @Directory
-    @File(name="Resize")
-    public Resize resize;
     
     @File
     public GpxFile location;
@@ -71,8 +67,6 @@ public class Theme extends SDirectory implements ADirectory {
         this.albums = new Albums(theme, aThis);
         
         this.random = new Random(theme, aThis);
-        
-        this.resize = new Resize(theme, aThis);
         
         this.loadLocation();
     }

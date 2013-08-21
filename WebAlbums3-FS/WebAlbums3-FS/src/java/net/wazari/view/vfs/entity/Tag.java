@@ -12,7 +12,6 @@ import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IntrosDirectory;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
-import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagDisplay;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import net.wazari.service.exchange.xml.tag.XmlTag;
@@ -98,8 +97,8 @@ public class Tag extends TagDirectory {
             TagDirectory aTagDir = (TagDirectory) adir;
             
             session.setId(this.id);
-            session.setTagAction(TagAction.RM);
-            session.setTagSet(new Integer[]{aTagDir.tagId});
+            session.tagAction = TagAction.RM;
+            session.tagSet = new Integer[]{aTagDir.tagId};
             this.aThis.photoService.treatFASTEDIT(session.getSessionPhotoFastEdit());
             
              ((IntrosDirectory) getParent()).rmFile(this);
@@ -125,8 +124,8 @@ public class Tag extends TagDirectory {
             Session session = new Session(theme);
             
             session.setId(this.id);
-            session.setTagAction(TagAction.ADD);
-            session.setTagSet(new Integer[]{aTagDir.tagId});
+            session.tagAction = TagAction.ADD;
+            session.tagSet = new Integer[]{aTagDir.tagId};
             this.aThis.photoService.treatFASTEDIT(session.getSessionPhotoFastEdit());
             
             ((IntrosDirectory) targetDir).addFile(this);

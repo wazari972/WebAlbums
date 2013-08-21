@@ -70,13 +70,13 @@ public interface ViewSessionAlbum extends VSession {
     Album_Special getAlbumSpecial();
     Edit_Action getEditAction();
     
-    ViewSessionAlbumEdit getEditSession();
-    ViewSessionAlbumSubmit getSubmitSession();
-    ViewSessionAlbumSimple getSimpleSession();
-    ViewSessionAlbumSelect getSelectSession();
+    ViewSessionAlbumEdit getSessionAlbumEdit();
+    ViewSessionAlbumSubmit getSessionAlbumSubmit();
+    ViewSessionAlbumSimple getSessionAlbumSimple();
+    ViewSessionAlbumSelect getSessionAlbumSelect();
     ViewSessionAlbumAgo getAgoSession();
-    ViewSessionAlbumDisplay getDisplaySession();
-    ViewSessionAlbumYear getYearSession();
+    ViewSessionAlbumDisplay getSessionAlbumDisplay();
+    ViewSessionAlbumYear getSessionAlbumYear();
     ViewSessionPhotoAlbumSize getPhotoAlbumSizeSession();
     ViewSessionTempTheme getTempThemeSession();
 }
