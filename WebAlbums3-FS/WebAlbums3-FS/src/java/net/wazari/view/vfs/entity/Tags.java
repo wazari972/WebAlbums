@@ -5,10 +5,14 @@
 package net.wazari.view.vfs.entity;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
+import net.wazari.libvfs.inteface.VFSException;
+import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud;
@@ -45,10 +49,15 @@ public class Tags implements ADirectory {
     }
     
     @Override
-    public void load() throws Exception {
+    public void load() throws VFSException {
         Session session = new Session(theme);
-        XmlWebAlbumsList entries = aThis.webPageService.displayListLB(ViewSession.Tag_Mode.TAG_USED, session, null,
-                ViewSession.Box.MULTIPLE);
+        
+        XmlWebAlbumsList entries;
+        try {
+            entries = aThis.webPageService.displayListLB(ViewSession.Tag_Mode.TAG_USED, session, null, ViewSession.Box.MULTIPLE);
+        } catch (WebAlbumsServiceException ex) {
+            throw new VFSException(ex);
+        }
         
         who = new TagDirectory(null, theme, aThis, (List) entries.who);
         what = new TagDirectory(null, theme, aThis, (List) entries.what);

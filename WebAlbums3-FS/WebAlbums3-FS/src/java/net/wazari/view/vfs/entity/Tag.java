@@ -6,11 +6,14 @@ package net.wazari.view.vfs.entity;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IntrosDirectory;
+import net.wazari.libvfs.inteface.VFSException;
+import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
@@ -53,11 +56,16 @@ public class Tag extends TagDirectory {
     }
 
     @Override
-    public void load() throws Exception {
+    public void load() throws VFSException {
         log.warn("Load images from : {}", this);
         Session session = new Session(theme);
         session.setTagAsked(new Integer[]{tagId});
-        XmlTagDisplay tags = aThis.tagService.treatTagDISPLAY(session.getSessionTagDisplay(), null);
+        XmlTagDisplay tags;
+        try {
+            tags = aThis.tagService.treatTagDISPLAY(session.getSessionTagDisplay(), null);
+        } catch (WebAlbumsServiceException ex) {
+            throw new VFSException(ex);
+        }
         log.warn("Load images from : {} == {} images", this, tags.photoList.photo.size());
         for (XmlPhoto photo : tags.photoList.photo) {
             photos.add(new TagPhoto(theme, aThis, photo.details, true));
@@ -106,7 +114,6 @@ public class Tag extends TagDirectory {
             log.warn("UNLIK: Tag {} removed from Photo {}", aTagDir.getShortname(), this.getShortname());
         }
         
-        @Override
         public void rename(IDirectory targetDir, String filename) throws Exception {
             log.warn("RENAME to {} in {}", targetDir, filename);
             

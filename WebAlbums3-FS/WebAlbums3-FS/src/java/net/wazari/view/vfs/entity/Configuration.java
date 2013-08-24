@@ -4,11 +4,11 @@
  */
 package net.wazari.view.vfs.entity;
 
-import java.util.logging.Level;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.libvfs.inteface.SFile;
+import net.wazari.libvfs.inteface.VFSException;
 import net.wazari.libvfs.inteface.ValueFile;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class Configuration  extends SDirectory implements ADirectory {
     }
     
     @Override
-    public void load() throws Exception {
+    public void load() throws VFSException {
         stars = new ValueFile(new ValueFile.SetterCallback() {
 
             @Override

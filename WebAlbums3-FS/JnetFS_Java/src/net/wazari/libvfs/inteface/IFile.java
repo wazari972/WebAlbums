@@ -33,8 +33,6 @@ public interface IFile {
     void setParent(IDirectory parent);
     IDirectory getParent();
 
-    void rename(IDirectory targetDir, String filename) throws Exception ;
-
     void touch();
     void truncate();
 

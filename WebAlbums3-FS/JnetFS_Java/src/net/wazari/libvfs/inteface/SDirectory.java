@@ -123,10 +123,6 @@ public class SDirectory implements IDirectory {
     }
 
     @Override
-    public void rename(IDirectory targetDir, String filename) {
-    }
-
-    @Override
     public void addFile(IFile file) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -147,6 +143,16 @@ public class SDirectory implements IDirectory {
 
     @Override
     public void write(String new_content) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void moveIn(IFile srcFile, String filename) throws VFSException {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public void acceptNewFile(IFile file, String filename) throws VFSException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -5,6 +5,7 @@
 package net.wazari.view.vfs.entity;
 
 import net.wazari.libvfs.annotation.ADirectory;
+import net.wazari.libvfs.inteface.VFSException;
 
 /**
  *
@@ -12,6 +13,6 @@ import net.wazari.libvfs.annotation.ADirectory;
  */
 public class Listing implements ADirectory {
     @Override
-    public void load() throws Exception {
+    public void load() throws VFSException {
     }
 }

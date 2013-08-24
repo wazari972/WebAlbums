@@ -5,6 +5,7 @@
 package net.wazari.view.vfs.entity;
 
 import net.wazari.libvfs.annotation.ADirectory;
+import net.wazari.libvfs.inteface.VFSException;
 
 /**
  *
@@ -17,6 +18,6 @@ public class Carnets implements ADirectory {
     }
 
     @Override
-    public void load() throws Exception {
+    public void load() throws VFSException {
     }
 }

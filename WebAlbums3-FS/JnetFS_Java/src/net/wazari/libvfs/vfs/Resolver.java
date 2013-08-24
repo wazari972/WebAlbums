@@ -9,18 +9,30 @@ import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.IntrosDirectory;
 import net.wazari.libvfs.inteface.IntrosDirectory.IntrosRoot;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
  */
 public class Resolver {
+    private static final Logger log = LoggerFactory.getLogger(LibVFS.class.getCanonicalName());
     
     private IntrosRoot root ;
-    public Resolver(ADirectory rootDir) {
+    private final String pathPrefix;
+    public Resolver(ADirectory rootDir, String pathPrefix) {
         root = new IntrosRoot(rootDir);
+        this.pathPrefix = pathPrefix;
     }
     public IFile getFile(String search) {
+        if (search.startsWith(pathPrefix)) {
+            /* CHANGE THAT*/
+            search = search.substring(pathPrefix.length() + 11);
+            search = "/France/Albums"+search;
+            log.warn("GET FILE: prefix > {}", search);
+        }
+        
         if (search.equals("/") || search.equals("")) {
             return root;
         }

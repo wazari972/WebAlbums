@@ -360,9 +360,9 @@ public final class JnetFS implements Code {
             addToJavaLibraryPath(new File("/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/lib"));
             System.loadLibrary("JnetFS");
         } catch (UnsatisfiedLinkError e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            log.warn("UnsatisfiedLinkError: {}", e.getMessage());
         }
         jnet = new JnetFS();
     }
-    
 }

@@ -6,6 +6,7 @@ package net.wazari.view.vfs.entity;
 
 import net.wazari.libvfs.inteface.SLink;
 import net.wazari.service.exchange.xml.common.XmlDetails;
+import net.wazari.view.vfs.Launch;
 
 /**
  *
@@ -16,7 +17,7 @@ public class Photo extends SLink {
     protected String target;
     protected Integer id;
     
-    protected boolean doCompletePath = true;
+    protected boolean doCompletePathed = true;
     protected boolean uniqName = false;
     protected boolean forceFile = false;
     
@@ -63,15 +64,7 @@ public class Photo extends SLink {
     
     @Override
     public String getTarget() {
-        String path = System.getProperty("root.path") ;
-        if (path == null) {
-            path = "/other/Web/" ;
-        }
-        if (doCompletePath) {
-            return path+"data/images/"+target;
-        } else {
-            return target;
-        }
+        return Launch.getFolderPrefix(true) + target;
     }
     
     @Override

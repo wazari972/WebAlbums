@@ -31,6 +31,19 @@ public class Launch extends HttpServlet {
     @EJB public ThemeLocal themeService ;
     @EJB public TagLocal tagService;
     @EJB public WebPageLocal webPageService ;
+    
+    public static String getFolderPrefix(boolean getCompleteImagePath) {
+        String path = System.getProperty("root.path") ;
+        if (path == null) {
+            path = "/other/Web/" ;
+        }
+        if (getCompleteImagePath) {
+            path += "data/images/";
+        }
+        
+        return path;
+    }
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -39,12 +52,12 @@ public class Launch extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Launch</title>");            
+            out.println("<title>WebAlbum FS -- mounter</title>");            
             out.println("</head>");
             out.println("<body>");
             try {
                 request.login("kevin", "");
-                out.println("<h1> Logged in</h1>");
+                out.println("<h1> Logged in as kevin</h1>");
             } catch (ServletException e) {
                 
             }
@@ -56,11 +69,12 @@ public class Launch extends HttpServlet {
             if (path == null) {
                 path = "./WebAlbums3-FS";
             }
-            
+            out.println("<h3> Mounting into "+path+".</h3>");
+            out.flush();
             try {
                 if (umount == null) {
                     Root root = new Root(this);
-                    net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
+                    net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, getFolderPrefix(true));
                     com.jnetfs.core.JnetFS.do_mount(new String[]{path});
                 } else {
                     com.jnetfs.core.JnetFS.do_umount(path);
@@ -69,7 +83,7 @@ public class Launch extends HttpServlet {
                  out.println("<h1> JNetFSException" + e + "</h1>");
                  e.printStackTrace();
             }
-
+            out.println("<h3> Done, goodbye :)</h3>");
             out.println("</body>");
             out.println("</html>");
         } finally {            

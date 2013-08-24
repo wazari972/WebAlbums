@@ -376,7 +376,7 @@ public class Session implements
 
     @Override
     public ViewSessionPhotoFastEdit getSessionPhotoFastEdit() {
-        throw new UnsupportedOperationException("Not supported in FS.");
+        return this;
     }
 
     @Override
@@ -494,14 +494,14 @@ public class Session implements
 
     @Override
     public String getDesc() {
-        throw new UnsupportedOperationException("Not supported in FS.");
+        return null;
     }
 
     public Integer[] tagSet;
     
     @Override
     public Integer[] getTagSet() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return tagSet;
     }
 
     public TagAction tagAction = null;
@@ -512,12 +512,12 @@ public class Session implements
 
     @Override
     public Integer getStars() {
-        throw new UnsupportedOperationException("Not supported in FS.");
+        return null;
     }
 
     @Override
     public Integer getNewStarLevel() {
-        throw new UnsupportedOperationException("Not supported in FS.");
+        return null;
     }
 
     @Override

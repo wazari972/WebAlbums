@@ -11,7 +11,7 @@ import net.wazari.libvfs.annotation.CanChange;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
-import net.wazari.service.ThemeLocal.Sort;
+import net.wazari.libvfs.inteface.VFSException;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.XmlTheme;
 import net.wazari.view.vfs.Launch;
@@ -46,7 +46,7 @@ public class Root extends SDirectory implements ADirectory, CanChange{
     }
 
     @Override
-    public void load() throws Exception {
+    public void load() throws VFSException {
         themes = new LinkedList<Theme>();
         log.info("LOAD ROOT");
         for (XmlTheme theme : aThis.themeService.getThemeListSimple(new Session(null)).theme) {
@@ -57,7 +57,7 @@ public class Root extends SDirectory implements ADirectory, CanChange{
     
     @Override
     public void mkdir(String name) {
-        log.warn("mkdir "+name);
+        log.warn("mkdir {}", name);
         if (name.startsWith(".Trash")) {
             trashes.add(new SDirectory());
         }

@@ -13,6 +13,7 @@ import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
+import net.wazari.libvfs.inteface.VFSException;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
@@ -50,7 +51,7 @@ public class Theme extends SDirectory implements ADirectory {
     private final ATheme theme;
     private final Launch aThis;
     
-    Theme(int id, String name, Launch aThis) throws WebAlbumsServiceException {
+    Theme(int id, String name, Launch aThis) {
         this.name = name;
         this.theme = new ATheme(id, name);
         this.aThis = aThis;
@@ -62,10 +63,9 @@ public class Theme extends SDirectory implements ADirectory {
     }
 
     @Override
-    public void load() throws Exception {
+    public void load() throws VFSException {
         this.tags = new Tags(theme, aThis);
         this.albums = new Albums(theme, aThis);
-        
         this.random = new Random(theme, aThis);
         
         this.loadLocation();
@@ -76,7 +76,7 @@ public class Theme extends SDirectory implements ADirectory {
         return "Directory["+name+"]";
     }
 
-    private void loadLocation() throws WebAlbumsServiceException {
+    private void loadLocation() throws VFSException {
         Session session = new Session(theme);
         GpxPoints loc = new GpxPoints();
         

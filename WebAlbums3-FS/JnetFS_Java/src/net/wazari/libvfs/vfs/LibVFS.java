@@ -4,7 +4,6 @@ import com.jnetfs.core.Code;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.*;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
@@ -15,10 +14,12 @@ import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.ILink;
 import net.wazari.libvfs.inteface.SLink;
+import net.wazari.libvfs.inteface.VFSException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LibVFS extends JnetFSAdapter {
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(LibVFS.class.getCanonicalName()) ;
+    private static final Logger log = LoggerFactory.getLogger(LibVFS.class.getCanonicalName());
     
     private long clientcount = 0;
 
@@ -41,10 +42,10 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int init(JnetJNIConnector jniEnv) throws JnetException {
-        debug("INIT");
+        log.info("INIT");
         clientcount++;
         
-        return ESUCCESS;
+        return Code.ESUCCESS;
         
     }
 
@@ -57,10 +58,10 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int destroy(JnetJNIConnector jniEnv) throws JnetException {
-        debug("DESTROY");
+        log.info("DESTROY");
         clientcount--;
 
-        return ESUCCESS;
+        return Code.ESUCCESS;
     }
 
     /**
@@ -72,52 +73,47 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int attributes(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
-        if (path == null || path.length() < 1) {
-            return ENOENT;
-        }
-        debug("ATTRIBUTES\t" + path);
-        IFile file = resolver.getFile(path) ;
+        String path = jniEnv.getString(Code.PATH);
+        IFile file = path == null || path.length() < 1 ? null : resolver.getFile(path) ;        
         if (file == null) {
-            debug("ATTRIBUTES no file");
-            return ENOENT;
+            log.debug("ATTRIBUTES File not found: {}", path);
+            return Code.ENOENT;
         }
         
         File.Access[] access = file.getAccess();
         
         int mode = 0;
-        
         if (Arrays.asList(access).contains(File.Access.R)) {
-            debug("ATTRIBUTES R");
+            log.debug("ATTRIBUTES R");
             mode |= 1 << 2; 
         }
         if (Arrays.asList(access).contains(File.Access.W)) {
-            debug("ATTRIBUTES W");
+            log.debug("ATTRIBUTES W");
             mode |= 1 << 1; 
         }
         if (Arrays.asList(access).contains(File.Access.X)) {
-            debug("ATTRIBUTES X");
+            log.debug("ATTRIBUTES X");
             mode |= 1;
         }
         mode = (mode << 6) | (mode << 3);
         if (file instanceof IDirectory) {
-            debug("ATTRIBUTES DIR");
+            log.debug("ATTRIBUTES DIR");
             mode |= Code.S_IFDIR;
         } else if (file instanceof ILink && !((ILink) file).forceFile()) {
-            debug("ATTRIBUTES LNK");
+            log.debug("ATTRIBUTES LNK");
             mode |= Code.S_IFLNK;
         } else {
-            debug("ATTRIBUTES REG");
+            log.debug("ATTRIBUTES REG");
             mode |= Code.S_IFREG;
         }
-        debug("ATTRIBUTES "+mode);
+        log.debug("ATTRIBUTES {}", mode);
         JnetAttributes.setMode(jniEnv, mode);
         JnetAttributes.setTime(jniEnv, file.getTime() / 1000L);
         JnetAttributes.setSize(jniEnv, file.getSize());
         
         JnetAttributes.setLinks(jniEnv, 1);
 
-        return ESUCCESS;
+        return Code.ESUCCESS;
     }
 
     /**
@@ -129,16 +125,16 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int list(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
-        debug("LIST\t" + path);
+        log.info("LIST\t {}", path);
         
         IFile file = resolver.getFile(path) ;
         if (file == null || !(file instanceof IDirectory)) {
-            debug("LIST\t EACCES " + EACCES);
-            return EACCES;
+            log.info("LIST\t EACCES {}", Code.EACCES);
+            return Code.EACCES;
         }
         IDirectory dir = (IDirectory) file;
         int i = 0;
@@ -149,7 +145,7 @@ public class LibVFS extends JnetFSAdapter {
         }
         JnetList.setCount(jniEnv, i);
         
-        return ESUCCESS;
+        return Code.ESUCCESS;
     }
 
     /**
@@ -161,24 +157,24 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int open(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null || path.length() < 1) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         IFile file = resolver.getFile(path) ;
         if (file == null) {
-            debug("OPEN\t" + path + "(ENOENT)");
-            return ENOENT;
+            log.info("OPEN\t {}(ENOENT)", path);
+            return Code.ENOENT;
         }
         
         long flags = JnetOpen.getFlags(jniEnv);
         
-        debug("OPEN\t" + path + "("+flags+")");
-        flags &= O_ACCMODE;
+        log.info("OPEN\t {} ({})", path, flags);
+        flags &= Code.O_ACCMODE;
         if (!file.supports(flags)) {
-            debug("OPEN\t" + path + "(EACCES)");
-            return EACCES;
+            log.info("OPEN\t {} (EACCES)");
+            return Code.EACCES;
         }
         
         file.incReference();
@@ -187,8 +183,8 @@ public class LibVFS extends JnetFSAdapter {
         
         JnetOpen.setDirectIO(jniEnv, false);
         JnetOpen.setKeepCache(jniEnv, false);
-        debug("Opened with success");
-        return ESUCCESS;
+        log.info("Opened with success");
+        return Code.ESUCCESS;
     }
 
     /**
@@ -200,15 +196,15 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int read(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("READ\t" + path);
+        log.info("READ\t {}", path);
         IFile file = resolver.getFile(path) ;
         if (file == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         long SIZE = JnetRead.getSize(jniEnv);
@@ -235,7 +231,7 @@ public class LibVFS extends JnetFSAdapter {
 
             return (int) SIZE;
         } catch (IOException ex) {
-            return EIO;
+            return Code.EIO;
         }
     }
 
@@ -248,25 +244,25 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int release(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("RELEASE\t" + path);
+        log.info("RELEASE\t {}", path);
         IFile file = resolver.getFile(path) ;
         if (file == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         try {
-            debug("RELEASE\t do release");
+            log.info("RELEASE\t do release");
             file.release();
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
-            debug("RELEASE\t failed "+e);
+            log.info("RELEASE\t failed {}", e);
             e.printStackTrace();
-            return EFAULT;
+            return Code.EFAULT;
         }
     }
 
@@ -279,26 +275,26 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int flush(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("CLOSE\t" + path);
+        log.info("CLOSE\t {}", path);
         IFile file = resolver.getFile(path) ;
         if (file == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         try {
-            debug("CLOSE\t do release");
+            log.info("CLOSE\t do release");
             file.close();
             file.decReference();
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
-            debug("CLOSE\t failed "+e);
+            log.info("CLOSE\t failed {}", e);
             e.printStackTrace();
-            return EFAULT;
+            return Code.EFAULT;
         }
     }
 
@@ -311,8 +307,8 @@ public class LibVFS extends JnetFSAdapter {
      */
     @Override
     public int statfs(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
-        debug("STATFS\t" + path);
+        String path = jniEnv.getString(Code.PATH);
+        log.info("STATFS\t {}", path);
         long count = 1;
         JnetStatfs.setNameMaxLen(jniEnv, 2550);
         JnetStatfs.setBlockSize(jniEnv, 1 << 12);
@@ -324,32 +320,32 @@ public class LibVFS extends JnetFSAdapter {
         JnetStatfs.setFileFree(jniEnv, 0);
         JnetStatfs.setFileAvailable(jniEnv, 0);
         JnetStatfs.setFileSID(jniEnv, 0);
-        return ESUCCESS;
+        return Code.ESUCCESS;
     }
     
     @Override
     public int write(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            debug("WRITE\tENOENT");
-            return ENOENT;
+            log.info("WRITE\tENOENT");
+            return Code.ENOENT;
         }
         
-        debug("WRITE\t" + path);
+        log.info("WRITE\t {}", path);
         IFile file = resolver.getFile(path) ;
         
         if (file == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         long SIZE = JnetWrite.getSize(jniEnv);
         long OFFSET = JnetWrite.getOffset(jniEnv);
         byte[] DATA = JnetWrite.getData(jniEnv);
         
-        log.warn("SIZE "+SIZE);
-        log.warn("OFFSET "+SIZE);
-        log.warn("DATA "+new String(DATA));
-        log.warn("buffer "+file.getContent());
+        log.warn("SIZE {}",SIZE);
+        log.warn("OFFSET {}", OFFSET);
+        log.warn("DATA {}", new String(DATA));
+        log.warn("buffer {}", file.getContent());
         
         byte[] buffer = file.getContent().getBytes();
         
@@ -368,7 +364,7 @@ public class LibVFS extends JnetFSAdapter {
         for (int i = 0; i < SIZE; i++) {
             target[(int)(i + OFFSET)] = DATA[i];
         }
-        log.warn("wrte "+new String(target));
+        log.warn("wrte {}", new String(target));
         file.write(new String(target));
         
         return (int) SIZE;
@@ -376,16 +372,16 @@ public class LibVFS extends JnetFSAdapter {
     
     @Override
     public int create(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("CREATE\t" + path);
+        log.info("CREATE\t {}", path);
         
         IFile file = resolver.getFile(path) ;
         if (file != null) {
-            return EEXIST;
+            return Code.EEXIST;
         }
         
         String dirname = path.substring(0, path.lastIndexOf("/"));
@@ -393,25 +389,25 @@ public class LibVFS extends JnetFSAdapter {
         
         file = resolver.getFile(dirname) ;
         if (file == null || !(file instanceof IDirectory)) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         try {
-            debug("CREATE\t do create" + path);
+            log.info("CREATE\t do create {}", path);
             ((IDirectory) file).create(filename);
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
             log.warn("CREATE {} failed: {}", path, e);
             e.printStackTrace();
-            return EFAULT;
+            return Code.EFAULT;
         }
     }
 
     @Override
     public int mkdir(JnetJNIConnector jniEnv) throws JnetException {
-        debug("MKDIR");
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        log.info("MKDIR");
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         String dirname = path.substring(0, path.lastIndexOf("/"));
@@ -419,218 +415,227 @@ public class LibVFS extends JnetFSAdapter {
         
         IFile file = resolver.getFile(dirname) ;
         if (file == null || !(file instanceof IDirectory)) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         try {
-            debug("MKDIR\t do create" + path);
+            log.info("MKDIR\t do create {}", path);
             ((IDirectory) file).mkdir(filename);
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
             log.warn("MKDIR {} failed: {}", path, e);
             e.printStackTrace();
-            return EFAULT;
+            return Code.EFAULT;
         }
     }
 
     @Override
     public int delete(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("DELETE\t" + path);
+        log.info("DELETE\t{}", path);
         IFile file = resolver.getFile(path) ;
         if (file == null || (file instanceof IDirectory)) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         try {
-            debug("DELETE\t do delete" + path);
+            log.info("DELETE\t do delete {}", path);
             file.unlink();
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
             log.warn("DELETE {} failed: {}", path, e);
             e.printStackTrace();
-            return EFAULT;
+            return Code.EFAULT;
         }
     }
 
     @Override
     public int rmdir(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("RMDIR\t" + path);
+        log.info("RMDIR\t {}", path);
         IFile file = resolver.getFile(path) ;
         if (file == null || !(file instanceof IDirectory)) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         try {
-            debug("RMDIR\t do rmdir" + path);
+            log.info("RMDIR\t do rmdir {}", path);
             ((IDirectory) file).rmdir();
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
             log.warn("RMDIR {} failed: {}", path, e);
             e.printStackTrace();
-            return EFAULT;
+            return Code.EFAULT;
         }
     }
-
+    
     @Override
     public int rename(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
-        if (path == null) {
-            return ENOENT;
+        String path = jniEnv.getString(Code.PATH);
+        IFile srcFile = path == null ? null : resolver.getFile(path) ;
+        if (srcFile == null) {
+            return Code.ENOENT;
         }
         
-        String to = jniEnv.getString(JnetFSImpl.TO);
-        debug("RENAME\t" + path+" into "+to);
-        IFile file = resolver.getFile(path) ;
-        if (file == null) {
-            return ENOENT;
-        }
+        String to = jniEnv.getString(Code.TO);
+        log.info("RENAME\t {} into {}", path, to);
+        
         String dirname = to.substring(0, to.lastIndexOf("/"));
         String filename = to.substring(to.lastIndexOf("/") + 1);
         
-        IFile targetDir = resolver.getFile(dirname) ;
-        debug("RENAME\t targetdir" + dirname+" is "+targetDir);
-        if (targetDir == null) {
-            return ENOENT;
-        } else if (!(targetDir instanceof IDirectory)) {
-            return ENOTDIR;
+        IFile target = resolver.getFile(dirname) ;
+        log.info("RENAME\t targetdir is {}", target);
+        log.info("RENAME\t source file is {}", srcFile);
+        if (target == null) {
+            return Code.ENOENT;
+        } else if (!(target instanceof IDirectory)) {
+            return Code.ENOTDIR;
         }
-        
+        IDirectory targetDir = (IDirectory) target;
         IFile targetFile = resolver.getFile((IDirectory) targetDir, filename, path);
         
-        debug("RENAME\t targetfile is" + filename+" is "+targetFile);
+        log.info("RENAME\t targetfile is {}. Already exists ? {}", filename, targetFile);
         if (targetFile != null) {
-            return EEXIST;
+            return Code.EEXIST;
         }
         try {
-            debug("RENAME\t do rename");
-            file.rename((IDirectory) targetDir, filename);
-            return ESUCCESS;
+            targetDir.moveIn(srcFile, filename);
+            
+            return Code.ESUCCESS;
         } catch (Exception e) {
-            debug("RENAME\t failed "+e);
-            e.printStackTrace();
-            return EFAULT;
+            log.info("RENAME\t failed.", e);
+            return Code.EFAULT;
         }
     }
 
     @Override
     public int touch(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("TOUCH\t" + path);
+        log.info("TOUCH\t {}", path);
         IFile file = resolver.getFile(path) ;
         if (file == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         try {
-            debug("TOUCH\t do touch");
+            log.info("TOUCH\t do touch");
             file.touch();
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
-            debug("TOUCH\t failed "+e);
+            log.info("TOUCH\t failed {}", e);
             e.printStackTrace();
-            return EFAULT;
+            return Code.EFAULT;
         }
     }
 
     @Override
     public int symlink(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
-        if (path == null) {
-            return ENOENT;
-        }
-        
-        debug("SYMLINK\t" + path);
-        IFile file = resolver.getFile(path) ;
+        String path = jniEnv.getString(Code.PATH);
+        IFile file = path == null ? null : resolver.getFile(path) ;
         if (file == null) {
-            return ENOENT;
+            log.info("SYMLINK\t {} not found", path);
+            return Code.ENOENT;
         }
-        return ENOSYS;
+        /* FIND A WAY TO ACKNOWLEDGE THE REQUESTED FILENAME */
+        String to = jniEnv.getString(Code.TO);
+        log.info("SYMLINK\t {} --> {}", path, to);
+        
+        String dirname = to.substring(0, to.lastIndexOf("/"));
+        String filename = to.substring(to.lastIndexOf("/") + 1);
+        
+        IFile target = resolver.getFile(dirname) ;
+        if (target == null) {
+            return Code.ENOENT;
+        } else if (!(target instanceof IDirectory)) {
+            return Code.ENOTDIR;
+        }
+        IDirectory targetDir = (IDirectory) target;
+        try {
+            targetDir.acceptNewFile(file, filename);
+            log.info("SYMLINK\t SUCCESS");
+            return Code.ESUCCESS;
+        } catch (VFSException ex) {
+            log.info("SYMLINK\t failed {}", ex);
+            return Code.EFAULT;
+        }
     }
 
     @Override
     public int readlink(JnetJNIConnector jniEnv) throws JnetException {
-        debug("READLINK");
-        String path = jniEnv.getString(JnetFSImpl.PATH);
-        if (path == null) {
-            return ENOENT;
-        }
-        
-        debug("READLINK\t" + path);
-        IFile file = resolver.getFile(path) ;
+        String path = jniEnv.getString(Code.PATH);
+        IFile file = path == null ? null : resolver.getFile(path) ;
         if (file == null || !(file instanceof SLink)) {
-            return ENOENT;
+            log.info("READLINK\t File not found {}", path);
+            return Code.ENOENT;
         }
         
         try {
-            debug("READLINK\t do readlink");
-            JnetReadLink.setRealPath(jniEnv, ((SLink) file).getTarget());
-            return ESUCCESS;
+            String target = ((SLink) file).getTarget();
+            JnetReadLink.setRealPath(jniEnv, target);
+            log.debug("READLINK\t do readlink from {} gave {}", file, target);
+            return Code.ESUCCESS;
         } catch (Exception e) {
-            debug("READLINK\t failed "+e);
-            e.printStackTrace();
-            return EFAULT;
+            log.warn("READLINK\t readlink from {} FAILED", file, e);
+            return Code.EFAULT;
         }
     }
     
     @Override
     public int truncate(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("TRUNCATE\t" + path);
+        log.info("TRUNCATE\t {}", path);
         IFile file = resolver.getFile(path) ;
         if (file == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         try {
-            debug("TRUNCATE\t do truncate");
+            log.info("TRUNCATE\t do truncate");
             file.truncate();
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
-            debug("TRUNCATE\t failed "+e);
-            e.printStackTrace();
-            return EFAULT;
+            log.info("TRUNCATE\t failed",e);
+            return Code.EFAULT;
         }
     }
     
     @Override
     public int chmod(JnetJNIConnector jniEnv) throws JnetException {
-        String path = jniEnv.getString(JnetFSImpl.PATH);
+        String path = jniEnv.getString(Code.PATH);
         if (path == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
-        debug("CHMOD\t" + path);
+        log.info("CHMOD\t {}", path);
         IFile file = resolver.getFile(path) ;
         if (file == null) {
-            return ENOENT;
+            return Code.ENOENT;
         }
         
         try {
-            debug("CHMOD\t do chmod");
+            log.info("CHMOD\t do chmod");
             /***/
-            return ESUCCESS;
+            return Code.ESUCCESS;
         } catch (Exception e) {
-            debug("CHMOD\t failed "+e);
+            log.info("CHMOD\t failed {}",e);
             e.printStackTrace();
-            return EFAULT;
+            return Code.EFAULT;
         }
     }
 }

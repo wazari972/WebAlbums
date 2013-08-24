@@ -104,10 +104,6 @@ public class SFile implements IFile {
     }
 
     @Override
-    public void rename(IDirectory targetDir, String filename) throws Exception {
-    }
-
-    @Override
     public void touch() {
     }
     

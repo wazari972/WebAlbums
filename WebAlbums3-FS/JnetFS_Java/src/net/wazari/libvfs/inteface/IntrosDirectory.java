@@ -4,7 +4,6 @@
  */
 package net.wazari.libvfs.inteface;
 
-import com.jnetfs.core.relay.impl.JnetFSAdapter;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -73,7 +72,7 @@ public class IntrosDirectory extends SDirectory {
         }
         
         if (theField == null || !(theField.isAnnotationPresent(File.class))) {
-            JnetFSAdapter.debug("getAccess no field/no annot "+theField);
+            log.warn("getAccess no field/no annot "+theField);
             return null;
         }
         
@@ -81,7 +80,7 @@ public class IntrosDirectory extends SDirectory {
         if (fileAnnot.access().length != 0) {
             return fileAnnot.access();
         } else {
-            JnetFSAdapter.debug("getAccess empty");
+            log.warn("getAccess empty");
             return null;
         }
     }
@@ -136,22 +135,18 @@ public class IntrosDirectory extends SDirectory {
     @Override
     public List<IFile> listFiles() {
         boolean changed = directory instanceof CanChange && ((CanChange) directory).contentChanged();
+        
         //if it's not the first time we come here the dir can change and did not change
         if (inFiles != null && !changed) {
             return inFiles;
+        }        
+        try {
+            directory.load();
+            log.warn("Loaded {}", this.directory);
+        } catch (Exception ex) {
+            log.warn("Loading {} failed ... ", this.directory, ex);
         }
         
-        //if it's the first time we come
-        if (inFiles == null && (changed || !(directory instanceof CanChange))) {
-            try {
-                log.warn("Load {}", this.directory);
-                directory.load();
-                log.warn("Loaded {}", this.directory);
-            } catch (Exception ex) {
-                log.warn("Loading {} failed ... {}", this.directory, ex);
-                ex.printStackTrace();
-            }
-        }
         inFiles = new LinkedList<IFile>();
 
         Map<Object, Field> map = getDirFields();
@@ -226,6 +221,20 @@ public class IntrosDirectory extends SDirectory {
     public void create(String path) throws Exception {
         if (directory instanceof IDirectory) {
             ((IDirectory) directory).create(path);
+        }
+    }
+
+    @Override
+    public void moveIn(IFile srcFile, String filename) throws VFSException {
+        if (directory instanceof IDirectory) {
+            ((IDirectory) directory).moveIn(srcFile, filename);
+        }
+    }
+    
+    @Override
+    public void acceptNewFile(IFile file, String filename) throws VFSException {
+        if (directory instanceof IDirectory) {
+            ((IDirectory) directory).moveIn(file, filename);
         }
     }
     

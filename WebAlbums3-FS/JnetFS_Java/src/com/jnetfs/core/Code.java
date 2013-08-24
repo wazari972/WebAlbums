@@ -13,6 +13,10 @@ package com.jnetfs.core;
  * @author jacky
  */
 public interface Code {
+    public static final String PATH = "OS_PATH";
+    public static final String TO = "OS_PATH_TO";
+    public static final String ROOT = "OS_ROOT";
+    public static final String JNET_FS = "OS_JNETFS";
 
     public static final int S_IFDIR = 0040000; //directory
     public static final int S_IFREG = 0100000; //normal file

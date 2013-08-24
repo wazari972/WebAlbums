@@ -15,6 +15,7 @@ import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.libvfs.inteface.SFile;
 import net.wazari.libvfs.inteface.SLink;
+import net.wazari.libvfs.inteface.VFSException;
 import net.wazari.libvfs.vfs.Resolver;
 
 
@@ -49,7 +50,7 @@ public class Root extends SDirectory implements ADirectory {
     public MyLink link = new MyLink();
 
     @Override
-    public void load() throws Exception {
+    public void load() throws VFSException {
         
     }
     
@@ -61,7 +62,7 @@ public class Root extends SDirectory implements ADirectory {
         public IFile tags = new Variable("zzzzzzzzzz");
 
         @Override
-        public void load() throws Exception {
+        public void load() throws VFSException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
@@ -69,7 +70,7 @@ public class Root extends SDirectory implements ADirectory {
     
     public static void main (String[] args) {
         Root root = new Root();
-        net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root);
+        net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, "");
         
         new Thread(new Runnable() {
 

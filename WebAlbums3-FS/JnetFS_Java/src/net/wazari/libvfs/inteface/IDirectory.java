@@ -26,4 +26,7 @@ public interface IDirectory extends IFile {
     
     void addFile(IFile file);
     void rmFile(IFile file);
+
+    void moveIn(IFile srcFile, String filename) throws VFSException;
+    void acceptNewFile(IFile file, String filename) throws VFSException;
 }

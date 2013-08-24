@@ -1,45 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
-    <appender name="net.wazari.errors.FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>WebAlbums.Errors.html</file>
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="ch.qos.logback.classic.html.HTMLLayout">
-                <pattern>%d{yyyy-MM-dd HH:mm:ss}%p%c%t%M%m%n</pattern>
-            </layout>
-        </encoder>
-        <append>true</append>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>warn</level>
-        </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>WebAlbums.Errors.%i.html</fileNamePattern>
-            <maxIndex>5</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>10000000</maxFileSize>
-        </triggeringPolicy>
-    </appender>
-    
-    <appender name="net.wazari.FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>WebAlbums.html</file>
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="ch.qos.logback.classic.html.HTMLLayout">
-                <pattern>%d{yyyy-MM-dd HH:mm:ss}%p%c%t%M%m%n</pattern>
-            </layout>
-        </encoder>
-        <append>true</append>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>warn</level>
-        </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>WebAlbums.%i.html</fileNamePattern>
-            <maxIndex>5</maxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>1000000</maxFileSize>
-        </triggeringPolicy>
-    </appender>
-
     <appender name="root.ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%-12(%d{HH:mm} [%relative]) %-4level %-25logger{5} * %msg %ex</pattern>
@@ -53,9 +13,6 @@
         <encoder>
             <pattern># %-12(%d{HH:mm} [%relative]) %-4level %-25logger{5} * %msg %ex%n</pattern>
         </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>warn</level>
-        </filter>
     </appender>
 
     <logger name="org.hibernate">
@@ -63,10 +20,13 @@
     </logger>
 
 
+    <logger additivity="false" name="net.wazari.libvfs">
+        <level value="info"/>
+        <appender-ref ref="net.wazari.ConsoleAppender"/>
+    </logger>
+
     <logger additivity="false" name="net.wazari">
         <level value="warn"/>
-        <appender-ref ref="net.wazari.FileAppender"/>
-        <appender-ref ref="net.wazari.errors.FileAppender"/>
         <appender-ref ref="net.wazari.ConsoleAppender"/>
     </logger>
 
