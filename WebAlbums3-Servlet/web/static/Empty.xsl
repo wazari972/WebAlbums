@@ -22,6 +22,7 @@
     <xsl:apply-templates select="/webAlbums/photos/random" />
     <xsl:apply-templates select="/webAlbums/photos/display" />
     <xsl:apply-templates select="/webAlbums/photos/about" />
+    <xsl:apply-templates select="/webAlbums/photos/fastedit" />
 
     <xsl:apply-templates select="/webAlbums/carnets/topCarnets" />
   </xsl:template>
@@ -102,6 +103,14 @@
         <img src="static/images/random.png" width="30px"/>
     </a>
     </div>
+  </xsl:template>
+
+  <xsl:template match="photos/fastedit">
+      <p>Description: <xsl:value-of select="@descStatus"/>@ <xsl:value-of select="desc_msg/text()"/></p>
+      <p>Tag: <xsl:value-of select="@tagStatus"/>@ <xsl:value-of select="tag_msg/text()"/></p>
+      <p>Stars: <xsl:value-of select="@starsStatus"/>@ <xsl:value-of select="stars_msg/text()"/></p>
+      <p>Delete: <xsl:value-of select="@deleteStatus"/> @ <xsl:value-of select="delete_msg/text()"/></p>
+      
   </xsl:template>
 
   <xsl:template match="/webAlbums/maint">

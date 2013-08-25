@@ -4,7 +4,6 @@
  */
 package net.wazari.service.engine;
 
-import java.awt.Desktop.Action;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -54,6 +53,7 @@ public class DatabaseBean implements DatabaseLocal {
     @EJB private PhotoUtil photoUtil ;
     @EJB MaintFacadeLocal maintDAO;
     
+    @Override
     public XmlDatabaseImport treatIMPORT(ViewSessionDatabase vSession) {
         XmlDatabaseImport output = new XmlDatabaseImport() ;
         try {
@@ -66,6 +66,7 @@ public class DatabaseBean implements DatabaseLocal {
         return output;
     }
 
+    @Override
     public XmlDatabaseExport treatEXPORT(ViewSessionDatabase vSession) {
         XmlDatabaseExport output = new XmlDatabaseExport() ;
         try {
@@ -78,6 +79,7 @@ public class DatabaseBean implements DatabaseLocal {
         return output;
     }
 
+    @Override
     public XmlDatabaseCheck treatCHECK(ViewSessionDatabase vSession) {
         XmlDatabaseCheck output = new XmlDatabaseCheck() ;
         
@@ -111,6 +113,7 @@ public class DatabaseBean implements DatabaseLocal {
                 List<String> mini = null;
                 
                 if (action == Database_Action.CHECK_FS) {
+                    /* Save in images and mini the path to all the files of the directory.  */
                     images = new LinkedList<String>();
                     mini = new LinkedList<String>();
                     String sep = vSession.getVSession().getConfiguration().getSep() ;
@@ -145,15 +148,17 @@ public class DatabaseBean implements DatabaseLocal {
                         List<String> current = images ;
                         for (String filepath : new String[]{photoUtil.getImagePath(vSession.getVSession(), enrPhoto), 
                                                             photoUtil.getMiniPath(vSession.getVSession(), enrPhoto)}) {
+                            if (enrPhoto.isGpx() && filepath.contains(vSession.getVSession().getConfiguration().getMiniPath(true))) {
+                                continue;
+                            }
                             if (action == Database_Action.CHECK_DB) {
                                 File f = new File(filepath);
                                 if (!f.exists()) {
-                                    output.files.add(filepath+": missing");
+                                    output.files.put(enrPhoto.getId().toString(), filepath + " missing");
                                 } else if (!f.canRead()) {
-                                    output.files.add(filepath+": not readable");
+                                    output.files.put(enrPhoto.getId().toString(), filepath + " not readable");
                                 }
                             } else if (action == Database_Action.CHECK_FS) {
-                                
                                 boolean removed = current.remove(filepath);
                                 log.info("checking: {}", filepath);
                                 log.info("found ^: {}", removed);
@@ -163,8 +168,11 @@ public class DatabaseBean implements DatabaseLocal {
                     }
                 }
                 if (action == Database_Action.CHECK_FS) {
-                    output.files.addAll(images);
-                    output.files.addAll(mini);
+                    for (List<String> lst : new List[]{images, mini}) {
+                        for (String name : lst) {
+                            output.files.put(name, "not found");
+                        }
+                    }
                 }
             }
             
@@ -177,6 +185,7 @@ public class DatabaseBean implements DatabaseLocal {
         return output;
     }
 
+    @Override
     public XmlDatabaseTrunk treatTRUNK(ViewSessionDatabase vSession) {
         XmlDatabaseTrunk output = new XmlDatabaseTrunk() ;
         try {
@@ -189,6 +198,7 @@ public class DatabaseBean implements DatabaseLocal {
         return output;
     }
 
+    @Override
     public XmlDatabaseStats treatSTATS(ViewSessionDatabase vSession) {
         XmlDatabaseStats output = new XmlDatabaseStats() ;
         Theme enrTheme = vSession.getVSession().getTheme();
@@ -257,16 +267,19 @@ public class DatabaseBean implements DatabaseLocal {
         return output;
     }
     
+    @Override
     public XmlDatabaseDefault treatDEFAULT(ViewSessionDatabase vSession) {
         XmlDatabaseDefault output = new XmlDatabaseDefault() ;
         
         return output;
     }
     
+    @Override
     public void treatUPDATE(ViewSessionDatabase vSession) {
         
     }
     
+    @Override
     public void treatUPDATE_DAO(ViewSessionDatabase vSession) {
         maintDAO.treatUpdate();
     }

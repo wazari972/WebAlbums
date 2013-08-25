@@ -60,7 +60,9 @@ public class PhotoBean implements PhotoLocal {
     private FilesFinder finder;
     @EJB
     private DaoToXmlBean daoToXml;
-
+    @EJB
+    private FilesFinder systemFacade;
+    
     @Override
     public XmlPhotoSubmit treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,
             Boolean correct) throws WebAlbumsServiceException {
@@ -509,8 +511,6 @@ public class PhotoBean implements PhotoLocal {
     @Override
     public XmlPhotoFastEdit treatFASTEDIT(ViewSessionPhotoFastEdit vSession) {
         XmlPhotoFastEdit output = new XmlPhotoFastEdit();
-        output.desc_status = null;
-        output.tag_status = null;
         
         Integer starLevel = vSession.getNewStarLevel();
         if (starLevel != null) {
@@ -525,6 +525,16 @@ public class PhotoBean implements PhotoLocal {
             output.desc_msg = "No photo found for id="+id;
             output.desc_status = XmlPhotoFastEdit.Status.ERROR;
             output.tag_status = XmlPhotoFastEdit.Status.ERROR;
+            output.delete_status = XmlPhotoFastEdit.Status.ERROR;
+            return output;
+        }
+
+        if (vSession.getSuppr()) {
+            if (finder.deletePhoto(enrPhoto, vSession.getVSession().getConfiguration())) {
+                output.delete_status = XmlPhotoFastEdit.Status.OK;
+            } else {
+                output.delete_status = XmlPhotoFastEdit.Status.ERROR;
+            }
             return output;
         }
         

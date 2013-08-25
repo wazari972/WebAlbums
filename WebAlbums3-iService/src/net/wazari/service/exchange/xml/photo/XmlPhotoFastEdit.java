@@ -16,10 +16,16 @@ public class XmlPhotoFastEdit {
     @XmlAttribute
     public Status desc_status;
     public String desc_msg;
+    
     @XmlAttribute
     public Status tag_status;
     public String tag_msg;
+    
     @XmlAttribute
     public Status stars_status;
     public String stars_msg;
+    
+    @XmlAttribute
+    public Status delete_status;
+    public String delete_msg;
 }

@@ -4,8 +4,8 @@
  */
 package net.wazari.service.exchange.xml.database;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.common.XmlInfoException;
 
@@ -16,7 +16,7 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
 @XmlRootElement
 public class XmlDatabaseCheck extends XmlInfoException{
     public XmlDatabaseCheck() {
-        this.files = new ArrayList();
+        this.files = new HashMap<String, String>();
     }
-    public List<String> files;
+    public Map<String, String> files ;
 }

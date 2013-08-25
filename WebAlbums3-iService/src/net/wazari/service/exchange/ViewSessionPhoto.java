@@ -19,22 +19,24 @@ public interface ViewSessionPhoto extends VSession {
         VISIONNEUSE, FASTEDIT, ABOUT, RANDOM
     }
     
-    interface ViewSessionPhotoFastEdit{
-        enum TagAction {SET, ADD, RM}
+    interface ViewSessionPhotoFastEdit extends VSession {
+        Integer getId();
+        
         
         String getDesc();
         
         Integer[] getTagSet();
         
+        enum TagAction {SET, ADD, RM}
         TagAction getTagAction();
         
         Integer getStars();
         
         Integer getNewStarLevel();
         
-        Integer getId();
-        
         void setStarLevel(Integer starLevel);
+        
+        boolean getSuppr();
     }
     
     interface ViewSessionPhotoSimple extends VSession {

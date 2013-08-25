@@ -524,5 +524,10 @@ public class Session implements
     public void setStarLevel(Integer starLevel) {
         throw new UnsupportedOperationException("Not supported in FS.");
     }
+
+    @Override
+    public boolean getSuppr() {
+        return false;
+    }
 }
 

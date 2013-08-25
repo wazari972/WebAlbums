@@ -148,9 +148,16 @@
         <p><xsl:value-of select="./message"/></p>
         <xsl:apply-templates select="files"/>
     </xsl:template>
-    <xsl:template match="files">
-        <p><xsl:value-of select="."/></p>
+    <xsl:template match="files/entry">
+        <p>
+            <xsl:value-of select="key/text()" /><b>&#126;<xsl:value-of select="value/text()" /></b>
+            <xsl:if test="string(number(key/text())) != 'NaN'">
+                &#128;<a><xsl:attribute name="href">Photos?action=EDIT&amp;id=<xsl:value-of select="key/text()" /></xsl:attribute>EDIT</a>
+                &#128;<a title="Pas de confirmation !"><xsl:attribute name="href">Photos?special=FASTEDIT&amp;id=<xsl:value-of select="key/text()" />&amp;suppr=Oui je veux supprimer cette photo</xsl:attribute>/!\ DELETE</a>
+            </xsl:if>
+        </p>
     </xsl:template>
+    
     <xsl:template match="stats">
         <xsl:apply-templates select="theme"/>
     </xsl:template>   
