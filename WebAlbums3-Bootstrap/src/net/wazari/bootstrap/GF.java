@@ -63,7 +63,7 @@ public class GF {
 
     static {
         try {
-            log.debug("Load configuration from '"+DEFAULT_CONFIG_PATH+"'.");
+            log.debug("Load configuration from '{}'.", DEFAULT_CONFIG_PATH);
             cfg = Config.load(DEFAULT_CONFIG_PATH);
         } catch (Exception ex) {
             throw new RuntimeException("Couldn't load the configuration file: " + ex.getMessage());
@@ -264,7 +264,7 @@ public class GF {
         public static Config load(String path) throws Exception {
             File file = new File(path);
             if (!file.isFile()) {
-                log.info("Path '"+file.getCanonicalPath()+"' is not a file ...");
+                log.info("Path '{}' is not a file ...", file.getCanonicalPath());
                 return loadDefault(path);
             }
 
@@ -300,7 +300,7 @@ public class GF {
             File file = new File(path);
             file.getParentFile().mkdirs();
             marshaller.marshal(this, file);
-            log.info("Configuration saved into '"+file.getCanonicalPath()+"'.");
+            log.info("Configuration saved into '{}'.", file.getCanonicalPath());
         }
         
         @XmlAttribute

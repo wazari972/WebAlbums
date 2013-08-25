@@ -60,7 +60,7 @@ public class XMLImportExport implements ImportExporter {
                 tagDAO.findAll(), carnetDAO.findAll()) ;
         try {
             XmlUtils.save(new File(path+FILENAME), web, WebAlbumsXML.clazzez);
-            log.info( "XML Saved! into "+path+FILENAME);
+            log.info( "XML Saved! into {}{}", path, FILENAME);
         } catch (JAXBException ex) {
             log.error("JAXBException", ex);
             throw new DatabaseFacadeLocalException(ex);
@@ -72,7 +72,7 @@ public class XMLImportExport implements ImportExporter {
         try {
             WebAlbumsXML web = XmlUtils.reload(new FileInputStream(new File(path+FILENAME)), WebAlbumsXML.clazzez);
             if (web == null) {
-                log.warn("Couldn't load the XML backup file "+path+FILENAME+"...");
+                log.warn("Couldn't load the XML backup file {}{} ...", path, FILENAME);
                 return ;
             }
             

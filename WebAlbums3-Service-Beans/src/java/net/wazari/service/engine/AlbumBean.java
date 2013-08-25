@@ -86,7 +86,6 @@ public class AlbumBean implements AlbumLocal {
         if (page == null && albumId != null) {
             int ipage = 0;
             while (!found) {
-                log.info("check on page "+ipage);
                 bornes = webPageService.calculBornes(ipage, vSession.getVSession().getPhotoAlbumSize());
         
                 albums = albumDAO.queryAlbums(vSession.getVSession(), Restriction.THEME_ONLY,
@@ -389,7 +388,7 @@ public class AlbumBean implements AlbumLocal {
                 Date d = new SimpleDateFormat("yyyy-MM-dd").parse(date);
                 enrAlbum.setDate(date);
             } catch (ParseException ex) {
-                log.warn("Date format incorrect: "+date);
+                log.warn("Date format incorrect: {}", date);
             }
         }
         

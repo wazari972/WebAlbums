@@ -226,7 +226,7 @@ public class CarnetBean implements CarnetLocal {
             new SimpleDateFormat("yyyy-MM-dd").parse(date); //ParseException
             enrCarnet.setDate(date);
         } catch (Exception ex) {
-            log.info("Date incorrect: "+date);
+            log.info("Date incorrect: {}", date);
             output.exception = "Date incorrect: '"+date+"', "
                     + "format attendu: yyyy-MM-dd";
             return output;
@@ -238,7 +238,7 @@ public class CarnetBean implements CarnetLocal {
                 enrCarnet.setPicture(enrRepr);
                 photos.add(repr);
             } catch (Exception e) {
-                log.info("Couldn't find the representative picture: "+repr);
+                log.info("Couldn't find the representative picture: {}", repr);
                 output.exception = "Couldn't find the representative picture: "
                                    +repr;
                 return output;
@@ -254,7 +254,7 @@ public class CarnetBean implements CarnetLocal {
                 enrAlbums.add(enrPhoto.getAlbum()); //NullPointerException
                 enrPhotos.add(enrPhoto);
             } catch (Exception e) {
-                log.info("Couldn't find one of the pictures: "+photoId);
+                log.info("Couldn't find one of the pictures: {}", photoId);
                 output.exception = "Couldn't find one of the pictures: "
                                    + photoId;
                 return output;

@@ -475,7 +475,7 @@ public class ViewSessionImpl implements
             try {
                 out.add(Integer.parseInt(str));
             } catch (NumberFormatException e) {
-                log.warn("Invalide number during split int:"+str);
+                log.warn("Invalide number during split int: {}", str);
             }
                 
         }

@@ -196,7 +196,7 @@ public class JPAAlbum implements Album, Serializable {
     public Integer droitId;
     public void setDroitId(Integer droit) {
         if (droit == null)
-            log.warn("DROIT is null "+this.id);
+            log.warn("DROIT is null for album {}", this.id);
         this.droitId = droit;
     }
 

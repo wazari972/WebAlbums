@@ -49,21 +49,22 @@ public class PluginManager implements PluginManagerLocal {
         return system;
     }
 
+    @Override
     public void reloadPlugins(String path) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader() ;
         if (path != null) {
-            log.info( "+++Adding plugins from {}", path);
+            log.info("Adding plugins from {}", path);
             cl = ClassPathUtil.addDirToClasspath(new File(path));
         }
         validWrappers.clear();
         invalidWrappers.clear();
-        log.info( "+++ Loading services for \"{}\"", Importer.class.getCanonicalName());
+        log.info("Loading services for \"{}\"", Importer.class.getCanonicalName());
         ServiceLoader<Importer> servicesImg = ServiceLoader.load(Importer.class, cl);
         Iterator<Importer> itImg = servicesImg.iterator();
         while (itImg.hasNext()) {
             try {
                 Importer current = itImg.next();
-                log.info( "+++ Adding \"{}\"", current.getClass().getCanonicalName());
+                log.info("Adding \"{}\"", current.getClass().getCanonicalName());
                 boolean pass ;
                 try {
                     pass = current.sanityCheck(SystemTools.cb) == Importer.SanityStatus.PASS;
@@ -77,7 +78,7 @@ public class PluginManager implements PluginManagerLocal {
                     invalidWrappers.add(current);
                 }
             } catch (ServiceConfigurationError e) {
-                log.warn( "Couldn''t load the service...", e);
+                log.warn("Couldn''t load the service...", e);
             }
         }
 
@@ -92,14 +93,14 @@ public class PluginManager implements PluginManagerLocal {
             }
         });
 
-        log.info( "+++ Loading services for \"{}\"", System.class.getCanonicalName());
+        log.info("Loading services for \"{}\"", System.class.getCanonicalName());
         ServiceLoader<System> servicesSys = ServiceLoader.load(System.class, cl);
         this.system = null;
         Iterator<System> itSyst = servicesSys.iterator();
         while (itSyst.hasNext()) {
             try {
                 System current = itSyst.next();
-                log.info( "+++ Adding \"{}\"", current.getClass().getCanonicalName());
+                log.info("Adding \"{}\"", current.getClass().getCanonicalName());
                 if (system == null && current.sanityCheck(SystemTools.cb) == Importer.SanityStatus.PASS) {
                     system = current;
                 } else {

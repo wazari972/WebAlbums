@@ -218,8 +218,7 @@ public class PhotoBean implements PhotoLocal {
 
         Album enrAlbum = albumDAO.loadIfAllowed(vSession.getVSession(), albumId);
         if (enrAlbum == null) {
-            output.exception = "L'album (" + albumId + ") n'existe pas "
-                    + "ou n'est pas accessible..." ;
+            output.exception = "L'album (" + albumId + ") n'existe pas ou n'est pas accessible..." ;
             return output ;
         }
         XmlAlbum album = output.album = new XmlAlbum();
@@ -397,7 +396,7 @@ public class PhotoBean implements PhotoLocal {
                             verb = "added";
                         } else if (turn == Turn.UNTAG) {
                             for (Integer tag : tags) {
-                                log.warn("remove "+tag);
+                                log.warn("remove {}", tag);
                                 photoUtil.removeTag(enrPhoto, tag);
                             }
                             verb = "removed";

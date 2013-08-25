@@ -72,7 +72,7 @@ public class IntrosDirectory extends SDirectory {
         }
         
         if (theField == null || !(theField.isAnnotationPresent(File.class))) {
-            log.warn("getAccess no field/no annot "+theField);
+            log.warn("getAccess no field/no annot {}", theField);
             return null;
         }
         

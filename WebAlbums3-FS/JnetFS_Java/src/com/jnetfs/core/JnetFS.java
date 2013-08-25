@@ -299,16 +299,16 @@ public final class JnetFS implements Code {
     
     public static void do_umount(String path) {
         if (!mountpoints.contains(path)) {
-            log.error("Nothing mounted on "+path+" ...");
+            log.error("Nothing mounted on {} ...", path);
         }
-        log.error("Bye "+path+", see you later!");
+        log.error("Bye {}, see you later!", path);
         try {
             path = new java.io.File(path).getCanonicalPath();
         } catch (IOException ex) {
-            log.error("Couldn't canonicalize "+path+": {}", ex);
+            log.error("Couldn't canonicalize: {}", path, ex);
         }
         jnet.umount(path);
-        log.error("Bye "+path+" (done)");
+        log.error("Bye {} (done)", path);
     }
 
     /**

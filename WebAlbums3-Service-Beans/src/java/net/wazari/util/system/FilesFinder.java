@@ -72,31 +72,30 @@ public class FilesFinder {
 
         //if init was performed correctly
         File dirTheme = new File(conf.getFtpPath() + themeName + SEP);
-        log.info("Dossier source : " + dirTheme);
+        log.info("Dossier source : {}", dirTheme);
         //creer le dossier d'import s'il n'existe pas encore
         if (!dirTheme.isDirectory()) {
-            log.info("Creation du dossier d'import (" + dirTheme + ")");
+            log.info("Creation du dossier d'import ({})", dirTheme);
             dirTheme.mkdirs();
         }
 
         boolean correct;
         if (!dirTheme.isDirectory()) {
-            log.warn(dirTheme.getAbsolutePath() + " n'est pas un dossier/impossible de le creer  ... ");
+            log.warn("{} n'est pas un dossier/impossible de le creer  ... ", dirTheme.getAbsolutePath());
             correct = false;
         } else {
-            log.info("ID du theme : " + enrTheme + "");
+            log.info("ID du theme :  {}", enrTheme);
             File[] subfiles = dirTheme.listFiles();
 
-            log.warn("Le dossier '" + themeName + "' contient "
-                    + subfiles.length + " fichier" + (subfiles.length > 1 ? "s" : ""));
+            log.warn("Le dossier '{}' contient {} fichier/s", themeName, subfiles.length);
 
             correct = true;
             int err = 0;
             for (int i = 0; i < subfiles.length; i++) {
                 if (subfiles[i].isDirectory()) {
-                    log.info("Important de l'album " + subfiles[i] + "");
+                    log.info("Important de l'album {}", subfiles[i]);
                     if (!importAlbum(stack, subfiles[i], enrTheme)) {
-                        log.warn("An error occured during importation of album (" + subfiles[i] + ")...");
+                        log.warn("An error occured during importation of album ({})...", subfiles[i]);
                         correct = false;
                         err++;
                     }
@@ -104,9 +103,9 @@ public class FilesFinder {
                 }
             }
 
-            log.info( "## Import of theme " + themeName + " completed");
+            log.info( "## Import of theme {} completed", themeName);
             if (err != 0) {
-                log.warn("## with " + err + " errors");
+                log.warn("## with {} errors", err);
             }
         }
 
@@ -125,12 +124,12 @@ public class FilesFinder {
     }
     private boolean importAlbum(Stack<Element> stack, File album, Theme enrTheme) {
         log.info("##");
-        log.info("## Import of : " + album.getName());
+        log.info("## Import of: {}", album.getName());
         int annee;
         String dossier;
         String albumPath;
         if (!album.exists() || !album.isDirectory()) {
-            log.info("## Le dossier Album '" + album.getName() + "' n'existe pas");
+            log.info("## Le dossier Album '{}' n'existe pas", album.getName());
             return false;
         } else {
             String strDate = null;
@@ -140,15 +139,14 @@ public class FilesFinder {
             if (dirName != null && dirName.length() > 11) {
                 String nom = dirName.substring(11);
                 nom = sansAccents(nom) ;
-                log.info("## NOM  : " + nom);
+                log.info("## NOM  : {}", nom);
                 try {
                     strDate = album.getName().substring(0, 10);
                     Date date = Album.DATE_STANDARD.parse(strDate);
-                    log.info("## DATE : " + date);
+                    log.info("## DATE : {}", date);
 
                 } catch (ParseException e) {
-                    log.warn("## Erreur dans le format de la date "
-                            + "(" + strDate + "), on skip");
+                    log.warn("## Erreur dans le format de la date ({}), on skip", strDate);
                     return false;
                 }
                 enrAlbum = albumDAO.loadByNameDate(nom, strDate);
@@ -165,10 +163,10 @@ public class FilesFinder {
 
                     log.info("## On tente d'ajouter l'album dans la base");
                     albumDAO.create(enrAlbum);
-                    log.info("## On vient de lui donner l'ID " + enrAlbum.getId());
+                    log.info("## On vient de lui donner l'ID {}", enrAlbum.getId());
 
                 } else {
-                    log.info("## L'album est dans la table : ID " + enrAlbum.getId());
+                    log.info("## L'album est dans la table : ID {}", enrAlbum.getId());
                 }
                 dossier = enrAlbum.getDate() + " " + enrAlbum.getNom();
             } else {
@@ -176,12 +174,11 @@ public class FilesFinder {
                     int albumId = Integer.parseInt(dirName);
                     enrAlbum = albumDAO.find(albumId);
                     if (enrAlbum == null) {
-                        log.info("## Can't find an album with id=" + albumId);
+                        log.info("## Can't find an album with id= {}", albumId);
                         return false;
                     }
                 } catch (NumberFormatException e) {
-                    log.warn("## Format of the album folder (" + dirName + ") wrong; "
-                            + "expected YYYY-MM-DD Title");
+                    log.warn("## Format of the album folder ({}) wrong; expected YYYY-MM-DD Title", dirName);
                     return false;
                 }
                 
@@ -195,8 +192,8 @@ public class FilesFinder {
             }
 
             if (enrAlbum.getTheme().getId() != enrTheme.getId()) {
-                log.warn("## L'album est dans la table (" + enrAlbum.getId() + "),"
-                        + " mais le theme n'est pas bon: " + enrAlbum.getTheme());
+                log.warn("## L'album est dans la table ({}),"
+                        + " mais le theme n'est pas bon: {}", enrAlbum.getId(), enrAlbum.getTheme());
                 return false;
             }
             
@@ -207,24 +204,22 @@ public class FilesFinder {
             int err = 0;
             File[] subfiles = album.listFiles();
             if (subfiles != null) {
-                log.info("## Le répertoire '" + dossier
-                        + "' contient " + subfiles.length
-                        + " fichier" + (subfiles.length > 1 ? "s" : ""));
+                log.info("## Le répertoire '{}' contient {} fichier/s", dossier, subfiles.length);
 
                 for (int i = 0; i < subfiles.length; i++) {
-                    log.info("## Traitement de " + subfiles[i].getName());
+                    log.info("## Traitement de {}", subfiles[i].getName());
                     if (!importPhoto(stack, albumPath, subfiles[i], enrAlbum)) {
                         err++;
                     }
                 }
-                log.info("## Import of : " + album.getName() + " completed");
+                log.info("## Import of : {} completed", album.getName() );
                 if (err != 0) {
-                    log.info("## with " + err + " errors");
+                    log.info("## with {} errors", err);
                 }
 
             } else {
                 log.warn("Impossible de connaitre le nombre de fichiers ..."
-                        + "(dossier ? " + album.isDirectory() + ")");
+                        + "(dossier ? ",  album.isDirectory());
             }
             return true;
         }
@@ -233,10 +228,10 @@ public class FilesFinder {
     private boolean importPhoto(Stack<Element> stack, String albumPath,
             File photo,
             Album enrAlbum) {
-        log.info("### Import of : " + photo.getName() + "");
+        log.info("### Import of : {}", photo.getName());
 
         if ("Thumbs.db".equals(photo.getName())) {
-            log.info("### Supression de " + photo);
+            log.info("### Supression de {}", photo);
             photo.delete();
             return true;
         }
@@ -247,12 +242,12 @@ public class FilesFinder {
             URLConnection connection = url.openConnection();
             type = connection.getContentType();
 
-            log.info("### Type : " + type);
+            log.info("### Type : {}", type);
         } catch (MalformedURLException e) {
-            log.warn("### URL mal formée ..." + e);
+            log.warn("### URL mal formée ... ", e);
             return false;
         } catch (IOException e) {
-            log.warn("### Erreur d'IO ..." + e);
+            log.warn("### Erreur d'IO ...", e);
             return false;
         }
 
@@ -266,7 +261,7 @@ public class FilesFinder {
         boolean dontThumbnail = false;
  
         if (!sysTools.supports(type, ext, Capability.THUMBNAIL)) {
-            log.warn("### " + photo + " n'est pas supportée ... (" + type + ")");
+            log.warn("### {} n'est pas supportée ... ({})", photo, type);
             return false;
         }
 
@@ -283,7 +278,7 @@ public class FilesFinder {
             sysTools.retrieveMetadata(type, ext, enrPhoto, photo.getAbsolutePath());
             enrPhoto.setAlbum(enrAlbum);
             enrPhoto.setType(type);
-            log.info("### Album " + enrPhoto.getAlbum());
+            log.info("### Album {}", enrPhoto.getAlbum());
             photoDAO.create(enrPhoto);
         } else /* sinon on update son nom d'album*/ {
             log.info("### Mise à jour de l'enregistrement");
@@ -299,7 +294,7 @@ public class FilesFinder {
         
         ImageResizer.Element elt = new ImageResizer.Element(enrAlbum.getTheme().getNom()+SEP+photoPath, photo, type, dontThumbnail);
         stack.push(elt);
-        log.info("### Import of : " + photo.getName() + " : completed");
+        log.info("### Import of : {} : completed", photo.getName());
         return true;
     }
 
@@ -344,7 +339,7 @@ public class FilesFinder {
             url = "file://" + conf.getImagesPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false);
 
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
-            log.info("On supprime sa photo : {}");
+            log.info("On supprime sa photo : {}", url);
             if (!fichier.delete()) {
                 log.warn("Mais ça marche pas ...");
             }
@@ -354,7 +349,7 @@ public class FilesFinder {
             //miniature
             url = "file://" + conf.getMiniPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false) + ".png";
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
-            log.info("On supprime sa miniature : {}");
+            log.info("On supprime sa miniature : {}", url);
             if (!fichier.delete()) {
                 log.warn("mais ça marche pas ...");
             }
@@ -368,7 +363,7 @@ public class FilesFinder {
         } catch (MalformedURLException e) {
             log.warn("MalformedURLException {}", url, e);
         } catch (URISyntaxException e) {
-            log.warn("URISyntaxException {}", url);
+            log.warn("URISyntaxException {}", url, e);
         }
         return false;
     }

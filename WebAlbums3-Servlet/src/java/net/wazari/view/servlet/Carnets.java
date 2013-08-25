@@ -50,7 +50,7 @@ public class Carnets extends HttpServlet{
         XmlCarnetSubmit submit = null;
         if(vSession.getVSession().isSessionManager()) {
             //prepare SUBMIT messag
-            log.info("treat Carnet/"+action);
+            log.info("treat Carnet/{}", action);
             if (action == Carnet_Action.SUBMIT || action == Carnet_Action.SAVE) {
                 submit = carnetService.treatSUBMIT(vSession.getSessionCarnetSubmit());
                 if (action == Carnet_Action.SAVE) {

@@ -54,7 +54,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
                     .setHint("org.hibernate.readOnly", true)
                     .getSingleResult();
         } catch (NoResultException e) {
-            log.info ( "No user with name +{}+", name);
+            log.info ( "No user with name '{}'", name);
             return null ;
         }
     }

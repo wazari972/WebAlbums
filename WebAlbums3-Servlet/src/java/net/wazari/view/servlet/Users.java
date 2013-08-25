@@ -63,7 +63,7 @@ public class Users extends HttpServlet {
                 return null ;
             } else if (Login_Action.CHANGE_IS_MANAGER == action) {
                 boolean wantManager = vSession.getwantManager();
-                log.warn("set Session manager to "+wantManager);
+                log.warn("set Session manager to {}", wantManager);
                 vSession.setSessionManager(wantManager);
             } else {
                 output.login = true ;

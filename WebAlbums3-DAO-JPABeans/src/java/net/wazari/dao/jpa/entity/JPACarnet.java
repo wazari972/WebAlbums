@@ -187,7 +187,7 @@ public class JPACarnet implements Carnet, Serializable {
     public Integer droitId;
     public void setDroitId(Integer droit) {
         if (droit == null)
-            log.warn("DROIT is null "+this.id);
+            log.warn("DROIT is null for Carnet/{}", this.id);
         this.droitId = droit;
     }
     
