@@ -18,6 +18,7 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoFastEdit;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSimple;
 import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
+import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.*;
 
@@ -69,5 +70,7 @@ public interface PhotoLocal {
     
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlPhotoFastEdit treatFASTEDIT(ViewSessionPhotoFastEdit vSession) throws WebAlbumsServiceException ;
+    
+    XmlDetails getPhotoByPath(ViewSession vSession, String path) throws WebAlbumsServiceException;
 }
 

@@ -85,7 +85,7 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
     public void load() throws VFSException {
         log.warn("Load directories from : {} ? {}", this, contentChanged);
         if (!contentChanged) {
-            return;        
+            return;
         }
         
         tagFiles = new LinkedList<Tag>(); // empty first, because CanChange

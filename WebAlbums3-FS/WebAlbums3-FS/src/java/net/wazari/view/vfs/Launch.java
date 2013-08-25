@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.wazari.libvfs.inteface.IResolver;
 import net.wazari.libvfs.vfs.Resolver;
 import net.wazari.service.AlbumLocal;
 import net.wazari.service.ImageLocal;
@@ -18,6 +19,7 @@ import net.wazari.service.PhotoLocal;
 import net.wazari.service.TagLocal;
 import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
+import net.wazari.view.vfs.entity.PhotoResolver;
 import net.wazari.view.vfs.entity.Root;
 
 /**
@@ -74,7 +76,8 @@ public class Launch extends HttpServlet {
             try {
                 if (umount == null) {
                     Root root = new Root(this);
-                    net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, getFolderPrefix(true));
+                    IResolver externalResolver = new PhotoResolver(root);
+                    net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, getFolderPrefix(true), externalResolver);
                     com.jnetfs.core.JnetFS.do_mount(new String[]{path});
                 } else {
                     com.jnetfs.core.JnetFS.do_umount(path);

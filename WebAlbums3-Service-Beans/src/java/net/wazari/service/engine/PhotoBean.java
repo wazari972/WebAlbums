@@ -28,12 +28,12 @@ import net.wazari.service.exchange.ViewSessionPhoto.ViewSessionPhotoSubmit;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlGpx;
 import net.wazari.service.exchange.xml.carnet.XmlCarnet;
+import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.service.exchange.xml.common.XmlFrom;
 import net.wazari.service.exchange.xml.photo.*;
 import net.wazari.util.system.FilesFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.profiler.StopWatch;
 
 @Stateless
 public class PhotoBean implements PhotoLocal {
@@ -570,5 +570,13 @@ public class PhotoBean implements PhotoLocal {
         photoDAO.pleaseFlush();
         
         return output;
+    }
+    
+    public XmlDetails getPhotoByPath(ViewSession vSession, String path) throws WebAlbumsServiceException {
+        XmlDetails ret = new XmlDetails();
+        Photo enrPhoto = photoDAO.loadByPath(path);
+        daoToXml.convertPhotoDetails(vSession, enrPhoto, ret, true);
+        
+        return ret;
     }
 }

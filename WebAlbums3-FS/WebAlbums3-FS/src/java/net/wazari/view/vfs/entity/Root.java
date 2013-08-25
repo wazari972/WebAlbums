@@ -39,7 +39,7 @@ public class Root extends SDirectory implements ADirectory, CanChange{
     @File
     public List<SDirectory> trashes = new LinkedList<SDirectory>();
     
-    private final Launch aThis;
+    protected final Launch aThis;
 
     public Root(Launch aThis) throws WebAlbumsServiceException {
         this.aThis = aThis;

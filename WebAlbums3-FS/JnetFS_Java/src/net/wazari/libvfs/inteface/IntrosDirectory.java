@@ -175,7 +175,6 @@ public class IntrosDirectory extends SDirectory {
         if (directory instanceof CanChange) {
             ((CanChange) directory).contentRead();
         }
-        
         return inFiles;
     }
     

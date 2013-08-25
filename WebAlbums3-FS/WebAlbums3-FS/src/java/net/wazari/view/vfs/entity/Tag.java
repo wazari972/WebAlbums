@@ -6,7 +6,6 @@ package net.wazari.view.vfs.entity;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.File;
@@ -57,6 +56,8 @@ public class Tag extends TagDirectory {
 
     @Override
     public void load() throws VFSException {
+        photos = new LinkedList<TagPhoto>();
+        
         log.warn("Load images from : {}", this);
         Session session = new Session(theme);
         session.setTagAsked(new Integer[]{tagId});

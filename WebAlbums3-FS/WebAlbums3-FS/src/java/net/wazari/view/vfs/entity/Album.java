@@ -6,7 +6,6 @@ package net.wazari.view.vfs.entity;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.File;

@@ -7,6 +7,7 @@ package net.wazari.libvfs.vfs;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
+import net.wazari.libvfs.inteface.IResolver;
 import net.wazari.libvfs.inteface.IntrosDirectory;
 import net.wazari.libvfs.inteface.IntrosDirectory.IntrosRoot;
 import org.slf4j.Logger;
@@ -20,17 +21,21 @@ public class Resolver {
     private static final Logger log = LoggerFactory.getLogger(LibVFS.class.getCanonicalName());
     
     private IntrosRoot root ;
-    private final String pathPrefix;
-    public Resolver(ADirectory rootDir, String pathPrefix) {
+    private final String externalPrefix;
+    private final IResolver external;
+    public Resolver(ADirectory rootDir, String externalPrefix, IResolver external) {
         root = new IntrosRoot(rootDir);
-        this.pathPrefix = pathPrefix;
+        this.externalPrefix = externalPrefix;
+        this.external = external;
     }
+    
     public IFile getFile(String search) {
-        if (search.startsWith(pathPrefix)) {
+        if (external !=null && search.startsWith(externalPrefix)) {
             /* CHANGE THAT*/
-            search = search.substring(pathPrefix.length() + 11);
-            search = "/France/Albums"+search;
-            log.warn("GET FILE: prefix > {}", search);
+            search = search.substring(externalPrefix.length());
+            IFile found = external.getFile(search);
+            log.warn("GET EXTERNAL FILE: {} > {}", search, found);
+            return found;
         }
         
         if (search.equals("/") || search.equals("")) {

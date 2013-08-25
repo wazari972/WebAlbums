@@ -70,7 +70,7 @@ public class Root extends SDirectory implements ADirectory {
     
     public static void main (String[] args) {
         Root root = new Root();
-        net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, "");
+        net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, "XXX", null);
         
         new Thread(new Runnable() {
 

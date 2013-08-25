@@ -21,14 +21,6 @@ public class Photo extends SLink {
     protected boolean uniqName = false;
     protected boolean forceFile = false;
     
-    public Photo(String path, String name, Integer id) {
-        setTarget(path);
-        this.name = name;
-        this.id = id;
-        
-        this.forceFile = (this.id == null);
-    }
-    
     public Photo(XmlDetails details, String name) {
         setTarget(details.photoId.path);
         this.name = name;
@@ -37,8 +29,9 @@ public class Photo extends SLink {
     
     public Photo(XmlDetails details, boolean uniq) {
         this(details);
-        
-        this.uniqName = uniq;
+        /* UNIQ_NAME disabled: makes drag-and-drop copy crash, because of
+           the automatique rename */
+        //this.uniqName = uniq;
     }
     
     public Photo(XmlDetails details) {

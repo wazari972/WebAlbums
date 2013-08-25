@@ -14,7 +14,6 @@ import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.libvfs.inteface.VFSException;
-import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
 import net.wazari.view.vfs.Launch;
@@ -48,7 +47,7 @@ public class Theme extends SDirectory implements ADirectory {
     @File
     public GpxFile location;
     
-    private final ATheme theme;
+    protected final ATheme theme;
     private final Launch aThis;
     
     Theme(int id, String name, Launch aThis) {

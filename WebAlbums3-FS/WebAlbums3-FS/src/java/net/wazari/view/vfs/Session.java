@@ -228,7 +228,7 @@ public class Session implements
 
     @Override
     public boolean isRootSession() {
-        return theme.getId() == 1;
+        return theme == null || theme.getId() == 1;
     }
 
     @Override
