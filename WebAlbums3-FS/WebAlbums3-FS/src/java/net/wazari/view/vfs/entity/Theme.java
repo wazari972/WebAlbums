@@ -81,8 +81,14 @@ public class Theme extends SDirectory implements ADirectory {
         
         XmlTagPersonsPlaces lst = aThis.tagService.treatTagPlaces(session);
         for (XmlTag tag : lst.tagList) {
-            if (tag.lat != null && tag.lng != null) {
-                loc.addPoint(tag.name, tag.lat, tag.lng);
+            try {
+                if (tag.lat != null && tag.lng != null) {
+                    loc.addPoint(tag.name, tag.lat, tag.lng);
+                }
+            } catch (NumberFormatException e) {
+                log.warn("Invalid location format for tag {}/{}", tag.name, tag.id);
+                log.warn("Invalid location was {}/{}", tag.lat, tag.lng);
+                log.warn("Invalid location error was {}", e.getMessage(), e);
             }
         }
         location = new GpxFile(loc);
