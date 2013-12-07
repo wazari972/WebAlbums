@@ -64,8 +64,8 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libJnetFS_C.${CND_DLIB_EXT}: ${OBJECT
 
 ${OBJECTDIR}/src/JnetFS.o: src/JnetFS.c 
 	${MKDIR} -p ${OBJECTDIR}/src
-	${RM} $@.d
-	$(COMPILE.c) -O2 -fPIC  -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/JnetFS.o src/JnetFS.c
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -fPIC  -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/src/JnetFS.o src/JnetFS.c
 
 # Subprojects
 .build-subprojects:
