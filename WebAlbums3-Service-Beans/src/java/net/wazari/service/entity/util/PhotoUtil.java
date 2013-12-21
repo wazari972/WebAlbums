@@ -134,8 +134,12 @@ public class PhotoUtil {
             if (exifs[i] == null) {
                 continue;
             }
-            String[] values = exifs[i].split(" - ");
-            output.entry.add(new XmlPhotoExifEntry(values[0], values[1])) ;
+            try {
+                String[] values = exifs[i].split(" - ");
+                output.entry.add(new XmlPhotoExifEntry(values[0], values[1])) ;
+            } catch(ArrayIndexOutOfBoundsException e) {
+                output.entry.add(new XmlPhotoExifEntry("UNKNOWN", exifs[i])) ;
+            }
         }
         return output ;
     }
