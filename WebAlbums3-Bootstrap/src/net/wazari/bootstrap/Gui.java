@@ -47,6 +47,22 @@ public class Gui extends JFrame {
     private static GF glassfish = new GF();
     
     public static void main(final String args[]) throws Throwable {
+        boolean no_gui = false;
+        for (String arg : args) {
+            if ("--no-gui".equals(arg) || "-nx".equals(arg)) {
+                no_gui = true;
+            }
+        }
+        
+        if (no_gui) {
+            try {
+                glassfish.start();
+            } catch (Throwable ex) {
+                log.error("Start glassfish error: {}", ex);
+            }
+            return;
+        }
+        
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -103,6 +119,13 @@ public class Gui extends JFrame {
     }
     
     public Gui(String args[]) throws Throwable {
+        boolean do_start = false;
+        for (String arg : args) {
+            if ("--start".equals(arg) || "-s".equals(arg)) {
+                do_start = true;
+            }
+        }
+        
         String title = "WebAlbums3.5-dev GUI Bootloader";
         boolean systrayed = false;
         
@@ -368,11 +391,10 @@ public class Gui extends JFrame {
             this.setVisible(true);
         }
         
-        for (String arg : args) {
-            if ("--start".equals(arg) || "-s".equals(arg)) {
-                miStart.doClick();
-            }
+        if (do_start) {
+            miStart.doClick();
         }
+        
     }
 
     private void glassfishStarting() {
@@ -383,7 +405,7 @@ public class Gui extends JFrame {
         miState.setText("Starting");
         miCfgPathLibFS.setEnabled(false);
         miCfgVerify.setEnabled(false);
-        icon.setIcon(createImage("/images/jonquille-busy.png", "WebAlbums"));
+//        icon.setIcon(createImage("/images/jonquille-busy.png", "WebAlbums"));
         gfState = GlassfishState.STARTING;
     }
     
