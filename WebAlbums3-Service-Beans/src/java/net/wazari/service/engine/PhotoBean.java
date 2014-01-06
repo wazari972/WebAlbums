@@ -503,6 +503,7 @@ public class PhotoBean implements PhotoLocal {
         }
 
         XmlPhotoAbout output = new XmlPhotoAbout() ;
+        output.details = new XmlDetails();
         daoToXml.convertPhotoDetails(vSession.getVSession(), enrPhoto, output.details, true); 
         
         return output ;
