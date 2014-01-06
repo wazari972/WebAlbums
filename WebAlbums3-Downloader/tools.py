@@ -17,6 +17,10 @@ INDEX = """<html><head><meta http-equiv="refresh" content="0; URL=%s" /></head><
 h = Http("")
 headers = None
 
+def get_an_image(uid):
+    response, content = h.request('%sImage__%d' % (WA_URL, uid))
+    return content
+
 def get_data_path_for_url():
     if theme is None:
         return "./"
@@ -51,12 +55,33 @@ def print_error_report():
         print "For url: %s%s" % (url, repr(name))
         print "Response: %s" % response
         print "------------"
-    
+
+
+def do_copy(filename):
+    if not filename.startswith(ABS_DATA_PATH):
+        return filename
+    src = filename
+    target = filename.replace(ABS_DATA_PATH, get_current_target_folder(with_theme=False))
+    link = filename.replace(ABS_DATA_PATH, get_data_path_for_url())
+    #print "%s --> %s (%s)" % (src, target, link)
+    #create dirname(target)
+    target_dir = target[:target.rindex("/")]
+    try:
+        os.makedirs(target_dir)
+    except OSError as e:
+        if e.errno != 17:
+            raise e
+    #copy src to target
+    cmd = "cp '%s' '%s'" % (src, target_dir)
+    print cmd
+    os.system(cmd)
+    return link
+
 count = 0
 theme = None
 def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, make_index=False, use_empty_xsl=False):
     global count
-    
+    print url
     name = name.encode("latin1")
     count += 1
     #url += name
@@ -74,7 +99,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
             with open(path, "w") as f:
                 f.write(INDEX % (url+name))
         
-        print "#%d %s: %s %s" % (count, theme, repr(url), repr(name))
+        #print "#%d %s: %s %s" % (count, theme, repr(url), repr(name))
         
         content_to_save = content
         content_to_return =  content        
@@ -100,25 +125,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
 
         if save:
             if full:
-                def do_copy(filename):
-                    if not filename.startswith(ABS_DATA_PATH):
-                        return filename
-                    src = filename
-                    target = filename.replace(ABS_DATA_PATH, get_current_target_folder(with_theme=False))
-                    link = filename.replace(ABS_DATA_PATH, get_data_path_for_url())
-                    #print "%s --> %s (%s)" % (src, target, link)
-                    #create dirname(target)
-                    target_dir = target[:target.rindex("/")]
-                    try:
-                        os.makedirs(target_dir)
-                    except OSError as e:
-                        if e.errno != 17:
-                            raise e
-                    #copy src to target
-                    cmd = "cp '%s' '%s'" % (src, target_dir)
-                    print cmd
-                    os.system(cmd)
-                    return link
+                
                     
                 for img in content_to_full.xpath("//*/img[@src]"):
                     img.set("src", do_copy(img.get("src")))
@@ -326,8 +333,29 @@ def get_all_tags(choix):
 #######  CARNETS  ######################
 ########################################
 
-def get_a_carnet(carnedId, name=""):
-    return get_a_page("Carnet__%s__" % carnedId, name)
+def get_a_carnet(carnetId, name="", full=False):
+    page = get_a_page("Carnet__%s_pc0__" % carnetId, name)
+
+    if full:
+        target = get_current_target_folder() + "Carnet_%d_%s/" % (carnetId, name)
+        xml_page = get_a_page("Carnet__%s_pc0____" % carnetId, name, parse_and_transform=False)
+        
+        xml = etree.fromstring(xml_page)
+
+        try:
+            os.mkdir(target)
+            print target
+        except OSError as e:
+            if e.errno != 17:
+                raise e
+        
+        for img in page.xpath("//photo"):
+            img_id = int(img.get("id"))
+            content = get_an_image(img_id)
+            with open('%s%d.jpg' % (target, img_id), 'wb') as f:
+                f.write(content)
+    
+    return page
 
 def get_a_carnetSet(page=0):
     if page == 0:

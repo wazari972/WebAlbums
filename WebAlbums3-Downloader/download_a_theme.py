@@ -5,7 +5,7 @@ import tools
 tools.ABS_DATA_PATH = "../"
     
 tools.login("kevin", "")
-exit()
+
 tools.get_a_theme(5, "Martinique")
 theme = None
 tools.get_a_theme(4, "Vayrac")
