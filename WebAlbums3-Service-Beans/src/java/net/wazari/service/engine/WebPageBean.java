@@ -673,7 +673,7 @@ public class WebPageBean implements WebPageLocal {
             first = false;
         }
         
-        while (olderParent != null && olderParent.children.size() == 1) {
+        while (olderParent != null && olderParent.children != null && olderParent.children.size() == 1) {
             olderParent = olderParent.children.get(0);
         }
         
