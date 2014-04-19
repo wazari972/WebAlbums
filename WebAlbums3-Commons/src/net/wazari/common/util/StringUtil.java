@@ -110,6 +110,10 @@ public class StringUtil {
         return sb.toString();
     }
 
+    public static String escapeJavaScript(String s) {
+        return StringEscapeUtils.escapeJavaScript(s);
+    }
+    
     public static String unescapeHtml(String s) {
         return StringEscapeUtils.unescapeHtml(s);
     }

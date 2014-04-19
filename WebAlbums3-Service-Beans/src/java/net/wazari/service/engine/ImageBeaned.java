@@ -30,9 +30,8 @@ import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.util.system.SystemTools;
-import org.apache.commons.lang.StringEscapeUtils;
-//import org.perf4j.StopWatch;
-//import org.perf4j.slf4j.Slf4JStopWatch;
+//import org.apache.commons.lang.StringEscapeUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,7 +224,7 @@ public class ImageBeaned implements ImageLocal {
         boolean uniq = false;
         try {
             String safeFilepath = filepath ;
-            safeFilepath = StringEscapeUtils.unescapeHtml(safeFilepath);
+            safeFilepath = StringUtil.unescapeHtml(safeFilepath);
             
             URLConnection conn = new URL(StringUtil.escapeURL(safeFilepath)).openConnection();
             InputStream in = conn.getInputStream();

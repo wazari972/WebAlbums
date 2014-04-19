@@ -11,12 +11,13 @@ import net.wazari.common.plugins.Importer.Capability;
 import net.wazari.common.plugins.Importer.Metadata;
 import net.wazari.common.plugins.Importer.ProcessCallback;
 import net.wazari.common.plugins.ProcessCallbackImpl;
+import net.wazari.common.util.StringUtil;
 import net.wazari.dao.PhotoFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.service.PluginManagerLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exchange.ViewSession;
-import org.apache.commons.lang.StringEscapeUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,6 +186,6 @@ public class SystemTools {
             return ;
         }
 
-        util.addBorder(cb, filepath, borderWidth, color == null ? "" : StringEscapeUtils.escapeJavaScript(color));
+        util.addBorder(cb, filepath, borderWidth, color == null ? "" : StringUtil.escapeJavaScript(color));
     }
 }
