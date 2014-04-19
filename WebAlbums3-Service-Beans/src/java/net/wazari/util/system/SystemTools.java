@@ -185,7 +185,7 @@ public class SystemTools {
             log.warn("No plugin available to add a border to {}@{}, nothing changed", enrPhoto.getType(), ext);
             return ;
         }
-
+        
         util.addBorder(cb, filepath, borderWidth, color == null ? "" : StringUtil.escapeJavaScript(color));
     }
 }

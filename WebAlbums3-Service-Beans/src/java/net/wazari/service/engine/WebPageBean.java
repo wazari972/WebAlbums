@@ -41,7 +41,6 @@ import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.util.system.SystemTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.profiler.StopWatch;
 
 @Stateless
 public class WebPageBean implements WebPageLocal {

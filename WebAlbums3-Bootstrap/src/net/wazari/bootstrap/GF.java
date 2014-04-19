@@ -46,10 +46,29 @@ public class GF {
     public static final String DEFAULT_CONFIG_PATH = "conf/config.xml";
     private static final String SHUTDOWN_PORT_PPT = "SHUTDOWN_PORT";
 
+    static {    /*
+        try {
+            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+            
+            JoranConfigurator configurator = new JoranConfigurator();
+            configurator.setContext(lc);
+            // the context was probably already configured by default configuration rules
+            lc.reset(); 
+            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("logback.xml") ;
+          
+            configurator.doConfigure(stream);
+            
+            StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
+        } catch (JoranException je) {
+           je.printStackTrace();
+        }*/
+    }
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
         try {
             GF glassfish = new GF();
             glassfish.start();
