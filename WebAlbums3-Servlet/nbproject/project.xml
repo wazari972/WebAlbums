@@ -28,10 +28,6 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.CP-Apache-commons-lang.2.5.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
                     <file>${reference.WebAlbums3-Plugins.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>

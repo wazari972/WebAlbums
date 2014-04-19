@@ -26,8 +26,6 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import net.wazari.view.servlet.exchange.xml.XmlWebAlbums;
-import org.apache.commons.lang.time.DurationFormatUtils;
-import org.apache.commons.lang.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,8 +69,7 @@ public class DispatcherBean {
             HttpServletRequest request,
             HttpServletResponse response)
             throws IOException, ServletException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+        
         
         request.setCharacterEncoding("utf-8");
         ViewSessionDispatcher vSession = new ViewSessionImpl(request, response, context);
@@ -211,8 +208,8 @@ public class DispatcherBean {
         }
         log.debug("============= Footer (written:{}, complete:{})=============", new Object[]{isWritten, output.isComplete});
         
-        stopWatch.stop();
-        String strTime = DurationFormatUtils.formatDuration(stopWatch.getTime(), "m'min' s's' S'ms'", false);
+        String strTime = "nop";
+        //String strTime = DurationFormatUtils.formatDuration(stopWatch.getTime(), "m'min' s's' S'ms'", false);
         if (!isWritten) {
             preventCaching(request, response);
 
