@@ -249,10 +249,19 @@
         </xsl:if>
     </li>
   </xsl:template>
-    
+  <xsl:key name="product" match="/webAlbums/albums/gpxes/gpx/tagList/*/name/text()" use="." />
   <xsl:template match="/webAlbums/albums/gpxes">
       <xsl:if test="/webAlbums/albums/gpxes/gpx">
-        <div>
+        <div id="gpxSelection">
+            <select multiple="true" data-placeholder="Filtrer par tag..." >
+                <xsl:for-each select="/webAlbums/albums/gpxes/gpx/tagList/*/name/text()[generate-id() = generate-id(key('product',.)[1])]">
+                    <xsl:sort select="." data-type="text" order="ascending"/>
+                    <option>
+                        <xsl:attribute name="value">gpxTrack__<xsl:value-of select="translate(., ' ', '_')"/></xsl:attribute>
+                        <xsl:value-of select="."/>
+                    </option>
+                </xsl:for-each>      
+            </select>
             <xsl:apply-templates select="/webAlbums/albums/gpxes/gpx"/>
             <div id="gpxChoix"></div>
         </div>
@@ -264,11 +273,29 @@
   
   <xsl:template match="/webAlbums/albums/gpxes/gpx">
     <p>
+        <xsl:attribute name="class">
+                <xsl:for-each select="tagList/*">gpxTrack__<xsl:value-of select="translate(./name/text(), ' ', '_')"/>
+                <xsl:if test="position() != last()">
+                    <xsl:text> </xsl:text>
+                </xsl:if>
+                </xsl:for-each>
+        </xsl:attribute>
         <a class="gpxTrack">
             <xsl:attribute name="rel"><xsl:value-of select="@id"/></xsl:attribute>
-            <xsl:value-of select="description"/>
+            <xsl:value-of select="description/line[1]/text()"/>
         </a>
-        (<a><xsl:attribute name="href">Photos__<xsl:value-of select="@albumId"/>_p0_pa__</xsl:attribute> <xsl:value-of select="albumName"/></a>)
+        <xsl:text> (</xsl:text>
+        <a target="_blank"><xsl:attribute name="href">Photos__<xsl:value-of select="@albumId"/>_p0_pa__</xsl:attribute>@ <xsl:value-of select="albumName"/></a>
+        <xsl:if test="tagList/*">
+            <xsl:text> -- </xsl:text>
+          <xsl:for-each select="tagList/*">
+              <xsl:value-of select="./name/text()"/>
+              <xsl:if test="position() != last()">
+                <xsl:text>, </xsl:text>
+              </xsl:if>
+          </xsl:for-each>
+        </xsl:if>
+        <xsl:text>)</xsl:text>
     </p>
   </xsl:template>
   

@@ -20,36 +20,58 @@ function createGpxesMap() {
     $("#gpxChoix").data("map", map);
     
     $(".gpxTrack").each(function (index) {
-        var this_trak = $(this);
-        var ready = function() {
-            layer.setVisibility(false);
-            this_trak.data("ready", true);
-            //remove the tempory bits
-            this_trak.text(label);
-        };
-        var layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"), ready);
-        $(this).data("layer", layer);
         $(this).data("ready", false);
-        var label = this_trak.text();
-        if (label === "")
+        var label = $(this).text();
+        if (label === "") {
             label = "Track "+index;
-        this_trak.text(label+" ...");
+            $(this).text(label);
+        }
+        
+        $(this).data("label", label);
     });
 
     $(".gpxTrack").click(function() {
+        var this_track = $(this); /*because ready_callback loose 'this' */
+        
+        var do_show = function() {
+            map = $("#gpxChoix").data("map");
+            layer.setVisibility(true);
+            zoomTo(map, layer, false);
+            this_track.text("+ " + this_track.data("label"));
+        };
         if (!$(this).data("ready")) {
-            alert("Track not ready yet.");
+            var ready_callback = function() {
+                this_track.data("ready", true);
+                do_show();
+            };
+            var layer = init_gpx_layer(map, $(this).text(), $(this).attr("rel"), ready_callback);
+            $(this).data("layer", layer);
+
+            $(this).text($(this).data("label")+" ...");
             return;
         }
         var layer = $(this).data("layer");
         if (layer.getVisibility()) {
             layer.setVisibility(false);
+            $(this).text($(this).data("label"));
         } else {
-            map = $("#gpxChoix").data("map");
-            layer.setVisibility(true);
-            zoomTo(map, layer, false);
+            do_show();
         }
     });
+    
+    $("#gpxSelection select").chosen();
+    $("#gpxSelection select").change(
+            function() {
+                $("#gpxSelection select option").each(function() {
+                    var show = $(this).attr('selected') === 'selected';
+                    
+                    if (show) 
+                        $("#gpxSelection p." + $(this).attr("value")).show();
+                    else
+                        $("#gpxSelection p." + $(this).attr("value")).hide();
+                });
+            }
+            );
 }
 
 var map;
@@ -113,6 +135,7 @@ function init_loader() {
         $(this).fadeOut();
         $("#theMapChoix").addClass("mapChoix");
         var map = loadMap("theMapChoix");
+        $("#theMapChoix").data("map", map);
         $("body").css("cursor", "wait");
         populateChoixMap(map);
     }) ;
@@ -139,7 +162,6 @@ function init_selecter() {
      $("#albmName").keyup(
         function() {
            trimAlbums($(this).val());
-
         }
      );
      if (!staticAccess)

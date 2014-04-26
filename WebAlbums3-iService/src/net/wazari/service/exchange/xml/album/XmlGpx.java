@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 
 /**
  *
@@ -28,6 +29,8 @@ public class XmlGpx {
     public List<String> description;
     @XmlElement
     public String path;
+    @XmlElement(name = "tagList")
+    public XmlWebAlbumsList tag_used;
     
     public void setDescription(String description) {
         if (description == null || description.isEmpty()) {

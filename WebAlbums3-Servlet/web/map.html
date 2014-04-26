@@ -58,9 +58,9 @@ and open the template in the editor.
         <input id="btGoto" type="button" value="goto"/>
         <script type="text/javascript">
             $(function() {
-                $('#mapLoader').click()
+                $('#mapLoader').click();
                 $("#btGoto").click(function () {
-                    geocode($("#search").val(), map)
+                    geocode($("#search").val(), $("#theMapChoix").data("map"));
                 }) ;
             })
         </script>

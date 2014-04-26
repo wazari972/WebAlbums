@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.common.exception.WebAlbumsException;
@@ -91,7 +92,7 @@ public class AlbumBean implements AlbumLocal {
                 albums = albumDAO.queryAlbums(vSession.getVSession(), Restriction.THEME_ONLY,
                                        AlbumFacadeLocal.TopFirst.FIRST, bornes);
                 for (Album enrAlbum : albums.subset) {
-                    if (enrAlbum.getId() == albumId) {
+                    if (Objects.equals(enrAlbum.getId(), albumId)) {
                         found = true;
                         page = ipage;
                         break;   
@@ -116,7 +117,7 @@ public class AlbumBean implements AlbumLocal {
         for(Album enrAlbum : albums.subset) {
             XmlAlbum album = new XmlAlbum();
 
-            if (enrAlbum.getId() == albumId) {
+            if (Objects.equals(enrAlbum.getId(), albumId)) {
                 album.submit = submit ;
             }
 
@@ -187,7 +188,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
-    public XmlAlbumGpx treatGPX(ViewSession vSession) {
+    public XmlAlbumGpx treatGPX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlAlbumGpx gpxList = new XmlAlbumGpx();
         
         SubsetOf<Album> albums = albumDAO.queryAlbums(vSession, 
@@ -200,6 +201,9 @@ public class AlbumBean implements AlbumLocal {
                 gpx.id = enrGpx.getId();
                 gpx.albumId = enrGpx.getAlbum().getId();
                 gpx.albumName = enrGpx.getAlbum().getNom();
+                gpx.tag_used = webPageService.displayListIBTD(ViewSession.Tag_Mode.TAG_USED,  
+                        vSession, enrGpx, ViewSession.Box.NONE,
+                        enrGpx.getAlbum().getDate());
                 
                 gpxList.gpx.add(gpx);
             }

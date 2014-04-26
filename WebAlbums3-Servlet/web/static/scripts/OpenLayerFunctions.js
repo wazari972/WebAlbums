@@ -12,7 +12,7 @@ function add_stamen_layers(map) {
     water.setName("Stamen Watercolor");
     //var terrain = new OpenLayers.Layer.Stamen("terrain");
     //terrain.setName("Stamen Terrain");
-    
+
     map.addLayers([toner, water]);
 }
 
@@ -62,7 +62,7 @@ function add_geoportail_layers(map) {
         //'localhost:8080': 'r6muu3lqjvkg22q8dw893k7z'
         "localhost:8080":"f4ezpirs8jd63cwbhkstbkqd"
     };
-    var apiKEY = apiKEYs[window.location.host];
+    var apiKEY = "nq2serx7okjnv1zjpvdlgrz9"; //apiKEYs[window.location.host];
     
     var options = {
         name: "Cartes IGN",
@@ -171,10 +171,11 @@ function init_gpx_layer(map, name, file_id, ready_callback) {
     map.addLayer(lgpx);
     
     lgpx.events.register("loadend", lgpx , function (e) {
-        if (ready_callback === undefined)
+        if (ready_callback === undefined) {
             zoomTo(map, lgpx, false);
-        else
+        } else {
             ready_callback(map, lgpx);
+        }
     });
     
     return lgpx;
@@ -196,9 +197,9 @@ function zoom_to_layer(map, layer) {
 }
 
 function transformLonLat(lonlat) {
-    if (!lonlat || !lonlat.transform)
+    if (!lonlat || !lonlat.transform) {
         return lonlat;
-    else {
+    } else {
         if (!have_osm()) {
             return null;
         }
@@ -240,8 +241,9 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
             this.popup.toggle();
         }
         
-        if (currentPopup !== null)
+        if (currentPopup !== null) {
             currentPopup.hide();
+        }
     
         currentPopup = this.popup;
         currentPopup.show();
@@ -255,33 +257,37 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
     return marker;
 }
 
+var geoCodeURL = "http://nominatim.openstreetmap.org/search";
 function geocode(address, map) {
-    if (!have_google()) {
-        return;
-    }
-    
-    var geocoder = new google.maps.Geocoder();
-    
-    if (geocoder) {
-        geocoder.geocode({'address': address }, function (results, status) {
-          if (status === google.maps.GeocoderStatus.OK) {
-             
-             var longlat = new OpenLayers.LonLat(results[0].geometry.location.lng(), results[0].geometry.location.lat());
-             map.setCenter(transformLonLat(longlat), map.getZoom());
-
-          } else {
-             alert("Geocoding failed: " + status);
-          }
-
-       });
-    } else {
-        alert("No geocoder ...");
-    }
+    $.ajax({
+        url: geoCodeURL,
+        data: {
+            format: "json",
+            q: address
+        },
+        async: false,
+        success: function ( data ) {
+            var json_to_obj = function( item ) {
+                if (!item) return null;
+                return {
+                    label: item.display_name,
+                    lat: item.lat,
+                    lon: item.lon
+                }
+            }
+            var item = json_to_obj(data[0])
+            if (item === null) {
+                return;
+            }
+            var longlat = new OpenLayers.LonLat(item.lon, item.lat);
+            map.setCenter(transformLonLat(longlat), map.getZoom());
+        }   
+    })
 }
 
 function json_pointToContent(point) {
     return "<div class='map_content'>"
-          +"  <h1><a href='Tag__"+point.id+"__"+point.name+"'>"+point.name+"</a></h1>\n"
+          +"  <h3><a taget='_blank' href='Tag__"+point.id+"__"+point.name+"'>"+point.name+"</a></h3>\n"
           +"  <center><img src='Miniature__"+point.picture+".png' /></center>\n"
           +"</div>";
 }
