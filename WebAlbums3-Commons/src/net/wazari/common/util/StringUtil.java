@@ -1,25 +1,28 @@
 package net.wazari.common.util;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StringUtil {
-
+    private static final Logger log = LoggerFactory.getLogger(StringUtil.class.getName());
+    
     public static String escapeSpaces(String s) {
         return s.replace(" ", "\\ ");
     }
 
-    public static String escapeSQL(String s) {
-        return StringEscapeUtils.escapeSql(s);
-    }
-
     public static String escapeHTML(String s) {
-        s = StringEscapeUtils.unescapeHtml(s);
-        return StringEscapeUtils.escapeHtml(s);
+        s = StringEscapeUtils.unescapeHtml4(s);
+        return StringEscapeUtils.escapeHtml4(s);
+    }
+    
+    public static String unescapeHtml(String s) {
+        return StringEscapeUtils.unescapeHtml4(s);
     }
 
     public static String escapeXML(String s) {
-        s = StringEscapeUtils.unescapeHtml(s);
-        s = StringEscapeUtils.escapeHtml(s);
+        s = StringEscapeUtils.unescapeHtml4(s);
+        s = StringEscapeUtils.escapeHtml4(s);
         return s;
     }
 
@@ -111,13 +114,9 @@ public class StringUtil {
     }
 
     public static String escapeJavaScript(String s) {
-        return StringEscapeUtils.escapeJavaScript(s);
+        return StringEscapeUtils.escapeJson(s);
     }
     
-    public static String unescapeHtml(String s) {
-        return StringEscapeUtils.unescapeHtml(s);
-    }
-
     public static String escapeSH(String s) {
         if (s == null) {
             return null;

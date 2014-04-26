@@ -807,6 +807,10 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.RT-Log-logback-classic-0.9.24.jar-1}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.RT-Log-logback-core-0.9.24.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Apache-commons-lang3-3.3.2.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-Apache-commos-lang.2.5.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${build.classes.dir}"/>
     </target>
     <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
         <basename file="${reference.WebAlbums3-iService.jar}" property="manifest.reference.WebAlbums3-iService.jar"/>
@@ -816,8 +820,12 @@ exists or setup the property manually. For example like this:
         <basename file="${libs.javaee-api-6.0.classpath}" property="manifest.libs.javaee-api-6.0.classpath"/>
         <basename file="${file.reference.RT-Log-logback-classic-0.9.24.jar-1}" property="manifest.file.reference.RT-Log-logback-classic-0.9.24.jar-1"/>
         <basename file="${file.reference.RT-Log-logback-core-0.9.24.jar}" property="manifest.file.reference.RT-Log-logback-core-0.9.24.jar"/>
+        <basename file="${file.reference.CP-Apache-commons-lang3-3.3.2.jar}" property="manifest.file.reference.CP-Apache-commons-lang3-3.3.2.jar"/>
+        <basename file="${file.reference.CP-DB-dbunit-2.4.5.jar}" property="manifest.file.reference.CP-DB-dbunit-2.4.5.jar"/>
+        <basename file="${file.reference.CP-Apache-commos-lang.2.5.jar}" property="manifest.file.reference.CP-Apache-commos-lang.2.5.jar"/>
+        <basename file="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" property="manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 "/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.reference.WebAlbums3-iService.jar}"/>
             <attribute name="jar-2-Extension-Name" value="${manifest.reference.WebAlbums3-iDAO.jar}"/>
             <attribute name="jar-3-Extension-Name" value="${manifest.reference.WebAlbums3-Commons.jar}"/>
@@ -825,6 +833,10 @@ exists or setup the property manually. For example like this:
             <attribute name="jar-5-Extension-Name" value="${manifest.libs.javaee-api-6.0.classpath}"/>
             <attribute name="jar-6-Extension-Name" value="${manifest.file.reference.RT-Log-logback-classic-0.9.24.jar-1}"/>
             <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.RT-Log-logback-core-0.9.24.jar}"/>
+            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.CP-Apache-commons-lang3-3.3.2.jar}"/>
+            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.CP-DB-dbunit-2.4.5.jar}"/>
+            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.CP-Apache-commos-lang.2.5.jar}"/>
+            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
@@ -835,6 +847,10 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.javaee-api-6.0.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.RT-Log-logback-classic-0.9.24.jar-1}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.RT-Log-logback-core-0.9.24.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-Apache-commons-lang3-3.3.2.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-DB-dbunit-2.4.5.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-Apache-commos-lang.2.5.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${file.reference.CP-EXIF-metadata-extractor-2.3.1.jar}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">

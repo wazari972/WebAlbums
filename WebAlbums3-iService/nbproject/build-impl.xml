@@ -824,7 +824,7 @@ is divided into following sections:
                 <copylibs compress="${jar.compress}" excludeFromCopy="${copylibs.excludes}" index="${jar.index}" indexMetaInf="${jar.index.metainf}" jarfile="${dist.jar}" manifest="@{manifest}" rebase="${copylibs.rebase}" runtimeclasspath="${run.classpath.without.build.classes.dir}">
                     <fileset dir="${build.classes.dir}" excludes="${dist.archive.excludes}"/>
                     <manifest>
-                        <!--<attribute name="Class-Path" value="${jar.classpath}"/>-->
+                        <attribute name="Class-Path" value="${jar.classpath}"/>
                         <customize/>
                     </manifest>
                 </copylibs>
