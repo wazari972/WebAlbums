@@ -1,0 +1,3 @@
+[submodule "slideshow"]
+	path = WebAlbums3-Servlet/web/static/libraries/redditp
+	url = https://github.com/wazari972/redditp.git
