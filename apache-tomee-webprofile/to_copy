@@ -1,0 +1,11 @@
+for PROJ in iDAO Plugins iService Commons
+do
+  cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.jar webapps/WebAlbums3-ea/lib/WebAlbums3-$PROJ.jar -v
+done
+for PROJ in DAO-JPABeans Service-Beans 
+do
+  cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.jar webapps/WebAlbums3-ea/WebAlbums3-$PROJ.jar -v
+done
+PROJ=Servlet
+cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.war webapps/WebAlbums3-ea/WebAlbums3-$PROJ.war -v
+

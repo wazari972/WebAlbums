@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import net.wazari.dao.entity.Theme;
 import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -78,15 +77,9 @@ public class DispatcherBean {
             userService.cleanUpSession(vSession.getSessionLogin());
         }
         if (page != Page.USER) {
-            log.debug("Authenticate the session");
-            request.authenticate(response);
-            
-            /* TO BE REMOVED ... one day 
-            if (request.getUserPrincipal() == null) {
-                try {
-                    request.login("kevin", "");
-                } catch (ServletException e) {}
-            }*/
+            if (!request.authenticate(response)) {
+                throw new ServletException("Not authenticated ...");
+            }
         }
         
         log.debug("============= <{}> =============", page);
@@ -244,67 +237,64 @@ public class DispatcherBean {
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     private static void doWrite(HttpServletResponse response, XmlWebAlbums output) {
         try {
-            PrintWriter sortie = response.getWriter();
-
-            if (!output.isBlob) {
-                if (!output.isComplete) {
-                    sortie.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
-                    sortie.println("<!DOCTYPE xsl:stylesheet  ["
-                            + "<!ENTITY auml   \"&#228;\" >"
-                            + "<!ENTITY ouml   \"&#246;\" >"
-                            + "<!ENTITY uuml   \"&#252;\" >"
-                            + "<!ENTITY szlig  \"&#223;\" >"
-                            + "<!ENTITY Auml   \"&#196;\" >"
-                            + "<!ENTITY Ouml   \"&#214;\" >"
-                            + "<!ENTITY Uuml   \"&#220;\" >"
-                            + "<!ENTITY euml   \"&#235;\" >"
-                            + "<!ENTITY ocirc  \"&#244;\" >"
-                            + "<!ENTITY icirc  \"&#238;\" >"
-                            + "<!ENTITY nbsp   \"&#160;\" >"
-                            + "<!ENTITY Agrave \"&#192;\" >"
-                            + "<!ENTITY Egrave \"&#200;\" >"
-                            + "<!ENTITY Eacute \"&#201;\" >"
-                            + "<!ENTITY Ecirc  \"&#202;\" >"
-                            + "<!ENTITY egrave \"&#232;\" >"
-                            + "<!ENTITY eacute \"&#233;\" >"
-                            + "<!ENTITY ecirc  \"&#234;\" >"
-                            + "<!ENTITY agrave \"&#224;\" >"
-                            + "<!ENTITY iuml   \"&#239;\" >"
-                            + "<!ENTITY ugrave \"&#249;\" >"
-                            + "<!ENTITY ucirc  \"&#251;\" >"
-                            + "<!ENTITY uuml   \"&#252;\" >"
-                            + "<!ENTITY ccedil \"&#231;\" >"
-                            + "<!ENTITY AElig  \"&#198;\" >"
-                            + "<!ENTITY aelig  \"&#330;\" >"
-                            + "<!ENTITY OElig  \"&#338;\" >"
-                            + "<!ENTITY oelig  \"&#339;\" >"
-                            + "<!ENTITY euro   \"&#8364;\">"
-                            + "<!ENTITY laquo  \"&#171;\" >"
-                            + "<!ENTITY raquo  \"&#187;\" >"
-                            + "]>");
-                    if (output.xslFile != null) {
-                        sortie.println("<?xml-stylesheet type=\"text/xsl\" href=\"" + output.xslFile + "\"?>");
+            try (PrintWriter sortie = response.getWriter()) {
+                if (!output.isBlob) {
+                    if (!output.isComplete) {
+                        sortie.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+                        sortie.println("<!DOCTYPE xsl:stylesheet  ["
+                                + "<!ENTITY auml   \"&#228;\" >"
+                                + "<!ENTITY ouml   \"&#246;\" >"
+                                + "<!ENTITY uuml   \"&#252;\" >"
+                                + "<!ENTITY szlig  \"&#223;\" >"
+                                + "<!ENTITY Auml   \"&#196;\" >"
+                                + "<!ENTITY Ouml   \"&#214;\" >"
+                                + "<!ENTITY Uuml   \"&#220;\" >"
+                                + "<!ENTITY euml   \"&#235;\" >"
+                                + "<!ENTITY ocirc  \"&#244;\" >"
+                                + "<!ENTITY icirc  \"&#238;\" >"
+                                + "<!ENTITY nbsp   \"&#160;\" >"
+                                + "<!ENTITY Agrave \"&#192;\" >"
+                                + "<!ENTITY Egrave \"&#200;\" >"
+                                + "<!ENTITY Eacute \"&#201;\" >"
+                                + "<!ENTITY Ecirc  \"&#202;\" >"
+                                + "<!ENTITY egrave \"&#232;\" >"
+                                + "<!ENTITY eacute \"&#233;\" >"
+                                + "<!ENTITY ecirc  \"&#234;\" >"
+                                + "<!ENTITY agrave \"&#224;\" >"
+                                + "<!ENTITY iuml   \"&#239;\" >"
+                                + "<!ENTITY ugrave \"&#249;\" >"
+                                + "<!ENTITY ucirc  \"&#251;\" >"
+                                + "<!ENTITY uuml   \"&#252;\" >"
+                                + "<!ENTITY ccedil \"&#231;\" >"
+                                + "<!ENTITY AElig  \"&#198;\" >"
+                                + "<!ENTITY aelig  \"&#330;\" >"
+                                + "<!ENTITY OElig  \"&#338;\" >"
+                                + "<!ENTITY oelig  \"&#339;\" >"
+                                + "<!ENTITY euro   \"&#8364;\">"
+                                + "<!ENTITY laquo  \"&#171;\" >"
+                                + "<!ENTITY raquo  \"&#187;\" >"
+                                + "]>");
+                        if (output.xslFile != null) {
+                            sortie.println("<?xml-stylesheet type=\"text/xsl\" href=\"" + output.xslFile + "\"?>");
+                        }
                     }
+                    //Create JAXB Context
+                    JAXBContext jc = JAXBContext.newInstance(XmlWebAlbums.class);
+                    
+                    //Create marshaller
+                    Marshaller marshaller = jc.createMarshaller();
+                    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                    marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+                    StringWriter writer = new StringWriter() ;
+                    marshaller.marshal(output, writer);
+                    sortie.append(writer.toString());
+                } else {
+                    sortie.println(output.blob);
                 }
-                //Create JAXB Context
-                JAXBContext jc = JAXBContext.newInstance(XmlWebAlbums.class);
-                
-                //Create marshaller
-                Marshaller marshaller = jc.createMarshaller();
-                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-                marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-                StringWriter writer = new StringWriter() ;
-                marshaller.marshal(output, writer);
-                sortie.append(writer.toString());
-            } else {
-                sortie.println(output.blob);
+                sortie.flush();
             }
-            sortie.flush();
-            sortie.close();
-        } catch (IOException e) {
-            log.error("IOException: ", e);
-        } catch (JAXBException e) {
-            log.error("IOException: ", e);
+        } catch (IOException | JAXBException e) {
+            log.error("Exception: ", e);
         }
     }
 

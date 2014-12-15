@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.AlbumFacadeLocal;
@@ -21,6 +23,7 @@ import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.CarnetLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
@@ -39,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public class CarnetBean implements CarnetLocal {
     private static final Logger log = LoggerFactory.getLogger(CarnetBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
@@ -54,6 +58,7 @@ public class CarnetBean implements CarnetLocal {
     @EJB private FilesFinder finder;
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlCarnetEdit treatEDIT(ViewSessionCarnetEdit vSession,
             XmlCarnetSubmit submit)
             throws WebAlbumsServiceException {
@@ -89,6 +94,7 @@ public class CarnetBean implements CarnetLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlCarnetsDisplay treatDISPLAY(ViewSessionCarnetDisplay vSession,
             XmlCarnetSubmit submit) throws WebAlbumsServiceException {
         
@@ -106,7 +112,7 @@ public class CarnetBean implements CarnetLocal {
         if (carnetId != null) {
             Carnet enrCarnet = carnetDAO.loadIfAllowed(vSession.getVSession(), carnetId);
             if (enrCarnet != null) {
-                carnets = new ArrayList<Carnet>(1);
+                carnets = new ArrayList<>(1);
                 carnets.add(enrCarnet);
             } else {
                 output.message = "Couldn't load carnet #"+carnetId;
@@ -133,7 +139,7 @@ public class CarnetBean implements CarnetLocal {
                 carnet.setText(enrCarnet.getText());
             }
             if (enrCarnet.getPhotoList() != null) {
-                carnet.photo = new ArrayList<XmlPhotoId>(enrCarnet.getPhotoList().size());
+                carnet.photo = new ArrayList<>(enrCarnet.getPhotoList().size());
                 for (Photo p : enrCarnet.getPhotoList()) {
                     XmlPhotoId photo = new XmlPhotoId(p.getId());
                     carnet.photo.add(photo);
@@ -172,6 +178,7 @@ public class CarnetBean implements CarnetLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlCarnetSubmit treatSUBMIT(ViewSessionCarnetSubmit vSession)
             throws WebAlbumsServiceException {
         XmlCarnetSubmit output = new XmlCarnetSubmit();
@@ -245,8 +252,8 @@ public class CarnetBean implements CarnetLocal {
             }
         }
         
-        Set<Photo> enrPhotos = new HashSet<Photo>();
-        Set<Album> enrAlbums = new HashSet<Album>();
+        Set<Photo> enrPhotos = new HashSet<>();
+        Set<Album> enrAlbums = new HashSet<>();
         for (Integer photoId : photos) {
             try {
                 Photo enrPhoto = photoDAO.find(photoId);
@@ -286,6 +293,7 @@ public class CarnetBean implements CarnetLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlCarnetsTop treatTOP(ViewSession vSession) {
         XmlCarnetsTop top5 = new XmlCarnetsTop();
 

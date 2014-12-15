@@ -54,15 +54,11 @@ public class Users extends HttpServlet {
                     }
                 }
                 
-                log.warn("TRY to login: {}/{}", userName, pass);
+                log.info("TRY to login: {}/{}", userName, pass);
                 request.login(userName, pass);
                 output.valid = true ;
                 Boolean dontRedirect = vSession.dontRedirect();
-                log.warn("authentication valid {}",dontRedirect);
-                log.warn("is manager? {}",request.isUserInRole(UtilisateurFacadeLocal.MANAGER_ROLE));
-                log.warn("is viewer? {}",request.isUserInRole(UtilisateurFacadeLocal.VIEWER_ROLE));
-                log.warn("is admin? {}",request.isUserInRole(UserLocal.USER_ADMIN));
-                log.warn("is famille? {}",request.isUserInRole(UserLocal.USER_FAMILLE));
+                
                 if (dontRedirect == null || !dontRedirect) {
                     response.sendRedirect("Index");
                 }

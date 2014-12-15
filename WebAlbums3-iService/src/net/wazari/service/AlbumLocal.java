@@ -25,38 +25,26 @@ import net.wazari.service.exchange.xml.common.XmlFrom;
  * @author kevin
  */
 @Local
-@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface AlbumLocal {
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit, XmlFrom fromPage) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumDisplay treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession, XmlAlbumSubmit submit) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlAlbum treatAlbmEDIT(ViewSessionAlbumEdit vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumTop treatTOP(ViewSession vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumYears treatYEARS(ViewSessionAlbumYear vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumSelect treatSELECT(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException;
     
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumGraph treatGRAPH(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException;
     
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumAgo treatAGO(ViewSessionAlbumAgo vSession) throws WebAlbumsServiceException;
     
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumAbout treatABOUT(ViewSessionAlbumSimple vSession) throws WebAlbumsServiceException ;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlAlbumGpx treatGPX(ViewSession vSession) throws WebAlbumsServiceException;
 }

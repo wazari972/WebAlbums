@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.*;
@@ -43,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@DeclareRoles({UserLocal.VIEWER_ROLE})
 public class WebPageBean implements WebPageLocal {
 
     @EJB
@@ -90,6 +94,7 @@ public class WebPageBean implements WebPageLocal {
     //or the page 'page' if asked is null
     //go to the first page otherwise
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public Bornes calculBornes(Integer page,
                                int taille) {
         Bornes bornes;
@@ -103,7 +108,9 @@ public class WebPageBean implements WebPageLocal {
     }
 
     private static final int NB_PAGES_BEF_AFT = 3 ;
+    
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlPage xmlPage(XmlFrom from, Bornes bornes) {
         int current = bornes.getCurrentPage() ;
         int last = bornes.getLastPage() ;
@@ -179,6 +186,7 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
+    @PermitAll
     public XmlAffichage xmlAffichage(ViewSession vSession) {
         XmlAffichage affichage = new XmlAffichage();
 
@@ -210,6 +218,7 @@ public class WebPageBean implements WebPageLocal {
     //if type is PHOTO, info (MODE) related to the photo #ID are put in the list
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayListIBTN(Tag_Mode mode,
             ViewSession vSession,
             EntityWithId entity,
@@ -252,6 +261,7 @@ public class WebPageBean implements WebPageLocal {
     //Mode specific information can be provide throug info (null otherwise)
     //(used by Mode.MAP for the link to the relevant address)
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayListLBN(Tag_Mode mode,
             ViewSession vSession,
             List<Tag> ids,
@@ -417,6 +427,7 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlUserList displayListDroit(Utilisateur right, Integer albmRight)
             throws WebAlbumsServiceException {
         XmlUserList output = new XmlUserList();
@@ -452,6 +463,7 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayAlbumGeolocations(ViewSessionAnAlbum vSession)
             throws WebAlbumsServiceException {
         Integer albumId = vSession.getAlbum();
@@ -468,6 +480,7 @@ public class WebPageBean implements WebPageLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayCarnetGeolocations(ViewSessionCarnetSimple vSession)
             throws WebAlbumsServiceException {
         Integer carnetId = vSession.getId();
@@ -484,6 +497,7 @@ public class WebPageBean implements WebPageLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayMapInScript(ViewSession vSession)
             throws WebAlbumsServiceException {
         return displayListLBN(Tag_Mode.TAG_USED, vSession, null, Box.MAP_SCRIPT);
@@ -495,6 +509,7 @@ public class WebPageBean implements WebPageLocal {
     //List made up of BOX items,
     //and is named NAME
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayListBN(Tag_Mode mode,
             ViewSession vSession,
             Box box)
@@ -508,6 +523,7 @@ public class WebPageBean implements WebPageLocal {
     //and is named with the default name for this MODE
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayListB(Tag_Mode mode,
             ViewSession vSession,
             Box box)
@@ -516,6 +532,7 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayListIBTD(Tag_Mode mode,
             ViewSession vSession,
             EntityWithId entity,
@@ -566,6 +583,7 @@ public class WebPageBean implements WebPageLocal {
     //if type is ALBUM, info (MODE) related to the album #ID are put in the list
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayListIBT(Tag_Mode mode,
             ViewSession vSession,
             EntityWithId entity,
@@ -580,6 +598,7 @@ public class WebPageBean implements WebPageLocal {
     //List is made up of BOX items
     //and is filled with the IDs
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlWebAlbumsList displayListLB(Tag_Mode mode,
             ViewSession vSession,
             List<Tag> ids,
@@ -589,6 +608,7 @@ public class WebPageBean implements WebPageLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public void populateEntities() {
         log.warn("Database empty, creating Root theme and Users");
         themeDAO.preconfigureDatabase();
@@ -603,7 +623,8 @@ public class WebPageBean implements WebPageLocal {
     private static final SimpleDateFormat month = new SimpleDateFormat("MMMM");
     private static final SimpleDateFormat day = new SimpleDateFormat("dd");
 
-
+    @Override
+    @PermitAll
     public XmlDate xmlDate(String strDate) {
         XmlDate date = new XmlDate();
         if (strDate.contains(".")) {
@@ -627,6 +648,7 @@ public class WebPageBean implements WebPageLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlTag tagListToTagTree(XmlWebAlbumsList tag_used) {        
         Map<Integer, XmlTag> map = new HashMap<Integer, XmlTag>();
         XmlTag olderParent = null;

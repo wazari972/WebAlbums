@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.common.exception.WebAlbumsException;
@@ -21,6 +23,7 @@ import net.wazari.dao.entity.*;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.service.AlbumLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.AlbumUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -43,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public class AlbumBean implements AlbumLocal {
     private static final Logger log = LoggerFactory.getLogger(AlbumBean.class.getCanonicalName()) ;
     private static final long serialVersionUID = 1L;
@@ -58,6 +62,7 @@ public class AlbumBean implements AlbumLocal {
     @EJB private DaoToXmlBean daoToXmlService;
     
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlAlbum treatAlbmEDIT(ViewSessionAlbumEdit vSession)
             throws WebAlbumsServiceException {
         Integer albumId = vSession.getId();
@@ -75,6 +80,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumList displayAlbum(ViewSessionAlbumDisplay vSession, 
                                         XmlAlbumSubmit submit, XmlFrom fromPage)
             throws WebAlbumsServiceException {
@@ -188,6 +194,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumGpx treatGPX(ViewSession vSession) throws WebAlbumsServiceException {
         XmlAlbumGpx gpxList = new XmlAlbumGpx();
         
@@ -212,6 +219,7 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumTop treatTOP(ViewSession vSession) throws WebAlbumsServiceException {
         XmlAlbumTop top5 = new XmlAlbumTop();
 
@@ -228,6 +236,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumGraph treatGRAPH(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException {
         XmlAlbumGraph graph = new XmlAlbumGraph();
         
@@ -237,6 +246,7 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumSelect treatSELECT(ViewSessionAlbumSelect vSession) throws WebAlbumsServiceException {
         XmlAlbumSelect select = new XmlAlbumSelect();
 
@@ -288,7 +298,9 @@ public class AlbumBean implements AlbumLocal {
     }
 
     private static final SimpleDateFormat YEAR = new SimpleDateFormat("yyyy") ;
+    
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumYears treatYEARS(ViewSessionAlbumYear vSession) throws WebAlbumsServiceException {
         XmlAlbumYears years = new XmlAlbumYears();
 
@@ -329,6 +341,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumAgo treatAGO(ViewSessionAlbumAgo vSession) throws WebAlbumsServiceException {
         XmlAlbumAgo ago = new XmlAlbumAgo();
         
@@ -355,6 +368,7 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlAlbumSubmit treatAlbmSUBMIT(ViewSessionAlbumSubmit vSession)
             throws WebAlbumsServiceException {
         XmlAlbumSubmit output = new XmlAlbumSubmit();
@@ -409,6 +423,7 @@ public class AlbumBean implements AlbumLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumDisplay treatAlbmDISPLAY(ViewSessionAlbumDisplay vSession,
             XmlAlbumSubmit submit) throws WebAlbumsServiceException {
 
@@ -421,6 +436,7 @@ public class AlbumBean implements AlbumLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlAlbumAbout treatABOUT(ViewSessionAlbumSimple vSession) throws WebAlbumsServiceException {
         Integer albumId = vSession.getId() ;
         if (albumId == null) {

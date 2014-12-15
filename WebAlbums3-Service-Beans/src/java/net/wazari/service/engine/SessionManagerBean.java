@@ -2,6 +2,7 @@ package net.wazari.service.engine;
 
 import java.io.File;
 import java.util.UUID;
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.service.SessionManagerLocal;
@@ -18,6 +19,7 @@ public class SessionManagerBean implements SessionManagerLocal {
     @EJB SystemTools sysTools ;
     /* Session Listener */
     @Override
+    @PermitAll
     public void sessionCreated(ViewSessionSession vSession) {
         log.info( "Session created {}", getUID());
         File temp = new File(vSession.getConfiguration().getTempPath() + vSession.getConfiguration().getSep() + getUID());
@@ -31,6 +33,7 @@ public class SessionManagerBean implements SessionManagerLocal {
         vSession.setTempDir(temp) ;
     }
 
+    @PermitAll
     @Override
     public void sessionDestroyed(ViewSessionSession vSession) {
         File temp = vSession.getTempDir() ;

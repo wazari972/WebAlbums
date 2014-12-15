@@ -34,10 +34,10 @@
   <user username="role1" password="tomcat" roles="role1"/>
 -->
     <!-- Activate those lines to get access to TomEE GUI -->
+	<role rolename="admin-gui" />
   <role rolename="tomee-admin" /><role rolename="manager-gui"/>
   <user username="tomee" password="tomee" roles="tomee-admin,manager-gui" />
-  <role rolename="Manager" /><role rolename="Admin" />
 
-    <user username="kevin" password="kevin" roles="Manager,Admin,manager-gui" />
+    <user username="kevin" password="" roles="manager-gui,admin-gui" />
 
 </tomcat-users>

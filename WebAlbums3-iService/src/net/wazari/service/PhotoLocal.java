@@ -27,7 +27,6 @@ import net.wazari.service.exchange.xml.photo.*;
  * @author kevin
  */
 @Local
-@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface PhotoLocal {
     
     enum TypeRequest {
@@ -50,25 +49,18 @@ public interface PhotoLocal {
         public Collection<Tag> listTagId ;
     }
     
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlPhotoList displayPhoto(PhotoRequest rq, ViewSessionPhotoDisplay vSession, XmlPhotoSubmit submit, XmlFrom fromPage) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlPhotoEdit treatPhotoEDIT(ViewSessionPhotoEdit vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException;
     
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlPhotoDisplay treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException ;
 
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlPhotoSubmit treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,Boolean correct) throws WebAlbumsServiceException ;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException ;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlPhotoAbout treatABOUT(ViewSessionPhotoSimple vSession) throws WebAlbumsServiceException ;
     
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlPhotoFastEdit treatFASTEDIT(ViewSessionPhotoFastEdit vSession) throws WebAlbumsServiceException ;
     
     XmlDetails getPhotoByPath(ViewSession vSession, String path) throws WebAlbumsServiceException;

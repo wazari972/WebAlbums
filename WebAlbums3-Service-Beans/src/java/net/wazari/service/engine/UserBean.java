@@ -1,6 +1,8 @@
 package net.wazari.service.engine;
 
 import java.security.Principal;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@DeclareRoles({UserLocal.USER_ADMIN, UserLocal.USER_FAMILLE, UserLocal.USER_AMIS, UserLocal.USER_PUBLIC,
+UserLocal.MANAGER_ROLE, UserLocal.VIEWER_ROLE})
 public class UserBean implements UserLocal {
 
     private static final Logger log = LoggerFactory.getLogger(UserBean.class.getCanonicalName());
@@ -24,10 +28,11 @@ public class UserBean implements UserLocal {
     private ThemeFacadeLocal themeDAO;
 
     @Override
+    @PermitAll
     public boolean logon(ViewSessionLogin vSession, HttpServletRequest request) {
         Integer themeId = vSession.getVSession().getThemeId();
         Principal pr = vSession.getUserPrincipal();
-        log.info( "Login with theme={}, principal={}", new Object[]{themeId, pr});
+        log.warn( "Login with theme={}, principal={}", new Object[]{themeId, pr});
 
         //user must be authenticated
         if (pr == null) {
@@ -101,6 +106,7 @@ public class UserBean implements UserLocal {
     }
 
     @Override
+    @PermitAll
     public void cleanUpSession(ViewSessionLogin vSession) {
         vSession.setUser(null);
         vSession.setSessionManager(null);

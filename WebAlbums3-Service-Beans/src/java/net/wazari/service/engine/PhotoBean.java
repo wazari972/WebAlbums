@@ -2,6 +2,8 @@ package net.wazari.service.engine;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -36,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public class PhotoBean implements PhotoLocal {
 
     private static final Logger log = LoggerFactory.getLogger(PhotoBean.class.toString());
@@ -64,6 +67,7 @@ public class PhotoBean implements PhotoLocal {
     private FilesFinder systemFacade;
     
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlPhotoSubmit treatPhotoSUBMIT(ViewSessionPhotoSubmit vSession,
             Boolean correct) throws WebAlbumsServiceException {
         XmlPhotoSubmit output = new XmlPhotoSubmit();
@@ -206,6 +210,7 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlPhotoDisplay treatPhotoDISPLAY(ViewSessionPhotoDisplay vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException {
         XmlPhotoDisplay output = new XmlPhotoDisplay();
         //afficher les photos
@@ -259,6 +264,7 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlPhotoEdit treatPhotoEDIT(ViewSessionPhotoEdit vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException {
         XmlPhotoEdit output = new XmlPhotoEdit();
         if (submit != null) {
@@ -322,7 +328,7 @@ public class PhotoBean implements PhotoLocal {
                                                ListOrder.DESC);
                 }
                 for (Photo enrPhoto : lstP.subset) {
-                    if (enrPhoto.getId() == photoId) {
+                    if (Objects.equals(enrPhoto.getId(), photoId)) {
                         found = true;
                         break;   
                     }
@@ -476,6 +482,7 @@ public class PhotoBean implements PhotoLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlPhotoRandom treatRANDOM(ViewSession vSession) throws WebAlbumsServiceException {
         Photo enrPhoto = null;
         while (true) {
@@ -496,6 +503,8 @@ public class PhotoBean implements PhotoLocal {
         return output ;
     }
 
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    @Override
     public XmlPhotoAbout treatABOUT(ViewSessionPhotoSimple vSession) throws WebAlbumsServiceException {
         Photo enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), vSession.getId());
         if(enrPhoto == null) {
@@ -509,6 +518,8 @@ public class PhotoBean implements PhotoLocal {
         return output ;
     }
 
+
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     @Override
     public XmlPhotoFastEdit treatFASTEDIT(ViewSessionPhotoFastEdit vSession) {
         XmlPhotoFastEdit output = new XmlPhotoFastEdit();
@@ -582,6 +593,8 @@ public class PhotoBean implements PhotoLocal {
         return output;
     }
     
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    @Override
     public XmlDetails getPhotoByPath(ViewSession vSession, String path) throws WebAlbumsServiceException {
         XmlDetails ret = new XmlDetails();
         Photo enrPhoto = photoDAO.loadByPath(path);

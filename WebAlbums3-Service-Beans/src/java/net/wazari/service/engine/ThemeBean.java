@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.AlbumFacadeLocal;
@@ -16,6 +18,7 @@ import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Theme;
 import net.wazari.service.ThemeLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.ViewSessionTheme;
@@ -29,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UserLocal.VIEWER_ROLE})
 public class ThemeBean implements ThemeLocal {
     private static final Logger log = LoggerFactory.getLogger(ThemeBean.class.getName());
     
@@ -58,6 +62,7 @@ public class ThemeBean implements ThemeLocal {
         vSession.setTempTheme(origTheme);
         
         Collections.sort(themes, new Comparator<Theme>() {
+            @Override
             public int compare(Theme t, Theme t1) {
                 String tStr = themeDates.get(t);
                 String t1Str = themeDates.get(t1);
@@ -68,6 +73,7 @@ public class ThemeBean implements ThemeLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlThemeList getThemeListSimple(ViewSession vSession) {
         XmlThemeList output = new XmlThemeList();
 
@@ -76,6 +82,9 @@ public class ThemeBean implements ThemeLocal {
 
         return output;
     }
+    
+    @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlThemeList getThemeList(ViewSessionTheme vSession, Sort order) {
         XmlThemeList output = new XmlThemeList();
 

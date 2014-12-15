@@ -23,9 +23,7 @@ import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
  * @author kevin
  */
 @Local
-@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface TagLocal {    
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlTagDisplay treatTagDISPLAY(ViewSessionTagDisplay vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException;
 
     @RolesAllowed(UserLocal.VIEWER_ROLE)

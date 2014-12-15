@@ -1,6 +1,8 @@
 package net.wazari.service.engine;
 
 import java.util.*;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.TagFacadeLocal;
@@ -11,6 +13,7 @@ import net.wazari.service.PhotoLocal;
 import net.wazari.service.PhotoLocal.PhotoRequest;
 import net.wazari.service.PhotoLocal.TypeRequest;
 import net.wazari.service.TagLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
@@ -28,9 +31,9 @@ import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.util.system.SystemTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.profiler.StopWatch;
 
 @Stateless
+@DeclareRoles({UserLocal.VIEWER_ROLE})
 public class TagBean implements TagLocal {
 
     private static final Logger log = LoggerFactory.getLogger(TagBean.class.getName());
@@ -41,17 +44,16 @@ public class TagBean implements TagLocal {
     private PhotoLocal photoLocal;
     @EJB
     private WebPageLocal webService;
-    @EJB
-    private SystemTools sysTools;
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlTagDisplay treatTagDISPLAY(ViewSessionTagDisplay vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException {
         XmlTagDisplay output = new XmlTagDisplay();
         Integer[] tags = vSession.getTagAsked();
         
         boolean wantChildren = vSession.getWantTagChildren();
         if (tags != null) {
-            Set<Tag> tagSet = new HashSet<Tag>(tags.length);
+            Set<Tag> tagSet = new HashSet<>(tags.length);
             for (int tagId : Arrays.asList(tags)) {
                 try {
                     Tag enrTag = tagDAO.find(tagId);
@@ -89,6 +91,7 @@ public class TagBean implements TagLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlTagAbout treatABOUT(ViewSessionTagSimple vSession) {
         Integer tagId = vSession.getId() ;
         Tag enrTag = tagDAO.find(tagId) ;
@@ -118,7 +121,7 @@ public class TagBean implements TagLocal {
             this.tag = tag;
             this.xml = xml;
             if (xml.children == null) {
-                xml.children = new LinkedList<XmlTagCloudEntry>() ;
+                xml.children = new LinkedList<>() ;
             }
             this.parentList = parentList;
         }
@@ -127,6 +130,7 @@ public class TagBean implements TagLocal {
     private static final int SIZE_MIN = 100;
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlTagCloud treatTagCloud(ViewSession vSession) {
         XmlTagCloud output = new XmlTagCloud();
 
@@ -140,7 +144,7 @@ public class TagBean implements TagLocal {
         }
 
         Tag enrCurrentTag = null;
-        Stack<PairTagXmlBuilder> enrSonStack = new Stack<PairTagXmlBuilder>();
+        Stack<PairTagXmlBuilder> enrSonStack = new Stack<>();
         while (!map.isEmpty()) {
             //if we've got no --parent-- tag to treat
             if (enrCurrentTag == null) {
@@ -212,7 +216,7 @@ public class TagBean implements TagLocal {
             return sonCount;
         }
         
-        List<XmlTagCloudEntry> toRemove = new LinkedList<XmlTagCloudEntry>();
+        List<XmlTagCloudEntry> toRemove = new LinkedList<>();
         for (XmlTagCloudEntry son : tag.children) {
             long count = updateParentTagCloud(son);
             
@@ -233,11 +237,13 @@ public class TagBean implements TagLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlTagPersonsPlaces treatTagPersons(ViewSession vSession) {
         return treatTagPersonsPlaces(vSession, Tag_Special.PERSONS);
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlTagPersonsPlaces treatTagPlaces(ViewSession vSession) {
         return treatTagPersonsPlaces(vSession, Tag_Special.PLACES);
     }

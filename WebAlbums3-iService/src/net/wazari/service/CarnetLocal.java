@@ -23,17 +23,13 @@ import net.wazari.service.exchange.xml.carnet.XmlCarnetsTop;
  * @author kevin
  */
 @Local
-@DeclareRoles({UserLocal.VIEWER_ROLE, UserLocal.MANAGER_ROLE})
 public interface CarnetLocal {
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
+    
     XmlCarnetsDisplay treatDISPLAY(ViewSessionCarnetDisplay vSession, XmlCarnetSubmit submit) throws WebAlbumsServiceException;
     
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlCarnetEdit treatEDIT(ViewSessionCarnetEdit vSession, XmlCarnetSubmit submit) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.MANAGER_ROLE)
     XmlCarnetSubmit treatSUBMIT(ViewSessionCarnetSubmit vSession) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlCarnetsTop treatTOP(ViewSession vSession);
 }

@@ -3,11 +3,14 @@ package net.wazari.service.engine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.dao.*;
 import net.wazari.dao.entity.*;
 import net.wazari.service.ConfigLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.xml.config.*;
@@ -16,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@DeclareRoles({UserLocal.MANAGER_ROLE})
 public class ConfigBean implements ConfigLocal {
 
     private static final long serialVersionUID = -628341734743684910L;
@@ -35,6 +39,7 @@ public class ConfigBean implements ConfigLocal {
     private FilesFinder filesFinder;
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigImport treatIMPORT(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigImport output = new XmlConfigImport();
@@ -52,6 +57,7 @@ public class ConfigBean implements ConfigLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigModTag treatMODTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigModTag output = new XmlConfigModTag ();
@@ -91,6 +97,7 @@ public class ConfigBean implements ConfigLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigSetHome treatSETHOME(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigSetHome output = new XmlConfigSetHome();
@@ -115,6 +122,7 @@ public class ConfigBean implements ConfigLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigModGeo treatMODGEO(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigModGeo output = new XmlConfigModGeo();
@@ -150,6 +158,7 @@ public class ConfigBean implements ConfigLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigModMinor treatMODMINOR(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigModMinor output = new XmlConfigModMinor();
@@ -178,6 +187,7 @@ public class ConfigBean implements ConfigLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigModPers treatMODPERS(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigModPers output = new XmlConfigModPers();
@@ -234,6 +244,7 @@ public class ConfigBean implements ConfigLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigModVis treatMODVIS(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigModVis output = new XmlConfigModVis();
@@ -277,6 +288,7 @@ public class ConfigBean implements ConfigLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigNewTag treatNEWTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigNewTag output = new XmlConfigNewTag();
@@ -358,6 +370,7 @@ public class ConfigBean implements ConfigLocal {
     }
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigLinkTag treatLINKTAG(ViewSessionConfig vSession) {
         XmlConfigLinkTag output = new XmlConfigLinkTag();
 
@@ -393,6 +406,7 @@ public class ConfigBean implements ConfigLocal {
 
 
     @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigDelTag treatDELTAG(ViewSessionConfig vSession)
             throws WebAlbumsServiceException {
         XmlConfigDelTag output = new XmlConfigDelTag();
@@ -431,10 +445,10 @@ public class ConfigBean implements ConfigLocal {
 
             //tag
             i = 0;
-            if (enrTag != null) {
-                tagDAO.remove(enrTag);
-                i++;
-            }
+            
+            tagDAO.remove(enrTag);
+            i++;
+            
             output.message += "Suppression de " + i + " Tag" ;
 
             return output ;
@@ -444,6 +458,8 @@ public class ConfigBean implements ConfigLocal {
         }
     }
 
+    @Override
+    @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigDelTheme treatDELTHEME(ViewSessionConfig vSession) throws WebAlbumsServiceException {
         XmlConfigDelTheme output = new XmlConfigDelTheme() ;
         try {

@@ -11,6 +11,8 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import net.wazari.common.util.StringUtil;
@@ -24,6 +26,7 @@ import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
 import net.wazari.dao.exchange.ServiceSession.ListOrder;
 import net.wazari.service.ImageLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSessionImages;
@@ -36,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Stateless
+@DeclareRoles({UserLocal.VIEWER_ROLE})
 public class ImageBeaned implements ImageLocal {
     private static final Logger log = LoggerFactory.getLogger(ImageBeaned.class.getName());
     private static final long serialVersionUID = 1L;
@@ -47,6 +51,7 @@ public class ImageBeaned implements ImageLocal {
     @EJB private ThemeFacadeLocal themeDAO ;
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public String treatSHRINK(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
         Photo enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), vSession.getId());
@@ -76,6 +81,7 @@ public class ImageBeaned implements ImageLocal {
     }
     
     @Override
+    @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlImage treatIMG(ViewSessionImages vSession)
             throws WebAlbumsServiceException {
         ImgMode mode = vSession.getImgMode();

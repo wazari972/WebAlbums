@@ -16,9 +16,6 @@ import net.wazari.service.exchange.ViewSessionLogin;
  * @author kevin
  */
 @Local
-
-@DeclareRoles({UserLocal.USER_ADMIN, UserLocal.USER_FAMILLE, UserLocal.USER_AMIS, UserLocal.USER_PUBLIC,
-UserLocal.MANAGER_ROLE, UserLocal.VIEWER_ROLE})
 public interface UserLocal {
     String MANAGER_ROLE = UtilisateurFacadeLocal.MANAGER_ROLE ;
     String VIEWER_ROLE  = UtilisateurFacadeLocal.VIEWER_ROLE  ;
