@@ -26,13 +26,13 @@ public class SessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {
-        log.warn("Session created") ;
+        log.warn("Session created:"+se.getSession().getId()) ;
         sessionService.sessionCreated(new ViewSessionLoginImpl(se.getSession()));
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
-        log.warn("Session Destroyed") ;
+        log.warn("Session Destroyed:"+se.getSession().getId()) ;
         try {
             sessionService.sessionDestroyed(new ViewSessionLoginImpl(se.getSession()));
         } catch (EJBException e) {

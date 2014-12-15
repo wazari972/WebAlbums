@@ -9,6 +9,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.wazari.dao.UtilisateurFacadeLocal;
+import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionLogin.Login_Action;
 import net.wazari.service.exchange.xml.XmlLogin;
@@ -51,11 +53,16 @@ public class Users extends HttpServlet {
                         request.logout();
                     }
                 }
-                log.info("try to login: {}", userName);
+                
+                log.warn("TRY to login: {}/{}", userName, pass);
                 request.login(userName, pass);
                 output.valid = true ;
                 Boolean dontRedirect = vSession.dontRedirect();
-                log.info("authentication valid {}",dontRedirect);
+                log.warn("authentication valid {}",dontRedirect);
+                log.warn("is manager? {}",request.isUserInRole(UtilisateurFacadeLocal.MANAGER_ROLE));
+                log.warn("is viewer? {}",request.isUserInRole(UtilisateurFacadeLocal.VIEWER_ROLE));
+                log.warn("is admin? {}",request.isUserInRole(UserLocal.USER_ADMIN));
+                log.warn("is famille? {}",request.isUserInRole(UserLocal.USER_FAMILLE));
                 if (dontRedirect == null || !dontRedirect) {
                     response.sendRedirect("Index");
                 }
@@ -70,7 +77,7 @@ public class Users extends HttpServlet {
             }
 
         } catch (javax.servlet.ServletException e) {
-            log.info("authentication failed : {}", e.getMessage());
+            log.warn("authentication failed : {}", e.getMessage());
             output.denied = true ;
             output.login = true ;
         } 

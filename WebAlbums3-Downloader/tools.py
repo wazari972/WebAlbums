@@ -158,10 +158,13 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
 
 def login(user, paswd, save_index=True, do_static=True, get_xslt=True, parse_and_transform=True):
     global headers
-    data = dict(userName=user, userPass=paswd)
+
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
-    response, content = h.request("%sUsers?action=LOGIN" % WA_URL, "POST", body=urlencode(data), headers=headers)
-    headers = {'Cookie': response['set-cookie']}
+    response, content = h.request("%sIndex" % WA_URL, headers=headers)
+    
+    headers['Cookie'] = response['set-cookie']
+    response, content = h.request("{}Users?action=LOGIN&dontRedirect=true&userName={}&userPass={}".format(WA_URL, user, paswd), headers=headers)
+    headers['Cookie'] = response['set-cookie']
     data = dict(themeId=9)
     if get_xslt:
         prepare_XSLTs()

@@ -45,7 +45,6 @@ public class DispatcherBean {
     }
 
     public DispatcherBean() {
-        log.warn("WebAlbums3-Servlet DispatcherBean created !");
     }
     @EJB private Index indexServlet;
     @EJB private Users userServlet;
@@ -80,14 +79,14 @@ public class DispatcherBean {
         }
         if (page != Page.USER) {
             log.debug("Authenticate the session");
-            //request.authenticate(response);
+            request.authenticate(response);
             
-            /* TO BE REMOVED ... one day */
+            /* TO BE REMOVED ... one day 
             if (request.getUserPrincipal() == null) {
                 try {
                     request.login("kevin", "");
                 } catch (ServletException e) {}
-            }
+            }*/
         }
         
         log.debug("============= <{}> =============", page);

@@ -19,18 +19,6 @@
                     <file>${reference.WebAlbums3-Servlet.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
-                <library>
-                    <file>${reference.WebAlbums3-FS.dist-ear}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library>
-                    <file>${reference.WebAlbums3-Jython.dist-ear}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library>
-                    <file>${reference.WebAlbums3-FS.dist-ear}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
             </web-module-additional-libraries>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
@@ -39,22 +27,6 @@
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>WebAlbums3-DAO-JPABeans</foreign-project>
-                <artifact-type>j2ee_ear_archive</artifact-type>
-                <script>build.xml</script>
-                <target>dist-ear</target>
-                <clean-target>clean-ear</clean-target>
-                <id>dist-ear</id>
-            </reference>
-            <reference>
-                <foreign-project>WebAlbums3-FS</foreign-project>
-                <artifact-type>j2ee_ear_archive</artifact-type>
-                <script>build.xml</script>
-                <target>dist-ear</target>
-                <clean-target>clean-ear</clean-target>
-                <id>dist-ear</id>
-            </reference>
-            <reference>
-                <foreign-project>WebAlbums3-Jython</foreign-project>
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
                 <target>dist-ear</target>

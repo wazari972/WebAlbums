@@ -13,16 +13,10 @@
   <module>
     <ejb>WebAlbums3-Service-Beans.jar</ejb>
   </module>
-  <module>
+  <!--<module>
     <web>
       <web-uri>WebAlbums3-FS.war</web-uri>
       <context-root>/WebAlbums3-FS</context-root>
     </web>
-  </module>
-  <module>
-    <web>
-      <web-uri>WebAlbums3-Jython.war</web-uri>
-      <context-root>/WebAlbums3-Jython</context-root>
-    </web>
-  </module>
+  </module>-->
 </application>
