@@ -1,0 +1,67 @@
+commons-beanutils-core-1.8.3.jar
+ commons-logging-1.1.1.jar
+geronimo-javamail_1.4_mail-1.8.3.jar
+geronimo-jaxb_2.2_spec-1.0.1.jar
+javaee-api-6.0-6-tomcat.jar
+myfaces-api-2.1.15.jar
+myfaces-impl-2.1.15.jar
+ commons-codec-1.9.jar
+ commons-collections-3.2.1.jar
+ commons-digester-1.8.jar
+openejb-client-4.7.1.jar
+openejb-core-4.7.1.jar
+ bval-core-0.5.jar
+ bval-jsr303-0.5.jar
+ commons-dbcp-1.4.jar
+ commons-lang3-3.3.2.jar
+ commons-pool-1.5.7.jar
+ geronimo-transaction-3.1.1.jar
+ howl-1.0.1-1.jar
+ jansi-1.8.jar
+ mbean-annotation-api-4.7.1.jar
+ openejb-api-4.7.1.jar
+ openejb-javaagent-4.7.1.jar
+ openejb-jee-accessors-4.7.1.jar
+  sxc-jaxb-core-0.8.jar
+   sxc-runtime-0.8.jar
+ openejb-jpa-integration-4.7.1.jar
+ openjpa-2.4.0-nonfinal-1598334.jar
+  commons-lang-2.6.jar
+  serp-1.14.1.jar
+ openwebbeans-ee-1.2.6.jar
+ openwebbeans-ee-common-1.2.6.jar
+ openwebbeans-ejb-1.2.6.jar
+ openwebbeans-spi-1.2.6.jar
+ openwebbeans-web-1.2.6.jar
+  openwebbeans-el22-1.2.6.jar
+ quartz-openejb-shade-2.2.1.jar
+ slf4j-api-1.7.7.jar
+ slf4j-jdk14-1.7.7.jar
+ xbean-bundleutils-4.0.jar
+openejb-ejbd-4.7.1.jar
+ openejb-loader-4.7.1.jar
+openejb-hsql-4.7.1.jar
+ hsqldb-2.3.2.jar
+openejb-http-4.7.1.jar
+openejb-jstl-1.2.jar
+openejb-server-4.7.1.jar
+ commons-cli-1.2.jar
+ openejb-jee-4.7.1.jar
+  jaxb-impl-2.2.7.jar
+   FastInfoset-1.2.12.jar
+   jaxb-core-2.2.7.jar
+    istack-commons-runtime-2.16.jar
+ xbean-asm5-shaded-4.0.jar
+ xbean-finder-shaded-4.0.jar
+ xbean-reflect-4.0.jar
+openwebbeans-jsf-1.2.6.jar
+ openwebbeans-impl-1.2.6.jar
+swizzle-stream-1.6.2.jar
+tomee-catalina-1.7.1.jar
+ tomee-jdbc-1.7.1.jar
+ tomee-juli-1.7.1.jar
+tomee-common-1.7.1.jar
+ xbean-naming-4.0.jar
+tomee-loader-1.7.1.jar
+tomee-mojarra-1.7.1.jar
+tomee-myfaces-1.7.1.jar

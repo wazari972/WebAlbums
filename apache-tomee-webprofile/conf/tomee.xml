@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomee>
+<Resource id = "jdbc/mysqlWebAlbums" type="DataSource">
+JdbcDriver com.mysql.jdbc.Driver
+JdbcUrl jdbc:mysql://127.0.0.1/WebAlbums
+UserName wazari972
+Password ijaheb
+JtaManaged true
+</Resource>
+
+  <!-- see http://tomee.apache.org/containers-and-resources.html -->
+
+  <!-- activate next line to be able to deploy applications in apps -->
+  <Deployments dir="apps" /> 
+</tomee>

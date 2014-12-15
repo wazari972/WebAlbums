@@ -1,0 +1,9 @@
+java -Djava.security.auth.login.config=$(pwd)/conf/login.config  -Dopenejb.authentication.realmName=PropertiesLogin \
+-Djava.util.logging.config.file=conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager \
+"-Dhttp.nonProxyHosts=localhost|127.0.0.1|kevin-desktop" \
+-Djava.endorsed.dirs=/home/kevin/WebAlbums/apache-tomee-webprofile/endorsed \
+-classpath /home/kevin/WebAlbums/apache-tomee-webprofile/bin/bootstrap.jar:/home/kevin/WebAlbums/apache-tomee-webprofile/bin/tomcat-juli.jar \
+-Dcatalina.base=/home/kevin/WebAlbums/apache-tomee-webprofile \
+-Dcatalina.home=/home/kevin/WebAlbums/apache-tomee-webprofile \
+-Djava.io.tmpdir=/home/kevin/ \
+org.apache.catalina.startup.Bootstrap start 

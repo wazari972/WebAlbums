@@ -1,0 +1,85 @@
+<dependencies>
+  <dependency groupId="commons-beanutils" artifactId="commons-beanutils-core" version="1.8.3" file-name="commons-beanutils-core-1.8.3.jar">
+    <dependency groupId="commons-logging" artifactId="commons-logging" version="1.1.1" file-name="commons-logging-1.1.1.jar"/>
+  </dependency>
+  <dependency groupId="org.apache.geronimo.javamail" artifactId="geronimo-javamail_1.4_mail" version="1.8.3" file-name="geronimo-javamail_1.4_mail-1.8.3.jar"/>
+  <dependency groupId="org.apache.geronimo.specs" artifactId="geronimo-jaxb_2.2_spec" version="1.0.1" file-name="geronimo-jaxb_2.2_spec-1.0.1.jar"/>
+  <dependency groupId="org.apache.myfaces.core" artifactId="myfaces-api" version="2.1.15" file-name="myfaces-api-2.1.15.jar"/>
+  <dependency groupId="org.apache.myfaces.core" artifactId="myfaces-impl" version="2.1.15" file-name="myfaces-impl-2.1.15.jar">
+    <dependency groupId="commons-codec" artifactId="commons-codec" version="1.9" file-name="commons-codec-1.9.jar"/>
+    <dependency groupId="commons-collections" artifactId="commons-collections" version="3.2.1" file-name="commons-collections-3.2.1.jar"/>
+    <dependency groupId="commons-digester" artifactId="commons-digester" version="1.8" file-name="commons-digester-1.8.jar"/>
+  </dependency>
+  <dependency groupId="org.apache.openejb" artifactId="javaee-api" version="6.0-6" file-name="javaee-api-6.0-6-tomcat.jar"/>
+  <dependency groupId="org.apache.openejb" artifactId="openejb-client" version="4.7.1" file-name="openejb-client-4.7.1.jar"/>
+  <dependency groupId="org.apache.openejb" artifactId="openejb-core" version="4.7.1" file-name="openejb-core-4.7.1.jar">
+    <dependency groupId="commons-dbcp" artifactId="commons-dbcp" version="1.4" file-name="commons-dbcp-1.4.jar"/>
+    <dependency groupId="commons-pool" artifactId="commons-pool" version="1.5.7" file-name="commons-pool-1.5.7.jar"/>
+    <dependency groupId="org.apache.bval" artifactId="bval-core" version="0.5" file-name="bval-core-0.5.jar"/>
+    <dependency groupId="org.apache.bval" artifactId="bval-jsr303" version="0.5" file-name="bval-jsr303-0.5.jar"/>
+    <dependency groupId="org.apache.commons" artifactId="commons-lang3" version="3.3.2" file-name="commons-lang3-3.3.2.jar"/>
+    <dependency groupId="org.apache.geronimo.components" artifactId="geronimo-transaction" version="3.1.1" file-name="geronimo-transaction-3.1.1.jar"/>
+    <dependency groupId="org.apache.openejb" artifactId="mbean-annotation-api" version="4.7.1" file-name="mbean-annotation-api-4.7.1.jar"/>
+    <dependency groupId="org.apache.openejb" artifactId="openejb-api" version="4.7.1" file-name="openejb-api-4.7.1.jar"/>
+    <dependency groupId="org.apache.openejb" artifactId="openejb-javaagent" version="4.7.1" file-name="openejb-javaagent-4.7.1.jar"/>
+    <dependency groupId="org.apache.openejb" artifactId="openejb-jee-accessors" version="4.7.1" file-name="openejb-jee-accessors-4.7.1.jar">
+      <dependency groupId="org.metatype.sxc" artifactId="sxc-jaxb-core" version="0.8" file-name="sxc-jaxb-core-0.8.jar">
+        <dependency groupId="org.metatype.sxc" artifactId="sxc-runtime" version="0.8" file-name="sxc-runtime-0.8.jar"/>
+      </dependency>
+    </dependency>
+    <dependency groupId="org.apache.openejb" artifactId="openejb-jpa-integration" version="4.7.1" file-name="openejb-jpa-integration-4.7.1.jar"/>
+    <dependency groupId="org.apache.openejb.patch" artifactId="openjpa" version="2.4.0-nonfinal-1598334" file-name="openjpa-2.4.0-nonfinal-1598334.jar">
+      <dependency groupId="commons-lang" artifactId="commons-lang" version="2.6" file-name="commons-lang-2.6.jar"/>
+      <dependency groupId="net.sourceforge.serp" artifactId="serp" version="1.14.1" file-name="serp-1.14.1.jar"/>
+    </dependency>
+    <dependency groupId="org.apache.openejb.shade" artifactId="quartz-openejb-shade" version="2.2.1" file-name="quartz-openejb-shade-2.2.1.jar"/>
+    <dependency groupId="org.apache.openwebbeans" artifactId="openwebbeans-ee" version="1.2.6" file-name="openwebbeans-ee-1.2.6.jar"/>
+    <dependency groupId="org.apache.openwebbeans" artifactId="openwebbeans-ee-common" version="1.2.6" file-name="openwebbeans-ee-common-1.2.6.jar"/>
+    <dependency groupId="org.apache.openwebbeans" artifactId="openwebbeans-ejb" version="1.2.6" file-name="openwebbeans-ejb-1.2.6.jar"/>
+    <dependency groupId="org.apache.openwebbeans" artifactId="openwebbeans-spi" version="1.2.6" file-name="openwebbeans-spi-1.2.6.jar"/>
+    <dependency groupId="org.apache.openwebbeans" artifactId="openwebbeans-web" version="1.2.6" file-name="openwebbeans-web-1.2.6.jar">
+      <dependency groupId="org.apache.openwebbeans" artifactId="openwebbeans-el22" version="1.2.6" file-name="openwebbeans-el22-1.2.6.jar"/>
+    </dependency>
+    <dependency groupId="org.apache.xbean" artifactId="xbean-bundleutils" version="4.0" file-name="xbean-bundleutils-4.0.jar"/>
+    <dependency groupId="org.fusesource.jansi" artifactId="jansi" version="1.8" file-name="jansi-1.8.jar"/>
+    <dependency groupId="org.objectweb.howl" artifactId="howl" version="1.0.1-1" file-name="howl-1.0.1-1.jar"/>
+    <dependency groupId="org.slf4j" artifactId="slf4j-api" version="1.7.7" file-name="slf4j-api-1.7.7.jar"/>
+    <dependency groupId="org.slf4j" artifactId="slf4j-jdk14" version="1.7.7" file-name="slf4j-jdk14-1.7.7.jar"/>
+  </dependency>
+  <dependency groupId="org.apache.openejb" artifactId="openejb-ejbd" version="4.7.1" file-name="openejb-ejbd-4.7.1.jar">
+    <dependency groupId="org.apache.openejb" artifactId="openejb-loader" version="4.7.1" file-name="openejb-loader-4.7.1.jar"/>
+  </dependency>
+  <dependency groupId="org.apache.openejb" artifactId="openejb-hsql" version="4.7.1" file-name="openejb-hsql-4.7.1.jar">
+    <dependency groupId="org.hsqldb" artifactId="hsqldb" version="2.3.2" file-name="hsqldb-2.3.2.jar"/>
+  </dependency>
+  <dependency groupId="org.apache.openejb" artifactId="openejb-http" version="4.7.1" file-name="openejb-http-4.7.1.jar"/>
+  <dependency groupId="org.apache.openejb" artifactId="openejb-server" version="4.7.1" file-name="openejb-server-4.7.1.jar">
+    <dependency groupId="commons-cli" artifactId="commons-cli" version="1.2" file-name="commons-cli-1.2.jar"/>
+    <dependency groupId="org.apache.openejb" artifactId="openejb-jee" version="4.7.1" file-name="openejb-jee-4.7.1.jar">
+      <dependency groupId="com.sun.xml.bind" artifactId="jaxb-impl" version="2.2.7" file-name="jaxb-impl-2.2.7.jar">
+        <dependency groupId="com.sun.xml.bind" artifactId="jaxb-core" version="2.2.7" file-name="jaxb-core-2.2.7.jar">
+          <dependency groupId="com.sun.istack" artifactId="istack-commons-runtime" version="2.16" file-name="istack-commons-runtime-2.16.jar"/>
+        </dependency>
+        <dependency groupId="com.sun.xml.fastinfoset" artifactId="FastInfoset" version="1.2.12" file-name="FastInfoset-1.2.12.jar"/>
+      </dependency>
+    </dependency>
+    <dependency groupId="org.apache.xbean" artifactId="xbean-asm5-shaded" version="4.0" file-name="xbean-asm5-shaded-4.0.jar"/>
+    <dependency groupId="org.apache.xbean" artifactId="xbean-finder-shaded" version="4.0" file-name="xbean-finder-shaded-4.0.jar"/>
+    <dependency groupId="org.apache.xbean" artifactId="xbean-reflect" version="4.0" file-name="xbean-reflect-4.0.jar"/>
+  </dependency>
+  <dependency groupId="org.apache.openejb" artifactId="tomee-catalina" version="1.7.1" file-name="tomee-catalina-1.7.1.jar">
+    <dependency groupId="org.apache.openejb" artifactId="tomee-jdbc" version="1.7.1" file-name="tomee-jdbc-1.7.1.jar"/>
+    <dependency groupId="org.apache.openejb" artifactId="tomee-juli" version="1.7.1" file-name="tomee-juli-1.7.1.jar"/>
+  </dependency>
+  <dependency groupId="org.apache.openejb" artifactId="tomee-common" version="1.7.1" file-name="tomee-common-1.7.1.jar">
+    <dependency groupId="org.apache.xbean" artifactId="xbean-naming" version="4.0" file-name="xbean-naming-4.0.jar"/>
+  </dependency>
+  <dependency groupId="org.apache.openejb" artifactId="tomee-loader" version="1.7.1" file-name="tomee-loader-1.7.1.jar"/>
+  <dependency groupId="org.apache.openejb" artifactId="tomee-mojarra" version="1.7.1" file-name="tomee-mojarra-1.7.1.jar"/>
+  <dependency groupId="org.apache.openejb" artifactId="tomee-myfaces" version="1.7.1" file-name="tomee-myfaces-1.7.1.jar"/>
+  <dependency groupId="org.apache.openejb.patch" artifactId="openejb-jstl" version="1.2" file-name="openejb-jstl-1.2.jar"/>
+  <dependency groupId="org.apache.openwebbeans" artifactId="openwebbeans-jsf" version="1.2.6" file-name="openwebbeans-jsf-1.2.6.jar">
+    <dependency groupId="org.apache.openwebbeans" artifactId="openwebbeans-impl" version="1.2.6" file-name="openwebbeans-impl-1.2.6.jar"/>
+  </dependency>
+  <dependency groupId="org.codehaus.swizzle" artifactId="swizzle-stream" version="1.6.2" file-name="swizzle-stream-1.6.2.jar"/>
+</dependencies>

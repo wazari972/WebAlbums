@@ -1,0 +1,14 @@
+<?xml version = "1.0" encoding="UTF-8"?>
+<openejbb>
+
+<Resource id = "jdbc/mysqlWebAlbums" type="DataSource">
+JdbcDriver com.mysql.jdbc.Driver
+JdbcUrl jdbc:mysql://127.0.0.1/WebAlbums
+UserName wazari972
+Password ijaheb
+JtaManaged true
+</Resource>
+
+<Deployments dir = "apps/" />
+
+</openejb>
