@@ -5,9 +5,9 @@
 
 <Resource id = "jdbc/mysqlWebAlbums" type="DataSource">
 JdbcDriver com.mysql.jdbc.Driver
-JdbcUrl jdbc:mysql://127.0.0.1/WebAlbums
-UserName wazari972
-Password ijaheb
+JdbcUrl jdbc:mysql://SERVER/DATABASE
+UserName USERNAME
+Password PASSWORD
 JtaManaged true
 </Resource>
 
