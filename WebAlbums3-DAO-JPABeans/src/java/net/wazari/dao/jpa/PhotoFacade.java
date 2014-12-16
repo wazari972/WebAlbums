@@ -6,6 +6,8 @@ package net.wazari.dao.jpa;
 
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -15,6 +17,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
+import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
@@ -31,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public class PhotoFacade implements PhotoFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(PhotoFacade.class.getCanonicalName()) ;
 
@@ -43,22 +47,26 @@ public class PhotoFacade implements PhotoFacadeLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void create(Photo photo) {
         em.persist(photo);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void edit(Photo photo) {
         em.merge(photo);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void remove(Photo photo) {
         photo.getAlbum().getPhotoList().remove(photo);
         em.remove(photo);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Photo loadIfAllowed(ServiceSession session, int id) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -78,6 +86,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public SubsetOf<Photo> loadFromAlbum(ServiceSession session, Album album, 
                                          Bornes bornes, ListOrder order)
     {
@@ -111,6 +120,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Photo loadByPath(String path) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -125,6 +135,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public SubsetOf<Photo> loadByTags(ServiceSession session, Collection<Tag> listTag, Bornes bornes, ListOrder order) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
@@ -157,6 +168,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Photo find(Integer id) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -172,11 +184,13 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Photo newPhoto() {
         return new JPAPhoto() ;
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public List<Photo> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAPhoto> cq = cb.createQuery(JPAPhoto.class) ;
@@ -188,6 +202,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Photo loadRandom(ServiceSession session) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -208,6 +223,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
     
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void pleaseFlush() {
         em.flush();
     }

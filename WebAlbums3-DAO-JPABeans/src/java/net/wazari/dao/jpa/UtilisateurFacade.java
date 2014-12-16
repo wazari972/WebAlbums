@@ -6,6 +6,8 @@
 package net.wazari.dao.jpa;
 
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -26,6 +28,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE})
 public class UtilisateurFacade implements UtilisateurFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(UtilisateurFacade.class.getCanonicalName()) ;
 
@@ -38,11 +41,13 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void newUser(int id, String nom) {
         em.merge(new JPAUtilisateur(id, nom));
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Utilisateur loadByName(String name) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -60,6 +65,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Utilisateur loadUserOutside(int albumId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
@@ -73,6 +79,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public List<Utilisateur> loadUserInside(int albumId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;
@@ -90,6 +97,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public JPAUtilisateur find(Integer id) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -106,6 +114,7 @@ public class UtilisateurFacade implements UtilisateurFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public List<Utilisateur> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAUtilisateur> cq = cb.createQuery(JPAUtilisateur.class) ;

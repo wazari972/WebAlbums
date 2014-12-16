@@ -15,18 +15,12 @@ import net.wazari.dao.entity.Person;
  * @author kevin
  */
 @Local
-@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface PersonFacadeLocal {
-
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Person newPerson() ;
     
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void create(Person person);
 
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void edit(Person person);
 
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void remove(Person person);
 }

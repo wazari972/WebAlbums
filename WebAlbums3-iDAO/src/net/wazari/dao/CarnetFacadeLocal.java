@@ -21,30 +21,20 @@ import net.wazari.dao.exchange.ServiceSession;
  * @author kevin
  */
 @Local
-@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public interface CarnetFacadeLocal {
-    
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     List<Carnet> findAll();
 
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void create(Carnet carnet);
 
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void edit(Carnet carnet);
 
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     void remove(Carnet carnet);
 
-    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Carnet find(Integer carnet);
 
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     Carnet newCarnet();
 
-    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     SubsetOf<Carnet> queryCarnets(ServiceSession vSession, Restriction restriction, TopFirst topFirst, Bornes bornes);
 
-    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     Carnet loadIfAllowed(ServiceSession session, Integer carnetId);
 }

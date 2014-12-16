@@ -28,7 +28,6 @@ import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.service.exchange.xml.tag.*;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
-import net.wazari.util.system.SystemTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -32,7 +32,7 @@ public class UserBean implements UserLocal {
     public boolean logon(ViewSessionLogin vSession, HttpServletRequest request) {
         Integer themeId = vSession.getVSession().getThemeId();
         Principal pr = vSession.getUserPrincipal();
-        log.warn( "Login with theme={}, principal={}", new Object[]{themeId, pr});
+        log.warn( "Logined with theme={}, principal={}", new Object[]{themeId, pr});
 
         //user must be authenticated
         if (pr == null) {

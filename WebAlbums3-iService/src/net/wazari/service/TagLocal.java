@@ -5,7 +5,6 @@
 
 package net.wazari.service;
 
-import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exception.WebAlbumsServiceException;
@@ -26,16 +25,12 @@ import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
 public interface TagLocal {    
     XmlTagDisplay treatTagDISPLAY(ViewSessionTagDisplay vSession, XmlPhotoSubmit submit) throws WebAlbumsServiceException;
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlTagPersonsPlaces treatTagPersons(ViewSession vSession);
     
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlTagPersonsPlaces treatTagPlaces(ViewSession vSession);
     
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlTagCloud treatTagCloud(ViewSession vSession);
 
-    @RolesAllowed(UserLocal.VIEWER_ROLE)
     XmlTagAbout treatABOUT(ViewSessionTagSimple vSession);
 
 }

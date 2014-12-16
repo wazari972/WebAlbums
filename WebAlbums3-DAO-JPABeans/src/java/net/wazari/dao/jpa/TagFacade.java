@@ -5,6 +5,7 @@
 package net.wazari.dao.jpa;
 
 import java.util.*;
+import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public class TagFacade implements TagFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(TagFacade.class.getName());
     
@@ -38,21 +40,25 @@ public class TagFacade implements TagFacadeLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void create(Tag tag) {
         em.persist(tag);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void edit(Tag tag) {
         em.merge(tag);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void remove(Tag tag) {
         em.remove(tag);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Map<Tag, Long> queryIDNameCount(ServiceSession session) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -80,6 +86,7 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Tag> queryAllowedTagByType(ServiceSession session, int type) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
@@ -106,6 +113,7 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Tag loadByName(String nom) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -146,6 +154,7 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public List<Tag> getNoSuchTags(ServiceSession sSession, List<Tag> tags) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
@@ -161,6 +170,7 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Set<Tag> getChildren(Tag enrParent) {
         if (enrParent == null) throw new NullPointerException() ;
         Set<Tag> children = new HashSet<Tag>() ;
@@ -173,6 +183,7 @@ public class TagFacade implements TagFacadeLocal {
 
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Tag find(Integer id) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -189,6 +200,7 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Tag> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
@@ -200,11 +212,13 @@ public class TagFacade implements TagFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Tag newTag() {
         return new JPATag() ;
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Photo getTagThemePhoto(ServiceSession sSession, Tag enrTag) {
         List<TagTheme> lstTT = enrTag.getTagThemeList();
         Random rand = new Random();

@@ -9,8 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.dao.UtilisateurFacadeLocal;
-import net.wazari.service.UserLocal;
 import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.service.exchange.ViewSessionLogin.Login_Action;
 import net.wazari.service.exchange.xml.XmlLogin;

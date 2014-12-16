@@ -6,6 +6,8 @@ package net.wazari.dao.jpa;
 
 import java.util.List;
 import java.util.Random;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -17,6 +19,7 @@ import javax.persistence.criteria.Root;
 import net.wazari.dao.TagFacadeLocal;
 import net.wazari.dao.TagThemeFacadeLocal;
 import net.wazari.dao.ThemeFacadeLocal;
+import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.TagTheme;
 import net.wazari.dao.jpa.entity.JPATagTheme;
 import net.wazari.dao.jpa.entity.JPATagTheme_;
@@ -30,6 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public class TagThemeFacade implements TagThemeFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(TagThemeFacade.class.getName());
 
@@ -40,22 +44,26 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void create(TagTheme tagTheme) {
         em.persist(tagTheme);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void edit(TagTheme tagTheme) {
         em.merge(tagTheme);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void remove(TagTheme tagTheme) {
         em.remove(em.merge(tagTheme));
     }
 
     private static Random rand = new Random() ;
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public TagTheme loadByTagTheme(Integer tagId, Integer themeId) {
         if (tagId == null || themeId == null) return null ;
 
@@ -91,11 +99,13 @@ public class TagThemeFacade implements TagThemeFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public TagTheme newTagTheme() {
         return new JPATagTheme();
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public List<TagTheme> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagTheme> cq = cb.createQuery(JPATagTheme.class) ;

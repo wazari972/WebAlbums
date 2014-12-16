@@ -6,6 +6,9 @@ package net.wazari.dao.jpa;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -15,6 +18,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import net.wazari.dao.ThemeFacadeLocal;
+import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.jpa.entity.JPATheme;
@@ -27,6 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE})
 public class ThemeFacade implements ThemeFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(ThemeFacade.class.getName());
      
@@ -34,11 +39,13 @@ public class ThemeFacade implements ThemeFacadeLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void edit(Theme enrTheme) {
         em.merge(enrTheme);
     }
     
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void remove(Theme theme, boolean protect) {
         if (protect || WebAlbumsDAOBean.PERSISTENCE_UNIT != WebAlbumsDAOBean.PERSISTENCE_UNIT_Prod) {
             throw new IllegalStateException("cannot remove a theme while ProtectedDB is enabled") ;
@@ -47,6 +54,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
+    @PermitAll
     public List<Theme> findAll() {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -61,6 +69,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public JPATheme loadByName(String themeName) {
         try {
             //FROM JPATheme t WHERE t.nom = :nom
@@ -77,6 +86,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
+    @PermitAll
     public JPATheme find(Integer id) {
         try {
             //FROM JPATheme t WHERE t.id = :id
@@ -93,6 +103,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void preconfigureDatabase() {
         em.createNativeQuery("ALTER TABLE `Album` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;").executeUpdate();
         em.createNativeQuery("ALTER TABLE `Photo` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;").executeUpdate();
@@ -102,6 +113,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
     
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Theme newTheme(int id, String name) {
         Theme enrTheme = new JPATheme(id, name) ;
         
@@ -109,6 +121,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Theme newTheme(String name) {
         Theme enrTheme = new JPATheme() ;
         enrTheme.setNom(name) ;
@@ -117,6 +130,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void setBackground(Theme enrTheme, Photo enrPhoto) {
         if (enrTheme != null) {
             enrTheme.setBackground(enrPhoto);
@@ -126,6 +140,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
     }
     
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void setPicture(Theme enrTheme, Photo enrPhoto) {
         if (enrTheme != null) {
             enrTheme.setPicture(enrPhoto);

@@ -25,8 +25,6 @@ public interface UserLocal {
     String USER_AMIS    = "Amis"    ;
     String USER_PUBLIC  = "Autres"  ;
 
-    @PermitAll
     boolean logon(ViewSessionLogin vSession, HttpServletRequest request) ;
-    @PermitAll
     void cleanUpSession(ViewSessionLogin vSession) ;
 }

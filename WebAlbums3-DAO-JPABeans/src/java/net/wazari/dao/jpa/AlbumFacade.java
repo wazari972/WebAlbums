@@ -5,6 +5,8 @@
 package net.wazari.dao.jpa;
 
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.*;
@@ -14,6 +16,7 @@ import javax.persistence.criteria.Root;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.Restriction;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
+import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
@@ -29,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public class AlbumFacade implements AlbumFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(AlbumFacade.class.getCanonicalName()) ;
 
@@ -39,21 +43,25 @@ public class AlbumFacade implements AlbumFacadeLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void create(Album album) {
         em.persist(album);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void edit(Album album) {
         em.merge(album);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void remove(Album album) {
         em.remove(album);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public SubsetOf<Album> queryAlbums(ServiceSession session,
             AlbumFacadeLocal.Restriction restrict, AlbumFacadeLocal.TopFirst topFirst, Bornes bornes) {
 
@@ -85,6 +93,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public SubsetOf<Album> queryRandomFromYear(ServiceSession session,
         Restriction restrict, Bornes bornes, String date) {
 
@@ -117,12 +126,14 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Album loadFirstAlbum(ServiceSession session,
             Restriction restrict) {
         return loadFirstLastAlbum(session, restrict, ListOrder.ASC) ;
     }
     
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Album loadLastAlbum(ServiceSession session,
             Restriction restrict) {
         return loadFirstLastAlbum(session, restrict, ListOrder.DESC) ;
@@ -152,6 +163,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Album loadIfAllowed(ServiceSession session, int id) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -169,6 +181,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
     
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Album find(Integer id) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -184,6 +197,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Album loadByNameDate(String name, String date) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -201,11 +215,13 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Album newAlbum() {
         return new JPAAlbum();
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public List<Album> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPAAlbum> cq = cb.createQuery(JPAAlbum.class) ;
@@ -217,6 +233,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Album> loadTimesAgoAlbums(ServiceSession session, 
                                           Integer year, Integer month, Integer day,
                                           Restriction restrict) {

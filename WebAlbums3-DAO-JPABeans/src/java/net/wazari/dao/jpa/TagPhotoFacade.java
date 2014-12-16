@@ -7,6 +7,8 @@ package net.wazari.dao.jpa;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public class TagPhotoFacade implements TagPhotoFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(TagPhotoFacade.class.getName()) ;
     
@@ -38,6 +41,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     @EJB TagThemeFacadeLocal   tagThemeDAO ;
     
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void create(TagPhoto tagPhoto) {
         tagPhoto.getPhoto().getTagPhotoList().add(tagPhoto);
         tagPhoto.getTag().getTagPhotoList().add(tagPhoto);
@@ -45,11 +49,13 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void edit(TagPhoto tagPhoto) {
         em.merge(tagPhoto);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void remove(TagPhoto tagPhoto) {
         tagPhoto.getPhoto().getTagPhotoList().remove(tagPhoto);
         tagPhoto.getTag().getTagPhotoList().remove(tagPhoto);
@@ -57,6 +63,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void deleteByPhoto(Photo enrPhoto) {
         int themeId = enrPhoto.getAlbum().getTheme().getId();
         Iterator<TagPhoto> it = enrPhoto.getTagPhotoList().iterator() ;
@@ -74,6 +81,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<TagPhoto> queryByAlbum(Album enrAlbum) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
@@ -87,6 +95,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public TagPhoto loadByTagPhoto(int tagId, int photoId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
@@ -102,6 +111,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Tag> selectDistinctTags() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATag> cq = cb.createQuery(JPATag.class) ;
@@ -112,11 +122,13 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public TagPhoto newTagPhoto() {
         return new JPATagPhoto() ;
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public List<TagPhoto> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;
@@ -128,6 +140,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     /* Returns all the TagPhoto associated with this Carnet.  */
     public List<TagPhoto> queryByCarnet(Carnet enrCarnet) {
         if (enrCarnet.getPhotoList() == null 

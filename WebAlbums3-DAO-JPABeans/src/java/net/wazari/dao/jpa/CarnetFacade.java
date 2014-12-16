@@ -5,6 +5,8 @@
 package net.wazari.dao.jpa;
 
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -17,6 +19,7 @@ import javax.persistence.criteria.Root;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.AlbumFacadeLocal.TopFirst;
 import net.wazari.dao.CarnetFacadeLocal;
+import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.facades.SubsetOf;
 import net.wazari.dao.entity.facades.SubsetOf.Bornes;
@@ -31,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @Stateless
+@DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public class CarnetFacade implements CarnetFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(CarnetFacade.class.getCanonicalName()) ;
 
@@ -41,21 +45,25 @@ public class CarnetFacade implements CarnetFacadeLocal {
     private EntityManager em;
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void create(Carnet carnet) {
         em.persist(carnet);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void edit(Carnet carnet) {
         em.merge(carnet);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void remove(Carnet carnet) {
         em.remove(carnet);
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Carnet find(Integer id) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -71,11 +79,13 @@ public class CarnetFacade implements CarnetFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Carnet newCarnet() {
         return new JPACarnet();
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public List<Carnet> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPACarnet> cq = cb.createQuery(JPACarnet.class) ;
@@ -88,6 +98,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
     }
     
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public SubsetOf<Carnet> queryCarnets(ServiceSession session,
             AlbumFacadeLocal.Restriction restrict, AlbumFacadeLocal.TopFirst topFirst, Bornes bornes) {
 
@@ -115,6 +126,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Carnet loadIfAllowed(ServiceSession session, Integer carnetId) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
