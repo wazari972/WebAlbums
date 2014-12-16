@@ -24,7 +24,7 @@ import net.wazari.view.vfs.Session;
 public class Albums extends Listing implements ADirectory {
     @Directory
     @File
-    public List<Album> albums = new LinkedList<Album>();
+    public List<Album> albums = new LinkedList<>();
     private final Theme theme;
     private final Launch aThis;
     

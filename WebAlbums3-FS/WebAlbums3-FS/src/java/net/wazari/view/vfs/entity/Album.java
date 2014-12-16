@@ -29,7 +29,7 @@ public class Album extends SDirectory implements ADirectory {
     private static final Logger log = LoggerFactory.getLogger(Album.class.getCanonicalName()) ;
     
     @File
-    public List<Photo> photos = new LinkedList<Photo>();
+    public List<Photo> photos = new LinkedList<>();
     
     private String name ;
     private final Theme theme;

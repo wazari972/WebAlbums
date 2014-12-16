@@ -73,10 +73,10 @@ public class ViewSessionImpl implements
         {
 
     private static final Logger log = LoggerFactory.getLogger(ViewSessionImpl.class.getCanonicalName());
-    private HttpServletRequest request;
-    private HttpServletResponse response;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
     
-    private Integer DEFAULT_PHOTOALBUM_SIZE = 15;
+    private final Integer DEFAULT_PHOTOALBUM_SIZE = 15;
     private Theme tempTheme = null;
     
     public ViewSessionImpl(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
@@ -185,7 +185,6 @@ public class ViewSessionImpl implements
         setSessionObject("directFileAccess", access ? "y" : "n");
     }
     
-    /** ** **/
     @Override
     public Integer getThemeId() {
         return getInteger("themeId");
@@ -209,14 +208,12 @@ public class ViewSessionImpl implements
         return getSessionObject("theme", Theme.class);
     }
 
-    /** ** **/
-
     @Override
     public File getTempDir() {
         return getSessionObject("tempDir", File.class);
     }
 
-    /** ** **/
+    
     @Override
     public Utilisateur getUser() {
         return getSessionObject("user", Utilisateur.class);
@@ -226,8 +223,6 @@ public class ViewSessionImpl implements
     public void setUser(Utilisateur enrUser) {
         setSessionObject("user", enrUser);
     }
-
-    /** ** **/
     
     @Override
     public Boolean getwantManager() {
@@ -252,7 +247,6 @@ public class ViewSessionImpl implements
         setSessionObject("rootSession", rootSession);
     }
 
-    /** ** **/
     @Override
     public boolean isSessionManager() {
         Boolean ret = getSessionObject("sessionManager", Boolean.class);
@@ -267,7 +261,6 @@ public class ViewSessionImpl implements
         setSessionObject("sessionManager", sessionManager);
     }
 
-    /** ** **/
     @Override
     public Integer getId() {
         return getInteger("id");
@@ -467,10 +460,10 @@ public class ViewSessionImpl implements
     
     private Set<Integer> splitInt(String in)  {
         if (in == null || in.length() == 1) {
-            return new HashSet<Integer>();
+            return new HashSet<>();
         }
         
-        Set<Integer> out = new HashSet<Integer>();
+        Set<Integer> out = new HashSet<>();
         for (String str : in.split("-")) {
             try {
                 out.add(Integer.parseInt(str));
@@ -530,7 +523,7 @@ public class ViewSessionImpl implements
 
     private String[] getParamArray(String name) {
         String[] ret = request.getParameterValues(name);
-        log.info( "getParamArray param:{} returned {}", new Object[]{name, Arrays.toString(ret)});
+        log.debug( "getParamArray param:{} returned {}", new Object[]{name, Arrays.toString(ret)});
         return ret;
     }
 
@@ -538,12 +531,11 @@ public class ViewSessionImpl implements
         if (from == null) {
             return new Integer[]{};
         }
-        ArrayList<Integer> ret = new ArrayList<Integer>(from.length);
-        for (int i = 0; i < from.length; i++) {
+        ArrayList<Integer> ret = new ArrayList<>(from.length);
+        for (String from1 : from) {
             try {
-                ret.add(Integer.parseInt(from[i]));
-            } catch (NumberFormatException e) {
-            }
+                ret.add(Integer.parseInt(from1));
+            } catch (NumberFormatException e) {}
         }
         return ret.toArray(new Integer[0]);
     }
@@ -964,7 +956,7 @@ public class ViewSessionImpl implements
     }
 
     public static class ViewSessionLoginImpl implements ViewSessionSession {
-        private HttpSession session ;
+        private final HttpSession session ;
         public ViewSessionLoginImpl (HttpSession session) {
             this.session = session ;
         }

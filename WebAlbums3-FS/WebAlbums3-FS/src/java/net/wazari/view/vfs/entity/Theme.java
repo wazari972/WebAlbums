@@ -36,7 +36,7 @@ public class Theme extends SDirectory implements ADirectory {
     public Tags tags ;
     @Directory
     @File(name="Carnets")
-    public Carnets carnets = new Carnets(this);
+    public Carnets carnets;
     
     private String name;
     
@@ -66,6 +66,7 @@ public class Theme extends SDirectory implements ADirectory {
         this.tags = new Tags(theme, aThis);
         this.albums = new Albums(theme, aThis);
         this.random = new Random(theme, aThis);
+        this.carnets = new Carnets(theme, aThis);
         
         this.loadLocation();
     }

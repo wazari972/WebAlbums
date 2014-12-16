@@ -6,8 +6,6 @@ package net.wazari.view.vfs.entity;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.wazari.dao.entity.Theme;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
@@ -87,7 +85,7 @@ public class Random implements ADirectory {
     public static class RandYears implements ADirectory {
         @Directory
         @File
-        public List<RandYear> years = new LinkedList<RandYear>();
+        public List<RandYear> years = new LinkedList<>();
         
         private final Theme theme;
         private final Launch aThis;
@@ -115,6 +113,7 @@ public class Random implements ADirectory {
     public static class RandomPhoto extends Photo {
         private final Session session;
         private final Launch aThis;
+        
         public RandomPhoto(Launch aThis, Session session) throws WebAlbumsServiceException {
             super(aThis.photoService.treatRANDOM(session).details);
             this.session = session;

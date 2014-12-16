@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.wazari.libvfs.inteface.IResolver;
 import net.wazari.libvfs.vfs.Resolver;
 import net.wazari.service.AlbumLocal;
+import net.wazari.service.CarnetLocal;
 import net.wazari.service.ImageLocal;
 import net.wazari.service.PhotoLocal;
 import net.wazari.service.TagLocal;
@@ -21,16 +22,21 @@ import net.wazari.service.ThemeLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.view.vfs.entity.PhotoResolver;
 import net.wazari.view.vfs.entity.Root;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
  */
 public class Launch extends HttpServlet {
+    private static final Logger log = LoggerFactory.getLogger(Launch.class.getCanonicalName()) ;
+    
     @EJB public ImageLocal imageService;
     @EJB public PhotoLocal photoService;
     @EJB public AlbumLocal albumService;
     @EJB public ThemeLocal themeService ;
+    @EJB public CarnetLocal carnetService ;
     @EJB public TagLocal tagService;
     @EJB public WebPageLocal webPageService ;
     
@@ -49,9 +55,7 @@ public class Launch extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try {
-            /* TODO output your page here. You may use following sample code. */
+        try (PrintWriter out = response.getWriter()) {
             out.println("<html>");
             out.println("<head>");
             out.println("<title>WebAlbum FS -- mounter</title>");            
@@ -66,31 +70,37 @@ public class Launch extends HttpServlet {
             out.flush();
             
             String path = request.getParameter("path");
-            String umount = request.getParameter("umount");
+            final String umount = request.getParameter("umount");
             
             if (path == null) {
                 path = "./WebAlbums3-FS";
             }
+            
+            if (umount == null) {
+                Root root = new Root(this);
+                IResolver externalResolver = new PhotoResolver(root);
+                net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, getFolderPrefix(true), externalResolver);
+            }
+            final String goodPath = path;
             out.println("<h3> Mounting into "+path+".</h3>");
             out.flush();
-            try {
-                if (umount == null) {
-                    Root root = new Root(this);
-                    IResolver externalResolver = new PhotoResolver(root);
-                    net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, getFolderPrefix(true), externalResolver);
-                    com.jnetfs.core.JnetFS.do_mount(new String[]{path});
-                } else {
-                    com.jnetfs.core.JnetFS.do_umount(path);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (umount == null) {
+                        com.jnetfs.core.JnetFS.do_mount(new String[]{goodPath});
+                    } else {
+                        com.jnetfs.core.JnetFS.do_umount(goodPath);
+                    }
                 }
-            } catch (Exception e) {
-                 out.println("<h1> JNetFSException" + e + "</h1>");
-                 e.printStackTrace();
-            }
+            }).start();
+            
             out.println("<h3> Done, goodbye :)</h3>");
             out.println("</body>");
             out.println("</html>");
-        } finally {            
-            out.close();
+        } catch (Exception e) {
+            log.warn("<h1> JNetFSException </h1>", e);
+        
         }
     }
 
