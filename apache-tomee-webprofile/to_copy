@@ -1,11 +1,14 @@
+DST=apps/WebAlbums3-ea/
+
 for PROJ in iDAO Plugins iService Commons
 do
-  cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.jar webapps/WebAlbums3-ea/lib/WebAlbums3-$PROJ.jar -v
+  cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.jar $DST/lib/WebAlbums3-$PROJ.jar -v
 done
 for PROJ in DAO-JPABeans Service-Beans 
 do
-  cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.jar webapps/WebAlbums3-ea/WebAlbums3-$PROJ.jar -v
+  cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.jar $DST/WebAlbums3-$PROJ.jar -v
 done
-PROJ=Servlet
-cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.war webapps/WebAlbums3-ea/WebAlbums3-$PROJ.war -v
-
+for PROJ in Servlet FS
+do
+cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.war $DST/WebAlbums3-$PROJ.war -v
+done
