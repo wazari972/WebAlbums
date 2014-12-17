@@ -37,7 +37,7 @@ public class Root extends SDirectory implements ADirectory, CanChange{
     
     @Directory
     @File
-    public List<SDirectory> trashes = new LinkedList<SDirectory>();
+    public List<SDirectory> trashes = new LinkedList<>();
     
     protected final Launch aThis;
 
@@ -47,17 +47,17 @@ public class Root extends SDirectory implements ADirectory, CanChange{
 
     @Override
     public void load() throws VFSException {
-        themes = new LinkedList<Theme>();
+        themes = new LinkedList<>();
         log.info("LOAD ROOT");
         for (XmlTheme theme : aThis.themeService.getThemeListSimple(new Session(null)).theme) {
-            log.warn("LOAD ROOT {}", theme.name);
+            log.info("LOAD ROOT {}", theme.name);
             themes.add(new Theme(theme.id, theme.name, aThis));
         }
     }
     
     @Override
     public void mkdir(String name) {
-        log.warn("mkdir {}", name);
+        log.info("mkdir {}", name);
         if (name.startsWith(".Trash")) {
             trashes.add(new SDirectory());
         }

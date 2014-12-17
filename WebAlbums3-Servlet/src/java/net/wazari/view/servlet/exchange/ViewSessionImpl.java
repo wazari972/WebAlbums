@@ -358,6 +358,12 @@ public class ViewSessionImpl implements
         return "y".equals(getString("themeBackground"));
     }
     
+    
+    @Override
+    public boolean getAllCarnetText() {
+        return "y".equals(getString("allCarnetText"));
+    }
+    
     @Override
     public boolean getThemePicture() {
         return "y".equals(getString("themePicture"));

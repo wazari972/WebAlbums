@@ -61,6 +61,7 @@ public class Session implements
     
     public Theme theme;
     public Integer[] tagAsked = new Integer[0];
+    private boolean allCarnetText;
     
     public Session(Theme theme) {
         this.theme = theme;
@@ -122,7 +123,7 @@ public class Session implements
         return true;
     }
 
-    private File tmpdir = new File("/tmp");
+    private final File tmpdir = new File("/tmp");
     @Override
     public java.io.File getTempDir() {
         return tmpdir;
@@ -250,6 +251,15 @@ public class Session implements
         return this.tagAsked;
     }
 
+    public void setAllCarnetText(boolean allCarnetText) {
+        this.allCarnetText = allCarnetText;
+    }
+    
+    @Override
+    public boolean getAllCarnetText() {
+        return this.allCarnetText;
+    }
+    
     @Override
     public boolean getWantTagChildren() {
         return false;

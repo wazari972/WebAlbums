@@ -135,7 +135,7 @@ public class CarnetBean implements CarnetLocal {
             carnet.id = enrCarnet.getId();
             carnet.carnetsPage = page;
             carnet.name = enrCarnet.getNom();
-            if (carnetId != null) {
+            if (carnetId != null || vSession.getAllCarnetText()) {
                 carnet.setText(enrCarnet.getText());
             }
             if (enrCarnet.getPhotoList() != null) {
@@ -229,7 +229,7 @@ public class CarnetBean implements CarnetLocal {
         enrCarnet.setNom(nom);
         enrCarnet.setDescription(desc);
         try {
-            date.substring(0) ; //NullPointerException
+            date = date.substring(0) ; //NullPointerException
             new SimpleDateFormat("yyyy-MM-dd").parse(date); //ParseException
             enrCarnet.setDate(date);
         } catch (Exception ex) {

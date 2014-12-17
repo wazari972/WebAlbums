@@ -43,6 +43,7 @@ public class Carnets implements ADirectory {
     public void load() throws VFSException {
         try {
             Session session = new Session(theme);
+            session.setAllCarnetText(true);
             
             XmlCarnetsDisplay carnetList = aThis.carnetService.treatDISPLAY(session, null);
             
@@ -91,7 +92,9 @@ public class Carnets implements ADirectory {
                 this.picture.setName(carnet_name+".jpg");
             }
             for (XmlPhotoId photo : photos) {
-                photoset.add(new Photo(photo.path, photo.id));
+                Photo p = new Photo(photo.path, photo.id);
+                p.setName(""+photo.id+".jpg");
+                photoset.add(p);
             }
         }        
 

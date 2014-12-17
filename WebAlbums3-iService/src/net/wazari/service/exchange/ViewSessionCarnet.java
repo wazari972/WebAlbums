@@ -49,6 +49,7 @@ public interface ViewSessionCarnet extends VSession {
         Integer getCarnet();
         Integer getCarnetsPage();
         Integer getPage() ;
+        boolean getAllCarnetText();
     }
     
     enum Carnet_Special {
