@@ -31,7 +31,7 @@ public class Album extends SDirectory implements ADirectory {
     @File
     public List<Photo> photos = new LinkedList<>();
     
-    private String name ;
+    private final String name ;
     private final Theme theme;
     private final Launch aThis;
     private final int albumId;

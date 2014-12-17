@@ -22,9 +22,8 @@ public class Photo extends SLink {
     protected boolean forceFile = false;
     
     public Photo(XmlDetails details, String name) {
-        setTarget(details.photoId.path);
+        this(details);
         this.name = name;
-        this.id = details.photoId.id;
     }
     
     public Photo(XmlDetails details, boolean uniq) {
@@ -35,8 +34,12 @@ public class Photo extends SLink {
     }
     
     public Photo(XmlDetails details) {
-        setTarget(details.photoId.path);
-        this.id = details.photoId.id;
+        this(details.photoId.path, details.photoId.id);
+    }
+    
+    public Photo(String path, int id) {
+        setTarget(path);
+        this.id = id;
     }
     
     @Override
@@ -45,9 +48,9 @@ public class Photo extends SLink {
     }
     
     protected final void setTarget(String target) {
-        this.forceFile = (target == null);
+        this.forceFile = target == null;
         
-        if (this.forceFile) {
+        if (null == target) {
             return;
         }
         
@@ -63,5 +66,9 @@ public class Photo extends SLink {
     @Override
     public String getShortname() {
         return (uniqName ? Integer.toString(id) + "-" : "") + name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
 }

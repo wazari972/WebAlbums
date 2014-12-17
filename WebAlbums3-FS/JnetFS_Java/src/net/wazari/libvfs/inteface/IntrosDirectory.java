@@ -142,7 +142,7 @@ public class IntrosDirectory extends SDirectory {
         }        
         try {
             directory.load();
-            log.warn("Loaded {}", this.directory);
+            log.info("Loaded {}", this.directory);
         } catch (Exception ex) {
             log.warn("Loading {} failed ... ", this.directory, ex);
         }

@@ -15,12 +15,13 @@ import javax.xml.bind.annotation.XmlValue;
  */
 @XmlRootElement
 public class XmlPhotoId {
-    public XmlPhotoId(Integer id) {
-        this.id = id;
-    }
     public XmlPhotoId(){};
     @XmlAttribute
     public Integer id;
     @XmlValue
     public String path;
+    
+    public XmlPhotoId(Integer id) {
+        this.id = id;
+    }
 }

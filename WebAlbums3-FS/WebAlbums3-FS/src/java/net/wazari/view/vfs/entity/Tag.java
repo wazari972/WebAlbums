@@ -32,7 +32,7 @@ public class Tag extends TagDirectory {
     private static final Logger log = LoggerFactory.getLogger(Tag.class.getCanonicalName()) ;
     
     @File
-    public List<TagPhoto> photos = new LinkedList<TagPhoto>();
+    public List<TagPhoto> photos = new LinkedList<>();
     
     private String name ;
     private final Theme theme;
@@ -56,7 +56,7 @@ public class Tag extends TagDirectory {
 
     @Override
     public void load() throws VFSException {
-        photos = new LinkedList<TagPhoto>();
+        photos = new LinkedList<>();
         
         log.warn("Load images from : {}", this);
         Session session = new Session(theme);

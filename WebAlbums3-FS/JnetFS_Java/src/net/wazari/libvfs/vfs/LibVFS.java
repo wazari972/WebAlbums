@@ -342,10 +342,10 @@ public class LibVFS extends JnetFSAdapter {
         long OFFSET = JnetWrite.getOffset(jniEnv);
         byte[] DATA = JnetWrite.getData(jniEnv);
         
-        log.warn("SIZE {}",SIZE);
-        log.warn("OFFSET {}", OFFSET);
-        log.warn("DATA {}", new String(DATA));
-        log.warn("buffer {}", file.getContent());
+        log.info("SIZE {}",SIZE);
+        log.info("OFFSET {}", OFFSET);
+        log.info("DATA {}", new String(DATA));
+        log.info("buffer {}", file.getContent());
         
         byte[] buffer = file.getContent().getBytes();
         
@@ -364,7 +364,7 @@ public class LibVFS extends JnetFSAdapter {
         for (int i = 0; i < SIZE; i++) {
             target[(int)(i + OFFSET)] = DATA[i];
         }
-        log.warn("wrte {}", new String(target));
+        log.info("wrte {}", new String(target));
         file.write(new String(target));
         
         return (int) SIZE;

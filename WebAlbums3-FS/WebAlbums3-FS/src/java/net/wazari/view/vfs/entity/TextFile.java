@@ -11,7 +11,7 @@ import net.wazari.libvfs.inteface.SFile;
  *
  * @author kevin
  */
-class TextFile extends SFile {
+public class TextFile extends SFile {
     public TextFile(String content, String name) {
         this.content = content;
         this.myName = name;

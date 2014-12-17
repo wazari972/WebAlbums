@@ -12,3 +12,4 @@ for PROJ in Servlet FS
 do
 cp ../WebAlbums3-$PROJ/dist/WebAlbums3-$PROJ.war $DST/WebAlbums3-$PROJ.war -v
 done
+cp ../WebAlbums3-FS/JnetFS_Java/dist/JnetFS_Java.jar apps/WebAlbums3-ea/lib

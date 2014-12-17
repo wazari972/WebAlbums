@@ -18,12 +18,16 @@ import net.wazari.service.exchange.xml.album.XmlAlbumYear;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
  */
 public class Random implements ADirectory {
+    private static final Logger log = LoggerFactory.getLogger(Random.class.getCanonicalName()) ;
+    
     @File(name="random.jpg")
     public RandomPhoto photo;
 
@@ -43,8 +47,16 @@ public class Random implements ADirectory {
     public void load() throws VFSException {
         try {
             Session session = new Session(theme);
-            
-            photo = new RandomPhoto(aThis, session);
+            try {
+                photo = new RandomPhoto(aThis, session);
+            } catch(NullPointerException e) {
+                try {
+                    photo = new RandomPhoto(aThis, session);
+                } catch(NullPointerException ex) {
+                    log.warn("treatRANDOM failed twice ...");
+                    photo = null;
+                }
+            }
             years = new RandYears(theme, aThis);
         } catch (Exception ex) {
             throw new VFSException(ex);
@@ -54,7 +66,7 @@ public class Random implements ADirectory {
     public static class RandYear extends SDirectory implements ADirectory {
         @Directory
         @File
-        public List<Album> albums = new LinkedList<Album>();
+        public List<Album> albums = new LinkedList<>();
         
         private final Theme theme;
         private final Launch aThis;

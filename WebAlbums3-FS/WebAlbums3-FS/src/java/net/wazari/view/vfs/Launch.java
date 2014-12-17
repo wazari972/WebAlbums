@@ -52,7 +52,7 @@ public class Launch extends HttpServlet {
         return path;
     }
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(final HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
@@ -61,12 +61,7 @@ public class Launch extends HttpServlet {
             out.println("<title>WebAlbum FS -- mounter</title>");            
             out.println("</head>");
             out.println("<body>");
-            try {
-                request.login("kevin", "");
-                out.println("<h1> Logged in as kevin</h1>");
-            } catch (ServletException e) {
-                
-            }
+            
             out.flush();
             
             String path = request.getParameter("path");
@@ -84,20 +79,29 @@ public class Launch extends HttpServlet {
             final String goodPath = path;
             out.println("<h3> Mounting into "+path+".</h3>");
             out.flush();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (umount == null) {
-                        com.jnetfs.core.JnetFS.do_mount(new String[]{goodPath});
-                    } else {
-                        com.jnetfs.core.JnetFS.do_umount(goodPath);
-                    }
-                }
-            }).start();
+            
+            try {
+                request.login("kevin", "");
+                out.println("<h1> Logged in as kevin</h1>");
+            } catch (ServletException e) {
+                log.warn("Login failed ...", e);
+                out.println("<h1>login failed "+e.getMessage()+"</h1>");
+            }
             
             out.println("<h3> Done, goodbye :)</h3>");
             out.println("</body>");
             out.println("</html>");
+            out.close();
+            
+            if (umount == null) {
+                com.jnetfs.core.JnetFS.do_mount(new String[]{goodPath});
+            } else {
+                com.jnetfs.core.JnetFS.do_umount(goodPath);
+            }
+                
+            
+            
+            
         } catch (Exception e) {
             log.warn("<h1> JNetFSException </h1>", e);
         
