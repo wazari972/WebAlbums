@@ -111,7 +111,7 @@ public class DispatcherBean {
                 log.debug("IMAGE written? {}", isWritten);
                 break;
             default: 
-                log.info("============= Login: {} =============", request.getUserPrincipal());
+                log.debug("============= Login: {} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
                 String type    = request.getParameter("type");
                 
