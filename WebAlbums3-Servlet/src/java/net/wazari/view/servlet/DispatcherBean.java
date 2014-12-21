@@ -111,12 +111,12 @@ public class DispatcherBean {
                 log.debug("IMAGE written? {}", isWritten);
                 break;
             default: 
-                log.info("============= Login: {} =============", request.getUserPrincipal());
+                log.debug("============= Login: {} =============", request.getUserPrincipal());
                 String special = request.getParameter("special");
                 String type    = request.getParameter("type");
                 
                 if (special != null) {
-                    log.info("Special XSL-style ({})", special);
+                    log.debug("Special XSL-style ({})", special);
                     output.xslFile = "static/Empty.xsl";
                 }
                 log.debug("XSL-style{}", output.xslFile);
