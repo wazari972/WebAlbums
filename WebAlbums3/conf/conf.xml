@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Configuration date="2010-49-25:20-49">
+    <directories>
+        <data>data</data>
+        <images>images</images>
+        <mini>miniatures</mini>
+        <ftp>ftp</ftp>
+        <temp>tmp</temp>
+        <backup>backup</backup>
+        <confFile>conf/conf.xml</confFile>
+    </directories>
+    <sizes>
+        <albums>15</albums>
+        <photos>15</photos>
+    </sizes>
+    <properties>
+        <isReadOnly>false</isReadOnly>
+        <protectDB>false</protectDB>
+    </properties>
+</Configuration>
