@@ -47,8 +47,9 @@
 	       roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal"/>
       </Realm>
 
-      <!-- set appBase to 'webapps' to auto deploy Tomcat services.  -->
-      <Host name="localhost"  appBase="webappss"
+      <!-- set appBase to 'webapps' to auto deploy Tomcat services -->
+      <!-- set it to 'webapps/empty' to deploy nothing -->
+      <Host name="localhost"  appBase="webapps/empty"
             unpackWARs="true" autoDeploy="false">
 
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
