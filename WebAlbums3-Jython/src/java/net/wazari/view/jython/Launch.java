@@ -55,14 +55,14 @@ public class Launch extends HttpServlet {
         PySystemState state = new PySystemState();
         
         state.setClassLoader(Interpreter.class.getClassLoader());
-        Map<PyObject,PyObject> map = new HashMap<PyObject,PyObject>();
+        Map<PyObject,PyObject> map = new HashMap<>();
         map.put(new PyString("this"), Py.java2py(this));
         PyDictionary dict = new PyDictionary(map);
         
         BufferedReader terminal = new BufferedReader(new InputStreamReader(System.in));
         PythonInterpreter interp = new PythonInterpreter(dict);
        
-        String codeString = "";
+        String codeString;
         String prompt = ">> ";
         while (true) {
           System.out.print (prompt);

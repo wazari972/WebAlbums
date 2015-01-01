@@ -37,7 +37,6 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWh
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.tag.XmlTag;
-import net.wazari.util.system.SystemTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
