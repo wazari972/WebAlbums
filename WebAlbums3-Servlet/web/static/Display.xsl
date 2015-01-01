@@ -132,10 +132,9 @@
                 <script type="text/javascript" src="static/scripts/tools.js"></script>
                 
                 <xsl:if test="/webAlbums/photos and /webAlbums/photos/display/album/gpx or /webAlbums/choix or webAlbums/config or webAlbums/carnets">
-                    <script src="http://openlayers.org/dev/OpenLayers.js"></script>
+                    <script src="http://openlayers.org/api/OpenLayers.js"></script>
                     <script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
                     <script src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
-                    <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.0"></script>
                     <script src="static/scripts/lib/HeatmapLayer.js" type="text/javascript"></script>
                     <script src="static/scripts/OpenLayerFunctions.js"></script>
                     

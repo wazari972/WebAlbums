@@ -5,17 +5,6 @@ var mapCenter = {
     zoom: 10
 };
 
-function add_stamen_layers(map) {
-    var toner = new OpenLayers.Layer.Stamen("toner");
-    toner.setName("Stamen Toner");
-    var water = new OpenLayers.Layer.Stamen("watercolor");
-    water.setName("Stamen Watercolor");
-    //var terrain = new OpenLayers.Layer.Stamen("terrain");
-    //terrain.setName("Stamen Terrain");
-
-    map.addLayers([toner, water]);
-}
-
 function add_osm_layers(map) {
     map.addLayer(new OpenLayers.Layer.OSM.Mapnik("OpenStreetMap"));
     
@@ -23,6 +12,15 @@ function add_osm_layers(map) {
         {displayOutsideMaxExtent: true, isBaseLayer: true, visibility: false, numZoomLevels:17, permalink: "cycle" });
         
     map.addLayer(openCycle);
+    
+    var mapbox = new ol.layer.Tile({
+      source: new ol.source.TileJSON({
+        url: 'http://api.tiles.mapbox.com/v3/' +
+            'mapbox.natural-earth-hypso-bathy.jsonp',
+        crossOrigin: 'anonymous'
+      })
+    });
+    map.addLayer(mapbox);
 }
 
 function add_google_layers(map) {
@@ -136,7 +134,10 @@ function init_osm_box(divName) {
         displayProjection: new OpenLayers.Projection("EPSG:4326")
     } );
     
-    var layers = [add_osm_layers, add_geoportail_layers, add_google_layers, add_stamen_layers];
+    var layers = [add_osm_layers 
+        /*add_geoportail_layers, 
+        add_google_layers*/
+        ];
     for (var i = 0; i < layers.length; i++) {
         try {
             layers[i](map);
@@ -225,7 +226,7 @@ function addMarker(map, markers, point, pointToContent_p, lnglat) {
     
     var feature = new OpenLayers.Feature(markers, lnglat);
     feature.closeBox = true;
-    feature.popupClass = OpenLayers.Class(OpenLayers.Popup.AnchoredBubble, {minSize: new OpenLayers.Size(300, 180) } );
+    feature.popupClass = OpenLayers.Class(OpenLayers.Popup.Anchored, {});
     feature.data.popupContentHTML = pointToContent_p(point);
     feature.data.overflow = "hidden";
 
@@ -303,7 +304,7 @@ function populateMapFromJSON(url, map, headCloud) {
         heatmap = add_heatmap_layer(map, "Heatmap");
     }
     
-    var markers = add_marker_layer(map, "Geo Tags")
+    var markers = add_marker_layer(map, "Geo Tags");
     
     $.getJSON(url,
         function(data) {
