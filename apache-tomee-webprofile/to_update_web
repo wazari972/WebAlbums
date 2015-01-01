@@ -1,0 +1,1 @@
+cp -r ../WebAlbums3-Servlet/web/* apps/WebAlbums3-ea/WebAlbums3-Servlet
