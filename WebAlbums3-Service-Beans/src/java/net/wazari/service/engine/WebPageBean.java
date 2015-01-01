@@ -1,9 +1,5 @@
 package net.wazari.service.engine;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.util.StatusPrinter;
-import java.io.InputStream;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,27 +64,6 @@ public class WebPageBean implements WebPageLocal {
     
     private static final long serialVersionUID = -8157612278920872716L;
     private static final Logger log = LoggerFactory.getLogger(WebPageBean.class.getName());
-
-    static {
-        log.warn("FilesFinder.initialized {}", SystemTools.initate());
-        log.warn("Loading WebAlbums3-Service-Beans");
-    
-        try {
-            LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-            
-            JoranConfigurator configurator = new JoranConfigurator();
-            configurator.setContext(lc);
-            // the context was probably already configured by default configuration rules
-            lc.reset(); 
-            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("logback.xml") ;
-          
-            configurator.doConfigure(stream);
-            
-            StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
-        } catch (Exception je) {
-           je.printStackTrace();
-        }
-    }
 
     //try to get the 'asked' element
     //or the page 'page' if asked is null

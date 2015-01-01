@@ -32,9 +32,6 @@ import org.slf4j.LoggerFactory;
 public class UtilisateurFacade implements UtilisateurFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(UtilisateurFacade.class.getCanonicalName()) ;
 
-    static {
-        log.warn("Loading WebAlbums3-DAO-JPABeans");
-    }
     @EJB AlbumFacadeLocal albumDAO ;
 
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)

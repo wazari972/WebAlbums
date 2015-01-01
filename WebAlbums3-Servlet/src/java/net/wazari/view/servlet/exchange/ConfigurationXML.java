@@ -9,8 +9,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.*;
-import net.wazari.common.util.XmlUtils;
 import net.wazari.common.util.XmlUtils;
 import net.wazari.service.exchange.Configuration;
 import org.slf4j.Logger;
@@ -25,12 +25,21 @@ import org.slf4j.LoggerFactory;
 public class ConfigurationXML implements Configuration {
     private static final Logger log = LoggerFactory.getLogger(ConfigurationXML.class.getName());
 
-    private static final String SEP ;
-    private static final String rootPath  ;
-    private static final boolean isPathURL ;
+    private static String SEP ;
+    private static String rootPath  ;
+    private static boolean isPathURL ;
+    private static boolean inited = false;
+    public static void init() {
+        if (inited) {
+            return;
+        }
+        inited = true;
+        initRootPath();
+        initConfiguration();
+    }
     
-    static {
-        LinkedList<String> paths = new LinkedList<String>() ;
+    private static void initRootPath() {
+        LinkedList<String> paths = new LinkedList<>() ;
         
         String prop = System.getProperty("root.path") ;
         if (prop != null) {
@@ -44,7 +53,7 @@ public class ConfigurationXML implements Configuration {
             String line = reader.readLine();
 
             while (line != null) {
-                log.info("Path '{}' found in classpath://RootPath.conf", line);
+                log.debug("Path '{}' found in classpath://RootPath.conf", line);
                 paths.addLast(line) ;
                 line = reader.readLine();
             }
@@ -92,11 +101,11 @@ public class ConfigurationXML implements Configuration {
     }
     
     private static Configuration conf ;
-    static {
+    private static void initConfiguration() {
         conf = new ConfigurationXML() ;
         
         try {
-            InputStream is = null ;
+            InputStream is ;
             if (isPathURL) {
                 is = new URL(conf.getConfigFilePath()).openStream() ;
             } else {
@@ -105,7 +114,7 @@ public class ConfigurationXML implements Configuration {
             conf = XmlUtils.reload(is , ConfigurationXML.class) ;
             log.info( "Configuration correctly loaded from {}", conf.getConfigFilePath());
             log.info(XmlUtils.print((ConfigurationXML)conf, ConfigurationXML.class));
-        } catch (Exception e) {
+        } catch (IOException | JAXBException e) {
             log.warn( "Exception while loading the Configuration from {}", e);
             log.error( "Using default configuration ...");
         }
@@ -118,11 +127,11 @@ public class ConfigurationXML implements Configuration {
     }
 
     @XmlAttribute
-    private String date = new SimpleDateFormat("yyyy-MM-dd:HH-mm").format(new Date());
+    private final String date = new SimpleDateFormat("yyyy-MM-dd:HH-mm").format(new Date());
     @XmlElement
-    private Directories directories = new Directories();
+    private final Directories directories = new Directories();
     @XmlElement
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
     private ConfigurationXML(){}
 
@@ -131,7 +140,7 @@ public class ConfigurationXML implements Configuration {
         return properties.isReadOnly || isPathURL ;
     }
 
-    /** Paths **/
+    /* Paths */
 
     @Override
     public String getRootPath() {

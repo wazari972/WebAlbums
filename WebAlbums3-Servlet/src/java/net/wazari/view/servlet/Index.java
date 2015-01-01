@@ -4,7 +4,6 @@ package net.wazari.view.servlet;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,13 +28,7 @@ public class Index extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(Index.class.getName()) ;
     
     @EJB DispatcherBean dispatcher ;
-
     @EJB ThemeLocal themeService ;
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-    }
     
     public XmlThemes treatVOID(ViewSessionTheme vSession) {
         XmlThemes output = new XmlThemes() ;

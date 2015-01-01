@@ -7,7 +7,10 @@ package net.wazari.view.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.Stateless;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -36,12 +39,6 @@ import org.slf4j.LoggerFactory;
 public class DispatcherBean {
 
     private static final Logger log = LoggerFactory.getLogger(DispatcherBean.class.getCanonicalName());
-
-    static {
-        log.warn("WebAlbums3-Servlet is being loaded ... ");
-        log.info("RootPath: {}", ConfigurationXML.getConf().getRootPath());
-        
-    }
 
     public DispatcherBean() {
     }
@@ -216,6 +213,16 @@ public class DispatcherBean {
         log.debug("============= <{}/>: {} =============", new Object[]{page, strTime});
     }
 
+    @Startup
+    @Singleton
+    public static class Initializer {
+        @PostConstruct
+        void init () {
+            log.info("============= <WebAlbum initialization> =============");
+            ConfigurationXML.init();
+        }
+        
+    }
     
     public interface ViewSessionDispatcher extends ViewSession {
         String getRawSpecial();   
