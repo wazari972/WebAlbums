@@ -13,12 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.service.UserLocal;
-import net.wazari.service.exchange.ViewSession;
-import net.wazari.service.exchange.ViewSessionImages;
-import net.wazari.service.exchange.ViewSessionLogin;
 import net.wazari.view.servlet.DispatcherBean;
 import net.wazari.view.servlet.Images;
-import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
