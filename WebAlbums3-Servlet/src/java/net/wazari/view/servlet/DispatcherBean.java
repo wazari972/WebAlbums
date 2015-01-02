@@ -69,7 +69,7 @@ public class DispatcherBean {
         request.setCharacterEncoding("utf-8");
         ViewSessionDispatcher vSession = new ViewSessionImpl(request, response, context);
         if (request.getParameter("logout") != null) {
-            log.info("Logout and cleanup the session");
+            log.debug("Logout and cleanup the session");
             request.logout();
             userService.cleanUpSession(vSession.getSessionLogin());
         }
@@ -119,7 +119,7 @@ public class DispatcherBean {
                 log.debug("XSL-style{}", output.xslFile);
                 //try to logon and set the thlaiestloleme
                 if (vSession.getThemeId() != null) {
-                    log.info("Try to logon");
+                    log.debug("Try to logon");
                     boolean ret = userService.logon(vSession.getSessionLogin(), request);
                     log.debug("Logon result: {}", ret);
                 }

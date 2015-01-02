@@ -56,6 +56,7 @@ prep_usr_appserver: prep_base_directories
 
 	rm $(APPSERVER_DIR)/lib/$(DB_CONNECTOR_JAR)
 	cp -r $(HOME_DIR)/WebAlbums-libs/$(DB_CONNECTOR_JAR) $(APPSERVER_DIR)/lib
+	cp -r $(HOME_DIR)/WebAlbums3-Service-Beans/src/java/logback.xml $(APPSERVER_DIR)/lib --remove-destination
 	cp $(HOME_DIR)/WebAlbums3/conf/appserver-tomee/* $(APPSERVER_DIR)/conf --remove-destination
 	@echo
 

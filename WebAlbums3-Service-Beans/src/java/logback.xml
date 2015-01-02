@@ -2,15 +2,16 @@
 <configuration debug="false">
     <appender name="root.ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>* %d{HH:mm} %-4level %-25logger{5} [%relative] * %msg %ex %n</pattern>
+            <pattern>* %d{HH:mm} %-4level %-25logger{5} %file:%line * %msg %ex %n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>info</level>
         </filter>
     </appender>
     <appender name="net.wazari.ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- http://logback.qos.ch/manual/layouts.html#ClassicPatternLayout -->
         <encoder>
-            <pattern># %d{HH:mm} %-4level %-25logger{5} [%relative] * %msg %ex %n</pattern>
+            <pattern># %d{HH:mm} %-4level %-25logger{5} %file:%line * %msg %ex %n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>info</level>
@@ -28,7 +29,7 @@
     </logger>
 
     <root>
-        <level value="info"/>
+        <level value="warn"/>
         <appender-ref ref="root.ConsoleAppender"/>
     </root>
 </configuration>

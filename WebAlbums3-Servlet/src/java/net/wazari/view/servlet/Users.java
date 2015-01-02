@@ -30,12 +30,12 @@ public class Users extends HttpServlet {
         XmlLogin output = new XmlLogin();
         try {
             Login_Action action = vSession.getLoginAction();
-            log.info("Action: {}", action);
+            log.debug("Action: {}", action);
             if (Login_Action.LOGIN == action) {
                 String userName = vSession.getUserName();
                 
                 if (userName == null) {
-                    log.info("userName empty, force login page");
+                    log.debug("userName empty, force login page");
                     output.login = true ;
                     return output;
                 }
@@ -52,7 +52,7 @@ public class Users extends HttpServlet {
                     }
                 }
                 
-                log.info("TRY to login: {}/{}", userName, pass);
+                log.debug("TRY to login: {}/{}", userName, pass);
                 request.login(userName, pass);
                 output.valid = true ;
                 Boolean dontRedirect = vSession.dontRedirect();
@@ -64,7 +64,7 @@ public class Users extends HttpServlet {
                 return null ;
             } else if (Login_Action.CHANGE_IS_MANAGER == action) {
                 boolean wantManager = vSession.getwantManager();
-                log.warn("set Session manager to {}", wantManager);
+                log.info("set Session manager to {}", wantManager);
                 vSession.setSessionManager(wantManager);
             } else {
                 output.login = true ;

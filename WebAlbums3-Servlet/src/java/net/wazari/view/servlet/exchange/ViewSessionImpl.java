@@ -646,7 +646,7 @@ public class ViewSessionImpl implements
                 log.warn( "Unknown class {} for parameter {}", new Object[]{type, name});
             }
         } catch (ClassCastException e) {
-            log.info( "Can''t cast value {} into class {}", new Object[]{val, type});
+            log.info( "Can't cast value {} into class {}", new Object[]{val, type});
         } catch (NullPointerException e) {
             log.info( "NullPointerException with {} for class {} ({})", new Object[]{val, type, name});
         } catch (NumberFormatException e) {
@@ -668,7 +668,7 @@ public class ViewSessionImpl implements
     }
 
     private static void setSessionObject(String key, Object val, HttpSession session) {
-        log.info( "setSessionObject param:{} val:{}", new Object[]{key, val});
+        log.debug( "setSessionObject param:{} val:{}", new Object[]{key, val});
         session.setAttribute(key, val);
     }
 

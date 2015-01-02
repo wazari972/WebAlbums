@@ -32,7 +32,7 @@ public class UserBean implements UserLocal {
     public boolean logon(ViewSessionLogin vSession, HttpServletRequest request) {
         Integer themeId = vSession.getVSession().getThemeId();
         Principal pr = vSession.getUserPrincipal();
-        log.warn( "Logined with theme={}, principal={}", new Object[]{themeId, pr});
+        log.debug( "Logged in with theme={}, principal={}", new Object[]{themeId, pr});
 
         //user must be authenticated
         if (pr == null) {
@@ -49,8 +49,8 @@ public class UserBean implements UserLocal {
 
         Theme enrTheme = themeDAO.find(themeId);
         if (enrTheme == null) {
-            log.warn( "No such theme in the database: {}", themeId);
-            log.warn( "No such theme in the database: {}", themeDAO.findAll());
+            log.warn("No such theme in the database: {}", themeId);
+            log.warn("No such theme in the database: {}", themeDAO.findAll());
             cleanUpSession(vSession);
             return false;
         }
@@ -70,16 +70,16 @@ public class UserBean implements UserLocal {
             userName = USER_PUBLIC;
         }
 
-        log.debug( "UserPrincipal :{}", pr.getName());
-        log.debug( "Role admin    :{}", request.isUserInRole(UserLocal.MANAGER_ROLE));
-        log.debug( "Role view     :{}", request.isUserInRole(UserLocal.VIEWER_ROLE));
-        log.debug( "DB User       :{}", userName);
+        log.debug("UserPrincipal :{}", pr.getName());
+        log.debug("Role admin    :{}", request.isUserInRole(UserLocal.MANAGER_ROLE));
+        log.debug("Role view     :{}", request.isUserInRole(UserLocal.VIEWER_ROLE));
+        log.debug("DB User       :{}", userName);
 
         Utilisateur enrUtil = userDAO.loadByName(userName);
-        log.info( "database lookup returned: {}", enrUtil);
+        log.debug("database lookup returned: {}", enrUtil);
         if (enrUtil == null) {
-            log.warn( "No such user in the database: {}", userName);
-            log.warn( "No such user in the database: {}", userDAO.findAll());
+            log.warn("No such user in the database: {}", userName);
+            log.warn("No such user in the database: {}", userDAO.findAll());
             cleanUpSession(vSession);
             return false;
         }
@@ -91,15 +91,15 @@ public class UserBean implements UserLocal {
             asThemeManager = true;
         }
 
-        log.info( "saveUser ({}-{})", new Object[]{enrUtil.getNom(), enrUtil.getId()});
+        log.debug("saveUser ({}-{})", new Object[]{enrUtil.getNom(), enrUtil.getId()});
         vSession.setUser(enrUtil);
 
-        log.info( "saveProperties (manager={}, rootSession={})",
+        log.debug("saveProperties (manager={}, rootSession={})",
                 new Object[]{asThemeManager, isRootSession});
         vSession.setSessionManager(asThemeManager);
         vSession.setRootSession(isRootSession);
 
-        log.info( "saveTheme ({})", enrTheme);
+        log.debug("saveTheme ({})", enrTheme);
         vSession.setTheme(enrTheme);
 
         return true;
