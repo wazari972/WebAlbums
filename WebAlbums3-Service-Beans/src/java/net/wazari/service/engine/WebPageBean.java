@@ -212,7 +212,7 @@ public class WebPageBean implements WebPageLocal {
             list = tagPhotoDAO.queryByCarnet((Carnet) entity);
             type = ListType.CARNET;
         }
-        List<Tag> tags = new ArrayList<Tag>(list.size());
+        List<Tag> tags = new ArrayList<>(list.size());
         for (TagPhoto enrTagPhoto : list) {
             tags.add(enrTagPhoto.getTag());
         }
@@ -279,7 +279,7 @@ public class WebPageBean implements WebPageLocal {
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);
                 
                 if (mode == Tag_Mode.TAG_NEVER_EVER) {
-                   List<Tag> never_ever = new ArrayList<Tag>(); 
+                   List<Tag> never_ever = new ArrayList<>(); 
                    for (Tag enrTag : tags) {
                         if (enrTag.getSonList().isEmpty()) {
                            never_ever.add(enrTag);
@@ -352,13 +352,12 @@ public class WebPageBean implements WebPageLocal {
                     default: throw new RuntimeException("Unkown tag type "+enrTag.getNom()+"->"+enrTag.getTagType()) ;
                 }
                 
-                if (mode == Tag_Mode.TAG_GEO) {
-                    if (enrTag.getGeolocalisation() != null) {
-                        XmlWebAlbumsTagWhere tagGeo = (XmlWebAlbumsTagWhere) tag;
-                        tagGeo.longit = enrTag.getGeolocalisation().getLongitude();
-                        tagGeo.lat = enrTag.getGeolocalisation().getLatitude();
-                    }
+                if (enrTag.getGeolocalisation() != null) {
+                    XmlWebAlbumsTagWhere tagGeo = (XmlWebAlbumsTagWhere) tag;
+                    tagGeo.lng = enrTag.getGeolocalisation().getLongitude();
+                    tagGeo.lat = enrTag.getGeolocalisation().getLatitude();
                 }
+                
             }
             //display the value [if in ids][select if in ids]
             if (box == Box.MAP_SCRIPT) {
@@ -517,11 +516,8 @@ public class WebPageBean implements WebPageLocal {
         Date ref;
         try {
             ref = inputDate.parse(date);
-        } catch (ParseException ex) {
+        } catch (ParseException | NumberFormatException ex) {
             log.warn("Invalid date provided: `{}`", date);
-            return lst;
-        } catch (NumberFormatException ex) {
-            log.warn("Invalid date provided: '{}'", date);
             return lst;
         }
         
@@ -539,9 +535,7 @@ public class WebPageBean implements WebPageLocal {
                         age--;
                     }
                     person.birthdate = Integer.toString(age);
-                } catch (ParseException ex) {
-                    log.warn("Invalid birth date for tag {}: {}", person.name, person.birthdate);
-                } catch (NumberFormatException ex) {
+                } catch (ParseException | NumberFormatException ex) {
                     log.warn("Invalid birth date for tag {}: {}", person.name, person.birthdate);
                 }
             }

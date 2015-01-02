@@ -58,15 +58,10 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
         
         if (tag instanceof XmlWebAlbumsList.XmlWebAlbumsTagWhere) {
             XmlWebAlbumsList.XmlWebAlbumsTagWhere where = (XmlWebAlbumsList.XmlWebAlbumsTagWhere) tag;
-            if (where.lat != null && where.longit != null) {
-                GpxPoints loc = new GpxPoints(tag.name, where.lat, where.longit);
+            if (where.lat != null && where.lng != null) {
+                GpxPoints loc = new GpxPoints(tag.name, where.lat, where.lng);
                 location = new GpxFile(loc);
             }
-        }
-        
-        if (tag != null && tag.lat != null && tag.lng != null) {
-            GpxPoints loc = new GpxPoints(tag.name, tag.lat, tag.lng);
-            location = new GpxFile(loc);
         }
     }
     

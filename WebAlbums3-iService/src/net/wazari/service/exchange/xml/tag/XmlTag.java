@@ -36,14 +36,4 @@ public class XmlTag {
         }
         children.add(tag);
     }
-    
-    @XmlAttribute
-    public String lat = null;
-    @XmlAttribute
-    public String lng = null;
-    
-    public void setGeo(String latitude, String longitude) {        
-        lat = latitude;
-        lng = longitude;
-    }
 }

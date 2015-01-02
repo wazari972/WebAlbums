@@ -70,13 +70,11 @@
                    <xsl:apply-templates select="carnet"/>
                 </div>
             </xsl:if>
-            <xsl:if test="gpx">
-               <div class="map_opt">
-                   <xsl:apply-templates select="gpx"/>
-                   <xsl:apply-templates select="details/tagList"/>
-                   <div id="gpx_box"></div>
-                </div>
-            </xsl:if>
+            <div class="map_opt">
+                <xsl:apply-templates select="gpx"/>
+                <xsl:apply-templates select="details/tagList"/>
+                <div id="gpx_box"></div>
+            </div>
 	  </h2>
           <div id="timesago" style="overflow:auto"></div>
           <hr/>
@@ -110,8 +108,8 @@
 <xsl:template match="/webAlbums/photos/display/album/details/tagList/where">
     <li>
         <a class="tag_visu">
-            <xsl:attribute name="rel"><xsl:value-of select="@lat"/>/<xsl:value-of select="@longit"/></xsl:attribute>
-            <xsl:value-of select="."/>
+            <xsl:attribute name="rel"><xsl:value-of select="@lat"/>/<xsl:value-of select="@lng"/></xsl:attribute>
+            <xsl:value-of select="name"/>
         </a>
     </li>
 </xsl:template>

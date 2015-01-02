@@ -51,8 +51,12 @@ public class XmlWebAlbumsList extends XmlInfoException {
         @XmlAttribute
         public String lat;
         @XmlAttribute
-        public String longit;
+        public String lng;
         public String getNature() {return "where" ;}
+        public void setGeo(String latitude, String longitude) {        
+            lat = latitude;
+            lng = longitude;
+        }
     }
     public static class XmlWebAlbumsTagWhat extends XmlTag {
         public String getNature() {return "what" ;}

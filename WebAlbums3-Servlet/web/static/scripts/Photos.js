@@ -197,7 +197,9 @@ function init_gpx() {
         var map = get_map();
         get_tag_layer(map, true);
         var marker = $(this).data("marker");
+        
         map.setCenter(marker.lonlat);
+        
     });
 }
 

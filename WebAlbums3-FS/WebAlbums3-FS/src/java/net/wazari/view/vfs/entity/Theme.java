@@ -14,6 +14,7 @@ import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.libvfs.inteface.VFSException;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
 import net.wazari.view.vfs.Launch;
@@ -82,13 +83,17 @@ public class Theme extends SDirectory implements ADirectory {
         
         XmlTagPersonsPlaces lst = aThis.tagService.treatTagPlaces(session);
         for (XmlTag tag : lst.tagList) {
+            if (!(tag instanceof XmlWebAlbumsList.XmlWebAlbumsTagWhere)) {
+                continue;
+            }
+            XmlWebAlbumsList.XmlWebAlbumsTagWhere where = (XmlWebAlbumsList.XmlWebAlbumsTagWhere) tag;
             try {
-                if (tag.lat != null && tag.lng != null) {
-                    loc.addPoint(tag.name, tag.lat, tag.lng);
+                if (where.lat != null && where.lng != null) {
+                    loc.addPoint(tag.name, where.lat, where.lng);
                 }
             } catch (NumberFormatException e) {
                 log.warn("Invalid location format for tag {}/{}", tag.name, tag.id);
-                log.warn("Invalid location was {}/{}", tag.lat, tag.lng);
+                log.warn("Invalid location was {}/{}", where.lat, where.lng);
                 log.warn("Invalid location error was {}", e.getMessage(), e);
             }
         }

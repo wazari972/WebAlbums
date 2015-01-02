@@ -24,6 +24,7 @@ import net.wazari.service.exchange.ViewSessionTag.Tag_Special;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagDisplay;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagSimple;
 import net.wazari.service.exchange.xml.common.XmlFrom;
+import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
 import net.wazari.service.exchange.xml.photo.XmlPhotoSubmit;
 import net.wazari.service.exchange.xml.tag.*;
@@ -179,7 +180,11 @@ public class TagBean implements TagLocal {
                 pair.parentList.add(pair.xml);
                 pair.xml.size = size;
                 pair.xml.nb = nbElts;
-                pair.xml.tag = new XmlTag();
+                if (null == pair.tag.getGeolocalisation()) {
+                    pair.xml.tag = new XmlTag();
+                } else {
+                    pair.xml.tag = new XmlWebAlbumsList.XmlWebAlbumsTagWhere();
+                }
                 pair.xml.tag.id = pair.tag.getId();
                 pair.xml.tag.name = pair.tag.getNom();
                 
@@ -191,7 +196,7 @@ public class TagBean implements TagLocal {
                 
                 if (pair.tag.getGeolocalisation() != null) {
                     Geolocalisation geo = pair.tag.getGeolocalisation();
-                    pair.xml.tag.setGeo(geo.getLatitude(), geo.getLongitude());
+                    ((XmlWebAlbumsList.XmlWebAlbumsTagWhere) pair.xml.tag).setGeo(geo.getLatitude(), geo.getLongitude());
                 }
                 for (Tag enrSon : pair.tag.getSonList()) {
                     XmlTagCloudEntry xmlSon = new XmlTagCloudEntry();
@@ -260,13 +265,20 @@ public class TagBean implements TagLocal {
 
         List<Tag> lstT = tagDAO.queryAllowedTagByType(vSession, type);
         for (Tag enrTag : lstT) {
-            XmlTag tag = new XmlTag();
+            XmlTag tag;
+            if (enrTag.getGeolocalisation() != null) {
+                tag = new XmlWebAlbumsList.XmlWebAlbumsTagWhere();
+            } else {
+                tag = new XmlTag();
+            }
+            
             tag.name = enrTag.getNom();
             tag.id = enrTag.getId();
             
             if (enrTag.getGeolocalisation() != null) {
+                XmlWebAlbumsList.XmlWebAlbumsTagWhere where = (XmlWebAlbumsList.XmlWebAlbumsTagWhere) tag;
                 Geolocalisation geo = enrTag.getGeolocalisation();
-                tag.setGeo(geo.getLatitude(), geo.getLongitude());
+                where.setGeo(geo.getLatitude(), geo.getLongitude());
             }
             
             Photo enrTagThemePhoto = tagDAO.getTagThemePhoto(vSession, enrTag);
