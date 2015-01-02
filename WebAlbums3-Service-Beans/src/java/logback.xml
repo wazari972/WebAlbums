@@ -1,35 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
-    <appender name="root.ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>* %d{HH:mm} %-4level %-25logger{5} %file:%line * %msg %ex %n</pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
-        </filter>
-    </appender>
+    <!-- logback-test.xml overrides logback.xml, so let the default version 
+         (logback.xml ) in WebAlbums3-Service-Beans.jar and ajust logback-test.xml
+         in appserver/lib. Don't give them the same name otherwise Logback gets
+         mad ! :-)                                                           -->
+         
+    <!-- ################################################################### -->
+    <!--                  WebAlbums Logging Configuration                    -->
+    <!-- ################################################################### -->
+    
     <appender name="net.wazari.ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- http://logback.qos.ch/manual/layouts.html#ClassicPatternLayout -->
+        
         <encoder>
+            <!-- encoder/pattern http://logback.qos.ch/manual/layouts.html#ClassicPatternLayout -->
             <pattern># %d{HH:mm} %-4level %-25logger{5} %file:%line * %msg %ex %n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <!-- change here to see more logs on screen -->
+            <level>info</level> 
+        </filter>
+    </appender>
+    
+    <logger additivity="false" name="net.wazari">
+        <level value="trace"/> 
+        <appender-ref ref="net.wazari.ConsoleAppender"/>
+    </logger>
+    
+    <!-- ################################################################### -->
+    <!--              WebAlbums Dependecies Logging Configuration            -->
+    <!-- ################################################################### -->
+    
+    <appender name="root.ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>* %d{HH:mm} %-4level %-25logger{5} * %msg %ex %n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>info</level>
         </filter>
     </appender>
-
+    
     <logger name="org.hibernate">
          <level value="warn"/>
     </logger>
-
-
-    <logger additivity="false" name="net.wazari">
-        <level value="info"/>
-        <appender-ref ref="net.wazari.ConsoleAppender"/>
+    <logger name="ch.qos.logback">
+         <level value="warn"/>
     </logger>
 
     <root>
         <level value="warn"/>
         <appender-ref ref="root.ConsoleAppender"/>
     </root>
+    
 </configuration>
