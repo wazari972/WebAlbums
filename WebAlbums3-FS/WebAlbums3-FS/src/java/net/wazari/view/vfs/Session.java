@@ -539,5 +539,10 @@ public class Session implements
     public boolean getSuppr() {
         return false;
     }
+
+    @Override
+    public Integer getExceptAlbm() {
+        return null;
+    }
 }
 

@@ -90,6 +90,13 @@ public class Choix extends HttpServlet {
                 public ViewSession getVSession() {
                     return vSession;
                 }
+
+                @Override
+                public Integer getExceptAlbm() {
+                    return null;
+                }
+                
+                
             };
             ViewSessionAlbumSelect vSessionAlbumSelect = new ViewSessionAlbumSelect() {
 

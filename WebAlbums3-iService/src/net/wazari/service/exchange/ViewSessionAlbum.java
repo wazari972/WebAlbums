@@ -23,6 +23,7 @@ public interface ViewSessionAlbum extends VSession {
         Integer getMonth();
         Integer getDay();
         boolean getAll();
+        Integer getExceptAlbm();
     }
     
     interface ViewSessionAlbumSimple extends VSession {

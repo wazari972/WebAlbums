@@ -211,7 +211,10 @@ $(function() {
     
     $("#showYearsAgo").data("all", false);
     $("#showYearsAgo").click(function () {
-        var date = $(this).attr("rel");
+        var dateAlbmId = $(this).attr("rel").split('/');
+        var date = dateAlbmId[0];
+        var albumId = dateAlbmId[1];
+        
         var dateArgs = "&month="+date.substring(5,5+2);
         dateArgs += "&day="+date.substring(8);
         var all = false;
@@ -220,6 +223,6 @@ $(function() {
             dateArgs += "&all=y";
         }
         $("#showYearsAgo").data("all", !all);
-        loadExernals('timeagoLoader', 'Albums?special=AGO'+dateArgs, 'timesago');
+        loadExernals('timeagoLoader', 'Albums?special=AGO'+dateArgs+"&exceptAlbm="+albumId, 'timesago');
     }) ;
 });

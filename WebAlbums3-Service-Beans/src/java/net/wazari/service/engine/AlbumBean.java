@@ -349,6 +349,7 @@ public class AlbumBean implements AlbumLocal {
         Integer month = vSession.getMonth();
         Integer day = vSession.getDay();
         boolean all = vSession.getAll();
+        Integer exceptAlbumId = vSession.getExceptAlbm();
         
         if (year == null && month == null && day == null) {
             //Note that Calendar.MONTH is for no apparent reasons ZERO based
@@ -359,6 +360,9 @@ public class AlbumBean implements AlbumLocal {
         List<Album> albums = albumDAO.loadTimesAgoAlbums(vSession.getVSession(), year, month, day,
                                                          (all ? Restriction.NONE : Restriction.THEME_ONLY));
         for (Album enrAlbum : albums) {
+            if (exceptAlbumId != null && Objects.equals(enrAlbum.getId(), exceptAlbumId)) {
+                continue;
+            }
             XmlAlbum album = new XmlAlbum();
             daoToXmlService.convertAlbum(vSession.getVSession(), enrAlbum, album, false);
             ago.album.add(album);

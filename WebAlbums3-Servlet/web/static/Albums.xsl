@@ -51,7 +51,7 @@
                     </xsl:if>
                     <a rel="singlepage[no]" id="showYearsAgo">
                         <xsl:attribute name="title">Show albums shot at the same date, years ago (_this_ then _all_ themes).</xsl:attribute>
-                        <xsl:attribute name="rel"><xsl:value-of select="date/@date" /></xsl:attribute>
+                        <xsl:attribute name="rel"><xsl:value-of select="date/@date" />/<xsl:value-of select="/webAlbums/photos/display/album/@id" /></xsl:attribute>
                         <img src="static/images/button_blue_repeat.png" height="30px"/>
                     </a>
                     <xsl:if test="/webAlbums/loginInfo/@admin">

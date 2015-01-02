@@ -113,6 +113,11 @@ public class ViewSessionImpl implements
     public String getDate() {
         return getString("date");
     }
+    
+    @Override
+    public Integer getExceptAlbm() {
+        return getInteger("exceptAlbm");
+    }
 
     @Override
     public int getNewTheme() {
