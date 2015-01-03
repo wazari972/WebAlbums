@@ -17,15 +17,15 @@
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <!-- change here to see more logs on screen -->
-            <level>info</level> 
+            <level>trace</level> 
         </filter>
     </appender>
     
     <logger additivity="false" name="net.wazari">
-        <level value="trace"/> 
+        <level value="info"/> 
         <appender-ref ref="net.wazari.ConsoleAppender"/>
     </logger>
-    
+
     <!-- ################################################################### -->
     <!--              WebAlbums Dependecies Logging Configuration            -->
     <!-- ################################################################### -->
