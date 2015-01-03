@@ -24,7 +24,7 @@ public class IntrosDirectory extends SDirectory {
     private static final Logger log = LoggerFactory.getLogger(IntrosDirectory.class.getCanonicalName());
     
     private List<IFile> inFiles = null;
-    private ADirectory directory;
+    private final ADirectory directory;
     
     public IntrosDirectory(IDirectory parent, ADirectory adir) {
         this.parent = parent;
@@ -86,7 +86,7 @@ public class IntrosDirectory extends SDirectory {
     }
         
     private Map<Object, Field> getDirFields() {
-        Map<Object, Field> map = new HashMap<Object, Field>();
+        Map<Object, Field> map = new HashMap<>();
         Class clazz = directory.getClass();
         while (clazz != null) {
             for (Field aField : clazz.getDeclaredFields()) {
@@ -97,7 +97,7 @@ public class IntrosDirectory extends SDirectory {
                 Object field_value;
                 try {
                     field_value = aField.get(directory) ;
-                } catch (Exception ex) {
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
                     continue;
                 }
                 
@@ -142,12 +142,12 @@ public class IntrosDirectory extends SDirectory {
         }        
         try {
             directory.load();
-            log.info("Loaded {}", this.directory);
+            log.debug("Loaded {}", this.directory);
         } catch (Exception ex) {
             log.warn("Loading {} failed ... ", this.directory, ex);
         }
         
-        inFiles = new LinkedList<IFile>();
+        inFiles = new LinkedList<>();
 
         Map<Object, Field> map = getDirFields();
         for (Object field_value : map.keySet()) {

@@ -33,11 +33,11 @@ public class Root extends SDirectory implements ADirectory, CanChange{
     
     @Directory
     @File(name="config")
-    public Configuration config = new Configuration(this);
+    public final Configuration config = new Configuration(this);
     
     @Directory
     @File
-    public List<SDirectory> trashes = new LinkedList<>();
+    public final List<SDirectory> trashes = new LinkedList<>();
     
     protected final Launch aThis;
 
@@ -50,14 +50,14 @@ public class Root extends SDirectory implements ADirectory, CanChange{
         themes = new LinkedList<>();
         log.info("LOAD ROOT");
         for (XmlTheme theme : aThis.themeService.getThemeListSimple(new Session(null)).theme) {
-            log.info("LOAD ROOT {}", theme.name);
+            log.debug("LOAD ROOT {}", theme.name);
             themes.add(new Theme(theme.id, theme.name, aThis));
         }
     }
     
     @Override
     public void mkdir(String name) {
-        log.info("mkdir {}", name);
+        log.debug("mkdir {}", name);
         if (name.startsWith(".Trash")) {
             trashes.add(new SDirectory());
         }

@@ -20,9 +20,10 @@ import org.slf4j.LoggerFactory;
 public class Resolver {
     private static final Logger log = LoggerFactory.getLogger(LibVFS.class.getCanonicalName());
     
-    private IntrosRoot root ;
+    private final IntrosRoot root ;
     private final String externalPrefix;
     private final IResolver external;
+    
     public Resolver(ADirectory rootDir, String externalPrefix, IResolver external) {
         root = new IntrosRoot(rootDir);
         this.externalPrefix = externalPrefix;
@@ -30,8 +31,7 @@ public class Resolver {
     }
     
     public IFile getFile(String search) {
-        if (external !=null && search.startsWith(externalPrefix)) {
-            /* CHANGE THAT*/
+        if (external != null && search.startsWith(externalPrefix)) {
             search = search.substring(externalPrefix.length());
             IFile found = external.getFile(search);
             log.warn("GET EXTERNAL FILE: {} > {}", search, found);

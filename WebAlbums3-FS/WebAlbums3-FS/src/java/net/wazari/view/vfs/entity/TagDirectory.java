@@ -83,7 +83,7 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
             return;
         }
         
-        tagFiles = new LinkedList<Tag>(); // empty first, because CanChange
+        tagFiles = new LinkedList<>(); // empty first, because CanChange
         contentRead();
         
         if (tagList != null) {
