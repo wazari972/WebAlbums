@@ -10,6 +10,7 @@ import java.text.Normalizer;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Stack;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -38,15 +39,15 @@ public class FilesFinder {
     @EJB private TagPhotoFacadeLocal tagPhotoDAO;
     @EJB private SystemTools sysTools;
     @EJB private ImageResizer resizer;
-
-    public boolean importAuthor(ViewSession vSession,
-            String themeName, Configuration conf) {
+    @EJB private Configuration configuration;
+    
+    public boolean importAuthor(ViewSession vSession, String themeName) {
         if (String.CASE_INSENSITIVE_ORDER.compare("root", themeName) == 0) {
             log.info("root is a reserved keyword");
             return false;
         }
 
-        Stack<Element> stack = new Stack<Element>();
+        Stack<Element> stack = new Stack<>();
 
         log.info("Importing for theme : {}", themeName);
 
@@ -71,7 +72,7 @@ public class FilesFinder {
         }
 
         //if init was performed correctly
-        File dirTheme = new File(conf.getFtpPath() + themeName + SEP);
+        File dirTheme = new File(configuration.getFtpPath() + themeName + SEP);
         log.info("Dossier source : {}", dirTheme);
         //creer le dossier d'import s'il n'existe pas encore
         if (!dirTheme.isDirectory()) {
@@ -91,15 +92,15 @@ public class FilesFinder {
 
             correct = true;
             int err = 0;
-            for (int i = 0; i < subfiles.length; i++) {
-                if (subfiles[i].isDirectory()) {
-                    log.info("Important de l'album {}", subfiles[i]);
-                    if (!importAlbum(stack, subfiles[i], enrTheme)) {
-                        log.warn("An error occured during importation of album ({})...", subfiles[i]);
+            for (File subfile : subfiles) {
+                if (subfile.isDirectory()) {
+                    log.info("Important de l'album {}", subfile);
+                    if (!importAlbum(stack, subfile, enrTheme)) {
+                        log.warn("An error occured during importation of album ({})...", subfile);
                         correct = false;
                         err++;
                     }
-                    subfiles[i].deleteOnExit();
+                    subfile.deleteOnExit();
                 }
             }
 
@@ -109,9 +110,8 @@ public class FilesFinder {
             }
         }
 
-        if (dirTheme != null) {
-            resizer.resize(conf, stack, dirTheme);
-        }
+        resizer.resize(stack, dirTheme);
+        
 
         if (!correct) {
             log.warn("An error occured during initialization process ...");
@@ -191,7 +191,7 @@ public class FilesFinder {
                 
             }
 
-            if (enrAlbum.getTheme().getId() != enrTheme.getId()) {
+            if (!Objects.equals(enrAlbum.getTheme().getId(), enrTheme.getId())) {
                 log.warn("## L'album est dans la table ({}),"
                         + " mais le theme n'est pas bon: {}", enrAlbum.getId(), enrAlbum.getTheme());
                 return false;
@@ -206,9 +206,9 @@ public class FilesFinder {
             if (subfiles != null) {
                 log.info("## Le répertoire '{}' contient {} fichier/s", dossier, subfiles.length);
 
-                for (int i = 0; i < subfiles.length; i++) {
-                    log.info("## Traitement de {}", subfiles[i].getName());
-                    if (!importPhoto(stack, albumPath, subfiles[i], enrAlbum)) {
+                for (File subfile : subfiles) {
+                    log.info("## Traitement de {}", subfile.getName());
+                    if (!importPhoto(stack, albumPath, subfile, enrAlbum)) {
                         err++;
                     }
                 }
@@ -298,12 +298,12 @@ public class FilesFinder {
         return true;
     }
 
-    public boolean deleteAlbum(Album enrAlbum, Configuration conf) {
+    public boolean deleteAlbum(Album enrAlbum) {
         boolean correct = true;
         for (Iterator<Photo> iter = enrAlbum.getPhotoList().iterator(); iter.hasNext();) {
             Photo enrPhoto = iter.next() ;
             iter.remove();
-            if (!deletePhoto(enrPhoto, conf)) {
+            if (!deletePhoto(enrPhoto)) {
                 log.warn("Problem during the deletion ...");
                 correct = false;
             }
@@ -316,7 +316,7 @@ public class FilesFinder {
         return false;
     }
 
-    public boolean deletePhoto(Photo enrPhoto, Configuration conf) {
+    public boolean deletePhoto(Photo enrPhoto) {
 
         String url = null;
         try {
@@ -336,7 +336,7 @@ public class FilesFinder {
             }
             
             //suppression des photos physiquement
-            url = "file://" + conf.getImagesPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false);
+            url = "file://" + configuration.getImagesPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false);
 
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
             log.info("On supprime sa photo : {}", url);
@@ -347,7 +347,7 @@ public class FilesFinder {
             fichier.getParentFile().delete();
 
             //miniature
-            url = "file://" + conf.getMiniPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false) + ".png";
+            url = "file://" + configuration.getMiniPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false) + ".png";
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
             log.info("On supprime sa miniature : {}", url);
             if (!fichier.delete()) {
@@ -368,13 +368,13 @@ public class FilesFinder {
         return false;
     }
 
-    public boolean deleteCarnet(Carnet enrCarnet, Configuration configuration) {  
+    public boolean deleteCarnet(Carnet enrCarnet) {  
         carnetDAO.remove(enrCarnet);
         
         return true ;
     }
 
-    public void moveAlbum(Album enrAlbum, Theme enrTheme, Configuration conf) {
+    public void moveAlbum(Album enrAlbum, Theme enrTheme) {
         log.warn("Move album {} to theme {}", enrAlbum.getNom(), enrTheme.getNom());
         if (enrAlbum.getTheme().equals(enrTheme)) {
             return;
@@ -382,8 +382,8 @@ public class FilesFinder {
         String albumPathSuffix = enrAlbum.getPhotoList().get(0).getPath(false);
         albumPathSuffix = SEP + albumPathSuffix.substring(0, albumPathSuffix.lastIndexOf(SEP));
         
-        File sourceAlbumImage = new File(conf.getImagesPath(true)+enrAlbum.getTheme().getNom()+albumPathSuffix);
-        File targetAlbumImage = new File(conf.getImagesPath(true)+enrTheme.getNom()+albumPathSuffix);
+        File sourceAlbumImage = new File(configuration.getImagesPath(true)+enrAlbum.getTheme().getNom()+albumPathSuffix);
+        File targetAlbumImage = new File(configuration.getImagesPath(true)+enrTheme.getNom()+albumPathSuffix);
         
         targetAlbumImage.getParentFile().mkdirs();
         
@@ -394,8 +394,8 @@ public class FilesFinder {
         }
         sourceAlbumImage.getParentFile().delete();
         
-        File sourceAlbumMini = new File(conf.getMiniPath(true)+enrAlbum.getTheme().getNom()+albumPathSuffix);
-        File targetAlbumMini = new File(conf.getMiniPath(true)+enrTheme.getNom()+albumPathSuffix);
+        File sourceAlbumMini = new File(configuration.getMiniPath(true)+enrAlbum.getTheme().getNom()+albumPathSuffix);
+        File targetAlbumMini = new File(configuration.getMiniPath(true)+enrTheme.getNom()+albumPathSuffix);
                 
         targetAlbumMini.getParentFile().mkdirs();
         

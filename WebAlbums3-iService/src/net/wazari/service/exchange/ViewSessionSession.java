@@ -12,7 +12,6 @@ import java.io.File;
  * @author kevinpouget
  */
 public interface ViewSessionSession {
-    Configuration getConfiguration() ;
     void setTempDir(File temp);
     File getTempDir();
 }

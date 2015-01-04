@@ -435,11 +435,6 @@ public class ViewSessionImpl implements
     }
 
     @Override
-    public Configuration getConfiguration() {
-        return ConfigurationXML.getConf();
-    }
-
-    @Override
     public void setContentDispositionFilename(String name) {
         response.addHeader("Content-Disposition", "filename=\""+name+"\"");
     }
@@ -978,11 +973,6 @@ public class ViewSessionImpl implements
         @Override
         public File getTempDir() {
             return ViewSessionImpl.getSessionObject("tempDir", File.class, session, null) ;
-        }
-
-        @Override
-        public Configuration getConfiguration() {
-            return ConfigurationXML.getConf() ;
         }
     }
 }

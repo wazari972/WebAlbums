@@ -7,10 +7,7 @@ package net.wazari.view.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.ejb.Stateless;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -25,7 +22,6 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.*;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
-import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.ViewSessionImpl;
 import net.wazari.view.servlet.exchange.xml.XmlWebAlbums;
 import org.slf4j.Logger;
@@ -211,17 +207,6 @@ public class DispatcherBean {
         }
 
         log.debug("============= <{}/>: {} =============", new Object[]{page, strTime});
-    }
-
-    @Startup
-    @Singleton
-    public static class Initializer {
-        @PostConstruct
-        void init () {
-            log.info("============= <WebAlbum initialization> =============");
-            ConfigurationXML.init();
-        }
-        
     }
     
     public interface ViewSessionDispatcher extends ViewSession {

@@ -17,14 +17,14 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ImageResizer {
-
     private static final Logger log = LoggerFactory.getLogger(ImageResizer.class.toString());
     private static final int HEIGHT = 200;
-    @EJB
-    private SystemTools sysTool;
-
+    
+    @EJB private SystemTools sysTool;
+    @EJB private Configuration configuration;
+    
     @Asynchronous
-    public void resize(Configuration conf, Stack<Element> stack, File author) {
+    public void resize(Stack<Element> stack, File author) {
         log.info("Starting the ImageResizer Thread");
 
         Element current;
@@ -37,13 +37,13 @@ public class ImageResizer {
             try {
                 if (!current.dontThumbnail) {
                     log.info("Resizing...");
-                    if (!thumbnail(current, conf)) {
+                    if (!thumbnail(current)) {
                         continue;
                     }
                 }
 
                 log.info("Moving...");
-                if (!move(current, conf)) {
+                if (!move(current)) {
                     continue;
                 }
 
@@ -92,8 +92,8 @@ public class ImageResizer {
         }
     }
 
-    public static boolean move(Element elt, Configuration conf) throws MalformedURLException, URISyntaxException {
-        String url = "file://" + conf.getImagesPath(true) + conf.getSep() + elt.path;
+    public boolean move(Element elt) throws MalformedURLException, URISyntaxException {
+        String url = "file://" + configuration.getImagesPath(true) + configuration.getSep() + elt.path;
         log.info( "SOURCE = {}", url);
         URI uri = new URL(StringUtil.escapeURL(url)).toURI();
         File destination = new File(uri);
@@ -108,8 +108,8 @@ public class ImageResizer {
         return true;
     }
     
-    private boolean thumbnail(Element source, Configuration conf) throws URISyntaxException, IOException {
-        String path = conf.getMiniPath(true) + conf.getSep() + source.path + ".png";
+    private boolean thumbnail(Element source) throws URISyntaxException, IOException {
+        String path = configuration.getMiniPath(true) + configuration.getSep() + source.path + ".png";
 
         File destination = new File(path);
         File parent = destination.getParentFile();

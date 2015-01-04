@@ -10,7 +10,6 @@ import javax.ejb.EJBException;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import net.wazari.service.SessionManagerLocal;
 import net.wazari.view.servlet.exchange.ViewSessionImpl.ViewSessionLoginImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 @WebListener
 public class SessionListener implements HttpSessionListener {
-    @EJB SessionManagerLocal sessionService ;
+    @EJB SessionManager sessionService ;
     private static final Logger log = LoggerFactory.getLogger(SessionListener.class.getName());
 
     @Override

@@ -201,7 +201,7 @@ public class CarnetBean implements CarnetLocal {
         output.carnet = enrCarnet;
         Boolean supprParam = vSession.getSuppr();
         if (supprParam) {
-            if (finder.deleteCarnet(enrCarnet, vSession.getVSession().getConfiguration())) {
+            if (finder.deleteCarnet(enrCarnet)) {
                 output.message = "Carnet correctement  supprimé !";
                 output.valid = true;
             } else {

@@ -255,7 +255,7 @@ public class AlbumBean implements AlbumLocal {
         
         boolean wantTags = vSession.getWantTags();
         
-        List<Tag> tagList = new LinkedList<Tag>();
+        List<Tag> tagList = new LinkedList<>();
         for (int tagId : vSession.getTagAsked()) {
             Tag enrTag = tagDAO.find(tagId);
             if (enrTag != null) {
@@ -385,7 +385,7 @@ public class AlbumBean implements AlbumLocal {
 
         Boolean supprParam = vSession.getSuppr();
         if (supprParam) {
-            if (finder.deleteAlbum(enrAlbum, vSession.getVSession().getConfiguration())) {
+            if (finder.deleteAlbum(enrAlbum)) {
                 output.message = "Album correctement  supprimé !";
             } else {
                 output.exception = "an error occured ...";
@@ -419,7 +419,7 @@ public class AlbumBean implements AlbumLocal {
         int newThemeId = vSession.getNewTheme();
         if (newThemeId != enrAlbum.getTheme().getId()) {
             Theme enrNewTheme = themeDAO.find(newThemeId);
-            finder.moveAlbum(enrAlbum, enrNewTheme, vSession.getVSession().getConfiguration());
+            finder.moveAlbum(enrAlbum, enrNewTheme);
         }
         
         output.message = "Album (" + enrAlbum.getId() + ") correctement mise à jour !";

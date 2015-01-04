@@ -11,6 +11,7 @@ import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.service.UserLocal;
+import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSessionLogin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,8 @@ public class UserBean implements UserLocal {
     private UtilisateurFacadeLocal userDAO;
     @EJB
     private ThemeFacadeLocal themeDAO;
-
+    @EJB private Configuration configuration;
+    
     @Override
     @PermitAll
     public boolean logon(ViewSessionLogin vSession, HttpServletRequest request) {
@@ -86,7 +88,7 @@ public class UserBean implements UserLocal {
 
         //no manager if not in admin group
         if (request.isUserInRole(UserLocal.MANAGER_ROLE) 
-                && !vSession.getVSession().getConfiguration().isReadOnly()
+                && !configuration.isReadOnly()
                 && !vSession.getVSession().getStatic()) {
             asThemeManager = true;
         }

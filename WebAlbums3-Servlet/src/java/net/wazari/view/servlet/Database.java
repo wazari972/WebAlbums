@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.ServletException;
@@ -29,7 +30,6 @@ import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSessionDatabase;
 import net.wazari.service.exchange.ViewSessionDatabase.Database_Action;
 import net.wazari.view.servlet.DispatcherBean.Page;
-import net.wazari.view.servlet.exchange.ConfigurationXML;
 import net.wazari.view.servlet.exchange.xml.XmlDatabase;
 import net.wazari.view.servlet.exchange.xml.XmlDatabase.XmlCreateDir;
 import org.slf4j.Logger;
@@ -47,8 +47,9 @@ import org.slf4j.LoggerFactory;
 public class Database extends HttpServlet {
     @EJB private DispatcherBean dispatcher ;
     @EJB private DatabaseLocal databaseService;
-    @EJB private WebPageLocal webPageService ;
+    @EJB private Configuration configuration ;
     @EJB private PluginManagerLocal systemTools;
+    
     public XmlDatabase treatDATABASE(ViewSessionDatabase vSession)
             throws WebAlbumsServiceException {
         XmlDatabase output = new XmlDatabase();
@@ -86,7 +87,7 @@ public class Database extends HttpServlet {
                     databaseService.treatUPDATE_DAO(vSession);
                     break;
                 case RELOAD_PLUGINS:
-                    systemTools.reloadPlugins(ConfigurationXML.getConf().getPluginsPath());
+                    systemTools.reloadPlugins(configuration.getPluginsPath());
                 case PLUGINS:
                     output.plugins = new XmlPluginInfo() ;
                     for (Importer imp : systemTools.getPluginList()) {
@@ -101,25 +102,25 @@ public class Database extends HttpServlet {
                     output.create_dir = new XmlCreateDir(create_directories());
                     break;
                 case SAVE_CONFIG:
-                    file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                    file = new File(configuration.getConfigFilePath());
                     file.getParentFile().mkdirs();
                     
                     try {
-                        XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
-                        output.message = "File saved in "+ConfigurationXML.getConf().getConfigFilePath();
+                        XmlUtils.save(file, configuration, configuration.getConfClass());
+                        output.message = "File saved in "+configuration.getConfigFilePath();
                     } catch (Exception ex) {
                         output.exception = "Couldn't save the file: "+ex.getMessage();
                     }
                     break;
                 case RELOAD_CONFIG:
-                    file = new File(ConfigurationXML.getConf().getConfigFilePath());
+                    file = new File(configuration.getConfigFilePath());
                     file.getParentFile().mkdirs();
 
-                    ConfigurationXML conf;
+                    Object conf;
                     try {
-                        conf = XmlUtils.reload(new FileInputStream(file), ConfigurationXML.class);
-                        ConfigurationXML.setConf(conf);
-                        output.message = "Configuration reloaded from "+ConfigurationXML.getConf().getConfigFilePath();
+                        conf = XmlUtils.reload(new FileInputStream(file), configuration.getConfClass());
+                        configuration.setConf(conf);
+                        output.message = "Configuration reloaded from "+configuration.getConfigFilePath();
                     } catch (Exception ex) {
                         output.exception = "Couldn't reloaded the configuration file: "+ex.getMessage();
                     }
@@ -127,7 +128,7 @@ public class Database extends HttpServlet {
                     
                    break;
                 case PRINT_CONFIG:
-                    output.config = (ConfigurationXML) ConfigurationXML.getConf();
+                    output.config =  configuration.getConf();
                     break;
             }
         } else {
@@ -137,15 +138,14 @@ public class Database extends HttpServlet {
         return output ;
     }
     
-    private static List<String> create_directories() {
-        Configuration conf = ConfigurationXML.getConf();
-        List<String> out = new LinkedList<String>();
-        out.add("Root path:"+conf.getRootPath()) ;
+    private List<String> create_directories() {
+        List<String> out = new LinkedList<>();
+        out.add("Root path:"+configuration.getRootPath()) ;
         
         List<String> directories = Arrays.asList(
                 new String[]{
-                    conf.getBackupPath(), conf.getTempPath(), conf.getPluginsPath(),
-                    conf.getFtpPath(), conf.getImagesPath(true), conf.getMiniPath(true)});
+                    configuration.getBackupPath(), configuration.getTempPath(), configuration.getPluginsPath(),
+                    configuration.getFtpPath(), configuration.getImagesPath(true), configuration.getMiniPath(true)});
         for (String dir : directories) {
             File currentFile = new File(dir) ;
             if (!(currentFile.isDirectory() || currentFile.mkdirs())) {
@@ -155,22 +155,22 @@ public class Database extends HttpServlet {
                 out.add(dir) ;
             }
         }
-        File confFile = new File(conf.getConfigFilePath()).getParentFile() ;
+        File confFile = new File(configuration.getConfigFilePath()).getParentFile() ;
         if (!(confFile.isDirectory() || confFile.mkdirs())) {
             log.warn( "Couldn't create path to {}",
-                    conf.getConfigFilePath());
-            out.add("WARNING Couldn't create path to "+ conf.getConfigFilePath()) ;
+                    configuration.getConfigFilePath());
+            out.add("WARNING Couldn't create path to "+ configuration.getConfigFilePath()) ;
         } else {
             if (!confFile.exists()) {
-                File file = new File(ConfigurationXML.getConf().getConfigFilePath());
                 try {
-                    XmlUtils.save(file, ConfigurationXML.getConf(), ConfigurationXML.class);
-                    out.add("INFO Config file saved in "+ conf.getConfigFilePath()) ;
+                    File file = new File(configuration.getConfigFilePath());
+                    XmlUtils.save(file, configuration.getConf(), configuration.getConfClass());
+                    out.add("INFO Config file saved in "+ configuration.getConfigFilePath()) ;
                 } catch (JAXBException ex) {
-                    out.add("WARNING couldn't save: "+ex.getMessage());
+                    out.add("WARN Config file couldn't be created ... "+ ex.getMessage()) ;
                 }
            } else {
-                out.add("INFO Config file already exists in "+ conf.getConfigFilePath()) ;
+                out.add("INFO Config file already exists in "+ configuration.getConfigFilePath()) ;
            }
         }
         return out;

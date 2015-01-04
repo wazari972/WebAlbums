@@ -14,6 +14,7 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import net.wazari.common.exception.WebAlbumsException;
 import net.wazari.dao.*;
 import net.wazari.dao.entity.*;
 import net.wazari.dao.entity.facades.EntityWithId;
@@ -23,6 +24,7 @@ import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.MapPoint;
 import net.wazari.service.entity.util.MapPoint.Point;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Tag_Mode;
@@ -58,6 +60,7 @@ public class WebPageBean implements WebPageLocal {
     private AlbumFacadeLocal albumDAO;
     @EJB
     private CarnetFacadeLocal carnetDAO;
+    @EJB private Configuration configuration;
     
     private static final SimpleDateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
     
@@ -164,7 +167,7 @@ public class WebPageBean implements WebPageLocal {
     public XmlAffichage xmlAffichage(ViewSession vSession) {
         XmlAffichage affichage = new XmlAffichage();
 
-        if (!vSession.getConfiguration().isPathURL() &&
+        if (!configuration.isPathURL() &&
             (vSession.isRootSession() ||
             vSession.getTheme() != null && vSession.getTheme().getBackground() != null)) {
             affichage.background = true  ;
@@ -178,8 +181,8 @@ public class WebPageBean implements WebPageLocal {
         affichage.statik = vSession.getStatic() ? true : null;
         affichage.direct_access = vSession.directFileAccess() ? true : null;
         if (affichage.direct_access != null && affichage.direct_access) {
-            affichage.mini_folder = vSession.getConfiguration().getMiniPath(false);
-            affichage.photo_folder = vSession.getConfiguration().getImagesPath(false);
+            affichage.mini_folder = configuration.getMiniPath(false);
+            affichage.photo_folder = configuration.getImagesPath(false);
         }
         return affichage;
     }
@@ -211,6 +214,8 @@ public class WebPageBean implements WebPageLocal {
         } else if (entity instanceof Carnet) {
             list = tagPhotoDAO.queryByCarnet((Carnet) entity);
             type = ListType.CARNET;
+        } else {
+            throw new WebAlbumsServiceException(WebAlbumsException.ErrorType.ServiceException, "Unknown entity type: "+entity);
         }
         List<Tag> tags = new ArrayList<>(list.size());
         for (TagPhoto enrTagPhoto : list) {
@@ -618,7 +623,7 @@ public class WebPageBean implements WebPageLocal {
     @Override
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     public XmlTag tagListToTagTree(XmlWebAlbumsList tag_used) {        
-        Map<Integer, XmlTag> map = new HashMap<Integer, XmlTag>();
+        Map<Integer, XmlTag> map = new HashMap<>();
         XmlTag olderParent = null;
         boolean first = true;
         

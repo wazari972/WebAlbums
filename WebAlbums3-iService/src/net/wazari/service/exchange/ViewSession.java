@@ -53,7 +53,6 @@ public interface ViewSession extends ServiceSession {
     Utilisateur getUser();
     boolean isAuthenticated();
     File getTempDir();
-    Configuration getConfiguration();
     Integer getThemeId();
     boolean isRemoteAccess();
     boolean directFileAccess();

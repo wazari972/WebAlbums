@@ -17,6 +17,7 @@ import net.wazari.service.UserLocal;
 import net.wazari.service.WebPageLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.Box;
 import net.wazari.service.exchange.ViewSession.Tag_Mode;
@@ -63,8 +64,7 @@ public class PhotoBean implements PhotoLocal {
     private FilesFinder finder;
     @EJB
     private DaoToXmlBean daoToXml;
-    @EJB
-    private FilesFinder systemFacade;
+    @EJB private Configuration configuration;
     
     @Override
     @RolesAllowed(UserLocal.MANAGER_ROLE)
@@ -88,8 +88,8 @@ public class PhotoBean implements PhotoLocal {
 
         //supprimer ?
         if (vSession.getSuppr()) {
-            if (finder.deletePhoto(enrPhoto, vSession.getVSession().getConfiguration())) {
-                output.message = "Photo correctement  supprimé !";
+            if (finder.deletePhoto(enrPhoto)) {
+                output.message = "Photo correctement supprimée !";
             } else {
                 output.exception = "Impossible de supprimer correctement la photo ...";
             }
@@ -151,7 +151,7 @@ public class PhotoBean implements PhotoLocal {
             themeDAO.setBackground(enrTheme, enrPhoto);
             vSession.getVSession().getTheme().setBackground(enrPhoto);
             
-            File backgroundDir = new File(vSession.getVSession().getConfiguration()
+            File backgroundDir = new File(configuration
                     .getTempPath()+vSession.getVSession().getTheme().getNom()) ;
             
             log.info("Delete and create background dir: {}", backgroundDir) ;
@@ -542,7 +542,7 @@ public class PhotoBean implements PhotoLocal {
         }
 
         if (vSession.getSuppr()) {
-            if (finder.deletePhoto(enrPhoto, vSession.getVSession().getConfiguration())) {
+            if (finder.deletePhoto(enrPhoto)) {
                 output.delete_status = XmlPhotoFastEdit.Status.OK;
             } else {
                 output.delete_status = XmlPhotoFastEdit.Status.ERROR;

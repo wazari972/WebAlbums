@@ -13,8 +13,8 @@ import net.wazari.dao.ThemeFacadeLocal;
 import net.wazari.dao.UtilisateurFacadeLocal;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.TagPhoto;
-import net.wazari.dao.entity.Theme;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.xml.photo.XmlPhotoExif;
 import net.wazari.service.exchange.xml.photo.XmlPhotoExif.XmlPhotoExifEntry;
@@ -36,6 +36,7 @@ public class PhotoUtil {
     @EJB TagFacadeLocal tagDAO;
     @EJB ThemeFacadeLocal themeDAO;
     @EJB UtilisateurFacadeLocal userDAO;
+    @EJB Configuration configuration;
 
     public void setTags(Photo p, Integer[] tags)
             throws WebAlbumsServiceException {
@@ -151,11 +152,11 @@ public class PhotoUtil {
             return true;
         }
 
-        String sep = vSession.getConfiguration().getSep() ;
+        String sep = configuration.getSep() ;
 
         String path = p.getPath(true);
-        String mini = vSession.getConfiguration().getMiniPath(true) + sep + path;
-        String image = vSession.getConfiguration().getImagesPath(true) + sep + path;
+        String mini = configuration.getMiniPath(true) + sep + path;
+        String image = configuration.getImagesPath(true) + sep + path;
         log.info( "Rotation de {}degres de {}", new Object[]{degrees, path});
         if (sysTools.rotate(null, null, degrees, mini + ".png", mini + ".png")) {
             if (!sysTools.rotate(null, null, degrees, image, image)) {
@@ -168,16 +169,15 @@ public class PhotoUtil {
             return false;
         }
     }
-
-    /***/    
+ 
     public String getImagePath(ViewSession vSession, Photo p) {
-        String sep = vSession.getConfiguration().getSep() ;
-        return vSession.getConfiguration().getImagesPath(true) + p.getPath(true);
+        String sep = configuration.getSep() ;
+        return configuration.getImagesPath(true) + p.getPath(true);
     }
 
     public String getMiniPath(ViewSession vSession, Photo p) {
-        String sep = vSession.getConfiguration().getSep() ;
-        return  vSession.getConfiguration().getMiniPath(true) +  p.getPath(true) + ".png";
+        String sep = configuration.getSep() ;
+        return  configuration.getMiniPath(true) +  p.getPath(true) + ".png";
     }
 
     public String getExtention(ViewSession vSession, Photo p) {

@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.common.plugins.XmlPluginInfo;
 import net.wazari.service.exchange.xml.common.XmlInfoException;
 import net.wazari.service.exchange.xml.database.*;
-import net.wazari.view.servlet.exchange.ConfigurationXML;
 
 /**
  *
@@ -28,7 +27,7 @@ public class XmlDatabase extends XmlInfoException {
     public XmlDatabaseStats stats;
     public XmlPluginInfo plugins;
     public XmlCreateDir create_dir ;
-    public ConfigurationXML config;
+    public Object config;
     
     public static class XmlCreateDir {
         public List<String> dirs;

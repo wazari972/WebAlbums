@@ -32,4 +32,8 @@ public interface Configuration {
     String getSep();
 
     boolean wantsProtectDB() ;
+    
+    Class getConfClass();
+    Object getConf();
+    void setConf(Object conf);
 }

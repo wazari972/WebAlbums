@@ -3,6 +3,7 @@ package net.wazari.service.engine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -12,6 +13,7 @@ import net.wazari.dao.entity.*;
 import net.wazari.service.ConfigLocal;
 import net.wazari.service.UserLocal;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSessionConfig;
 import net.wazari.service.exchange.xml.config.*;
 import net.wazari.util.system.FilesFinder;
@@ -37,7 +39,9 @@ public class ConfigBean implements ConfigLocal {
     private ThemeFacadeLocal themeDAO;
     @EJB
     private FilesFinder filesFinder;
-
+    @EJB
+    private Configuration configuration;
+    
     @Override
     @RolesAllowed(UserLocal.MANAGER_ROLE)
     public XmlConfigImport treatIMPORT(ViewSessionConfig vSession)
@@ -45,7 +49,7 @@ public class ConfigBean implements ConfigLocal {
         XmlConfigImport output = new XmlConfigImport();
         String theme = vSession.getImportTheme();
 
-        boolean correct = filesFinder.importAuthor(vSession.getVSession(), theme, vSession.getVSession().getConfiguration());
+        boolean correct = filesFinder.importAuthor(vSession.getVSession(), theme);
 
         if (correct) {
             output.message = "Well done !" ;
@@ -70,7 +74,7 @@ public class ConfigBean implements ConfigLocal {
         }
 
         Tag enrTag = tagDAO.find(tag);
-        if (tag == null) {
+        if (null == enrTag) {
             output.exception = "Le Tag #" + tag + " n'est pas dans la base ...";
             return output;
         }
@@ -84,7 +88,7 @@ public class ConfigBean implements ConfigLocal {
         
         Boolean isMinor = vSession.getMinor();
         Boolean oldIsMinor = enrTag.isMinor();
-        if (oldIsMinor != null && oldIsMinor != isMinor) {
+        if (oldIsMinor != null && !Objects.equals(oldIsMinor, isMinor)) {
             if (!isMinor)
                 isMinor = null;
             enrTag.setMinor(isMinor);
@@ -255,7 +259,7 @@ public class ConfigBean implements ConfigLocal {
         }
 
         Integer tag = vSession.getTag();
-        Boolean visible = vSession.getVisible();
+        boolean visible = vSession.getVisible();
 
         if (tag == null || tag == -1) {
             output.exception = "Pas de tag selectionné ...";
@@ -276,11 +280,9 @@ public class ConfigBean implements ConfigLocal {
 
             tagThemeDAO.create(enrTagTheme);
         }
-        if (visible != null && visible) {
-            enrTagTheme.setVisible(true);
-        } else {
-            enrTagTheme.setVisible(false);
-        }
+        
+        enrTagTheme.setVisible(visible);
+        
         tagThemeDAO.edit(enrTagTheme);
         output.message = "Le tag " + tag + " est maintenant : " + (visible ? "visible" : "invisible");
 
@@ -468,7 +470,7 @@ public class ConfigBean implements ConfigLocal {
                 return output ;
             }
 
-            themeDAO.remove(vSession.getVSession().getTheme(), vSession.getVSession().getConfiguration().wantsProtectDB());
+            themeDAO.remove(vSession.getVSession().getTheme(), configuration.wantsProtectDB());
             output.message = "Theme correctement supprimer" ;
             return output ;
         } catch (Exception e) {

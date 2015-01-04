@@ -43,21 +43,19 @@ import org.slf4j.LoggerFactory;
  */
 @Stateless
 public class DatabaseBean implements DatabaseLocal {
-    private static String getPath(Configuration conf) {
-        return conf.getBackupPath();
-    }
     private static final Logger log = LoggerFactory.getLogger(DatabaseBean.class.toString());
     @EJB ThemeFacadeLocal themeDAO;
     @EJB TagFacadeLocal tagDAO;
     @EJB DatabaseFacadeLocal databaseDAO;
     @EJB private PhotoUtil photoUtil ;
     @EJB MaintFacadeLocal maintDAO;
+    @EJB private Configuration configuration;
     
     @Override
     public XmlDatabaseImport treatIMPORT(ViewSessionDatabase vSession) {
         XmlDatabaseImport output = new XmlDatabaseImport() ;
         try {
-            databaseDAO.treatImportXML(vSession.getVSession().getConfiguration().wantsProtectDB(), getPath(vSession.getVSession().getConfiguration()));
+            databaseDAO.treatImportXML(configuration.wantsProtectDB(), configuration.getBackupPath());
             output.message = "Import OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
@@ -70,7 +68,7 @@ public class DatabaseBean implements DatabaseLocal {
     public XmlDatabaseExport treatEXPORT(ViewSessionDatabase vSession) {
         XmlDatabaseExport output = new XmlDatabaseExport() ;
         try {
-            databaseDAO.treatExportXML(getPath(vSession.getVSession().getConfiguration()));
+            databaseDAO.treatExportXML(configuration.getBackupPath());
             output.message = "Export OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
@@ -93,10 +91,10 @@ public class DatabaseBean implements DatabaseLocal {
             if (enrTheme == null) {
                 throw new DatabaseFacadeLocalException("Theme not set");
             }
-            if (vSession.getVSession().getConfiguration().isPathURL()) {
+            if (configuration.isPathURL()) {
                 throw new DatabaseFacadeLocalException("URL path checking not implemented yet");
             }
-            List<Theme> themes = new LinkedList<Theme>();
+            List<Theme> themes = new LinkedList<>();
             if (vSession.getVSession().isRootSession()) {
                 themes.addAll(themeDAO.findAll());
             }
@@ -114,11 +112,11 @@ public class DatabaseBean implements DatabaseLocal {
                 
                 if (action == Database_Action.CHECK_FS) {
                     /* Save in images and mini the path to all the files of the directory.  */
-                    images = new LinkedList<String>();
-                    mini = new LinkedList<String>();
-                    String sep = vSession.getVSession().getConfiguration().getSep() ;
+                    images = new LinkedList<>();
+                    mini = new LinkedList<>();
+                    String sep = configuration.getSep() ;
                     List<String> current = images ;
-                    String pictpath = vSession.getVSession().getConfiguration().getImagesPath(true) ;
+                    String pictpath = configuration.getImagesPath(true) ;
                     
                     while (current != null) {    
                         File themeDir = new File(pictpath + sep + curEnrTheme.getNom());
@@ -135,7 +133,7 @@ public class DatabaseBean implements DatabaseLocal {
                         
                         if (current == images) {
                             current = mini; 
-                            pictpath = vSession.getVSession().getConfiguration().getMiniPath(true) ;
+                            pictpath = configuration.getMiniPath(true) ;
                         } else {
                             current = null;
                         }
@@ -148,7 +146,7 @@ public class DatabaseBean implements DatabaseLocal {
                         List<String> current = images ;
                         for (String filepath : new String[]{photoUtil.getImagePath(vSession.getVSession(), enrPhoto), 
                                                             photoUtil.getMiniPath(vSession.getVSession(), enrPhoto)}) {
-                            if (enrPhoto.isGpx() && filepath.contains(vSession.getVSession().getConfiguration().getMiniPath(true))) {
+                            if (enrPhoto.isGpx() && filepath.contains(configuration.getMiniPath(true))) {
                                 continue;
                             }
                             if (action == Database_Action.CHECK_DB) {
@@ -189,7 +187,7 @@ public class DatabaseBean implements DatabaseLocal {
     public XmlDatabaseTrunk treatTRUNK(ViewSessionDatabase vSession) {
         XmlDatabaseTrunk output = new XmlDatabaseTrunk() ;
         try {
-            databaseDAO.treatTruncateDB(vSession.getVSession().getConfiguration().wantsProtectDB());
+            databaseDAO.treatTruncateDB(configuration.wantsProtectDB());
             output.message = "Trunk OK";
         } catch (DatabaseFacadeLocal.DatabaseFacadeLocalException e) {
             output.exception = e.getMessage();
@@ -206,7 +204,7 @@ public class DatabaseBean implements DatabaseLocal {
             output.exception = "theme not set";
             return output;
         }
-        List<Theme> themes = new LinkedList<Theme>();
+        List<Theme> themes = new LinkedList<>();
         XmlDatabaseStatsTheme xmlRootTheme = null;
         if (!vSession.getVSession().isRootSession()) {
             //Hibernate exception if direct
@@ -244,7 +242,7 @@ public class DatabaseBean implements DatabaseLocal {
             
             if (xmlRootTheme == null || xmlRootTheme.tag == null) {
                 Map<Tag, Long> map = tagDAO.queryIDNameCount(vSession.getVSession());
-                List<XmlTagCloudEntry> lst = new ArrayList<XmlTagCloudEntry>(map.size());
+                List<XmlTagCloudEntry> lst = new ArrayList<>(map.size());
                 for (Tag enrTag : map.keySet()) {
                     XmlTagCloudEntry xmlCloudEntry = new XmlTagCloudEntry();
                     xmlCloudEntry.tag = new XmlTag();

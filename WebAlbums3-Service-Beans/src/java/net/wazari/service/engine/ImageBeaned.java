@@ -29,11 +29,11 @@ import net.wazari.service.ImageLocal;
 import net.wazari.service.UserLocal;
 import net.wazari.service.entity.util.PhotoUtil;
 import net.wazari.service.exception.WebAlbumsServiceException;
+import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSessionImages;
 import net.wazari.service.exchange.ViewSessionImages.ImgMode;
 import net.wazari.service.exchange.xml.XmlImage;
 import net.wazari.util.system.SystemTools;
-//import org.apache.commons.lang.StringEscapeUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +49,7 @@ public class ImageBeaned implements ImageLocal {
 
     @EJB private SystemTools sysTools ;
     @EJB private ThemeFacadeLocal themeDAO ;
+    @EJB private Configuration configuration;
     
     @Override
     @RolesAllowed(UserLocal.VIEWER_ROLE)
@@ -71,7 +72,7 @@ public class ImageBeaned implements ImageLocal {
             Integer borderWidth = vSession.getBorderWidth();
             if (borderWidth != null) {
                 String color = vSession.getBorderColor() ;
-                sysTools.addBorder(vSession.getVSession(), enrPhoto, new Integer(borderWidth), color, filepath);
+                sysTools.addBorder(vSession.getVSession(), enrPhoto, borderWidth, color, filepath);
                 log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
             }
         } catch (NumberFormatException e) {
@@ -168,7 +169,7 @@ public class ImageBeaned implements ImageLocal {
                     Integer borderWidth = vSession.getBorderWidth();
                     if (borderWidth != null) {
                         String color = vSession.getBorderColor() ;
-                        sysTools.addBorder(vSession.getVSession(), enrPhoto, new Integer(borderWidth), color, filepath);
+                        sysTools.addBorder(vSession.getVSession(), enrPhoto, borderWidth, color, filepath);
                         log.warn("Border {}*{} ({}) added to file: {}", new Object[]{borderWidth, borderWidth, color, filepath}) ;
                     }
                 } catch (NumberFormatException e) {
@@ -178,9 +179,9 @@ public class ImageBeaned implements ImageLocal {
             } else if (mode == ImgMode.BACKGROUND) {
                 final int SIZE = 1280 ;
 
-                String backgroundpath = vSession.getVSession().getConfiguration()
+                String backgroundpath = configuration
                         .getTempPath()+enrThemeForBackground.getNom()+File.separator+SIZE+".jpg" ;
-                if (vSession.getVSession().getConfiguration().isPathURL()) {
+                if (configuration.isPathURL()) {
                     filepath = photoUtil.getImagePath(vSession.getVSession(), enrPhoto) ;
                 } else if (!new File (backgroundpath).exists()) {
                     filepath = sysTools.shrink(vSession.getVSession(), enrPhoto, SIZE, backgroundpath);
@@ -198,23 +199,20 @@ public class ImageBeaned implements ImageLocal {
             
 
             //redirect if the image can be accessed from HTTP
-            if (vSession.getVSession().getConfiguration().isPathURL()) {
+            if (!configuration.isPathURL()) {
+                filepath = "file://" + filepath;
+            } else {
                 if (false) {
                     vSession.redirect(filepath) ;
-                    //stopWatch.stop(stopWatch.getTag()+".redirect") ;
                     return null ;
                 }
-            } else {
-                filepath = "file://" + filepath;
             }
 
-            //stopWatch.lap("Service.treatIMG."+mode) ;
             //null = correct, true = incorrect, but contentType already set
             Boolean correct = sendFile(vSession, filepath, type, output);
             if (correct == null || correct) {
                 output = null;
             }
-            //stopWatch.stop("Service.treatIMG."+mode+".sendFile") ;
         } catch (Exception e) {
             log.warn ("{}: {} ", e.getClass().getSimpleName(), e) ;
             output.exception = e.getMessage();
@@ -245,12 +243,12 @@ public class ImageBeaned implements ImageLocal {
             
             vSession.setContentLength(conn.getContentLength());
             vSession.setContentType(type);
-            OutputStream out = vSession.getOutputStream();
-            while ((nbRead = in.read(buffer)) != -1) {
-                out.write(buffer, 0, nbRead);
+            try (OutputStream out = vSession.getOutputStream()) {
+                while ((nbRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, nbRead);
+                }
+                out.flush();
             }
-            out.flush();
-            out.close();
             
             return null;
         } catch (MalformedURLException e) {
