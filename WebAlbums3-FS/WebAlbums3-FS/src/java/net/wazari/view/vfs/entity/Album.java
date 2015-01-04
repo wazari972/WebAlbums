@@ -98,7 +98,7 @@ public class Album extends SDirectory implements ADirectory {
             }
         }
         if (simpleAlbumDir) {
-                return;
+            return;
         }
         XmlAlbumAgo albumAgo;
         try {

@@ -78,7 +78,12 @@ public class LibVFS extends JnetFSAdapter {
         String path = jniEnv.getString(Code.PATH);
         IFile file = path == null || path.length() < 1 ? null : resolver.getFile(path) ;        
         if (file == null) {
-            log.info("ATTRIBUTES File not found: {}", path);
+            if (path != null 
+                    && !path.contains(".hidden")
+                    && !path.contains("Trash")) 
+            {
+                log.info("ATTRIBUTES File not found: {}", path);
+            }
             return Code.ENOENT;
         }
         
