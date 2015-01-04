@@ -14,6 +14,7 @@
         <web-resource-collection>
             <web-resource-name>WebAlbums3</web-resource-name>
             <description/>
+            <url-pattern>/</url-pattern>
             <url-pattern>/Index</url-pattern>
             <url-pattern>/Choix</url-pattern>
             <url-pattern>/Albums</url-pattern>
