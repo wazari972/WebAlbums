@@ -4,28 +4,17 @@
  */
 package net.wazari.libvfs.inteface;
 
+import net.wazari.libvfs.annotation.File;
+
 /**
  *
  * @author kevin
  */
-public class ValueFile extends SFile {
-    private SetterCallback setter = null;
-    private GetterCallback getter = null;
+public abstract class ValueFile extends SFile {    
+    @Override
+    public abstract String getContent();
     
-    public interface GetterCallback {
-        String getContent();
-    }
-    
-    public interface SetterCallback {
-        void setContent(String content);
-    }
-    
-    public ValueFile(SetterCallback setter, GetterCallback getter) {
-        this.setter = setter;
-        this.getter = getter;
-    }
-
-    public ValueFile() {}
+    public abstract void setContent(String content);
     
     @Override
     public void open() {
@@ -35,17 +24,11 @@ public class ValueFile extends SFile {
     
     @Override
     public void close() {
-        if (setter != null) {
-            setter.setContent(content);
-        }
+        this.setContent(this.content);
     }
     
     @Override
-    public String getContent() {
-        if (getter != null) {
-            return getter.getContent();
-        } else {
-            return content;
-        }
-    }    
+    public File.Access[] getAccess() {
+        return new File.Access[]{File.Access.R, File.Access.W};
+    }
 }

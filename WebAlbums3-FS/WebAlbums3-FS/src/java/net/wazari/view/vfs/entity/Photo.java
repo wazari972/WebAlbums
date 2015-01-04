@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
  */
 public class Photo extends SLink {
     private static final Logger log = LoggerFactory.getLogger(Photo.class.getCanonicalName());
-    public final static boolean FORCE_FILE = false;
     
     protected String name;
     private String target;
@@ -25,7 +24,7 @@ public class Photo extends SLink {
     protected boolean doCompletePathed = true;
     protected boolean uniqName = false;
     // should we read this.content or this.target ?
-    protected boolean forceFile = FORCE_FILE;
+    protected boolean forceFile = Configuration.PHOTO_AS_FILE;
     
     public Photo(XmlDetails details, String name) {
         this(details);
@@ -50,7 +49,7 @@ public class Photo extends SLink {
     protected final void setPhoto(String path, Integer id) {
         setTarget(path, id);
         this.id = id;
-        if (FORCE_FILE) {
+        if (Configuration.PHOTO_AS_FILE) {
             this.setJFile(new java.io.File( Launch.getFolderPrefix(true)+path));
         }
     }
@@ -61,7 +60,7 @@ public class Photo extends SLink {
     }
     
     private void setTarget(String path, Integer id) {
-        if (!FORCE_FILE) {
+        if (!Configuration.PHOTO_AS_FILE) {
             this.forceFile = path == null;
         }
         

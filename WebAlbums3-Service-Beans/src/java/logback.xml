@@ -16,15 +16,16 @@
             <pattern># %d{HH:mm} %-4level %-25logger{5} %file:%line * %msg %ex %n</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <!-- change here to see more logs on screen -->
             <level>trace</level> 
         </filter>
     </appender>
     
     <logger additivity="false" name="net.wazari">
+        <!-- change here to see more logs on screen -->
         <level value="info"/> 
         <appender-ref ref="net.wazari.ConsoleAppender"/>
     </logger>
+    <!--
     <logger additivity="false" name="net.wazari.view.vfs">
         <level value="debug"/> 
         <appender-ref ref="net.wazari.ConsoleAppender"/>
@@ -33,6 +34,7 @@
         <level value="info"/> 
         <appender-ref ref="net.wazari.ConsoleAppender"/>
     </logger>
+    -->
     <!-- ################################################################### -->
     <!--              WebAlbums Dependecies Logging Configuration            -->
     <!-- ################################################################### -->

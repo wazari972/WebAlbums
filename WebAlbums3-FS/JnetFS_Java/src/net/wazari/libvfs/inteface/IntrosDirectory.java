@@ -139,7 +139,7 @@ public class IntrosDirectory extends SDirectory {
         //if it's not the first time we come here the dir can change and did not change
         if (inFiles != null && !changed) {
             return inFiles;
-        }        
+        }
         try {
             directory.load();
             log.debug("Loaded {}", this.directory);

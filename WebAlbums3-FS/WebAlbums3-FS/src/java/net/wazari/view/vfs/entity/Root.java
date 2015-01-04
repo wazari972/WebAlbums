@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 @File
-public class Root extends SDirectory implements ADirectory, CanChange{
+public class Root extends SDirectory implements ADirectory, CanChange {
     private static final Logger log = LoggerFactory.getLogger(Root.class.getCanonicalName()) ;
     
     @File
@@ -48,7 +48,6 @@ public class Root extends SDirectory implements ADirectory, CanChange{
     @Override
     public void load() throws VFSException {
         themes = new LinkedList<>();
-        log.info("LOAD ROOT");
         for (XmlTheme theme : aThis.themeService.getThemeListSimple(new Session(null)).theme) {
             log.debug("LOAD ROOT {}", theme.name);
             themes.add(new Theme(theme.id, theme.name, aThis));
