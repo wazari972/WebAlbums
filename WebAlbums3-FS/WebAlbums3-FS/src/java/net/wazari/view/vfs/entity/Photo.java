@@ -7,19 +7,25 @@ package net.wazari.view.vfs.entity;
 import net.wazari.libvfs.inteface.SLink;
 import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.view.vfs.Launch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author kevin
  */
 public class Photo extends SLink {
+    private static final Logger log = LoggerFactory.getLogger(Photo.class.getCanonicalName());
+    public final static boolean FORCE_FILE = false;
+    
     protected String name;
-    protected String target;
+    private String target;
     protected Integer id;
     
     protected boolean doCompletePathed = true;
     protected boolean uniqName = false;
-    protected boolean forceFile = false;
+    // should we read this.content or this.target ?
+    protected boolean forceFile = FORCE_FILE;
     
     public Photo(XmlDetails details, String name) {
         this(details);
@@ -38,8 +44,15 @@ public class Photo extends SLink {
     }
     
     public Photo(String path, int id) {
-        setTarget(path);
+        setPhoto(path, id);
+    }
+    
+    protected final void setPhoto(String path, Integer id) {
+        setTarget(path, id);
         this.id = id;
+        if (FORCE_FILE) {
+            this.setJFile(new java.io.File( Launch.getFolderPrefix(true)+path));
+        }
     }
     
     @Override
@@ -47,15 +60,17 @@ public class Photo extends SLink {
         return this.forceFile;
     }
     
-    protected final void setTarget(String target) {
-        this.forceFile = target == null;
+    private void setTarget(String path, Integer id) {
+        if (!FORCE_FILE) {
+            this.forceFile = path == null;
+        }
         
-        if (null == target) {
+        if (null == path) {
             return;
         }
         
-        this.target = target;
-        name = target.substring(target.lastIndexOf("/")+1);
+        this.target = path;
+        this.name = path.substring(path.lastIndexOf("/")+1);
     }
     
     @Override

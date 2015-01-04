@@ -16,6 +16,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlAlbumYear;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
+import net.wazari.service.exchange.xml.common.XmlDetails;
 import net.wazari.view.vfs.Launch;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
@@ -134,7 +135,8 @@ public class Random implements ADirectory {
         
         @Override
         public void unlink() throws WebAlbumsServiceException {
-            this.setTarget(aThis.photoService.treatRANDOM(session).details.photoId.path);
+            XmlDetails details = aThis.photoService.treatRANDOM(session).details;
+            this.setPhoto(details.photoId.path, details.photoId.id);
         }
     }
 }

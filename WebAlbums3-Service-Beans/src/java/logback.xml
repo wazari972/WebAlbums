@@ -25,7 +25,14 @@
         <level value="info"/> 
         <appender-ref ref="net.wazari.ConsoleAppender"/>
     </logger>
-
+    <logger additivity="false" name="net.wazari.view.vfs">
+        <level value="debug"/> 
+        <appender-ref ref="net.wazari.ConsoleAppender"/>
+    </logger>
+    <logger additivity="false" name="net.wazari.libvfs">
+        <level value="info"/> 
+        <appender-ref ref="net.wazari.ConsoleAppender"/>
+    </logger>
     <!-- ################################################################### -->
     <!--              WebAlbums Dependecies Logging Configuration            -->
     <!-- ################################################################### -->

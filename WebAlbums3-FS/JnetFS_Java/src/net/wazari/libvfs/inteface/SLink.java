@@ -8,7 +8,7 @@ package net.wazari.libvfs.inteface;
  *
  * @author kevin
  */
-public class SLink extends SFile implements ILink {
+public class SLink extends JFile implements ILink {
 
     @Override
     public String getTarget() {

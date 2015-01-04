@@ -65,7 +65,7 @@ public class Resolver {
                     return (IFile) getFile(new IntrosDirectory(current, (ADirectory) file), fullname, search);
                 }
             } else {
-                //nothing to do here, wrong file
+                //nothing to do here, not the right file, not a directory
             } 
         }
         

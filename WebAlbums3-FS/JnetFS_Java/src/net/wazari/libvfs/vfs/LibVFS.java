@@ -4,6 +4,7 @@ import com.jnetfs.core.Code;
 import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 import com.jnetfs.core.relay.impl.*;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
@@ -13,6 +14,7 @@ import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
 import net.wazari.libvfs.inteface.ILink;
+import net.wazari.libvfs.inteface.JFile;
 import net.wazari.libvfs.inteface.SLink;
 import net.wazari.libvfs.inteface.VFSException;
 import org.slf4j.Logger;
@@ -207,29 +209,45 @@ public class LibVFS extends JnetFSAdapter {
             return Code.ENOENT;
         }
         
-        long SIZE = JnetRead.getSize(jniEnv);
-        long OFFSET = JnetRead.getOffset(jniEnv);
+        long lsize = JnetRead.getSize(jniEnv);
+        final long OFFSET = JnetRead.getOffset(jniEnv);
         
         long maxlen = file.getSize();
-        if (OFFSET >= maxlen) {
+        if (OFFSET < maxlen) {
+        } else {
             return 0;
         }
-        if (maxlen - OFFSET < SIZE) {
-            SIZE = maxlen - OFFSET;
+        if (maxlen - OFFSET < lsize) {
+            lsize = maxlen - OFFSET;
         }
-        byte buffer[] = new byte[(int) SIZE];
+            
+        if (lsize > Integer.MAX_VALUE) {
+            log.warn("Cannot read {} bytes, we're limited to integers ({}) ...",
+                     lsize, Integer.MAX_VALUE);
+            return Code.ESPIPE; /* illegal seek */
+        }
+        
+        int size = (int) lsize;
+        
+        byte buffer[] = new byte[size];
         try {
-            //String range = "bytes=" + OFFSET + "-" + (OFFSET + SIZE - 1);
             int count = 0;
-            InputStream is = new StringBufferInputStream(file.getContent());
-            while (count < buffer.length) {
-                int c = is.read(buffer, count, buffer.length - count);
+            InputStream is;
+            
+            if (file instanceof JFile && ((JFile) file).getJFile() != null) {
+                is = new FileInputStream(((JFile) file).getJFile());
+            } else {
+                is = new StringBufferInputStream(file.getContent());
+            }
+            is.skip(OFFSET);
+            while (count < size) {
+                int c = is.read(buffer, count, size - count);
                 count += c;
             }
             is.close();
             JnetRead.setData(jniEnv, buffer);
-
-            return (int) SIZE;
+            
+            return count;
         } catch (IOException ex) {
             return Code.EIO;
         }
