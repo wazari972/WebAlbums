@@ -23,4 +23,8 @@ public class JnetWrite {
     public static long getOffset(JnetJNIConnector conn) throws JnetException {
         return conn.getLong("offset");
     }
+    
+    public static long getHandle(JnetJNIConnector conn) throws JnetException {
+        return conn.getLong(".fh");
+    }
 }

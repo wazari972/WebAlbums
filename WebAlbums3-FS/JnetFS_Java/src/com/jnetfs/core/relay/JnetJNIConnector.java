@@ -26,7 +26,7 @@ public final class JnetJNIConnector implements Serializable {
      * default constructor
      */
     public JnetJNIConnector() {
-        this.attrs = new HashMap<String, Object>();
+        this.attrs = new HashMap<>();
     }
 
     /**
@@ -96,7 +96,7 @@ public final class JnetJNIConnector implements Serializable {
      * @param val int
      */
     public void setInteger(String key, int val) {
-        attrs.put(key, new Integer(val));
+        attrs.put(key, val);
     }
 
     /**
@@ -106,7 +106,7 @@ public final class JnetJNIConnector implements Serializable {
      * @param val long
      */
     public void setLong(String key, long val) {
-        attrs.put(key, new Long(val));
+        attrs.put(key, val);
     }
 
     /**

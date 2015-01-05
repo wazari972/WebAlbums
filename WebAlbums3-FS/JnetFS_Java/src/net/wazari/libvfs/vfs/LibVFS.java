@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
 
 public class LibVFS extends JnetFSAdapter {
     private static final Logger log = LoggerFactory.getLogger(LibVFS.class.getCanonicalName());
-    
-    private long clientcount = 0;
 
     static class FileInfo {
         public String fullname = null;
@@ -45,7 +43,6 @@ public class LibVFS extends JnetFSAdapter {
     @Override
     public int init(JnetJNIConnector jniEnv) throws JnetException {
         log.info("INIT");
-        clientcount++;
         
         return Code.ESUCCESS;
         
@@ -61,7 +58,6 @@ public class LibVFS extends JnetFSAdapter {
     @Override
     public int destroy(JnetJNIConnector jniEnv) throws JnetException {
         log.info("DESTROY");
-        clientcount--;
 
         return Code.ESUCCESS;
     }
