@@ -10,7 +10,6 @@ import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.libvfs.inteface.SFile;
 import net.wazari.libvfs.inteface.VFSException;
 import net.wazari.libvfs.inteface.ValueFile;
-import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +18,7 @@ import org.slf4j.LoggerFactory;
  * @author kevin
  */
 public class Configuration  extends SDirectory implements ADirectory {
-    
     private static final Logger log = LoggerFactory.getLogger(SFile.class.getCanonicalName()) ;
-    public static boolean PHOTO_AS_FILE = false;
     
     @File(name="stars")
     public ValueFile stars;
@@ -29,7 +26,7 @@ public class Configuration  extends SDirectory implements ADirectory {
     @File(name="image_access")
     public ValueFile imgAccess;
     
-    final Root root;
+    public final Root root;
     
     public Configuration(Root root) {
         this.root = root;
@@ -46,13 +43,13 @@ public class Configuration  extends SDirectory implements ADirectory {
     class StarConfiguration extends ValueFile {
         @Override
         public String getContent() {
-            return Integer.toString(Session.stars);
+            return Integer.toString(Configuration.this.root.stars);
         }
         
         @Override
         public void setContent(String content) {
             try {
-                Session.stars = Integer.parseInt(content.trim());
+                Configuration.this.root.stars = Integer.parseInt(content.trim());
                 Configuration.this.root.changed = true;
             } catch(NumberFormatException e) {
                 log.info("Coudln't parse a number in '{}'", content);
@@ -65,7 +62,7 @@ public class Configuration  extends SDirectory implements ADirectory {
         private static final String ACCESS_LINK = "link";
         private static final String ACCESS_FILE = "file";
         
-        private String access = PHOTO_AS_FILE ? ACCESS_FILE : ACCESS_LINK;
+        private String access = Configuration.this.root.PHOTO_AS_FILE ? ACCESS_FILE : ACCESS_LINK;
         
         @Override
         public String getContent() {
@@ -88,14 +85,14 @@ public class Configuration  extends SDirectory implements ADirectory {
             if (content.equals(ACCESS_LINK)) {
                 Configuration.log.info("Switch image access to link.");
                 
-                Configuration.PHOTO_AS_FILE = false;
+                Configuration.this.root.PHOTO_AS_FILE = false;
                 Configuration.this.root.changed = true;
                 
                 this.access = content;
             } else if (content.equals(ACCESS_FILE)) {
                 Configuration.log.info("Switch image access to file.");
                 
-                Configuration.PHOTO_AS_FILE = true;
+                Configuration.this.root.PHOTO_AS_FILE = true;
                 Configuration.this.root.changed = true;
                 
                 this.access = content;

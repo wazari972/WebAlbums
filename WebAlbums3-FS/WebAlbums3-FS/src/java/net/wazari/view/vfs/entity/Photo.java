@@ -24,32 +24,37 @@ public class Photo extends SLink {
     protected boolean doCompletePathed = true;
     protected boolean uniqName = false;
     // should we read this.content or this.target ?
-    protected boolean forceFile = Configuration.PHOTO_AS_FILE;
+    protected boolean forceFile;
     
-    public Photo(XmlDetails details, String name) {
-        this(details);
+    final Root root;
+    public Photo(Root root, XmlDetails details, String name) {
+        this(root, details);
         this.name = name;
+        
     }
     
-    public Photo(XmlDetails details, boolean uniq) {
-        this(details);
+    public Photo(Root root, XmlDetails details, boolean uniq) {
+        this(root, details);
         /* UNIQ_NAME disabled: makes drag-and-drop copy crash, because of
            the automatique rename */
         //this.uniqName = uniq;
     }
     
-    public Photo(XmlDetails details) {
-        this(details.photoId.path, details.photoId.id);
+    public Photo(Root root, XmlDetails details) {
+        this(root, details.photoId.path, details.photoId.id);
     }
     
-    public Photo(String path, int id) {
+    public Photo(Root root, String path, int id) {
+        this.root = root;
+        this.forceFile = root.PHOTO_AS_FILE;
         setPhoto(path, id);
+        
     }
     
     protected final void setPhoto(String path, Integer id) {
         setTarget(path, id);
         this.id = id;
-        if (Configuration.PHOTO_AS_FILE) {
+        if (root.PHOTO_AS_FILE) {
             this.setJFile(new java.io.File( Launch.getFolderPrefix(true)+path));
         }
     }
@@ -60,7 +65,7 @@ public class Photo extends SLink {
     }
     
     private void setTarget(String path, Integer id) {
-        if (!Configuration.PHOTO_AS_FILE) {
+        if (!root.PHOTO_AS_FILE) {
             this.forceFile = path == null;
         }
         

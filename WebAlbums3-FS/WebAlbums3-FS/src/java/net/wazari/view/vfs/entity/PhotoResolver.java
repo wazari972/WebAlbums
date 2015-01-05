@@ -29,11 +29,11 @@ public class PhotoResolver implements IResolver {
     public IFile getFile(String search) {
         search = search.substring(search.indexOf("/")+1);
         try {
-            Session session = new Session(null);
+            Session session = new Session(null, this.root);
             XmlDetails details = root.aThis.photoService.getPhotoByPath(session, search);
             if (details != null) {
                 log.info("Photo found for path {} >> ", search, details.photoId);
-                return new Photo(details);
+                return new Photo(this.root, details);
             }
             
             log.info("Photo not found for path {}", search);

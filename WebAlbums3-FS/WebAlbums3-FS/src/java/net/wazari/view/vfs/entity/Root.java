@@ -27,6 +27,9 @@ import org.slf4j.LoggerFactory;
 public class Root extends SDirectory implements ADirectory, CanChange {
     private static final Logger log = LoggerFactory.getLogger(Root.class.getCanonicalName()) ;
     
+    public int stars = 1;
+    public boolean PHOTO_AS_FILE = false;
+    
     @File
     @Directory
     public List<Theme> themes ;
@@ -48,9 +51,9 @@ public class Root extends SDirectory implements ADirectory, CanChange {
     @Override
     public void load() throws VFSException {
         themes = new LinkedList<>();
-        for (XmlTheme theme : aThis.themeService.getThemeListSimple(new Session(null)).theme) {
+        for (XmlTheme theme : aThis.themeService.getThemeListSimple(new Session(null, this)).theme) {
             log.debug("LOAD ROOT {}", theme.name);
-            themes.add(new Theme(theme.id, theme.name, aThis));
+            themes.add(new Theme(this, theme.id, theme.name, aThis));
         }
     }
     

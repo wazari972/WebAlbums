@@ -53,13 +53,25 @@ public class Album extends SDirectory implements ADirectory {
     private final int albumId;
     
     /* set to TRUE to exclude subdirectories (tags and years ago). */
-    private boolean simpleAlbumDir = false;
+    private boolean wantTags = true;
+    private boolean wantYearAgo = true;
     
-    public Album(XmlDate date, String name, int albumId, net.wazari.dao.entity.Theme theme, Launch aThis) {
+    private final Root root;
+    
+    public Album(Root root, XmlDate date, String name, int albumId, net.wazari.dao.entity.Theme theme, Launch aThis) {
         this.name = date.date + " " + name;
         this.theme = theme;
         this.aThis = aThis;
         this.albumId = albumId;
+        this.root = root;
+    }
+    
+    public void noTags() {
+        this.wantTags = false;
+    }
+    
+    public void noYears() {
+        this.wantYearAgo = false;
     }
     
     @Override
@@ -69,7 +81,7 @@ public class Album extends SDirectory implements ADirectory {
 
     @Override
     public void load() throws VFSException {
-        final Session session = new Session(theme);
+        final Session session = new Session(theme, this.root);
         session.setAlbum(albumId);
         
         XmlPhotoDisplay photodisp;
@@ -80,9 +92,9 @@ public class Album extends SDirectory implements ADirectory {
         }
         
         for (XmlPhoto photo : photodisp.photoList.photo) {
-            Photo photofile = new Photo(photo.details);
+            Photo photofile = new Photo(this.root, photo.details);
             photos.add(photofile);
-            if (simpleAlbumDir) {
+            if (!this.wantTags) {
                 continue;
             }
             for (XmlTag tag : photo.details.tag_used.getAllTags()) {
@@ -97,7 +109,7 @@ public class Album extends SDirectory implements ADirectory {
                 tagdir.addFileInside(photofile);
             }
         }
-        if (simpleAlbumDir) {
+        if (!this.wantYearAgo) {
             return;
         }
         XmlAlbumAgo albumAgo;
@@ -142,8 +154,8 @@ public class Album extends SDirectory implements ADirectory {
         log.debug("Album {} has {} years-ago albums.", albumId, albumAgo.album.size());
         BasicDirectory ago = new BasicDirectory("Years before");
         for (XmlAlbum album : albumAgo.album) {
-            Album albumagodir = new Album(album.date, album.name, album.id, theme, aThis);
-            albumagodir.simpleAlbumDir = true;
+            Album albumagodir = new Album(this.root, album.date, album.name, album.id, theme, aThis);
+            albumagodir.wantYearAgo = true;
             ago.addDirInside(albumagodir);
         }
         if (!ago.dirs.isEmpty()) {

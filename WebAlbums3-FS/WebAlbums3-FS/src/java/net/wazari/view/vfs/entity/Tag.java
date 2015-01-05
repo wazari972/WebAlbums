@@ -38,12 +38,12 @@ public class Tag extends TagDirectory {
     private final Theme theme;
     private final Launch aThis;
     
-    public Tag(XmlTag tag, Theme theme, Launch aThis) {
-        this(null, tag, theme, aThis);
+    public Tag(Root root, XmlTag tag, Theme theme, Launch aThis) {
+        this(root, null, tag, theme, aThis);
     }
     
-    public Tag(List<XmlTagCloudEntry> tagInside, XmlTag tag, Theme theme, Launch aThis) {
-        super(tag, tagInside, theme, aThis);
+    public Tag(Root root, List<XmlTagCloudEntry> tagInside, XmlTag tag, Theme theme, Launch aThis) {
+        super(root, tag, tagInside, theme, aThis);
         this.name = tag.name;
         this.theme = theme;
         this.aThis = aThis;
@@ -58,7 +58,7 @@ public class Tag extends TagDirectory {
     public void load() throws VFSException {
         photos = new LinkedList<>();
         
-        Session session = new Session(theme);
+        Session session = new Session(theme, this.root);
         session.setTagAsked(new Integer[]{tagId});
         XmlTagDisplay tags;
         try {
@@ -68,7 +68,7 @@ public class Tag extends TagDirectory {
         }
         
         for (XmlPhoto photo : tags.photoList.photo) {
-            photos.add(new TagPhoto(theme, aThis, photo.details, true));
+            photos.add(new TagPhoto(this.root, theme, aThis, photo.details, true));
         }
         super.load();
     }
@@ -83,15 +83,15 @@ public class Tag extends TagDirectory {
         private final Theme theme;
         private final Launch aThis;
         
-        public TagPhoto(Theme theme, Launch aThis, XmlDetails details, boolean uniqName) {
-            super(details, uniqName);
+        public TagPhoto(Root root, Theme theme, Launch aThis, XmlDetails details, boolean uniqName) {
+            super(root, details, uniqName);
             this.theme = theme;
             this.aThis = aThis;
         }
         
         @Override
         public void unlink() throws Exception {
-            Session session = new Session(theme);
+            Session session = new Session(theme, this.root);
             
             if (!(getParent() instanceof IntrosDirectory)) {
                 throw new Exception("Dir "+getParent().getShortname() + "<>" + getParent() + " is not a IntrosDirectory");
@@ -128,7 +128,7 @@ public class Tag extends TagDirectory {
             
             TagDirectory aTagDir = (TagDirectory) adir;
             
-            Session session = new Session(theme);
+            Session session = new Session(theme, this.root);
             
             session.setId(this.id);
             session.tagAction = TagAction.ADD;

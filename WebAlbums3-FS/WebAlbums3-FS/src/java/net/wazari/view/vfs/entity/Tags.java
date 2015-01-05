@@ -40,15 +40,17 @@ public class Tags implements ADirectory {
     
     private final Theme theme;
     private final Launch aThis;
-
-    public Tags(Theme theme, Launch aThis) {
+    private final Root root;
+    
+    public Tags(Root root, Theme theme, Launch aThis) {
         this.theme = theme;
         this.aThis = aThis;
+        this.root = root;
     }
     
     @Override
     public void load() throws VFSException {
-        Session session = new Session(theme);
+        Session session = new Session(theme, this.root);
         
         XmlWebAlbumsList entries;
         try {
@@ -57,11 +59,11 @@ public class Tags implements ADirectory {
             throw new VFSException(ex);
         }
         
-        who = new TagDirectory(null, theme, aThis, (List) entries.who);
-        what = new TagDirectory(null, theme, aThis, (List) entries.what);
-        where = new TagDirectory(null, theme, aThis, (List) entries.where);
+        who = new TagDirectory(root, null, theme, aThis, (List) entries.who);
+        what = new TagDirectory(root, null, theme, aThis, (List) entries.what);
+        where = new TagDirectory(root, null, theme, aThis, (List) entries.where);
         
         XmlTagCloud theCloud = aThis.tagService.treatTagCloud(session);
-        cloud = new TagDirectory(null, theCloud.parentList, theme, aThis);
+        cloud = new TagDirectory(root, null, theCloud.parentList, theme, aThis);
     }
 }

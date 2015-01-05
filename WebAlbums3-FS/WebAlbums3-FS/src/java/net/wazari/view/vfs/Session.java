@@ -10,7 +10,6 @@ import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Theme;
 import net.wazari.dao.entity.Utilisateur;
 import net.wazari.dao.exchange.ServiceSession;
-import net.wazari.service.exchange.Configuration;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.ViewSessionChoix;
 import net.wazari.service.exchange.ViewSessionAlbum;
@@ -45,6 +44,7 @@ import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagCloud;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagDisplay;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagEdit;
 import net.wazari.service.exchange.ViewSessionTag.ViewSessionTagSimple;
+import net.wazari.view.vfs.entity.Root;
 
 /**
  *
@@ -56,15 +56,16 @@ public class Session implements
         ViewSessionAlbum, ViewSessionAlbumDisplay, ViewSessionAlbumAgo, ViewSessionAlbumSimple, ViewSessionAlbumYear, ViewSessionAlbumSelect,
         ViewSessionPhoto, ViewSessionPhotoDisplay, ViewSessionPhotoSimple, ViewSessionAnAlbum,
         ViewSessionTag, ViewSessionTagSimple, ViewSessionTagCloud, ViewSessionTagDisplay,
-        ViewSessionCarnet, ViewSessionCarnetDisplay, ViewSessionCarnetSimple {
-    public static int stars = 1;
-    
+        ViewSessionCarnet, ViewSessionCarnetDisplay, ViewSessionCarnetSimple 
+{   
+    public Root root;
     public Theme theme;
     public Integer[] tagAsked = new Integer[0];
     private boolean allCarnetText;
     
-    public Session(Theme theme) {
+    public Session(Theme theme, Root root) {
         this.theme = theme;
+        this.root = root;
     }
     
     @Override
@@ -79,7 +80,7 @@ public class Session implements
     
     @Override
     public Integer getStarLevel() {
-        return stars;
+        return this.root.stars;
     }
     
     @Override

@@ -39,7 +39,7 @@ public class Theme extends SDirectory implements ADirectory {
     @File(name="Carnets")
     public Carnets carnets;
     
-    private String name;
+    private final String name;
     
     @Directory
     @File(name="Random")
@@ -50,11 +50,13 @@ public class Theme extends SDirectory implements ADirectory {
     
     protected final ATheme theme;
     private final Launch aThis;
+    private final Root root;
     
-    Theme(int id, String name, Launch aThis) {
+    Theme(Root root, int id, String name, Launch aThis) {
         this.name = name;
         this.theme = new ATheme(id, name);
         this.aThis = aThis;
+        this.root = root;
     }
     
     @Override
@@ -64,10 +66,10 @@ public class Theme extends SDirectory implements ADirectory {
 
     @Override
     public void load() throws VFSException {
-        this.tags = new Tags(theme, aThis);
-        this.albums = new Albums(theme, aThis);
-        this.random = new Random(theme, aThis);
-        this.carnets = new Carnets(theme, aThis);
+        this.tags = new Tags(this.root, theme, aThis);
+        this.albums = new Albums(this.root, theme, aThis);
+        this.random = new Random(this.root, theme, aThis);
+        this.carnets = new Carnets(this.root, theme, aThis);
         
         this.loadLocation();
     }
@@ -78,7 +80,7 @@ public class Theme extends SDirectory implements ADirectory {
     }
 
     private void loadLocation() throws VFSException {
-        Session session = new Session(theme);
+        Session session = new Session(theme, this.root);
         GpxPoints loc = new GpxPoints();
         
         XmlTagPersonsPlaces lst = aThis.tagService.treatTagPlaces(session);

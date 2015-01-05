@@ -45,8 +45,9 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
     protected final Integer tagId;
     
     private boolean contentChanged = true;
+    protected Root root;
     
-    public TagDirectory(XmlTag tag, Theme theme, Launch aThis) {
+    public TagDirectory(Root root, XmlTag tag, Theme theme, Launch aThis) {
         this.theme = theme;
         this.aThis = aThis;
         
@@ -65,14 +66,14 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
         }
     }
     
-    public TagDirectory(XmlTag tag, Theme theme, Launch aThis, List<XmlTag> tagList) {
-        this(tag, theme, aThis);
+    public TagDirectory(Root root, XmlTag tag, Theme theme, Launch aThis, List<XmlTag> tagList) {
+        this(root, tag, theme, aThis);
         this.tagList = tagList;
         
     }
 
-    public TagDirectory(XmlTag tag, List<XmlTagCloudEntry> tagCloud, Theme theme, Launch aThis) {
-        this(tag, theme, aThis);
+    public TagDirectory(Root root, XmlTag tag, List<XmlTagCloudEntry> tagCloud, Theme theme, Launch aThis) {
+        this(root, tag, theme, aThis);
         this.tagCloud = tagCloud;
     }
 
@@ -87,12 +88,12 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
         
         if (tagList != null) {
             for (XmlTag tag : tagList) {
-                tagFiles.add(new Tag(tag, theme, aThis)) ;
+                tagFiles.add(new Tag(this.root, tag, theme, aThis)) ;
             }
         } else if (tagCloud != null) {
             for (XmlTagCloudEntry tag : tagCloud) {
                 tag.tag.name = tag.nb + " " + tag.tag.name;
-                tagFiles.add(new Tag(tag.children, tag.tag, theme, aThis)) ;
+                tagFiles.add(new Tag(this.root, tag.children, tag.tag, theme, aThis)) ;
             }
         }
     }
@@ -110,7 +111,7 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
         
         Photo srcPhoto = (Photo) srcFile;
         
-        Session session = new Session(theme);
+        Session session = new Session(theme, this.root);
         session.setId(srcPhoto.id);
         session.tagAction = ViewSessionPhoto.ViewSessionPhotoFastEdit.TagAction.ADD;
         session.tagSet = new Integer[]{this.tagId};

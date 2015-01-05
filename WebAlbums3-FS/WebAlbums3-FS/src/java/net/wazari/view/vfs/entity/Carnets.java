@@ -29,26 +29,28 @@ public class Carnets implements ADirectory {
     
     private final net.wazari.dao.entity.Theme theme;
     private final Launch aThis;
+    private final Root root;
     
     @Directory
     @File
     public List<Carnet> carnets = new LinkedList<>();
     
-    public Carnets(net.wazari.dao.entity.Theme theme, Launch aThis) {
+    public Carnets(Root root, net.wazari.dao.entity.Theme theme, Launch aThis) {
         this.theme = theme;
         this.aThis = aThis;
+        this.root = root;
     }
 
     @Override
     public void load() throws VFSException {
         try {
-            Session session = new Session(theme);
+            Session session = new Session(theme, this.root);
             session.setAllCarnetText(true);
             
             XmlCarnetsDisplay carnetList = aThis.carnetService.treatDISPLAY(session, null);
             
             for (XmlCarnet carnet : carnetList.carnet) {
-                carnets.add(new Carnet(carnet.date, carnet.name, carnet.id, 
+                carnets.add(new Carnet(this.root, carnet.date, carnet.name, carnet.id, 
                         carnet.text, carnet.picture, carnet.photo));
             }
         } catch (Exception ex) {
@@ -56,7 +58,7 @@ public class Carnets implements ADirectory {
         }
     }
     
-    public static class Carnet extends SDirectory implements ADirectory {
+    public class Carnet extends SDirectory implements ADirectory {
         @File
         public List<Photo> photoset = new LinkedList<>();
         
@@ -73,7 +75,7 @@ public class Carnets implements ADirectory {
             return carnet_name;
         }
         
-        public Carnet(XmlDate date, String name, int carnetId, 
+        public Carnet(Root root, XmlDate date, String name, int carnetId, 
                 List<String> text, XmlPhotoId picture, List<XmlPhotoId> photos) 
         {
             this.carnet_name = date.date + " " + name;
@@ -88,11 +90,11 @@ public class Carnets implements ADirectory {
                 this.text = null;
             }
             if (picture != null) {
-                this.picture = new Photo(picture.path, picture.id);
+                this.picture = new Photo(Carnets.this.root, picture.path, picture.id);
                 this.picture.setName(carnet_name+".jpg");
             }
             for (XmlPhotoId photo : photos) {
-                Photo p = new Photo(photo.path, photo.id);
+                Photo p = new Photo(Carnets.this.root, photo.path, photo.id);
                 p.setName(""+photo.id+".jpg");
                 photoset.add(p);
             }

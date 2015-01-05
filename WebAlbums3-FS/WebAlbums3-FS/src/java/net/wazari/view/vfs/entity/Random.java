@@ -38,16 +38,18 @@ public class Random implements ADirectory {
     
     private final Theme theme;
     private final Launch aThis;
+    private final Root root;
     
-    public Random(net.wazari.dao.entity.Theme theme, Launch aThis) {
+    public Random(Root root, net.wazari.dao.entity.Theme theme, Launch aThis) {
         this.theme = theme;
         this.aThis = aThis;
+        this.root = root;
     }
 
     @Override
     public void load() throws VFSException {
         try {
-            Session session = new Session(theme);
+            Session session = new Session(theme, this.root);
             try {
                 photo = new RandomPhoto(aThis, session);
             } catch(NullPointerException e) {
@@ -64,7 +66,7 @@ public class Random implements ADirectory {
         }
     }
 
-    public static class RandYear extends SDirectory implements ADirectory {
+    public class RandYear extends SDirectory implements ADirectory {
         @Directory
         @File
         public List<Album> albums = new LinkedList<>();
@@ -90,12 +92,12 @@ public class Random implements ADirectory {
         @Override
         public void load() throws VFSException {
             for (XmlAlbum anAlbum : thealbums) {
-                albums.add(new Album(anAlbum.date, anAlbum.name, anAlbum.id, theme, aThis));
+                albums.add(new Album(Random.this.root, anAlbum.date, anAlbum.name, anAlbum.id, theme, aThis));
             }
         }
     }
 
-    public static class RandYears implements ADirectory {
+    public class RandYears implements ADirectory {
         @Directory
         @File
         public List<RandYear> years = new LinkedList<>();
@@ -111,7 +113,7 @@ public class Random implements ADirectory {
         @Override
         public void load() throws VFSException {
             try {
-                Session session = new Session(theme);
+                Session session = new Session(theme, Random.this.root);
                 XmlAlbumYears theYears = aThis.albumService.treatYEARS(session.getSessionAlbumYear());
                 
                 for (XmlAlbumYear year : theYears.year) {
@@ -123,12 +125,12 @@ public class Random implements ADirectory {
         }
     }
 
-    public static class RandomPhoto extends Photo {
+    public class RandomPhoto extends Photo {
         private final Session session;
         private final Launch aThis;
         
         public RandomPhoto(Launch aThis, Session session) throws WebAlbumsServiceException {
-            super(aThis.photoService.treatRANDOM(session).details);
+            super(Random.this.root, aThis.photoService.treatRANDOM(session).details);
             this.session = session;
             this.aThis = aThis;
         }
