@@ -44,7 +44,7 @@ public class Root extends SDirectory implements ADirectory, CanChange {
     
     protected final Launch aThis;
 
-    public Root(Launch aThis) throws WebAlbumsServiceException {
+    public Root(Launch aThis) {
         this.aThis = aThis;
     }
 
