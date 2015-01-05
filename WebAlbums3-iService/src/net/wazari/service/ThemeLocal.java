@@ -5,8 +5,6 @@
 
 package net.wazari.service;
 
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.ViewSession.ViewSessionTheme;
