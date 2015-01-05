@@ -80,7 +80,9 @@ public class LibVFS extends JnetFSAdapter {
         if (file == null) {
             if (path != null 
                     && !path.contains(".hidden")
-                    && !path.contains("Trash")) 
+                    && !path.contains("Trash")
+                    && !path.contains(".git")
+                    && !path.contains("objects")) 
             {
                 log.info("ATTRIBUTES File not found: {}", path);
             }

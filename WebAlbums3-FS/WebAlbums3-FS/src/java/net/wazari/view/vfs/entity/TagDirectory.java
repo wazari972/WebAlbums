@@ -78,7 +78,6 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
 
     @Override
     public void load() throws VFSException {
-        log.warn("Load directories from : {} ? {}", this, contentChanged);
         if (!contentChanged) {
             return;
         }

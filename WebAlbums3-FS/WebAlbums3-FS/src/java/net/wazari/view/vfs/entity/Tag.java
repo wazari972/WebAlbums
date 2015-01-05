@@ -58,7 +58,6 @@ public class Tag extends TagDirectory {
     public void load() throws VFSException {
         photos = new LinkedList<>();
         
-        log.warn("Load images from : {}", this);
         Session session = new Session(theme);
         session.setTagAsked(new Integer[]{tagId});
         XmlTagDisplay tags;
@@ -67,7 +66,7 @@ public class Tag extends TagDirectory {
         } catch (WebAlbumsServiceException ex) {
             throw new VFSException(ex);
         }
-        log.warn("Load images from : {} == {} images", this, tags.photoList.photo.size());
+        
         for (XmlPhoto photo : tags.photoList.photo) {
             photos.add(new TagPhoto(theme, aThis, photo.details, true));
         }
