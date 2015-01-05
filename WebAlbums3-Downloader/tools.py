@@ -158,13 +158,24 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
 
 def login(user, paswd, save_index=True, do_static=True, get_xslt=True, parse_and_transform=True):
     global headers
-
+    
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
     response, content = h.request("%sIndex" % WA_URL, headers=headers)
     
-    headers['Cookie'] = response['set-cookie']
-    response, content = h.request("{}Users?action=LOGIN&dontRedirect=true&userName={}&userPass={}".format(WA_URL, user, paswd), headers=headers)
-    headers['Cookie'] = response['set-cookie']
+    if response.status == 401:
+        h.add_credentials(user, paswd)
+        # I'm not sure why we need all of that,
+        # but it doesn't work anymore if I remove any 1 line ...
+        response, content = h.request("%sIndex" % WA_URL, headers=headers)
+        headers['Cookie'] = response['set-cookie']
+        response, content = h.request("%sChoix__2__France" % WA_URL, headers=headers)
+        headers['Cookie'] = response['set-cookie']
+        response, content = h.request("%sChoix__11__France" % WA_URL, headers=headers)
+    else:
+        headers['Cookie'] = response['set-cookie']
+        response, content = h.request("{}Users?action=LOGIN&dontRedirect=true&userName={}&userPass={}".format(WA_URL, user, paswd), headers=headers)
+        headers['Cookie'] = response['set-cookie']
+        
     data = dict(themeId=9)
     if get_xslt:
         prepare_XSLTs()
