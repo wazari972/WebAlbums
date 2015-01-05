@@ -74,7 +74,7 @@ public class Launch extends HttpServlet {
             if (umount == null) {
                 Root root = new Root(this);
                 IResolver externalResolver = new PhotoResolver(root);
-                net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, getFolderPrefix(true), externalResolver);
+                net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, getFolderPrefix(true), externalResolver, true);
             }
             final String goodPath = path;
             out.println("<h3> Mounting into "+path+".</h3>");

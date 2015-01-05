@@ -45,8 +45,6 @@ public class Album extends SDirectory implements ADirectory {
     @File
     public List<SDirectory> subdirs = new LinkedList<>();
     
-    public Map<Integer, SDirectory> phototags = new HashMap<>();
-    
     private final String name ;
     private final Theme theme;
     private final Launch aThis;
@@ -90,7 +88,7 @@ public class Album extends SDirectory implements ADirectory {
         } catch (WebAlbumsServiceException ex) {
             throw new VFSException(ex);
         }
-        
+        Map<Integer, SDirectory> phototags = new HashMap<>();
         for (XmlPhoto photo : photodisp.photoList.photo) {
             Photo photofile = new Photo(this.root, photo.details);
             photos.add(photofile);

@@ -4,6 +4,8 @@
  */
 package net.wazari.libvfs.vfs;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.inteface.IDirectory;
 import net.wazari.libvfs.inteface.IFile;
@@ -23,11 +25,14 @@ public class Resolver {
     private final IntrosRoot root ;
     private final String externalPrefix;
     private final IResolver external;
-    
-    public Resolver(ADirectory rootDir, String externalPrefix, IResolver external) {
+    private final Map<String, IFile> cache = new HashMap<>();
+    private final boolean do_cache;
+    public Resolver(ADirectory rootDir, String externalPrefix, 
+            IResolver external, boolean do_cache) {
         root = new IntrosRoot(rootDir);
         this.externalPrefix = externalPrefix;
         this.external = external;
+        this.do_cache = do_cache;
     }
     
     public IFile getFile(String search) {
@@ -42,10 +47,22 @@ public class Resolver {
             return root;
         }
         
-        return getFile(root, "", search);
+        if (do_cache) {
+            IFile f = cache.get(search);
+            if (f != null) {
+                return f;
+            }
+        }
+        
+        IFile foundFile = getFile(root, "", search);
+        
+        if (do_cache && foundFile != null) {
+            cache.put(search, foundFile);
+        }
+        return foundFile;
     }
     
-    public IFile getFile(IDirectory current, String path, String search) {
+    IFile getFile(IDirectory current, String path, String search) {
         for (IFile file : current.listFiles())  {
             file.setParent(current);
                 
