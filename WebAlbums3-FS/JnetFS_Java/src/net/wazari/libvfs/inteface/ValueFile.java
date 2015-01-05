@@ -12,9 +12,20 @@ import net.wazari.libvfs.annotation.File;
  */
 public abstract class ValueFile extends SFile {    
     @Override
-    public abstract String getContent();
+    public String getContent() {
+        /* Override me !*/
+        return super.getContent();
+    }
     
-    public abstract void setContent(String content);
+    public void setContent(String content) {
+        /* Override me !*/
+    }
+    
+    @Override
+    public void unlink() throws Exception{
+        /* Override me !*/
+        super.unlink();
+    }
     
     @Override
     public void open() {

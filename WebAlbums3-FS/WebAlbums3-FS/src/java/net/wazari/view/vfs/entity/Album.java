@@ -155,7 +155,7 @@ public class Album extends SDirectory implements ADirectory {
         BasicDirectory ago = new BasicDirectory("Years before");
         for (XmlAlbum album : albumAgo.album) {
             Album albumagodir = new Album(this.root, album.date, album.name, album.id, theme, aThis);
-            albumagodir.wantYearAgo = true;
+            albumagodir.wantYearAgo = false;
             ago.addDirInside(albumagodir);
         }
         if (!ago.dirs.isEmpty()) {

@@ -45,11 +45,12 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
     protected final Integer tagId;
     
     private boolean contentChanged = true;
-    protected Root root;
+    protected final Root root;
     
     public TagDirectory(Root root, XmlTag tag, Theme theme, Launch aThis) {
         this.theme = theme;
         this.aThis = aThis;
+        this.root = root;
         
         if (tag != null) {
             this.tagId = tag.id;

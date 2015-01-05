@@ -26,6 +26,9 @@ public class Configuration  extends SDirectory implements ADirectory {
     @File(name="image_access")
     public ValueFile imgAccess;
     
+    @File(name="reload")
+    public ValueFile reload;
+    
     public final Root root;
     
     public Configuration(Root root) {
@@ -33,11 +36,22 @@ public class Configuration  extends SDirectory implements ADirectory {
         
         stars = new StarConfiguration();
         imgAccess = new ImageAccessConfiguration();
+        reload = new ReloadConfiguration();
     }
     
     @Override
     public void load() throws VFSException {       
         //nothing here, the configuration has to be loaded only once.
+    }
+
+    class ReloadConfiguration extends ValueFile {
+        ReloadConfiguration() {
+            this.content = "#delete me to reload the filesystem content";
+        }
+        @Override
+        public void unlink() throws Exception{
+            Configuration.this.root.changed = true;
+        }
     }
     
     class StarConfiguration extends ValueFile {

@@ -92,7 +92,9 @@ public class Random implements ADirectory {
         @Override
         public void load() throws VFSException {
             for (XmlAlbum anAlbum : thealbums) {
-                albums.add(new Album(Random.this.root, anAlbum.date, anAlbum.name, anAlbum.id, theme, aThis));
+                Album album = new Album(Random.this.root, anAlbum.date, anAlbum.name, anAlbum.id, theme, aThis);
+                album.noYears();
+                albums.add(album);
             }
         }
     }
