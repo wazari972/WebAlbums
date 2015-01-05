@@ -147,4 +147,9 @@ public class WebAlbumsDAOBean {
              && userId != null
              && userId < session.getUser().getId();
     }
+    
+    /*
+    JPA request to string:
+      em.createQuery(cq).unwrap(org.hibernate.Query.class).getQueryString();
+    */
 }

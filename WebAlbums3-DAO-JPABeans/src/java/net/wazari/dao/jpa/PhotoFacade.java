@@ -4,6 +4,7 @@
  */
 package net.wazari.dao.jpa;
 
+import java.awt.print.Book;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
@@ -14,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;
@@ -95,7 +97,7 @@ public class PhotoFacade implements PhotoFacadeLocal {
         Root<JPAPhoto> p = cq.from(JPAPhoto.class) ;
         cq.where(cb.equal(p.get(JPAPhoto_.album), album));
         webDAO.setOrder(cq, cb, order, p.get(JPAPhoto_.path)) ;
-
+        
         Query q = em.createQuery(cq) ;
         int size = q.getResultList().size() ;
 
@@ -103,14 +105,16 @@ public class PhotoFacade implements PhotoFacadeLocal {
             q.setFirstResult(bornes.getFirstElement());
             q.setMaxResults(session.getPhotoAlbumSize());
         }
-
+        
         List<JPAPhoto> subset = q
                     .setHint("org.hibernate.cacheable", true)
                     .setHint("org.hibernate.readOnly", !session.isSessionManager())
                     .getResultList() ;
+        
         //oh no, why is the filter done on the JAVA side ... ?
         //because the SQL request was too complex ? well maybe ...
         subset = webDAO.filterPhotosAllowed(subset, session);
+        
         if (bornes == null || bornes.getFirstElement() == null) {
             return new SubsetOf(subset) ;
         } else {
