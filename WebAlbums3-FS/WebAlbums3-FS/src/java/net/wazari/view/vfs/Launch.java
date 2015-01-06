@@ -4,6 +4,7 @@
  */
 package net.wazari.view.vfs;
 
+import com.jnetfs.core.JnetFS;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.wazari.libvfs.inteface.IResolver;
+import net.wazari.libvfs.vfs.LibVFS;
 import net.wazari.libvfs.vfs.Resolver;
 import net.wazari.service.AlbumLocal;
 import net.wazari.service.CarnetLocal;
@@ -31,7 +33,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author kevin
  */
+@WebServlet(
+    name = "Launch",
+    urlPatterns = {"/Launch"},
+    loadOnStartup = 1
+)
+@Stateless
 public class Launch extends HttpServlet {
+    private static final String USERNAME = "kevin";
+    private static final String PASSWORD = "";
+    
     private static final Logger log = LoggerFactory.getLogger(Launch.class.getCanonicalName()) ;
     
     @EJB public ImageLocal imageService;
@@ -54,60 +65,64 @@ public class Launch extends HttpServlet {
         return path;
     }
     
-    protected void processRequest(final HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+    private void printAResponse(HttpServletRequest request, HttpServletResponse response,
+            String path, ServletException ex) 
+        {
         try (PrintWriter out = response.getWriter()) {
             out.println("<html>");
             out.println("<head>");
             out.println("<title>WebAlbum FS -- mounter</title>");            
             out.println("</head>");
             out.println("<body>");
-            
-            out.flush();
-            
-            String path = request.getParameter("path");
-            final String umount = request.getParameter("umount");
-            
-            if (path == null) {
-                path = "./WebAlbums3-FS";
-            }
-            
-            if (umount == null) {
-                Root root = new Root(this);
-                IResolver externalResolver = new PhotoResolver(root);
-                net.wazari.libvfs.vfs.LibVFS.resolver = new Resolver(root, getFolderPrefix(true), externalResolver, true);
-            }
-            final String goodPath = path;
             out.println("<h3> Mounting into "+path+".</h3>");
-            out.flush();
             
-            try {
-                request.login("kevin", "");
-                out.println("<h1> Logged in as kevin</h1>");
-            } catch (ServletException e) {
-                log.warn("Login failed ...", e);
-                out.println("<h1>login failed "+e.getMessage()+"</h1>");
+            
+            if (ex == null) {
+                out.println("<h1> Logged in as "+request.getUserPrincipal()+"</h1>");
+                out.println("<h3> Done, goodbye :)</h3>");
+            } else {
+                log.warn("Login failed ...", ex);
+                out.println("<h1>login failed "+ex.getMessage()+"</h1>");
             }
             
-            out.println("<h3> Done, goodbye :)</h3>");
             out.println("</body>");
             out.println("</html>");
-            out.close();
-            
-            if (umount == null) {
-                com.jnetfs.core.JnetFS.do_mount(new String[]{goodPath});
-            } else {
-                com.jnetfs.core.JnetFS.do_umount(goodPath);
-            }
-                
-            
-            
-            
+            out.close();    
         } catch (Exception e) {
             log.warn("<h1> JNetFSException </h1>", e);
-        
         }
+    }
+    
+    private void connectLibVFS(boolean mount, String path) {
+        if (mount) {
+            Root root = new Root(this);
+            IResolver externalResolver = new PhotoResolver(root);
+            LibVFS.resolver = new Resolver(root, getFolderPrefix(true), 
+                    externalResolver, true);
+
+            JnetFS.do_mount(new String[]{path});
+        } else {
+            JnetFS.do_umount(path);
+        }
+    }
+    
+    protected void processRequest(final HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        
+        boolean mount = request.getParameter("umount") != null;
+        String path = request.getParameter("path") != null ? 
+                request.getParameter("path") : "./WebAlbums3-FS";
+        
+        ServletException ex = null;
+        try {
+            request.login(USERNAME, PASSWORD);
+        } catch(ServletException e) {
+            ex = e;
+        }
+        
+        printAResponse(request, response, path, ex);
+        connectLibVFS(mount, path);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
