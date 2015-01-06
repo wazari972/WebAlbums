@@ -89,7 +89,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
         
         lstAlbums = webDAO.filterAlbumsAllowed(lstAlbums, session) ;
         
-        return (SubsetOf) new SubsetOf<JPAAlbum>(bornes, lstAlbums, (long) size);
+        return (SubsetOf) new SubsetOf<>(bornes, lstAlbums, (long) size);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class AlbumFacade implements AlbumFacadeLocal {
         
         lstAlbums = webDAO.filterAlbumsAllowed(lstAlbums, session) ;
         
-        return (SubsetOf) new SubsetOf<JPAAlbum>(bornes,lstAlbums, size);
+        return (SubsetOf) new SubsetOf<>(bornes,lstAlbums, size);
     }
 
     @Override

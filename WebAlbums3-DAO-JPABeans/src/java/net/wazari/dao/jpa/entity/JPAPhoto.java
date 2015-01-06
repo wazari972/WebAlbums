@@ -14,7 +14,6 @@ import net.wazari.dao.entity.Carnet;
 import net.wazari.dao.entity.Photo;
 import net.wazari.dao.entity.Tag;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +25,12 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "Photo",
-    uniqueConstraints = {@UniqueConstraint(columnNames={"PhotoPath"})}
+    uniqueConstraints = {@UniqueConstraint(columnNames={"PhotoPath"})},
+    indexes = {
+        @Index(name="Idx_album", columnList = "Album, ID"),
+        @Index(name="Idx_path", columnList = "PhotoPath"),
+        @Index(name="Idx_stars", columnList = "Stars")
+    }
 )
 public class JPAPhoto implements Photo, Serializable {
     private static final Logger log = LoggerFactory.getLogger(JPAPhoto.class.getName());
@@ -42,7 +46,6 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "ID", nullable = false)
     private Integer id;
 
-    @Index(name="Idx_path")
     @Basic(optional = false)
     @Column(name = "PhotoPath", nullable = false, length = 100)
     private String path;
@@ -50,7 +53,6 @@ public class JPAPhoto implements Photo, Serializable {
     @Column(name = "Description", length = 200)
     private String description;
 
-    @Index(name="Idx_stars")
     @Column(name = "Stars", length = 2, nullable = false)
     private Integer stars = 3;
     
@@ -87,7 +89,6 @@ public class JPAPhoto implements Photo, Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "photo", fetch = FetchType.LAZY)
     private List<JPATagPhoto> jPATagPhotoList;
 
-    @Index(name="Idx_album")
     @JoinColumn(name = "Album", referencedColumnName = "ID", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private JPAAlbum album;
@@ -353,10 +354,8 @@ public class JPAPhoto implements Photo, Serializable {
             return false;
         }
         JPAPhoto other = (JPAPhoto) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) 
+                || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
