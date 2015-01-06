@@ -14,22 +14,7 @@
         <web-resource-collection>
             <web-resource-name>WebAlbums3</web-resource-name>
             <description/>
-            <url-pattern>/</url-pattern>
-            <url-pattern>/Index</url-pattern>
-            <url-pattern>/Choix</url-pattern>
-            <url-pattern>/Albums</url-pattern>
-            <url-pattern>/Photos</url-pattern>
-            <url-pattern>/Tags</url-pattern>
-            <url-pattern>/Images</url-pattern>
-            <url-pattern>/Maint</url-pattern>
-            <url-pattern>/Database</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>POST</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>PUT</http-method>
-            <http-method>OPTIONS</http-method>
-            <http-method>TRACE</http-method>
-            <http-method>DELETE</http-method>
+            <url-pattern>/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description/>
@@ -38,11 +23,7 @@
     </security-constraint>
     <login-config>
         <auth-method>BASIC</auth-method>
-        <realm-name>file</realm-name>
-        <form-login-config>
-            <form-login-page>/Users</form-login-page>
-            <form-error-page>/static/images/rien.jpg</form-error-page>
-        </form-login-config>
+        <realm-name>WebAlbums login</realm-name>
     </login-config>
     <security-role>
         <description>Access to configuration and modification functions</description>
