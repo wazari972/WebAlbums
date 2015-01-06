@@ -15,7 +15,7 @@ import net.wazari.service.exchange.xml.carnet.XmlCarnet;
 import net.wazari.service.exchange.xml.carnet.XmlCarnetsDisplay;
 import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.photo.XmlPhotoId;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +28,14 @@ public class Carnets implements ADirectory {
     private static final Logger log = LoggerFactory.getLogger(Carnets.class.getCanonicalName()) ;
     
     private final net.wazari.dao.entity.Theme theme;
-    private final Launch aThis;
+    private final FSConnector aThis;
     private final Root root;
     
     @Directory
     @File
     public List<Carnet> carnets = new LinkedList<>();
     
-    public Carnets(Root root, net.wazari.dao.entity.Theme theme, Launch aThis) {
+    public Carnets(Root root, net.wazari.dao.entity.Theme theme, FSConnector aThis) {
         this.theme = theme;
         this.aThis = aThis;
         this.root = root;

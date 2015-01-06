@@ -4,8 +4,6 @@
  */
 package net.wazari.service;
 
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.PermitAll;
 import javax.ejb.Local;
 import javax.servlet.http.HttpServletRequest;
 import net.wazari.dao.UtilisateurFacadeLocal;

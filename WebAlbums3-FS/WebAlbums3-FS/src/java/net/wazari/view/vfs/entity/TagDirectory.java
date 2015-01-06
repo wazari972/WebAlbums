@@ -19,7 +19,7 @@ import net.wazari.service.exchange.ViewSessionPhoto;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
     public GpxFile location;
     
     private final Theme theme;
-    private final Launch aThis;
+    private final FSConnector aThis;
     private List<XmlTag> tagList = null;
     private List<XmlTagCloudEntry> tagCloud = null;
     protected final Integer tagId;
@@ -47,7 +47,7 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
     private boolean contentChanged = true;
     protected final Root root;
     
-    public TagDirectory(Root root, XmlTag tag, Theme theme, Launch aThis) {
+    public TagDirectory(Root root, XmlTag tag, Theme theme, FSConnector aThis) {
         this.theme = theme;
         this.aThis = aThis;
         this.root = root;
@@ -67,13 +67,13 @@ public class TagDirectory extends SDirectory implements ADirectory, CanChange {
         }
     }
     
-    public TagDirectory(Root root, XmlTag tag, Theme theme, Launch aThis, List<XmlTag> tagList) {
+    public TagDirectory(Root root, XmlTag tag, Theme theme, FSConnector aThis, List<XmlTag> tagList) {
         this(root, tag, theme, aThis);
         this.tagList = tagList;
         
     }
 
-    public TagDirectory(Root root, XmlTag tag, List<XmlTagCloudEntry> tagCloud, Theme theme, Launch aThis) {
+    public TagDirectory(Root root, XmlTag tag, List<XmlTagCloudEntry> tagCloud, Theme theme, FSConnector aThis) {
         this(root, tag, theme, aThis);
         this.tagCloud = tagCloud;
     }

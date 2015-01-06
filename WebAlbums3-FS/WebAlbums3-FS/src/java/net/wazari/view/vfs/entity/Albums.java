@@ -13,12 +13,11 @@ import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.BasicDirectory;
-import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.libvfs.inteface.VFSException;
 import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlAlbumSelect;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 
 /**
@@ -31,9 +30,10 @@ public class Albums extends Listing implements ADirectory {
     public List<BasicDirectory> years = new LinkedList<>();
     
     private final Theme theme;
-    private final Launch aThis;
+    private final FSConnector aThis;
     private final Root root;
-    public Albums(Root root, net.wazari.dao.entity.Theme theme, Launch aThis) {
+    
+    public Albums(Root root, net.wazari.dao.entity.Theme theme, FSConnector aThis) {
         this.theme = theme;
         this.aThis = aThis;
         this.root = root;

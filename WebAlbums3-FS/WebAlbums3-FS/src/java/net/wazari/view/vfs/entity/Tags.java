@@ -14,7 +14,7 @@ import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.ViewSession;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 
 /**
@@ -39,10 +39,10 @@ public class Tags implements ADirectory {
     public TagDirectory cloud ;
     
     private final Theme theme;
-    private final Launch aThis;
+    private final FSConnector aThis;
     private final Root root;
     
-    public Tags(Root root, Theme theme, Launch aThis) {
+    public Tags(Root root, Theme theme, FSConnector aThis) {
         this.theme = theme;
         this.aThis = aThis;
         this.root = root;

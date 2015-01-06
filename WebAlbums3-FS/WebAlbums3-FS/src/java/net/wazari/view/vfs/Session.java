@@ -94,7 +94,7 @@ public class Session implements
 
             @Override
             public String getNom() {
-                return "kevin";
+                return "admin";
             }
 
             @Override

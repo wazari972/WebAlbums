@@ -12,9 +12,8 @@ import net.wazari.libvfs.annotation.Directory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
 import net.wazari.libvfs.inteface.VFSException;
-import net.wazari.service.exception.WebAlbumsServiceException;
 import net.wazari.service.exchange.xml.XmlTheme;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +41,9 @@ public class Root extends SDirectory implements ADirectory, CanChange {
     @File
     public final List<SDirectory> trashes = new LinkedList<>();
     
-    protected final Launch aThis;
+    protected final FSConnector aThis;
 
-    public Root(Launch aThis) {
+    public Root(FSConnector aThis) {
         this.aThis = aThis;
     }
 

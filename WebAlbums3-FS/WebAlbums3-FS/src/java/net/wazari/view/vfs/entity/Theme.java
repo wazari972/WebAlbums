@@ -17,7 +17,7 @@ import net.wazari.libvfs.inteface.VFSException;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.service.exchange.xml.tag.XmlTagPersonsPlaces;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +49,10 @@ public class Theme extends SDirectory implements ADirectory {
     public GpxFile location;
     
     protected final ATheme theme;
-    private final Launch aThis;
+    private final FSConnector aThis;
     private final Root root;
     
-    Theme(Root root, int id, String name, Launch aThis) {
+    Theme(Root root, int id, String name, FSConnector aThis) {
         this.name = name;
         this.theme = new ATheme(id, name);
         this.aThis = aThis;

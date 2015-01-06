@@ -26,7 +26,7 @@ import net.wazari.service.exchange.xml.common.XmlDate;
 import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import net.wazari.service.exchange.xml.photo.XmlPhotoDisplay;
 import net.wazari.service.exchange.xml.tag.XmlTag;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class Album extends SDirectory implements ADirectory {
     
     private final String name ;
     private final Theme theme;
-    private final Launch aThis;
+    private final FSConnector aThis;
     private final int albumId;
     
     /* set to TRUE to exclude subdirectories (tags and years ago). */
@@ -56,7 +56,7 @@ public class Album extends SDirectory implements ADirectory {
     
     private final Root root;
     
-    public Album(Root root, XmlDate date, String name, int albumId, net.wazari.dao.entity.Theme theme, Launch aThis) {
+    public Album(Root root, XmlDate date, String name, int albumId, net.wazari.dao.entity.Theme theme, FSConnector aThis) {
         this.name = date.date + " " + name;
         this.theme = theme;
         this.aThis = aThis;

@@ -4,28 +4,14 @@
  */
 package net.wazari.view.vfs;
 
-import com.jnetfs.core.JnetFS;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.wazari.libvfs.inteface.IResolver;
-import net.wazari.libvfs.vfs.LibVFS;
-import net.wazari.libvfs.vfs.Resolver;
-import net.wazari.service.AlbumLocal;
-import net.wazari.service.CarnetLocal;
-import net.wazari.service.ImageLocal;
-import net.wazari.service.PhotoLocal;
-import net.wazari.service.TagLocal;
-import net.wazari.service.ThemeLocal;
-import net.wazari.service.WebPageLocal;
-import net.wazari.view.vfs.entity.PhotoResolver;
-import net.wazari.view.vfs.entity.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,20 +24,13 @@ import org.slf4j.LoggerFactory;
     urlPatterns = {"/Launch"},
     loadOnStartup = 1
 )
-@Stateless
 public class Launch extends HttpServlet {
     private static final String USERNAME = "kevin";
     private static final String PASSWORD = "";
     
     private static final Logger log = LoggerFactory.getLogger(Launch.class.getCanonicalName()) ;
     
-    @EJB public ImageLocal imageService;
-    @EJB public PhotoLocal photoService;
-    @EJB public AlbumLocal albumService;
-    @EJB public ThemeLocal themeService ;
-    @EJB public CarnetLocal carnetService ;
-    @EJB public TagLocal tagService;
-    @EJB public WebPageLocal webPageService ;
+    @EJB FSConnector conn;
     
     public static String getFolderPrefix(boolean getCompleteImagePath) {
         String path = System.getProperty("root.path") ;
@@ -69,13 +48,14 @@ public class Launch extends HttpServlet {
             String path, ServletException ex) 
         {
         try (PrintWriter out = response.getWriter()) {
+            response.setContentType("text/html;charset=UTF-8");
+            
             out.println("<html>");
             out.println("<head>");
             out.println("<title>WebAlbum FS -- mounter</title>");            
             out.println("</head>");
             out.println("<body>");
             out.println("<h3> Mounting into "+path+".</h3>");
-            
             
             if (ex == null) {
                 out.println("<h1> Logged in as "+request.getUserPrincipal()+"</h1>");
@@ -93,26 +73,13 @@ public class Launch extends HttpServlet {
         }
     }
     
-    private void connectLibVFS(boolean mount, String path) {
-        if (mount) {
-            Root root = new Root(this);
-            IResolver externalResolver = new PhotoResolver(root);
-            LibVFS.resolver = new Resolver(root, getFolderPrefix(true), 
-                    externalResolver, true);
-
-            JnetFS.do_mount(new String[]{path});
-        } else {
-            JnetFS.do_umount(path);
-        }
-    }
-    
     protected void processRequest(final HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+            throws ServletException, IOException 
+    {        
+        boolean mount = request.getParameter("umount") == null;
         
-        boolean mount = request.getParameter("umount") != null;
         String path = request.getParameter("path") != null ? 
-                request.getParameter("path") : "./WebAlbums3-FS";
+                request.getParameter("path") : FSConnector.DEFAULT_PATH;
         
         ServletException ex = null;
         try {
@@ -122,9 +89,9 @@ public class Launch extends HttpServlet {
         }
         
         printAResponse(request, response, path, ex);
-        connectLibVFS(mount, path);
+        conn.connectLibVFS(mount, path);
     }
-
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP
@@ -166,3 +133,4 @@ public class Launch extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 }
+

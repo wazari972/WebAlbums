@@ -17,7 +17,7 @@ import net.wazari.service.exchange.xml.album.XmlAlbum;
 import net.wazari.service.exchange.xml.album.XmlAlbumYear;
 import net.wazari.service.exchange.xml.album.XmlAlbumYears;
 import net.wazari.service.exchange.xml.common.XmlDetails;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +37,10 @@ public class Random implements ADirectory {
     public RandYears years;
     
     private final Theme theme;
-    private final Launch aThis;
+    private final FSConnector aThis;
     private final Root root;
     
-    public Random(Root root, net.wazari.dao.entity.Theme theme, Launch aThis) {
+    public Random(Root root, net.wazari.dao.entity.Theme theme, FSConnector aThis) {
         this.theme = theme;
         this.aThis = aThis;
         this.root = root;
@@ -72,11 +72,12 @@ public class Random implements ADirectory {
         public List<Album> albums = new LinkedList<>();
         
         private final Theme theme;
-        private final Launch aThis;
+        private final FSConnector aThis;
         private final String name;
         private final List<XmlAlbum> thealbums;
 
-        public RandYear(Integer year, List<XmlAlbum> thealbums, net.wazari.dao.entity.Theme theme, Launch aThis) throws WebAlbumsServiceException {
+        public RandYear(Integer year, List<XmlAlbum> thealbums, net.wazari.dao.entity.Theme theme, 
+                FSConnector aThis) throws WebAlbumsServiceException {
             this.name = year.toString();
             this.thealbums = thealbums;
             
@@ -105,9 +106,9 @@ public class Random implements ADirectory {
         public List<RandYear> years = new LinkedList<>();
         
         private final Theme theme;
-        private final Launch aThis;
+        private final FSConnector aThis;
 
-        public RandYears(net.wazari.dao.entity.Theme theme, Launch aThis) throws WebAlbumsServiceException {
+        public RandYears(net.wazari.dao.entity.Theme theme, FSConnector aThis) throws WebAlbumsServiceException {
             this.theme = theme;
             this.aThis = aThis;
         }
@@ -129,9 +130,9 @@ public class Random implements ADirectory {
 
     public class RandomPhoto extends Photo {
         private final Session session;
-        private final Launch aThis;
+        private final FSConnector aThis;
         
-        public RandomPhoto(Launch aThis, Session session) throws WebAlbumsServiceException {
+        public RandomPhoto(FSConnector aThis, Session session) throws WebAlbumsServiceException {
             super(Random.this.root, aThis.photoService.treatRANDOM(session).details);
             this.session = session;
             this.aThis = aThis;

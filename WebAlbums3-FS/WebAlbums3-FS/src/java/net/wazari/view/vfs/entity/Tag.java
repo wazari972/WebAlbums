@@ -19,7 +19,7 @@ import net.wazari.service.exchange.xml.photo.XmlPhoto;
 import net.wazari.service.exchange.xml.tag.XmlTag;
 import net.wazari.service.exchange.xml.tag.XmlTagCloud.XmlTagCloudEntry;
 import net.wazari.service.exchange.xml.tag.XmlTagDisplay;
-import net.wazari.view.vfs.Launch;
+import net.wazari.view.vfs.FSConnector;
 import net.wazari.view.vfs.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,13 +36,13 @@ public class Tag extends TagDirectory {
     
     private String name ;
     private final Theme theme;
-    private final Launch aThis;
+    private final FSConnector aThis;
     
-    public Tag(Root root, XmlTag tag, Theme theme, Launch aThis) {
+    public Tag(Root root, XmlTag tag, Theme theme, FSConnector aThis) {
         this(root, null, tag, theme, aThis);
     }
     
-    public Tag(Root root, List<XmlTagCloudEntry> tagInside, XmlTag tag, Theme theme, Launch aThis) {
+    public Tag(Root root, List<XmlTagCloudEntry> tagInside, XmlTag tag, Theme theme, FSConnector aThis) {
         super(root, tag, tagInside, theme, aThis);
         this.name = tag.name;
         this.theme = theme;
@@ -81,9 +81,9 @@ public class Tag extends TagDirectory {
     public static class TagPhoto extends Photo {
 
         private final Theme theme;
-        private final Launch aThis;
+        private final FSConnector aThis;
         
-        public TagPhoto(Root root, Theme theme, Launch aThis, XmlDetails details, boolean uniqName) {
+        public TagPhoto(Root root, Theme theme, FSConnector aThis, XmlDetails details, boolean uniqName) {
             super(root, details, uniqName);
             this.theme = theme;
             this.aThis = aThis;
