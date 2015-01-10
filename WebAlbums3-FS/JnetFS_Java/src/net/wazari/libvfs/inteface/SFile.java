@@ -12,6 +12,9 @@ import net.wazari.libvfs.annotation.File.Access;
  * @author kevin
  */
 public class SFile implements IFile {
+    private static long UIDs = 0;
+    public final long UID = UIDs++;
+    
     public String myName = "generic_file";
     public int reference = 0;
     protected String content = "Generic content";
@@ -35,7 +38,7 @@ public class SFile implements IFile {
 
     @Override
     public long getHandle() {
-        return 1000;
+        return UID;
     }
     
     @Override

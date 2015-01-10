@@ -16,6 +16,7 @@ public interface Code {
     public static final String PATH = "OS_PATH";
     public static final String TO = "OS_PATH_TO";
     public static final String ROOT = "OS_ROOT";
+    public static final String HANDLE = ".jh";
     public static final String JNET_FS = "OS_JNETFS";
 
     public static final int S_IFDIR = 0040000; //directory
