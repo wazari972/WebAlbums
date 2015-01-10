@@ -1,0 +1,20 @@
+#! /bin/sh
+
+DATA_DIR=$1
+CONFIG_FILE=$2
+
+TMP=$3
+
+DATA=data
+IMAGES=images
+MINIS=miniatures
+BACKUP=backup
+
+sed -i "s|DATA|$DATA|g" $CONFIG_FILE
+sed -i "s|IMAGES|$IMAGES|g" $CONFIG_FILE
+sed -i "s|MINIS|$MINIS|g" $CONFIG_FILE
+sed -i "s|TMP|$TMP|g" $CONFIG_FILE
+sed -i "s|FTP|$FTP|g" $CONFIG_FILE
+sed -i "s|BACKUP|$BACKUP|g" $CONFIG_FILE
+
+mkdir -p $DATA_DIR/$IMAGES $DATA_DIR/$MINIS $DATA_DIR/$TMP $DATA_DIR/$BACKUP

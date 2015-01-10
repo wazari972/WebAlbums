@@ -8,7 +8,7 @@ PKG_NAMEVERSION += $(PKG_NAME)-$(VERSION)-$(RELEASE)
 
 APPSERVER_DIRNAME = apache-tomee-webprofile
 APP_DIRNAME := app-ear
-
+CONF_DIR := conf/conf.xml # must agree with WebAlbums3-Service-Beans/src/java/net/wazari/service/engine/ConfigurationBean.java::CONFIG_DATA_PATH
 DB_CONNECTOR_JAR := RT-DB-mysql-connector-java-5.1.12-bin.jar
 
 PKG_DIR := ${shell pwd}
@@ -18,7 +18,9 @@ ETC_DIR := $(INSTALL_PREFIX)/etc/$(PKG_NAME)
 USR_DIR := $(INSTALL_PREFIX)/usr/local/$(PKG_NAME)
 TMP_DIR := $(INSTALL_PREFIX)/var/tmp/$(PKG_NAME)
 VAR_DIR := $(INSTALL_PREFIX)/var/$(PKG_NAME)
-LOG_DIR := $(INSTALL_PREFIX)/var/$(PKG_NAME)/log
+LOG_DIR := $(VAR_DIR)/log
+DATA_DIR:= $(VAR_DIR)/data
+
 APPSERVER_DIR := $(USR_DIR)/$(APPSERVER_DIRNAME)
 
 ALL_DIRS := $(ETC_DIR) $(USR_DIR) $(TMP_DIR) $(VAR_DIR) $(LOG_DIR)
@@ -27,10 +29,18 @@ all: prep_config prep_usr_appserver prep_usr_app prep_base_directories
 
 prep_config: prep_base_directories prep_usr_appserver
 	@echo '# Prepare configuration'
-	cp $(HOME_DIR)/WebAlbums3/conf/config.xml $(ETC_DIR)/
 	rm -rf $(ETC_DIR)/appserver
 	mv $(APPSERVER_DIR)/conf $(ETC_DIR)/appserver
 	ln -s $(ETC_DIR)/appserver $(APPSERVER_DIR)/conf
+
+	rm $(ETC_DIR)/appserver/tomee.xml -f
+	mv $(ETC_DIR)/appserver/tomee.xml.template $(ETC_DIR)/appserver/tomee.xml
+	sh setup_db.sh $(ETC_DIR)/appserver/tomee.xml
+
+	cp $(HOME_DIR)/WebAlbums3/conf/conf-example.xml $(ETC_DIR)/conf.xml
+	sh setup_data_dir.sh $(DATA_DIR) $(ETC_DIR)/conf.xml $(TMP_DIR)
+	mkdir -p $(DATA_DIR)/$(shell dirname $(CONF_DIR)) 
+	ln -s $(ETC_DIR)/conf.xml $(DATA_DIR)/$(CONF_DIR)
 	@echo
 
 build_app :
@@ -50,6 +60,8 @@ prep_usr_appserver: prep_base_directories
 
 	ln -s $(LOG_DIR) $(APPSERVER_DIR)/logs
 	ln -s $(TMP_DIR) $(APPSERVER_DIR)/work
+	mkdir -p $(DATA_DIR)
+	sh setup_data_dir.sh $(DATA_DIR) $(CONF_FILE)
 
 	mkdir $(APPSERVER_DIR)/apps
 	mkdir -p $(APPSERVER_DIR)/webapps/empty
