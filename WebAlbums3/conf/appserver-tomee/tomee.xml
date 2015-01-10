@@ -3,7 +3,7 @@
   # git update-index --assume-unchanged 
   <Resource id = "jdbc/mysqlWebAlbums" type="DataSource">
     JdbcDriver com.mysql.jdbc.Driver
-    JdbcUrl jdbc:mysql://127.0.0.1/WebAlbums
+    JdbcUrl jdbc:mysql://127.0.0.1/WebAlbums_TEST
     UserName wazari972
     Password ijaheb
     JtaManaged true
