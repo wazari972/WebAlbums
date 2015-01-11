@@ -66,7 +66,6 @@ public class ConfigurationBean implements Configuration {
     @Override
     public String getRootPath() {
         return ConfigurationXML.rootPath;
-
     }
 
     @Override
@@ -118,6 +117,11 @@ public class ConfigurationBean implements Configuration {
     @Override
     public boolean wantsProtectDB() {
         return conf.properties.protectDB ;
+    }
+    
+    @Override
+    public String getAutomountWFS() {
+        return conf.properties.automountWFS;
     }
     
 }

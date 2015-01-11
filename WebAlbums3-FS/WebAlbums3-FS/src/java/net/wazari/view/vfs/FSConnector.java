@@ -48,16 +48,24 @@ public class FSConnector {
     @EJB public CarnetLocal carnetService ;
     @EJB public TagLocal tagService;
     @EJB public WebPageLocal webPageService ;
+    @EJB public net.wazari.service.exchange.Configuration configuration ;
     
     @EJB private FSConnector con; /* for async call. */
     
     @PostConstruct
     void init() {
-        if (!CONNECT_ON_STARTUP) {
+        String mountTo = configuration.getAutomountWFS();
+        if (mountTo == null || mountTo.isEmpty()) {
             return;
         }
-        log.info("Connecting {} ...", DEFAULT_PATH);
-        con.connectLibVFS(true, DEFAULT_PATH);
+        
+        if (!new java.io.File(mountTo).isDirectory()) {
+            log.warn("Configured path '{}' is not a directory ...", mountTo);
+            return;
+        }
+        
+        log.info("Connecting {} ...", mountTo);
+        con.connectLibVFS(true, mountTo);
         log.info("Connection done :-)");
     }
     

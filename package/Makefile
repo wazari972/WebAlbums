@@ -49,6 +49,7 @@ prep_config: prep_base_directories prep_usr_appserver
 	ln -s $(ETC_DIR)/conf.xml $(ROOT_PATH)/$(CONF_DIR)
 
 	echo $(ROOT_PATH) > $(ETC_DIR)/root.path
+	rm -f $(APPSERVER_DIR)/conf/root.path
 	ln -s $(ETC_DIR)/root.path $(APPSERVER_DIR)/conf
 	@echo
 

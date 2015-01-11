@@ -33,6 +33,8 @@ public interface Configuration {
 
     boolean wantsProtectDB() ;
     
+    String getAutomountWFS();
+    
     Class getConfClass();
     Object getConf();
     void setConf(Object conf);
