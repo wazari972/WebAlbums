@@ -48,13 +48,14 @@ public class SystemTools {
         Importer wrap = null;
         String typeSafe = type == null ? "image" : type ;
         for (Importer util : plugins.getWorkingPlugins()) {
-            log.warn( "Test {}: {}", new Object[]{util.getName(), Arrays.asList(util.supports())});
+            log.debug( "Test {}: {}", new Object[]{util.getName(), 
+                Arrays.asList(util.supports())});
             if (util.supports(typeSafe, ext, cap)) {
                 wrap = util;
                 break ;
             }
         }
-        log.warn( "Wrapper for {}@{}-{}: {}", new Object[]{typeSafe, ext, wrap, cap});
+        log.debug( "Wrapper for {}@{}-{}: {}", new Object[]{typeSafe, ext, wrap, cap});
         return wrap;
     }
 
@@ -67,7 +68,7 @@ public class SystemTools {
         //build temp/USER
         File dir = new File(root, vSession.getUser().getNom());
         if (!dir.isDirectory() && !dir.mkdir()) {
-            log.warn("COULD NOT CREATE TMEP DIRE");
+            log.warn("Could not create temp directory {}", dir.getAbsolutePath());
             return null;
         }
         dir.deleteOnExit();
@@ -99,7 +100,7 @@ public class SystemTools {
                         return null;
                     }
                 } catch (IOException e) {
-                    log.warn( "IOException", e);
+                    log.warn( "Could not create temp file {} ...", unique.getAbsolutePath());
                     return null;
                 }
             }
@@ -126,7 +127,7 @@ public class SystemTools {
                 return photoUtil.getImagePath(vSession, enrPhoto);
             }
         } catch (NumberFormatException e) {
-            log.error( "Photo {} doesnt have a valid width:{}", new Object[]{enrPhoto, enrPhoto.getWidth()});
+            log.warn( "Photo {} doesnt have a valid width: {}", enrPhoto, enrPhoto.getWidth());
             //return photoUtil.getImagePath(vSession, enrPhoto);
         }
 
@@ -137,7 +138,7 @@ public class SystemTools {
         if (util != null) {
             util.shrink(cb, photoUtil.getImagePath(vSession, enrPhoto), fPhoto.toString(), width);
         } else {
-            log.warn("No plugin available to shrink {}@{}, just copy it across", enrPhoto.getType(), ext) ;
+            log.info("No plugin available to shrink {}@{}, just copy it across", enrPhoto.getType(), ext) ;
             plugins.getUsedSystem().copy(cb, fPhoto.toString(), fPhoto.toString() );
         }
 
@@ -182,7 +183,7 @@ public class SystemTools {
 
         Importer util = getWrapper(enrPhoto.getType(), ext, Importer.Capability.ADD_BORDER);
         if (util == null) {
-            log.warn("No plugin available to add a border to {}@{}, nothing changed", enrPhoto.getType(), ext);
+            log.info("No plugin available to add a border to {}@{}, nothing changed", enrPhoto.getType(), ext);
             return ;
         }
         

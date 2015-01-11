@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ImageResizer {
-    private static final Logger log = LoggerFactory.getLogger(ImageResizer.class.toString());
+    private static final Logger log = LoggerFactory.getLogger(ImageResizer.class.getCanonicalName());
     private static final int HEIGHT = 200;
     
     @EJB private SystemTools sysTool;
@@ -29,36 +29,30 @@ public class ImageResizer {
 
         Element current;
         while (!stack.empty()) {
-            log.info("Looping");
-
             current = stack.pop();
             log.info(current.path);
 
             try {
                 if (!current.dontThumbnail) {
-                    log.info("Resizing...");
+                    log.debug("Resizing...");
                     if (!thumbnail(current)) {
                         continue;
                     }
                 }
 
-                log.info("Moving...");
+                log.debug("Moving...");
                 if (!move(current)) {
                     continue;
                 }
 
-                log.info("Done !");
-            } catch (URISyntaxException e) {
-                log.info( "URISyntaxException {}", e);
-            } catch (MalformedURLException e) {
-                log.info( "MalformedURLException {}", e);
-            } catch (IOException e) {
-                log.info( "IOExceptionLException {}", e);
+                log.debug("Done !");
+            } catch (URISyntaxException | IOException e) {
+                log.warn("Couldn't thumbnail/move image {}", current.path, e);
             }
 
         }
         if (author != null && author.isDirectory()) {
-            log.info( "Nettoyage du dossier {}", author);
+            log.debug("Nettoyage du dossier {}", author);
             File[] lst = author.listFiles();
 
             //supprimer recursivement tous les dossiers de ce repertoire
@@ -66,9 +60,9 @@ public class ImageResizer {
                 clean(f);
             }
         } else {
-            log.info("Pas de dossier à nettoyer");
+            log.debug("Pas de dossier à nettoyer");
         }
-        log.info("Finished !");
+        log.debug("Finished !");
     }
 
     public static void clean(File rep) {
@@ -78,9 +72,9 @@ public class ImageResizer {
             }
             //on fait rien
 
-            log.warn( "Fichier trouv\u00e9 {} !", rep);
+            log.debug("File found: {} !", rep);
         } else if (rep.isDirectory()) {
-            log.info( "Suppression du dossier {} ...", rep);
+            log.info("Suppression du dossier {} ...", rep);
             File[] lst = rep.listFiles();
 
             //supprimer recursivement tous les dossiers vides de ce repertoire
@@ -94,14 +88,14 @@ public class ImageResizer {
 
     public boolean move(Element elt) throws MalformedURLException, URISyntaxException {
         String url = "file://" + configuration.getImagesPath(true) + configuration.getSep() + elt.path;
-        log.info( "SOURCE = {}", url);
+        log.debug("SOURCE = {}", url);
         URI uri = new URL(StringUtil.escapeURL(url)).toURI();
         File destination = new File(uri);
         destination.getParentFile().mkdirs();
-        log.info( "Move {} to {}", new Object[]{elt.image, destination});
+        log.debug("Move {} to {}", new Object[]{elt.image, destination});
 
         if (!elt.image.renameTo(destination)) {
-            log.info("Impossible de déplacer ...");
+            log.warn("Couldn't move {} to {}", elt.image, destination);
             return false;
         }
 
@@ -114,10 +108,10 @@ public class ImageResizer {
         File destination = new File(path);
         File parent = destination.getParentFile();
         if (!parent.isDirectory() && !parent.mkdirs()) {
-            log.warn( "Impossible de creer le dossier destination ({})", parent);
+            log.warn("Impossible de creer le dossier destination ({})", parent);
             return false;
         } else {
-            log.warn( "Repertoires parents cr\u00e9es ({})", parent);
+            log.warn("Parent directories created ({})", parent);
             String ext = null;
             int idx = source.image.getName().lastIndexOf('.');
             if (idx != -1) {
