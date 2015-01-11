@@ -324,6 +324,10 @@ int jnetfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
             if (jname != NULL) {
                 const char *name = (*env)->GetStringUTFChars(env, jname, JNI_FALSE);
                 if (name != NULL) {
+                    memset(key, 0, sizeof (key));
+                    sprintf(key, "handle_%i", i);
+                    uint64_t handle = (uint64_t) getLong(env, connector, key);
+                    /* pass handle to filler here */
                     filler(buf, name, NULL, 0);
                     (*env)->ReleaseStringUTFChars(env, jname, name);
                 }

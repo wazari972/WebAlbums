@@ -105,11 +105,13 @@ public class ThemeFacade implements ThemeFacadeLocal {
     @Override
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public void preconfigureDatabase() {
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS=0;").executeUpdate();
         em.createNativeQuery("ALTER TABLE `Album` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;").executeUpdate();
         em.createNativeQuery("ALTER TABLE `Photo` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;").executeUpdate();
         em.createNativeQuery("ALTER TABLE `Tag`   CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;").executeUpdate();
         em.createNativeQuery("ALTER TABLE `Theme` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;").executeUpdate();
         em.createNativeQuery("ALTER TABLE `Carnet` CHANGE `ID` `ID` INT(11) NOT NULL AUTO_INCREMENT ;").executeUpdate();
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS=0;").executeUpdate();    
     }
     
     @Override

@@ -6,9 +6,6 @@
 package net.wazari.service;
 
 import java.util.List;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Tag;
 import net.wazari.dao.entity.Utilisateur;

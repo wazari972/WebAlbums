@@ -146,7 +146,10 @@ public class LibVFS extends JnetFSAdapter {
         List<IFile> files = dir.listFiles();
         for (IFile inFile : files) {
             String name = inFile.getShortname();
+            //resolver.addToCache(new StringBuilder(path).append("/").append(name).toString(), inFile);
             JnetList.addName(jniEnv, i++, name);
+            JnetList.addHandle(jniEnv, i, inFile.getHandle());
+            i++;
         }
         JnetList.setCount(jniEnv, i);
         
@@ -166,6 +169,7 @@ public class LibVFS extends JnetFSAdapter {
         if (path == null || path.length() < 1) {
             return Code.ENOENT;
         }
+        long handle = JnetOpen.getHandle(jniEnv);
         
         IFile file = resolver.getFile(path) ;
         if (file == null) {
@@ -205,6 +209,7 @@ public class LibVFS extends JnetFSAdapter {
         if (path == null) {
             return Code.ENOENT;
         }
+        long handle = JnetRead.getHandle(jniEnv);
         
         log.debug("READ\t {}", path);
         IFile file = resolver.getFile(path) ;
@@ -269,6 +274,7 @@ public class LibVFS extends JnetFSAdapter {
         if (path == null) {
             return Code.ENOENT;
         }
+        long handle = jniEnv.getLong(Code.HANDLE);
         
         log.debug("RELEASE\t {}", path);
         IFile file = resolver.getFile(path) ;
@@ -300,6 +306,7 @@ public class LibVFS extends JnetFSAdapter {
         if (path == null) {
             return Code.ENOENT;
         }
+        long handle = jniEnv.getLong(Code.HANDLE);
         
         log.debug("CLOSE\t {}", path);
         IFile file = resolver.getFile(path) ;
@@ -351,6 +358,7 @@ public class LibVFS extends JnetFSAdapter {
             log.info("WRITE\tENOENT");
             return Code.ENOENT;
         }
+        long handle = JnetWrite.getHandle(jniEnv);
         
         log.debug("WRITE\t {}", path);
         IFile file = resolver.getFile(path) ;

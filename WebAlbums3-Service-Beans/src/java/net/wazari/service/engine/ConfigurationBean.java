@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ConfigurationBean implements Configuration {
+    final static String CONFIG_PATH = "conf/conf.xml";
     static final Logger log = LoggerFactory.getLogger(ConfigurationBean.class.getName());
     
     private static ConfigurationXML conf;
@@ -65,47 +66,42 @@ public class ConfigurationBean implements Configuration {
     @Override
     public String getRootPath() {
         return ConfigurationXML.rootPath;
-
-    }
-
-    public String getDataPath(boolean withRoot) {
-        return (withRoot ? getRootPath() : "") + conf.directories.data + getSep();
     }
 
     @Override
     public String getBackupPath() {
-        return getDataPath(true) + conf.directories.backup + getSep();
+        return getRootPath() + conf.directories.backup + getSep();
     }
 
     @Override
     public String getImagesPath(boolean withRoot) {
-        return getDataPath(withRoot) + conf.directories.images + getSep();
+        return (withRoot? getRootPath(): "") + conf.directories.images + getSep();
     }
 
     @Override
     public String getFtpPath() {
-        return getDataPath(true) + conf.directories.ftp + getSep();
+        return getRootPath() + conf.directories.ftp + getSep();
 
     }
 
     @Override
     public String getMiniPath(boolean withRoot) {
-        return getDataPath(withRoot) + conf.directories.mini + getSep();
+        return (withRoot? getRootPath(): "") + conf.directories.mini + getSep();
     }
 
     @Override
     public String getTempPath() {
-        return getDataPath(true) + conf.directories.temp + getSep();
+        return getRootPath() + conf.directories.temp + getSep();
     }
 
     @Override
     public String getPluginsPath() {
-        return getDataPath(true) + conf.directories.plugins + getSep();
+        return getRootPath() + conf.directories.plugins + getSep();
     }
     
     @Override
     public String getConfigFilePath() {
-        return getDataPath(true) + conf.directories.confFile;
+        return getRootPath() + ConfigurationBean.CONFIG_PATH;
     }
 
     @Override
@@ -121,6 +117,11 @@ public class ConfigurationBean implements Configuration {
     @Override
     public boolean wantsProtectDB() {
         return conf.properties.protectDB ;
+    }
+    
+    @Override
+    public String getAutomountWFS() {
+        return conf.properties.automountWFS;
     }
     
 }
@@ -210,18 +211,18 @@ class ConfigurationXML {
     }
     
     private static ConfigurationXML initConfiguration() {
-        final String CONFIG_FILE_PATH = "/other/Web/data/conf/conf.xml";
         ConfigurationXML conf;
         try {
             InputStream is ;
+            String config_path = rootPath + ConfigurationBean.CONFIG_PATH;
             if (isPathURL) {
-                is = new URL(CONFIG_FILE_PATH).openStream() ;
+                is = new URL(config_path).openStream() ;
             } else {
-                is = new FileInputStream(new File(CONFIG_FILE_PATH)) ;
+                is = new FileInputStream(new File(config_path)) ;
             }
             
             conf = XmlUtils.reload(is , ConfigurationXML.class) ;
-            ConfigurationBean.log.info("Configuration correctly loaded from {}", CONFIG_FILE_PATH);
+            ConfigurationBean.log.info("Configuration correctly loaded from {}", config_path);
         } catch (IOException | JAXBException e) {
             ConfigurationBean.log.warn("Exception while loading the Configuration from {}", e);
             ConfigurationBean.log.error("Using default configuration ...");
@@ -248,8 +249,6 @@ class ConfigurationXML {
 
     static class Directories {
         @XmlElement
-        String data = "data";
-        @XmlElement
         String images = "images";
         @XmlElement
         String mini = "miniatures";
@@ -260,8 +259,6 @@ class ConfigurationXML {
         @XmlElement
         String backup = "backup";
         @XmlElement
-        String confFile = "conf/conf.xml";
-
         String plugins = "plugins";
     }
     
@@ -271,5 +268,8 @@ class ConfigurationXML {
 
         @XmlElement
         boolean protectDB = true;
+        
+        @XmlElement
+        String automountWFS = null;
     }
 }

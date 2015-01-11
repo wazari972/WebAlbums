@@ -55,11 +55,14 @@ public class Resolver {
         }
         
         IFile foundFile = getFile(root, "", search);
-        
-        if (do_cache && foundFile != null) {
-            cache.put(search, foundFile);
-        }
+        addToCache(search, foundFile);
         return foundFile;
+    }
+    
+    public void addToCache(String path, IFile file) {
+        if (do_cache && file != null) {
+            cache.put(path, file);
+        }
     }
     
     IFile getFile(IDirectory current, String path, String search) {

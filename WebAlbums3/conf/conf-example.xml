@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Configuration date="2010-49-25:20-49">
+<Configuration date="2015-01-10:20-00">
     <directories>
-        <data>data</data>
-        <images>images</images>
-        <mini>miniatures</mini>
-        <ftp>ftp</ftp>
-        <temp>tmp</temp>
-        <backup>backup</backup>
-        <confFile>conf/conf.xml</confFile>
+        <data>DATA</data>
+        <images>IMAGES</images>
+        <mini>MINIS</mini>
+        <ftp>FTP</ftp>
+        <temp>TMP</temp>
+        <backup>BACKUP</backup>
     </directories>
     <sizes>
         <albums>15</albums>

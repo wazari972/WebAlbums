@@ -62,7 +62,7 @@ public class SDirectory implements IDirectory {
 
     @Override
     public long getHandle() {
-       throw new UnsupportedOperationException("Not supported yet.");
+       return -1;
     }
 
     @Override

@@ -11,7 +11,6 @@ import com.jnetfs.core.JnetException;
 import com.jnetfs.core.relay.JnetJNIConnector;
 
 public class JnetOpen {
-
     public static void setHandle(JnetJNIConnector conn, long handle) {
         conn.setLong(".fh", handle);
     }
@@ -26,5 +25,9 @@ public class JnetOpen {
 
     public static long getFlags(JnetJNIConnector conn) throws JnetException {
         return conn.getLong(".flags");
+    }
+    
+    public static long getHandle(JnetJNIConnector conn) throws JnetException {
+        return conn.getLong(".fh");
     }
 }

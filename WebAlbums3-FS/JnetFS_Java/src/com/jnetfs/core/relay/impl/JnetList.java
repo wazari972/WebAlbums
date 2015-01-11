@@ -14,6 +14,10 @@ public class JnetList {
     public static void addName(JnetJNIConnector conn, int pos, String name) {
         conn.setString("file_" + pos, name);
     }
+    
+    public static void addHandle(JnetJNIConnector conn, int pos, long handle) {
+        conn.setLong("handle_" + pos, handle);
+    }
 
     public static void setCount(JnetJNIConnector conn, int count) {
         conn.setInteger("file_count", count);

@@ -61,19 +61,19 @@ public class FilesFinder {
                 return false;
             }
 
-            log.info("Le theme n'est pas dans la table");
+            log.debug("Le theme n'est pas dans la table");
             enrTheme = themeDAO.newTheme(themeName);
             enrTheme = themeDAO.loadByName(enrTheme.getNom()) ;
-            log.info("Le theme a correctement été ajouté");
+            log.debug("Le theme a correctement été ajouté");
 
         } //if theme already exists
         else {
-            log.info("Le theme est dans la table");
+            log.debug("Le theme est dans la table");
         }
 
         //if init was performed correctly
         File dirTheme = new File(configuration.getFtpPath() + themeName + SEP);
-        log.info("Dossier source : {}", dirTheme);
+        log.debug("Dossier source : {}", dirTheme);
         //creer le dossier d'import s'il n'existe pas encore
         if (!dirTheme.isDirectory()) {
             log.info("Creation du dossier d'import ({})", dirTheme);
@@ -85,16 +85,16 @@ public class FilesFinder {
             log.warn("{} n'est pas un dossier/impossible de le creer  ... ", dirTheme.getAbsolutePath());
             correct = false;
         } else {
-            log.info("ID du theme :  {}", enrTheme);
+            log.debug("ID du theme :  {}", enrTheme);
             File[] subfiles = dirTheme.listFiles();
 
-            log.warn("Le dossier '{}' contient {} fichier/s", themeName, subfiles.length);
+            log.info("Le dossier '{}' contient {} fichier/s", themeName, subfiles.length);
 
             correct = true;
             int err = 0;
             for (File subfile : subfiles) {
                 if (subfile.isDirectory()) {
-                    log.info("Important de l'album {}", subfile);
+                    log.debug("Important de l'album {}", subfile);
                     if (!importAlbum(stack, subfile, enrTheme)) {
                         log.warn("An error occured during importation of album ({})...", subfile);
                         correct = false;
@@ -112,7 +112,6 @@ public class FilesFinder {
 
         resizer.resize(stack, dirTheme);
         
-
         if (!correct) {
             log.warn("An error occured during initialization process ...");
         }
@@ -123,13 +122,13 @@ public class FilesFinder {
             return Normalizer.normalize(source, Normalizer.Form.NFD).replaceAll("[\u0300-\u036F]", "");
     }
     private boolean importAlbum(Stack<Element> stack, File album, Theme enrTheme) {
-        log.info("##");
-        log.info("## Import of: {}", album.getName());
+        log.debug("##");
+        log.debug("## Import of: {}", album.getName());
         int annee;
         String dossier;
         String albumPath;
         if (!album.exists() || !album.isDirectory()) {
-            log.info("## Le dossier Album '{}' n'existe pas", album.getName());
+            log.debug("## Le dossier Album '{}' n'existe pas", album.getName());
             return false;
         } else {
             String strDate = null;
@@ -139,20 +138,20 @@ public class FilesFinder {
             if (dirName != null && dirName.length() > 11) {
                 String nom = dirName.substring(11);
                 nom = sansAccents(nom) ;
-                log.info("## NOM  : {}", nom);
+                log.debug("## NOM  : {}", nom);
                 try {
                     strDate = album.getName().substring(0, 10);
                     Date date = Album.DATE_STANDARD.parse(strDate);
-                    log.info("## DATE : {}", date);
+                    log.debug("## DATE : {}", date);
 
                 } catch (ParseException e) {
-                    log.warn("## Erreur dans le format de la date ({}), on skip", strDate);
+                    log.info("## Erreur dans le format de la date (**{}** {}), on skip", strDate, nom);
                     return false;
                 }
                 enrAlbum = albumDAO.loadByNameDate(nom, strDate);
                 if (enrAlbum == null) {
                     //si il n'y est pas, on l'ajoute
-                    log.info("## L'album n'est pas dans la table");
+                    log.debug("## L'album n'est pas dans la table");
                     enrAlbum = albumDAO.newAlbum();
 
                     enrAlbum.setNom(nom);
@@ -161,12 +160,12 @@ public class FilesFinder {
                     enrAlbum.setDate(strDate);
                     enrAlbum.setDroit(userDAO.find(DEFAULT_USER));
 
-                    log.info("## On tente d'ajouter l'album dans la base");
+                    log.debug("## On tente d'ajouter l'album dans la base");
                     albumDAO.create(enrAlbum);
-                    log.info("## On vient de lui donner l'ID {}", enrAlbum.getId());
+                    log.debug("## On vient de lui donner l'ID {}", enrAlbum.getId());
 
                 } else {
-                    log.info("## L'album est dans la table : ID {}", enrAlbum.getId());
+                    log.debug("## L'album est dans la table : ID {}", enrAlbum.getId());
                 }
                 dossier = enrAlbum.getDate() + " " + enrAlbum.getNom();
             } else {
@@ -204,10 +203,10 @@ public class FilesFinder {
             int err = 0;
             File[] subfiles = album.listFiles();
             if (subfiles != null) {
-                log.info("## Le répertoire '{}' contient {} fichier/s", dossier, subfiles.length);
+                log.debug("## Le répertoire '{}' contient {} fichier/s", dossier, subfiles.length);
 
                 for (File subfile : subfiles) {
-                    log.info("## Traitement de {}", subfile.getName());
+                    log.debug("## Traitement de {}", subfile.getName());
                     if (!importPhoto(stack, albumPath, subfile, enrAlbum)) {
                         err++;
                     }
@@ -228,10 +227,10 @@ public class FilesFinder {
     private boolean importPhoto(Stack<Element> stack, String albumPath,
             File photo,
             Album enrAlbum) {
-        log.info("### Import of : {}", photo.getName());
+        log.debug("### Import of : {}", photo.getName());
 
         if ("Thumbs.db".equals(photo.getName())) {
-            log.info("### Supression de {}", photo);
+            log.debug("### Supression de {}", photo);
             photo.delete();
             return true;
         }
@@ -242,7 +241,7 @@ public class FilesFinder {
             URLConnection connection = url.openConnection();
             type = connection.getContentType();
 
-            log.info("### Type : {}", type);
+            log.debug("### Type : {}", type);
         } catch (MalformedURLException e) {
             log.warn("### URL mal formée ... ", e);
             return false;
@@ -261,7 +260,7 @@ public class FilesFinder {
         boolean dontThumbnail = false;
  
         if (!sysTools.supports(type, ext, Capability.THUMBNAIL)) {
-            log.warn("### {} n'est pas supportée ... ({})", photo, type);
+            log.info("### {} n'est pas supportée ... ({})", photo, type);
             return false;
         }
 
@@ -269,7 +268,7 @@ public class FilesFinder {
 
         //si l'image (son path) n'est pas encore dans la base
         if (enrPhoto == null) {
-            log.info("### Creation d'un nouvel enregistrement");
+            log.debug("### Creation d'un nouvel enregistrement");
             //on crée la nouvelle photo
             enrPhoto = photoDAO.newPhoto();
             enrPhoto.setDescription("");
@@ -278,10 +277,10 @@ public class FilesFinder {
             sysTools.retrieveMetadata(type, ext, enrPhoto, photo.getAbsolutePath());
             enrPhoto.setAlbum(enrAlbum);
             enrPhoto.setType(type);
-            log.info("### Album {}", enrPhoto.getAlbum());
+            log.debug("### Album {}", enrPhoto.getAlbum());
             photoDAO.create(enrPhoto);
         } else /* sinon on update son nom d'album*/ {
-            log.info("### Mise à jour de l'enregistrement");
+            log.debug("### Mise à jour de l'enregistrement");
             enrPhoto.setAlbum(enrAlbum);
 
             photoDAO.edit(enrPhoto);
@@ -294,7 +293,7 @@ public class FilesFinder {
         
         ImageResizer.Element elt = new ImageResizer.Element(enrAlbum.getTheme().getNom()+SEP+photoPath, photo, type, dontThumbnail);
         stack.push(elt);
-        log.info("### Import of : {} : completed", photo.getName());
+        log.debug("### Import of : {} : completed", photo.getName());
         return true;
     }
 
@@ -304,7 +303,7 @@ public class FilesFinder {
             Photo enrPhoto = iter.next() ;
             iter.remove();
             if (!deletePhoto(enrPhoto)) {
-                log.warn("Problem during the deletion ...");
+                log.info("Problem during the deletion ...");
                 correct = false;
             }
         }
@@ -323,11 +322,7 @@ public class FilesFinder {
             File fichier;
 
             Theme enrTheme = enrPhoto.getAlbum().getTheme();
-            if (enrTheme == null) {
-                log.warn("Theme impossible à trouver ... (photo={})", enrPhoto.getId());
-                return false;
-            }
-            log.info("Traitement de la photo {}", enrPhoto.getId());
+            log.debug("Traitement de la photo {}", enrPhoto.getId());
             //suppression des tags de cette photo
             tagPhotoDAO.deleteByPhoto(enrPhoto);
 
@@ -339,9 +334,10 @@ public class FilesFinder {
             url = "file://" + configuration.getImagesPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false);
 
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
-            log.info("On supprime sa photo : {}", url);
+            
             if (!fichier.delete()) {
-                log.warn("Mais ça marche pas ...");
+                log.info("On supprime sa photo : {}", url);
+                log.info("Mais ça marche pas ...");
             }
             //pas de rep vide
             fichier.getParentFile().delete();
@@ -349,16 +345,17 @@ public class FilesFinder {
             //miniature
             url = "file://" + configuration.getMiniPath(true) + SEP + enrTheme.getNom() + SEP + enrPhoto.getPath(false) + ".png";
             fichier = new File(new URL(StringUtil.escapeURL(url)).toURI());
-            log.info("On supprime sa miniature : {}", url);
+            
             if (!fichier.delete()) {
-                log.warn("mais ça marche pas ...");
+                log.info("On supprime sa miniature : {}", url);
+                log.info("mais ça marche pas ...");
             }
             //pas de rep vide
             fichier.getParentFile().delete();
             //suppression du champs dans la table Photo
             photoDAO.remove(enrPhoto);
 
-            log.info("Photo correctement supprimée !");
+            log.debug("Photo correctement supprimée !");
             return true;
         } catch (MalformedURLException e) {
             log.warn("MalformedURLException {}", url, e);
@@ -375,7 +372,7 @@ public class FilesFinder {
     }
 
     public void moveAlbum(Album enrAlbum, Theme enrTheme) {
-        log.warn("Move album {} to theme {}", enrAlbum.getNom(), enrTheme.getNom());
+        log.debug("Move album {} to theme {}", enrAlbum.getNom(), enrTheme.getNom());
         if (enrAlbum.getTheme().equals(enrTheme)) {
             return;
         }
@@ -387,9 +384,9 @@ public class FilesFinder {
         
         targetAlbumImage.getParentFile().mkdirs();
         
-        log.warn("{} renameTo {}", sourceAlbumImage, targetAlbumImage);
+        log.debug("{} renameTo {}", sourceAlbumImage, targetAlbumImage);
         if (!sourceAlbumImage.renameTo(targetAlbumImage)) {
-            log.error("Couldn't rename {} to {}", sourceAlbumImage, targetAlbumImage);
+            log.warn("Couldn't rename {} to {}", sourceAlbumImage, targetAlbumImage);
             return;
         }
         sourceAlbumImage.getParentFile().delete();
@@ -399,9 +396,9 @@ public class FilesFinder {
                 
         targetAlbumMini.getParentFile().mkdirs();
         
-        log.warn("{} renameTo {}", sourceAlbumMini, targetAlbumMini);
+        log.debug("{} renameTo {}", sourceAlbumMini, targetAlbumMini);
         if (!sourceAlbumMini.renameTo(targetAlbumMini)) {
-            log.error("Couldn't rename {} to {}", sourceAlbumImage, targetAlbumImage);
+            log.warn("Couldn't rename {} to {}", sourceAlbumImage, targetAlbumImage);
             return;
         }
         sourceAlbumMini.getParentFile().delete();
