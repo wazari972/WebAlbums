@@ -8,7 +8,7 @@ PKG_NAMEVERSION += $(PKG_NAME)-$(VERSION)-$(RELEASE)
 
 APPSERVER_DIRNAME = apache-tomee-webprofile
 APP_DIRNAME := app-ear
-CONF_DIR := conf/conf.xml # must agree with WebAlbums3-Service-Beans/src/java/net/wazari/service/engine/ConfigurationBean.java::CONFIG_DATA_PATH
+CONF_DIR := conf/conf.xml # must agree with WebAlbums3-Service-Beans/src/java/net/wazari/service/engine/ConfigurationBean.java::CONFIG_PATH
 DB_CONNECTOR_JAR := RT-DB-mysql-connector-java-5.1.12-bin.jar
 
 PKG_DIR := ${shell pwd}
@@ -19,13 +19,18 @@ USR_DIR := $(INSTALL_PREFIX)/usr/local/$(PKG_NAME)
 TMP_DIR := $(INSTALL_PREFIX)/var/tmp/$(PKG_NAME)
 VAR_DIR := $(INSTALL_PREFIX)/var/$(PKG_NAME)
 LOG_DIR := $(VAR_DIR)/log
-DATA_DIR:= $(VAR_DIR)/data
+ROOT_PATH:= $(VAR_DIR)
 
 APPSERVER_DIR := $(USR_DIR)/$(APPSERVER_DIRNAME)
 
 ALL_DIRS := $(ETC_DIR) $(USR_DIR) $(TMP_DIR) $(VAR_DIR) $(LOG_DIR)
 
-all: prep_config prep_usr_appserver prep_usr_app prep_base_directories
+all: prep_config prep_usr_appserver prep_usr_app prep_base_directories prep_example
+
+prep_example: prep_base_directories
+	mkdir -p $(ROOT_PATH)/ftp/France
+	cp /mnt/sda7/kevin/Downloads/WebAlbums-3-release/data/images/France/2012/2012-10-12\ Sailing\ Journey $(ROOT_PATH)/ftp/France -r
+	cp /mnt/sda7/kevin/Downloads/WebAlbums-3-release/data/images/France/2013/2013-03-31\ Antibes $(ROOT_PATH)/ftp/France -r
 
 prep_config: prep_base_directories prep_usr_appserver
 	@echo '# Prepare configuration'
@@ -38,9 +43,13 @@ prep_config: prep_base_directories prep_usr_appserver
 	sh setup_db.sh $(ETC_DIR)/appserver/tomee.xml
 
 	cp $(HOME_DIR)/WebAlbums3/conf/conf-example.xml $(ETC_DIR)/conf.xml
-	sh setup_data_dir.sh $(DATA_DIR) $(ETC_DIR)/conf.xml $(TMP_DIR)
-	mkdir -p $(DATA_DIR)/$(shell dirname $(CONF_DIR)) 
-	ln -s $(ETC_DIR)/conf.xml $(DATA_DIR)/$(CONF_DIR)
+	mkdir -p $(ROOT_PATH)
+	sh setup_data_dir.sh $(ROOT_PATH) $(ETC_DIR)/conf.xml $(TMP_DIR)
+	mkdir -p $(ROOT_PATH)/$(shell dirname $(CONF_DIR)) 
+	ln -s $(ETC_DIR)/conf.xml $(ROOT_PATH)/$(CONF_DIR)
+
+	echo $(ROOT_PATH) > $(ETC_DIR)/root.path
+	ln -s $(ETC_DIR)/root.path $(APPSERVER_DIR)/conf
 	@echo
 
 build_app :
@@ -60,8 +69,6 @@ prep_usr_appserver: prep_base_directories
 
 	ln -s $(LOG_DIR) $(APPSERVER_DIR)/logs
 	ln -s $(TMP_DIR) $(APPSERVER_DIR)/work
-	mkdir -p $(DATA_DIR)
-	sh setup_data_dir.sh $(DATA_DIR) $(CONF_FILE)
 
 	mkdir $(APPSERVER_DIR)/apps
 	mkdir -p $(APPSERVER_DIR)/webapps/empty

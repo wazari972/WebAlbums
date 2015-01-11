@@ -1,9 +1,12 @@
-java -Djava.security.auth.login.config=$(pwd)/conf/login.config  -Dopenejb.authentication.realmName=PropertiesLogin \
--Djava.util.logging.config.file=conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager \
-"-Dhttp.nonProxyHosts=localhost|127.0.0.1|kevin-desktop" \
--Djava.endorsed.dirs=$(pwd)/endorsed \
--classpath $(pwd)/bin/bootstrap.jar:$(pwd)/bin/tomcat-juli.jar \
--Dcatalina.base=$(pwd) \
--Dcatalina.home=$(pwd) \
--Djava.io.tmpdir=/home/kevin/ \
+TOMEE_HOME=$(dirname $0)
+
+java -Djava.security.auth.login.config=$TOMEE_HOME/conf/login.config           \
+     -Dopenejb.authentication.realmName=PropertiesLogin                        \
+     -Djava.util.logging.config.file=$TOMEE_HOME/conf/logging.properties       \
+     -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager         \
+     -Djava.endorsed.dirs=$TOMEE_HOME/endorsed                                 \
+     -classpath $TOMEE_HOME/bin/bootstrap.jar:$TOMEE_HOME/bin/tomcat-juli.jar  \
+     -Dcatalina.base=$TOMEE_HOME                                               \
+     -Dcatalina.home=$TOMEE_HOME                                               \
+     -Droot.path=$(cat $TOMEE_HOME/conf/root.path)                             \
 org.apache.catalina.startup.Bootstrap start 

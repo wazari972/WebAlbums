@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ConfigurationBean implements Configuration {
-    final static String CONFIG_DATA_PATH = "conf/conf.xml";
+    final static String CONFIG_PATH = "conf/conf.xml";
     static final Logger log = LoggerFactory.getLogger(ConfigurationBean.class.getName());
     
     private static ConfigurationXML conf;
@@ -69,44 +69,40 @@ public class ConfigurationBean implements Configuration {
 
     }
 
-    public String getDataPath(boolean withRoot) {
-        return (withRoot ? getRootPath() : "") + conf.directories.data + getSep();
-    }
-
     @Override
     public String getBackupPath() {
-        return getDataPath(true) + conf.directories.backup + getSep();
+        return getRootPath() + conf.directories.backup + getSep();
     }
 
     @Override
     public String getImagesPath(boolean withRoot) {
-        return getDataPath(withRoot) + conf.directories.images + getSep();
+        return (withRoot? getRootPath(): "") + conf.directories.images + getSep();
     }
 
     @Override
     public String getFtpPath() {
-        return getDataPath(true) + conf.directories.ftp + getSep();
+        return getRootPath() + conf.directories.ftp + getSep();
 
     }
 
     @Override
     public String getMiniPath(boolean withRoot) {
-        return getDataPath(withRoot) + conf.directories.mini + getSep();
+        return (withRoot? getRootPath(): "") + conf.directories.mini + getSep();
     }
 
     @Override
     public String getTempPath() {
-        return getDataPath(true) + conf.directories.temp + getSep();
+        return getRootPath() + conf.directories.temp + getSep();
     }
 
     @Override
     public String getPluginsPath() {
-        return getDataPath(true) + conf.directories.plugins + getSep();
+        return getRootPath() + conf.directories.plugins + getSep();
     }
     
     @Override
     public String getConfigFilePath() {
-        return getDataPath(true) + ConfigurationBean.CONFIG_DATA_PATH;
+        return getRootPath() + ConfigurationBean.CONFIG_PATH;
     }
 
     @Override
@@ -214,7 +210,7 @@ class ConfigurationXML {
         ConfigurationXML conf;
         try {
             InputStream is ;
-            String config_path = rootPath + ConfigurationBean.CONFIG_DATA_PATH;
+            String config_path = rootPath + ConfigurationBean.CONFIG_PATH;
             if (isPathURL) {
                 is = new URL(config_path).openStream() ;
             } else {
@@ -249,8 +245,6 @@ class ConfigurationXML {
 
     static class Directories {
         @XmlElement
-        String data = "data";
-        @XmlElement
         String images = "images";
         @XmlElement
         String mini = "miniatures";
@@ -260,7 +254,7 @@ class ConfigurationXML {
         String temp = "tmp";
         @XmlElement
         String backup = "backup";
-
+        @XmlElement
         String plugins = "plugins";
     }
     
@@ -270,5 +264,8 @@ class ConfigurationXML {
 
         @XmlElement
         boolean protectDB = true;
+        
+        @XmlElement
+        String automountWFS = null;
     }
 }
