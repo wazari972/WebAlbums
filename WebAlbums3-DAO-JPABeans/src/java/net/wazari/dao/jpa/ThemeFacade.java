@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 @DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE})
 public class ThemeFacade implements ThemeFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(ThemeFacade.class.getName());
-     
+    
     @PersistenceContext(unitName=WebAlbumsDAOBean.PERSISTENCE_UNIT)
     private EntityManager em;
 
@@ -64,7 +64,7 @@ public class ThemeFacade implements ThemeFacadeLocal {
                                 .getResultList();
         } catch (javax.persistence.PersistenceException e) {
             log.warn("Database query failed ...");
-            return new ArrayList<Theme>() ;
+            return new ArrayList<>() ;
         }
     }
 

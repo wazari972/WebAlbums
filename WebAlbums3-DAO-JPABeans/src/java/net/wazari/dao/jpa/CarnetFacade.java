@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 @DeclareRoles({UtilisateurFacadeLocal.MANAGER_ROLE, UtilisateurFacadeLocal.VIEWER_ROLE})
 public class CarnetFacade implements CarnetFacadeLocal {
     private static final Logger log = LoggerFactory.getLogger(CarnetFacade.class.getCanonicalName()) ;
-
+    
     @EJB
     WebAlbumsDAOBean webDAO;
 
@@ -122,7 +122,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
         q.setHint("org.hibernate.readOnly", true) ;
 
         List<JPACarnet> lstCarnets = q.getResultList() ;
-        return (SubsetOf) new SubsetOf<JPACarnet>(bornes, lstCarnets, (long) size);
+        return (SubsetOf) new SubsetOf<>(bornes, lstCarnets, (long) size);
     }
 
     @Override

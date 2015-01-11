@@ -1,11 +1,24 @@
 TOMEE_HOME=$(dirname $0)
 
+if [ "$1" != "-v" -a "$1" != "--verbose"   ]
+then
+        LOGGING="-Djava.util.logging.config.file=$TOMEE_HOME/conf/logging.properties \
+                  -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+fi
+
+CP=$TOMEE_HOME/bin/bootstrap.jar:$TOMEE_HOME/bin/tomcat-juli.jar:$TOMEE_HOME/lib/jandex-1.2.0.Final.jar
+
+#for i in $TOMEE_HOME/lib/hibernate4/* 
+#do
+# CP=$CP:$i
+#done
+#CP=$CP:$TOMEE_HOME/apps/WebAlbums3-ea/lib
+
 java -Djava.security.auth.login.config=$TOMEE_HOME/conf/login.config           \
      -Dopenejb.authentication.realmName=PropertiesLogin                        \
-     -Djava.util.logging.config.file=$TOMEE_HOME/conf/logging.properties       \
-     -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager         \
+      $LOGGING                                                                 \
      -Djava.endorsed.dirs=$TOMEE_HOME/endorsed                                 \
-     -classpath $TOMEE_HOME/bin/bootstrap.jar:$TOMEE_HOME/bin/tomcat-juli.jar  \
+     -classpath $CP                                                            \
      -Dcatalina.base=$TOMEE_HOME                                               \
      -Dcatalina.home=$TOMEE_HOME                                               \
      -Droot.path=$(cat $TOMEE_HOME/conf/root.path)                             \
