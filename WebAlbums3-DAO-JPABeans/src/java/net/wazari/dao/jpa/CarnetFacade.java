@@ -85,7 +85,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
     }
 
     @Override
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public List<Carnet> findAll() {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPACarnet> cq = cb.createQuery(JPACarnet.class) ;
@@ -98,7 +98,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
     }
     
     @Override
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public SubsetOf<Carnet> queryCarnets(ServiceSession session,
             AlbumFacadeLocal.Restriction restrict, AlbumFacadeLocal.TopFirst topFirst, Bornes bornes) {
 
@@ -126,7 +126,7 @@ public class CarnetFacade implements CarnetFacadeLocal {
     }
 
     @Override
-    @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Carnet loadIfAllowed(ServiceSession session, Integer carnetId) {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
