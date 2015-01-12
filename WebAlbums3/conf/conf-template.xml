@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Configuration date="2015-01-10:20-00">
     <directories>
-		<root_path>/other/Web/data</root_path>
-        <data>DATA</data>
+        <root_path>ROOT_PATH</root_path>
         <images>IMAGES</images>
         <mini>MINIS</mini>
         <ftp>FTP</ftp>
@@ -16,5 +15,8 @@
     <properties>
         <isReadOnly>false</isReadOnly>
         <protectDB>false</protectDB>
+        <WFS>
+            <automount enabled="false">/path/to/WFS/automount</automount>
+	</WFS>
     </properties>
 </Configuration>
