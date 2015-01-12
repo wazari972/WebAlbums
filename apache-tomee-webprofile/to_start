@@ -1,26 +1,44 @@
 #! /bin/sh
 TOMEE_HOME=$(dirname $0)
+DEFAULT_CONF_PATH_FILE=$TOMEE_HOME/conf/config.path
 
 while [[ $# > 0 ]]
 do
   key=$1
   case $key in
     -v|--verbose)
-    LOGGING="-Djava.util.logging.config.file=$TOMEE_HOME/conf/logging.properties \
-             -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
-    shift
+    verbose=1
     ;;
     -cp|--copy)
     cd $TOMEE_HOME
     sh ./to_copy
     cd -
+    ;;
+    -cfg|--config-file)
     shift
+    CONFIG_PATH=$1
+    ;;
+    -h|--help)
+    echo "no help yet, read the script file!"
+    exit
     ;;
     *)
     # unknown option
     ;;
   esac
+  shift    
 done
+
+if [ -z $CONFIG_PATH ]
+then
+    CONFIG_PATH=$(cat $DEFAULT_CONF_PATH_FILE)
+fi
+
+if [ -z $verbose ]
+then
+    LOGGING="-Djava.util.logging.config.file=$TOMEE_HOME/conf/logging.properties \
+             -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+fi
 
 CP=\
 $TOMEE_HOME/bin/bootstrap.jar:\
@@ -34,5 +52,5 @@ java -Djava.security.auth.login.config=$TOMEE_HOME/conf/login.config           \
      -classpath $CP                                                            \
      -Dcatalina.base=$TOMEE_HOME                                               \
      -Dcatalina.home=$TOMEE_HOME                                               \
-     -Droot.path=$(cat $TOMEE_HOME/conf/root.path)                             \
+     -Dconfig.path=$CONFIG_PATH                                                \
 org.apache.catalina.startup.Bootstrap start 

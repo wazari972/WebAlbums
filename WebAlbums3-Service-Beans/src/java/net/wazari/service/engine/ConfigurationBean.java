@@ -5,10 +5,11 @@
 package net.wazari.service.engine;
 
 import java.io.*;
-import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -27,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 @Stateless
 public class ConfigurationBean implements Configuration {
-    final static String CONFIG_PATH = "conf/conf.xml";
     static final Logger log = LoggerFactory.getLogger(ConfigurationBean.class.getName());
     
     private static ConfigurationXML conf;
@@ -101,7 +101,7 @@ public class ConfigurationBean implements Configuration {
     
     @Override
     public String getConfigFilePath() {
-        return getRootPath() + ConfigurationBean.CONFIG_PATH;
+        return ConfigurationXML.configPath;
     }
 
     @Override
@@ -131,115 +131,129 @@ public class ConfigurationBean implements Configuration {
 @XmlRootElement(name = "Configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 class ConfigurationXML {
-    static String SEP ;
-    static String rootPath  ;
-    static boolean isPathURL ;
+    static String SEP ;    
+    static boolean isPathURL = false;
+    static String rootPath = null;
     static ConfigurationXML inited = null;
     
     static ConfigurationXML init() {
         if (inited != null) {
             return inited;
         }
-        initRootPath();
         inited = initConfiguration();
         
         return inited;
     }
-    
-    private static void initRootPath() {
+    static String configPath;
+    private static final String CONFIG_PATH_PROPNAME = "config.path";
+    private static void initConfigPath() {
         LinkedList<String> paths = new LinkedList<>() ;
         
-        String prop = System.getProperty("root.path") ;
+        String prop = System.getProperty(CONFIG_PATH_PROPNAME) ;
         if (prop != null) {
-            ConfigurationBean.log.info("Property 'root.path'  found, '{}' added on top of the list...", prop); 
+            ConfigurationBean.log.info("Property '{}' found, '{}' added on top of the list.", CONFIG_PATH_PROPNAME, prop); 
             paths.addFirst(prop) ;
         }
             
         try {
-            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("RootPath.conf") ;
+            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(CONFIG_PATH_PROPNAME) ;
             if (stream != null) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                 String line = reader.readLine();
 
                 while (line != null) {
-                    ConfigurationBean.log.debug("Path '{}' found in classpath://RootPath.conf", line);
+                    ConfigurationBean.log.debug("Config path '{}' found in classpath://{}", line);
                     paths.addLast(line) ;
                     line = reader.readLine();
                 }
             } else {
-                ConfigurationBean.log.warn( "Could not find RootPath.conf inside the classpath ...");
+                ConfigurationBean.log.warn( "Could not find ConfigPath.conf inside the classpath ...");
             }
         } catch (IOException ex) {
-            ConfigurationBean.log.error( "Could not read RootPath from file: {}", ex.getMessage());
+            ConfigurationBean.log.error( "Could not read {} from file: {}", new Object[]{CONFIG_PATH_PROPNAME, ex.getMessage(), ex});
         }
 
-        String thePath = null;
         for (String path : paths) {
             if (!path.startsWith("http://")) {
-                File rootDirFile = new File (path) ;
+                File confDirFile = new File (path) ;
                 
-                if (!rootDirFile.exists()) {
-                    ConfigurationBean.log.error("Rootpath '{}' doesn't exists ...", path);
+                if (!confDirFile.exists()) {
+                    ConfigurationBean.log.error("Configation path '{}' doesn't exists ...", path);
                     continue;
-                } else if (!rootDirFile.isDirectory()) {
-                    ConfigurationBean.log.error("Rootpath '{}' is not a directory ...");
+                } else if (!confDirFile.isFile()) {
+                    ConfigurationBean.log.error("Configation path '{}' is not a file ...", path);
+                    continue;                    
+                } else if (!confDirFile.canRead()) {
+                    ConfigurationBean.log.error("Configation path '{}' cannot be read ...", path);
                     continue;                    
                 }
-
-                if (!rootDirFile.isAbsolute()) {
-                    try {
-                        path = rootDirFile.getAbsoluteFile().getCanonicalPath();
-                    } catch (IOException ex) {
-                        ConfigurationBean.log.warn( "Couldn''t unrelativize the path:{}", ex.getMessage());
-                        continue;
-                    }
-                }
             }
-            thePath = path;
+            configPath = path;
             break;
-            
-        }
-        if (thePath == null) {
-            throw new IllegalArgumentException("Could not work out a valid root path ...") ;
         }
         
-        isPathURL = thePath.startsWith("http://");
-        SEP = isPathURL ? "/" : File.separator;
-        if (!thePath.endsWith(SEP)) {
-            thePath += SEP ;
+        if (configPath == null) {
+            throw new IllegalArgumentException("Could not work out a valid root path ...") ;
         }
-        rootPath = thePath;
-        ConfigurationBean.log.warn( "Root path retrieved: {}", rootPath);
     }
     
     private static ConfigurationXML initConfiguration() {
+        initConfigPath();
         ConfigurationXML conf;
         try {
-            InputStream is ;
-            String config_path = rootPath + ConfigurationBean.CONFIG_PATH;
-            if (isPathURL) {
-                is = new URL(config_path).openStream() ;
-            } else {
-                is = new FileInputStream(new File(config_path)) ;
-            }
+            InputStream is = new FileInputStream(new File(configPath)) ;
+            conf = XmlUtils.reload(is, ConfigurationXML.class) ;
             
-            conf = XmlUtils.reload(is , ConfigurationXML.class) ;
-            ConfigurationBean.log.info("Configuration correctly loaded from {}", config_path);
+            ConfigurationBean.log.info("Configuration correctly loaded from {}", configPath);
         } catch (IOException | JAXBException e) {
-            ConfigurationBean.log.warn("Exception while loading the Configuration from {}", e);
+            ConfigurationBean.log.warn("Exception while loading the Configuration from {}", e.getMessage(), e);
             ConfigurationBean.log.error("Using default configuration ...");
             
             conf = new ConfigurationXML();
         }
+        
         try {
             ConfigurationBean.log.info(XmlUtils.print((ConfigurationXML) conf, ConfigurationXML.class));
         } catch (JAXBException ex) {
-            ConfigurationBean.log.warn("Exception while printing the Configuration file {} ...", conf);
+            ConfigurationBean.log.warn("Exception while printing the Configuration file {} ... ({})", new Object[]{conf, ex.getMessage(), ex});
         }
+        
+        String thePath = null;
+        for (String path : conf.directories.root_path) {
+            if (!path.startsWith("http://")) {
+                File rootDirFile = new File(path);
+                
+                if (!rootDirFile.exists()) {
+                    ConfigurationBean.log.info("Root path '{}' doesn't exists ...", path);
+                    continue;
+                } else if (!rootDirFile.isDirectory()) {
+                    ConfigurationBean.log.info("Root path '{}' is not a directory ...");
+                    continue;
+                }
+
+                path = rootDirFile.getAbsolutePath();
+            } else {
+                isPathURL = true;
+            }
+            thePath = path;
+            break;
+        }
+        
+        if (thePath == null) {
+            throw new IllegalArgumentException("Could not work out a valid root path ...") ;
+        }
+        
+        SEP = isPathURL ? "/" : File.separator;
+        
+        if (!thePath.endsWith(SEP)) {
+            thePath += SEP ;
+        }
+        rootPath = thePath;
+        ConfigurationBean.log.warn("Root path set to '{}'", rootPath);
         
         return conf;
     }
-
+    
     @XmlAttribute
     final String date = new SimpleDateFormat("yyyy-MM-dd:HH-mm").format(new Date());
     @XmlElement
@@ -252,6 +266,9 @@ class ConfigurationXML {
     private ConfigurationXML(){}
 
     static class Directories {
+        @XmlElement
+        List<String> root_path = new LinkedList<>(Arrays.asList(new String[]{"/path/to/web/albums/data"}));
+        
         @XmlElement
         String images = "images";
         @XmlElement
@@ -283,10 +300,10 @@ class ConfigurationXML {
         
         public static class Automount {
             @XmlValue
-            String path = null;
+            String path = "/path/to/automount/wfs";
             
             @XmlAttribute
-            Boolean enabled = null;
+            Boolean enabled = false;
         }
     }
 }

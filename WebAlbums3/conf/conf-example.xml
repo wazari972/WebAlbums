@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Configuration date="2015-01-10:20-00">
     <directories>
+		<root_path>/other/Web/data</root_path>
         <data>DATA</data>
         <images>IMAGES</images>
         <mini>MINIS</mini>
