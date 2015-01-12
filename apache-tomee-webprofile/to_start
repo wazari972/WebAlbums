@@ -20,9 +20,7 @@ do
     # unknown option
     ;;
   esac
-
 done
-exit
 
 CP=\
 $TOMEE_HOME/bin/bootstrap.jar:\
