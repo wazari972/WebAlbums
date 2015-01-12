@@ -18,10 +18,10 @@ import net.wazari.service.exchange.xml.XmlPage;
 @XmlRootElement
 public class XmlAlbumList {
     public XmlAlbumList() {
-        album = new LinkedList<XmlAlbum>() ;
+        album = new LinkedList<>() ;
     }
     public XmlAlbumList(int length) {
-        album = new ArrayList<XmlAlbum>(length) ;
+        album = new ArrayList<>(length) ;
     }
     public final List<XmlAlbum> album ;
     public XmlPage page;

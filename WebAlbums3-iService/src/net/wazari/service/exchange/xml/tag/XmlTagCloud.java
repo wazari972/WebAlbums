@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  */
 public class XmlTagCloud {
     @XmlElement(name = "tagInfo")
-    public List<XmlTagCloudEntry> parentList = new LinkedList<XmlTagCloudEntry>();
+    public List<XmlTagCloudEntry> parentList = new LinkedList<>();
 
     public static class XmlTagCloudEntry {
         @XmlElement

@@ -24,10 +24,10 @@ public class XmlPhotoList extends XmlInfoException {
     public XmlPage page;
 
     public XmlPhotoList() {
-        photo = new LinkedList<XmlPhoto>() ;
+        photo = new LinkedList<>() ;
     }
     public XmlPhotoList(int size) {
-        photo = new ArrayList<XmlPhoto>(size) ;
+        photo = new ArrayList<>(size) ;
     }
 
 }

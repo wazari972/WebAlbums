@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlAlbumSelect {
     public XmlAlbumSelect() {
-        album = new LinkedList<XmlAlbum>() ;
+        album = new LinkedList<>() ;
     }
     public final List<XmlAlbum> album ;
 }

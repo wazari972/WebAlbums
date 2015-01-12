@@ -16,7 +16,7 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
 @XmlRootElement
 public class XmlDatabaseCheck extends XmlInfoException{
     public XmlDatabaseCheck() {
-        this.files = new HashMap<String, String>();
+        this.files = new HashMap<>();
     }
     public Map<String, String> files ;
 }

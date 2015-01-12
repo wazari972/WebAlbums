@@ -52,5 +52,5 @@ public class XmlAlbum {
         }
     }
     
-    public Map<String, Counter> photoCount = new HashMap<String, Counter>();
+    public Map<String, Counter> photoCount = new HashMap<>();
 }

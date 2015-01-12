@@ -33,10 +33,10 @@ public class XmlWebAlbumsList extends XmlInfoException {
     @XmlAttribute
     public ListType type ;
 
-    public List<XmlTag> tag = new LinkedList<XmlTag>() ;
-    public List<XmlWebAlbumsTagWho> who = new LinkedList<XmlWebAlbumsTagWho>() ;
-    public List<XmlWebAlbumsTagWhat> what = new LinkedList<XmlWebAlbumsTagWhat>() ;
-    public List<XmlWebAlbumsTagWhere> where = new LinkedList<XmlWebAlbumsTagWhere>() ;
+    public List<XmlTag> tag = new LinkedList<>() ;
+    public List<XmlWebAlbumsTagWho> who = new LinkedList<>() ;
+    public List<XmlWebAlbumsTagWhat> what = new LinkedList<>() ;
+    public List<XmlWebAlbumsTagWhere> where = new LinkedList<>() ;
     
     public void addTag(XmlTag newTag) {
         if (newTag == null) return ;
@@ -73,7 +73,7 @@ public class XmlWebAlbumsList extends XmlInfoException {
     }
     
     public List<XmlTag> getAllTags() {
-        List<XmlTag> alltags = new LinkedList<XmlTag>();
+        List<XmlTag> alltags = new LinkedList<>();
         alltags.addAll(this.tag);
         alltags.addAll(this.who);
         alltags.addAll(this.what);

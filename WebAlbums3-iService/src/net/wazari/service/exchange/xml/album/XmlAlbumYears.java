@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlAlbumYears {
     public XmlAlbumYears() {
-        year = new LinkedList<XmlAlbumYear>() ;
+        year = new LinkedList<>() ;
     }
     @XmlElement
     public final List<XmlAlbumYear> year ;

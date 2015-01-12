@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlCarnetsTop {
     public XmlCarnetsTop() {
-        carnet = new LinkedList<XmlCarnet>() ;
+        carnet = new LinkedList<>() ;
     }
     public final List<XmlCarnet> carnet ;
 

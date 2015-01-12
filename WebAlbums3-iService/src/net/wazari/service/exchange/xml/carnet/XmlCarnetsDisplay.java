@@ -19,10 +19,10 @@ import net.wazari.service.exchange.xml.common.XmlInfoException;
 @XmlRootElement
 public class XmlCarnetsDisplay extends XmlInfoException{
     public XmlCarnetsDisplay() {
-        carnet = new LinkedList<XmlCarnet>() ;
+        carnet = new LinkedList<>() ;
     }
     public XmlCarnetsDisplay(int length) {
-        carnet = new ArrayList<XmlCarnet>(length) ;
+        carnet = new ArrayList<>(length) ;
     }
     public final List<XmlCarnet> carnet ;
     public XmlPage page;

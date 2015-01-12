@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class XmlAlbumGpx {
     public XmlAlbumGpx() {
-        gpx = new LinkedList<XmlGpx>() ;
+        gpx = new LinkedList<>() ;
     }
     public final List<XmlGpx> gpx ;
 

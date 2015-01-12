@@ -8,7 +8,6 @@ package net.wazari.service.exchange.xml.album;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.wazari.service.exchange.xml.XmlThemeList;
-import net.wazari.service.exchange.xml.common.XmlUserList;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList;
 
 /**

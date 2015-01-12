@@ -15,7 +15,5 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class XmlUserList {
-
-    public final List<XmlUser> user = new LinkedList<XmlUser>() ;
-
+    public final List<XmlUser> user = new LinkedList<>() ;
 }

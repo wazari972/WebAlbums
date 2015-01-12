@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class XmlPhotoExif {
-    public List<XmlPhotoExifEntry> entry = new LinkedList<XmlPhotoExifEntry>() ;
+    public List<XmlPhotoExifEntry> entry = new LinkedList<>() ;
     public static class XmlPhotoExifEntry {
 
         public XmlPhotoExifEntry() {}

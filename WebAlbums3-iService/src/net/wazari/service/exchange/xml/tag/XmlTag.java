@@ -32,7 +32,7 @@ public class XmlTag {
     
     public void addChildren(XmlTag tag) {
         if (children == null) {
-            children = new LinkedList<XmlTag>();
+            children = new LinkedList<>();
         }
         children.add(tag);
     }

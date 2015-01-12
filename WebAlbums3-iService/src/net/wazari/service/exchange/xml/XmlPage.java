@@ -22,11 +22,11 @@ public class XmlPage {
     @XmlAttribute
     public Integer first;
 
-    public List<Integer> prev = new LinkedList<Integer>();
+    public List<Integer> prev = new LinkedList<>();
     @XmlAttribute
     public Integer current;
 
-    public List<Integer> next = new LinkedList<Integer>();
+    public List<Integer> next = new LinkedList<>();
     @XmlAttribute
     public Integer last;
     @XmlAttribute

@@ -15,5 +15,5 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class XmlMaint {
-    public final List<String> actions = new LinkedList<String>() ;
+    public final List<String> actions = new LinkedList<>() ;
 }

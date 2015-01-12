@@ -15,8 +15,5 @@ import net.wazari.dao.entity.Utilisateur;
 @XmlRootElement
 public class XmlUtilisateur {
     public XmlUtilisateur() {}
-    public XmlUtilisateur(Utilisateur user) {
-        
-    }
-
+    public XmlUtilisateur(Utilisateur user) {}
 }
