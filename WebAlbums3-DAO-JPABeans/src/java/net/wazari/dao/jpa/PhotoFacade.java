@@ -4,7 +4,6 @@
  */
 package net.wazari.dao.jpa;
 
-import java.awt.print.Book;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.security.DeclareRoles;
@@ -15,7 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import net.wazari.dao.AlbumFacadeLocal;
 import net.wazari.dao.PhotoFacadeLocal;

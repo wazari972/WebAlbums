@@ -4,8 +4,6 @@
  */
 package net.wazari.dao;
 
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 
 /**

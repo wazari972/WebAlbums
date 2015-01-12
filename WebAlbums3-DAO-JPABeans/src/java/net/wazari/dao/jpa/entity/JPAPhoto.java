@@ -25,13 +25,12 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "Photo",
-    uniqueConstraints = {@UniqueConstraint(columnNames={"PhotoPath"})}
-        /*,
+    uniqueConstraints = {@UniqueConstraint(columnNames={"PhotoPath"})},
     indexes = {
         @Index(name="Idx_album", columnList = "Album, ID"),
         @Index(name="Idx_path", columnList = "PhotoPath"),
         @Index(name="Idx_stars", columnList = "Stars")
-    }*/
+    }
 )
 public class JPAPhoto implements Photo, Serializable {
     private static final Logger log = LoggerFactory.getLogger(JPAPhoto.class.getName());

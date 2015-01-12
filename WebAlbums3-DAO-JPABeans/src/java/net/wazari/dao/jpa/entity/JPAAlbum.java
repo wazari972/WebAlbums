@@ -21,9 +21,10 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @Table(name = "Album"
-        /*, 
+        , 
         indexes = {@Index(name="Idx_name", columnList = "Nom", unique = true),
-                   @Index(name="Idx_date", columnList = "AlbumDate")}*/)
+                   @Index(name="Idx_date", columnList = "AlbumDate")}
+)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 public class JPAAlbum implements Album, Serializable {

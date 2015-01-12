@@ -6,8 +6,6 @@ package net.wazari.dao;
 
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Local;
 import net.wazari.dao.entity.Album;
 import net.wazari.dao.entity.Photo;

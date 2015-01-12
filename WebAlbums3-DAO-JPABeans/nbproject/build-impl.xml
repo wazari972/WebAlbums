@@ -800,7 +800,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.javaee-api-7.0.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${libs.jpa20-persistence.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${libs.jpa2-persistence.classpath}" todir="${build.classes.dir}"/>
-        <copyfiles files="${libs.hibernate4-persistencemodelgen.classpath}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.antlr-2.7.7.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.c3p0-0.9.2.1.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.cglib-2.2.jar}" todir="${build.classes.dir}"/>
@@ -813,7 +812,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.hibernate-ehcache-4.3.1.Final.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.hibernate-entitymanager-4.3.1.Final.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.hibernate-jpa-2.1-api-1.0.0.Final.jar}" todir="${build.classes.dir}"/>
-        <copyfiles files="${file.reference.hibernate-jpamodelgen-4.3.1.Final.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.hibernate-tools-4.3.1.CR1.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.javassist-3.18.1-GA.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.jboss-logging-3.1.3.GA.jar}" todir="${build.classes.dir}"/>
@@ -838,6 +836,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.persistence-api-1.0.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.validation-api-1.1.0.Final.jar}" todir="${build.classes.dir}"/>
         <copyfiles files="${file.reference.javaee-api-7.0.jar}" todir="${build.classes.dir}"/>
+        <copyfiles files="${libs.hibernate4-persistencemodelgen.classpath}" todir="${build.classes.dir}"/>
     </target>
     <target if="is.server.weblogic" name="-library-inclusion-in-archive-weblogic">
         <basename file="${reference.WebAlbums3-iDAO.jar}" property="manifest.reference.WebAlbums3-iDAO.jar"/>
@@ -846,7 +845,6 @@ exists or setup the property manually. For example like this:
         <basename file="${libs.javaee-api-7.0.classpath}" property="manifest.libs.javaee-api-7.0.classpath"/>
         <basename file="${libs.jpa20-persistence.classpath}" property="manifest.libs.jpa20-persistence.classpath"/>
         <basename file="${libs.jpa2-persistence.classpath}" property="manifest.libs.jpa2-persistence.classpath"/>
-        <basename file="${libs.hibernate4-persistencemodelgen.classpath}" property="manifest.libs.hibernate4-persistencemodelgen.classpath"/>
         <basename file="${file.reference.antlr-2.7.7.jar}" property="manifest.file.reference.antlr-2.7.7.jar"/>
         <basename file="${file.reference.c3p0-0.9.2.1.jar}" property="manifest.file.reference.c3p0-0.9.2.1.jar"/>
         <basename file="${file.reference.cglib-2.2.jar}" property="manifest.file.reference.cglib-2.2.jar"/>
@@ -859,7 +857,6 @@ exists or setup the property manually. For example like this:
         <basename file="${file.reference.hibernate-ehcache-4.3.1.Final.jar}" property="manifest.file.reference.hibernate-ehcache-4.3.1.Final.jar"/>
         <basename file="${file.reference.hibernate-entitymanager-4.3.1.Final.jar}" property="manifest.file.reference.hibernate-entitymanager-4.3.1.Final.jar"/>
         <basename file="${file.reference.hibernate-jpa-2.1-api-1.0.0.Final.jar}" property="manifest.file.reference.hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
-        <basename file="${file.reference.hibernate-jpamodelgen-4.3.1.Final.jar}" property="manifest.file.reference.hibernate-jpamodelgen-4.3.1.Final.jar"/>
         <basename file="${file.reference.hibernate-tools-4.3.1.CR1.jar}" property="manifest.file.reference.hibernate-tools-4.3.1.CR1.jar"/>
         <basename file="${file.reference.javassist-3.18.1-GA.jar}" property="manifest.file.reference.javassist-3.18.1-GA.jar"/>
         <basename file="${file.reference.jboss-logging-3.1.3.GA.jar}" property="manifest.file.reference.jboss-logging-3.1.3.GA.jar"/>
@@ -884,52 +881,52 @@ exists or setup the property manually. For example like this:
         <basename file="${file.reference.persistence-api-1.0.jar}" property="manifest.file.reference.persistence-api-1.0.jar"/>
         <basename file="${file.reference.validation-api-1.1.0.Final.jar}" property="manifest.file.reference.validation-api-1.1.0.Final.jar"/>
         <basename file="${file.reference.javaee-api-7.0.jar}" property="manifest.file.reference.javaee-api-7.0.jar"/>
+        <basename file="${libs.hibernate4-persistencemodelgen.classpath}" property="manifest.libs.hibernate4-persistencemodelgen.classpath"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 jar-12 jar-13 jar-14 jar-15 jar-16 jar-17 jar-18 jar-19 jar-20 jar-21 jar-22 jar-23 jar-24 jar-25 jar-26 jar-27 jar-28 jar-29 jar-30 jar-31 jar-32 jar-33 jar-34 jar-35 jar-36 jar-37 jar-38 jar-39 jar-40 jar-41 jar-42 jar-43 jar-44 "/>
+            <attribute name="Extension-List" value="jar-1 jar-2 jar-3 jar-4 jar-5 jar-6 jar-7 jar-8 jar-9 jar-10 jar-11 jar-12 jar-13 jar-14 jar-15 jar-16 jar-17 jar-18 jar-19 jar-20 jar-21 jar-22 jar-23 jar-24 jar-25 jar-26 jar-27 jar-28 jar-29 jar-30 jar-31 jar-32 jar-33 jar-34 jar-35 jar-36 jar-37 jar-38 jar-39 jar-40 jar-41 jar-42 jar-43 "/>
             <attribute name="jar-1-Extension-Name" value="${manifest.reference.WebAlbums3-iDAO.jar}"/>
             <attribute name="jar-2-Extension-Name" value="${manifest.reference.WebAlbums3-Commons.jar}"/>
             <attribute name="jar-3-Extension-Name" value="${manifest.file.reference.CP-Log-slf4j-api-1.6.0.jar}"/>
             <attribute name="jar-4-Extension-Name" value="${manifest.libs.javaee-api-7.0.classpath}"/>
             <attribute name="jar-5-Extension-Name" value="${manifest.libs.jpa20-persistence.classpath}"/>
             <attribute name="jar-6-Extension-Name" value="${manifest.libs.jpa2-persistence.classpath}"/>
-            <attribute name="jar-7-Extension-Name" value="${manifest.libs.hibernate4-persistencemodelgen.classpath}"/>
-            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.antlr-2.7.7.jar}"/>
-            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.c3p0-0.9.2.1.jar}"/>
-            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.cglib-2.2.jar}"/>
-            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.commons-collections-3.2.1.jar}"/>
-            <attribute name="jar-12-Extension-Name" value="${manifest.file.reference.dom4j-1.6.1.jar-1}"/>
-            <attribute name="jar-13-Extension-Name" value="${manifest.file.reference.ehcache-core-2.4.3.jar}"/>
-            <attribute name="jar-14-Extension-Name" value="${manifest.file.reference.hibernate-c3p0-4.3.1.Final.jar}"/>
-            <attribute name="jar-15-Extension-Name" value="${manifest.file.reference.hibernate-commons-annotations-4.0.4.Final.jar}"/>
-            <attribute name="jar-16-Extension-Name" value="${manifest.file.reference.hibernate-core-4.3.1.Final.jar}"/>
-            <attribute name="jar-17-Extension-Name" value="${manifest.file.reference.hibernate-ehcache-4.3.1.Final.jar}"/>
-            <attribute name="jar-18-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.3.1.Final.jar}"/>
-            <attribute name="jar-19-Extension-Name" value="${manifest.file.reference.hibernate-jpa-2.1-api-1.0.0.Final.jar}"/>
-            <attribute name="jar-20-Extension-Name" value="${manifest.file.reference.hibernate-jpamodelgen-4.3.1.Final.jar}"/>
-            <attribute name="jar-21-Extension-Name" value="${manifest.file.reference.hibernate-tools-4.3.1.CR1.jar}"/>
-            <attribute name="jar-22-Extension-Name" value="${manifest.file.reference.javassist-3.18.1-GA.jar}"/>
-            <attribute name="jar-23-Extension-Name" value="${manifest.file.reference.jboss-logging-3.1.3.GA.jar}"/>
-            <attribute name="jar-24-Extension-Name" value="${manifest.file.reference.jboss-transaction-api_1.2_spec-1.0.0.Final.jar}"/>
-            <attribute name="jar-25-Extension-Name" value="${manifest.file.reference.jtidy-r8-20060801.jar}"/>
-            <attribute name="jar-26-Extension-Name" value="${manifest.file.reference.log4j-1.2.12.jar}"/>
-            <attribute name="jar-27-Extension-Name" value="${manifest.file.reference.mchange-commons-java-0.2.3.4.jar}"/>
-            <attribute name="jar-28-Extension-Name" value="${manifest.file.reference.asm-all-repackaged-2.2.0-b21.jar}"/>
-            <attribute name="jar-29-Extension-Name" value="${manifest.file.reference.cglib-2.2.0-b21.jar}"/>
-            <attribute name="jar-30-Extension-Name" value="${manifest.file.reference.guava-14.0.1.jar}"/>
-            <attribute name="jar-31-Extension-Name" value="${manifest.file.reference.hk2-api-2.2.0-b21.jar}"/>
-            <attribute name="jar-32-Extension-Name" value="${manifest.file.reference.hk2-locator-2.2.0-b21.jar}"/>
-            <attribute name="jar-33-Extension-Name" value="${manifest.file.reference.hk2-utils-2.2.0-b21.jar}"/>
-            <attribute name="jar-34-Extension-Name" value="${manifest.file.reference.javax.annotation-api-1.2.jar}"/>
-            <attribute name="jar-35-Extension-Name" value="${manifest.file.reference.javax.inject-2.2.0-b21.jar}"/>
-            <attribute name="jar-36-Extension-Name" value="${manifest.file.reference.javax.servlet-api-3.0.1.jar}"/>
-            <attribute name="jar-37-Extension-Name" value="${manifest.file.reference.jaxb-api-2.2.7.jar}"/>
-            <attribute name="jar-38-Extension-Name" value="${manifest.file.reference.jersey-entity-filtering-2.5.1.jar}"/>
-            <attribute name="jar-39-Extension-Name" value="${manifest.file.reference.jersey-media-moxy-2.5.1.jar}"/>
-            <attribute name="jar-40-Extension-Name" value="${manifest.file.reference.org.osgi.core-4.2.0.jar}"/>
-            <attribute name="jar-41-Extension-Name" value="${manifest.file.reference.osgi-resource-locator-1.0.1.jar}"/>
-            <attribute name="jar-42-Extension-Name" value="${manifest.file.reference.persistence-api-1.0.jar}"/>
-            <attribute name="jar-43-Extension-Name" value="${manifest.file.reference.validation-api-1.1.0.Final.jar}"/>
-            <attribute name="jar-44-Extension-Name" value="${manifest.file.reference.javaee-api-7.0.jar}"/>
+            <attribute name="jar-7-Extension-Name" value="${manifest.file.reference.antlr-2.7.7.jar}"/>
+            <attribute name="jar-8-Extension-Name" value="${manifest.file.reference.c3p0-0.9.2.1.jar}"/>
+            <attribute name="jar-9-Extension-Name" value="${manifest.file.reference.cglib-2.2.jar}"/>
+            <attribute name="jar-10-Extension-Name" value="${manifest.file.reference.commons-collections-3.2.1.jar}"/>
+            <attribute name="jar-11-Extension-Name" value="${manifest.file.reference.dom4j-1.6.1.jar-1}"/>
+            <attribute name="jar-12-Extension-Name" value="${manifest.file.reference.ehcache-core-2.4.3.jar}"/>
+            <attribute name="jar-13-Extension-Name" value="${manifest.file.reference.hibernate-c3p0-4.3.1.Final.jar}"/>
+            <attribute name="jar-14-Extension-Name" value="${manifest.file.reference.hibernate-commons-annotations-4.0.4.Final.jar}"/>
+            <attribute name="jar-15-Extension-Name" value="${manifest.file.reference.hibernate-core-4.3.1.Final.jar}"/>
+            <attribute name="jar-16-Extension-Name" value="${manifest.file.reference.hibernate-ehcache-4.3.1.Final.jar}"/>
+            <attribute name="jar-17-Extension-Name" value="${manifest.file.reference.hibernate-entitymanager-4.3.1.Final.jar}"/>
+            <attribute name="jar-18-Extension-Name" value="${manifest.file.reference.hibernate-jpa-2.1-api-1.0.0.Final.jar}"/>
+            <attribute name="jar-19-Extension-Name" value="${manifest.file.reference.hibernate-tools-4.3.1.CR1.jar}"/>
+            <attribute name="jar-20-Extension-Name" value="${manifest.file.reference.javassist-3.18.1-GA.jar}"/>
+            <attribute name="jar-21-Extension-Name" value="${manifest.file.reference.jboss-logging-3.1.3.GA.jar}"/>
+            <attribute name="jar-22-Extension-Name" value="${manifest.file.reference.jboss-transaction-api_1.2_spec-1.0.0.Final.jar}"/>
+            <attribute name="jar-23-Extension-Name" value="${manifest.file.reference.jtidy-r8-20060801.jar}"/>
+            <attribute name="jar-24-Extension-Name" value="${manifest.file.reference.log4j-1.2.12.jar}"/>
+            <attribute name="jar-25-Extension-Name" value="${manifest.file.reference.mchange-commons-java-0.2.3.4.jar}"/>
+            <attribute name="jar-26-Extension-Name" value="${manifest.file.reference.asm-all-repackaged-2.2.0-b21.jar}"/>
+            <attribute name="jar-27-Extension-Name" value="${manifest.file.reference.cglib-2.2.0-b21.jar}"/>
+            <attribute name="jar-28-Extension-Name" value="${manifest.file.reference.guava-14.0.1.jar}"/>
+            <attribute name="jar-29-Extension-Name" value="${manifest.file.reference.hk2-api-2.2.0-b21.jar}"/>
+            <attribute name="jar-30-Extension-Name" value="${manifest.file.reference.hk2-locator-2.2.0-b21.jar}"/>
+            <attribute name="jar-31-Extension-Name" value="${manifest.file.reference.hk2-utils-2.2.0-b21.jar}"/>
+            <attribute name="jar-32-Extension-Name" value="${manifest.file.reference.javax.annotation-api-1.2.jar}"/>
+            <attribute name="jar-33-Extension-Name" value="${manifest.file.reference.javax.inject-2.2.0-b21.jar}"/>
+            <attribute name="jar-34-Extension-Name" value="${manifest.file.reference.javax.servlet-api-3.0.1.jar}"/>
+            <attribute name="jar-35-Extension-Name" value="${manifest.file.reference.jaxb-api-2.2.7.jar}"/>
+            <attribute name="jar-36-Extension-Name" value="${manifest.file.reference.jersey-entity-filtering-2.5.1.jar}"/>
+            <attribute name="jar-37-Extension-Name" value="${manifest.file.reference.jersey-media-moxy-2.5.1.jar}"/>
+            <attribute name="jar-38-Extension-Name" value="${manifest.file.reference.org.osgi.core-4.2.0.jar}"/>
+            <attribute name="jar-39-Extension-Name" value="${manifest.file.reference.osgi-resource-locator-1.0.1.jar}"/>
+            <attribute name="jar-40-Extension-Name" value="${manifest.file.reference.persistence-api-1.0.jar}"/>
+            <attribute name="jar-41-Extension-Name" value="${manifest.file.reference.validation-api-1.1.0.Final.jar}"/>
+            <attribute name="jar-42-Extension-Name" value="${manifest.file.reference.javaee-api-7.0.jar}"/>
+            <attribute name="jar-43-Extension-Name" value="${manifest.libs.hibernate4-persistencemodelgen.classpath}"/>
         </manifest>
     </target>
     <target depends="compile" name="library-inclusion-in-manifest">
@@ -939,7 +936,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.javaee-api-7.0.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.jpa20-persistence.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.jpa2-persistence.classpath}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.hibernate4-persistencemodelgen.classpath}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.antlr-2.7.7.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.c3p0-0.9.2.1.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.cglib-2.2.jar}" todir="${dist.ear.dir}/lib"/>
@@ -952,7 +948,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.hibernate-ehcache-4.3.1.Final.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.hibernate-entitymanager-4.3.1.Final.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.hibernate-jpa-2.1-api-1.0.0.Final.jar}" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${file.reference.hibernate-jpamodelgen-4.3.1.Final.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.hibernate-tools-4.3.1.CR1.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.javassist-3.18.1-GA.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.jboss-logging-3.1.3.GA.jar}" todir="${dist.ear.dir}/lib"/>
@@ -977,6 +972,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.persistence-api-1.0.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.validation-api-1.1.0.Final.jar}" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.javaee-api-7.0.jar}" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.hibernate4-persistencemodelgen.classpath}" todir="${dist.ear.dir}/lib"/>
         <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target name="-copy-meta-inf">
