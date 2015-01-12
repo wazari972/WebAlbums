@@ -121,9 +121,11 @@ public class ConfigurationBean implements Configuration {
     
     @Override
     public String getAutomountWFS() {
-        return conf.properties.automountWFS;
+        if (conf.WFS.automount.enabled != null && !conf.WFS.automount.enabled) {
+            return null;
+        }
+        return conf.WFS.automount.path;
     }
-    
 }
 
 @XmlRootElement(name = "Configuration")
@@ -244,7 +246,9 @@ class ConfigurationXML {
     final Directories directories = new Directories();
     @XmlElement
     final Properties properties = new Properties();
-
+    @XmlElement
+    final WFSProperties WFS = new WFSProperties();
+    
     private ConfigurationXML(){}
 
     static class Directories {
@@ -268,8 +272,21 @@ class ConfigurationXML {
 
         @XmlElement
         boolean protectDB = true;
+    }
+    
+    public static class WFSProperties {
+        @XmlAttribute
+        Boolean enabled = null;
         
         @XmlElement
-        String automountWFS = null;
+        final Automount automount = new Automount();
+        
+        public static class Automount {
+            @XmlValue
+            String path = null;
+            
+            @XmlAttribute
+            Boolean enabled = null;
+        }
     }
 }
