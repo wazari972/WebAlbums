@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config port="8080">
+    <sunResourcesXML>./conf/sun-resources.xml</sunResourcesXML>
+    <webAlbumsEARe>./bin/WebAlbums-ea.ear</webAlbumsEARe>
+	<webAlbumsEAR>/home/kevin/WebAlbums/WebAlbums-ea/build</webAlbumsEAR>
+    <webAlbumsFS>./WebAlbums-FS</webAlbumsFS>
+    <libJnetFs>./lib</libJnetFs>
+    <root_path>/other/Webeee</root_path>
+    <users>
+        <user name="kevin" password="" groups="Admin:Manager"/>
+    </users>
+</config>

@@ -42,8 +42,8 @@ ROOT_PATH := $(VAR_DIR)
 
 APPSERVER_DIR := $(USR_DIR)/$(APPSERVER_DIRNAME)
 
-ANT_EAR_BUILDFILE := $(HOME_DIR)/WebAlbums3-ea/build.xml
-ANT_WFS_BUILDFILE := $(HOME_DIR)/WebAlbums3-FS/WebAlbums3-FS/build.xml
+ANT_EAR_BUILDFILE := $(HOME_DIR)/WebAlbums-ea/build.xml
+ANT_WFS_BUILDFILE := $(HOME_DIR)/WebAlbums-FS/WebAlbums-FS/build.xml
 
 DEFAULT_TARGETS := conf_root_path conf_webapp
 ifeq ($(WITH_WFS),y)
@@ -67,7 +67,7 @@ prep_example: prep_root_path
 ### Root path ###
 
 conf_root_path: prep_root_path conf_appserver
-	cp $(HOME_DIR)/WebAlbums3/conf/conf-template.xml $(ETC_DIR)/$(CONF_FILENAME)
+	cp $(HOME_DIR)/WebAlbums/conf/conf-template.xml $(ETC_DIR)/$(CONF_FILENAME)
 	sh setup_data_dir.sh --configure $(ROOT_PATH) $(ETC_DIR)/$(CONF_FILENAME) $(TMP_DIR)
 	echo $(ETC_DIR)/$(CONF_FILENAME) > $(ETC_DIR)/appserver/config.path
 
@@ -86,12 +86,12 @@ prep_webapp:
 	@echo '# Prepare EAR application'
 	rm -rf $(USR_DIR)/$(APP_DIRNAME)
 	mkdir -p $(USR_DIR)
-	cp -r $(HOME_DIR)/WebAlbums3-ea/build $(USR_DIR)/$(APP_DIRNAME)
+	cp -r $(HOME_DIR)/WebAlbums-ea/build $(USR_DIR)/$(APP_DIRNAME)
 ifeq ($(WITH_WFS),y)
-	cp -r $(HOME_DIR)/WebAlbums3-FS/WebAlbums3-FS/dist/WebAlbums3-FS.war $(USR_DIR)/$(APP_DIRNAME) # not sure why ant doesn't copy it itself ...
+	cp -r $(HOME_DIR)/WebAlbums-FS/WebAlbums-FS/dist/WebAlbums-FS.war $(USR_DIR)/$(APP_DIRNAME) # not sure why ant doesn't copy it itself ...
 else
-	rm -f $(USR_DIR)/$(APP_DIRNAME)/WebAlbums3-FS.war # Tomcat fails if file not present
-	touch $(USR_DIR)/$(APP_DIRNAME)/WebAlbums3-FS.war # to be improved
+	rm -f $(USR_DIR)/$(APP_DIRNAME)/WebAlbums-FS.war # Tomcat fails if file not present
+	touch $(USR_DIR)/$(APP_DIRNAME)/WebAlbums-FS.war # to be improved
 	@echo "remove\n\n\n\n"
 endif
 	@echo
@@ -112,10 +112,10 @@ conf_wfs: prep_wfs conf_appserver
 
 prep_wfs: build_wfs
 	mkdir -p $(LIB_DIR)
-	cp ../WebAlbums3-FS/JnetFS_C/lib/libJnetFS.so $(LIB_DIR)
+	cp ../WebAlbums-FS/JnetFS_C/lib/libJnetFS.so $(LIB_DIR)
 
-build_wfs: ../WebAlbums3-FS/JnetFS_C/lib/libJnetFS.so
-	make -C ../WebAlbums3-FS/JnetFS_C
+build_wfs: ../WebAlbums-FS/JnetFS_C/lib/libJnetFS.so
+	make -C ../WebAlbums-FS/JnetFS_C
 
 ### AppServer ###
 
@@ -128,7 +128,7 @@ conf_appserver:
 
 	rm $(ETC_DIR)/appserver/tomee.xml -f
 
-	cp $(HOME_DIR)/WebAlbums3/conf/appserver-tomee/* $(ETC_DIR)/appserver/ --remove-destination
+	cp $(HOME_DIR)/WebAlbums/conf/appserver-tomee/* $(ETC_DIR)/appserver/ --remove-destination
 
 	mv $(ETC_DIR)/appserver/tomee-template.xml $(ETC_DIR)/appserver/tomee.xml
 	sh setup_db.sh $(ETC_DIR)/appserver/tomee.xml
@@ -152,7 +152,7 @@ prep_appserver: conf_appserver
 
 	rm $(APPSERVER_DIR)/lib/$(DB_CONNECTOR_JAR)
 	cp -r $(HOME_DIR)/WebAlbums-libs/$(DB_CONNECTOR_JAR) $(APPSERVER_DIR)/lib
-	cp -r $(HOME_DIR)/WebAlbums3-Service-Beans/src/java/logback.xml $(APPSERVER_DIR)/lib/logback-test.xml --remove-destination
+	cp -r $(HOME_DIR)/WebAlbums-Service-Beans/src/java/logback.xml $(APPSERVER_DIR)/lib/logback-test.xml --remove-destination
 
 	./link.sh $(ETC_DIR)/appserver $(APPSERVER_DIR)/conf
 	@echo

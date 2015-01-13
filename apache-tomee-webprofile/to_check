@@ -1,1 +1,1 @@
-find apps/WebAlbums3-ea/ -type f -name "WebAlbums3*" -exec ls -lh {} \;
+find apps/WebAlbums-ea/ -type f -name "WebAlbums*" -exec ls -lh {} \;

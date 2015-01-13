@@ -1,2 +1,2 @@
 LINK="--link --remove-destination"
-cp -r ../WebAlbums3-Servlet/web/* apps/WebAlbums3-ea/WebAlbums3-Servlet $LINK
+cp -r ../WebAlbums-Servlet/web/* apps/WebAlbums-ea/WebAlbums-Servlet $LINK
