@@ -1,5 +1,7 @@
+#! /bin/sh
+
 while [ 1 -eq 1 ]
 do
-sh to_copy 
-sh to_start $*
+  sh to_copy 
+  sh to_start $*
 done

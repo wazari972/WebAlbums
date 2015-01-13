@@ -1,2 +1,4 @@
+#! /bin/sh
+
 LINK="--link --remove-destination"
 cp -r ../WebAlbums-Servlet/web/* apps/WebAlbums-ea/WebAlbums-Servlet $LINK

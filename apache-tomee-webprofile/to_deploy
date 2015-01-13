@@ -1,1 +1,3 @@
+#! /bin/sh
+
 rm apps/WebAlbums-ea -rf ; bin/tomee.sh deploy apps/WebAlbums-ea.ear

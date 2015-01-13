@@ -1,1 +1,3 @@
+#! /bin/sh
+
 find apps/WebAlbums-ea/ -type f -name "WebAlbums*" -exec ls -lh {} \;

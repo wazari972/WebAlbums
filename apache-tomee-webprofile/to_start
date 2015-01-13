@@ -1,4 +1,5 @@
 #! /bin/sh
+
 TOMEE_HOME=$(dirname $0)
 DEFAULT_CONF_PATH_FILE=$TOMEE_HOME/conf/config.path
 DEFAULT_LIBRARY_PATH_FILE=$TOMEE_HOME/conf/library.path

@@ -1,3 +1,5 @@
+#! /bin/sh
+
 DST=apps/WebAlbums-ea/
 
 for PROJ in iDAO Plugins iService Commons
