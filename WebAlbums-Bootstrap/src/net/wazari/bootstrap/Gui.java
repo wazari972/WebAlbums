@@ -102,7 +102,11 @@ public class Gui extends JFrame {
         long loadingTime = System.currentTimeMillis();
         float time = ((float) (loadingTime - timeStart) / 1000);
         
-        log.info("Ready to server at http://localhost:{}/WebAlbumsid waitForPortStop() throws IOException {
+        log.info("Ready to server at http://localhost:{}/WebAlbums-dev after {}s",
+                Util.cfg.port, time);
+    }
+    
+    public static void waitForPortStop() throws IOException {
         try (ServerSocket servSocker = new ServerSocket(Util.cfg.port+1)) {
             servSocker.accept().close();
         }
