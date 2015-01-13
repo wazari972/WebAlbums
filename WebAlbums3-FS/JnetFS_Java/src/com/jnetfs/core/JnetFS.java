@@ -232,7 +232,7 @@ public final class JnetFS implements Code {
      *
      * @param args string[]
      */
-    private static List<String> mountpoints = new LinkedList<String>();
+    private static List<String> mountpoints = new LinkedList<>();
     
     static {
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -248,20 +248,17 @@ public final class JnetFS implements Code {
     
     public static void do_mount(String[] args) {
         //setup parameter for java(fuse)
-        List<String> fuseArgs = new ArrayList<String>();
+        List<String> fuseArgs = new ArrayList<>();
         String mpoint = null;
         boolean option = false;
-        for (int i = 0; i < args.length; i++) {
-            if ("-".startsWith(args[i])) {
+        for (String arg : args) {
+            if ("-".startsWith(arg)) {
                 option = true;
             }
-            if (mpoint == null
-                    && !"-".startsWith(args[i])
-                    && !option) {
-                mpoint = args[i];
+            if (mpoint == null && !"-".startsWith(arg) && !option) {
+                mpoint = arg;
             }
-            
-            fuseArgs.add(args[i]);
+            fuseArgs.add(arg);
         }
         if (mpoint == null || fuseArgs.indexOf("-h") != -1) {
             printUsage();
@@ -277,23 +274,20 @@ public final class JnetFS implements Code {
         }
         
         String[] fargv = fuseArgs.toArray(new String[fuseArgs.size()]);
+        final String mountPoint = mpoint;
         try {
-            //setup shutdown hook/unmount JnetFS
-            final String mountPoint = mpoint;
-            
             if (mountpoints.contains(mpoint)) {
                 log.info("Path {} is already connected", mpoint);
             }
             
             mountpoints.add(mountPoint);
+            log.warn("Mouting WFS on {}", mountPoint);
             jnet.mount(fargv, false);
-            try {
-                mountpoints.remove(mountPoint);
-            } catch(Exception e) {
-                //pass
-            }
+            
+            mountpoints.remove(mountPoint); // fails silently, but we don't care
+            
         } catch (Throwable ex) {
-            ex.printStackTrace();
+            log.warn("Error while mounting WFS on {} ({})", new Object[]{mountPoint, ex.getMessage(), ex});
         }
     }
     
@@ -328,40 +322,47 @@ public final class JnetFS implements Code {
      */
     private native void umount(String path);
     public static void addToJavaLibraryPath(File dir) {
-            final String LIBRARY_PATH = "java.library.path";
-            if (!dir.isDirectory()) {
-                    throw new IllegalArgumentException(dir + " is not a directory.");
-            }
-            String javaLibraryPath = System.getProperty(LIBRARY_PATH);
-            System.setProperty(LIBRARY_PATH, javaLibraryPath + File.pathSeparatorChar + dir.getAbsolutePath());
-
-            resetJavaLibraryPath();
+        final String LIBRARY_PATH = "java.library.path";
+        if (!dir.isDirectory()) {
+            log.warn("{} is not a directory, cannot be added to {}", dir.getAbsoluteFile(), LIBRARY_PATH);
+            return;
+        }
+        String javaLibraryPath = System.getProperty(LIBRARY_PATH);
+        System.setProperty(LIBRARY_PATH, dir.getAbsolutePath() + File.pathSeparatorChar + javaLibraryPath);
+        log.info("{} added to {}", dir.getAbsoluteFile(), LIBRARY_PATH);
+        resetJavaLibraryPath();
     }
-    public static void resetJavaLibraryPath() {
+    private static void resetJavaLibraryPath() {
 	synchronized(Runtime.getRuntime()) {
-		try {
-			Field field = ClassLoader.class.getDeclaredField("usr_paths");
-			field.setAccessible(true);
-			field.set(null, null);
-			
-			field = ClassLoader.class.getDeclaredField("sys_paths");
-			field.setAccessible(true);
-			field.set(null, null);
-		} catch (NoSuchFieldException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+            try {
+                Field field = ClassLoader.class.getDeclaredField("usr_paths");
+                field.setAccessible(true);
+                field.set(null, null);
+
+                field = ClassLoader.class.getDeclaredField("sys_paths");
+                field.setAccessible(true);
+                field.set(null, null);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
 	}
-    }   
+    }
+    private static final String WFS_LIB_PATH_PROP = "wfs.library.path";
+    private static final String JAVA_LIBRARY_PATH = "/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/lib";
+    private static final boolean PREPEND_JLP = false;
     static final JnetFS jnet;
     static {
         try {
-            addToJavaLibraryPath(new File("/home/kevin/WebAlbums/WebAlbums3-FS/JnetFS_C/lib"));
+            String wfs_lib_path = System.getProperty(WFS_LIB_PATH_PROP);
+            if (wfs_lib_path != null && !wfs_lib_path.isEmpty()) {
+                addToJavaLibraryPath(new File(wfs_lib_path));
+            }
+            if (PREPEND_JLP) {
+                addToJavaLibraryPath(new File(JAVA_LIBRARY_PATH));
+            }
             System.loadLibrary("JnetFS");
         } catch (UnsatisfiedLinkError e) {
-            //e.printStackTrace();
-            log.warn("UnsatisfiedLinkError: {}", e.getMessage());
+            log.error("Couldn't load JnetFS JNI library ... {}", e.getMessage(), e);
         }
         jnet = new JnetFS();
     }
