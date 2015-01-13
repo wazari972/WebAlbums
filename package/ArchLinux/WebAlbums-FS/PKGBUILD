@@ -1,0 +1,27 @@
+# Maintainer: Kevin Pouget <webalbums-archlinux@0x972.info>
+
+pkgname=webalbums
+pkgver=0
+pkgrel=0
+pkgdesc="Free webbased photo manager -- Virtual Filesystem"
+arch=('i686' 'x86_64' 'armv6h')
+url="https://github.com/wazari972/WebAlbums"
+license=('GPL')
+depends=('WebAlbums' 'fuse')
+source=(${pkgname}::git+https://github.com/wazari972/WebAlbums.git)
+sha1sums=('SKIP')
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  ./configure ...
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  make DESTDIR="$pkgdir/" install
+
+  install -D -m0644 "$srcdir/..." "$pkgdir/..."
+}
