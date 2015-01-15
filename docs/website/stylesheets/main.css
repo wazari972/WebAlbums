@@ -1,0 +1,117 @@
+body {
+  background:  #c5d9e3;
+  color:       #222222;
+  font-family: Sans-Serif;
+  font-size:   12pt;
+  /*margin-top:  0px;*/
+}
+
+div#content a {
+  color: #dddddd !important;
+  text-decoration: none !important;
+}
+
+div#content a:link:hover, div#content a:visited:hover {
+  text-shadow: #16638a 2px 2px 1px;
+}
+
+div#content a:link, div#content a:visited {
+  text-shadow: #48758c 1px 1px 1px;
+}
+
+div#avatar {
+  border-radius: 5px;
+  float:         right;
+  height:        80px;
+  width:         80px;
+
+  -moz-border-radius:    5px;
+  -moz-box-shadow:       0 0 5px 5px #ffffff;
+  -webkit-border-radius: 5px;
+  -webkit-box-shadow:    0 0 5px 5px #ffffff;
+}
+
+div#content {
+  background:  #555555;
+  border-left: 5px solid #48758c;
+  color:       #aaaaaa;
+  padding:     20px;
+}
+
+div#footer {
+  background:    #48758c;
+  border-radius: 0 0 5px 5px;
+  color:         #ffffff;
+  padding:       0px 23px 0px 22px;
+  text-align:    center;
+  text-shadow:   #333333 1px 1px 1px;
+
+  -moz-border-radius:    0 0 5px 5px;
+  -webkit-border-radius: 0 0 5px 5px;
+}
+
+div#sidebar {
+  padding-top: 5em;
+  text-align:  center;
+}
+
+.FlattrButton {
+  margin-top: 2em;
+}
+
+div.text {
+  text-align: justify;
+}
+
+h1 {
+  font-family: Monospace;
+  text-shadow: #000000 2px 2px 4px;
+}
+
+h1 em {
+  color:        #777777;
+  display:      block;
+  font-size:    11pt;
+  font-style:   normal;
+  padding-left: 20px;
+  text-shadow:  #333333 1px 1px 2px;
+}
+
+h2 {
+  border-bottom: 2px solid #48758c;
+  color:         #dddddd;
+  font-family:   Monospace;
+  text-shadow:   #333333 1px 1px 1px;
+}
+
+ul li a {
+  display: block;
+  padding: 5px;
+}
+
+ul li a:hover {
+  background:    #666666;
+  border-radius: 5px;
+
+  -moz-border-radius: 5px;
+}
+
+ul.projects li {
+  border-bottom:  1px dashed #666666;
+  margin-top:     5px;
+  padding-bottom: 5px;
+}
+
+ul.projects li:last-child {
+  border-bottom: none;
+}
+
+span.description {
+  color:     #bbbbbb;
+  font-size: 10pt;
+  text-shadow: none !important;
+}
+
+ul {
+  list-style-type: square;
+}

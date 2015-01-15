@@ -1,0 +1,15 @@
+# Site settings
+title: WebAlbums Project
+author: Kevin Pouget
+author.website: http://blog.0x972.info/
+email: webalbums@0x972.info
+
+baseurl: "" # the subpath of your site
+url: "http://webalbums.0x972.info" 
+github_username:  wazari972
+avatar: http://www.gravatar.com/avatar/6a35d74f4e5c15cd50cb45d3e517e4ca
+
+# Build settings
+markdown: kramdown
+
+### Template based on https://github.com/koraktor/koraktor.github.io ###
