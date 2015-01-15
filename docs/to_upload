@@ -1,0 +1,1 @@
+scp -r website/_site/* 0x972.info:0x972.info/webalbums
