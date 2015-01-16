@@ -1,12 +1,16 @@
 # Maintainer: Kevin Pouget <webalbums-archlinux@0x972.info>
 
 pkgname=webalbums
-pkgver=0
+pkgver() {
+  cd "$pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
 pkgrel=0
 pkgdesc="Free web-based photo manager -- webapplication"
 arch=('any')
 url="https://github.com/wazari972/WebAlbums"
 license=('GPL')
+makedepends=('git' 'apache-ant')
 depends=('WebAlbums-appserver')
 source=(${pkgname}::git+https://github.com/wazari972/WebAlbums.git)
 sha1sums=('SKIP')
@@ -14,14 +18,9 @@ sha1sums=('SKIP')
 build() {
   cd "$srcdir/$pkgname-$pkgver"
 
-  ./configure ...
-  make
+  make -f $srcdir/$_gitdirname BUILD_DIRNAME=build conf_webapp conf_root_path
 }
 
 package() {
-  cd "$srcdir/$pkgname-$pkgver"
-
-  make DESTDIR="$pkgdir/" install
-
-  install -D -m0644 "$srcdir/..." "$pkgdir/..."
+  install -d -m0644 "$srcdir/build" "$pkgdir/"
 }
