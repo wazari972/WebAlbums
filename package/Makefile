@@ -67,6 +67,7 @@ prep_example: prep_root_path
 ### Root path ###
 
 conf_root_path: prep_root_path
+	mkdir -p $(ETC_DIR) $(ETC_DIR)/appserver
 	cp $(HOME_DIR)/WebAlbums/conf/conf-template.xml $(ETC_DIR)/$(CONF_FILENAME)
 	$(PKG_DIR)/setup_data_dir.sh --configure $(ROOT_PATH) $(ETC_DIR)/$(CONF_FILENAME) $(TMP_DIR)
 	echo $(ETC_DIR)/$(CONF_FILENAME) > $(ETC_DIR)/appserver/config.path
@@ -80,19 +81,20 @@ prep_root_path:
 ### WebApp ###
 
 conf_webapp: prep_webapp
+	mkdir -p $(APPSERVER_DIR)/apps/
+	rm -f $(APPSERVER_DIR)/apps/$(PKG_NAME)-ea
 	$(PKG_DIR)/link.sh $(USR_DIR)/$(APP_DIRNAME) $(APPSERVER_DIR)/apps/$(PKG_NAME)-ea
 
 prep_webapp:
 	@echo '# Prepare EAR application'
-	rm -rf $(USR_DIR)/$(APP_DIRNAME)
 	mkdir -p $(USR_DIR)
+	rm -rf $(USR_DIR)/$(APP_DIRNAME)
 	cp -r $(HOME_DIR)/WebAlbums-ea/build $(USR_DIR)/$(APP_DIRNAME)
 ifeq ($(WITH_WFS),y)
 	cp -r $(HOME_DIR)/WebAlbums-FS/WebAlbums-FS/dist/WebAlbums-FS.war $(USR_DIR)/$(APP_DIRNAME) # not sure why ant doesn't copy it itself ...
 else
 	rm -f $(USR_DIR)/$(APP_DIRNAME)/WebAlbums-FS.war # Tomcat fails if file not present
 	touch $(USR_DIR)/$(APP_DIRNAME)/WebAlbums-FS.war # to be improved
-	@echo "remove\n\n\n\n"
 endif
 	@echo
 

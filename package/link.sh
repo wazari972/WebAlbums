@@ -16,6 +16,6 @@ done
 
 good_target=${back}${target#$common_part/}
 
-cmd="ln -s $good_target $source"
+cmd="ln -s $good_target $source -f"
 echo "  $cmd"
 $cmd
