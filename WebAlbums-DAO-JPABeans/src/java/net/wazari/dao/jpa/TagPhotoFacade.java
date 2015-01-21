@@ -145,7 +145,7 @@ public class TagPhotoFacade implements TagPhotoFacadeLocal {
     public List<TagPhoto> queryByCarnet(Carnet enrCarnet) {
         if (enrCarnet.getPhotoList() == null 
                 || enrCarnet.getPhotoList().isEmpty())
-            return new ArrayList<TagPhoto>(0);
+            return new ArrayList<>(0);
         
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<JPATagPhoto> cq = cb.createQuery(JPATagPhoto.class) ;

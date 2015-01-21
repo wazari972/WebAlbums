@@ -78,7 +78,7 @@ public class TagFacade implements TagFacadeLocal {
                     fromTag,
                     cb.count(fromTagPhoto)));
         List<Object[]> lst = tq.getResultList() ;
-        Map<Tag, Long> ret = new LinkedHashMap <Tag, Long>();
+        Map<Tag, Long> ret = new LinkedHashMap <>();
         for (Object[] current : lst) {
             ret.put((JPATag) current[0], (Long) current[1]);
         }
@@ -173,7 +173,7 @@ public class TagFacade implements TagFacadeLocal {
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public Set<Tag> getChildren(Tag enrParent) {
         if (enrParent == null) throw new NullPointerException() ;
-        Set<Tag> children = new HashSet<Tag>() ;
+        Set<Tag> children = new HashSet<>() ;
         for (Tag enrChild : enrParent.getSonList()) {
             children.add(enrChild) ;
             children.addAll(enrChild.getSonList());
