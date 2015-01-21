@@ -274,7 +274,7 @@ public class LibVFS extends JnetFSAdapter {
         if (path == null) {
             return Code.ENOENT;
         }
-        long handle = jniEnv.getLong(Code.HANDLE);
+        //long handle = jniEnv.getLong(Code.HANDLE);
         
         log.debug("RELEASE\t {}", path);
         IFile file = resolver.getFile(path) ;
@@ -306,7 +306,7 @@ public class LibVFS extends JnetFSAdapter {
         if (path == null) {
             return Code.ENOENT;
         }
-        long handle = jniEnv.getLong(Code.HANDLE);
+        //long handle = jniEnv.getLong(Code.HANDLE);
         
         log.debug("CLOSE\t {}", path);
         IFile file = resolver.getFile(path) ;
