@@ -1,4 +1,6 @@
 install/*
-ArchLinux/pkg/*
-ArchLinux/src/*
+*/pkg/*
+*/src/*
+*/build/*
+Github/*.tar.gz
 ArchLinux/*.pkg.tar.xz

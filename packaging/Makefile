@@ -45,16 +45,12 @@ APPSERVER_DIR := $(USR_DIR)/$(APPSERVER_DIRNAME)
 ANT_EAR_BUILDFILE := $(HOME_DIR)/WebAlbums-ea/build.xml
 ANT_WFS_BUILDFILE := $(HOME_DIR)/WebAlbums-FS/WebAlbums-FS/build.xml
 
-DEFAULT_TARGETS := conf_root_path conf_webapp
-ifeq ($(WITH_WFS),y)
-	DEFAULTS_TARGETS := $(ALL_TARGETS) conf_wfs
-endif
-
 ###################
 ### Build rules ###
 ###################
 
-all:  $(DEFAULT_TARGETS)
+all: prep_appserver
+	@$(MAKE) -f $(firstword $(MAKEFILE_LIST)) conf_root_path conf_webapp conf_wfs
 
 ### Example ###
 
@@ -63,14 +59,17 @@ prep_example: prep_root_path
 	mkdir -p $(ROOT_PATH)/ftp/France
 	cp /mnt/sda7/kevin/Downloads/WebAlbums-3-release/data/images/France/2012/2012-10-12\ Sailing\ Journey $(ROOT_PATH)/ftp/France -r
 	cp /mnt/sda7/kevin/Downloads/WebAlbums-3-release/data/images/France/2013/2013-03-31\ Antibes $(ROOT_PATH)/ftp/France -r
+	@echo
 
 ### Root path ###
 
 conf_root_path: prep_root_path
+	@echo '# Configure root path'
 	mkdir -p $(ETC_DIR) $(ETC_DIR)/appserver
 	cp $(HOME_DIR)/WebAlbums/conf/conf-template.xml $(ETC_DIR)/$(CONF_FILENAME)
 	$(PKG_DIR)/setup_data_dir.sh --configure $(ROOT_PATH) $(ETC_DIR)/$(CONF_FILENAME) $(TMP_DIR)
 	echo $(ETC_DIR)/$(CONF_FILENAME) > $(ETC_DIR)/appserver/config.path
+	@echo
 
 prep_root_path:
 	@echo '# Prepare root path'
@@ -81,48 +80,52 @@ prep_root_path:
 ### WebApp ###
 
 conf_webapp: prep_webapp
+	@echo '# Configure webapplication'
 	mkdir -p $(APPSERVER_DIR)/apps/
 	rm -f $(APPSERVER_DIR)/apps/$(PKG_NAME)-ea
-	$(PKG_DIR)/link.sh $(USR_DIR)/$(APP_DIRNAME) $(APPSERVER_DIR)/apps/$(PKG_NAME)-ea
+	@$(PKG_DIR)/link.sh $(USR_DIR)/$(APP_DIRNAME) $(APPSERVER_DIR)/apps/$(PKG_NAME)-ea
+	@echo
 
-prep_webapp:
+prep_webapp: build_webapp
 	@echo '# Prepare EAR application'
 	mkdir -p $(USR_DIR)
 	rm -rf $(USR_DIR)/$(APP_DIRNAME)
 	cp -r $(HOME_DIR)/WebAlbums-ea/build $(USR_DIR)/$(APP_DIRNAME)
-ifeq ($(WITH_WFS),y)
 	cp -r $(HOME_DIR)/WebAlbums-FS/WebAlbums-FS/dist/WebAlbums-FS.war $(USR_DIR)/$(APP_DIRNAME) # not sure why ant doesn't copy it itself ...
-else
-	rm -f $(USR_DIR)/$(APP_DIRNAME)/WebAlbums-FS.war # Tomcat fails if file not present
-	touch $(USR_DIR)/$(APP_DIRNAME)/WebAlbums-FS.war # to be improved
-endif
 	@echo
 
 build_webapp:
-	ant -buildfile $(ANT_EAR_BUILDFILE) -quiet | grep -v "Trying to override old definition of task"
-ifeq ($(WITH_WFS),y)
-	ant -buildfile $(ANT_WFS_BUILDFILE) -quiet | grep -v "Trying to override old definition of task"
-endif
+	@echo '# Build webapplication'
+	#ant -buildfile $(ANT_EAR_BUILDFILE) -quiet | grep -v "Trying to override old definition of task"
+	#ant -buildfile $(ANT_WFS_BUILDFILE) -quiet | grep -v "Trying to override old definition of task"
+	@echo
 
-clean_webapp:
+clean_webapp:	
 	ant -buildfile $(ANT_EAR_BUILDFILE) -quiet
 
 ### WebAlbumsFS ###
 
-conf_wfs: prep_wfs conf_appserver
+conf_wfs:
+	@echo '# Configure WFS'
+	mkdir -p $(ETC_DIR)/appserver/
 	echo $(LIB_DIR) > $(ETC_DIR)/appserver/library.path
+	@echo
 
 prep_wfs: build_wfs
+	@echo '# Prepare WFS'
 	mkdir -p $(LIB_DIR)
-	cp ../WebAlbums-FS/JnetFS_C/lib/libJnetFS.so $(LIB_DIR)
+	cp $(HOME_DIR)/WebAlbums-FS/JnetFS_C/lib/libJnetFS.so $(LIB_DIR)
+	@echo
 
-build_wfs: ../WebAlbums-FS/JnetFS_C/lib/libJnetFS.so
-	make -C ../WebAlbums-FS/JnetFS_C
+build_wfs: $(HOME_DIR)/WebAlbums-FS/JnetFS_C/lib/libJnetFS.so
+	@echo '# Build WFS-lib'
+	make -C $(HOME_DIR)/WebAlbums-FS/JnetFS_C
+	@echo
 
 ### AppServer ###
 
 conf_appserver:
-	@echo '# Prepare configuration'
+	@echo '# Prepare appserver configuration'
 	mkdir -p $(ETC_DIR)
 
 	rm -rf $(ETC_DIR)/appserver
@@ -131,6 +134,7 @@ conf_appserver:
 	rm $(ETC_DIR)/appserver/tomee.xml -f
 
 	cp $(HOME_DIR)/WebAlbums/conf/appserver-tomee/* $(ETC_DIR)/appserver/ --remove-destination
+	@$(PKG_DIR)/link.sh $(APPSERVER_DIR)/lib/logback-test.xml $(ETC_DIR)/appserver/logback-test.xml
 
 	mv $(ETC_DIR)/appserver/tomee-template.xml $(ETC_DIR)/appserver/tomee.xml
 	$(PKG_DIR)/setup_db.sh $(ETC_DIR)/appserver/tomee.xml
@@ -138,7 +142,7 @@ conf_appserver:
 	@echo
 
 prep_appserver: conf_appserver
-	@echo '# Prepare J2EE appserver'
+	@echo '# Prepare appserver appserver'
 	mkdir -p $(USR_DIR) $(LOG_DIR) $(TMP_DIR)
 
 	rm -rf $(USR_DIR)/$(APPSERVER_DIRNAME)
@@ -146,8 +150,8 @@ prep_appserver: conf_appserver
 
 	rm -rf $(APPSERVER_DIR)/{logs,work,apps,conf}
 
-	$(PKG_DIR)/link.sh $(LOG_DIR) $(APPSERVER_DIR)/logs
-	$(PKG_DIR)/link.sh $(TMP_DIR) $(APPSERVER_DIR)/work
+	@$(PKG_DIR)/link.sh $(LOG_DIR) $(APPSERVER_DIR)/logs
+	@$(PKG_DIR)/link.sh $(TMP_DIR) $(APPSERVER_DIR)/work
 
 	mkdir -p $(APPSERVER_DIR)/webapps/empty
 	mkdir $(APPSERVER_DIR)/apps
@@ -156,7 +160,7 @@ prep_appserver: conf_appserver
 	cp -r $(HOME_DIR)/WebAlbums-libs/$(DB_CONNECTOR_JAR) $(APPSERVER_DIR)/lib
 	cp -r $(HOME_DIR)/WebAlbums-Service-Beans/src/java/logback.xml $(APPSERVER_DIR)/lib/logback-test.xml --remove-destination
 
-	$(PKG_DIR)/link.sh $(ETC_DIR)/appserver $(APPSERVER_DIR)/conf
+	@$(PKG_DIR)/link.sh $(ETC_DIR)/appserver $(APPSERVER_DIR)/conf
 	@echo
 
 ### Cleanup ###

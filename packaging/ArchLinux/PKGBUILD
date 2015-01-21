@@ -3,7 +3,7 @@
 
 _package=${PKG:-none}
 
-pkgname=webalbums-$_package-git
+pkgname="webalbums-$_package-git"
 pkgrel=0
 pkgver=1
 arch=('any')
@@ -16,7 +16,7 @@ case ${_package} in
         depends=('jre7-openjdk')
         makedepends=('git')
         
-        _description="Tomee Application Appserver"
+        _description=" -- Tomee Application Appserver"
         _make_target=("prep_appserver")
         ;;
     webapp)
@@ -25,25 +25,32 @@ case ${_package} in
                     'totem: for video thumbnails')
         makedepends=('git' 'apache-ant')
 
-        _description="Main app"
-        _make_target=('conf_webapp' 'conf_root_path' 'WITH_WFS=n')
+        _description=" -- Main application"
+        _make_target=('conf_webapp' 'conf_root_path' 'conf_wfs')
         ;;
     wfs)
-        msg "not yet"
-        exit -1;
+        depends=() #'webalbums-webapp'
+        makedepends=('git' 'gcc' 'fuse' 'jre7-openjdk')
+
+        _description=" -- WebAlbums File-system"
+        _make_target=('prep_wfs')
         ;;
     all)
-        msg "not yet"
-        exit -1;
+        depends=('imagemagick' 'mariadb' 'jre7-openjdk')
+        makedepends=('git' 'gcc' 'fuse' 'jre7-openjdk' 'apache-ant')
+        _make_target=('all')
+        pkgname="webalbums-git"
         ;;
     *)
-        msg "Unknown package to build ($_package), set one (PKG=...)" \
-            "between appserver, webapp, wfs, all."
+        msg "Unknown package to build ($_package), \
+please set one: PKG={appserver, webapp, wfs, all} $0."
         exit -1
         ;;
 esac
 
-pkgdesc="Free webbased photo manager -- $_description"
+
+
+pkgdesc="Free webbased photo manager$_description"
 
 _gitroot=https://github.com/wazari972/WebAlbums
 _gitname=webalbums-git
@@ -65,12 +72,11 @@ build() {
     
     msg "Git checkout done (or server timeout)"
     msg "Starting build..."
-    make -f $srcdir/$_gitname/package/Makefile BUILD_DIRNAME=$srcdir/build/$pkgname ${_make_target[*]}
+    make -f $srcdir/$_gitname/packaging/Makefile BUILD_DIRNAME=$srcdir/../build/$pkgname ${_make_target[*]}
     msg "Build done"
-    exit
 }
 
 package() {
-    msg "Preparing package archive ... $srcdir/build $pkgdir/"
-    cp -r $srcdir/build/$pkgname/* $pkgdir/
+    msg "Preparing package archive ..."
+    cp -r $srcdir/../build/$pkgname/* $pkgdir/
 }
