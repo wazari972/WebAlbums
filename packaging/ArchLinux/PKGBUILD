@@ -1,65 +1,44 @@
 #!/bin/sh
 # Maintainer: Kevin Pouget <webalbums-archlinux@0x972.info>
 
-_package=${PKG:-none}
-
-pkgname="webalbums-$_package-git"
+pkgbase="WebAlbums"
+pkgname=("webalbums-appserver-git" "webalbums-webapp-git"
+         "webalbums-jfs-git" "webalbums-all-git")
 pkgrel=0
 pkgver=1
 arch=('any')
 url="https://github.com/wazari972/WebAlbums"
 license=('GPL')
 md5sums=() #generate with 'makepkg -g'
+makedepends=('git' 'apache-ant' 'gcc' 'fuse' 'jre7-openjdk')
+pkgdesc_all="Free webbased photo manager"
 
-case ${_package} in
-    appserver)
-        depends=('jre7-openjdk')
-        makedepends=('git')
-        
-        _description=" -- Tomee Application Appserver"
-        _make_target=("prep_appserver")
-        ;;
-    webapp)
-        depends=('imagemagick' 'mariadb') #'webalbums-appserver'
-        optdepends=('ffmpeg: for video thumbnails',
-                    'totem: for video thumbnails')
-        makedepends=('git' 'apache-ant')
-
-        _description=" -- Main application"
-        _make_target=('conf_webapp' 'conf_root_path' 'conf_wfs')
-        ;;
-    wfs)
-        depends=() #'webalbums-webapp'
-        makedepends=('git' 'gcc' 'fuse' 'jre7-openjdk')
-
-        _description=" -- WebAlbums File-system"
-        _make_target=('prep_wfs')
-        ;;
-    all)
-        depends=('imagemagick' 'mariadb' 'jre7-openjdk')
-        makedepends=('git' 'gcc' 'fuse' 'jre7-openjdk' 'apache-ant')
-        _make_target=('all')
-        pkgname="webalbums-git"
-        ;;
-    *)
-        msg "Unknown package to build ($_package), \
-please set one: PKG={appserver, webapp, wfs, all} $0."
-        exit -1
-        ;;
-esac
-
-
-
-pkgdesc="Free webbased photo manager$_description"
+_depends_appserver=('jre7-openjdk')
+_depends_webapp=('imagemagick' 'mariadb') #'webalbums-appserver'
+_depends_jfs=() #'webalbums-webapp'
+depends=("${_depends_appserver[@]}"
+         "${_depends_webapp[@]}"
+         "${_depends_jfs[@]}")
 
 _gitroot=https://github.com/wazari972/WebAlbums
 _gitname=webalbums-git
 _gitbranch=develop
 _localgit=/home/kevin/WebAlbums
 
+_makefile=$_gitname/packaging/Makefile
+
+__pkgver() {
+    # get DATE here
+  cd "$srcdir/$pkgname"
+  ( set -o pipefail
+    git describe --long --tags 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
 build() {
     cd "$srcdir"
-    msg "Connecting to git server...."
+    msg "Connecting to git server... $pkgname"
     
     if [[ -d "$_gitname" ]]; then
         msg "Pulling from git origin repository ..."
@@ -72,11 +51,39 @@ build() {
     
     msg "Git checkout done (or server timeout)"
     msg "Starting build..."
-    make -f $srcdir/$_gitname/packaging/Makefile BUILD_DIRNAME=$srcdir/../build/$pkgname ${_make_target[*]}
+    make -f $srcdir/$_makefile build_webapp  
+    make -f $srcdir/$_makefile build_jfs  
+    
     msg "Build done"
 }
 
 package() {
-    msg "Preparing package archive ..."
-    cp -r $srcdir/../build/$pkgname/* $pkgdir/
+    msg "Preparing package $pkgname archive ..."
+    make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir $*
+}
+
+package_webalbums-appserver-git() {
+    depends=$_depends_appserver
+    pkgdesc="$pkgdesc_all -- Tomee Application Appserver"
+    package prep_appserver
+}
+
+package_webalbums-webapp-git() {
+    depends=$_depends_webapp
+    pkgdesc="$pkgdesc_all -- Main application"
+    optdepends=('ffmpeg: for video thumbnails',
+                'totem: for video thumbnails')
+    package conf_webapp conf_root_path conf_jfs
+    make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir EXEC_PREFIX=/ path_build_to_exec
+}
+package_webalbums-jfs-git() {
+    depends=$_depends_jfs
+    pkgdesc="$pkgdesc_all -- Java File-system"
+   
+    package prep_jfs
+}
+
+package_webalbums-all-git() {
+    pkgdesc=$pkgdesc_all
+    package all
 }

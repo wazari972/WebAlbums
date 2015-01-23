@@ -3,10 +3,12 @@
 #####################
 
 BUILD_DIRNAME ?= build
-WITH_WFS ?= y
+WITH_JFS ?= y
 
 VERSION ?= 3.5
 RELEASE ?= dev
+
+EXEC_PREFIX ?=
 
 ##################
 ###  Env Setup ###
@@ -50,7 +52,7 @@ ANT_WFS_BUILDFILE := $(HOME_DIR)/WebAlbums-FS/WebAlbums-FS/build.xml
 ###################
 
 all: prep_appserver
-	@$(MAKE) -f $(firstword $(MAKEFILE_LIST)) conf_root_path conf_webapp conf_wfs
+	@$(MAKE) -f $(firstword $(MAKEFILE_LIST)) conf_root_path conf_webapp conf_jfs
 
 ### Example ###
 
@@ -79,6 +81,12 @@ prep_root_path:
 
 ### WebApp ###
 
+path_build_to_exec:
+	sed -i 's#$(BUILD_PREFIX)#$(EXEC_PREFIX)#g' \
+		$(ETC_DIR)/appserver/library.path \
+		$(ETC_DIR)/appserver/config.path \
+		$(ETC_DIR)/$(CONF_FILENAME)
+
 conf_webapp: prep_webapp
 	@echo '# Configure webapplication'
 	mkdir -p $(APPSERVER_DIR)/apps/
@@ -86,7 +94,7 @@ conf_webapp: prep_webapp
 	@$(PKG_DIR)/link.sh $(USR_DIR)/$(APP_DIRNAME) $(APPSERVER_DIR)/apps/$(PKG_NAME)-ea
 	@echo
 
-prep_webapp: build_webapp
+prep_webapp:
 	@echo '# Prepare EAR application'
 	mkdir -p $(USR_DIR)
 	rm -rf $(USR_DIR)/$(APP_DIRNAME)
@@ -94,31 +102,38 @@ prep_webapp: build_webapp
 	cp -r $(HOME_DIR)/WebAlbums-FS/WebAlbums-FS/dist/WebAlbums-FS.war $(USR_DIR)/$(APP_DIRNAME) # not sure why ant doesn't copy it itself ...
 	@echo
 
-build_webapp:
+build_webapp: 
 	@echo '# Build webapplication'
-	#ant -buildfile $(ANT_EAR_BUILDFILE) -quiet | grep -v "Trying to override old definition of task"
-	#ant -buildfile $(ANT_WFS_BUILDFILE) -quiet | grep -v "Trying to override old definition of task"
+	@$(MAKE) -j2 -f $(firstword $(MAKEFILE_LIST)) build_vfs_webapp
 	@echo
+
+build_ear_webapp: 
+	ant -buildfile $(ANT_EAR_BUILDFILE) -quiet | \
+		grep -v "Trying to override old definition of task"
+
+build_vfs_webapp:
+	ant -buildfile $(ANT_WFS_BUILDFILE) -quiet | \
+		grep -v "Trying to override old definition of task"
 
 clean_webapp:	
 	ant -buildfile $(ANT_EAR_BUILDFILE) -quiet
 
-### WebAlbumsFS ###
+### JnetFS ###
 
-conf_wfs:
-	@echo '# Configure WFS'
+conf_jfs:
+	@echo '# Configure JFS'
 	mkdir -p $(ETC_DIR)/appserver/
 	echo $(LIB_DIR) > $(ETC_DIR)/appserver/library.path
 	@echo
 
-prep_wfs: build_wfs
-	@echo '# Prepare WFS'
+prep_jfs:
+	@echo '# Prepare JFS'
 	mkdir -p $(LIB_DIR)
 	cp $(HOME_DIR)/WebAlbums-FS/JnetFS_C/lib/libJnetFS.so $(LIB_DIR)
 	@echo
 
-build_wfs: $(HOME_DIR)/WebAlbums-FS/JnetFS_C/lib/libJnetFS.so
-	@echo '# Build WFS-lib'
+build_jfs: $(HOME_DIR)/WebAlbums-FS/JnetFS_C/lib/libJnetFS.so
+	@echo '# Build JFS-lib'
 	make -C $(HOME_DIR)/WebAlbums-FS/JnetFS_C
 	@echo
 
