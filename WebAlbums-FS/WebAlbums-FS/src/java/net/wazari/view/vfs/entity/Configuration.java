@@ -4,6 +4,8 @@
  */
 package net.wazari.view.vfs.entity;
 
+import java.io.InputStream;
+import java.util.Properties;
 import net.wazari.libvfs.annotation.ADirectory;
 import net.wazari.libvfs.annotation.File;
 import net.wazari.libvfs.inteface.SDirectory;
@@ -29,6 +31,9 @@ public class Configuration  extends SDirectory implements ADirectory {
     @File(name="reload")
     public ValueFile reload;
     
+    @File(name="version")
+    public ValueFile fversion;
+    
     public final Root root;
     
     public Configuration(Root root) {
@@ -37,13 +42,21 @@ public class Configuration  extends SDirectory implements ADirectory {
         stars = new StarConfiguration();
         imgAccess = new ImageAccessConfiguration();
         reload = new ReloadConfiguration();
+        fversion = new VersionConfiguration();
     }
     
     @Override
     public void load() throws VFSException {       
         //nothing here, the configuration has to be loaded only once.
     }
-
+    
+    class VersionConfiguration extends ValueFile {
+        @Override
+        public String getContent() {
+            return Configuration.version;
+        }
+    }
+    
     class ReloadConfiguration extends ValueFile {
         ReloadConfiguration() {
             this.content = "#delete me to reload the filesystem content";
@@ -127,5 +140,33 @@ public class Configuration  extends SDirectory implements ADirectory {
                 this.setContent(ACCESS_LINK);
             }
         }
+    }
+    
+    public static final String version;
+    static {
+        String ver;
+        try {
+            Properties version_props = new Properties();
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream stream = loader.getResourceAsStream("META-INF/version.properties");
+            version_props.load(stream);
+            
+            ver = version_props.getProperty("git-tag") + "." +
+                  version_props.getProperty("git-count");
+            
+            if ("True".equals(version_props.getProperty("dev-release"))) {
+                ver += "-git";
+                
+                if ("True".equals(version_props.getProperty("pkg-release"))) {
+                    ver += "."+version_props.getProperty("git-date");
+                }
+            }
+            
+        } catch (Exception ex) {
+            log.warn("Couln't initialize version property file ... {}", ex.getMessage(), ex);
+            ver = "unknown-git";
+        }
+        
+        version = ver;
     }
 }
