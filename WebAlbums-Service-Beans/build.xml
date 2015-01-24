@@ -22,7 +22,7 @@
         <arg value="git log -n 1 --pretty=format:%h -- ../VERSION/webapp"/>
       </exec>
       <exec executable="bash" outputproperty="git-count"><arg value="-c"/>
-        <arg value="git rev-list --count ${git-since}..HEAD"/>
+        <arg value="git rev-list --count ${git-since}..HEAD ../WebAlbums-Service-Beans ../WebAlbums-Servlet ../WebAlbums-FS/WebAlbums-FS"/>
       </exec>
       <exec executable="bash" outputproperty="git-date"><arg value="-c"/>
         <arg value="git log --format='%ai' HEAD^..HEAD | cut -d' ' -f1 | sed 's/-//g'"/>
