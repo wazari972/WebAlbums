@@ -201,6 +201,7 @@ public class DispatcherBean {
             if (!output.isComplete) {
                 output.loginInfo = webPageService.xmlLogin(vSession.getSessionLogin());
                 output.affichage = webPageService.xmlAffichage(vSession);
+                output.version = webPageService.version();
                 output.time = strTime;
             }
             doWrite(response, output);

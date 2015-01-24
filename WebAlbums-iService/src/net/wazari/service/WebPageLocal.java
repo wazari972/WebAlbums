@@ -64,4 +64,6 @@ public interface WebPageLocal {
     XmlWebAlbumsList displayAlbumGeolocations(ViewSessionAnAlbum vSession) throws WebAlbumsServiceException;
 
     XmlWebAlbumsList displayCarnetGeolocations(ViewSessionCarnetSimple vSession) throws WebAlbumsServiceException;
+
+    String version();
 }

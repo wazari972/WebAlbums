@@ -5,6 +5,7 @@
 
 package net.wazari.view.servlet.exchange.xml;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import net.wazari.service.exchange.xml.*;
@@ -41,5 +42,9 @@ public class XmlWebAlbums {
     /***/
     public XmlAffichage affichage;
     public XmlLoginInfo loginInfo;
+    
+    @XmlAttribute
     public String time ;
+    @XmlAttribute
+    public String version ;
 }

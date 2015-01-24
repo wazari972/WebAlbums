@@ -8,7 +8,7 @@
 	<xsl:apply-templates select="/webAlbums/login/valid"/>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" href="static/favicon.png" type="image/png" /> 
-	<title>WebAlbums 3 : <xsl:value-of select="/webAlbums/loginInfo/theme" /> - <xsl:value-of select="/webAlbums/loginInfo/user"/></title>
+	<title><xsl:value-of select="/webAlbums/loginInfo/theme" /> - <xsl:value-of select="/webAlbums/loginInfo/user"/> - WebAlbums <xsl:value-of select="/webAlbums/@version"/></title>
 
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
@@ -28,7 +28,7 @@
         
 	<div id="header"> 
 	  <div id="logo">
-	    <h1>WebAlbums</h1>
+	    <h1>WebAlbums </h1>
 	    <h2>by Kevin POUGET</h2>
 	  </div>
 	  
@@ -91,7 +91,7 @@
 		  <li><a href="Index?logout=TRUE" title="logout" rel="singlepage[no]">Log out</a></li>
                   <xsl:if test="/webAlbums/affichage/@static"><li>Static mode</li></xsl:if>
                   <xsl:if test="/webAlbums/affichage/@directAccess"><li>Direct Access to images</li></xsl:if>
-                  <li>Page générée en <br/><small id="gen_time"><xsl:value-of select="/webAlbums/time"/></small>.</li>
+                  <li>Page générée en <br/><small id="gen_time"><xsl:value-of select="/webAlbums/@time"/></small>.</li>
 		</ul>
 
                 <xsl:if test="/webAlbums/loginInfo/@admin">

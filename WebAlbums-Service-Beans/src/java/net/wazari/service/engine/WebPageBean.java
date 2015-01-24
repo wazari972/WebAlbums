@@ -1,5 +1,7 @@
 package net.wazari.service.engine;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -39,6 +43,7 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWh
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.tag.XmlTag;
+import static org.jboss.weld.util.reflection.Formats.version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -672,5 +677,39 @@ public class WebPageBean implements WebPageLocal {
         }
         
         return olderParent;
+    }
+    
+    public static final String version;
+    static {
+        String ver;
+        try {
+            Properties version_props = new Properties();
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            InputStream stream = loader.getResourceAsStream("META-INF/version.properties");
+            version_props.load(stream);
+            
+            ver = version_props.getProperty("git-tag") + "." +
+                  version_props.getProperty("git-count");
+            
+            if ("True".equals(version_props.getProperty("dev-release"))) {
+                ver += "-git";
+                
+                if ("True".equals(version_props.getProperty("pkg-release"))) {
+                    ver += "."+version_props.getProperty("git-date");
+                }
+            }
+            
+        } catch (Exception ex) {
+            log.warn("Couln't initialize version property file ... {}", ex.getMessage(), ex);
+            ver = "unknown-git";
+        }
+        
+        version = ver;
+    }
+    
+    @Override
+    @PermitAll
+    public String version() {
+        return version;
     }
 }

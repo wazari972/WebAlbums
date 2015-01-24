@@ -19,7 +19,7 @@
         <arg value="cat ../VERSION_webapp"/>
       </exec>
       <exec executable="bash" outputproperty="git-since"><arg value="-c"/>
-        <arg value="git log -n 1 --pretty=format:%h -- VERSION_webapp"/>
+        <arg value="git log -n 1 --pretty=format:%h -- ../VERSION_webapp"/>
       </exec>
       <exec executable="bash" outputproperty="git-count"><arg value="-c"/>
         <arg value="git rev-list --count ${git-since}..HEAD"/>

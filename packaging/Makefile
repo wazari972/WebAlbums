@@ -80,9 +80,6 @@ prep_root_path:
 
 ### WebApp ###
 
-apply_version:
-	sed -i 's#<h1>WebAlbums</h1>#$(VERSION)$(RELEASE)#g' $(USR_DIR)/$(APP_DIRNAME)/WebAlbums-Servlet/static/Display.xsl
-
 path_build_to_exec:
 	sed -i 's#$(BUILD_PREFIX)#$(EXEC_PREFIX)#g' \
 		$(ETC_DIR)/appserver/library.path \
@@ -110,11 +107,11 @@ build_webapp:
 	@echo
 
 build_ear_webapp: 
-	ant -buildfile $(ANT_EAR_BUILDFILE) -quiet | \
+	ant -buildfile $(ANT_EAR_BUILDFILE) -quiet dist | \
 		grep -v "Trying to override old definition of task"
 
 build_vfs_webapp:
-	ant -buildfile $(ANT_WFS_BUILDFILE) -quiet | \
+	ant -buildfile $(ANT_WFS_BUILDFILE) -quiet dist | \
 		grep -v "Trying to override old definition of task"
 
 clean_webapp:	
