@@ -5,7 +5,7 @@ pkgbase="WebAlbums"
 pkgname=("webalbums-appserver-git" "webalbums-webapp-git"
          "webalbums-jfs-git" "webalbums-all-git")
 pkgrel=1
-pkgver=0.9.3_20150124
+pkgver=0.9.6_20150124
 arch=('any')
 url="https://github.com/wazari972/WebAlbums"
 license=('GPL')
@@ -78,7 +78,7 @@ pkgver() {
     esac
 
     if [ -z $version ]; then
-        version=$(head -1 VERSION_$package)
+        version=$(head -1 "VERSION/$package")
         since=$(git log -n 1 --pretty=format:%h -- VERSION_$package)
     fi
     
@@ -99,9 +99,7 @@ build() {
 
 package() {
     msg "Preparing package $pkgname archive ..."
-    #make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir $*
-    mkdir -p $pkgdir
-    touch $pkgdir/test
+    make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir $*
 }
 
 package_webalbums-appserver-git() {
