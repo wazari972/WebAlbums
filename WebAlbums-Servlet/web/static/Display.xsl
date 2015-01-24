@@ -28,7 +28,7 @@
         
 	<div id="header"> 
 	  <div id="logo">
-	    <h1>WebAlbums 3</h1>
+	    <h1>WebAlbums</h1>
 	    <h2>by Kevin POUGET</h2>
 	  </div>
 	  

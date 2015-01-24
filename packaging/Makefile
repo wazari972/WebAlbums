@@ -5,8 +5,8 @@
 BUILD_DIRNAME ?= build
 WITH_JFS ?= y
 
-VERSION ?= 3.5
-RELEASE ?= dev
+VERSION ?= 0
+RELEASE ?= -dev
 
 EXEC_PREFIX ?=
 
@@ -17,7 +17,6 @@ EXEC_PREFIX ?=
 BUILD_PREFIX := ${shell mkdir -p $(BUILD_DIRNAME) && readlink  --canonicalize $(BUILD_DIRNAME)}
 
 PKG_NAME := WebAlbums
-PKG_NAMEVERSION += $(PKG_NAME)-$(VERSION)-$(RELEASE)
 
 APPSERVER_DIRNAME = apache-tomee-webprofile
 APP_DIRNAME := app-ear
@@ -80,6 +79,9 @@ prep_root_path:
 	@echo
 
 ### WebApp ###
+
+apply_version:
+	sed -i 's#<h1>WebAlbums</h1>#$(VERSION)$(RELEASE)#g' $(USR_DIR)/$(APP_DIRNAME)/WebAlbums-Servlet/static/Display.xsl
 
 path_build_to_exec:
 	sed -i 's#$(BUILD_PREFIX)#$(EXEC_PREFIX)#g' \
