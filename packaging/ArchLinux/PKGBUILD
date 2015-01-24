@@ -5,7 +5,7 @@ pkgbase="WebAlbums"
 pkgname=("webalbums-appserver-git" "webalbums-webapp-git"
          "webalbums-jfs-git" "webalbums-all-git")
 pkgrel=1
-pkgver=0.9.6_20150124
+pkgver=0.9.8_20150124
 arch=('any')
 url="https://github.com/wazari972/WebAlbums"
 license=('GPL')
@@ -115,6 +115,7 @@ package_webalbums-webapp-git() {
     optdepends=('ffmpeg: for video thumbnails',
                 'totem: for video thumbnails')
     package conf_webapp conf_root_path conf_jfs
+    make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir path_build_to_exec
     pkgver=$(pkgver webapp)
 }
 
