@@ -34,6 +34,7 @@ endif
 
 ETC_DIR := $(BUILD_PREFIX)/etc/$(PKG_NAME)
 USR_DIR := $(BUILD_PREFIX)/usr/share/$(PKG_NAME)
+USR_BIN_DIR := $(BUILD_PREFIX)/usr/bin
 LIB_DIR := $(BUILD_PREFIX)/usr/lib/$(LIB_ARCH_SUFFIX)
 TMP_DIR := $(BUILD_PREFIX)/var/tmp/$(PKG_NAME)
 VAR_DIR := $(BUILD_PREFIX)/var/$(PKG_NAME)
@@ -61,6 +62,15 @@ prep_example: prep_root_path
 	cp /mnt/sda7/kevin/Downloads/WebAlbums-3-release/data/images/France/2012/2012-10-12\ Sailing\ Journey $(ROOT_PATH)/ftp/France -r
 	cp /mnt/sda7/kevin/Downloads/WebAlbums-3-release/data/images/France/2013/2013-03-31\ Antibes $(ROOT_PATH)/ftp/France -r
 	@echo
+
+### Environment ###
+
+prep_usr_bin:
+	@echo '# Prepare /usr/bin'
+	mkdir -p $(USR_BIN_DIR) 
+	cp $(HOME_DIR)/packaging/bin/webalbums_launch $(USR_BIN_DIR)
+	sed -i 's#^TOMEE_HOME=.*$\#TOMEE_HOME=$(subst $(BUILD_PREFIX),,${APPSERVER_DIR})#' $(USR_BIN_DIR)/webalbums_launch
+	@echo 
 
 ### Root path ###
 

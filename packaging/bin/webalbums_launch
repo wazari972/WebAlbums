@@ -1,0 +1,88 @@
+#! /bin/sh
+
+TOMEE_HOME=../../apache-tomee-webprofile/ # will be changed during packaging
+DEFAULT_CONF_PATH_FILE=$TOMEE_HOME/conf/config.path
+DEFAULT_LIBRARY_PATH_FILE=$TOMEE_HOME/conf/library.path
+
+while [[ $# > 0 ]]
+do
+  key=$1
+  case $key in
+      --dry-run)
+          DRY_RUN=1
+          ;;
+      -v|--verbose)
+          VERBOSE=1
+          ;;
+      -cp|--copy)
+          cd $TOMEE_HOME
+          sh ./to_copy
+          cd -
+          ;;
+      -cfg|--config-file)
+          shift
+          CONFIG_PATH=$1
+          ;;
+      -l|--lib-path)
+          shift
+          LIBRARY_PATH=$1
+          ;;
+      -h|--help)
+          echo "no help yet, read the script file!"
+          exit
+          ;;
+      --jsvc)
+          USE_JSVC=1
+          ;;
+      *)
+          # unknown option
+          OPT="$OPT $key" 
+          ;;
+  esac
+  shift    
+done
+            
+if [ -z $CONFIG_PATH ]
+then
+    CONFIG_PATH=$(cat $DEFAULT_CONF_PATH_FILE)
+fi
+
+if [ -z $LIBRARY_PATH ]
+then
+    LIBRARY_PATH=$(cat $DEFAULT_LIBRARY_PATH_FILE)
+fi
+
+if [ -z $VERBOSE ]
+then
+    LOGGING="-Djava.util.logging.config.file=$TOMEE_HOME/conf/logging.properties \
+             -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+fi
+
+if [ -z $USE_JSVC  ]
+then
+    EXEC="java"
+else
+    EXEC="jsvc"
+fi
+
+if [ ! -z $DRY_RUN ]
+then
+    EXEC="echo $EXEC"
+fi
+
+CP=\
+$TOMEE_HOME/bin/bootstrap.jar:\
+$TOMEE_HOME/bin/tomcat-juli.jar:\
+$TOMEE_HOME/lib/jandex-1.2.0.Final.jar
+
+$EXEC -Djava.security.auth.login.config=$TOMEE_HOME/conf/login.config           \
+     -Dopenejb.authentication.realmName=PropertiesLogin                        \
+     $LOGGING                                                                  \
+     -Djava.endorsed.dirs=$TOMEE_HOME/endorsed                                 \
+     -classpath $CP                                                            \
+     -Dcatalina.base=$TOMEE_HOME                                               \
+     -Dcatalina.home=$TOMEE_HOME                                               \
+     -Dconfig.path=$CONFIG_PATH                                                \
+     -Dwfs.library.path=$LIBRARY_PATH                                          \
+     $OPT                                                                      \
+org.apache.catalina.startup.Bootstrap start 

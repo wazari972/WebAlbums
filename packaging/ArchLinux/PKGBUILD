@@ -5,7 +5,7 @@ pkgbase="WebAlbums"
 pkgname=("webalbums-appserver-git" "webalbums-webapp-git"
          "webalbums-jfs-git" "webalbums-all-git")
 pkgrel=1
-pkgver=0.9.8_20150124
+pkgver=0.9.9_20150124
 arch=('any')
 url="https://github.com/wazari972/WebAlbums"
 license=('GPL')
@@ -105,7 +105,7 @@ package() {
 package_webalbums-appserver-git() {
     depends=$_depends_appserver
     pkgdesc="$pkgdesc_all -- Tomee Application Appserver"
-    package prep_appserver
+    package prep_appserver prep_usr_bin
     pkgver=$(pkgver appserver)
 }
 

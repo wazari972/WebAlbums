@@ -1,0 +1,26 @@
+[Unit]
+Description=WebAlbums Appserver
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/webalbums.pid
+Environment=CATALINA_PID=/var/run/webalbums.pid
+Environment=JAVA_HOME=/usr/lib/jvm/default-runtime
+
+ExecStart=/usr/bin/webalbums_launch \
+            --jscv \
+            -user webalbums \
+            -java-home ${JAVA_HOME} \
+            -pidfile /var/run/webalbums.pid \
+            -errfile SYSLOG \
+            -outfile SYSLOG
+            
+
+ExecStop=/usr/bin/jsvc \
+            -pidfile /var/run/webalbums.pid \
+            -stop \
+            org.apache.catalina.startup.Bootstrap
+
+[Install]
+WantedBy=multi-user.target
