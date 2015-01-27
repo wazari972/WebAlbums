@@ -78,8 +78,8 @@ pkgver() {
     esac
 
     if [ -z $version ]; then
-        version=$(head -1 "VERSION/$package")
-        since=$(git log -n 1 --pretty=format:%h -- VERSION_$package)
+        version=$(head -1 ".VERSION/$package")
+        since=$(git log -n 1 --pretty=format:%h -- .VERSION/$package)
     fi
     
     cnt=$(git rev-list --count $since..HEAD $project)

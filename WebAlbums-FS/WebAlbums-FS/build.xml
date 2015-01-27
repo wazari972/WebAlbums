@@ -16,10 +16,10 @@
         <format property="builtat" pattern=" MM/dd/yyyy hh:mm aa" timezone="Europe/Paris"/>
       </tstamp>
       <exec executable="bash" outputproperty="git-tag"><arg value="-c"/>
-        <arg value="cat ../../VERSION/wfs"/>
+        <arg value="cat ../../.VERSION/wfs"/>
       </exec>
       <exec executable="bash" outputproperty="git-since"><arg value="-c"/>
-        <arg value="git log -n 1 --pretty=format:%h -- ../../VERSION/wfs"/>
+        <arg value="git log -n 1 --pretty=format:%h -- ../../.VERSION/wfs"/>
       </exec>
       <exec executable="bash" outputproperty="git-count"><arg value="-c"/>
         <arg value="git rev-list --count ${git-since}..HEAD ."/>
