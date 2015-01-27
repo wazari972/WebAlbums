@@ -5,7 +5,7 @@ pkgbase="webalbums"
 pkgname=("webalbums-appserver-git" "webalbums-webapp-git"
          "webalbums-jfs-git" "webalbums-all-git")
 pkgrel=1
-pkgver=0.9.9_20150124
+pkgver=0.9.13_20150127
 arch=('any')
 url="https://github.com/wazari972/WebAlbums"
 license=('GPL')
@@ -13,12 +13,13 @@ md5sums=() #generate with 'makepkg -g'
 makedepends=('git' 'apache-ant' 'gcc' 'fuse' 'jre7-openjdk')
 pkgdesc_all="Free webbased photo manager"
 
-_depends_appserver=('jre7-openjdk')
-_depends_webapp=('imagemagick' 'mariadb') #'webalbums-appserver'
-_depends_jfs=() #'webalbums-webapp'
-depends=("${_depends_appserver[@]}"
-         "${_depends_webapp[@]}"
-         "${_depends_jfs[@]}")
+_depends_appserver=('jre7-openjdk>=7'
+                    'java-jsvc' 'java-commons-daemon') # same as arch/tomcat8)
+_depends_webapp=('imagemagick' 'mariadb' 'webalbums-appserver-git')
+_depends_jfs=('webalbums-webapp-git')
+_depends_all=("${_depends_appserver[@]}"
+              "${_depends_webapp[@]}"
+              "${_depends_jfs[@]}")
 
 _gitroot=https://github.com/wazari972/WebAlbums
 _gitname=webalbums-git
@@ -100,13 +101,16 @@ build() {
 package() {
     msg "Preparing package $pkgname archive ..."
     make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir $*
+    
+    if [[ -d $pkg/var/tmp ]]; then
+        chmod 1777 $pkg/var/tmp
+    fi
 }
 
 package_webalbums-appserver-git() {
     depends=$_depends_appserver
     pkgdesc="$pkgdesc_all -- Tomee Application Appserver"
     license=('APACHE')
-    depends=('java-runtime>=7' 'java-jsvc' 'java-commons-daemon' 'eclipse-ecj') # same as arch/tomcat8
     optdepends=('tomcat-native: to allow optimal performance in production environments')
     backup=(etc/${pkgbase}/appserver/catalina.policy
             etc/${pkgbase}/appserver/catalina.properties
@@ -122,7 +126,7 @@ package_webalbums-appserver-git() {
             etc/${pkgbase}/appserver/tomee.xml
             etc/${pkgbase}/appserver/server.xml
            )
-    install=${pkgname}.install
+    install=webalbums-appserver-git.install
     pkgver=$(pkgver appserver)
     
     package prep_appserver prep_usr_bin
@@ -139,8 +143,8 @@ package_webalbums-webapp-git() {
     optdepends=('ffmpeg: for video thumbnails',
                 'totem: for video thumbnails')
     pkgver=$(pkgver webapp)
-    backup=(etc/webalbums/conf.xml)
-    
+    backup=("etc/webalbums/conf.xml")
+    install=(webalbums-webapp-git.install)
     package conf_webapp conf_root_path conf_jfs
     make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir path_build_to_exec
 }
@@ -154,6 +158,7 @@ package_webalbums-jfs-git() {
 }
 
 package_webalbums-all-git() {
+    depends=$_depends_all
     pkgdesc=$pkgdesc_all
     pkgver=$(pkgver all)
 

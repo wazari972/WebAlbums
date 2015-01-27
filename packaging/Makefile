@@ -78,7 +78,7 @@ prep_usr_bin:
 conf_root_path: prep_root_path
 	@echo '# Configure root path'
 	mkdir -p $(ETC_DIR) $(ETC_DIR)/appserver
-	cp $(HOME_DIR)/WebAlbums/conf/conf-template.xml $(ETC_DIR)/$(CONF_FILENAME)
+	cp $(HOME_DIR)/packaging/etc/conf-template.xml $(ETC_DIR)/$(CONF_FILENAME)
 	$(PKG_DIR)/setup_data_dir.sh --configure $(ROOT_PATH) $(ETC_DIR)/$(CONF_FILENAME) $(TMP_DIR)
 	echo $(ETC_DIR)/$(CONF_FILENAME) > $(ETC_DIR)/appserver/config.path
 	@echo
@@ -157,8 +157,8 @@ conf_appserver:
 	cp -r $(HOME_DIR)/$(APPSERVER_DIRNAME)/conf $(ETC_DIR)/appserver 
 
 	rm $(ETC_DIR)/appserver/tomee.xml -f
-
-	cp $(HOME_DIR)/WebAlbums/conf/appserver-tomee/* $(ETC_DIR)/appserver/ --remove-destination
+	rm $(ETC_DIR)/appserver/{config,library}.path -f
+	cp $(HOME_DIR)/packaging/etc/appserver-tomee/* $(ETC_DIR)/appserver/ --remove-destination
 	@$(PKG_DIR)/link.sh $(APPSERVER_DIR)/lib/logback-test.xml $(ETC_DIR)/appserver/logback-test.xml
 
 	mv $(ETC_DIR)/appserver/tomee-template.xml $(ETC_DIR)/appserver/tomee.xml

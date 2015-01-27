@@ -4,3 +4,4 @@ install/*
 */build/*
 Github/*.tar.gz
 ArchLinux/*.pkg.tar.xz
+etc/appserver-tomee/tomee.xml

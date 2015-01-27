@@ -19,7 +19,6 @@ IMAGES=images
 MINIS=miniatures
 FTP=ftp
 BACKUP=backup
-PLUGINS=plugins
 
 if [ "$DO_CONFIGURE" == 1 ]
 then
@@ -29,7 +28,6 @@ then
     sed -i "s|TMP|$TMP|g" $CONFIG_FILE
     sed -i "s|FTP|$FTP|g" $CONFIG_FILE
     sed -i "s|BACKUP|$BACKUP|g" $CONFIG_FILE
-    sed -i "s|PLUGINS|$PLUGINS|g" $CONFIG_FILE
 fi
 if [ "$DO_MKDIRS" == 1 ]
 then
@@ -37,6 +35,5 @@ then
           $ROOT_PATH/$MINIS \
           $ROOT_PATH/$BACKUP \
           $ROOT_PATH/$FTP \
-          $ROOT_PATH/$PLUGINS \
           -p
 fi

@@ -1,8 +1,32 @@
-#! /bin/sh
+#! /bin/bash
+set -x
+login() {
+    WEBALBUMS_USER="webalbums"
+    
+    if [[ $(id -u) == 0 ]]; then
+        if [[ "$*" != *"--jsvc"* ]]; then
+            # --jsvc switches to $WEBALBUMS_USER;
+            # otherwise do it manually
+            exec sudo -u $WEBALBUMS_USER $*
+        fi
+    elif [[ $(whoami) != $WEBALBUMS_USER ]]; then
+        echo "ERROR: you need to run $0 as root or as user 'webalbums'."
+        exit 1
+    fi
+}
 
-TOMEE_HOME=../../apache-tomee-webprofile/ # will be changed during packaging
+help() {
+    echo "no help yet, read the script file!"
+    exit
+}
+
+TOMEE_HOME=/usr/share/webalbums/apache-tomee-webprofile # will be changed during packaging
 DEFAULT_CONF_PATH_FILE=$TOMEE_HOME/conf/config.path
 DEFAULT_LIBRARY_PATH_FILE=$TOMEE_HOME/conf/library.path
+
+login $0 $*
+
+cd $TOMEE_HOME
 
 while [[ $# > 0 ]]
 do
@@ -28,8 +52,7 @@ do
           LIBRARY_PATH=$1
           ;;
       -h|--help)
-          echo "no help yet, read the script file!"
-          exit
+          help
           ;;
       --jsvc)
           USE_JSVC=1
@@ -62,7 +85,7 @@ if [ -z $USE_JSVC  ]
 then
     EXEC="java"
 else
-    EXEC="jsvc"
+    EXEC="/usr/bin/jsvc"
 fi
 
 if [ ! -z $DRY_RUN ]
@@ -80,6 +103,7 @@ $EXEC -Djava.security.auth.login.config=$TOMEE_HOME/conf/login.config          \
      $LOGGING                                                                  \
      -Djava.endorsed.dirs=$TOMEE_HOME/endorsed                                 \
      -Djava.io.tmpdir=$TOMEE_HOME/temp                                         \
+     -Dtomee.unpack.dir=temp                                                   \
      -classpath $CP                                                            \
      -Dcatalina.base=$TOMEE_HOME                                               \
      -Dcatalina.home=$TOMEE_HOME                                               \
