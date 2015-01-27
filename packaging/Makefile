@@ -16,7 +16,8 @@ EXEC_PREFIX ?=
 
 BUILD_PREFIX := ${shell mkdir -p $(BUILD_DIRNAME) && readlink  --canonicalize $(BUILD_DIRNAME)}
 
-PKG_NAME := WebAlbums
+Pkg_Name := WebAlbums
+pkg_name := webalbums
 
 APPSERVER_DIRNAME = apache-tomee-webprofile
 APP_DIRNAME := app-ear
@@ -32,13 +33,13 @@ else
     LIB_ARCH_SUFFIX :=32
 endif
 
-ETC_DIR := $(BUILD_PREFIX)/etc/$(PKG_NAME)
-USR_DIR := $(BUILD_PREFIX)/usr/share/$(PKG_NAME)
+ETC_DIR := $(BUILD_PREFIX)/etc/$(pkg_name)
+USR_DIR := $(BUILD_PREFIX)/usr/share/$(pkg_name)
 USR_BIN_DIR := $(BUILD_PREFIX)/usr/bin
 LIB_DIR := $(BUILD_PREFIX)/usr/lib/$(LIB_ARCH_SUFFIX)
-TMP_DIR := $(BUILD_PREFIX)/var/tmp/$(PKG_NAME)
-VAR_DIR := $(BUILD_PREFIX)/var/$(PKG_NAME)
-LOG_DIR := $(BUILD_PREFIX)/var/log/$(PKG_NAME)
+TMP_DIR := $(BUILD_PREFIX)/var/tmp/$(pkg_name)
+VAR_DIR := $(BUILD_PREFIX)/var/$(pkg_name)
+LOG_DIR := $(BUILD_PREFIX)/var/log/$(pkg_name)
 
 ROOT_PATH := $(VAR_DIR)
 
@@ -99,8 +100,8 @@ path_build_to_exec:
 conf_webapp: prep_webapp
 	@echo '# Configure webapplication'
 	mkdir -p $(APPSERVER_DIR)/apps/
-	rm -f $(APPSERVER_DIR)/apps/$(PKG_NAME)-ea
-	@$(PKG_DIR)/link.sh $(USR_DIR)/$(APP_DIRNAME) $(APPSERVER_DIR)/apps/$(PKG_NAME)-ea
+	rm -f $(APPSERVER_DIR)/apps/$(Pkg_Name)-ea
+	@$(PKG_DIR)/link.sh $(USR_DIR)/$(APP_DIRNAME) $(APPSERVER_DIR)/apps/$(Pkg_Name)-ea
 	@echo
 
 prep_webapp:
@@ -167,7 +168,7 @@ conf_appserver:
 
 prep_appserver: conf_appserver
 	@echo '# Prepare appserver appserver'
-	mkdir -p $(USR_DIR) $(LOG_DIR) $(TMP_DIR)
+	mkdir -p $(USR_DIR) $(LOG_DIR) $(TMP_DIR)/work $(TMP_DIR)/temp
 
 	rm -rf $(USR_DIR)/$(APPSERVER_DIRNAME)
 	cp -r $(HOME_DIR)/$(APPSERVER_DIRNAME) $(USR_DIR)
@@ -175,7 +176,8 @@ prep_appserver: conf_appserver
 	rm -rf $(APPSERVER_DIR)/{logs,work,apps,conf}
 
 	@$(PKG_DIR)/link.sh $(LOG_DIR) $(APPSERVER_DIR)/logs
-	@$(PKG_DIR)/link.sh $(TMP_DIR) $(APPSERVER_DIR)/work
+	@$(PKG_DIR)/link.sh $(TMP_DIR)/work $(APPSERVER_DIR)/work
+	@$(PKG_DIR)/link.sh $(TMP_DIR)/temp $(APPSERVER_DIR)/temp
 
 	mkdir -p $(APPSERVER_DIR)/webapps/empty
 	mkdir $(APPSERVER_DIR)/apps

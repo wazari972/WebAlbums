@@ -1,0 +1,37 @@
+# Base on https://projects.archlinux.org/svntogit/packages.git/tree/trunk/tomcat8.install?h=packages/tomcat8
+
+_pkgbase='webalbums'
+_gid_webalbums_name='webalbums'
+_gid_webalbums=57
+_uid_webalbums_name='webalbums'
+_uid_webalbums=57
+
+post_install() {
+  if ! getent group ${_gid_webalbums_name} >/dev/null 2>&1; then
+    groupadd -g ${_gid_webalbums} ${_gid_webalbums_name}
+  fi
+  if ! getent passwd ${_uid_webalbums_name} >/dev/null 2>&1; then
+    useradd  -u ${_uid_webalbums} -g ${_gid_webalbums_name} -d /usr/share/${_pkgbase}/apache-tomee-webprofile -s /bin/false ${_uid_webalbums_name}
+  fi
+
+  if [ -f lib/modules/$(uname -r)/kernel/security/capability.ko ]; then
+    echo 'It appears that your current kernel has linux security'
+    echo 'capabilities built as a module. WebAlbums appserver'
+    echo '(Tomcat)requires this functionality to operate.'
+  fi
+}
+
+post_upgrade() {
+  post_install $1
+}
+
+pre_remove() {
+  if getent passwd ${_uid_webalbums_name} > /dev/null 2>&1; then
+    userdel ${_uid_webalbums_name}
+  fi
+  if getent group ${_gid_webalbums_name} > /dev/null 2>&1; then
+    groupdel ${_gid_webalbums_name}
+  fi
+
+  echo "To fully clean Webalbums/Tomcat's file, consider removing directories /var/{lib,tmp,log}/${_pkgbase}"
+}

@@ -75,10 +75,11 @@ $TOMEE_HOME/bin/bootstrap.jar:\
 $TOMEE_HOME/bin/tomcat-juli.jar:\
 $TOMEE_HOME/lib/jandex-1.2.0.Final.jar
 
-$EXEC -Djava.security.auth.login.config=$TOMEE_HOME/conf/login.config           \
+$EXEC -Djava.security.auth.login.config=$TOMEE_HOME/conf/login.config          \
      -Dopenejb.authentication.realmName=PropertiesLogin                        \
      $LOGGING                                                                  \
      -Djava.endorsed.dirs=$TOMEE_HOME/endorsed                                 \
+     -Djava.io.tmpdir=$TOMEE_HOME/temp                                         \
      -classpath $CP                                                            \
      -Dcatalina.base=$TOMEE_HOME                                               \
      -Dcatalina.home=$TOMEE_HOME                                               \

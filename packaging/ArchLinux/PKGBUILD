@@ -1,7 +1,7 @@
 #!/bin/sh
 # Maintainer: Kevin Pouget <webalbums-archlinux@0x972.info>
 
-pkgbase="WebAlbums"
+pkgbase="webalbums"
 pkgname=("webalbums-appserver-git" "webalbums-webapp-git"
          "webalbums-jfs-git" "webalbums-all-git")
 pkgrel=1
@@ -105,8 +105,32 @@ package() {
 package_webalbums-appserver-git() {
     depends=$_depends_appserver
     pkgdesc="$pkgdesc_all -- Tomee Application Appserver"
-    package prep_appserver prep_usr_bin
+    license=('APACHE')
+    depends=('java-runtime>=7' 'java-jsvc' 'java-commons-daemon' 'eclipse-ecj') # same as arch/tomcat8
+    optdepends=('tomcat-native: to allow optimal performance in production environments')
+    backup=(etc/${pkgbase}/appserver/catalina.policy
+            etc/${pkgbase}/appserver/catalina.properties
+            
+            etc/${pkgbase}/appserver/logging.properties
+            etc/${pkgbase}/appserver/logback-test.xml
+            
+            etc/${pkgbase}/appserver/login.config
+            etc/${pkgbase}/appserver/groups.properties
+            etc/${pkgbase}/appserver/users.properties
+            
+            etc/${pkgbase}/appserver/system.properties
+            etc/${pkgbase}/appserver/tomee.xml
+            etc/${pkgbase}/appserver/server.xml
+           )
+    install=${pkgname}.install
     pkgver=$(pkgver appserver)
+    
+    package prep_appserver prep_usr_bin
+
+    install -Dm644  ${srcdir}/${_gitname}/packaging/ArchLinux/systemd_${pkgbase}.service \
+            "${pkgdir}"/usr/lib/systemd/system/${pkgbase}.service
+    install -Dm644 ${srcdir}/${_gitname}/packaging/ArchLinux/systemd_tmpfiles.d_${pkgbase}.conf \
+            "${pkgdir}"/usr/lib/tmpfiles.d/${pkgbase}.conf
 }
 
 package_webalbums-webapp-git() {
@@ -114,24 +138,26 @@ package_webalbums-webapp-git() {
     pkgdesc="$pkgdesc_all -- Main application"
     optdepends=('ffmpeg: for video thumbnails',
                 'totem: for video thumbnails')
+    pkgver=$(pkgver webapp)
+    backup=(etc/webalbums/conf.xml)
+    
     package conf_webapp conf_root_path conf_jfs
     make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir path_build_to_exec
-    pkgver=$(pkgver webapp)
 }
 
 package_webalbums-jfs-git() {
     depends=$_depends_jfs
-    pkgdesc="$pkgdesc_all -- Java File-system"
-   
-    package prep_jfs
+    pkgdesc="$pkgdesc_all -- Java File-system"   
     pkgver=$(pkgver jfs)
+    
+    package prep_jfs
 }
 
 package_webalbums-all-git() {
+    pkgdesc=$pkgdesc_all
+    pkgver=$(pkgver all)
+
     package_webalbums-appserver-git
     package_webalbums-webapp-git
     package_webalbums-jfs-git
-    
-    pkgdesc=$pkgdesc_all
-    pkgver=$(pkgver all)
 }
