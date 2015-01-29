@@ -5,7 +5,7 @@ pkgbase="webalbums"
 pkgname=("webalbums-appserver-git" "webalbums-webapp-git"
          "webalbums-jfs-git" "webalbums-all-git")
 pkgrel=1
-pkgver=0.9.13_20150127
+pkgver=0.9.14_20150127
 arch=('any')
 url="https://github.com/wazari972/WebAlbums"
 license=('GPL')
@@ -15,8 +15,8 @@ pkgdesc_all="Free webbased photo manager"
 
 _depends_appserver=('jre7-openjdk>=7'
                     'java-jsvc' 'java-commons-daemon') # same as arch/tomcat8)
-_depends_webapp=('imagemagick' 'mariadb' 'webalbums-appserver-git')
-_depends_jfs=('webalbums-webapp-git')
+_depends_webapp=('imagemagick' 'mariadb') #'webalbums-appserver-git'
+_depends_jfs=() #'webalbums-webapp-git'
 _depends_all=("${_depends_appserver[@]}"
               "${_depends_webapp[@]}"
               "${_depends_jfs[@]}")
@@ -36,7 +36,7 @@ prepare() {
             msg "Pulling from git origin repository ..."
             cd "$_gitname" && git pull origin
         fi
-        msg "The local files are updated."
+        msg "The local files are up to date."
     elif [[ -d "../../../WebAlbums-ea" ]]; then
         msg "Creating src as a symlink to ../../.."
         ln -s ../../.. "$_gitname"
@@ -92,9 +92,13 @@ build() {
     cd "$srcdir"
     
     msg "Starting build..."
+    
     make -f $srcdir/$_makefile build_webapp  
     make -f $srcdir/$_makefile build_jfs
-    
+
+    $srcdir/$_gitname/packaging/ArchLinux/merge_install.sh \
+        $srcdir/$_gitname/packaging/ArchLinux/ --gen-all
+
     msg "Build done"
 }
 
@@ -116,7 +120,6 @@ package_webalbums-appserver-git() {
             etc/${pkgbase}/appserver/catalina.properties
             
             etc/${pkgbase}/appserver/logging.properties
-            etc/${pkgbase}/appserver/logback-test.xml
             
             etc/${pkgbase}/appserver/login.config
             etc/${pkgbase}/appserver/groups.properties
@@ -126,7 +129,7 @@ package_webalbums-appserver-git() {
             etc/${pkgbase}/appserver/tomee.xml
             etc/${pkgbase}/appserver/server.xml
            )
-    install=webalbums-appserver-git.install
+    install="webalbums-appserver-git.install"
     pkgver=$(pkgver appserver)
     
     package prep_appserver prep_usr_bin
@@ -144,7 +147,7 @@ package_webalbums-webapp-git() {
                 'totem: for video thumbnails')
     pkgver=$(pkgver webapp)
     backup=("etc/webalbums/conf.xml")
-    install=(webalbums-webapp-git.install)
+    install="webalbums-webapp-git.install"
     package conf_webapp conf_root_path conf_jfs
     make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir path_build_to_exec
 }
@@ -157,12 +160,20 @@ package_webalbums-jfs-git() {
     package prep_jfs
 }
 
-package_webalbums-all-git() {
-    depends=$_depends_all
-    pkgdesc=$pkgdesc_all
-    pkgver=$(pkgver all)
-
+build_all_package() {
     package_webalbums-appserver-git
     package_webalbums-webapp-git
     package_webalbums-jfs-git
 }
+
+package_webalbums-all-git() {
+    build_all_package
+    
+    install="webalbums-all-git.gen.install"
+        
+    depends=$_depends_all
+    pkgdesc=$pkgdesc_all
+    pkgver=$(pkgver all)
+}
+
+

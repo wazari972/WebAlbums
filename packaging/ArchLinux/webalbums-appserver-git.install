@@ -20,8 +20,11 @@ post_install() {
         echo '(Tomcat)requires this functionality to operate.'
     fi
 
-    echo ">>> Configure your database connection in /etc/webalbums/appserver/tomee.xml before first usage."
-    echo ">>> If necessary, change the appserver's port (default is 8080) in /etc/webalbums/appserver/server.xml:<Server>/<Connector port>"
+    echo "\
+>>> Configure your database connection in 
+>>> /etc/webalbums/appserver/tomee.xml before first usage.
+>>> If necessary, change the appserver's port (default is 8080)
+>>> in /etc/webalbums/appserver/server.xml:<Server>/<Connector port>."
 }
 
 post_upgrade() {
