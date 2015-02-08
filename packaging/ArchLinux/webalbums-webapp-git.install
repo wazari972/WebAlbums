@@ -1,21 +1,21 @@
 # Base on https://projects.archlinux.org/svntogit/packages.git/tree/trunk/tomcat8.install?h=packages/tomcat8
 
 _pkgbase='webalbums'
-_gid_name='webalbums'
-_uid_name='webalbums'
+
+_gid_tomcat_name='tomcat7'
+_gid_tomcat=71
+_uid_tomcat_name='tomcat7'
+_uid_tomcat=71
 
 post_install() {
-    if ! getent group ${_gid_name} >/dev/null 2>&1; then
-        echo "Cannot find WebAlbums group '${_gid_name}'."
+    if ! getent group ${_gid_tomcat_name} >/dev/null 2>&1; then
+        echo "Cannot find Tomcat group '${_gid_name}'."
         exit 1
     fi
-    if ! getent passwd ${_uid_name} >/dev/null 2>&1; then
-        echo "Cannot find WebAlbums user '${_uid_name}'."
+    if ! getent passwd ${_uid_tomcat_name} >/dev/null 2>&1; then
+        echo "Cannot find Tomcat user '${_uid_name}'."
         exit 1
     fi
-
-    chown -R ${_uid_name}:${_gid_name} /var/webalbums/ -R
-    chmod ugo+w /var/webalbums/ftp
 
     echo ">>> Upload/copy your photo albums to /var/${_pkgbase}/ftp :-)"
 }

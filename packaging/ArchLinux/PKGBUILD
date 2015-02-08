@@ -5,7 +5,7 @@ pkgbase="webalbums"
 pkgname=("webalbums-appserver-git" "webalbums-webapp-git"
          "webalbums-jfs-git" "webalbums-all-git")
 pkgrel=1
-pkgver=0.9.14_20150127
+pkgver=0.9.15_20150129
 arch=('any')
 url="https://github.com/wazari972/WebAlbums"
 license=('GPL')
@@ -13,20 +13,16 @@ md5sums=() #generate with 'makepkg -g'
 makedepends=('git' 'apache-ant' 'gcc' 'fuse' 'jre7-openjdk')
 pkgdesc_all="Free webbased photo manager"
 
-_depends_appserver=('jre7-openjdk>=7'
-                    'java-jsvc' 'java-commons-daemon') # same as arch/tomcat8)
-_depends_webapp=('imagemagick' 'mariadb') #'webalbums-appserver-git'
-_depends_jfs=() #'webalbums-webapp-git'
-_depends_all=("${_depends_appserver[@]}"
-              "${_depends_webapp[@]}"
-              "${_depends_jfs[@]}")
-
 _gitroot=https://github.com/wazari972/WebAlbums
 _gitname=webalbums-git
 _gitbranch=develop
 _localgit=/home/kevin/WebAlbums
 
 _makefile=$_gitname/packaging/Makefile
+
+_gid_log=19
+_gid_tomcat=71
+_uid_tomcat=71
 
 prepare() {
     msg "Connecting to git server..."
@@ -106,8 +102,8 @@ package() {
     msg "Preparing package $pkgname archive ..."
     make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir $*
     
-    if [[ -d $pkg/var/tmp ]]; then
-        chmod 1777 $pkg/var/tmp
+    if [[ -d $pkgdir/var/tmp ]]; then
+        chmod 1777 $pkgdir/var/tmp
     fi
 }
 
@@ -131,9 +127,16 @@ package_webalbums-appserver-git() {
            )
     install="webalbums-appserver-git.install"
     pkgver=$(pkgver appserver)
+    conflicts="webalbums-all-git"
+    depends=('jre7-openjdk>=7'
+             'java-jsvc'
+             'java-commons-daemon') # same as arch/tomcat7)
     
     package prep_appserver prep_usr_bin
 
+    chown -R ${_uid_tomcat}:${_gid_tomcat} "${pkgdir}"/var/tmp/$pkgbase
+    chgrp -R ${_gid_log} "${pkgdir}"/var/log/$pkgbase
+    
     install -Dm644  ${srcdir}/${_gitname}/packaging/ArchLinux/systemd_${pkgbase}.service \
             "${pkgdir}"/usr/lib/systemd/system/${pkgbase}.service
     install -Dm644 ${srcdir}/${_gitname}/packaging/ArchLinux/systemd_tmpfiles.d_${pkgbase}.conf \
@@ -148,30 +151,37 @@ package_webalbums-webapp-git() {
     pkgver=$(pkgver webapp)
     backup=("etc/webalbums/conf.xml")
     install="webalbums-webapp-git.install"
+    conflicts="webalbums-all-git"
+    depends=('imagemagick' 'mariadb' 'webalbums-appserver-git')
+    
     package conf_webapp conf_root_path conf_jfs
     make -f $srcdir/$_makefile BUILD_DIRNAME=$pkgdir path_build_to_exec
+
+    chown -R ${_uid_tomcat}:${_gid_tomcat} "${pkgdir}"/var/webalbums/
+    chmod ugo+w "${pkgdir}"/var/webalbums/ftp
 }
 
 package_webalbums-jfs-git() {
     depends=$_depends_jfs
     pkgdesc="$pkgdesc_all -- Java File-system"   
     pkgver=$(pkgver jfs)
+    conflicts="webalbums-all-git"
+    depends=('webalbums-webapp-git')
     
     package prep_jfs
 }
 
-build_all_package() {
+prepare_all_packages() {
     package_webalbums-appserver-git
     package_webalbums-webapp-git
     package_webalbums-jfs-git
 }
 
 package_webalbums-all-git() {
-    build_all_package
+    prepare_all_packages
     
     install="webalbums-all-git.gen.install"
-        
-    depends=$_depends_all
+    depends=('imagemagick' 'mariadb' 'jre7-openjdk>=7' 'java-jsvc' 'java-commons-daemon')
     pkgdesc=$pkgdesc_all
     pkgver=$(pkgver all)
 }
