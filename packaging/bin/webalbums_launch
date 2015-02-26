@@ -1,5 +1,5 @@
 #! /bin/bash
-set -x
+
 login() {
     WEBALBUMS_USER="webalbums"
     
@@ -10,8 +10,10 @@ login() {
             exec sudo -u $WEBALBUMS_USER $*
         fi
     elif [[ $(whoami) != $WEBALBUMS_USER ]]; then
-        echo "ERROR: you need to run $0 as root or as user 'webalbums'."
-        exit 1
+        if [[ "$*" == *"--jsvc"* ]]; then
+            echo "ERROR: you need to run $0 as root or as user 'webalbums' to user --jsvc switch."
+            exit 1
+        fi
     fi
 }
 
@@ -20,7 +22,9 @@ help() {
     exit
 }
 
-TOMEE_HOME=/usr/share/webalbums/apache-tomee-webprofile # will be changed during packaging
+PKG_BIN_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd) # ie, this script file directory
+
+TOMEE_HOME=$(readlink -f $PKG_BIN_DIR/../../apache-tomee-webprofile) # will be changed during packaging
 DEFAULT_CONF_PATH_FILE=$TOMEE_HOME/conf/config.path
 DEFAULT_LIBRARY_PATH_FILE=$TOMEE_HOME/conf/library.path
 

@@ -1,27 +1,55 @@
-Still under development, no direct way to install.
-Windows currently not supported, but it shouldn't be complicated to adapt to it.
+Installation
+============
 
+From GIT sources
+----------------
 
-See contribute and send me an email!
+    git clone https://github.com/wazari972/WebAlbums.git
 
-Requirements
+    cd WebAlbums
+    make -f packaging/Makefile build_ear_webapp
+    make -f packaging/Makefile build_vfs_webapp
+    make -f packaging/Makefile build_jfs
+
+    cd apache-tomee-webprofile
+    # create a database and a user, then
+    $EDITOR conf/tomee.xml # configure db access
+
+    # setup users and groups
+    $EDITOR conf/users.properties conf/groups.properties
+
+    # if necessary, configure tomcat appserver
+    $EDITOR conf/server.xml
+
+    # configure path to webalbums photos
+    $EDITOR conf/webalbums.xml
+
+    # create the relevant directories, eg:
+    # mkdir $WEBALBUMS/{ftp,miniatures,images}
+
+    # put photos in ftp directory, eg:
+    # mkdir $WEBALBUMS/ftp/Familly/2015-01-01\ New\ Year\ Lunch
+
+From Archive
 ------------
- - Java environment
- - MySQL database
- - Glassfish Server v3
 
-Current installation
---------------------
+    wget ...
+    tar xvf ...
+    
+From Archlinux
+--------------
 
-- Checkout the git repository,
-- load and compile the project, 
-- edit Persistance.xml to point to your database
-- and deploy!
+    wget WebAlbums-Archlinux.tar.gz
+    tar xvf WebAlbums-Archlinux.tar.gz
+    cd WebAlbums-Archlinux
+    makepkg
+    
+    sudo pacman -U webalbums-all-git-*.-any.pkg.tar.xz
+    # or
+    sudo pacman -U webalbums-appserver-git-*.-any.pkg.tar.xz
+    sudo pacman -U webalbums-webapp-git-*.-any.pkg.tar.xz
+    sudo pacman -U webalbums-jfs-git-*.-any.pkg.tar.xz
+    
+Configuration
+=============
 
-
-Normal installation (soon)
---------------------------
-- Download the bootloader
-- edit the configuration file
-- download the last EAR archive of the application
-- and launch!
