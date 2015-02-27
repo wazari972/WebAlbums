@@ -95,7 +95,7 @@ build() {
     make -f $srcdir/$_makefile build_webapp  
     make -f $srcdir/$_makefile build_jfs
 
-    $srcdir/$_gitname/packaging/ArchLinux/merge_install.sh \
+    $srcdir/$_gitname/packaging/merge_install.sh \
         $srcdir/$_gitname/packaging/ArchLinux/ --gen-all
 
     msg "Build done"
