@@ -33,8 +33,21 @@ From GIT sources
 From Archive
 ------------
 
-    wget ...
-    tar xvf ...
+Download and extract archives from
+[Github](https://github.com/wazari972/WebAlbums/releases/latest). That
+will create `etc`, `usr` and `var` directories (Archlinux directory
+rules). 
+
+    VERSION=v0.9.1
+    wget https://github.com/wazari972/WebAlbums/releases/download/$VERSION/webalbums-all-git.tar.gz
+    # or 
+    wget https://github.com/wazari972/WebAlbums/releases/download/$VERSION/webalbums-{appserver,webapp,jfs}-git.tar.gz
+
+    for arch in webalbums-*.tar.gz;do
+      tar xvf $arch
+    done
+    
+    INSTALL_ROOT=$(pwd) # install prefix is here
     
 From Archlinux
 --------------
@@ -52,6 +65,7 @@ From Archlinux
     sudo pacman -U webalbums-webapp-git-*.-any.pkg.tar.xz
     sudo pacman -U webalbums-jfs-git-*.-any.pkg.tar.xz
     
+    INSTALL_ROOT= # no install prefix
 Configuration
 =============
 
@@ -82,13 +96,18 @@ administration rights.
 * Define usernames and passwords in `users.properties`
   (username=password)
 
-* Bind users to roles (groups) in `groups.properties` (role=username). WebAlbums roles are:
+* Bind users to roles (groups) in `groups.properties`
+  (role=username). WebAlbums roles are:
   * `MANAGER` to give administration rights
   * `VIEWER` to give viewer rights (mandatory!)
-  * `Admin`, `Famille`, `Amis`, `Autres` (admin, family, friends and others, respectively) restrict the set of picture a given user can see. `Admin` sees everything, and `Autres` is the most restricted.
+  * `Admin`, `Famille`, `Amis`, `Autres` (admin, family, friends and
+    others, respectively) restrict the set of picture a given user can
+    see. `Admin` sees everything, and `Autres` is the most restricted.
 
 WebAlbums Paths and Directories
 -------------------------------
+
+    TOMCAT_HOME=$INSTALL_ROOT/usr/share/webalbums/apache-tomee-webprofile
 
 WebAlbums searches for its configuration file in `$(cat
 $TOMCAT_HOME/config.path)`, that should point to something like
@@ -97,7 +116,9 @@ $TOMCAT_HOME/config.path)`, that should point to something like
 Configuration file `webalbums.xml` specifies where WebAlbums should
 store and lookup its images:
 
-*  `Configuration/directories/root_path` is the absolute path to the root directory. The directory should contain the subfolders `images`, `miniatures`, `ftp`, ...
+* `Configuration/directories/root_path` is the absolute path to the
+   root directory. The directory should contain the subfolders
+   `images`, `miniatures`, `ftp`, ...
 
     * `images` will contains your photos, don't forget to backup
       it. You may want to access it directly from your $HOME, in that
