@@ -87,6 +87,9 @@ public class Config extends HttpServlet {
             case DELTHEME:
                 output.deltheme = configService.treatDELTHEME(vSession);
                 break;
+            case SCREEN_SIZE:
+                vSession.setScreenSize(vSession.getScreenSize());
+                break;
             default:
                 break;
         }

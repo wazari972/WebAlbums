@@ -50,7 +50,9 @@ function init_common() {
     init_fullscreen();
     add_callback("SinglePage", init_fullscreen);
     $(".albumTT").ezpz_tooltip({stayOnContent: true,beforeShow: prepareAlbumsTooltipsDiv});
-
+    
+    callURL("Config?action=SCREEN_SIZE&special=ONLY&screenSize="+$(document).width());
+    
     loadCloud();
 }
 /******************************************/

@@ -177,8 +177,10 @@ public class ImageBeaned implements ImageLocal {
                     return output ;
                 }
             } else if (mode == ImgMode.BACKGROUND) {
-                final int SIZE = 1280 ;
-
+                assert(enrThemeForBackground != null);
+                
+                final Integer SIZE = vSession.getScreenSize();
+                
                 String backgroundpath = configuration
                         .getTempPath()+enrThemeForBackground.getNom()+File.separator+SIZE+".jpg" ;
                 if (configuration.isPathURL()) {

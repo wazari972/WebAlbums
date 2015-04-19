@@ -77,6 +77,7 @@ public class ViewSessionImpl implements
     private final HttpServletResponse response;
     
     private final Integer DEFAULT_PHOTOALBUM_SIZE = 15;
+    private final Integer DEFAULT_SCREEN_SIZE = 1280;
     private Theme tempTheme = null;
     
     public ViewSessionImpl(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
@@ -579,7 +580,27 @@ public class ViewSessionImpl implements
     public Integer getCarnetsPage() {
         return getInteger("carnetsPage") ;
     }
-
+    
+    @Override
+    public void setScreenSize(int size) {
+        setSessionObject("screenSize", size);
+    }
+    
+    @Override
+    public int getScreenSize() {
+        Integer size = getInteger("screenSize");
+        
+        if (size == null) {
+            size = getSessionObject("screenSize", Integer.class) ;
+        }
+        
+        if (size == null) {
+            size  = DEFAULT_SCREEN_SIZE;
+        }
+        
+        return size;
+    }
+    
     @Override
     public int getPhotoAlbumSize() {
         Integer size = getInteger("photoAlbumSize");

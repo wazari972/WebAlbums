@@ -19,6 +19,8 @@ public interface ViewSessionImages extends VSession {
 
     String getBorderColor();
 
+    int getScreenSize();
+
     enum ImgMode {MINI, GRAND, SHRINK, BACKGROUND, RANDOM_TAG, REPRESENT_TAG, GPX}
 
     Integer getId();

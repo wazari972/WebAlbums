@@ -18,7 +18,8 @@ public interface ViewSessionConfig extends VSession {
     
     enum Config_Action {
         DELTAG, MODGEO, MODVIS, MODTAG, NEWTAG, DELTHEME, LINKTAG, MODPERS, 
-        MODMINOR, DEFAULT, IMPORT, SETHOME
+        MODMINOR, DEFAULT, IMPORT, SETHOME,
+        SCREEN_SIZE
     }
     
     Config_Special getConfigSpecial();
@@ -49,4 +50,7 @@ public interface ViewSessionConfig extends VSession {
     String getBirthdate();
     
     String getContact();
+    
+    int getScreenSize();
+    void setScreenSize(int size);
 }
