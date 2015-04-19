@@ -29,7 +29,7 @@ public class ProcessCallbackImpl implements ProcessCallback {
 
     private Process execPS(String[] cmd) {
         try {
-            log.info( "exec: {}", Arrays.toString(cmd));
+            log.debug( "exec: {}", Arrays.toString(cmd));
 
             return Runtime.getRuntime().exec(cmd);
         } catch (Exception e) {
@@ -38,11 +38,13 @@ public class ProcessCallbackImpl implements ProcessCallback {
         }
     }
 
+    @Override
     public void exec(String[] cmd) {
         //execPS(cmd);
         execWaitFor(cmd);
     }
 
+    @Override
     public int execWaitFor(String[] cmd) {
         Process ps = execPS(cmd);
 
@@ -51,27 +53,25 @@ public class ProcessCallbackImpl implements ProcessCallback {
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(ps.getInputStream()));
-        String str = null;
+        String str;
 
         while (true) {
             try {
                 while ((str = reader.readLine()) != null) {
-                    log.info(str);
+                    log.debug(str);
                 }
 
                 reader = new BufferedReader(new InputStreamReader(ps.getErrorStream()));
 
                 while ((str = reader.readLine()) != null) {
-                    log.info( "err - {}", str);
+                    log.debug( "err - {}", str);
                 }
                 int ret = ps.waitFor();
-                log.info( "ret:{}", ret);
+                log.debug( "ret:{}", ret);
 
                 return ret;
 
-            } catch (InterruptedException e) {
-            } catch (IOException e) {
-            }
+            } catch (InterruptedException | IOException e) {}
         }
     }
 }

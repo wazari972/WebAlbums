@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.util.Date;
@@ -278,7 +280,12 @@ public class FilesFinder {
             enrPhoto.setAlbum(enrAlbum);
             enrPhoto.setType(type);
             log.debug("### Album {}", enrPhoto.getAlbum());
-            photoDAO.create(enrPhoto);
+            try {
+                photoDAO.create(enrPhoto);
+            } catch (Exception e) {
+                log.warn("Could not create database record for file {} ({})", new Object[] {photoPath, e.getMessage(), e});
+                return false;
+            }
         } else /* sinon on update son nom d'album*/ {
             log.debug("### Mise à jour de l'enregistrement");
             enrPhoto.setAlbum(enrAlbum);
@@ -385,8 +392,10 @@ public class FilesFinder {
         targetAlbumImage.getParentFile().mkdirs();
         
         log.debug("{} renameTo {}", sourceAlbumImage, targetAlbumImage);
-        if (!sourceAlbumImage.renameTo(targetAlbumImage)) {
-            log.warn("Couldn't rename {} to {}", sourceAlbumImage, targetAlbumImage);
+        try {
+            Files.move(sourceAlbumImage.toPath(), targetAlbumImage.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.warn("Could not move {} to {} ({})", new Object[] {sourceAlbumImage.toPath(), targetAlbumImage.toPath(), e.getMessage(), e});
             return;
         }
         sourceAlbumImage.getParentFile().delete();

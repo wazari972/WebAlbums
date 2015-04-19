@@ -47,7 +47,7 @@ public class JPAPhoto implements Photo, Serializable {
     private Integer id;
 
     @Basic(optional = false)
-    @Column(name = "PhotoPath", nullable = false, length = 100)
+    @Column(name = "PhotoPath", nullable = false, length = 200)
     private String path;
 
     @Column(name = "Description", length = 200)

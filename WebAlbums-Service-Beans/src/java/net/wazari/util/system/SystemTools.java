@@ -152,7 +152,12 @@ public class SystemTools {
         if (wrapper == null) {
             return false;
         } else {
-            return wrapper.thumbnail(cb, source, dest, height);
+            try {
+                return wrapper.thumbnail(cb, source, dest, height);
+            } catch (Exception e) {
+                log.warn("Thumbnailing failed with wrapper {}, {} --> {} ({}px)", new Object[] {wrapper, source, dest, height, e});
+                return false;
+            }
         }
     }
 

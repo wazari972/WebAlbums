@@ -9,21 +9,13 @@ import net.wazari.common.plugins.Importer.SanityStatus;
 public class TotemWrapper extends GenericImporter {
 
     private boolean supports(String type, String ext) {
-        if (type != null) {
-            if (type.contains("video")
-             || type.toLowerCase().contains("mpeg"))
-            {
-                return true ;
-            }
+        if (true) return false;
+        if (type != null && (type.contains("video") || type.toLowerCase().contains("mpeg"))) {
+            return true;
         }
         
-        if (ext != null) {
-            if (String.CASE_INSENSITIVE_ORDER.compare(ext, "asf") == 0) {
-                return true;
-            }
-            if (String.CASE_INSENSITIVE_ORDER.compare(ext, "3gp") == 0) {
-                return true;
-            }
+        if (ext != null && "asf 3gp".contains(ext.toLowerCase())) {
+            return true;
         }
 
         return false;
@@ -43,7 +35,7 @@ public class TotemWrapper extends GenericImporter {
 
     @Override
     public String getName() {
-        return "Totem Wrapper" ;
+        return "Totem Wrapper DISABLED" ;
     }
 
     @Override

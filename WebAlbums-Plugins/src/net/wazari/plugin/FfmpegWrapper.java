@@ -40,7 +40,7 @@ public class FfmpegWrapper  extends GenericImporter {
     }
 
     public boolean supports(String type, String ext, Capability cap) {
-        if (type.contains("video")) {
+        if (type.contains("video") || "dvd mp4".contains(ext.toLowerCase())) {
             return Arrays.asList(supports()).contains(cap) ;
         } else {
             return false ;
@@ -49,14 +49,16 @@ public class FfmpegWrapper  extends GenericImporter {
 
     @Override
     public boolean thumbnail(ProcessCallback cb, String source, String dest, int height) {
-        int width = (int)(height*16.)/9 ;
-        return 0 == cb.execWaitFor(new String[]{"ffmpeg", "-i", source,
-        "-vcodec", "png",
-        "-vframes", "1",
-        "-an",
-        "-f", "rawvideo",
-        "-s", width+"x"+height,
-        "-y", dest});
+        int width = (int) (height*16.)/9 ;
+        return 0 == cb.execWaitFor(new String[]{
+            "ffmpeg", 
+                "-i", source,
+                "-vcodec", "png",
+                "-vframes", "1",
+                "-an",
+                "-f", "rawvideo",
+                "-s", width+"x"+height,
+                "-y", dest});
     }
 
     public SanityStatus sanityCheck(ProcessCallback cb) {

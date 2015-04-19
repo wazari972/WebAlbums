@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Stack;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
@@ -70,11 +72,11 @@ public class ImageResizer {
             if ("Thumbs.db".equals(rep.getName())) {
                 rep.delete();
             }
-            //on fait rien
+            //nothing to do
 
             log.debug("File found: {} !", rep);
         } else if (rep.isDirectory()) {
-            log.info("Suppression du dossier {} ...", rep);
+            log.debug("Removing empty directory {} ...", rep);
             File[] lst = rep.listFiles();
 
             //supprimer recursivement tous les dossiers vides de ce repertoire
@@ -94,8 +96,10 @@ public class ImageResizer {
         destination.getParentFile().mkdirs();
         log.debug("Move {} to {}", new Object[]{elt.image, destination});
 
-        if (!elt.image.renameTo(destination)) {
-            log.warn("Couldn't move {} to {}", elt.image, destination);
+        try {
+            Files.move(elt.image.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            log.warn("Could not move {} to {} ({})", new Object[] {elt.image.toPath(), destination.toPath(), e.getMessage(), e});
             return false;
         }
 
@@ -108,10 +112,9 @@ public class ImageResizer {
         File destination = new File(path);
         File parent = destination.getParentFile();
         if (!parent.isDirectory() && !parent.mkdirs()) {
-            log.warn("Impossible de creer le dossier destination ({})", parent);
+            log.warn("Could not create target thumbnail directory ... ({})", parent);
             return false;
         } else {
-            log.warn("Parent directories created ({})", parent);
             String ext = null;
             int idx = source.image.getName().lastIndexOf('.');
             if (idx != -1) {
