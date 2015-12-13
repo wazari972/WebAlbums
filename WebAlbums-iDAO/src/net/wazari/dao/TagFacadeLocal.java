@@ -33,7 +33,7 @@ public interface TagFacadeLocal {
 
     Tag loadByName(String nom) ;
 
-    List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) ;
+    List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo, boolean restrictToTheme) ;
     
     List<Tag> getNoSuchTags(ServiceSession sSession, List<Tag> tags) ;
     

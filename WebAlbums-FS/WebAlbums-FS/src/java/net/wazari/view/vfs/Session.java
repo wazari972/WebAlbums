@@ -381,6 +381,11 @@ public class Session implements
     }
 
     @Override
+    public String getPath() {
+        return null;
+    }
+    
+    @Override
     public boolean getAll() {
         return false;
     }

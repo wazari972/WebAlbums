@@ -506,7 +506,12 @@ public class PhotoBean implements PhotoLocal {
     @RolesAllowed(UserLocal.VIEWER_ROLE)
     @Override
     public XmlPhotoAbout treatABOUT(ViewSessionPhotoSimple vSession) throws WebAlbumsServiceException {
-        Photo enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), vSession.getId());
+        Photo enrPhoto;
+        if (vSession.getId() != null) {
+            enrPhoto = photoDAO.loadIfAllowed(vSession.getVSession(), vSession.getId());
+        } else {
+            enrPhoto = photoDAO.loadByPathIfAllowed(vSession.getVSession(), vSession.getPath());
+        }
         if(enrPhoto == null) {
             return null ;
         }

@@ -1,9 +1,18 @@
 from httplib2 import Http
-from urllib import urlencode
+
+try:
+    from urllib.parse import urlencode
+    from urllib.request import urlopen
+except:
+    from urllib import urlencode
+    from urllib import urlopen
 import os
 from lxml import etree
 import timeit
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except:
+    from io import StringIO
 from collections import defaultdict
 
 STATIC_FOLDER = "../WebAlbums-Servlet/web/static"
@@ -17,8 +26,19 @@ INDEX = """<html><head><meta http-equiv="refresh" content="0; URL=%s" /></head><
 h = Http("")
 headers = None
 
+def server_on():
+    try:
+        urlopen(WA_URL, timeout=1)
+        return True
+    except IOError as err:
+        return False
+
 def get_an_image(uid):
     response, content = h.request('%sImage__%d' % (WA_URL, uid))
+    return content
+
+def get_a_photo(uid):
+    response, content = h.request('%sPhotos?special=ABOUT&id=%d' % (WA_URL, uid))
     return content
 
 def get_data_path_for_url():
@@ -49,12 +69,12 @@ def fail(e, url, name, response, content):
     errors.append((e, url, name, response, content))
     
 def print_error_report():
-    print "======================"
+    print("======================")
     for (e, url, name, response, content) in errors:
-        print "Error %s" % e
-        print "For url: %s%s" % (url, repr(name))
-        print "Response: %s" % response
-        print "------------"
+        print("Error %s" % e)
+        print("For url: %s%s" % (url, repr(name)))
+        print("Response: %s" % response)
+        print("------------")
 
 
 def do_copy(filename):
@@ -63,7 +83,7 @@ def do_copy(filename):
     src = filename
     target = filename.replace(ABS_DATA_PATH, get_current_target_folder(with_theme=False))
     link = filename.replace(ABS_DATA_PATH, get_data_path_for_url())
-    #print "%s --> %s (%s)" % (src, target, link)
+    #print("%s --> %s (%s)" % (src, target, link))
     #create dirname(target)
     target_dir = target[:target.rindex("/")]
     try:
@@ -73,7 +93,7 @@ def do_copy(filename):
             raise e
     #copy src to target
     cmd = "cp '%s' '%s'" % (src, target_dir)
-    print cmd
+    print(cmd)
     os.system(cmd)
     return link
 
@@ -81,11 +101,12 @@ count = 0
 theme = None
 def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, make_index=False, use_empty_xsl=False):
     global count
-    print url
-    name = name.encode("latin1")
+    #name = name.encode("latin1")
     count += 1
     #url += name
     url = url.replace(" ", "%20")
+    response = {"status" : 0}
+    content = None
     try:
         response, content = h.request(WA_URL+url, 'GET', headers=headers)
         if response["status"] == 500:
@@ -99,14 +120,14 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
             with open(path, "w") as f:
                 f.write(INDEX % (url+name))
         
-        #print "#%d %s: %s %s" % (count, theme, repr(url), repr(name))
+        #print("#%d %s: %s %s" % (count, theme, repr(url), repr(name)))
         
         content_to_save = content
         content_to_return =  content        
         
         if parse_and_transform:
             content_to_return = etree.fromstring(content)
-            #print "#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name))
+            #print("#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name)))
             
             if not callback(content_to_return, url, name):
                 return content_to_return
@@ -141,11 +162,11 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
                 
         return content_to_return
     except Exception as e:
-        print "Request: ", repr(url)
-        print "Status: ", response["status"]
-        print "Response: ", response
-        print e
-        print ""
+        print("Request: ", repr(url))
+        print("Status: ", response["status"])
+        print("Response: ", response)
+        print(e)
+        print("")
         
         fail(e, url, name, response, content)
         return
@@ -181,10 +202,10 @@ def login(user, paswd, save_index=True, do_static=True, get_xslt=True, parse_and
         prepare_XSLTs()
     get_index(save=save_index, do_static=do_static, parse_and_transform=parse_and_transform)
     
-def get_choix(themeId, name="", make_index=False, want_static=True, want_background=True, parse_and_transform=True):
+def get_choix(themeId, name="", make_index=False, want_static=True, want_background=True, parse_and_transform=True, save=True):
     global theme
     theme = name
-    choix = get_a_page("Choix__%s__" % themeId, name, make_index=make_index, parse_and_transform=parse_and_transform)
+    choix = get_a_page("Choix__%s__" % themeId, name, make_index=make_index, parse_and_transform=parse_and_transform, save=save)
     
     if want_background:
         get_background(themeId, name)
@@ -204,7 +225,7 @@ def get_background(themeId, name):
 
 def get_static():
     target = TARGET_PATH+("/"+theme if theme is not None else "")
-    print "Copy static to '%s'" % target
+    print("Copy static to '%s'" % target)
     os.system("cp -r '%s' '%s'" % (STATIC_FOLDER, target))
     
 class PrefixResolver(etree.Resolver):        
@@ -227,7 +248,7 @@ def prepare_XSLTs():
         emptyXslt = get_XSLT("static/Empty.xsl")
         
 def get_XSLT(path):
-    print "Get stylesheets"
+    print("Get stylesheets")
     parser = etree.XMLParser()
     parser.resolvers.add(PrefixResolver())
     page = get_a_page(path, parse_and_transform=False, save=False)
@@ -253,7 +274,7 @@ def get_albums_of_albumSet(albumSet):
 def get_all_albums():
     first = get_an_albumSet()
     if first is None:
-        print "Couldn't fetch albums page"
+        print("Couldn't fetch albums page")
         return
     page = first.find("albums").find("display").find("albumList").find("page")
     if page.get("last") is not None:
@@ -285,7 +306,7 @@ def get_all_photos_of_photoSet(albumId, name="", full=False):
     photos_already_dl[theme].append(albumId)
     first = get_a_photoSet(albumId, name=name, full=full)
     if first is None:
-        print "Couldn't fetch photos from %s/%s" % (repr(name), albumId)
+        print("Couldn't fetch photos from %s/%s" % (repr(name), albumId))
         return
     
     get_a_visioSet(albumId, name=name, full=full)
@@ -324,7 +345,7 @@ def get_a_tag_page(tagId, page=0, name="", full=False, make_index=False, get_rel
 def get_a_tagSet(tagId, name="", full=False, make_index=False, get_related_albums=False):
     first = get_a_tag_page(tagId, name=name, full=full, make_index=make_index, get_related_albums=get_related_albums)
     if first is None:
-        print "Couldn't fetch tag page %s/%s" % (repr(name), tagId)
+        print("Couldn't fetch tag page %s/%s" % (repr(name), tagId))
         return
     page = first.find("tags").find("display").find("photoList").find("page")
     if page.get("last") is not None:
@@ -358,7 +379,7 @@ def get_a_carnet(carnetId, name="", full=False):
 
         try:
             os.mkdir(target)
-            print target
+            print(target)
         except OSError as e:
             if e.errno != 17:
                 raise e
@@ -404,7 +425,7 @@ def get_a_theme(themeId, name,  want_static=True, want_background=True):
     choix = get_choix(themeId, name, make_index=True,  want_static=want_static, want_background=want_background)
     
     if choix is None:
-        print "Couldn't fetch Choix for %s/%s" % (repr(name), themeId)
+        print("Couldn't fetch Choix for %s/%s" % (repr(name), themeId))
         return
     get_static()
     get_all_albums()
@@ -415,7 +436,7 @@ def get_all_themes():
     get_static()
     index = get_index()
     if index is None:
-        print "Couldn't fetch the index ..."
+        print("Couldn't fetch the index ...")
         return
         
     for xmlTheme in index.find("themes").find("themeList").findall("theme"):

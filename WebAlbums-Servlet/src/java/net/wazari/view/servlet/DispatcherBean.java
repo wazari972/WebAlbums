@@ -89,7 +89,7 @@ public class DispatcherBean {
                     output.login = userServlet.treatLogin(vSession.getSessionLogin(), request, response);
                     if (output.login == null) {
                         return;
-                    }
+                    }   
                 break;
             case VOID:
                 output.themes = indexServlet.treatVOID(vSession.getSessionTheme());
@@ -122,12 +122,16 @@ public class DispatcherBean {
                 //from here on, the theme must be saved
                 if (vSession.getTheme() == null) {
                     if (special == null) {
-                        log.debug("Not logged in, not a special page, display VOID page");
-                        output.themes = indexServlet.treatVOID(vSession.getSessionTheme());
-
+                        log.debug("Not into a theme, not a special page, display VOID page");
                     } else {
-                        output.isComplete = true;
-                        log.debug("Not logged in, special request, nothing to display ...");
+                        
+                        if (page == Page.PHOTO && ViewSessionPhoto.Photo_Special.ABOUT.toString().equals(special)) {
+                            output.photos = photoServlet.treatPHOTO(vSession.getSessionPhoto());
+                            output.isComplete = false;
+                        } else {
+                            output.isComplete = true;
+                            log.debug("Not into a theme, special request, nothing to display ...");
+                        }
                     }
                 } else {
                     log.debug("{} {}page", page, special != null ? special : "");

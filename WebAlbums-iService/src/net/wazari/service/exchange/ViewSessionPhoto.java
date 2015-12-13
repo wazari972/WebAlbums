@@ -41,6 +41,7 @@ public interface ViewSessionPhoto extends VSession {
     
     interface ViewSessionPhotoSimple extends VSession {
         Integer getId();
+        String getPath();
         
     }
     interface ViewSessionPhotoSubmit extends VSession {

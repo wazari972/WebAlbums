@@ -56,7 +56,7 @@ public class WebAlbumsDAOBean {
         if (restrict == Restriction.NONE)
             return TRUE ;
         
-        if (session.isRootSession()) {
+        if (session.isRootSession() || theme == null || session.getTheme() == null) {
             return TRUE ;
         } else {
             return cb.equal(theme.get(JPATheme_.id), session.getTheme().getId()) ;
@@ -106,6 +106,9 @@ public class WebAlbumsDAOBean {
     
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
     public JPAPhoto filter(JPAPhoto photo, ServiceSession session, boolean starfilter) {
+        if (photo == null) {
+            return null;
+        }
         if (mustFilter(session, photo.getDroit())) {
             return null;
         }

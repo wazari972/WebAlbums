@@ -122,6 +122,13 @@ public class PhotoFacade implements PhotoFacadeLocal {
     }
 
     @Override
+    @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
+    public Photo loadByPathIfAllowed(ServiceSession session, String path) {
+        JPAPhoto photo = (JPAPhoto) loadByPath(path);
+        return webDAO.filter(photo, session, false);
+    }
+    
+    @Override
     @RolesAllowed(UtilisateurFacadeLocal.MANAGER_ROLE)
     public Photo loadByPath(String path) {
         try {

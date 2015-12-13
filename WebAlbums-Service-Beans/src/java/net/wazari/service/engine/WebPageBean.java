@@ -1,6 +1,5 @@
 package net.wazari.service.engine;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.text.ParseException;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -43,7 +41,6 @@ import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWh
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWhere;
 import net.wazari.service.exchange.xml.common.XmlWebAlbumsList.XmlWebAlbumsTagWho;
 import net.wazari.service.exchange.xml.tag.XmlTag;
-import static org.jboss.weld.util.reflection.Formats.version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -256,18 +253,20 @@ public class WebPageBean implements WebPageLocal {
 
         XmlWebAlbumsList output = new XmlWebAlbumsList();
         boolean geoOnly = mode == Tag_Mode.TAG_GEO;
+        boolean themeOnly = mode == Tag_Mode.TAG_USED && (ids == null || ids.isEmpty());
+        
         //affichage de la liste des tags où il y aura des photos
         if (!vSession.isSessionManager()) {
             if (mode != Tag_Mode.TAG_USED && mode != Tag_Mode.TAG_GEO) {
                 throw new RuntimeException("Don't want to process mode " + mode + " when not logged at manager");
             }
             log.debug( "Load visible tags (only for geo?{})", geoOnly);
-            tags = tagDAO.loadVisibleTags(vSession, geoOnly);
+            tags = tagDAO.loadVisibleTags(vSession, geoOnly, themeOnly);
         } else /* current manager*/ {
 
             if (mode == Tag_Mode.TAG_USED || mode == Tag_Mode.TAG_GEO) {
-                log.debug( "Load visible tags (only for geo?{})", geoOnly);
-                tags = tagDAO.loadVisibleTags(vSession, geoOnly);
+                log.debug( "Load visible tags (only for geo?{}, themeOnly?{})", geoOnly, themeOnly);
+                tags = tagDAO.loadVisibleTags(vSession, geoOnly, themeOnly);
             } else if (mode == Tag_Mode.TAG_ALL) {
                 log.debug( "Load all tags");
                 //afficher tous les tags
@@ -283,7 +282,7 @@ public class WebPageBean implements WebPageLocal {
                 } else /* TAG_NUSED*/ {
                     //select all the tags used in photo of this theme
                     log.debug( "Select not used tags");
-                    notWantedTags = tagDAO.loadVisibleTags(vSession, false);
+                    notWantedTags = tagDAO.loadVisibleTags(vSession, false, themeOnly);
                 }
                 log.debug( "Select no such tags");
                 tags = tagDAO.getNoSuchTags(vSession, notWantedTags);
@@ -303,9 +302,8 @@ public class WebPageBean implements WebPageLocal {
                 return output ;
             }
         } /* isManagerSession */
-
-        output.mode = mode ;
-
+        
+        output.mode = mode;
         MapPoint map = null;
         if (box == Box.MAP_SCRIPT) {
             map = new MapPoint();

@@ -1,0 +1,10 @@
+[Plugin]
+Module=eogWebAlbums
+IAge=2
+Loader=python3
+Name=WebAlbums Connector
+Icon=postr
+Description=Interactions with WebAlbums database.
+Authors=Kevin Pouget <eog-webalbums@0x972.info>
+Copyright=Copyright © 2015 Creative Commons
+Website=http://webalbums.0x972.info

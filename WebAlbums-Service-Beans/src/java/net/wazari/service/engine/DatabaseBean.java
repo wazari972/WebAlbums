@@ -234,7 +234,7 @@ public class DatabaseBean implements DatabaseLocal {
                 vSession.setTheme(curEnrTheme);
             }
             
-            xmlTheme.tags = tagDAO.loadVisibleTags(vSession.getVSession(), false).size();
+            xmlTheme.tags = tagDAO.loadVisibleTags(vSession.getVSession(), false, true).size();
             if (xmlRootTheme != null) {
                 vSession.setRootSession(Boolean.TRUE);
                 vSession.setTheme(enrTheme);

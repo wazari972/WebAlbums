@@ -582,6 +582,11 @@ public class ViewSessionImpl implements
     }
     
     @Override
+    public String getPath() {
+        return getString("path") ;
+    }
+    
+    @Override
     public void setScreenSize(int size) {
         setSessionObject("screenSize", size);
     }

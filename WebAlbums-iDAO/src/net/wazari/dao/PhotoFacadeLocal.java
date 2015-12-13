@@ -28,6 +28,8 @@ public interface PhotoFacadeLocal {
     void remove(Photo photo);
 
     Photo loadIfAllowed(ServiceSession session, int id);
+    
+    Photo loadByPathIfAllowed(ServiceSession session, String path);
 
     SubsetOf<Photo> loadFromAlbum(ServiceSession session, Album album, Bornes bornes, ListOrder order);
 

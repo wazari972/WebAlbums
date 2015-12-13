@@ -45,7 +45,7 @@ public class DaoToXmlBean {
     PhotoUtil photoUtil;
    
     public void convertPhotoDetails(ViewSession vSession, Photo enrPhoto, 
-            XmlDetails details, boolean withAlbumDetails) throws WebAlbumsServiceException {
+                                    XmlDetails details, boolean withAlbumDetails) throws WebAlbumsServiceException {
         details.photoId = new XmlPhotoId(enrPhoto.getId());
         if (vSession.directFileAccess()) {
             details.photoId.path = enrPhoto.getPath(true) ;
@@ -70,6 +70,7 @@ public class DaoToXmlBean {
         }
 
         details.stars = enrPhoto.getStars();
+        addUserOutside(vSession, enrPhoto, details);
     }
     
     public void addUserOutside(ViewSession vSession, Photo enrPhoto, 

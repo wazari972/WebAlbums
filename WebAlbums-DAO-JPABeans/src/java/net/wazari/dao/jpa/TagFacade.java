@@ -131,7 +131,7 @@ public class TagFacade implements TagFacadeLocal {
 
     @Override
     @RolesAllowed(UtilisateurFacadeLocal.VIEWER_ROLE)
-    public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo) {
+    public List<Tag> loadVisibleTags(ServiceSession sSession, boolean restrictToGeo, boolean restrictToTheme) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         Predicate TRUE = cb.conjunction() ;
 
@@ -140,8 +140,7 @@ public class TagFacade implements TagFacadeLocal {
         ListJoin<JPATag, JPATagPhoto> tp = t.join(JPATag_.jPATagPhotoList) ;
         Join<JPATagPhoto, JPAPhoto> p = tp.join(JPATagPhoto_.photo) ;
         cq.where(cb.and(
-                webDAO.getRestrictionToCurrentTheme(sSession, 
-                p.get(JPAPhoto_.album).get(JPAAlbum_.theme)),
+                (restrictToTheme ? webDAO.getRestrictionToCurrentTheme(sSession, p.get(JPAPhoto_.album).get(JPAAlbum_.theme)) : TRUE),
                 (restrictToGeo ? cb.equal(t.get(JPATag_.tagType), 3) : TRUE)
                 )) ;
 
