@@ -14,6 +14,7 @@ try:
 except:
     from io import StringIO
 from collections import defaultdict
+import traceback
 
 STATIC_FOLDER = "../WebAlbums-Servlet/web/static"
 WA_URL = "http://127.0.0.1:8080/WebAlbums-dev/"
@@ -24,11 +25,12 @@ ABS_DATA_PATH = "/other/Web/"
 INDEX = """<html><head><meta http-equiv="refresh" content="0; URL=%s" /></head></html>"""
 
 h = Http("")
+
 headers = None
 
 def server_on():
     try:
-        urlopen(WA_URL, timeout=1)
+        urlopen(WA_URL)
         return True
     except IOError as err:
         return False
@@ -128,7 +130,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
         if parse_and_transform:
             content_to_return = etree.fromstring(content)
             #print("#%d %s %s: %s %s" % (count, theme, xml.find("time").text, repr(url), repr(name)))
-            
+            print("call: {}".format(url))
             if not callback(content_to_return, url, name):
                 return content_to_return
             
@@ -138,7 +140,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
                 root_path = get_data_path_for_url()
             
             xslt = displayXslt if not use_empty_xsl else emptyXslt
-            
+
             content_to_full = xslt(content_to_return, RootPath="'%s'" % root_path)
             
             if not full:
@@ -155,7 +157,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
                     a.set("href", do_copy(a.get("href")))
                 
                 content_to_save = etree.tostring(content_to_full, pretty_print=False, method="html")
-                
+
             path = folder+url+name
             with open(path, "w") as f:
                 f.write(content_to_save)
@@ -167,7 +169,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
         print("Response: ", response)
         print(e)
         print("")
-        
+        print(traceback.format_exc())
         fail(e, url, name, response, content)
         return
 
@@ -179,6 +181,7 @@ def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, ma
 
 def login(user, paswd, save_index=True, do_static=True, get_xslt=True, parse_and_transform=True):
     global headers
+    h.add_credentials(user, paswd)
     
     headers = {'Content-type': 'application/x-www-form-urlencoded'}
     response, content = h.request("%sIndex" % WA_URL, headers=headers)
@@ -261,11 +264,11 @@ def get_XSLT(path):
 #######  ALBUMS ########################
 ########################################
 
-def get_an_albumSet(page=0):
+def get_an_albumSet(page=0, parse_and_transform=True, save=True):
     if page == 0:
-        return get_a_page("Albums")
+        return get_a_page("Albums", parse_and_transform=parse_and_transform, save=save)
     else:
-        return get_a_page("Albums__p%s" % page)
+        return get_a_page("Albums__p%s" % page, parse_and_transform=parse_and_transform, save=save)
         
 def get_albums_of_albumSet(albumSet):
     for album in albumSet.find("albums").find("display").find("albumList").findall("album"):
@@ -295,8 +298,8 @@ def get_all_albums():
 def get_a_visioSet(albmId, page=0, name="", full=False):
     return get_a_page("Visio__%s_p%s__" % (albmId, page), name, full=full, use_empty_xsl=True)
 
-def get_a_photoSet(albmId, page=0, name="", full=False):
-    return get_a_page("Photos__%s_p%s__" % (albmId, page), name, full=full)
+def get_a_photoSet(albmId, page=0, name="", full=False, parse_and_transform=True):
+    return get_a_page("Photos__%s_p%s__" % (albmId, page), name, full=full, parse_and_transform=parse_and_transform)
     
 photos_already_dl = defaultdict(list)
 def get_all_photos_of_photoSet(albumId, name="", full=False):
