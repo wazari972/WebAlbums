@@ -68,10 +68,10 @@ prep_example: prep_root_path
 
 prep_usr_bin:
 	@echo '# Prepare /usr/bin'
-	mkdir -p $(USR_BIN_DIR) 
+	mkdir -p $(USR_BIN_DIR)
 	cp $(HOME_DIR)/packaging/bin/webalbums_launch $(USR_BIN_DIR)
 	sed -i 's#^TOMEE_HOME=.*$\#TOMEE_HOME=$(subst $(BUILD_PREFIX),,${APPSERVER_DIR})#' $(USR_BIN_DIR)/webalbums_launch
-	@echo 
+	@echo
 
 ### Root path ###
 
@@ -112,20 +112,20 @@ prep_webapp:
 	cp -r $(HOME_DIR)/WebAlbums-FS/WebAlbums-FS/dist/WebAlbums-FS.war $(USR_DIR)/$(APP_DIRNAME) # not sure why ant doesn't copy it itself ...
 	@echo
 
-build_webapp: 
+build_webapp:
 	@echo '# Build webapplication'
 	@$(MAKE) -j2 -f $(firstword $(MAKEFILE_LIST)) build_vfs_webapp
 	@echo
 
-build_ear_webapp: 
-	ant -buildfile $(ANT_EAR_BUILDFILE) -quiet dist | \
+build_ear_webapp:
+	ant -Dlibs.CopyLibs.classpath=./WebAlbums-libs/CopyLibs/org-netbeans-modules-java-j2seproject-copylibstask.jar  -buildfile $(ANT_EAR_BUILDFILE) -quiet dist | \
 		grep -v "Trying to override old definition of task"
 
 build_vfs_webapp:
 	ant -buildfile $(ANT_WFS_BUILDFILE) -quiet dist | \
 		grep -v "Trying to override old definition of task"
 
-clean_webapp:	
+clean_webapp:
 	ant -buildfile $(ANT_EAR_BUILDFILE) -quiet
 
 ### JnetFS ###
@@ -154,7 +154,7 @@ conf_appserver:
 	mkdir -p $(ETC_DIR)
 
 	rm -rf $(ETC_DIR)/appserver
-	cp -r $(HOME_DIR)/$(APPSERVER_DIRNAME)/conf $(ETC_DIR)/appserver 
+	cp -r $(HOME_DIR)/$(APPSERVER_DIRNAME)/conf $(ETC_DIR)/appserver
 
 	rm $(ETC_DIR)/appserver/tomee.xml -f
 	rm $(ETC_DIR)/appserver/{config,library}.path -f

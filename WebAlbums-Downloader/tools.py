@@ -101,7 +101,8 @@ def do_copy(filename):
 
 count = 0
 theme = None
-def get_a_page(url, name="", save=True, parse_and_transform=True, full=False, make_index=False, use_empty_xsl=False):
+def get_a_page(url, name="", save=True, parse_and_transform=True, full=False,
+               make_index=False, use_empty_xsl=False):
     global count
     #name = name.encode("latin1")
     count += 1

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import os
 import tempfile
@@ -14,8 +14,8 @@ try:
 except ImportError as e:
   # cd /usr/lib/
   # ln -s libMagickWand-6.Q16.so libMagickWand.so
-  print "Couldn't import Wand package."
-  print "Please refer to #http://dahlia.kr/wand/ to install it."
+  print("Couldn't import Wand package.")
+  print("Please refer to #http://dahlia.kr/wand/ to install it.")
   import traceback; traceback.print_exc()
   raise e
 
@@ -29,9 +29,9 @@ except ImportError:
 try:
   from docopt import docopt
 except ImportError:
-  print "Couldn't import Docopt package."
-  print "Please refer to#https://github.com/docopt/docopt to install it."
-  print "/!\\ Option parsing not possible, defaulting to hardcoded values/!\\"
+  print("Couldn't import Docopt package.")
+  print("Please refer to#https://github.com/docopt/docopt to install it.")
+  print("/!\\ Option parsing not possible, defaulting to hardcoded values/!\\")
 
 def to_bool(val):
   if val is None:
@@ -72,33 +72,33 @@ OPT_TO_KEY = {
 KEY_TO_OPT = dict([(key, (opt, ttype)) for opt, (key, ttype) in OPT_TO_KEY.items()])
 
 PARAMS = {
-"PATH" : "/home/kevin/WebAlbums/WebAlbums/WebAlbums-FS/Grenoble/Random",
+"PATH" : "/home/kevin/mount/first",
 "TARGET" : "/tmp/final.png",
 #define the size of the picture
-"WIDTH" : 1366,
+"WIDTH" : 2000,
 
 #define how many lines do we want
-"LINES": 3,
+"LINES": 2,
 
 "LINE_HEIGHT": 200,
 
 #minimum width of cropped image. Below that, we black it out
 #only for POLAROID
-"CROP_SIZE": 100,
+"CROP_SIZE": 1000,
 
 "IMG_FORMAT_SUFFIX": ".png",
 
 # False if PATH is a normal directory, True if it is WebAlbums-FS
-"USE_VFS": True,
+"USE_VFS": False,
 "FORCE_VFS": False,
 "FORCE_NO_VFS": False,
 
 # True if end-of-line photos are wrapped to the next line
 "DO_WRAP": False,
 # True if we want a black background and white frame, plus details
-"DO_POLAROID": False,
+"DO_POLAROID": True,
 
-"WANT_NO_CAPTION": False,
+"WANT_NO_CAPTION": True,
 
 # False if we want to add pictures randomly
 "PUT_RANDOM": False,
@@ -160,16 +160,17 @@ class UpdateCallback:
     pass
   
   def newImage(self, row=0, col=0, filename=""):
-    print "%d.%d > %s" % (row, col, filename)
+    print("%d.%d > %s" % (row, col, filename))
     
   def updLine(self, row, tmpLine):
-    print "--- %d ---" % row
-      
+    #print("--- %d ---" % row)
+    pass
+  
   def newFinal(self, name):
     pass
   
   def finished(self, name):
-    print "=========="
+    print("==========")
 
   def stopRequested(self):
     return False
@@ -183,7 +184,7 @@ if __name__ == "__main__":
     arguments = docopt(usage, version="3.5-dev")
 
     if arguments["--help"]:
-        print usage
+        print(usage)
         exit()
 
     param_args = dict([(OPT_TO_KEY[opt][0], OPT_TO_KEY[opt][1](value)) for opt, value in arguments.items()])
@@ -200,7 +201,7 @@ def get_next_file_vfs():
   if previous is not None:
     try:
       os.unlink(previous)
-    except:
+    except OSerror:
       pass
     
   files = os.listdir(PARAMS["PATH"])
@@ -232,8 +233,11 @@ def get_file_details(filename):
     
     return "%s (%s)" % (album, theme)
   except Exception as e:
-    print e
-    return get_file_details_dir(filename)
+    #print("Cannot get details from {}: {}".format(filename, e))
+    fname = get_file_details_dir(filename)
+    fname = fname.rpartition(".")[0]
+    fname = fname.replace("_", "\n")
+    return fname
 
 ###########################################
 
@@ -245,7 +249,10 @@ class GetFileDir:
     if len(self.files) == 0:
       raise EnvironmentError("No file available")
     
+    self.files.sort()
+    
     if randomize:
+      print("RANDOMIZE")
       random.shuffle(self.files)
   
   def get_next_file(self):
@@ -332,7 +339,7 @@ def photowall(name):
 
   previous_filename = None
   #for all the rows, 
-  for row in xrange(PARAMS["LINES"]):    
+  for row in range(PARAMS["LINES"]):    
     output_row = None
     row_width = 0
     #concatenate until the image width is reached
@@ -373,6 +380,8 @@ def photowall(name):
           
           if PARAMS["DO_POLAROID"] and will_fit < PARAMS["CROP_SIZE"]:
             row_width = PARAMS["WIDTH"]
+            previous_filename = filename
+            print("Doesn't fit")
             continue
           
           if PARAMS["DO_WRAP"]:
@@ -438,7 +447,7 @@ def random_wall(real_target_filename):
   except:
     pass
   
-  print "Target file is %s" % real_target_filename 
+  print("Target file is %s" % real_target_filename )
   target = None
   if mime is not None:
     try:
@@ -465,7 +474,7 @@ def random_wall(real_target_filename):
       break
       
     filename = get_next_file()
-    print filename
+    print(filename)
     
     img = Image(filename=filename)
     with img.clone() as clone:
@@ -494,8 +503,10 @@ get_next_file = None
 
 def path_is_jnetfs(path):
   #check if PATH is VFS or not
+
   df_output_lines = os.popen("df -Ph '%s'" % path).read().splitlines()
-  return "JnetFS" in df_output_lines[1]
+  
+  return df_output_lines and "JnetFS" in df_output_lines[1]
 
 def fix_args():
   global get_next_file

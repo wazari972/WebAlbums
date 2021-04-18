@@ -186,7 +186,7 @@ class Handler:
     if photowall.updateCB is not None:
       photowall.updateCB.stopped = True
       
-    print "bye"
+    print("bye")
   
   def onBtFullscreen(self, *args):
     fullscreen = self.builder.get_object('winFullscreen')
@@ -212,8 +212,8 @@ class Handler:
     self.builder.get_object('ckCaption').set_sensitive(do_pol and use_fs)
     self.builder.get_object('ckMini').set_sensitive(use_fs)
     self.builder.get_object('ckPickRandom').set_sensitive(not use_fs)
-    print "use", use_fs
-    print "is", self.is_jnetFS
+    print("use", use_fs)
+    print("is", self.is_jnetFS)
     color = None if self.is_jnetFS == use_fs else Gdk.color_parse("red")
     self.builder.get_object('ckWebAlbumFS').modify_bg(Gtk.StateType.NORMAL, color)
     
@@ -450,7 +450,7 @@ class Handler:
     return True
       
   def doPause(self):
-    print "do pause"
+    print("do pause")
     photowall.updateCB.paused = True
     
     return True
