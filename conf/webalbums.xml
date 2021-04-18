@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Configuration date="2015-01-10:20-00">
+    <directories>
+        <root_path>/var/webalbums</root_path>
+        <images>images</images>
+        <mini>miniatures</mini>
+        <ftp>ftp</ftp>
+        <temp>/var/tmp/webalbums</temp>
+        <backup>backup</backup>
+    </directories>
+    <sizes>
+        <albums>15</albums>
+        <photos>15</photos>
+    </sizes>
+    <properties>
+        <isReadOnly>false</isReadOnly>
+        <protectDB>false</protectDB>
+        <WFS>
+            <automount enabled="false">/path/to/WFS/automount</automount>
+	</WFS>
+    </properties>
+</Configuration>
