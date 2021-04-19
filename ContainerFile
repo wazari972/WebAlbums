@@ -1,0 +1,17 @@
+FROM quay.io/app-sre/ubi8-ubi:latest
+
+RUN dnf -y install sudo java
+RUN mkdir /var/webalbums
+
+COPY apache-tomee-webprofile /app
+COPY WebAlbums-libs/RT-DB-mysql-connector-java-5.1.12-bin.jar /app/lib
+COPY WebAlbums-Service-Beans/src/java/logback.xml /app/lib
+COPY packaging/etc/appserver-tomee/* /app/conf/
+COPY WebAlbums-ea/build /app/apps/WebAlbums-ea
+COPY packaging/setup_db.sh /app
+COPY packaging/setup_user.sh /app
+COPY packaging/etc/appserver-tomee/tomee-template.xml /app/conf/tomee.xml
+
+WORKDIR /app
+
+CMD set -x ; ./setup_db.sh /app/conf/tomee.xml && ./setup_user.sh /app/conf/users.properties && ./to_start

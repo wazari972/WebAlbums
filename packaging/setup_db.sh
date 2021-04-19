@@ -1,13 +1,11 @@
-#! /bin/sh
+#! /bin/sh -e
 
 TOMME_XML=$1
 
-USERNAME=wazari972
-PASSWORD=ijaheb
-ADDRESS=127.0.0.1
-DB_NAME=WebAlbums_TEST
+DB_ADDRESS="127.0.0.1"
+DB_NAME="WebAlbums"
 
-sed -i "s/USERNAME/$USERNAME/g" $TOMME_XML
-sed -i "s/PASSWORD/$PASSWORD/g" $TOMME_XML
-sed -i "s/ADDRESS/$ADDRESS/g" $TOMME_XML
+sed -i "s/USERNAME/$DB_USERNAME/g" $TOMME_XML
+sed -i "s/PASSWORD/$DB_PASSWORD/g" $TOMME_XML
+sed -i "s/ADDRESS/$DB_ADDRESS/g" $TOMME_XML
 sed -i "s/DB_NAME/$DB_NAME/g" $TOMME_XML
