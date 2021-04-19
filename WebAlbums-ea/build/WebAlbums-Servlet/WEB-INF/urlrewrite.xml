@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
+<!--
+    Configuration file for UrlRewriteFilter
+    http://tuckey.org/urlrewrite/
+-->
+<urlrewrite>
+    <!--  CHOIX -->
+    <rule>
+        <from>^/Choix__([0-9]+)__.*$</from>
+        <to>Choix?themeId=$1</to>
+    </rule>
+    <rule>
+        <from>^/Choix_plus_([0-9]+)__.*$</from>
+        <to>Choix?themeId=$1&amp;complete=y</to>
+    </rule>
+    <rule>
+        <from>^/Choix_map.json$</from>
+        <to>Choix?special=MAP&amp;type=JSON</to>
+    </rule>
+    <!--  ALBUMS -->
+    <rule>
+        <from>^/Albums__p([0-9]*)$</from>
+        <to>Albums?page=$1</to>
+    </rule>
+    
+    <!--  PHOTOS -->
+    <rule>
+        <from>^/Photos__([0-9]+)_p([0-9]*)__.*$</from>
+        <to >Photos?album=$1&amp;page=$2</to>
+    </rule>
+    <rule>
+        <from>^/Photos__([0-9]+)_map\.json$</from>
+        <to >Photos?album=$1&amp;type=JSON&amp;special=MAP</to>
+    </rule>
+    <rule>
+        <from>^/Photos__([0-9]+)_p([0-9]*)_pa([0-9]*)__.*$</from>
+        <to >Photos?album=$1&amp;page=$2&amp;albmPage=$3</to>
+    </rule>
+    <rule>
+        <from>^/Visio__([0-9]+)_p([0-9]*)__.*$</from>
+        <to >Photos?album=$1&amp;page=$2&amp;special=VISIONNEUSE</to>
+    </rule>
+    <rule>
+        <from>^/Visio__([0-9]+)_p([0-9]*)_pa([0-9]*)__.*$</from>
+        <to >Photos?album=$1&amp;page=$2&amp;albmPage=$3&amp;special=VISIONNEUSE</to>
+    </rule>
+    
+    <!--  IMAGES -->
+    <rule>
+        <from>^/Image__([0-9]+).*$</from>
+        <to>Images?id=$1&amp;mode=GRAND</to>
+    </rule>
+    <rule>
+        <from>^/Miniature__([0-9]+)\.png$</from>
+        <to>Images?id=$1&amp;mode=MINI</to>
+    </rule>
+    <rule>
+        <from>^/GPX__([0-9]+)\.gpx$</from>
+        <to>Images?id=$1&amp;mode=GPX</to>
+    </rule>
+    <rule>
+        <from>^/Tag__.*__([0-9]+)\.png$</from>
+        <to>Images?id=$1&amp;mode=REPRESENT_TAG</to>
+    </rule>
+    <rule>
+        <from>^/background.*$</from>
+        <to>Images?mode=BACKGROUND</to>
+    </rule>
+    <!--  TAGS -->
+    <rule>
+        <from>^/Tag__([0-9]+)x__.*$</from>
+        <to>Tags?tagAsked=$1&amp;wantTagChildren=true</to>
+    </rule>
+    <rule>
+        <from>^/Tag__([0-9]+)x_p([0-9]+)__.*$</from>
+        <to>Tags?tagAsked=$1&amp;page=$2&amp;wantTagChildren=true</to>
+    </rule>
+    <rule>
+        <from>^/Tag__([0-9]+)__.*$</from>
+        <to>Tags?tagAsked=$1</to>
+    </rule>
+
+    <rule>
+        <from>^/Tag__([0-9]+)_p([0-9]*)__.*$</from>
+        <to>Tags?tagAsked=$1&amp;page=$2</to>
+    </rule>
+    <rule>
+        <from>^/Tags__Cloud.*$</from>
+        <to>Tags?special=CLOUD</to>
+    </rule>
+    
+    <!--  CARNETS -->
+    <rule>
+        <from>^/Carnet__([0-9]+)_pc([0-9]*)__.*$</from>
+        <to >Carnets?carnet=$1&amp;page=$2</to>
+    </rule>
+    <rule>
+        <from>^/Carnets__p([0-9]*)$</from>
+        <to >Carnets?page=$1</to>
+    </rule>
+    <rule>
+        <from>^/Carnet__([0-9]+)_map\.json$</from>
+        <to >Carnets?id=$1&amp;type=JSON&amp;special=MAP</to>
+    </rule>
+    <!--  INDEX -->
+    <rule>
+        <from>^/Index\..*</from>
+        <to>Index?&amp;static=y</to>
+    </rule>
+    <rule>
+        <from>^/index\..*$</from>
+        <to>Index?&amp;static=y</to>
+    </rule>
+</urlrewrite>
+
